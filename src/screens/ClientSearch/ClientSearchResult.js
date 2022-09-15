@@ -747,7 +747,7 @@ const ClientSearchResult = ({ props, classes }) => {
           message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
             getData();
-            navigate(-1)
+            //navigate(-1)
           }
         },
         'S_401': {
@@ -1593,11 +1593,18 @@ const ClientSearchResult = ({ props, classes }) => {
           />
         }
         case DialogType.EDIT_RECIPIENT: {
-          const mappedGroups = data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.split(',')?.map(function (x) {
-            return parseInt(x, 10);
-          }) || searchData?.GroupIds?.split(',')?.map(function (x) {
-            return parseInt(x, 10);
-          }) || [];
+          let mappedGroups = [];
+          if (data && data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.length > 0) {
+            mappedGroups = data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.split(',')?.map(function (x) {
+              return parseInt(x, 10);
+            });
+          }
+          else if (searchData?.GroupIds && searchData?.GroupIds?.length > 0) {
+            mappedGroups = searchData?.GroupIds?.split(',')?.map(function (x) {
+              return parseInt(x, 10);
+            })
+          }
+
           return <AddRecipientPopup
             classes={classes}
             isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
