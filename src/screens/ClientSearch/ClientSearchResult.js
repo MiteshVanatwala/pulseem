@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
+//import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import {
   Box,
@@ -50,12 +51,14 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportFile } from '../../helpers/exportFromJson';
+import { exportFile, exportAsXLSX } from '../../helpers/exportFromJson';
 import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { switchClientStatus } from '../../helpers/functions';
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
+import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import { useNavigate } from 'react-router';
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -92,7 +95,8 @@ const ClientSearchResult = ({ props, classes }) => {
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
-  const { groupData } = useSelector((state) => state.group);
+  const navigate = useNavigate()
+  const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
@@ -174,7 +178,10 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   useEffect(() => {
     const initExtraFields = async () => {
-      await dispatch(getAccountExtraData());
+      dispatch(getAccountExtraData());
+      if (subAccountAllGroups.length === 0) {
+        dispatch(getGroupsBySubAccountId());
+      }
     }
     let isSessionStorageData = null;
     let overwriteObject = location?.state;
@@ -186,10 +193,13 @@ const ClientSearchResult = ({ props, classes }) => {
         (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
       if (isSessionStorageData) {
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
+        overwriteObject.IsSearchByFilter = true;
       }
     }
+
     // On load
     let initSearchData = {
+      IsSearchByFilter: false,
       IsAdvanced: false,
       PageSize: rowsPerPage,
       PageIndex: page,
@@ -266,16 +276,27 @@ const ClientSearchResult = ({ props, classes }) => {
       exportColumnHeader.current = updatingObject;
     }
   }, [extraData])
+
+
   useEffect(() => {
     if (searchData) {
-      if (searchData.IsAdvanced) {
-        getSearchData();
+      if (!searchData.IsAdvanced) {
+        sessionStorage.removeItem('searchData')
       }
-      else {
-        getData();
-      }
+      getData();
+      //OLD version
+      // if (document.referrer.toLowerCase().indexOf("ClientSearch.aspx".toLowerCase()) > -1) {
+      //   if (searchData.IsAdvanced) {
+      //     getSearchData();
+      //   }
+      // }
+      // else {
+      //   sessionStorage.removeItem('searchData')
+      //   getData();
+      // }
     }
-  }, [searchData]);
+  }, [dispatch, searchData, page, rowsPerPage]);
+
   const handleFromDateChange = (value) => {
     if (value > date.ToDate) {
       setDate({ ...date, ToDate: null });
@@ -327,14 +348,15 @@ const ClientSearchResult = ({ props, classes }) => {
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
           orderList = deletePropertyFromArrayObject(orderList, "Revenue");
         }
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+          searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+          orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+        }
         orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
         orderList = formatDateTime(orderList, t);
-        exportFile({
-          data: orderList,
-          fileName: (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult',
-          exportType: 'csv',
-          fields: exportColumnHeader.current
-        });
+        const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+
+        await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
       }
       else {
         setToastMessage(t('common.errorOccured'));
@@ -572,14 +594,14 @@ const ClientSearchResult = ({ props, classes }) => {
   ];
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients(searchData));
+    await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
     setLoader(false);
   };
-  const getSearchData = async () => {
-    setLoader(true);
-    await dispatch(searchAdvancedClients(searchData));
-    setLoader(false);
-  }
+  // const getSearchData = async () => {
+  //   setLoader(true);
+  //   await dispatch(searchAdvancedClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
+  //   setLoader(false);
+  // }
   useEffect(() => {
     // setData(Static_CSR_Data)
     setData(ClientData);
@@ -645,7 +667,7 @@ const ClientSearchResult = ({ props, classes }) => {
       Func: () => null
     },
   }) => {
-    switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
+    switch (response.payload?.StatusCode || response.payload?.Message.StatusCode) {
       case 200: {
         actions?.S_200?.Func?.();
         actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
@@ -724,7 +746,8 @@ const ClientSearchResult = ({ props, classes }) => {
           code: 201,
           message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
-            getData()
+            getData();
+            //navigate(-1)
           }
         },
         'S_401': {
@@ -764,9 +787,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(true);
     const response = await dispatch(removeEmailClient(selectedClients[0]))
     if (response) {
-      if (response.payload === 'true') {
-        response.payload = { ...response.payload, StatusCode: 201 }
-      }
       //TODO: show delete success message
       handleResponses(response,
         {
@@ -807,9 +827,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(true);
     const response = await dispatch(removeSmsClient(selectedClients[0]))
     if (response) {
-      if (response.payload === 'true') {
-        response.payload = { ...response.payload, StatusCode: 201 }
-      }
       //TODO: show delete success message
       handleResponses(response,
         {
@@ -845,12 +862,16 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     setLoader(false);
   }
-  const handleAssignClientsToGroup = async (groupName) => {
+  const handleAssignClientsToGroup = async (groupData) => {
+    setDialog(null);
     setLoader(true);
-    const response = await dispatch(AddClientsToGroup({ ...searchData, GroupName: groupName }));
+    const response = await dispatch(AddClientsToGroup({
+      ...searchData,
+      GroupName: groupData.GroupName,
+      IsTestGroup: groupData.IsTestGroup
+    }));
     handleResponses(response, assignClientsActions);
     setLoader(false);
-    setDialog(null);
   }
   const handleUnSubscribe = async (opt) => {
     setDialog(null);
@@ -923,7 +944,7 @@ const ClientSearchResult = ({ props, classes }) => {
             setPage(1);
           }}
           onKeyPress={handleKeyPress}
-          placeholder={t("report.clientName")}
+          placeholder={t("appbar.search")}
         />
       );
     }
@@ -937,7 +958,7 @@ const ClientSearchResult = ({ props, classes }) => {
             onKeyPress={handleKeyDown}
             onChange={(e) => setSearchStr(e.target.value)}
             className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t("report.clientName")}
+            placeholder={t("appBar.groups.search")}
           />
         </Grid>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
@@ -1057,14 +1078,9 @@ const ClientSearchResult = ({ props, classes }) => {
       </Grid>
     );
   };
-  const handleRowsPerPageChange = async (val) => {
-    await dispatch(setRowsPerPage(val));
-    setSearchData({
-      ...searchData,
-      PageSize: val
-    })
-    setCookie("rpp", val, { maxAge: 2147483647 });
-  };
+  const handleRowsPerPageChange = (val) => {
+    dispatch(setRowsPerPage(val))
+  }
   const renderPhoneNameCell = (row, fullwidth) => {
     let date = null;
     const { FirstName, LastName } = row;
@@ -1298,7 +1314,20 @@ const ClientSearchResult = ({ props, classes }) => {
               {
                 label: t(""),
                 component: (
-                  <Typography title={Email} className={classes.bold}>{`${Email && Email.length > 18 ? Email.substring(0, 18) + '...' : Email}`}</Typography>
+                  <CustomTooltip
+                    isSimpleTooltip={false}
+                    interactive={true}
+                    classes={{
+                      tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                      arrow: classes.fBlack,
+                    }}
+                    arrow={true}
+                    style={{ fontWeight: "bold" }}
+                    placement={"top"}
+                    title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
+                    text={`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}
+                  >
+                  </CustomTooltip>
                 ),
                 classes: { text: localClasses.noWrap },
               },
@@ -1558,12 +1587,24 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             addClientByQuery={true}
-            createGroupCallback={(groupName) => { handleAssignClientsToGroup(groupName); }}
+            createGroupCallback={(groupData) => { handleAssignClientsToGroup(groupData); }}
             handleResponses={(response, actions) => handleResponses(response, actions)}
             getData={() => null}
           />
         }
         case DialogType.EDIT_RECIPIENT: {
+          let mappedGroups = [];
+          if (data && data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.length > 0) {
+            mappedGroups = data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.split(',')?.map(function (x) {
+              return parseInt(x, 10);
+            });
+          }
+          else if (searchData?.GroupIds && searchData?.GroupIds?.length > 0) {
+            mappedGroups = searchData?.GroupIds?.split(',')?.map(function (x) {
+              return parseInt(x, 10);
+            })
+          }
+
           return <AddRecipientPopup
             classes={classes}
             isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
@@ -1575,12 +1616,15 @@ const ClientSearchResult = ({ props, classes }) => {
             Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
             // selectGroup={(idArr) => setSelectedGroups(idArr)}
             DialogType={DialogType}
-            selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
+            selectedGroups={mappedGroups}
             setDialog={setDialog}
-            handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions); }}
-            onAddRecipient={() => { getData(); }}
+            handleResponses={(response, actions) => { handleResponses(response, actions); }}
+            onAddRecipient={(closeDialog = true) => {
+              closeDialog && setDialog(null);
+              getData();
+            }}
             recipientData={
-              selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
+              selectedClients[0] && (data?.find((obj) => obj?.ClientID === selectedClients[0]))
             }
           />
         }

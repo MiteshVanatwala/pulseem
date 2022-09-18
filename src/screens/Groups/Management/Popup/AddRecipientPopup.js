@@ -26,7 +26,7 @@ import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
-import { addRecipient, getGroupsBySubAccountId } from "../../../../redux/reducers/groupSlice";
+import { addRecipient, deleteRecipients } from "../../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
@@ -102,7 +102,6 @@ const AddRecipientPopup = ({ classes,
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const localClasses = useStyles()
-    const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector((state) => state.sms);
     const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
@@ -141,10 +140,7 @@ const AddRecipientPopup = ({ classes,
 
         setLoader(true);
         if (!extraData || extraData.length === 0) {
-            await dispatch(getAccountExtraData());
-        }
-        if (subAccountAllGroups.length === 0) {
-            await dispatch(getGroupsBySubAccountId());
+            dispatch(getAccountExtraData());
         }
         setLoader(false)
     };
@@ -190,7 +186,8 @@ const AddRecipientPopup = ({ classes,
                     onChange={(e) => onSelect(e.target.value)}
                 >
                     {
-                        data.map(obj => <MenuItem
+                        data.map((obj, idx) => <MenuItem
+                            key={idx}
                             style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                             disabled={obj.status === -1}
                             value={obj.status}>{t(obj.text)}</MenuItem>
@@ -206,12 +203,12 @@ const AddRecipientPopup = ({ classes,
             const { date, field } = dateField;
             if (isExtraData) {
                 setAccountExtraFields({
-                    ...accountExtraFields, [field]: moment(date, dateFormat).format()
+                    ...accountExtraFields, [field]: moment(date, dateFormat).format().split('T')[0]
                 });
             }
             else {
                 setAddRecipientData({
-                    ...addRecipientData, [field]: moment(date, dateFormat).format()
+                    ...addRecipientData, [field]: moment(date, dateFormat).format().split('T')[0]
                 })
             }
         }
@@ -1038,13 +1035,16 @@ const AddRecipientPopup = ({ classes,
                 dropdown
                 dropDownProps={{
                     onChange: (e, val) => {
+                        if (e.currentTarget.toString().indexOf('SVG') > -1) {
+                            handleRemoveFromGroups(recipientData.ClientID, selectedLocalGroups)
+                        }
                         const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
                         recipientData ? setSelectedLocalGroups(idArr) : selectGroup(idArr)
                         if (idArr.length > 0) {
                             setErrors({ ...errors, Groups: '' })
                         }
                     },
-                    selectedGroups: recipientData ? selectedLocalGroups : selectedGroups
+                    selectedGroups: recipientData && selectedLocalGroups?.length > 0 ? selectedLocalGroups : selectedGroups
                 }
                 }
                 error={errors.Groups}
@@ -1053,6 +1053,39 @@ const AddRecipientPopup = ({ classes,
         </div>)
 
 
+    const handleRemoveFromGroups = async (clientId, groupId) => {
+        const payload = {
+            GroupIDs: groupId,
+            ListOfValues: [clientId]
+        }
+        const response = await dispatch(deleteRecipients(payload))
+
+        handleResponses(response, {
+            S_201: {
+                code: 201,
+                message: ToastMessages.RECIPIENT_DELETED_FROM_GROUP
+            },
+            S_400: {
+                code: 400,
+                message: ToastMessages.INVALID_CLIENT_ID,
+                Func: () => null
+            },
+            S_401: {
+                code: 401,
+                message: ToastMessages.GROUP_INVALID_API,
+                Func: () => null
+            },
+            S_404: {
+                code: 405,
+                message: ToastMessages.SOMETHING_WENT_WRONG,
+                Func: () => null
+            },
+            default: {
+                message: ToastMessages.GENERIC_ERROR,
+                Func: () => null
+            }
+        });
+    }
     const handleEmailStatus = async (val) => {
         setLoader(true)
         let response = await dispatch(changeClientStatus({
@@ -1065,8 +1098,8 @@ const AddRecipientPopup = ({ classes,
                 code: 201,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
-                    onAddRecipient();
-                    setDialog('EDIT_RECIPIENT');
+                    onAddRecipient(false);
+                    //setDialog('EDIT_RECIPIENT');
                 }
             },
             S_400: {
@@ -1105,8 +1138,8 @@ const AddRecipientPopup = ({ classes,
                 code: 201,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
-                    onAddRecipient();
-                    setDialog('EDIT_RECIPIENT');
+                    onAddRecipient(false);
+                    //setDialog('EDIT_RECIPIENT');
                 }
             },
             S_400: {

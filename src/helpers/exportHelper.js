@@ -97,7 +97,25 @@ export const formatDateTime = (arr, t) => {
         if (a.snt_OpeningDate) {
             a.snt_OpeningDate = moment(a.snt_OpeningDate).format("DD/MM/YYYY HH:mm");
         }
-        if (a.SendDate === '' || !a.SendDate) {
+        if (a.ExtraDate1) {
+            a.ExtraDate1 = moment(a.ExtraDate1).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ExtraDate2) {
+            a.ExtraDate2 = moment(a.ExtraDate2).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ExtraDate3) {
+            a.ExtraDate1 = moment(a.ExtraDate3).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ExtraDate4) {
+            a.ExtraDate2 = moment(a.ExtraDate4).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ReminderDate) {
+            a.ReminderDate = moment(a.ReminderDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.BirthDate) {
+            a.BirthDate = moment(a.BirthDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.SendDate === '') {
             a.SendDate = t('common.notSent');
         }
 
@@ -151,7 +169,7 @@ export const replaceExtraFieldHeader = (obj, accountExtraFields) => {
         if (val && val !== '') {
             obj[key] = val;
         }
-        else{
+        else {
             delete obj[key];
         }
     });
