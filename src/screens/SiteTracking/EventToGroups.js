@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next';
 import GroupTags from '../../components/Groups/GroupTags'
-import { EventConditions } from '../../helpers/PulseemArrays'
+import { EventConditions } from '../../helpers/Constants'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import { FormControl, Typography, TextField, Box, Select, MenuItem, Button } from '@material-ui/core'
-import { updateMetaData, deleteMetaData, getCurrentEventGroups } from '../../redux/reducers/siteTrackingSlice';
+import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
 import { Dialog } from '../../components/managment/index';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import { DeleteIcon } from '../../assets/images/managment/index';
@@ -134,7 +134,7 @@ const EventToGroups = ({
                                         style={{ fontSize: 16, fontWeight: 400 }}
                                         placement={'top'}
                                         nameEllipsis={false}
-                                        title={<Typography style={{maxHeight: 50}} noWrap={false}>{t(condition.tooltip)}</Typography>}
+                                        title={<Typography style={{ maxHeight: 50 }} noWrap={false}>{t(condition.tooltip)}</Typography>}
                                         text={t(condition.value)}
                                     /> :
                                         t(condition.value)

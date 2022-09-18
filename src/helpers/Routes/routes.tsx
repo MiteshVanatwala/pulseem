@@ -18,7 +18,7 @@ import {
   GroupMenuIcon,
 } from "../../assets/images/settings/index";
 import { FaBinoculars } from "react-icons/fa";
-import SettingsLogo from "../assets/images/settings-white.png";
+import SettingsLogo from "../../assets/images/settings-white.png";
 import { FaHome } from "react-icons/fa";
 
 export const getSettingsItem = (

@@ -4,7 +4,7 @@ import { TopAppBar,/*Drawer*/ } from '../components/core'
 import { Container } from '@material-ui/core'
 // import { Helmet } from 'react-helmet';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { getRoutes, getSettingsItem } from '../helpers/routes';
+import { getRoutes, getSettingsItem } from '../helpers/Routes/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
 
