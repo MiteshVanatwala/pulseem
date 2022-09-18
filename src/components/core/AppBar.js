@@ -28,7 +28,8 @@ const AppBarItem = ({
   textStyle = '',
   showIcon = false,
   classes,
-  menuWidth = 290
+  menuWidth = 290,
+  onInnerClick = () => null
 }) => {
   const redirect = useNavigate();
   const [open, setOpen] = useState(false)
@@ -90,7 +91,7 @@ const AppBarItem = ({
                       {index !== 0 && <Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
-                        onClick={() => { redirect(option.href) }}
+                        onClick={() => { onInnerClick ? onInnerClick(option) : redirect(option.href) }}
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
