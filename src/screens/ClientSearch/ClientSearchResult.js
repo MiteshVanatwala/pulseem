@@ -114,6 +114,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
+  const [filterSearch, setFilterSearch] = useState(null);
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -194,6 +195,7 @@ const ClientSearchResult = ({ props, classes }) => {
       if (isSessionStorageData) {
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
         overwriteObject.IsSearchByFilter = true;
+        setFilterSearch(overwriteObject);
       }
     }
 
@@ -312,6 +314,8 @@ const ClientSearchResult = ({ props, classes }) => {
         FromDate: date.FromDate,
         ToDate: date.ToDate,
         SearchTerm: searchStr,
+        MyActivities: null,
+        MyConditions: null
       });
       setPage(1);
       handleFilter();
@@ -326,6 +330,8 @@ const ClientSearchResult = ({ props, classes }) => {
         FromDate: date.FromDate,
         ToDate: date.ToDate,
         SearchTerm: searchStr,
+        MyActivities: null,
+        MyConditions: null
       });
       setPage(1);
       handleFilter();
@@ -974,6 +980,8 @@ const ClientSearchResult = ({ props, classes }) => {
                 FromDate: date.FromDate,
                 ToDate: date.ToDate,
                 SearchTerm: searchStr,
+                MyActivities: null,
+                MyConditions: null
               });
               setPage(1);
               handleFilter();
@@ -991,7 +999,7 @@ const ClientSearchResult = ({ props, classes }) => {
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  setSearchData({ ...searchData, SearchTerm: "" });
+                  setSearchData({ ...searchData, SearchTerm: "", ...filterSearch });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();
