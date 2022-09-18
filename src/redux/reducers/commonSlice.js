@@ -1,4 +1,4 @@
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { getCookie } from '../../helpers/Functions/cookies'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 

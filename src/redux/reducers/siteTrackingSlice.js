@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
-import { SiteTrackingInstance } from '../../helpers/Api/SiteTracking';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { SiteTrackingInstance } from '../../helpers/Api/SiteTrackingAPI';
 import { Validation } from '../../helpers/Utils/Validations';
 import { siteTrackingScriptUrl } from '../../config/index';
 import { RandomID } from '../../helpers/Functions/functions'

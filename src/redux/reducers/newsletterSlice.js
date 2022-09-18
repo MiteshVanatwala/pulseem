@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { ExportFile } from '../../helpers/Export/ExportFile';
 
 export const getNewslatterData = createAsyncThunk(

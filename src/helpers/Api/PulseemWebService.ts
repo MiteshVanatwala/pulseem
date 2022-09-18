@@ -13,7 +13,7 @@ const PulseemWSInstance = axios.create({
 })
 
 PulseemWSInstance.defaults.withCredentials = true;
-PulseemWSInstance.defaults.credentials = 'include';
+//PulseemWSInstance.defaults.credentials = 'include';
 
 PulseemWSInstance.interceptors.response.use(
     res => res,

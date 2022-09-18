@@ -2,7 +2,13 @@ import exportFromJSON from 'export-from-json'
 
 const defaultData = { fileName: 'PulseemReport', exportType: 'csv' };
 
-const ExportFile = (options) => {
+export type options = {
+    fileName: string;
+    exportType: object;
+    data: any;
+
+}
+const ExportFile = (options: any) => {
 
     if (options.fileName === '') {
         options.fileName = defaultData.fileName;

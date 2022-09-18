@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
-import { uploaderInstance } from '../../helpers/Api/Uploader'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { uploaderInstance } from '../../helpers/Api/UploaderAPI'
 
 export const getGroupsBySubAccountId = createAsyncThunk(
     'Group/GetGroupsBySubAccountId', async (_, thunkAPI) => {

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReact'
-import { PulseemWSInstance } from '../../helpers/Api/PulseemWS'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI'
+import { PulseemWSInstance } from '../../helpers/Api/PulseemWebService'
 
 
 export const getAutomationsData = createAsyncThunk(

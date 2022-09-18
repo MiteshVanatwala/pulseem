@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getNotificationData = createAsyncThunk(
   'notification/getNotifications', async (_, thunkAPI) => {

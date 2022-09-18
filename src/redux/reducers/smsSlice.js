@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getSmsData = createAsyncThunk(
   'smsCampaign/getAllSmsCampaigns', async (_, thunkAPI) => {

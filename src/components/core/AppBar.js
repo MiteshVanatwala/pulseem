@@ -14,7 +14,7 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import { getRoutes, getSettingsItem } from '../../helpers/Routes/routes'
 import { setCookie, getCookie } from '../../helpers/Functions/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
-import { logout } from '../../helpers/Api/PulseemReact'
+import { logout } from '../../helpers/Api/PulseemReactAPI'
 import { openInNewTab } from '../../helpers/Functions/functions'
 import {
   ChartIcon

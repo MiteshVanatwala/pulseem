@@ -31,7 +31,7 @@ import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
-import { logout } from '../../../helpers/Api/PulseemReact'
+import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 
 function Alert(props) {
