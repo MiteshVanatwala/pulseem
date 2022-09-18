@@ -18,7 +18,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
+import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 
 const ArchiveManagementScreen = ({ classes }) => {

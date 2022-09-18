@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
 import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
-import { setCookie } from '../../helpers/cookies';
+import { setCookie } from '../../helpers/Functions/cookies';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 

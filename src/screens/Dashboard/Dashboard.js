@@ -10,7 +10,7 @@ import RecipientChart from '../../components/Charts/RecipientChart';
 import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
-import { getCookie } from '../../helpers/cookies'
+import { getCookie } from '../../helpers/Functions/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
 
 const DashboardScreen = ({ classes }) => {

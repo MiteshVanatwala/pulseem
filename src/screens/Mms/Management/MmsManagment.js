@@ -21,7 +21,6 @@ import 'moment/locale/he'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 const MmsManagnentScreen = ({ classes }) => {

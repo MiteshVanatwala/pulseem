@@ -15,7 +15,7 @@ import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, e
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
-import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
+import { EmailStatus, SmsStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSearchParams } from 'react-router-dom';

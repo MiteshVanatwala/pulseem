@@ -13,7 +13,7 @@ import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { getCookie, setCookie } from '../../helpers/cookies';
+import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';

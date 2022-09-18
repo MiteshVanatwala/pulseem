@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { setCookie, getCookie } from '../../helpers/cookies'
+import { setCookie, getCookie } from '../../helpers/Functions/cookies'
 const rtlLanguages = ['he', 'ar']
 
 export const coreSlice = createSlice({

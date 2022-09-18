@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getCookie, setCookie } from '../cookies';
+import { getCookie, setCookie } from '../Functions/cookies';
 import { apiURL, actionURL, isProdMode } from '../../config/index'
 
 const refreshTokenURL = `${actionURL}RefreshToken.ashx`

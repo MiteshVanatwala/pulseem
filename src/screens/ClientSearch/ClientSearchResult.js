@@ -26,7 +26,7 @@ import moment from "moment";
 import "moment/locale/he";
 import { Loader } from "../../components/Loader/Loader";
 import { setRowsPerPage } from "../../redux/reducers/coreSlice";
-import { setCookie } from "../../helpers/cookies";
+import { setCookie } from "../../helpers/Functions/cookies";
 import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import RenderRow from "./SubComp/RenderRow";

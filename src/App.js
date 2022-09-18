@@ -5,7 +5,7 @@ import AutomationManagment from './screens/Automations/Management/AutomationsMan
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
 import MmsManagment from './screens/Mms/Management/MmsManagment';
 import SmsManagment from './screens/Sms/Management/SmsManagment';
-import { getCookie, setCookie, cookieListener } from './helpers/cookies'
+import { getCookie, setCookie, cookieListener } from './helpers/Functions/cookies'
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";

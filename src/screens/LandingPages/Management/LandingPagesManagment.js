@@ -17,14 +17,11 @@ import {
   duplicteLandingPage, downloadReport, exportSurvey
 } from '../../../redux/reducers/landingPagesSlice'
 import { openInNewTab } from '../../../helpers/Functions/functions'
-import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
 
 const LandingPagesesManagmentScreen = ({ classes }) => {

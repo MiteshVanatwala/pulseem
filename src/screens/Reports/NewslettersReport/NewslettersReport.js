@@ -17,9 +17,9 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { getCookie, setCookie } from '../../../helpers/cookies';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
+import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 

@@ -25,7 +25,6 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-//import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useNavigate } from 'react-router-dom';
 

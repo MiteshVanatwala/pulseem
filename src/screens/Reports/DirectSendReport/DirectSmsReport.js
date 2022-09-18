@@ -17,7 +17,7 @@ import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/re
 import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/PulseemArrays';
+import { SmsStatus } from '../../../helpers/Constants';
 import { StatusColor, StatusText } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';

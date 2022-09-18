@@ -16,7 +16,7 @@ import { getNewsletterDirectReport, getArchiveDirectReport } from '../../../redu
 import { reactivateEmail } from '../../../redux/reducers/clientSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
+import { EmailStatus } from '../../../helpers/Constants';
 import { StatusColor, StatusText } from '../../../helpers/UI/TableText';
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';

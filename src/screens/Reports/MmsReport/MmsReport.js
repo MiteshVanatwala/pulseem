@@ -13,7 +13,7 @@ import 'moment/locale/he';
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { MMSReportStatus } from '../../../helpers/PulseemArrays';
+import { MMSReportStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';

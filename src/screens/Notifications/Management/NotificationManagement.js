@@ -25,7 +25,7 @@ import {
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { getCookie, setCookie } from '../../../helpers/cookies';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
