@@ -134,7 +134,7 @@ const EventToGroups = ({
                                         style={{ fontSize: 16, fontWeight: 400 }}
                                         placement={'top'}
                                         nameEllipsis={false}
-                                        title={<Typography style={{maxHeight: 50}} noWrap={false}>{t(condition.tooltip)}</Typography>}
+                                        title={<Typography style={{ maxHeight: 50 }} noWrap={false}>{t(condition.tooltip)}</Typography>}
                                         text={t(condition.value)}
                                     /> :
                                         t(condition.value)
@@ -171,6 +171,7 @@ const EventToGroups = ({
                 </Typography>
                 <GroupTags
                     groupSelected={groupSelected}
+                    // groupSelected={currentEvent.groupIds}
                     onRemoveGroup={handleRemoveGroup}
                     classes={classes}
                     title={'siteTracking.typeGroupName'}

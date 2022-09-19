@@ -35,26 +35,27 @@ const GroupTags = ({ classes,
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
-        const newList = groups.filter((g) => { return g.GroupID !== groupId });
+        // const newList = groups.filter((g) => { return g !== groupId });
+        const newList = groupSelected.filter((g) => { return g !== groupId });
+        // setGroups(newList)
         onRemoveGroup(newList);
-        dispatch(setSelectedGroups(newList));
+        // dispatch(setSelectedGroups(newList));
     }
 
-    useEffect(() => {
-        if (groupSelected && groupsToShow) {
-            let tmpGroups = [];
-            groupSelected.forEach((grp) => {
-                const findGroup = groupsToShow.find((g) => { return g.GroupID === grp });
-                if (findGroup) {
-                    tmpGroups.push(findGroup)
-                }
-            });
+    // useEffect(() => {
+    //     if (groupSelected && subAccountAllGroups) {
+    //         // groupSelected.forEach((grp) => {
+    //         //     const findGroup = subAccountAllGroups.find((g) => { return g.GroupID === grp });
+    //         //     if (findGroup) {
+    //         //         tmpGroups.push(findGroup)
+    //         //     }
+    //         // });
 
-            setGroups(tmpGroups);
-            dispatch(setSelectedGroups(tmpGroups));
+    //         setGroups(tmpGroups);
+    //         dispatch(setSelectedGroups(tmpGroups));
 
-        }
-    }, [groupSelected])
+    //     }
+    // }, [groupSelected])
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box
@@ -62,8 +63,27 @@ const GroupTags = ({ classes,
                 className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
                 onClick={() => onShowModal()}
             >
-                {(!selectedGroups || selectedGroups.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
-                {selectedGroups && selectedGroups.length > 0 ? (
+                {(!groupSelected || groupSelected.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
+                {groupSelected && groupSelected.length > 0 ? (
+                    <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
+                        {subAccountAllGroups.filter((g) => groupSelected.indexOf(g.GroupID) > -1).map((item, index) => {
+                            return (
+                                <Box key={index} className={clsx(classes.selectedGroupsDiv)}>
+                                    <span className={clsx(classes.ellipsisText, classes.nameGroup)}>
+                                        {item.GroupName}
+                                    </span>
+                                    <RiCloseFill
+                                        className={classes.groupCloseicn}
+                                        onClick={(event) => {
+                                            handleRemoveGroup(event, item.GroupID);
+                                        }}
+                                    />
+                                </Box>
+                            );
+                        })}
+                    </Box>
+                ) : null}
+                {/* {selectedGroups && selectedGroups.length > 0 ? (
                     <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
                         {selectedGroups.map((item, index) => {
                             return (
@@ -81,7 +101,7 @@ const GroupTags = ({ classes,
                             );
                         })}
                     </Box>
-                ) : null}
+                ) : null} */}
             </Box>
         </Box>
     )

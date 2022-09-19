@@ -27,7 +27,6 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 //import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const SmsManagnentScreen = ({ classes }) => {
@@ -272,7 +271,6 @@ const SmsManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            // onClick={handleVerificationDialog}
             onClick={() => setNewSmsVerification(true)}
           >
             {t('sms.verificationDialogTitle')}

@@ -1697,4 +1697,101 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: '#3291d1'
     }
   },
+
+  carouselContainer: {
+    display: 'flex',
+    flexWrap: 'nowrap',
+    overflow: 'hidden',
+    height: 'min-content'
+  },
+  carouselItem: {
+    minWidth: '100%',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  T05S: {
+    transition: '.5s cubic-bezier(0.39, 0.575, 0.565, 1)'
+  },
+  T10S: {
+    transition: '1s cubic-bezier(0.39, 0.575, 0.565, 1)'
+  },
+  hAuto: {
+    height: 'auto !important'
+  },
+
+  emailVerItemContainer: {
+    '& .error': {
+      marginTop: 5,
+      color: 'red',
+      height: 26
+    },
+    '& .success': {
+      marginTop: 7,
+      color: 'green',
+      height: 26
+    },
+    '& .cSlide': {
+      width: "100%",
+      height: '100%',
+      position: "relative",
+      '&.firstSlide': {
+        '& .contactDataBox': {
+          overflowX: 'clip',
+          overflowY: 'auto',
+          height: '100%'
+        },
+        '& .emailBox': {
+          '& span': {
+            paddingInline: 2,
+            fontSize: 18,
+            marginTop: 2
+          },
+          '& .emailText': {
+            paddingInline: 4,
+            maxWidth: 250,
+            minWidth: 160
+          },
+          '& .emailVerLink': {
+            paddingInline: 3
+          }
+        }
+        ,
+        '& .btnVerifyNewLtr': {
+          position: "absolute",
+          top: 0,
+          right: 10
+        },
+        '& .btnVerifyNewRTL': {
+          position: "absolute",
+          top: 0,
+          left: 0
+        },
+        '& .MuiDivider-root': {
+          marginTop: 6,
+          height: '1.3px',
+          backgroundColor: '#cdcdcd'
+        }
+      }
+    },
+    '& .cFlexSlide': {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      width: "100%",
+      height: '100%',
+      textAlign: 'center',
+      '&.secondSlide': {
+        '& .titleDescBox': {
+          '& .mt20': {
+            marginTop: 20
+          },
+          '& .desc': {
+            marginTop: 20,
+          }
+        }
+      }
+    },
+  }
 });
