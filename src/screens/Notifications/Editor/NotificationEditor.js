@@ -33,6 +33,7 @@ import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
 import { isValidUrl } from '../../../helpers/UrlHelper';
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -894,7 +895,7 @@ const NotificationEditor = ({ props, classes }) => {
           </Box>
         </Grid>
         <div className={classes.notification} id={model.ID}>
-          <div style={{ marginBottom: 5 }} className={clsx(
+          <div className={clsx(
             classes.flexJustifyCenter,
             classes.dashed,
             classes.notificationTop,
@@ -904,7 +905,8 @@ const NotificationEditor = ({ props, classes }) => {
             onMouseLeave={() => setHovered(false)}
             onClick={openGallery(false)}
             style={{
-              backgroundImage: `url(${model.Image})`
+              backgroundImage: `url(${model.Image})`,
+              marginBottom: 5
             }}
           >
             {model == null || !model.Image ? chooseImage() : ""
@@ -1256,7 +1258,8 @@ const NotificationEditor = ({ props, classes }) => {
           classes={classes}
           isConfirm={isGalleryConfirmed}
           callbackSelectFile={handleSelectedImage}
-          style={{ minWidth: 400 }} />
+          style={{ minWidth: 400 }}
+          folderType={PulseemFolderType.CLIENT_IMAGES} />
       )
     };
   }

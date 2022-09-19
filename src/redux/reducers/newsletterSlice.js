@@ -4,12 +4,14 @@ import { exportFile } from '../../helpers/exportFromJson';
 
 export const getNewslatterData = createAsyncThunk(
   'email/getEmailCampaigns', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`email/getEmailCampaigns`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await instence.get(`email/getEmailCampaigns`);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
   }
 )
 
@@ -162,7 +164,16 @@ export const newsletterSlice = createSlice({
     newslettersReportsError: '',
     directNewsletterReport: {},
     directNewsletterReportError: '',
-    newsletterArchiveData: []
+    newsletterArchiveData: [],
+    ToastMessages: {
+      SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
+      INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
+      FILE_EXT_NOT_ALWD: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.fileCanNotNull', showAnimtionCheck: false },
+      NULL_FILE: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.fileCanNotNull', showAnimtionCheck: false },
+      GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
+      INVALID_CAMPAIGN_ID: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invalidCampaignId', showAnimtionCheck: false },
+      CAMPAIGN_NOT_FOUND: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.CampaignNotFound', showAnimtionCheck: false }
+    }
     //archiveDirectNewsletterReport: []
   },
   reducers: {},

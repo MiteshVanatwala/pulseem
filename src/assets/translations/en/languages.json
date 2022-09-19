@@ -1,0 +1,17 @@
+{
+    "langCodes": {
+        "hebrew": "Hebrew",
+        "english": "English",
+        "french": "French",
+        "spanish": "Spanish",
+        "german": "German",
+        "russian": "Russian",
+        "japaneese": "Japanese",
+        "romana": "Romanian",
+        "arabic": "Arabic",
+        "hungarian": "Hungary",
+        "slovak": "Slovak",
+        "portuguese": "Portuguese",
+        "dutch": "Dutch"
+    }
+}

@@ -194,6 +194,16 @@ export const emailStatusColor = (status) => {
   }
 }
 
+export const renderHtml = (html) => {
+  function createMarkup() {
+    return { __html: html };
+  }
+  return (
+    <label dangerouslySetInnerHTML={createMarkup()}></label>
+  );
+}
+
+
 export const makeId = () => {
   let ID = "";
   let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

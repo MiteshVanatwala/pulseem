@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import CampaignEditor from './screens/HtmlCampaign/CampaignEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
@@ -37,6 +38,7 @@ import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 //import { siteTrackingScriptUrl } from './config/index';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
+import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 
 const renderRoutes = (classes, history) => {
@@ -131,6 +133,24 @@ const renderRoutes = (classes, history) => {
         exact
         path="/Campaigns"
         render={props => <NewsletterManagment {...props} classes={classes} />}
+      />
+      <Route
+        exact
+        path="/Campaigns/Create"
+        render={props => <NewsLetterWizard {...props} classes={classes} />}
+      />
+      <Route
+        path="/Campaigns/Create/:id"
+        render={props => <NewsLetterWizard {...props} classes={classes} />}
+      />
+      <Route
+        exact
+        path="/Campaigns/editor"
+        render={props => <CampaignEditor {...props} classes={classes} />}
+      />
+      <Route
+        path="/Campaigns/editor/:id"
+        render={props => <CampaignEditor {...props} classes={classes} />}
       />
       <Route
         exact
@@ -380,13 +400,44 @@ const renderRoutes = (classes, history) => {
   )
 }
 
-const App = ({ screenSize }) => {
+
+const App = ({ isRTL, classes, theme, language }) => {
+  return (
+    <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
+      <MuiThemeProvider theme={theme}>
+        <div dir={isRTL ? 'rtl' : 'ltr'}>
+          {renderRoutes(classes)}
+        </div>
+      </MuiThemeProvider>
+    </MuiPickersUtilsProvider>
+
+  )
+}
+
+function useWidth() {
+  const { language } = useSelector(state => state.core)
+  const theme = getTheme(language);
+  const keys = [...theme.breakpoints.keys].reverse();
+  return (
+    keys.reduce((output, key) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const matches = useMediaQuery(theme.breakpoints.up(key));
+      return !output && matches ? key : output;
+    }, null) || 'xs'
+  );
+}
+
+const AppContainer = () => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
-  screenSize && dispatch(setWindowSize(screenSize))
+  const classes = useClasses(windowSize, isRTL)()
+   const theme = getTheme(language)
+  // const navigate = useNavigate()
+  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
+  const width = useWidth();
+  dispatch(setWindowSize(width))
 
   useEffect(() => {
-
     const initFeatures = async () => {
       if (!accountSettings) {
         const settings = await dispatch(getCommonFeatures());
@@ -394,10 +445,9 @@ const App = ({ screenSize }) => {
       }
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      // const smsOldVersion = getCookie('OldVersion')
-      // dispatch(setSmsOldVersion(smsOldVersion))
       setCookie('OldVersion', false);
     }
+
 
     const updateToken = () => {
       const culture = getCookie('Culture')
@@ -448,47 +498,20 @@ const App = ({ screenSize }) => {
   }, [dispatch])
 
 
-  const classes = useClasses(windowSize, isRTL)()
-  const theme = getTheme(language)
-  const history = useHistory()
   document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
   return (
-    <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
-      <MuiThemeProvider theme={theme}>
-        <div dir={isRTL ? 'rtl' : 'ltr'}>
-          {renderRoutes(classes, history)}
-        </div>
-      </MuiThemeProvider>
-    </MuiPickersUtilsProvider>
-
-  )
-}
-
-function useWidth() {
-  const { language } = useSelector(state => state.core)
-  const theme = getTheme(language);
-  const keys = [...theme.breakpoints.keys].reverse();
-  return (
-    keys.reduce((output, key) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const matches = useMediaQuery(theme.breakpoints.up(key));
-      return !output && matches ? key : output;
-    }, null) || 'xs'
-  );
-}
-
-const AppContainer = () => {
-  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
-  const width = useWidth();
-
-  return (
     <StylesProvider jss={jss}>
       <BrowserRouter basename='/react'>
-        <App screenSize={width} />
+        <App isRTL={isRTL}
+          classes={classes}
+          // navigate={navigate}
+          theme={theme}
+          language={language}
+          screenSize={width} />
       </BrowserRouter>
     </StylesProvider>
   )
