@@ -352,14 +352,13 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 setLoader(false);
 
                 if (isContiue) {
-                    window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                    window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
+                    //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
                 }
             });
-
-
         }
     }
     const handleDelete = async () => {
@@ -367,11 +366,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         setConfirmDelete(false)
         window.location = '/react/Campaigns'
     }
-
-
-
-
-
     const renderToast = () => {
         if (toastMessage) {
 
@@ -384,7 +378,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         }
         return null;
     }
-
     const CampaignBox1 = () => (
         <Box py={3}>
             <SimpleGrid
@@ -605,7 +598,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             />
         </Box>
     )
-
     const CampaignBox2 = () => (
         <Box pt={3}>
             <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
@@ -830,7 +822,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             />
         </Box>
     )
-
     const CampaignBox3 = () => (
         <Box pt={3}>
             <Typography className={localClasses.suHeading}>{t("campaigns.newsLetterEditor.textAdditions")}</Typography>
@@ -1197,7 +1188,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             />
         </Box>
     )
-
     const removeAttachmentFile = (event, fileId) => {
         event.preventDefault();
         event.stopPropagation();
@@ -1205,7 +1195,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         setCampaingnValues({ ...campaingnValues, FilesProperties: newAttachments.filter((f) => f.ID !== fileId) });
         setIsSilenceUpdated(true);
     }
-
     const getDeleteStatus = () => {
         return setConfirmDelete(true)
     }
