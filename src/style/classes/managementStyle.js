@@ -1740,7 +1740,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         '& .contactDataBox': {
           overflowX: 'clip',
           overflowY: 'auto',
-          height: '100%'
+          height: '62%'
         },
         '& .emailBox': {
           '& span': {
