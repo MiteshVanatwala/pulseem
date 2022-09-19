@@ -483,7 +483,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     </Box>
                     <Box>
                         <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.scriptPurchaseIstructionForComplete")}</Typography>
-                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.javscriptFunction")}</Typography>                        
+                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.javscriptFunction")}</Typography>
                         <pre>
                             <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
                                 {`window.addEventListener('load', function(event) {
