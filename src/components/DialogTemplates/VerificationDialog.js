@@ -30,7 +30,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
 
 
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
-    const SLIDE_HEIGHTS = [40, 20, 20, 20, 20]
+    const SLIDE_HEIGHTS = [25, 20, 20, 20, 20]
 
     useEffect(() => {
         variant === 'email' && dispatch(getAuthorizedEmails());
@@ -161,7 +161,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         <Divider />
                     </Box>
                     <Box style={{ position: 'relative', height: '90%' }} >
-                        <Typography className={clsx(classes.pbt15, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                        <Typography className={clsx(classes.pb25, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                         <Box className={clsx('contactDataBox', classes.sidebar)}>
                             {
                                 verifiedEmails.map((obj) => (
@@ -187,7 +187,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         <Button className={clsx(
                             classes.actionButton,
                             classes.actionButtonDarkBlue,
-                            'btnVerifyNewLtr'
+                            isRTL ? 'btnVerifyNewRTL' : 'btnVerifyNewLtr'
                         )}
                             onClick={() => {
                                 setSelectedVerificationContact('')

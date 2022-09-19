@@ -2505,6 +2505,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   containerFullHeight: {
     minHeight: 'calc(100vh - 120px)'
   },
+  pb15:{
+    paddingBottom: 15
+  },
+  pb25:{
+    paddingBottom: 25
+  },
   pbt10: {
     paddingTop: 10,
     paddingBottom: 10
