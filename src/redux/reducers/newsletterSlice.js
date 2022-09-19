@@ -171,6 +171,8 @@ export const newsletterSlice = createSlice({
       FILE_EXT_NOT_ALWD: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.fileCanNotNull', showAnimtionCheck: false },
       NULL_FILE: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.fileCanNotNull', showAnimtionCheck: false },
       GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
+      INVALID_CAMPAIGN_ID: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invalidCampaignId', showAnimtionCheck: false },
+      CAMPAIGN_NOT_FOUND: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.CampaignNotFound', showAnimtionCheck: false }
     }
     //archiveDirectNewsletterReport: []
   },

@@ -515,7 +515,9 @@
       "campaignName": "Please fill in campaign name",
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
-      "campaignSubject": "Please fill in a campaign subject"
+      "campaignSubject": "Please fill in a campaign subject",
+      "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
+      "CampaignNotFound": "Campaign not found or deleted"
     },
     "success": "Success"
   },

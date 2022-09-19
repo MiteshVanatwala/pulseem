@@ -195,28 +195,27 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
-            case 200: {
-                setToastMessage(res?.Message)
-                break;
-            }
             case 201: {
                 setCampaingnValues({ ...JSON.parse(res?.Message) })
                 break;
             }
-            case 202: {
-                setToastMessage(res?.Message)
+            case 401: {
+                setToastMessage(ToastMessages.INVALID_API_MISSING_KEY)
+                break;
+            }
+            case 402: {
+                setToastMessage(ToastMessages.INVALID_CAMPAIGN_ID)
                 break;
             }
             case 404: {
-                setToastMessage(res?.Message)
+                setToastMessage(ToastMessages.CAMPAIGN_NOT_FOUND)
                 break;
             }
-            case 400: {
-                setToastMessage(res?.Message)
-                break;
-            }
+            case 200:
+            case 500:
             default: {
-                setToastMessage(res?.Message)
+                setToastMessage(ToastMessages.GENERAL_ERROR)
+                break;
             }
         }
     }
@@ -249,8 +248,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             }
         }
     }
-
-
 
     useEffect(() => {
         const preload = async () => {
@@ -345,11 +342,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         if (!handleValidations()) {
             setLoader(true);
             dispatch(saveCampaignInfo(campaingnValues)).then((response) => {
+                setLoader(false);
+
                 const savedCampaign = response.payload;
                 handleSubmitNewsletterResponse(savedCampaign)
                 const saveInfo = JSON.parse(savedCampaign.Message);
-
-                setLoader(false);
 
                 if (isContiue) {
                     window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`

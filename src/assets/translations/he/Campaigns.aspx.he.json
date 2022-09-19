@@ -506,7 +506,9 @@
       "campaignName": "אנא מלא שם קמפיין",
       "fromName": "אנא מלא שם שולח",
       "fromEmail": "נא מלא כתובת מייל לשליחה",
-      "campaignSubject": "נא לרשום נושא קומפיין"
+      "campaignSubject": "נא לרשום נושא קומפיין",
+      "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
+      "CampaignNotFound": "קמפיין לא נמצא או נמחק"
     },
     "success": "Success"
   },
