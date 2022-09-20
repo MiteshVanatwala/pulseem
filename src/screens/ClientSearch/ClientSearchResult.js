@@ -1608,7 +1608,8 @@ const ClientSearchResult = ({ props, classes }) => {
             });
           }
           else if (searchData?.GroupIds && searchData?.GroupIds?.length > 0) {
-            mappedGroups = searchData?.GroupIds?.split(',')?.map(function (x) {
+            // mappedGroups = searchData?.GroupIds?.split(',')?.map(function (x) {
+            mappedGroups = searchData?.GroupIds?.map(function (x) {
               return parseInt(x, 10);
             })
           }

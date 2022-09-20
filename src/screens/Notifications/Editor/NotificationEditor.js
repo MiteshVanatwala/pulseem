@@ -33,6 +33,7 @@ import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
 import { isValidUrl } from '../../../helpers/UrlHelper';
+import { useParams } from 'react-router-dom';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -107,7 +108,7 @@ const DashedInput = withStyles({
 
 })(TextField);
 
-const NotificationEditor = ({ props, classes }) => {
+const NotificationEditor = ({ classes, ...props }) => {
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
@@ -183,6 +184,8 @@ const NotificationEditor = ({ props, classes }) => {
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
+  const params = useParams();
+
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -195,9 +198,9 @@ const NotificationEditor = ({ props, classes }) => {
     body.scrollIntoView({}, 100);
 
     handlePublicKey();
-    if (props?.match?.params?.id != null && parseInt(props?.match?.params?.id) > 0) {
+    if (params.id != null && parseInt(params.id) > 0) {
       getData();
-      if (props.match.params.send || props.match.url.toLowerCase().indexOf('send') > -1) {
+      if (params.send || window.location.pathname.toLowerCase().indexOf('send') > -1) {
         getSubAccountGroups();
         setActiveStep(activeStep + 1);
       }
@@ -281,7 +284,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
       else {
         dispatch(save(modelToSave)).then((response) => {
-          if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
+          if (params.create || window.location.pathname.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
               window.location.href = "/react/Notifications";
             }
@@ -326,7 +329,7 @@ const NotificationEditor = ({ props, classes }) => {
       else {
         model.sendDate = null;
       }
-      const data = { NotificationId: parseInt(props?.match?.params?.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+      const data = { NotificationId: parseInt(params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
       const result = await dispatch(saveNotificationSettings(data));
       if (result.payload == true) {
         if (!isExit && isSummary === false) {
@@ -347,7 +350,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const insertNotificationForSend = async (e) => {
     e.preventDefault();
-    const data = { NotificationId: parseInt(props?.match?.params?.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+    const data = { NotificationId: parseInt(params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
     const result = await dispatch(SendNotification(data));
 
     if (result && result.payload === true) {
@@ -356,7 +359,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const getData = async () => {
-    const notificationPayload = await dispatch(getNotificationById(props?.match?.params?.id));
+    const notificationPayload = await dispatch(getNotificationById(params.id));
     setModel(notificationPayload.payload);
     setSourceModel(notificationPayload.payload);
     setPublicKey(notificationPayload.payload.PublicKey);
@@ -369,7 +372,7 @@ const NotificationEditor = ({ props, classes }) => {
     setGroupList(list.payload);
   }
   const getNotificationSettings = async () => {
-    const list = await dispatch(getSettings(props?.match?.params?.id));
+    const list = await dispatch(getSettings(params.id));
     const selectedList = [];
     if (list.payload.length > 0) {
       const sendDate = list.payload[0].SendDate;

@@ -31,6 +31,7 @@ import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/api'
+import { useParams } from 'react-router-dom';
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -218,6 +219,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
+  const params = useParams()
 
   //#endregion
   useEffect(() => {
@@ -291,10 +293,10 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const getData = async () => {
     setLoader(true);
-    if (props && props?.match?.params?.id) {
+    if (params && params.id) {
       const finishedCampaigns = await dispatch(getFinishedCampaigns());
       const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(props?.match?.params?.id));
+      const campaignSettings = await dispatch(getCampaignSettings(params.id));
       await dispatch(getTestGroups());
 
       if (campaignSettings.payload.error) {
@@ -417,14 +419,14 @@ const SmsSend = ({ classes, ...props }) => {
   };
 
   useEffect(() => {
-    if (props && props?.match?.params?.id) {
+    if (params && params.id) {
       getSavedData();
     }
   }, []);
 
   const getSavedData = async () => {
-    if (props && props?.match?.params?.id) {
-      let response = await dispatch(getSmsByID(props?.match?.params?.id))
+    if (params && params.id) {
+      let response = await dispatch(getSmsByID(params.id))
       setLoader(false)
       if (response) {
         setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text, CreditPerSms: response.payload.CreditsPerSms })
@@ -1428,7 +1430,7 @@ const SmsSend = ({ classes, ...props }) => {
         ExceptionalDays: exceptionalDays
       },
       SendTypeID: sendType,
-      SmsCampaignID: props?.match?.params?.id,
+      SmsCampaignID: params.id,
       SourceTimeZone: "Asia/Calcutta",
       SpecialSettings: {
         Type: "",
@@ -1562,7 +1564,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   const onApiCall = async () => {
     let payload = {
-      "SmsCampaignID": props?.match?.params?.id,
+      "SmsCampaignID": params.id,
       "SubAccountID": -1,
       "AccountID": -1,
       "Credits": dataSaved.CreditPerSms,
@@ -1766,8 +1768,8 @@ const SmsSend = ({ classes, ...props }) => {
   }
 
   const handleDelete = () => {
-    if (props && props?.match?.params?.id) {
-      dispatch(deleteSms(props?.match?.params?.id));
+    if (params && params.id) {
+      dispatch(deleteSms(params.id));
       setDialogType(null);
       navigate("/SMSCampaigns");
     }
@@ -1797,7 +1799,7 @@ const SmsSend = ({ classes, ...props }) => {
     settypedData([]);
   };
   const handlePreviousPage = () => {
-    window.location = `/react/sms/edit/${props?.match?.params?.id}`;
+    window.location = `/react/sms/edit/${params.id}`;
   }
   const renderHtml = (html) => {
     function createMarkup() {

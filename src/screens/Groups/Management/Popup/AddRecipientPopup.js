@@ -154,6 +154,10 @@ const AddRecipientPopup = ({ classes,
         }
     }, [recipientData])
 
+    useEffect(() => {
+        console.log("SELECTE_LOCAL:", selectedLocalGroups)
+    }, [selectedLocalGroups])
+
 
     const handleBlur = (e) => {
         if (!e.target.value) {
@@ -1044,7 +1048,7 @@ const AddRecipientPopup = ({ classes,
                             setErrors({ ...errors, Groups: '' })
                         }
                     },
-                    selectedGroups: recipientData && selectedLocalGroups?.length > 0 ? selectedLocalGroups : selectedGroups
+                    selectedGroups: recipientData ? selectedLocalGroups : selectedGroups
                 }
                 }
                 error={errors.Groups}
