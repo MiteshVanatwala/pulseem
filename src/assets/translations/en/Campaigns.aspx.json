@@ -503,7 +503,7 @@
       "Name": "Used to identify the campaign in the system. Recipients will not see this name",
       "FromName": "This field is mandatory",
       "FromEmail": "Only verified emails are allowed,",
-      "clickToVerify": "click here to verify",
+      "clickToVerify": "Click here to verify",
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
       "upload": "The file will appear as an attached file in your mail"
