@@ -22,6 +22,7 @@ import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 import PulseemTags from '../../../components/Tags/PulseemTags'
 import { makeId } from '../../../helpers/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -160,7 +161,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
         Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
         FromName: t('common.requiredField'),
-        FromEmail: t('common.requiredField'),
+        FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
     }
 
     const ErrorTexts = {
@@ -189,6 +190,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [selectedRadio, setSelectedRadio] = useState({ a: null, b: null, c: null, d: null })
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
     const [confirmDelete, setConfirmDelete] = useState(false)
+    const [verPopupOpen, setVerPopupOpen] = useState(false)
 
 
 
@@ -486,7 +488,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             </Select>
                                             {/* error={errors.FromEmail}
                                                     helperText={helperTexts.FromEmail} */}
-                                            <FormHelperText>{errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail}</FormHelperText>
+                                            <FormHelperText>{errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}{!errors.FromEmail && <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>}</FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -1319,6 +1321,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                     </Typography>
                 </Box>
             </Dialog>
+            {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
             <Loader isOpen={showLoader} />
         </DefaultScreen>
     )
