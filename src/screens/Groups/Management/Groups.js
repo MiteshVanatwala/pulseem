@@ -436,6 +436,7 @@ const Groups = ({ classes }) => {
             UpdateDate,
             PendingClients,
             PendingSmsClients,
+            PendingEmails
         } = row;
         let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
             return e === true
@@ -855,13 +856,15 @@ const Groups = ({ classes }) => {
                                         (ActiveEmails || 0) +
                                         (RemovedEmails || 0) +
                                         (RestrictedEmails || 0) +
-                                        (InvalidEmails || 0)
+                                        (InvalidEmails || 0) +
+                                        (PendingClients || 0)
                                     ) > 0
                                         ||
                                         (
                                             (ActiveCell || 0) +
                                             (RemovedCell || 0) +
-                                            (InvalidCell || 0)
+                                            (InvalidCell || 0) +
+                                            (PendingSmsClients || 0)
                                         ) > 0 ?
                                         () => navigate(CLIENT_CONSTANTS.BASEURL, {
                                             state: {

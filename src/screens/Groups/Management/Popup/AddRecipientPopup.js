@@ -1038,9 +1038,9 @@ const AddRecipientPopup = ({ classes,
                 style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 dropdown
                 dropDownProps={{
-                    onChange: (e, val) => {
-                        if (e.currentTarget.toString().indexOf('SVG') > -1) {
-                            handleRemoveFromGroups(recipientData.ClientID, selectedLocalGroups)
+                    onChange: (e, val, reason, details) => {
+                        if (reason === "remove-option" || val.length === 0) {
+                            handleRemoveFromGroups(recipientData.Cellphone || recipientData.Email, reason === "remove-option" ? [details?.option?.GroupID] : selectedLocalGroups)
                         }
                         const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
                         recipientData ? setSelectedLocalGroups(idArr) : selectGroup(idArr)
