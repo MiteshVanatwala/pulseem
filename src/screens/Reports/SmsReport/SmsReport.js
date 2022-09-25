@@ -155,7 +155,7 @@ const SmsReport = ({ classes }) => {
     let orderList = searchResults || smsReport;
     //await OrderItems(searchResults || smsReport, Object.keys(exportColumnHeader));
 
-    HandleExportData(orderList, {
+    const exportOptions = {
       OrderItems: true,
       FormatDate: true,
       IsBoolean: true,
@@ -165,16 +165,19 @@ const SmsReport = ({ classes }) => {
       PropertyToReplace: 'IsResponse',
       Order: Object.keys(exportColumnHeader),
       DeleteProperties: ["Status"]
-    }).then((result) => {
+    };
+
+    try {
+      const result = await HandleExportData(orderList, exportOptions);
       ExportFile({
         data: result,
         fileName: 'smsReport',
         exportType: 'csv',
         fields: exportColumnHeader
       });
-    }).catch((e) => {
-      console.error(e);
-    });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const renderSearchSection = () => {

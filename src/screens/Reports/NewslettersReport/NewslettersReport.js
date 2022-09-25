@@ -200,26 +200,28 @@ const NewslettersReport = ({ classes }) => {
       listToExport = searchResults || newslettersReports;
     }
 
-    HandleExportData(listToExport, {
+    const exportOptions = {
       OrderItems: true,
       FormatDate: true,
       TranslateStatusToString: true,
       Statuses: EmailStatus,
       Order: Object.keys(exportColumnHeader),
       DeleteProperties: ["Status"]
-    }).then((result) => {
+    };
+
+    try {
+      const result = await HandleExportData(listToExport, exportOptions);
       ExportFile({
         data: result,
         fileName: 'emailReport',
         exportType: 'csv',
         fields: exportColumnHeader
       });
-    }).catch((e) => {
-      console.error(e);
-    });
 
-    setToFileArray([]);
-
+      setToFileArray([]);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 

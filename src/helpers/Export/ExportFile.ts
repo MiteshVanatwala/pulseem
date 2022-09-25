@@ -1,20 +1,22 @@
 import exportFromJSON from 'export-from-json'
+import { ExportType } from 'export-from-json';
 
 const defaultData = { fileName: 'PulseemReport', exportType: 'csv' };
 
-export type options = {
+export type Options = {
     fileName: string;
-    exportType: object;
+    exportType: ExportType | any;
     data: any;
+    fields: any;
 
 }
-const ExportFile = (options: any) => {
+const ExportFile = (options: Options) => {
 
     if (options.fileName === '') {
         options.fileName = defaultData.fileName;
     }
-    if (options.exportType === '') {
-        options.exportType = defaultData.exportType;
+    if (!options.exportType) {
+        options.exportType = defaultData.exportType as ExportType;
     }
 
     const ePromise = new Promise((resolve, reject) => {

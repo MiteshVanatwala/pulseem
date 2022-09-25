@@ -116,23 +116,27 @@ const SmsReplies = ({ classes, ...other }) => {
     const handleDownloadCsv = async () => {
         let orderList = await OrderItems(smsReplies, Object.keys(exportColumnHeader));
 
-        HandleExportData(orderList, {
+        const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             TranslateStatusToString: true,
             Statuses: ClientStatus.Email.concat(ClientStatus.Sms),
             Order: Object.keys(exportColumnHeader),
             DeleteProperties: ["Status"]
-        }).then((result) => {
+        };
+
+        try {
+            const result = await HandleExportData(orderList, exportOptions);
+
             ExportFile({
                 data: result,
                 fileName: `smsReplies_${other.props.match.params.id}`,
                 exportType: 'csv',
                 fields: exportColumnHeader
             });
-        }).catch((e) => {
-            console.error(e);
-        });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     const renderTable = () => {

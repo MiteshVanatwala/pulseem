@@ -20,6 +20,14 @@ export interface ExportOption extends ExportConditions {
     Statuses: KeyValue[];
     DeleteProperties: string[];
 }
+export interface Status {
+    STATUS: any;
+    StatusDescription: any;
+    Status: any;
+    SmsStatus: any,
+    StatusName: any;
+    Attachments: any;
+}
 export interface ExportData {
     Data: any;
 }
@@ -30,7 +38,7 @@ export interface KeyValue {
 const DateOptions: string[] = ['SendDate', 'LastEditDate', 'UpdateDate', 'UpdatedDate', 'CreationDate', 'ReplyDate', 'DATE'];
 
 export const HandleExportData = async (exportData: ExportData, options: ExportOption) => {
-    let finalExportData: ExportData | any = exportData;
+    let finalExportData: ExportData = exportData;
 
     return new Promise(async (resolve, reject) => {
         if (options.OrderItems === true) {
@@ -71,119 +79,91 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
         resolve(finalExportData);
     });
 }
-export const OrderItems = async (data: ExportData | any, order: any, options: ExportOption) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const finalOrder: any = [];
+export async function OrderItems(data: ExportData | any, order: any, options: ExportOption) {
+    const finalOrder: any = [];
 
-            for (var i = 0; i < data.length; i++) {
-                let newObject: any = {};
-                // eslint-disable-next-line no-loop-func
-                order.forEach((o: string | number) => {
-                    let value = data[i][o];
-                    if (options.ReplaceClientStatus === true && o?.toString()?.toLowerCase() === 'clientstatus') {
-                        value = data[i][o] === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
-                    }
-                    if (options.FormatDate === true && DateOptions.filter(e => { return e === o })?.length > 0) {
-                        value = FormatDate(value);
-                    }
-                    newObject[o] = value;
-                });
-
-                finalOrder.push(newObject);
+    for (var i = 0; i < data.length; i++) {
+        let newObject: any = {};
+        // eslint-disable-next-line no-loop-func
+        order.forEach((o: string | number) => {
+            let value = data[i][o];
+            if (options.ReplaceClientStatus === true && o?.toString()?.toLowerCase() === 'clientstatus') {
+                value = data[i][o] === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
             }
-            resolve(finalOrder);
-        } catch (error) {
-            console.error('ExportHelper => OrderItems', error);
-            reject(error);
-        }
-    });
-}
-export const SwitchStatus = async (data: ExportData | any, statuses: KeyValue[], options: ExportOption) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const retValData: any[] = [];
-            data.forEach((o: { STATUS: any; StatusDescription: any; Status: any; SmsStatus: any, StatusName: any; Attachments: any; }) => {
-                const tempData = { ...o };
-                if (options.TranslateStatusDescription === true) {
-                    if (o.STATUS) {
-                        let status = statuses.find((s: { id: any; }) => { return s.id === o.STATUS });
-                        if (status && status.value !== '') {
-                            tempData["StatusDescription"] = i18n.t(status.value);
-                        }
-                    }
-                    if (o.Status) {
-                        let status = statuses.find((s: { id: any; }) => { return s.id === o.Status });
-                        if (status && status.value !== '') {
-                            tempData["StatusDescription"] = i18n.t(status.value);
-                        }
-                    }
-                    if (o.SmsStatus || o.SmsStatus === 0) {
-                        const status = statuses.find((x) => { return x.id === o.SmsStatus });
-                        if (status) {
-                            tempData["SmsStatus"] = i18n.t(status.value);
-                        }
-                    }
-                }
-                if (options.TranslateStatusToString === true) {
-                    if (o.Status) {
-                        let status = statuses.find((s) => { return s.id === o.Status });
-                        if (status && status.value !== '') {
-                            tempData["StatusName"] = i18n.t(status.value);
-                        }
-                    }
-                    if (o.SmsStatus || o.SmsStatus === 0) {
-                        const status = statuses.find((x) => { return x.id === o.SmsStatus });
-                        if (status) {
-                            tempData["SmsStatus"] = i18n.t(status.value);
-                        }
-                    }
-                    if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
-                        tempData["Attachments"] = i18n.t('emailStatus.noAttachments');
-                    }
-                }
+            if (options.FormatDate === true && DateOptions.filter(e => { return e === o })?.length > 0) {
+                value = FormatDate(value);
+            }
+            newObject[o] = value;
+        });
 
-                retValData.push(tempData);
-            });
-            resolve(retValData);
-        } catch (error) {
-            console.error('ExportHelper => SwitchStatusDescription', error);
-            reject(error);
-        }
-    });
+        finalOrder.push(newObject);
+    }
+    return finalOrder as ExportData;
 }
-export const ReplaceNull = async (obj: any, property: string, val: string = '') => {
-    return new Promise((resolve, reject) => {
-        try {
-            obj.forEach((o: { [x: string]: string; }) => {
-                if (o[property] === null || o[property] === '') {
-                    o[property] = val;
+export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[], options: ExportOption) {
+    const retValData: any = [];
+    data.forEach((o: Status) => {
+        const tempData = { ...o } as Status;
+        if (options.TranslateStatusDescription === true) {
+            if (o.STATUS) {
+                let status = statuses.find((s: { id: any; }) => { return s.id === o.STATUS });
+                if (status && status.value !== '') {
+                    tempData.StatusDescription = i18n.t(status.value);
                 }
-            });
-            resolve(obj);
-        } catch (error) {
-            console.error('ExportHelper => SwitchStatusDescription', error);
-            reject(error);
+            }
+            if (o.Status) {
+                let status = statuses.find((s: { id: any; }) => { return s.id === o.Status });
+                if (status && status.value !== '') {
+                    tempData.StatusDescription = i18n.t(status.value);
+                }
+            }
+            if (o.SmsStatus || o.SmsStatus === 0) {
+                const status = statuses.find((x) => { return x.id === o.SmsStatus });
+                if (status) {
+                    tempData.SmsStatus = i18n.t(status.value);
+                }
+            }
         }
+        if (options.TranslateStatusToString === true) {
+            if (o.Status) {
+                let status = statuses.find((s) => { return s.id === o.Status });
+                if (status && status.value !== '') {
+                    tempData.StatusName = i18n.t(status.value);
+                }
+            }
+            if (o.SmsStatus || o.SmsStatus === 0) {
+                const status = statuses.find((x) => { return x.id === o.SmsStatus });
+                if (status) {
+                    tempData.SmsStatus = i18n.t(status.value);
+                }
+            }
+            if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
+                tempData.Attachments = i18n.t('emailStatus.noAttachments');
+            }
+        }
+
+        retValData.push(tempData);
     });
+    return retValData as ExportData;
 }
-export const BooleanToNumber = (obj: any, property: string, isBoolean: boolean = false) => {
-    return new Promise((resolve, reject) => {
-        try {
-            obj.forEach((o: any) => {
-                if (!o[property]) {
-                    o[property] = isBoolean ? i18n.t('common.No') : 0;
-                }
-                else {
-                    o[property] = isBoolean ? i18n.t('common.Yes') : 1;
-                }
-            });
-            resolve(obj);
-        } catch (error) {
-            console.error('ExportHelper => SwitchStatusDescription', error);
-            reject(error);
+export async function ReplaceNull(obj: ExportData | any, property: string, val: string = '') {
+    obj.forEach((o: { [x: string]: string; }) => {
+        if (o[property] === null || o[property] === '') {
+            o[property] = val;
         }
     });
+    return obj as ExportData;
+}
+export async function BooleanToNumber(obj: ExportData | any, property: string, isBoolean: boolean = false) {
+    obj.forEach((o: any) => {
+        if (!o[property]) {
+            o[property] = isBoolean ? i18n.t('common.No') : 0;
+        }
+        else {
+            o[property] = isBoolean ? i18n.t('common.Yes') : 1;
+        }
+    });
+    return obj as ExportData;
 }
 export const FormatDate = (date: string) => {
     if (date === '' || !date) {
@@ -191,30 +171,23 @@ export const FormatDate = (date: string) => {
     }
     return moment(date).format("DD/MM/YYYY HH:mm");
 }
-export const ReplaceClientStatus = (obj: any) => {
+export async function ReplaceClientStatus(obj: ExportData | any) {
     obj.forEach((o: any) => {
         o.ClientStatus = o.ClientStatus === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
     });
-    return obj;
+    return obj as ExportData;
 }
-export const DeletePropertyFromArrayObject = (data: ExportData | any, properties: string[]) => {
-    try {
-        return new Promise((resolve) => {
-            const retValData: any[] = [];
+export async function DeletePropertyFromArrayObject(data: ExportData | any, properties: string[]) {
+    const retValData: any = [];
 
-            data.forEach((obj: { [x: string]: any; }) => {
-                properties.forEach((property: string) => {
-                    delete obj[property];
-                })
-                retValData.push(obj);
-            });
-            resolve(retValData);
-        });
-    } catch (ex) {
-        console.error(ex);
-    }
+    data.forEach((obj: { [x: string]: any; }) => {
+        properties.forEach((property: string) => {
+            delete obj[property];
+        })
+        retValData.push(obj);
+    });
+    return retValData as ExportData;
 }
-
 export const JsonToCSV = async (data: any, options: any) => {
     return new Promise((resolve, reject) => {
         try {
@@ -244,7 +217,6 @@ export const JsonToCSV = async (data: any, options: any) => {
         }
     });
 }
-
 export const CreateFile = (data: any, type: string) => {
     return new Promise((resolve, reject) => {
         try {
@@ -255,7 +227,6 @@ export const CreateFile = (data: any, type: string) => {
         }
     })
 }
-
 export const StringToArrayBuffer = (str: string) => {
     return new Promise((resolve, reject) => {
         try {

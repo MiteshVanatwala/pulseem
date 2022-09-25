@@ -116,7 +116,7 @@ const MmsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async () => {
-        HandleExportData(filteredResults, {
+        const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             BooleanToNumber: true,
@@ -125,7 +125,10 @@ const MmsReport = ({ classes }) => {
             IsBoolean: true,
             Statuses: MMSReportStatus,
             Order: Object.keys(exportColumnHeader)
-        }).then((result) => {
+        };
+        try {
+            let result = await HandleExportData(filteredResults, exportOptions)
+
             result = result.reduce(
                 (previousValue, currentValue) => {
                     currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
@@ -139,9 +142,10 @@ const MmsReport = ({ classes }) => {
                 exportType: 'csv',
                 fields: exportColumnHeader
             });
-        }).catch((e) => {
+        }
+        catch (e) {
             console.error(e);
-        });
+        };
     }
 
     const colorTextStyle = {

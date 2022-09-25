@@ -236,6 +236,7 @@ const ArchiveManagementScreen = ({ classes }) => {
   }
 
   const handleDownloadCsv = async () => {
+    setLoader(true);
     const exportColumnHeader = {
       "Name": t('common.CampaignName'),
       "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
@@ -245,23 +246,30 @@ const ArchiveManagementScreen = ({ classes }) => {
 
     const list = searchResults ?? newsletterArchiveData;
 
-    HandleExportData(list, {
+    const exportOptions = {
       OrderItems: true,
       FormatDate: true,
       TranslateStatusToString: true,
       Statuses: EmailStatus,
       Order: Object.keys(exportColumnHeader),
       DeleteProperties: ["Status"]
-    }).then((result) => {
+    };
+
+    try {
+      const result = await HandleExportData(list, exportOptions);
+
       ExportFile({
         data: result,
         fileName: 'emailReport',
         exportType: 'csv',
         fields: exportColumnHeader
       });
-    }).catch((e) => {
-      console.error(e);
-    });
+    } catch (e) {
+      console.log(e);
+    }
+    finally {
+      setLoader(false);
+    }
   }
   const redirctToArchive = () => {
     window.location = '/react/Campaigns/Archive'
