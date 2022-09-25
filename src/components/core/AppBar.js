@@ -91,7 +91,12 @@ const AppBarItem = ({
                       {index !== 0 && <Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
-                        onClick={() => { onInnerClick ? onInnerClick(option) : redirect(option.href) }}
+                        onClick={() => {
+                          if (!option.href || option.href === '') {
+                            onInnerClick(option)
+                          }
+                          else redirect(option.href)
+                        }}
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
