@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
-//import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import {
   Box,
@@ -28,7 +27,6 @@ import moment from "moment";
 import "moment/locale/he";
 import { Loader } from "../../components/Loader/Loader";
 import { setRowsPerPage } from "../../redux/reducers/coreSlice";
-import { setCookie } from "../../helpers/cookies";
 import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
@@ -41,8 +39,7 @@ import {
   removeSmsClient,
   searchAllClients,
   getExportData,
-  setUnsubscribedClients,
-  searchAdvancedClients
+  setUnsubscribedClients
 } from "../../redux/reducers/clientSlice";
 import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
@@ -51,7 +48,7 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportFile, exportAsXLSX } from '../../helpers/exportFromJson';
+import { exportAsXLSX } from '../../helpers/exportFromJson';
 import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { switchClientStatus } from '../../helpers/functions';
@@ -115,6 +112,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
   const [filterSearch, setFilterSearch] = useState(null);
+  const [searchReferrer, setSearchReferrer] = useState(false);
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -191,8 +189,10 @@ const ClientSearchResult = ({ props, classes }) => {
       isSessionStorageData =
         referrer.toLowerCase().includes('automationreport') ||
         referrer.toLowerCase().includes('createautomations') ||
-        (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
+        (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result') ||
+          searchReferrer === true)
       if (isSessionStorageData) {
+        setSearchReferrer(true);
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
         overwriteObject.IsSearchByFilter = true;
         setFilterSearch(overwriteObject);
@@ -932,6 +932,14 @@ const ClientSearchResult = ({ props, classes }) => {
       </>
     );
   };
+  const handleSearch = (searchData) => {
+    let sessionSearchData = null;
+    if (searchReferrer === true) {
+      sessionSearchData = JSON.parse(window.sessionStorage?.getItem('searchData'));
+      sessionSearchData.IsSearchByFilter = true;
+    }
+    setSearchData({ ...searchData, ...sessionSearchData })
+  }
   // DONE
   const renderSearchLine = () => {
     if (windowSize === "xs") {
@@ -941,11 +949,11 @@ const ClientSearchResult = ({ props, classes }) => {
           value={searchStr}
           onChange={(e) => setSearchStr(e.target.value)}
           onClick={() => {
-            setSearchData({
+            handleSearch({
               ...searchData,
               PageIndex: 1,
               PageSize: rowsPerPage,
-              SearchTerm: searchStr,
+              SearchTerm: searchStr
             });
             setPage(1);
           }}
@@ -973,7 +981,7 @@ const ClientSearchResult = ({ props, classes }) => {
             size="large"
             variant="contained"
             onClick={() => {
-              setSearchData({
+              handleSearch({
                 ...searchData,
                 PageIndex: 1,
                 PageSize: rowsPerPage,
@@ -999,7 +1007,7 @@ const ClientSearchResult = ({ props, classes }) => {
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  setSearchData({ ...searchData, SearchTerm: "", ...filterSearch });
+                  handleSearch({ ...searchData, SearchTerm: "", ...filterSearch });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();
