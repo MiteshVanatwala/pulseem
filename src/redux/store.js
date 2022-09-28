@@ -16,6 +16,7 @@ import siteTrackingReducer from './reducers/siteTrackingSlice'
 import clientReducer from './reducers/clientSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
+import ConnectorsSlice from './reducers/ConnectorsSlice';
 
 export default configureStore({
   reducer: {
@@ -35,6 +36,7 @@ export default configureStore({
     siteTracking: siteTrackingReducer,
     client: clientReducer,
     group: groupSlice,
-    report: reportSlice
+    report: reportSlice,
+    connectors: ConnectorsSlice
   },
 });
