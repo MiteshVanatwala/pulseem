@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
-import { Validation } from "../../../../helpers/Utils/Validations";
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 
 
@@ -30,7 +30,6 @@ const UnsubscribeOrDeletePopup = ({
     ToastMessages,
     getData
 }) => {
-    const validation = new Validation();
     const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
@@ -274,12 +273,12 @@ const UnsubscribeOrDeletePopup = ({
                 return null;
             }
 
-            if (validation.Phone(m)) {
+            if (IsValidPhone(m)) {
                 if (m.length >= 9 && m.length <= 13) {
                     return m.trim();
                 }
             }
-            if (validation.Email(m)) {
+            if (IsValidEmail(m)) {
                 return m.trim();
             }
 

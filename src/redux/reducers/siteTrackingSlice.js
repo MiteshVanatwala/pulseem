@@ -1,11 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { SiteTrackingInstance } from '../../helpers/Api/SiteTrackingAPI';
-import { Validation } from '../../helpers/Utils/Validations';
+import { VerifyGetUrl } from '../../helpers/Utils/Validations';
 import { siteTrackingScriptUrl } from '../../config/index';
 import { RandomID } from '../../helpers/Functions/functions'
-
-const validation = new Validation();
 
 export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
@@ -69,7 +67,7 @@ export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
       const payload = { data: '' };
-      const isVerified = await validation.VerifyGetUrl(`${siteTrackingScriptUrl}?v=${Math.random()}`);
+      const isVerified = await VerifyGetUrl(`${siteTrackingScriptUrl}?v=${Math.random()}`);
       if (isVerified === true) {
         payload.data = `<script type="text/javascript">
         (function(d, t) {

@@ -25,7 +25,7 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
-import { Validation } from "../../../../helpers/Utils/Validations";
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 
 
 import { Loader } from "../../../../components/Loader/Loader";
@@ -64,7 +64,6 @@ const AddRecipientPopup = ({ classes,
     onAnotherRecipientAdded = () => null,
     handleResponses = (response, actions) => null
 }) => {
-    const validation = new Validation();
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const localClasses = useStyles()
@@ -89,7 +88,7 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...errors, [e.target.name]: t(ADD_RECIPIENT_REQUIRED_ERRORS[e.target.name]) })
         }
         if (e.target.name === "Email") {
-            if (!validation.Email(e.target.value)) {
+            if (!IsValidEmail(e.target.value)) {
                 setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
             }
         }
@@ -97,7 +96,7 @@ const AddRecipientPopup = ({ classes,
             if (e.target.value.length > 16 || e.target.value.length < 9) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength) })
             }
-            else if (!validation.Phone(e.target.value)) {
+            else if (!IsValidPhone(e.target.value)) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
             }
         }
@@ -160,7 +159,7 @@ const AddRecipientPopup = ({ classes,
 
         if (!data.ClientsData.Email &&
             !data.ClientsData.Cellphone) {
-            if (!data.ClientsData.Email || !validation.Email(data.ClientsData.Email)) {
+            if (!data.ClientsData.Email || !IsValidEmail(data.ClientsData.Email)) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
             if (data.ClientsData.Cellphone.length < 9 || data.ClientsData.Cellphone.length > 16) {
@@ -171,7 +170,7 @@ const AddRecipientPopup = ({ classes,
             setActiveTab(0);
 
             return;
-        } else if (data.ClientsData.Email && !validation.Email(data.ClientsData.Email)) {
+        } else if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
             setActiveTab(0);
@@ -327,7 +326,7 @@ const AddRecipientPopup = ({ classes,
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (!validation.Phone(tempVal)) {
+                                else if (!IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -360,7 +359,7 @@ const AddRecipientPopup = ({ classes,
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (validation.Phone(tempVal)) {
+                                else if (IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -489,7 +488,7 @@ const AddRecipientPopup = ({ classes,
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (validation.Phone(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}
@@ -514,7 +513,7 @@ const AddRecipientPopup = ({ classes,
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (validation.Phone(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}

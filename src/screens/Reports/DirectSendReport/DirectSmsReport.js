@@ -18,7 +18,7 @@ import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { SmsStatus } from '../../../helpers/Constants';
-import { StatusColor, StatusText } from '../../../helpers/UI/TableText';
+import { ConvertSmsStatusText, ConvertColorStatus, SourceType } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { useSelector } from 'react-redux';
@@ -42,8 +42,6 @@ const DirectSMSReportTab = ({
   rowsOptions,
   isArchive = false
 }) => {
-  const statusColor = new StatusColor();
-  const statusText = new StatusText();
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
@@ -110,9 +108,9 @@ const DirectSMSReportTab = ({
       text = `${text.format('DD/MM/YYYY HH:mm')}`
     }
     if (dataType === 'status') {
-      text = t(statusText.Sms(text));
+      text = t(ConvertSmsStatusText(text));
       return (
-        <Typography style={{ color: statusColor.Sms(data), fontWeight: 600 }}>{text}</Typography>
+        <Typography style={{ color: ConvertColorStatus(data, SourceType.SMS), fontWeight: 600 }}>{text}</Typography>
       )
     }
 
@@ -545,8 +543,8 @@ const DirectSMSReportTab = ({
               {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-              <Typography style={{ color: statusColor.Sms(STATUS) }}>
-                {t(statusText.Sms(STATUS))}
+              <Typography style={{ color: ConvertColorStatus(STATUS, SourceType.SMS) }}>
+                {t(ConvertSmsStatusText(STATUS))}
               </Typography>
             </Box>
           </Box>

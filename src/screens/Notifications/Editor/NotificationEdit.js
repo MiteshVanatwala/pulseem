@@ -24,7 +24,7 @@ import moment from 'moment'
 import 'moment/locale/he'
 import Toast from '../../../components/Toast/Toast.component';
 import Tooltip from '@material-ui/core/Tooltip';
-import { Validation } from "../../../helpers/Utils/Validations";
+import { IsValidURL } from "../../../helpers/Utils/Validations";
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -101,7 +101,6 @@ const DashedInput = withStyles({
 })(TextField);
 
 const NotificationEdit = ({ classes }) => {
-  const validation = new Validation();
   const redirect = useNavigate();
   const { id } = useParams();
   const location = useLocation();
@@ -374,7 +373,7 @@ const NotificationEdit = ({ classes }) => {
         document.querySelector("#notificationRedirectUrl").classList.add("error");
       }
       else {
-        if (!validation.Url(model.RedirectURL)) {
+        if (!IsValidURL(model.RedirectURL)) {
           errorList.push({ message: t('notifications.validation.redirectUrlNotValid') });
           document.querySelector("#notificationRedirectUrl").classList.add("error");
         }

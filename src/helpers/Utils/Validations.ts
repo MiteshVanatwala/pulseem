@@ -1,41 +1,41 @@
-import { TYPE_URL } from "../Types/common";
-export class Validation {
-    Email(value: string) {
-        if (value === '' || value === undefined) {
-            return false;
-        }
-        return value?.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z\-0-9]{2,}))$/)
+export const IsValidEmail = (value: string) => {
+    if (value === '' || value === undefined) {
+        return false;
     }
-    Phone(value: string) {
-        if (value === '' || value === undefined) {
-            return false;
-        }
-        const phoneRegex = /^[0-9-]+$/
-        return phoneRegex.test(value)
+    return value?.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z\-0-9]{2,}))$/)
+}
+
+export const IsValidPhone = (value: string) => {
+    if (value === '' || value === undefined) {
+        return false;
     }
-    Url(value: TYPE_URL) {
-        var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-            '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-        return !!pattern.test(value);
-    }
-    VerifyGetUrl = async (value: string) => {
-        return new Promise((resolve, reject) => {
-            try {
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function () {
-                    if (xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status === 200) {
-                        resolve(true);
-                    }
+    const phoneRegex = /^[0-9-]+$/
+    return phoneRegex.test(value)
+}
+
+export const IsValidURL = (value: string) => {
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    return !!pattern.test(value);
+}
+
+export const VerifyGetUrl = (value: string) => {
+    return new Promise((resolve, reject) => {
+        try {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status === 200) {
+                    resolve(true);
                 }
-                xmlhttp.open("HEAD", value, true);
-                xmlhttp.send();
-            } catch (error) {
-                reject(false);
             }
-        });
-    }
+            xmlhttp.open("HEAD", value, true);
+            xmlhttp.send();
+        } catch (error) {
+            reject(false);
+        }
+    });
 }

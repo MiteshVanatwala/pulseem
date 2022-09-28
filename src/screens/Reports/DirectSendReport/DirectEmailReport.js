@@ -17,7 +17,7 @@ import { reactivateEmail } from '../../../redux/reducers/clientSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
 import { EmailStatus } from '../../../helpers/Constants';
-import { StatusColor, StatusText } from '../../../helpers/UI/TableText';
+import { ConvertColorStatus, ConvertEmailStatusText, EllipsisText, SourceType } from '../../../helpers/UI/TableText';
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -35,8 +35,6 @@ const RenderRow = ({
   onRefresh = () => null
 }) => {
   const [open, setOpen] = useState(false);
-  const statusColor = new StatusColor();
-  const statusText = new StatusText();
 
   const renderCell = (data, dataType) => {
     let text = data;
@@ -45,9 +43,9 @@ const RenderRow = ({
       text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
     }
     if (dataType === 'status') {
-      text = t(statusText.Email(data))
+      text = t(ConvertEmailStatusText(data))
       return (
-        <Typography style={{ color: statusColor.Email(data), fontWeight: 600 }}>{text}</Typography>
+        <Typography style={{ color: ConvertColorStatus(data, SourceType.EMAIL), fontWeight: 600 }}>{text}</Typography>
       )
     }
 
@@ -94,7 +92,7 @@ const RenderRow = ({
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1, classes.ellipsisText)}
                     title={row.ExternalRef ? row.ExternalRef : t('report.None')}>
-                    {row.ExternalRef ? statusText.Ellipsis(row.ExternalRef, 25) : t('report.None')
+                    {row.ExternalRef ? EllipsisText(row.ExternalRef, 25) : t('report.None')
                     }</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>
                     {row.Attachments ? row.Attachments.split('##').map((link, index) => {
@@ -568,9 +566,6 @@ const DirectEmailReportTab = ({
       FromEmail,
       Status
     } = row
-    const statusColor = new StatusColor();
-    const statusText = new StatusText();
-
     return (
       <TableRow
         key={row.ID}
@@ -582,8 +577,8 @@ const DirectEmailReportTab = ({
               {renderNameCell({ SendID, Name, SendDate, UpdateDate, Status, CreatedDate })}
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-              <Typography style={{ color: statusColor.Email(Status) }}>
-                {t(statusText.Email(Status))}
+              <Typography style={{ color: ConvertColorStatus(Status, SourceType.EMAIL) }}>
+                {t(ConvertEmailStatusText(Status))}
               </Typography>
             </Box>
           </Box>

@@ -17,14 +17,13 @@ import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
-import { Validation } from '../../helpers/Utils/Validations';
+import { IsValidURL } from '../../helpers/Utils/Validations';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const SiteTrackingEditor = ({ classes }) => {
-    const validation = new Validation();
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
@@ -55,7 +54,7 @@ const SiteTrackingEditor = ({ classes }) => {
 
     useEffect(() => {
         if (event && (isValidDomain !== null || event.domain !== '')) {
-            setIsValidDomain(validation.Url(event.domain));
+            setIsValidDomain(IsValidURL(event.domain));
         }
     }, [event]);
 
@@ -90,7 +89,7 @@ const SiteTrackingEditor = ({ classes }) => {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
-        if (event.domain !== '' && !validation.Url(event.domain)) {
+        if (event.domain !== '' && !IsValidURL(event.domain)) {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
