@@ -350,13 +350,13 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 handleSubmitNewsletterResponse(savedCampaign)
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
-                // if (isContiue) {
-                //     window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
-                //     //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
-                // }
-                // else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
-                window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
-                // }
+                if (isContiue) {
+                    window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
+                    //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                }
+                else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
+                    window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
+                }
             });
         }
     }
