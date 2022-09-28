@@ -10,19 +10,18 @@ const useRedirect = () => {
             window.open(url);
             return false;
         }
-        if (window.location.href.indexOf("aspx") > -1) {
+        if (url.indexOf("aspx") > -1) {
             window.location.href = url;
         } else {
             navigate(url);
         }
     };
 
-    
-    const generalProps: generalPropTypes = {
-        redirect: Redirect
-    };
+    // const Response: generalPropTypes = {
+    //     redirect: Redirect
+    // };
 
-    return generalProps;
+    return Redirect;
 };
 
 export default useRedirect;

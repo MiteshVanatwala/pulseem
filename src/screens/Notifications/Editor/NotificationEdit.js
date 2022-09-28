@@ -25,7 +25,8 @@ import 'moment/locale/he'
 import Toast from '../../../components/Toast/Toast.component';
 import Tooltip from '@material-ui/core/Tooltip';
 import { IsValidURL } from "../../../helpers/Utils/Validations";
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -101,7 +102,7 @@ const DashedInput = withStyles({
 })(TextField);
 
 const NotificationEdit = ({ classes }) => {
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
   const { id } = useParams();
   const location = useLocation();
 
@@ -220,7 +221,7 @@ const NotificationEdit = ({ classes }) => {
       saveNotification(true, false)
     }
     else {
-      redirect("/react/Notifications");
+      Redirect({ url: "/react/Notifications" });
     }
   }
   const renderConfirmCancel = () => {
@@ -255,7 +256,7 @@ const NotificationEdit = ({ classes }) => {
   }
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
-      redirect(`/react/Notification/send/${notificationId}`);
+      Redirect({ url: `/react/Notification/send/${notificationId}` });
     }
   }
   const handleNotificationName = (event) => {
@@ -926,7 +927,7 @@ const NotificationEdit = ({ classes }) => {
         dispatch(save(modelToSave)).then((response) => {
           if (location.pathname.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
-              redirect("/react/Notifications")
+              Redirect({ url: "/react/Notifications" })
             }
             else {
               setToastMessage(toastMessages.SUCCESS);
@@ -935,7 +936,7 @@ const NotificationEdit = ({ classes }) => {
                   redirectAfterSave(response.payload);
                 }
                 else {
-                  redirect(`/react/Notification/edit/${response.payload}`);
+                  Redirect({ url: `/react/Notification/edit/${response.payload}` });
                 }
                 setToastMessage(null);
               }, 1500);
@@ -953,7 +954,7 @@ const NotificationEdit = ({ classes }) => {
         });
       }
       if (isExit) {
-        redirect("/react/Notifications");
+        Redirect({ url: "/react/Notifications" });
       }
     }
   }

@@ -15,12 +15,12 @@ import TabList from '@material-ui/lab/TabList';
 import RecipientsTab from './RecipientsTab';
 import queryString from 'query-string';
 import { Loader } from '../../../components/Loader/Loader';
-import { useNavigate } from 'react-router-dom';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 const GraphicReport = ({ props, classes }) => {
   const { language, windowSize, isRTL } = useSelector(state => state.core)
   const [tabValue, setTabValue] = useState(0);
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
   const [showLoader, setLoader] = useState(true);
   const [campaignData, setData] = useState(null);
   //const [campaignPreviewImage, setCampaignPreviewImage] = useState(null);
@@ -53,7 +53,7 @@ const GraphicReport = ({ props, classes }) => {
           <Grid item className={classes.mb4}>
             <Button
               onClick={() => {
-                redirect("/react/Reports/NewsletterReports");
+                Redirect({ url: "/react/Reports/NewsletterReports" });
               }}
               className={classes.middleTxt}
             >

@@ -2,7 +2,8 @@ import React, { useRef } from 'react';
 import clsx from 'clsx';
 import { Typography, Button, Box } from '@material-ui/core'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { useNavigate } from 'react-router-dom';
+import useRedirect from '../../helpers/Routes/Redirect';
+
 
 export const ManagmentIcon = ({
   classes,
@@ -20,7 +21,7 @@ export const ManagmentIcon = ({
   text = '',
   onClick = () => null }) => {
   const buttonRef = useRef();
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
 
   if (remove)
     return null
@@ -33,7 +34,7 @@ export const ManagmentIcon = ({
         size='small'
         onClick={() => {
           if (href) {
-            redirect(href);
+            Redirect({ url: href });
           }
           else {
             onClick(buttonRef)

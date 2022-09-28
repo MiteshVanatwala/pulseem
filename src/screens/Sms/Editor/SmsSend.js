@@ -33,6 +33,7 @@ import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
+import useRedirect from "../../../helpers/Routes/Redirect";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -129,7 +130,7 @@ const SmsSend = ({ classes, ...props }) => {
   const { id, FromAutomation, NodeToEdit } = useParams();
   const { t } = useTranslation();
   const styles = useStyles();
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
   const severe = useSnackSevere();
   const recipientSuccess = useSnackRecipients();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups } = useSelector((state) => state.sms);
@@ -221,7 +222,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
-  
+
   //#endregion
   useEffect(() => {
     setselectArray([
@@ -1476,7 +1477,7 @@ const SmsSend = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.SUCCESS);
       }
       else if (toggle && exit == "exit") {
-        redirect("/SMSCampaigns");
+        Redirect({ url: "/react/SMSCampaigns" });
       }
       else {
         let response = await dispatch(getCampaignSumm(requestPayload.SmsCampaignID));
@@ -1772,7 +1773,7 @@ const SmsSend = ({ classes, ...props }) => {
     if (id) {
       dispatch(deleteSms(id));
       setDialogType(null);
-      redirect("/SMSCampaigns");
+      Redirect({ url: "/react/SMSCampaigns" });
     }
   };
   const renderToast = () => {
@@ -1800,7 +1801,7 @@ const SmsSend = ({ classes, ...props }) => {
     settypedData([]);
   };
   const handlePreviousPage = () => {
-    redirect(`/react/sms/edit/${id}`);
+    Redirect({ url: `/react/sms/edit/${id}` });
   }
   const renderSendType2validation = () => {
     return (<>
@@ -2549,7 +2550,7 @@ const SmsSend = ({ classes, ...props }) => {
       showDefaultButtons: true,
       confirmText: t("common.Yes"),
       cancelText: t("common.No"),
-      onClose: () => { redirect("/SMSCampaigns"); },
+      onClose: () => { Redirect({ url: "/react/SMSCampaigns" }); },
       onCancel: () => { setDialogType(null) },
       onConfirm: () => { onSaveSettings(true, "exit") }
     }
@@ -2566,7 +2567,16 @@ const SmsSend = ({ classes, ...props }) => {
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}
             </p>
-            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { redirect("/SMSCampaigns") }}>{t("common.confirm")}</span>
+            <span
+              style={{
+                padding: "12px",
+                backgroundColor: "green",
+                marginTop: "10px",
+                cursor: "pointer",
+                color: "#ffffff",
+                borderRadius: "10px"
+              }}
+              onClick={() => { Redirect({ url: "/react/SMSCampaigns" }) }}>{t("common.confirm")}</span>
           </div>
         </Box>
       ),

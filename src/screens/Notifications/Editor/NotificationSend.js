@@ -9,17 +9,18 @@ import { useSelector, useDispatch } from 'react-redux'
 import Toast from '../../../components/Toast/Toast.component';
 import { CheckAnimation } from '../../../assets/images/settings/index'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, Link } from '@material-ui/core'
 import { getNotificationById, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../../redux/reducers/notificationSlice';
 import Groups from '../../../components/Notifications/Groups/Groups';
 import { DateField, Dialog } from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
     const { t } = useTranslation();
-    const redirect = useNavigate();
+    const Redirect = useRedirect();
     const { notificationGroups } = useSelector(state => state.notification)
     /* #region  Component settings constatns */
     const dispatch = useDispatch();
@@ -196,7 +197,7 @@ const NotificationSend = ({ classes }) => {
             saveSettings(true)
         }
         else {
-            redirect("/react/Notifications");
+            Redirect({ url: "/react/Notifications" });
         }
     }
     const saveSettings = async (isExit, isSummary = false) => {
@@ -218,7 +219,7 @@ const NotificationSend = ({ classes }) => {
                 }
                 else {
                     if (isSummary === false)
-                        redirect("/react/Notifications");
+                        Redirect({ url: "/react/Notifications" });
                     else
                         getSummary();
                 }
@@ -289,7 +290,7 @@ const NotificationSend = ({ classes }) => {
                     classes.actionButtonLightBlue,
                     classes.backButton
                 )}
-                onClick={() => redirect(`/react/Notification/edit/${model.ID}`)}
+                onClick={() => Redirect({ url: `/react/Notification/edit/${model.ID}` })}
             >
                 {t('notifications.back')}
             </Button>
@@ -645,7 +646,7 @@ const NotificationSend = ({ classes }) => {
                     <Button
                         variant='contained'
                         size='small'
-                        onClick={() => { redirect("/react/Notifications") }}
+                        onClick={() => { Redirect({ url: "/react/Notifications" }) }}
                         className={clsx(
                             classes.confirmButton,
                             classes.dialogConfirmButton,
@@ -660,7 +661,7 @@ const NotificationSend = ({ classes }) => {
                     showDivider={false}
                     classes={classes}
                     open={true}
-                    onClose={() => { redirect("/react/Notifications") }}
+                    onClose={() => { Redirect({ url: "/react/Notifications" }) }}
                     {...dialog}>
                     {dialog.content}
                 </Dialog>

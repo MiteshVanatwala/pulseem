@@ -26,7 +26,7 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { useNavigate } from 'react-router-dom';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -52,7 +52,7 @@ const SmsManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
 
   const getData = async () => {
     await dispatch(getSmsData())
@@ -239,7 +239,7 @@ const SmsManagnentScreen = ({ classes }) => {
             variant='contained'
             size='medium'
             onClick={() => {
-              redirect("/react/sms/create")
+              Redirect({ url: "/react/sms/create" })
             }}
             className={clsx(
               classes.actionButton,

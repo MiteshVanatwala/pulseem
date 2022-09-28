@@ -20,7 +20,7 @@ import {
   ChartIcon
 } from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
-import { useNavigate } from 'react-router-dom';
+import useRedirect from '../../helpers/Routes/Redirect';
 
 const AppBarItem = ({
   item,
@@ -31,7 +31,7 @@ const AppBarItem = ({
   menuWidth = 290,
   onInnerClick = () => null
 }) => {
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
 
   const [buttonWidth, setButtonWidth] = useState(0)
@@ -60,7 +60,7 @@ const AppBarItem = ({
         className={classes.appBarHrefContainer}
         onClick={() => {
           handleOpen()
-          redirect(item.href)
+          Redirect({ url: item.href })
         }}>
         <IconButton
           ref={buttonRef}
@@ -95,7 +95,7 @@ const AppBarItem = ({
                           if (!option.href || option.href === '') {
                             onInnerClick(option)
                           }
-                          else redirect(option.href)
+                          else Redirect({ url: option.href })
                         }}
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
@@ -172,7 +172,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
   let cookieFeature = getCookie("accountFeatures");
   const cookieIsClal = getCookie("isClal");
 
@@ -223,7 +223,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     if (!!uri) {
       setCookie('scriptDialog', false, { maxAge: 36000000000 });
       dispatch(setScriptDialog(false));
-      redirect(uri);
+      Redirect({ url: uri });
     }
   }
   const returnToAdmin = () => {
@@ -241,7 +241,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           item={route}
           chosen={route.key === currentPage}
           showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
-          onInnerClick={() => redirect(route.href)}
+          onInnerClick={() => Redirect({ url: route.href })}
         />
       ))}
       {windowSize === 'xl' || windowSize === 'lg' ? <>
@@ -349,7 +349,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                           <Box
                             className={classes.phoneAppBarItemContainer}>
                             <Button
-                              onClick={() => redirect(route.href)}
+                              onClick={() => Redirect({ url: route.href })}
                               style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
                               {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
@@ -390,7 +390,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
         <Toolbar variant='dense'>
           <Button
             style={{ padding: 0, matgin: 0 }}
-            onClick={() => redirect(routes[0].href)}>
+            onClick={() => Redirect({ url: routes[0].href })}>
             <Box
               component='img'
               src={`${imageURL}`}

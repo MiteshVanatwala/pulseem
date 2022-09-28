@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { getShortcuts, setShortcuts, deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 import { DASHBOARD_SHORTCUT } from '../../model/Shortcuts/DashboardShortcuts';
-import { useNavigate } from 'react-router-dom';
+import useRedirect from '../../helpers/Routes/Redirect';
 
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
@@ -23,7 +23,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const [activeShortcut, setActiveShortcut] = useState(null);
   const dispatch = useDispatch();
   const categories = { ...DASHBOARD_SHORTCUT };
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
 
   if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures.indexOf('35') > -1) {
     categories['appBar.notifications.title'] = {
@@ -253,7 +253,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           variant='contained'
           color='primary'
           onClick={() => {
-            redirect(data.ShortcutUrl)
+            Redirect({ url: data.ShortcutUrl })
           }}
           classes={{
             label: classes.shortcutLabel,

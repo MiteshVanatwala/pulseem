@@ -30,10 +30,10 @@ import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { MdNotificationsActive } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import useRedirect from '../../../helpers/Routes/Redirect';
 
 const NotificationManagement = ({ classes }) => {
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
   const { notificationData } = useSelector(state => state.notification)
   const { t } = useTranslation()
@@ -369,7 +369,7 @@ const NotificationManagement = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => redirect('/react/Notification/create')}
+            onClick={() => Redirect({ url: '/react/Notification/create' })}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen

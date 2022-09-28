@@ -27,7 +27,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
-  const redirect = useNavigate();
+  const Redirect = useNavigate();
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
   const { automationsData, automationsDataError, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
@@ -595,7 +595,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
       getData()
       if (isEdit)
-        redirect(`/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`)
+        Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
     } catch (err) {
       setDialogType({
         type: "statusError",

@@ -55,6 +55,7 @@ import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
+import useRedirect from "../../../helpers/Routes/Redirect";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -111,7 +112,7 @@ const SmsCreator = ({ classes }) => {
     maxLength: "13"
   }
 
-  const redirect = useNavigate();
+  const Redirect = useRedirect();
   const dispatch = useDispatch();
   const { windowSize, isRTL, accountFeatures } = useSelector(
     (state) => state.core
@@ -1231,13 +1232,13 @@ const SmsCreator = ({ classes }) => {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
-          redirect(`/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}`);
+          Redirect({ url: `/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}` });
           setToastMessage(null);
         }, 1500);
       } else if (returnToAutomation) {
-        redirect(getAutomationReturnUrl(campaignId));
+        Redirect({ url: getAutomationReturnUrl(campaignId) });
       } else {
-        redirect(`/react/sms/send/${campaignId}`);
+        Redirect({ url: `/react/sms/send/${campaignId}` });
       }
     }
     else if (r.payload.Status === 3) {
@@ -1291,13 +1292,13 @@ const SmsCreator = ({ classes }) => {
       if (response) {
         dispatch(deleteSms(response.payload.SMSCampaignID));
         handleClose();
-        redirect("/react/SMSCampaigns");
+        Redirect({ url: "/react/SMSCampaigns" });
       }
     }
     else {
       dispatch(deleteSms(-1));
       handleClose();
-      redirect("/react/SMSCampaigns");
+      Redirect({ url: "/react/SMSCampaigns" });
     }
   };
 
@@ -1353,7 +1354,7 @@ const SmsCreator = ({ classes }) => {
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
-          redirect("/react/SMSCampaigns");
+          Redirect({ url: "/react/SMSCampaigns" });
 
         }
         else {
@@ -1367,7 +1368,7 @@ const SmsCreator = ({ classes }) => {
       }
     }
     else if (saveBeforeExit === false) {
-      redirect("/react/SMSCampaigns");
+      Redirect({ url: "/react/SMSCampaigns" });
       setDialogType(null);
     }
   };
