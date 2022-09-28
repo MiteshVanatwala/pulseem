@@ -119,7 +119,7 @@ const SmsReplies = ({ classes, ...other }) => {
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
-            TranslateStatusToString: true,
+            ConvertStatusToString: true,
             Statuses: ClientStatus.Email.concat(ClientStatus.Sms),
             Order: Object.keys(exportColumnHeader),
             DeleteProperties: ["Status"]

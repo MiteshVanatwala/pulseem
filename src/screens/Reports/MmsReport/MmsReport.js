@@ -120,7 +120,7 @@ const MmsReport = ({ classes }) => {
             OrderItems: true,
             FormatDate: true,
             BooleanToNumber: true,
-            TranslateStatusToString: true,
+            ConvertStatusToString: true,
             PropertyToReplace: 'IsResponse',
             IsBoolean: true,
             Statuses: MMSReportStatus,

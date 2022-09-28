@@ -10,8 +10,8 @@ export interface ExportConditions {
     ReplaceNull: boolean;
     BooleanToNumber: boolean;
     ReplaceClientStatus: boolean;
-    TranslateStatusToString: boolean;
-    TranslateStatusDescription: boolean;
+    ConvertStatusToString: boolean;
+    ConvertStatusDescription: boolean;
 }
 export interface ExportOption extends ExportConditions {
     Order: any;
@@ -57,7 +57,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 reject();
             }
         }
-        if ((options.TranslateStatusDescription === true || options.TranslateStatusToString === true) && options.Statuses !== null) {
+        if ((options.ConvertStatusDescription === true || options.ConvertStatusToString === true) && options.Statuses !== null) {
             try {
                 finalExportData = await SwitchStatus(finalExportData, options.Statuses, options);
             } catch (error) {
@@ -104,7 +104,7 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
     const retValData: any = [];
     data.forEach((o: Status) => {
         const tempData = { ...o } as Status;
-        if (options.TranslateStatusDescription === true) {
+        if (options.ConvertStatusDescription === true) {
             if (o.STATUS) {
                 let status = statuses.find((s: { id: any; }) => { return s.id === o.STATUS });
                 if (status && status.value !== '') {
@@ -124,7 +124,7 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
                 }
             }
         }
-        if (options.TranslateStatusToString === true) {
+        if (options.ConvertStatusToString === true) {
             if (o.Status) {
                 let status = statuses.find((s) => { return s.id === o.Status });
                 if (status && status.value !== '') {

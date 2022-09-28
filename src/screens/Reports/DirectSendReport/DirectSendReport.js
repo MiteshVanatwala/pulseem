@@ -252,8 +252,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       const exportOption = {
         OrderItems: true,
         FormatDate: true,
-        TranslateStatusToString: false,
-        TranslateStatusDescription: true,
+        ConvertStatusToString: false,
+        ConvertStatusDescription: true,
         Statuses: SmsStatus,
         ReplaceClientStatus: true,
         DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
@@ -284,8 +284,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       const exportOptions = {
         OrderItems: true,
         FormatDate: true,
-        TranslateStatusToString: false,
-        TranslateStatusDescription: true,
+        ConvertStatusToString: false,
+        ConvertStatusDescription: true,
         Statuses: EmailStatus,
         ReplaceClientStatus: true,
         PropertyToReplace: "Status",

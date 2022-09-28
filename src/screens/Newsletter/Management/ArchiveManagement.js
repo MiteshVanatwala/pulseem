@@ -249,7 +249,7 @@ const ArchiveManagementScreen = ({ classes }) => {
     const exportOptions = {
       OrderItems: true,
       FormatDate: true,
-      TranslateStatusToString: true,
+      ConvertStatusToString: true,
       Statuses: EmailStatus,
       Order: Object.keys(exportColumnHeader),
       DeleteProperties: ["Status"]

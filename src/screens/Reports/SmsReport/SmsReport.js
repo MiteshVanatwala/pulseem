@@ -161,7 +161,7 @@ const SmsReport = ({ classes }) => {
       IsBoolean: true,
       BooleanToNumber: true,
       Statuses: smsReportStatus,
-      TranslateStatusToString: true,
+      ConvertStatusToString: true,
       PropertyToReplace: 'IsResponse',
       Order: Object.keys(exportColumnHeader),
       DeleteProperties: ["Status"]
