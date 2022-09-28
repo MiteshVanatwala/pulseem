@@ -1,0 +1,26 @@
+import { CSSProperties } from "@material-ui/core/styles/withStyles";
+export type DialogOptions = {
+    childrenPadding?: boolean;
+    open: boolean;
+    title: any;
+    icon?: any;
+    children: any;
+    showDivider?: boolean;
+    onClose?: Function;
+    onCancel?: Function;
+    onConfirm?: Function;
+    renderButtons?: any;
+    renderTitle?: any;
+    disableBackdropClick?: boolean;
+    customContainerStyle?: Object | string | null;
+    paperStyle?: Object | string | null;
+    childrenStyle?: Object | string | null;
+    contentStyle?: Object | string | null;
+    cancelText?: string;
+    confirmText?: string;
+    showDefaultButtons?: boolean;
+    style?: CSSProperties | undefined;
+    exitButton?: any;
+    maxHeight?: string | number | undefined;
+    reduceTitle?: boolean;
+};
