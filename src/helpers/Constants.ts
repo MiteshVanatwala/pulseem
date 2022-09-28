@@ -17,7 +17,6 @@ export const EmailStatus = [
     { id: 11, value: 'emailStatus.removed' },
     { id: 12, value: 'emailStatus.removedBySystem' }
 ];
-
 export const smsReportStatus = [
     { id: 0, value: 'report.smsReport.statuses.other' },
     { id: 1, value: 'report.smsReport.statuses.draft' },
@@ -26,7 +25,6 @@ export const smsReportStatus = [
     { id: 4, value: 'report.smsReport.statuses.sent' },
     { id: 5, value: 'report.smsReport.statuses.cancelled' }
 ];
-
 export const SmsStatus = [
     { id: null, value: 'common.All' },
     { id: 1, value: 'report.directReport.statuses.pending' },
@@ -35,15 +33,13 @@ export const SmsStatus = [
     { id: 4, value: 'report.directReport.statuses.error' },
     { id: 5, value: 'report.directReport.statuses.removed' }
 ];
-
 export const ReponseType = [
     { id: 0, value: 'report.directReport.responseType.all' },
     { id: 1, value: 'report.directReport.responseType.notActive' },
     { id: 2, value: 'report.directReport.responseType.activeAll' },
     { id: 3, value: 'report.directReport.responseType.activeHasResponse' },
     { id: 4, value: 'report.directReport.responseType.activeNoResponse' }
-]
-
+];
 export const ClientStatus = {
     Sms: [
         { id: -1, value: 'common.noSms' },
@@ -65,13 +61,10 @@ export const EventsOptions = [
     { key: 'PURCHASE', value: 'siteTracking.events.purchase' }
     // { key: 'PAGE_LOAD', value: 'siteTracking.events.pageLoad' }
 ];
-
-
 export const EventConditions = [
     { key: 'CONTAINS', value: "siteTracking.conditions.contains", tooltip: null },
     { key: 'EXACT', value: "siteTracking.conditions.exact", tooltip: 'siteTracking.conditions.tooltip.exact' }
 ];
-
 export const MMSReportStatus = [
     { id: 0, value: 'report.smsReport.statuses.other', color: '' },
     { id: 1, value: 'report.smsReport.statuses.draft', color: "textColorOrange" },
