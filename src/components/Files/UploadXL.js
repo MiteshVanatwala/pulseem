@@ -374,6 +374,11 @@ const UploadXL = ({
                         reader.readAsText(file, "ISO-8859-8");
                     }
                     else {
+                        Log({
+                            MethodName: 'handleFiles',
+                            ComponentName: 'UploadXL.js',
+                            Text: `Client trying to upload non-acceptable file - ${file.name}`
+                        })
                         setLoader(false);
                         return false;
                     }

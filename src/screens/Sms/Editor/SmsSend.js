@@ -801,6 +801,11 @@ const SmsSend = ({ classes, ...props }) => {
           reader.readAsText(file, "ISO-8859-8");
         }
         else {
+          Log({
+            MethodName: 'handleFiles',
+            ComponentName: 'SmsSend.js',
+            Text: `Client trying to upload non-acceptable file - ${file.name}`
+          })
           return false;
         }
       }
