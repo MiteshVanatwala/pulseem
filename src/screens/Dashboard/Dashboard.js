@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -12,9 +12,10 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCookie } from '../../helpers/Functions/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
-import { Log } from "../../connectors/Teams/Log";
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
 const DashboardScreen = ({ classes }) => {
+  const dispatch = useDispatch();
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [showTFA, setShowTFA] = useState(false);
@@ -42,11 +43,11 @@ const DashboardScreen = ({ classes }) => {
       }
     } catch (e) {
       console.error(e);
-      Log({
+      dispatch(sendToTeamChannel({
         MethodName: 'init2FA',
         ComponentName: 'Dashboard.js',
         Text: e
-      })
+      }));
     }
   }
 

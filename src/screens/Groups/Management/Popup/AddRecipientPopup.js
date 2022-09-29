@@ -26,7 +26,8 @@ import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
-import { Log } from "../../../../connectors/Teams/Log";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+
 
 
 import { Loader } from "../../../../components/Loader/Loader";
@@ -247,11 +248,11 @@ const AddRecipientPopup = ({ classes,
         }
         catch (err) {
             console.log('errr:', err)
-            Log({
+            dispatch(sendToTeamChannel({
                 MethodName: 'handleSubmit',
                 ComponentName: 'AddRecipientPopup.js',
                 Text: err
-            })
+            }));
         }
         finally {
             setLoader(false)

@@ -22,7 +22,7 @@ import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { Log } from '../../connectors/Teams/Log';
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
@@ -215,11 +215,11 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         catch (e) {
             console.log(e);
-            Log({
+            dispatch(sendToTeamChannel({
                 MethodName: 'onSaveReponse',
                 ComponentName: 'SiteTrackingEditor.js',
                 Text: e
-            })
+            }));
             setDialogType({ type: 'serverNotAble' })
         }
     }

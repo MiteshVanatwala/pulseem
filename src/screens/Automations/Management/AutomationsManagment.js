@@ -24,7 +24,7 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { Log } from "../../../connectors/Teams/Log";
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -601,11 +601,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
         type: "statusError",
         data: data.ID
       })
-      Log({
+      dispatch(sendToTeamChannel({
         MethodName: 'handleActiveChange',
         ComponentName: 'AutomationsManagement.js',
         Text: err
-      })
+      }));
     }
     handleClose()
   }

@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
 import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon, DateField, Dialog, SearchField } from '../../../components/managment/index'
@@ -20,7 +20,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { Log } from '../../../connectors/Teams/Log';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -129,11 +129,11 @@ const ArchiveManagementScreen = ({ classes }) => {
         setPage(1);
       } catch (error) {
         console.log(error);
-        Log({
+        dispatch(sendToTeamChannel({
           MethodName: 'handleSearch',
           ComponentName: 'ArchiveManagement.js',
           Text: error
-        })
+        }));
       }
     }
 
@@ -271,11 +271,11 @@ const ArchiveManagementScreen = ({ classes }) => {
       });
     } catch (e) {
       console.log(e);
-      Log({
+      dispatch(sendToTeamChannel({
         MethodName: 'handleDownloadCsv',
         ComponentName: 'ArchiveManagement.js',
         Text: e
-      })
+      }));
     }
     finally {
       setLoader(false);

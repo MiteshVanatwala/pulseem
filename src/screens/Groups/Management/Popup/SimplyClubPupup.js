@@ -11,7 +11,7 @@ import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
-import { Log } from '../../../../connectors/Teams/Log';
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -114,11 +114,11 @@ const SimplyClubPupup = ({
                 setheaders([...tempHeaders])
             } catch (e) {
                 console.error(e);
-                Log({
+                dispatch(sendToTeamChannel({
                     MethodName: 'preload',
                     ComponentName: 'SimplyClubPupup.js',
                     Text: e
-                })
+                }));
             }
         }
         if (ClientData) {
@@ -297,11 +297,11 @@ const SimplyClubPupup = ({
                 resolve(response);
             } catch (e) {
                 console.error(e);
-                Log({
+                dispatch(sendToTeamChannel({
                     MethodName: 'handleAddClients',
                     ComponentName: 'SimplyClubPupup.js',
                     Text: e
-                })
+                }));
                 reject(null);
             }
         });

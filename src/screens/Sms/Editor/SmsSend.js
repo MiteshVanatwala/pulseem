@@ -34,7 +34,7 @@ import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
-import { Log } from '../../../connectors/Teams/Log';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -801,20 +801,20 @@ const SmsSend = ({ classes, ...props }) => {
           reader.readAsText(file, "ISO-8859-8");
         }
         else {
-          Log({
+          dispatch(sendToTeamChannel({
             MethodName: 'handleFiles',
             ComponentName: 'SmsSend.js',
             Text: `Client trying to upload non-acceptable file - ${file.name}`
-          })
+          }))
           return false;
         }
       }
       catch (error) {
-        Log({
+        dispatch(sendToTeamChannel({
           MethodName: 'handleFiles',
           ComponentName: 'SmsSend.js',
           Text: error
-        })
+        }))
         reject(error);
       }
     });

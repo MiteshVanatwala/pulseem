@@ -19,7 +19,7 @@ import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-import { Log } from "../../../../connectors/Teams/Log";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const UnsubscribeOrDeletePopup = ({
     classes,
@@ -252,11 +252,11 @@ const UnsubscribeOrDeletePopup = ({
             }
             catch (error) {
                 setLoader(false);
-                Log({
+                dispatch(sendToTeamChannel({
                     MethodName: 'handleFiles',
                     ComponentName: 'UnsubscribeOrDeletePopup.js',
                     Text: error
-                })
+                }));
                 reject(error);
             }
         });
@@ -407,11 +407,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
-            Log({
+            dispatch(sendToTeamChannel({
                 MethodName: 'handleDeleteSubmit',
                 ComponentName: 'UnsubscribeOrDeletePopup.js',
                 Text: e
-            })
+            }));
             setLoader(false);
         }
     }
@@ -475,11 +475,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
-            Log({
+            dispatch(sendToTeamChannel({
                 MethodName: 'handleUnsubSubmit',
                 ComponentName: 'UnsubscribeOrDeletePopup.js',
                 Text: e
-            })
+            }));
             setLoader(false);
         }
     }

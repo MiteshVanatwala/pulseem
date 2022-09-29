@@ -21,7 +21,7 @@ import {
 } from "../../../../redux/reducers/groupSlice";
 
 import { Dialog } from "../../../../components/managment/Dialog";
-import { Log } from "../../../../connectors/Teams/Log";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog, getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
@@ -101,11 +101,11 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             })
 
         } catch (err) {
-            Log({
+            dispatch(sendToTeamChannel({
                 MethodName: 'init2FA',
                 ComponentName: 'Dashboard.js',
                 Text: err
-            })
+            }));
             return false;
         }
     };

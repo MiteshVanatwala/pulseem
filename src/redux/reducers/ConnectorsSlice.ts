@@ -1,11 +1,22 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
+export interface TeamsMessage {
+    MethodName: string;
+    ComponentName: string;
+    Text: string;
+}
+
 export const sendToTeamChannel = createAsyncThunk(
     'connectors/SendToTeamChannel',
-    async (data: any, thunkAPI) => {
+    async (message: TeamsMessage, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.post(`connectors/SendToTeamChannel`, data);
+            const { ComponentName = '', MethodName = '' } = message;
+            const log = {
+                activityTitle: `Component: ${ComponentName} | Method: ${MethodName}`,
+                text: message.Text,
+            }
+            const response = await PulseemReactInstance.post(`connectors/SendToTeamChannel`, log);
             return JSON.parse(response.data)
         } catch (error) {
             return console.log(error);

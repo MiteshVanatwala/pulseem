@@ -27,7 +27,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { IsValidURL } from "../../../helpers/Utils/Validations";
 import { useParams, useLocation } from 'react-router-dom';
 import useRedirect from '../../../helpers/Routes/Redirect';
-import { Log } from '../../../connectors/Teams/Log';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -427,11 +427,11 @@ const NotificationEdit = ({ classes }) => {
           }
         }
         catch (e) {
-          Log({
+          dispatch(sendToTeamChannel({
             MethodName: 'handleTestSend',
             ComponentName: 'NotificationEdit.js',
             Text: e
-          })
+          }));
           console.log(e);
         }
       });

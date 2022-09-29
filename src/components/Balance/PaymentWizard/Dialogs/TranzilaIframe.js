@@ -3,7 +3,8 @@ import { Grid, Box, Typography, Divider, Link } from '@material-ui/core';
 import PurchaseSummary from './PurchaseSummary'
 import { Loader } from '../../../Loader/Loader';
 import { useEffect } from 'react';
-import { Log } from '../../../../connectors/Teams/Log';
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { useDispatch } from 'react-redux';
 
 const TranzilaIframe = ({
     t,
@@ -16,6 +17,7 @@ const TranzilaIframe = ({
     onStepBack = () => null,
     onComplete = () => null
 }) => {
+    const dispatch = useDispatch();
     useEffect(() => {
         window.addEventListener('message', (e) => {
             if (e.data) {
@@ -26,11 +28,11 @@ const TranzilaIframe = ({
                     }
                 }
                 catch (e) {
-                    Log({
+                    dispatch(sendToTeamChannel({
                         MethodName: 'UseEffect',
                         ComponentName: 'TranzilaIframe',
                         Message: e
-                    })
+                    }));
                     return false;
                 }
             }

@@ -2,8 +2,6 @@ import 'moment/locale/he';
 import i18n from 'i18next';
 import moment from 'moment';
 import Papa from 'papaparse';
-import { Log } from '../../connectors/Teams/Log';
-
 export interface ExportConditions {
     IsBoolean: boolean;
     OrderItems: boolean;
@@ -46,49 +44,49 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
             try {
                 finalExportData = await OrderItems(finalExportData, options.Order, options);
             } catch (error) {
-                Log({
-                    MethodName: 'HandleExportData',
-                    ComponentName: 'ExportHelper.ts',
-                    Text: error as string
-                })
+                // Log({
+                //     MethodName: 'HandleExportData',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
                 console.error('OrderItems');
-                reject();
+                reject(error);
             }
         }
         if (options.ReplaceNull === true) {
             try {
                 finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue);
             } catch (error) {
-                Log({
-                    MethodName: 'ReplaceNull',
-                    ComponentName: 'ExportHelper.ts',
-                    Text: error as string
-                })
-                reject();
+                // Log({
+                //     MethodName: 'ReplaceNull',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
+                reject(error);
             }
         }
         if ((options.ConvertStatusDescription === true || options.ConvertStatusToString === true) && options.Statuses !== null) {
             try {
                 finalExportData = await SwitchStatus(finalExportData, options.Statuses, options);
             } catch (error) {
-                Log({
-                    MethodName: 'SwitchStatus',
-                    ComponentName: 'ExportHelper.ts',
-                    Text: error as string
-                })
-                reject();
+                // Log({
+                //     MethodName: 'SwitchStatus',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
+                reject(error);
             }
         }
         if (options.BooleanToNumber === true) {
             try {
                 finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean);
             } catch (error) {
-                Log({
-                    MethodName: 'BooleanToNumber',
-                    ComponentName: 'ExportHelper.ts',
-                    Text: error as string
-                })
-                reject();
+                // Log({
+                //     MethodName: 'BooleanToNumber',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
+                reject(error);
             }
         }
         if (options.DeleteProperties?.length > 0) {
@@ -230,11 +228,11 @@ export const JsonToCSV = async (data: any, options: any) => {
             });
         }
         catch (e) {
-            Log({
-                MethodName: 'jsonToCsv',
-                ComponentName: 'ExportHelper.ts',
-                Text: e as string
-            })
+            // Log({
+            //     MethodName: 'jsonToCsv',
+            //     ComponentName: 'ExportHelper.ts',
+            //     Text: e as string
+            // })
             reject(e);
         }
     });
@@ -245,11 +243,11 @@ export const CreateFile = (data: any, type: string) => {
             const f = new File([data], `${Date.now()}.${type}`, { type: `text/${type}` });
             resolve(f);
         } catch (error) {
-            Log({
-                MethodName: 'CreateFile',
-                ComponentName: 'ExportHelper.ts',
-                Text: error as string
-            })
+            // Log({
+            //     MethodName: 'CreateFile',
+            //     ComponentName: 'ExportHelper.ts',
+            //     Text: error as string
+            // })
             reject(error);
         }
     })

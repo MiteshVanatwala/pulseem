@@ -1,5 +1,3 @@
-import { Log } from "../../connectors/Teams/Log";
-
 export const IsValidEmail = (value: string) => {
     if (value === '' || value === undefined) {
         return false;
@@ -37,11 +35,11 @@ export const VerifyGetUrl = (value: string) => {
             xmlhttp.open("HEAD", value, true);
             xmlhttp.send();
         } catch (error) {
-            Log({
-                MethodName: 'VerifyGetUrl',
-                ComponentName: 'Validation.ts',
-                Text: error as string
-            })
+            // Log({
+            //     MethodName: 'VerifyGetUrl',
+            //     ComponentName: 'Validation.ts',
+            //     Text: error as string
+            // })
             reject(false);
         }
     });

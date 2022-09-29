@@ -20,7 +20,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { Button } from "@mui/material";
-import { Log } from "../../connectors/Teams/Log";
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -374,21 +374,21 @@ const UploadXL = ({
                         reader.readAsText(file, "ISO-8859-8");
                     }
                     else {
-                        Log({
+                        dispatch(sendToTeamChannel({
                             MethodName: 'handleFiles',
                             ComponentName: 'UploadXL.js',
                             Text: `Client trying to upload non-acceptable file - ${file.name}`
-                        })
+                        }));
                         setLoader(false);
                         return false;
                     }
                 }
                 catch (error) {
-                    Log({
+                    dispatch(sendToTeamChannel({
                         MethodName: 'handleFiles',
                         ComponentName: 'UploadXL',
                         Message: error
-                    })
+                    }));
                     reject(error);
                 }
             });
