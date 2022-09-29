@@ -18,6 +18,7 @@ import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../../components/managment/Dialog";
+import { Log } from "../../connectors/Teams/Log";
 
 const EditGroupPopup = ({ classes,
     isOpen = false,
@@ -95,6 +96,11 @@ const EditGroupPopup = ({ classes,
             })
             return response
         } catch (err) {
+            Log({
+                MethodName: 'handleEditGroup',
+                ComponentName: 'EditGroupPopup.js',
+                Text: err
+            })
             return false;
         }
     };

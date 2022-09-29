@@ -3,6 +3,7 @@ import { Grid, Box, Typography, Divider, Link } from '@material-ui/core';
 import PurchaseSummary from './PurchaseSummary'
 import { Loader } from '../../../Loader/Loader';
 import { useEffect } from 'react';
+import { Log } from '../../../../connectors/Teams/Log';
 
 const TranzilaIframe = ({
     t,
@@ -25,6 +26,11 @@ const TranzilaIframe = ({
                     }
                 }
                 catch (e) {
+                    Log({
+                        MethodName: 'UseEffect',
+                        ComponentName: 'TranzilaIframe',
+                        Message: e
+                    })
                     return false;
                 }
             }
@@ -33,7 +39,7 @@ const TranzilaIframe = ({
 
     return <Grid container>
         <Grid item xs={12}>
-            <Box className={classes.justifyBetween} style={{alignItems: 'center'}}>
+            <Box className={classes.justifyBetween} style={{ alignItems: 'center' }}>
                 <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>
                 <Link onClick={onStepBack} style={{ cursor: 'pointer' }}>{t("smsReport.back")}</Link>
             </Box>

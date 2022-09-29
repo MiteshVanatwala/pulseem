@@ -20,6 +20,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { Button } from "@mui/material";
+import { Log } from "../../connectors/Teams/Log";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -378,6 +379,11 @@ const UploadXL = ({
                     }
                 }
                 catch (error) {
+                    Log({
+                        MethodName: 'handleFiles',
+                        ComponentName: 'UploadXL',
+                        Message: error
+                    })
                     reject(error);
                 }
             });

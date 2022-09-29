@@ -24,6 +24,7 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { Log } from "../../../connectors/Teams/Log";
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -427,7 +428,6 @@ const AutomationsManagnentScreen = ({ classes }) => {
         <CustomTooltip
           arrow
           isSimpleTooltip={false}
-          title={row.Name}
           classes={classes}
           interactive={true}
           placement={'top'}
@@ -600,6 +600,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
       setDialogType({
         type: "statusError",
         data: data.ID
+      })
+      Log({
+        MethodName: 'handleActiveChange',
+        ComponentName: 'AutomationsManagement.js',
+        Text: err
       })
     }
     handleClose()

@@ -12,6 +12,7 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCookie } from '../../helpers/Functions/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
+import { Log } from "../../connectors/Teams/Log";
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
@@ -41,6 +42,11 @@ const DashboardScreen = ({ classes }) => {
       }
     } catch (e) {
       console.error(e);
+      Log({
+        MethodName: 'init2FA',
+        ComponentName: 'Dashboard.js',
+        Text: e
+      })
     }
   }
 

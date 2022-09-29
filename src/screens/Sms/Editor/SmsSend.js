@@ -34,6 +34,7 @@ import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
+import { Log } from '../../../connectors/Teams/Log';
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -804,6 +805,11 @@ const SmsSend = ({ classes, ...props }) => {
         }
       }
       catch (error) {
+        Log({
+          MethodName: 'handleFiles',
+          ComponentName: 'SmsSend.js',
+          Text: error
+        })
         reject(error);
       }
     });

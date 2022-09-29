@@ -20,6 +20,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { Log } from '../../../connectors/Teams/Log';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -128,6 +129,11 @@ const ArchiveManagementScreen = ({ classes }) => {
         setPage(1);
       } catch (error) {
         console.log(error);
+        Log({
+          MethodName: 'handleSearch',
+          ComponentName: 'ArchiveManagement.js',
+          Text: error
+        })
       }
     }
 
@@ -149,7 +155,6 @@ const ArchiveManagementScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
@@ -266,6 +271,11 @@ const ArchiveManagementScreen = ({ classes }) => {
       });
     } catch (e) {
       console.log(e);
+      Log({
+        MethodName: 'handleDownloadCsv',
+        ComponentName: 'ArchiveManagement.js',
+        Text: e
+      })
     }
     finally {
       setLoader(false);

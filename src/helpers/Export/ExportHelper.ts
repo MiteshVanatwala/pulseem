@@ -2,6 +2,7 @@ import 'moment/locale/he';
 import i18n from 'i18next';
 import moment from 'moment';
 import Papa from 'papaparse';
+import { Log } from '../../connectors/Teams/Log';
 
 export interface ExportConditions {
     IsBoolean: boolean;
@@ -45,6 +46,11 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
             try {
                 finalExportData = await OrderItems(finalExportData, options.Order, options);
             } catch (error) {
+                Log({
+                    MethodName: 'HandleExportData',
+                    ComponentName: 'ExportHelper.ts',
+                    Text: error as string
+                })
                 console.error('OrderItems');
                 reject();
             }
@@ -53,7 +59,11 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
             try {
                 finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue);
             } catch (error) {
-                console.error('ReplaceNull');
+                Log({
+                    MethodName: 'ReplaceNull',
+                    ComponentName: 'ExportHelper.ts',
+                    Text: error as string
+                })
                 reject();
             }
         }
@@ -61,7 +71,11 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
             try {
                 finalExportData = await SwitchStatus(finalExportData, options.Statuses, options);
             } catch (error) {
-                console.error('SwitchStatus');
+                Log({
+                    MethodName: 'SwitchStatus',
+                    ComponentName: 'ExportHelper.ts',
+                    Text: error as string
+                })
                 reject();
             }
         }
@@ -69,7 +83,11 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
             try {
                 finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean);
             } catch (error) {
-                console.error('BooleanToNumber');
+                Log({
+                    MethodName: 'BooleanToNumber',
+                    ComponentName: 'ExportHelper.ts',
+                    Text: error as string
+                })
                 reject();
             }
         }
@@ -212,7 +230,11 @@ export const JsonToCSV = async (data: any, options: any) => {
             });
         }
         catch (e) {
-            console.error('jsonToCsv', e);
+            Log({
+                MethodName: 'jsonToCsv',
+                ComponentName: 'ExportHelper.ts',
+                Text: e as string
+            })
             reject(e);
         }
     });
@@ -223,6 +245,11 @@ export const CreateFile = (data: any, type: string) => {
             const f = new File([data], `${Date.now()}.${type}`, { type: `text/${type}` });
             resolve(f);
         } catch (error) {
+            Log({
+                MethodName: 'CreateFile',
+                ComponentName: 'ExportHelper.ts',
+                Text: error as string
+            })
             reject(error);
         }
     })

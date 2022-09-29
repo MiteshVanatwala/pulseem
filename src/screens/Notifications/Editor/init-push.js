@@ -1,3 +1,5 @@
+import { Log } from "../../../connectors/Teams/Log";
+
 export const PushService = async (apiToken) => {
     let swRegistration = null;
     Date.prototype.addDays = function (days) {
@@ -35,6 +37,11 @@ export const PushService = async (apiToken) => {
                 });
             }
             catch (e) {
+                Log({
+                    MethodName: 'initializeUI',
+                    ComponentName: 'init-push.js',
+                    Text: e
+                })
                 reject(e);
             }
         });

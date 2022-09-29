@@ -11,7 +11,7 @@ import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
-
+import { Log } from '../../../../connectors/Teams/Log';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -114,6 +114,11 @@ const SimplyClubPupup = ({
                 setheaders([...tempHeaders])
             } catch (e) {
                 console.error(e);
+                Log({
+                    MethodName: 'preload',
+                    ComponentName: 'SimplyClubPupup.js',
+                    Text: e
+                })
             }
         }
         if (ClientData) {
@@ -292,6 +297,11 @@ const SimplyClubPupup = ({
                 resolve(response);
             } catch (e) {
                 console.error(e);
+                Log({
+                    MethodName: 'handleAddClients',
+                    ComponentName: 'SimplyClubPupup.js',
+                    Text: e
+                })
                 reject(null);
             }
         });

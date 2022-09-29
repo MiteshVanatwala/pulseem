@@ -19,7 +19,7 @@ import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-
+import { Log } from "../../../../connectors/Teams/Log";
 
 const UnsubscribeOrDeletePopup = ({
     classes,
@@ -252,6 +252,11 @@ const UnsubscribeOrDeletePopup = ({
             }
             catch (error) {
                 setLoader(false);
+                Log({
+                    MethodName: 'handleFiles',
+                    ComponentName: 'UnsubscribeOrDeletePopup.js',
+                    Text: error
+                })
                 reject(error);
             }
         });
@@ -402,6 +407,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
+            Log({
+                MethodName: 'handleDeleteSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            })
             setLoader(false);
         }
     }
@@ -465,7 +475,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
-            //TODO: Something went wrong
+            Log({
+                MethodName: 'handleUnsubSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            })
             setLoader(false);
         }
     }
