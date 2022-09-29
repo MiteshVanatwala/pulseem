@@ -38,6 +38,7 @@ import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
+import PageNotFound from './screens/404';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -367,6 +368,9 @@ const renderRoutes = (classes, redirect) => {
         exact
         path={`/react/SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
+      />
+      <Route
+        path="*" element={<PageNotFound classes={classes} />}
       />
     </>
   )
