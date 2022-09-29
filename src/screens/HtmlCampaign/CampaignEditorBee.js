@@ -62,6 +62,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     title: "",
     message: ""
   })
+  const [beeFinalData, setBeeFinalData] = useState({});
   const DialogType = {
     TEST_SEND: "testSend",
     DELETE: "delete",
@@ -84,7 +85,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   useEffect(() => {
     if (dataLoaded) {
       setTimeout(() => {
-        onLoad();
+        //onLoad();
       }, 1000)
     }
   }, [dataLoaded]);
@@ -97,7 +98,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     initOptions();
     setTimeout(() => {
       if (dataLoaded) {
-        onLoad();
+        // onLoad();
       }
     }, 0);
   }, [language]);
@@ -125,6 +126,44 @@ const CampaignEditor = ({ classes, ...props }) => {
     setAlertLogout(true);
   });
 
+  var config = {
+    uid: 'test1-clientside', //needed for identify resources of the that user and billing stuff
+    container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
+    language: isRTL ? 'he-IL' : 'en-US',
+    trackChanges: true,
+    //mergeTags: mergeData,
+    onSave: (jsonFile, htmlFile) => {
+      console.log(jsonFile);
+      console.log('onSave', htmlFile)
+      //const reponse = dispatch(testSend({ ...sendRequest }));
+      //onResponse(reponse.payload.StatusCode);
+      //setSummaryData(reponse.payload.Summary);
+      //setLoader(false);
+    },
+    onSaveAsTemplate: (jsonFile) => {
+      console.log('onSaveAsTemplate', jsonFile)
+    },
+    onSend: (htmlFile, jsonFile) => {
+      setBeeFinalData({
+        campaignId: campaignId,
+        JsonData: JSON.stringify(jsonFile),
+        HtmlData: htmlFile
+      });
+      setDialog(DialogType.TEST_SEND);
+    },
+    onChange: (jsonFile, response) => {
+      console.log('onChange', jsonFile);
+      console.log('onChange', response);
+      // setBeeFinalData({
+      //   campaignId: campaignId,
+      //   JsonData: JSON.stringify(jsonFile),
+      //   HtmlData: response
+      // });
+    },
+    onError: (errorMessage) => {
+      console.log('onError ', errorMessage)
+    }
+  };
 
   const getData = async () => {
     setLoader(true);
@@ -138,24 +177,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     const initBee = () => {
       GetBeeToken().then((t) => {
         const beeTest = new BeePlugin(t);
-        var config = {
-          uid: 'test1-clientside', //needed for identify resources of the that user and billing stuff
-          container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-          language: isRTL ? 'he-IL' : 'en-US',
-          //mergeTags: mergeData,
-          onSave: (jsonFile, htmlFile) => {
-            console.log('onSave',  htmlFile)
-          },
-          onSaveAsTemplate: (jsonFile) => {
-            console.log('onSaveAsTemplate', jsonFile)
-          },
-          onSend: (htmlFile) => {
-            console.log('onSend', htmlFile)
-          },
-          onError: (errorMessage) => {
-            console.log('onError ', errorMessage)
-          }
-        };
         const template = {};
         beeTest.start(config, template).then((p) => {
           console.log(p);
@@ -349,32 +370,24 @@ const CampaignEditor = ({ classes, ...props }) => {
       registerEvents();
     }
   }
-  const saveDesign = (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    editorRef.current.exportHtml(
-      (data) => {
-        const { design, html, amp } = data;
-        const htmlToSave = amp.html
-        console.log(htmlToSave);
-        //const { html } = data.amp;
-        dispatch(saveCampaign({
-          campaignId: campaignId,
-          JsonData: JSON.stringify(design),
-          HtmlData: html
-        })).then((response) => {
-          if (response.payload === true) {
-            if (redirectAfterSave) {
-              window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
-            }
-            else if (showAnimation) {
-              setToastMessage(ToastMessages.CAMPAIGN_SAVED);
-            }
-          }
-          else {
-            console.log(response);
-          }
-        })
-      },
-      { amp: true, cleanup: true })
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
+    const response = await dispatch(saveCampaign({
+      campaignId: beeFinalData.campaignId,
+      JsonData: beeFinalData.JsonData,
+      HtmlData: beeFinalData.HtmlData
+    }));
+    if (response.payload === true) {
+      if (redirectAfterSave) {
+        window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
+      }
+      else if (showAnimation) {
+        setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+      }
+    }
+    else {
+      console.log(response);
+    }
+
   }
   const deleteNewsletter = async () => {
     setDialog(null);
