@@ -384,15 +384,15 @@ const App = ({ screenSize }) => {
   useEffect(() => {
 
     const initFeatures = async () => {
+      const isClal = getCookie('isClal');
       if (!accountSettings) {
         const settings = await dispatch(getCommonFeatures());
         dispatch(setAccountFeatures(settings.payload));
       }
-      const response = await dispatch(isClalAccount());
-      dispatch(setIsClal(response.payload));
-      // const smsOldVersion = getCookie('OldVersion')
-      // dispatch(setSmsOldVersion(smsOldVersion))
-      setCookie('OldVersion', false);
+      if (isClal === undefined) {
+        const response = await dispatch(isClalAccount());
+        dispatch(setIsClal(response.payload));
+      }
     }
 
     const updateToken = () => {
