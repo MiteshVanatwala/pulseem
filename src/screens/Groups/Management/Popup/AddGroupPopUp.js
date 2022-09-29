@@ -21,7 +21,7 @@ import {
 } from "../../../../redux/reducers/groupSlice";
 
 import { Dialog } from "../../../../components/managment/Dialog";
-import { Log } from "../../connectors/Teams/Log";
+import { Log } from "../../../../connectors/Teams/Log";
 
 const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog, getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();

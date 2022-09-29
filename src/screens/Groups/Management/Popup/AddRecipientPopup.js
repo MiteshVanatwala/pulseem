@@ -26,7 +26,7 @@ import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
-import { Log } from "../../connectors/Teams/Log";
+import { Log } from "../../../../connectors/Teams/Log";
 
 
 import { Loader } from "../../../../components/Loader/Loader";
