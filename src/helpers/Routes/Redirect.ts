@@ -10,16 +10,12 @@ const useRedirect = () => {
             window.open(url);
             return false;
         }
-        if (url.indexOf("aspx") > -1) {
+        if (url.toLowerCase().indexOf("aspx") > -1 || url.toLowerCase().indexOf('/pulseem/') > -1) {
             window.location.href = url;
         } else {
             navigate(url);
         }
     };
-
-    // const Response: generalPropTypes = {
-    //     redirect: Redirect
-    // };
 
     return Redirect;
 };
