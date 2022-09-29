@@ -22,6 +22,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
+import { Title } from '../../../components/managment/Title';
 
 const NewslettersReport = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
@@ -170,17 +171,6 @@ const NewslettersReport = ({ classes }) => {
   useEffect(() => {
     handleSearch();
   }, [newslettersReports])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('mainReport.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setNotificationNameSearch('')
@@ -915,7 +905,7 @@ const NewslettersReport = ({ classes }) => {
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

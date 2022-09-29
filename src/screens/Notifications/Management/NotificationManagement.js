@@ -31,6 +31,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import { Title } from '../../../components/managment/Title';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
@@ -198,17 +199,6 @@ const NotificationManagement = ({ classes }) => {
         {dialog.content}
       </Dialog>
     );
-  }
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('notifications.notificationManagement')}
-        </Typography>
-        <Divider />
-      </>
-    )
   }
 
   const clearSearch = () => {
@@ -1288,7 +1278,7 @@ const NotificationManagement = ({ classes }) => {
       currentPage='notifications'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('notifications.notificationManagement')} Classes={classes.managementTitle} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

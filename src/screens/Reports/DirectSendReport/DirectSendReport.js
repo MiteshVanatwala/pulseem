@@ -19,6 +19,7 @@ import { EmailStatus, SmsStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSearchParams } from 'react-router-dom';
+import { Title } from '../../../components/managment/Title';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   // const qs = queryString.parse(props.location.search);
@@ -194,17 +195,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     isSearchingData[key] = value;
 
     setSearching({ ...isSearching })
-  }
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
-        </Typography>
-        <Divider />
-      </>
-    )
   }
 
   const excelHeaders = {
@@ -424,7 +414,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes.managementTitle} />
       {renderTabs()}
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>

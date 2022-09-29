@@ -22,7 +22,8 @@ import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { Title } from '../../../components/managment/Title';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const { windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -51,17 +52,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('landingPages.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setLandingPageNameSearch('');
@@ -715,7 +705,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       currentPage='landingPages'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('landingPages.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

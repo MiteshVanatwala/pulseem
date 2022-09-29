@@ -19,6 +19,7 @@ import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { Title } from '../../../components/managment/Title';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -615,10 +616,7 @@ const MmsReport = ({ classes }) => {
             containerClass={classes.management}
             currentPage="reports"
             subPage="MmsReport">
-            <Typography className={classes.managementTitle}>
-                {t('common.MMSReports')}
-            </Typography>
-            <Divider />
+            <Title Text={t('common.MMSReports')} Classes={classes.managementTitle} />
             {renderFilter()}
             {renderManagmentLine()}
             <DataTable

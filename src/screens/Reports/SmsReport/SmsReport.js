@@ -22,6 +22,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { smsReportStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
+import { Title } from '../../../components/managment/Title';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -152,17 +153,6 @@ const SmsReport = ({ classes }) => {
     "replies": t('common.Comments'),
     "futureSends": t('campaigns.FutureSend'),
     "StatusName": t('mainReport.statusName'),
-  }
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('common.SMSReports')}
-        </Typography>
-        <Divider />
-      </>
-    )
   }
 
   const clearSearch = () => {
@@ -691,7 +681,7 @@ const SmsReport = ({ classes }) => {
       containerClass={classes.management}
       currentPage="reports"
       subPage="SmsReport">
-      {renderHeader()}
+      <Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

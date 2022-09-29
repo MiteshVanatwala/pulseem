@@ -22,6 +22,7 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { Title } from '../../../components/managment/Title';
 
 const MmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -52,17 +53,6 @@ const MmsManagnentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('mms.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('')
@@ -753,7 +743,7 @@ const MmsManagnentScreen = ({ classes }) => {
       currentPage='mms'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('mms.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

@@ -36,6 +36,7 @@ import { Dialog } from '../../components/managment/index';
 import { searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
+import { Title } from '../../components/managment/Title';
 
 const ClientSearchResult = ({ classes }) => {
   const {
@@ -343,18 +344,6 @@ const ClientSearchResult = ({ classes }) => {
     } else setSelectedClients([...selectedClients, id]);
   };
 
-
-  //  COMPONENTS  //
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t("client.logPageHeaderResource1.Text")}
-        </Typography>
-        <Divider />
-      </>
-    );
-  };
   // DONE
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
@@ -731,9 +720,7 @@ const ClientSearchResult = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
     >
       {renderToast()}
-      {renderHeader()}
-      {/* {renderSearchLine()} */}
-      {/* {windowSize !== "xs" ? renderManagmentLine() : null} */}
+      <Title Text={t('client.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       <Grid item lg={8} xs={windowSize === "xs" && 12} style={{ paddingTop: 40, margin: '0 auto' }}>
         {revenueSummary && <SummaryRow
           data={revenueSummary}

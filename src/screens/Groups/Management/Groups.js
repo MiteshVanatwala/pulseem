@@ -39,6 +39,7 @@ import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { Title } from '../../../components/managment/Title';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -109,16 +110,7 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
-    const renderHeader = () => {
-        return (
-            <>
-                <Typography className={classes.managementTitle}>
-                    {t("recipient.logPageHeaderResource1.Text")}
-                </Typography>
-                <Divider />
-            </>
-        );
-    };
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -1200,7 +1192,7 @@ const Groups = ({ classes }) => {
             containerClass={classes.management}>
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
-                {renderHeader()}
+                <Title Text={t('recipient.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
                 {renderSearchSection()}
                 {windowSize !== 'xs' ? renderManagmentLine() :
                     <Box

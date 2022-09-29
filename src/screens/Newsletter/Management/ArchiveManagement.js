@@ -21,6 +21,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { Title } from '../../../components/managment/Title';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -56,17 +57,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     getData();
     handleDefaultDates();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderArchive.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -612,7 +602,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       subPage='archiveManagement'
       classes={classes}
       containerClass={classes.managmentNarrow}>
-      {renderHeader()}
+      <Title Text={t('campaigns.logPageHeaderArchive.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

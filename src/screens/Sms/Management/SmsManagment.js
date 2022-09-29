@@ -27,6 +27,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import { Title } from '../../../components/managment/Title';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -63,17 +64,6 @@ const SmsManagnentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('sms.PageResource1.Title')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('')
@@ -1057,7 +1047,7 @@ const SmsManagnentScreen = ({ classes }) => {
       currentPage='sms'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}
