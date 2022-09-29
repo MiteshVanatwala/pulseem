@@ -124,7 +124,8 @@ const SmsCreator = ({ classes }) => {
     smsSendResult,
     commonSettings,
     testGroups,
-    ToastMessages
+    ToastMessages,
+    extraData
   } = useSelector((state) => state.sms);
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
@@ -337,11 +338,19 @@ const SmsCreator = ({ classes }) => {
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
-    let resp = await dispatch(getAccountExtraData());
-    let arr = Object.keys(resp.payload)
+    let resp = null;
+    if (!extraData || extraData?.length === 0) {
+      const ed = await dispatch(getAccountExtraData());
+      resp = ed.payload;
+    }
+    else {
+      resp = extraData;
+    }
+
+    let arr = Object.keys(resp)
     let additionalExtraData = arr.map(function (key) {
-      return { [key]: resp.payload[key] };
-    })
+      return { [key]: resp[key] };
+    });
 
     for (let i = 0; i < additionalExtraData.length; i++) {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })

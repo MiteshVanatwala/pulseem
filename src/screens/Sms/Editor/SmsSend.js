@@ -414,7 +414,8 @@ const SmsSend = ({ classes, ...props }) => {
     setLoader(true);
     getData();
     setLoader(false);
-    getDataExtra();
+    if (!extraData || extraData?.length === 0)
+      getDataExtra();
   }, [dispatch]);
   const getDataExtra = async () => {
     await dispatch(getAccountExtraData());
