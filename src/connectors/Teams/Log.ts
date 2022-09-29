@@ -6,9 +6,8 @@ export interface TeamsMessage {
     ComponentName: string;
     Text: string;
 }
-const dispatch = useDispatch();
-
 export const Log = async (message: TeamsMessage) => {
+    const dispatch = useDispatch();
     // Add environment dependency
     try {
         dispatch(sendToTeamChannel({
