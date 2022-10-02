@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Tooltip } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
 import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -16,8 +16,7 @@ import Papa from 'papaparse';
 import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
-// import { useHistory } from "react-router";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
@@ -112,23 +111,11 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
-  return {
-    id: `full-width-tab-${index}`,
-    "aria-controls": `full-width-tabpanel-${index}`,
-  };
-}
-
-const useStyle = makeStyles((theme) => ({
-  root: {
-    backgroundColor: "#ffffff",
-  },
-}));
 //#endregion
 
 const SmsSend = ({ classes, ...props }) => {
   //#region initialized states
-  const { id, FromAutomation, NodeToEdit } = useParams();
+  const { id } = useParams();
   const { t } = useTranslation();
   const styles = useStyles();
   const Redirect = useRedirect();
@@ -140,7 +127,6 @@ const SmsSend = ({ classes, ...props }) => {
   const { windowSize, isRTL } = useSelector(
     (state) => state.core
   );
-  const theme = useTheme();
   const [selectedGroups, setSelected] = useState([]);
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
   const [sendType, setSendType] = useState("1");
@@ -153,19 +139,15 @@ const SmsSend = ({ classes, ...props }) => {
   const [totalRecords, settotalRecords] = useState(0);
   const [exceptionalDays, setExceptionalDays] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
-  const [areaClick, setareaClick] = useState(false);
   const [dropClick, setdropClick] = useState(false);
   const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
   const [columnValidate, setcolumnValidate] = useState(false);
   const [afterClick, setafterClick] = useState(false);
   const [specialSettingValidation, setspecialSettingValidation] = useState(false);
-  const [reciFilter, setreciFilter] = useState(false);
-  const [responseQuick, setresponseQuick] = useState(null);
   const [pulseBool, setpulseBool] = useState(false);
   const [TimeBool, setTimeBool] = useState(false);
   const [dropIndex, setdropIndex] = useState(-1);
-  const [noTrue, setnoTrue] = useState(false);
   const [snackbarRecipients, setsnackbarRecipients] = useState(false);
   const [bsDot, setbsDot] = useState(false);
   const [model, setModel] = useState({
@@ -200,11 +182,9 @@ const SmsSend = ({ classes, ...props }) => {
   const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
-  const [editT, seteditT] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [totalCampaigns, settotalCampaigns] = useState([]);
   const [typedData, settypedData] = useState([]);
-  const [displayFilter, setdisplayFilter] = useState(false);
   const [selectArray, setselectArray] = useState([]);
   const [dataSaved, setdataSaved] = useState({
     campaignName: "",
@@ -226,27 +206,29 @@ const SmsSend = ({ classes, ...props }) => {
 
   //#endregion
   useEffect(() => {
-    setselectArray([
-      {
-        isdisabled: false,
-        idx: -1,
-        value: "FirstName",
-        label: t("common.first_name")
-      },
-      {
-        isdisabled: false,
-        idx: -1,
-        value: "LastName",
-        label: t("common.last_name")
-      },
-      {
-        isdisabled: false,
-        idx: -1,
-        value: "CellPhone",
-        label: t("common.cellphone")
-      }
-    ]);
-  }, [!showLoader]);
+    if (!showLoader) {
+      setselectArray([
+        {
+          isdisabled: false,
+          idx: -1,
+          value: "FirstName",
+          label: t("common.first_name")
+        },
+        {
+          isdisabled: false,
+          idx: -1,
+          value: "LastName",
+          label: t("common.last_name")
+        },
+        {
+          isdisabled: false,
+          idx: -1,
+          value: "CellPhone",
+          label: t("common.cellphone")
+        }
+      ]);
+    }
+  }, [showLoader, t]);
 
 
   const handleSendResult = async (smsSendResult) => {
@@ -318,7 +300,8 @@ const SmsSend = ({ classes, ...props }) => {
         const selectedGroupsForSend = [];
         const seGroups = campaignSettings.payload.Groups;
         for (var i = 0; i < seGroups.length; i++) {
-          const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] });
+          const idx = i;
+          const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[idx] });
           if (g.length > 0) {
             selectedGroupsForSend.push(g[0]);
           }
@@ -329,16 +312,18 @@ const SmsSend = ({ classes, ...props }) => {
         setbsDot(true);
         const selectedGroups = [];
         const seGroups = campaignSettings.payload.SendExeptional.Groups;
-        for (var i = 0; i < seGroups.length; i++) {
-          selectedGroups.push(subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] })[0]);
+        for (var j = 0; j < seGroups.length; j++) {
+          const idx = j;
+          selectedGroups.push(subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[idx] })[0]);
         }
         setFilterGroups(selectedGroups);
       }
       if (campaignSettings.payload.SendExeptional != null && campaignSettings.payload.SendExeptional.Campaigns.length !== 0) {
         const selectedCampaigns = [];
         const seCampaigns = campaignSettings.payload.SendExeptional.Campaigns;
-        for (var i = 0; i < seCampaigns.length; i++) {
-          selectedCampaigns.push(finishedCampaigns.payload.filter((c) => { return c.SMSCampaignID === seCampaigns[i] })[0]);
+        for (var h = 0; h < seCampaigns.length; h++) {
+          const idx = h;
+          selectedCampaigns.push(finishedCampaigns.payload.filter((c) => { return c.SMSCampaignID === seCampaigns[idx] })[0]);
         }
         setFilterCampaigns(selectedCampaigns);
       }
@@ -355,13 +340,11 @@ const SmsSend = ({ classes, ...props }) => {
         settoggleRandom(true);
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 2) {
-        setnoTrue(true);
         setpulsePer("recipients");
         setpulseReci("Recipients");
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 1) {
         setpulsePer("percent");
-        setnoTrue(false);
         setpulseReci("");
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 1) {
@@ -399,8 +382,11 @@ const SmsSend = ({ classes, ...props }) => {
     }
   };
 
-  useEffect(async () => {
-    await isOtpPassed();
+  useEffect(() => {
+    const fetchOTPPassed = () => {
+      isOtpPassed();
+    }
+    fetchOTPPassed();
   }, [dataSaved]);
 
   useEffect(() => {
@@ -447,11 +433,11 @@ const SmsSend = ({ classes, ...props }) => {
   };
 
   const handleSendType = (event) => {
-    if (event.target.value == "1") {
+    if (event.target.value === "1") {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
     }
-    else if (event.target.value == "3") {
+    else if (event.target.value === "3") {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
       setTimeInterval(-1);
@@ -557,10 +543,10 @@ const SmsSend = ({ classes, ...props }) => {
     setPulseAmount(sourcePulses.pulseAmount);
     setTimeInterval(sourcePulses.timeInterval);
 
-    if (sourcePulses.pulseAmount == "" || sourcePulses.timeInterval == "") {
+    if (sourcePulses.pulseAmount === "" || sourcePulses.timeInterval === "") {
       settogglePulse(false)
     }
-    if (sourcePulses.randomAmount == "") {
+    if (sourcePulses.randomAmount === "") {
       settoggleRandom(false)
     }
     setDialogType(null);
@@ -660,16 +646,14 @@ const SmsSend = ({ classes, ...props }) => {
     const records = enteredValue.filter((r) => { return r !== "" });
     settotalRecords(records.length)
     setareaData(e.target.value);
-    setareaClick(true);
     setdropClick(false);
   };
   const handleFiles = (e) => {
     e.preventDefault();
-    setareaClick(false);
     setdropClick(true);
     const file = e.dataTransfer.files[0];
     const reader = new FileReader();
-    var p = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       try {
         if (file.name.toLowerCase().indexOf("xls") > -1) {
           setLoader(true);
@@ -711,8 +695,6 @@ const SmsSend = ({ classes, ...props }) => {
         }
 
         else if (file.name.toLowerCase().indexOf("csv") > -1) {
-
-          const maxLinesPerFile = 1000000;
           setLoader(true);
           reader.onload = function () {
             var config = {
@@ -748,7 +730,7 @@ const SmsSend = ({ classes, ...props }) => {
                       if (
                         item &&
                         String(item).startsWith("5") &&
-                        String(item).length == 9
+                        String(item).length === 9
                       ) {
                         item = "0" + item;
                       }
@@ -776,8 +758,6 @@ const SmsSend = ({ classes, ...props }) => {
               beforeFirstChunk: undefined,
               withCredentials: undefined,
             };
-            const lines = reader.result.split("\n");
-
 
             Papa.parse(reader.result, {
               config,
@@ -788,9 +768,9 @@ const SmsSend = ({ classes, ...props }) => {
                 const resultCsv = results.data;
                 setDialogType({ type: "manualUpload" });
                 let ddc = [];
-                for (let i in resultCsv[0]) {
+                resultCsv[0].foreach(() => {
                   ddc.push(t("sms.adjustTitle"))
-                }
+                })
                 setheaders(ddc);
               },
 
@@ -981,7 +961,7 @@ const SmsSend = ({ classes, ...props }) => {
                 </div>
               ) : null}
             </div>
-            {manualClick == false ? (
+            {manualClick === false ? (
               <div
                 style={{
                   display: "flex",
@@ -1003,7 +983,7 @@ const SmsSend = ({ classes, ...props }) => {
               </div>
             ) : null}
           </div>
-          {manualClick == true ? (
+          {manualClick === true ? (
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
                 <div>
@@ -1043,24 +1023,18 @@ const SmsSend = ({ classes, ...props }) => {
         if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) {
           setbsDot(true);
           setsnackbarRecipients(true);
-          setdisplayFilter(true);
-          setreciFilter(false);
         }
         else {
           setbsDot(false);
-          setreciFilter(false);
-          setdisplayFilter(false);
         }
       }
     }
     else {
       if (selectedFilterGroups.length !== 0 || exceptionalDays !== "" || selectedFilterCampaigns.length !== 0) {
         setsnackbarRecipients(true);
-        setreciFilter(false);
         setbsDot(true);
       }
       else {
-        setreciFilter(false);
         setbsDot(false);
       }
     }
@@ -1101,8 +1075,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
     setinitialheadstate(dummyArr);
     setheaders(dummyArr)
-
-    seteditT(true);
     setDialogType({ type: "manualUpload" });
   };
   const handleReciInput = (e) => {
@@ -1137,23 +1109,22 @@ const SmsSend = ({ classes, ...props }) => {
     }
     else {
       setDateFieldID(e.target.value)
-      {
-        Object.keys(extraData).map((item, i) => {
-          if (e.target.value == i + 3) {
-            setSelectedSpecialValue(item)
-          }
-          else if (e.target.value == 1) {
-            setSelectedSpecialValue("Birthday")
-          }
-          else if (e.target.value == 2) {
-            setSelectedSpecialValue("Creation day")
-          }
-        })
-      }
+      Object.keys(extraData).map((item, i) => {
+        if (parseInt(e.target.value) === i + 3) {
+          setSelectedSpecialValue(item)
+        }
+        else if (parseInt(e.target.value) === 1) {
+          setSelectedSpecialValue("Birthday")
+        }
+        else if (parseInt(e.target.value) === 2) {
+          setSelectedSpecialValue("Creation day")
+        }
+      })
+
     }
   }
   const handlePulseDialog = () => {
-    setSourcePulses({ timeType: timeType, pulseType: pulseType, pulseAmount: pulseAmount, timeInterval, timeInterval, randomAmount: random });
+    setSourcePulses({ timeType: timeType, pulseType: pulseType, pulseAmount: pulseAmount, timeInterval, randomAmount: random });
     setDialogType({ type: "pulses" });
   }
   const renderRight = () => {
@@ -1197,35 +1168,35 @@ const SmsSend = ({ classes, ...props }) => {
               <Box
                 className={classes.dateBox}
                 style={{
-                  pointerEvents: sendType == "2" ? "auto" : "none",
+                  pointerEvents: sendType === "2" ? "auto" : "none",
                 }}
               >
                 <DateField
                   minDate={moment()}
                   classes={classes}
-                  value={sendType == "2" ? sendDate : null}
+                  value={sendType === "2" ? sendDate : null}
                   onChange={handleDatePicker}
                   placeholder={t("notifications.date")}
                   timePickerOpen={true}
-                  dateActive={sendType == "2" ? false : true}
+                  dateActive={sendType === "2" ? false : true}
                 />
               </Box>
               <Box
                 className={classes.dateBox}
                 style={{
                   marginTop: 10,
-                  pointerEvents: sendType == "2" ? "auto" : "none",
+                  pointerEvents: sendType === "2" ? "auto" : "none",
                 }}
               >
                 <DateField
                   minDate={moment()}
                   classes={classes}
-                  value={sendType == "2" ? sendDate : null}
+                  value={sendType === "2" ? sendDate : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
                   ampm={false}
-                  timeActive={sendType == "2" ? false : true}
+                  timeActive={sendType === "2" ? false : true}
                   timePickerOpen={timePickerOpen}
                 />
               </Box>
@@ -1242,7 +1213,7 @@ const SmsSend = ({ classes, ...props }) => {
                 className={classes.dateBox}
                 style={{
                   marginTop: 10,
-                  pointerEvents: sendType == "3" ? "auto" : "none",
+                  pointerEvents: sendType === "3" ? "auto" : "none",
                 }}
               >
                 <select
@@ -1286,8 +1257,8 @@ const SmsSend = ({ classes, ...props }) => {
                   type="text"
                   className={classes.inputDays}
                   placeholder="0"
-                  disabled={sendType == "3" ? false : true}
-                  value={sendType == "3" ? daysBeforeAfter : ""}
+                  disabled={sendType === "3" ? false : true}
+                  value={sendType === "3" ? daysBeforeAfter : ""}
                   onChange={(e) => { handleSpecialDayChange(e) }}
                   maxLength="3"
                 />
@@ -1300,7 +1271,7 @@ const SmsSend = ({ classes, ...props }) => {
                   <div style={{ display: "flex" }}>
                     <span
                       className={
-                        sendType == "3" ? toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                        sendType === "3" ? toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                       }
                       onClick={() => {
                         handlebef();
@@ -1310,7 +1281,7 @@ const SmsSend = ({ classes, ...props }) => {
                     </span>
                     <span
                       className={
-                        sendType == "3" ? toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                        sendType === "3" ? toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
                       }
                       onClick={() => {
                         handleaf();
@@ -1322,7 +1293,7 @@ const SmsSend = ({ classes, ...props }) => {
                   </div> : <div style={{ display: "flex" }}>
                     <span
                       className={
-                        sendType == "3" ? toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                        sendType === "3" ? toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
                       }
                       onClick={() => {
                         handlebef();
@@ -1332,7 +1303,7 @@ const SmsSend = ({ classes, ...props }) => {
                     </span>
                     <span
                       className={
-                        sendType == "3" ? toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                        sendType === "3" ? toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                       }
                       onClick={() => {
                         handleaf();
@@ -1346,13 +1317,13 @@ const SmsSend = ({ classes, ...props }) => {
                 className={classes.dateBox}
                 style={{
                   marginTop: 10,
-                  pointerEvents: sendType == "3" ? "auto" : "none",
+                  pointerEvents: sendType === "3" ? "auto" : "none",
                   marginBottom: '1rem'
                 }}
               >
                 <DateField
                   classes={classes}
-                  value={sendType == "3" ? sendTime : null}
+                  value={sendType === "3" ? sendTime : null}
 
                   onTimeChange={handleRadioTime}
                   placeholder={t("notifications.hour")}
@@ -1363,8 +1334,8 @@ const SmsSend = ({ classes, ...props }) => {
                   }}
                   ampm={false}
                   timePickerOpen={timePickerOpen}
-                  timeActive={sendType == "3" ? false : true}
-                  disabled={sendType == "3" ? false : true}
+                  timeActive={sendType === "3" ? false : true}
+                  disabled={sendType === "3" ? false : true}
                   autoOk
                 />
               </Box>
@@ -1403,8 +1374,8 @@ const SmsSend = ({ classes, ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" || pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-              {t("sms.every")} {timeInterval} {hourName == "" || minName == "mins" ? t("common.minutes") : t("common.hours")}
+              {t("smsReport.packetSend")} - {pulseAmount} {pulsePer === "" || pulsePer === "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
+              {t("sms.every")} {timeInterval} {hourName === "" || minName === "mins" ? t("common.minutes") : t("common.hours")}
             </span>
           ) : null}
           {toggleRandom ? (
@@ -1488,12 +1459,11 @@ const SmsSend = ({ classes, ...props }) => {
       if (toggle && exit !== "exit") {
         setToastMessage(ToastMessages.SUCCESS);
       }
-      else if (toggle && exit == "exit") {
+      else if (toggle && exit === "exit") {
         Redirect({ url: "/react/SMSCampaigns" });
       }
       else {
         let response = await dispatch(getCampaignSumm(requestPayload.SmsCampaignID));
-        setresponseQuick(response);
         const estimated = estimatedEndDate(response.payload);
         setestimationDate(estimated);
         setsummModal(true);
@@ -1530,7 +1500,7 @@ const SmsSend = ({ classes, ...props }) => {
     return moment(date)
       .add(
         Math.round(addTime),
-        timeType == 1
+        timeType === 1
           ? "m"
           : "h"
       )
@@ -1605,7 +1575,7 @@ const SmsSend = ({ classes, ...props }) => {
     }
   };
   const handleChangeId = (id) => {
-    if (dropIndex == -1) {
+    if (dropIndex === -1) {
       setdropIndex(id);
     } else {
       setdropIndex(-1);
@@ -1698,7 +1668,7 @@ const SmsSend = ({ classes, ...props }) => {
       setLoader(false);
 
 
-      if (r.payload.Reason == "no_recipients_to_update") {
+      if (r.payload.Reason === "no_recipients_to_update") {
         setToastMessage(ToastMessages.INVALID_RECIPIENTS)
         settypedData([]);
         setContacts([]);
@@ -1757,7 +1727,7 @@ const SmsSend = ({ classes, ...props }) => {
     const groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
     let columnHasValue = false;
     headers.forEach((value) => {
-      if (value == t("common.cellphone")) {
+      if (value === t("common.cellphone")) {
         columnHasValue = true
       }
     })
@@ -1875,8 +1845,8 @@ const SmsSend = ({ classes, ...props }) => {
         </div>
         <div>
           <ul className={classes.fieldsRequire}>
-            {spectialDateFieldID == "0" ? <li>{t("sms.selectSpecialField")}</li> : null}
-            {daysBeforeAfter == "" ? <li>{t("sms.typeDays")}</li> : null}
+            {spectialDateFieldID === "0" ? <li>{t("sms.selectSpecialField")}</li> : null}
+            {daysBeforeAfter === "" ? <li>{t("sms.typeDays")}</li> : null}
             {sendTime == null ? <li>{t("sms.selectSendingTime")}</li> : null}
 
           </ul>
@@ -1903,10 +1873,10 @@ const SmsSend = ({ classes, ...props }) => {
       </Dialog></>)
   }
   const handleMainWarningPulse = () => {
-    if (snackbarTimeBoolean == false || snackBarPulseBoolean == false) {
+    if (snackbarTimeBoolean === false || snackBarPulseBoolean === false) {
       return false;
     }
-    else if (snackbarMainPulse == false) {
+    else if (snackbarMainPulse === false) {
       return false;
     }
   }
@@ -2238,8 +2208,8 @@ const SmsSend = ({ classes, ...props }) => {
                           <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
 
                           {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
-                          {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
-                        {dropIndex == idx ? (
+                          {dropIndex === idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
+                        {dropIndex === idx ? (
                           <div className={classes.adjustC}>
                             {selectArray.map((item, id) => {
 
@@ -2282,6 +2252,7 @@ const SmsSend = ({ classes, ...props }) => {
                       </tbody>
                     );
                   }
+                  return null;
                 })
                 : typedData.map((item, id) => {
                   if (id > typedData.length - 6) {
@@ -2300,6 +2271,7 @@ const SmsSend = ({ classes, ...props }) => {
                       </tbody>
                     );
                   }
+                  return null;
                 })}
             </table>
           </Box>
@@ -2392,7 +2364,6 @@ const SmsSend = ({ classes, ...props }) => {
                     }
                     onClick={() => {
                       setPulseType(1);
-                      setnoTrue(false);
                       setpulsePer("percent");
                     }}
                   >
@@ -2408,7 +2379,6 @@ const SmsSend = ({ classes, ...props }) => {
                     }
                     onClick={() => {
                       setPulseType(2);
-                      setnoTrue(true);
                       setpulsePer("recipients");
                       setpulseReci("Recipients");
                     }}
@@ -2574,7 +2544,7 @@ const SmsSend = ({ classes, ...props }) => {
       content: (
         <Box>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <img src={Gif} style={{ width: "150px", height: "150px" }} />
+            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="" />
             <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}
