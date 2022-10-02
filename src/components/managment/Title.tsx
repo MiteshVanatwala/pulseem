@@ -1,16 +1,21 @@
-import { Typography, Divider } from '@material-ui/core';
+import { Typography, Divider, Box } from '@material-ui/core';
 
 interface TitleObject {
     Classes: any;
     Text: string;
+    ContainerStyle: object,
+    Element: any;
 }
 
-export const Title = ({ Text, Classes }: TitleObject) => {
+export const Title = ({ Text, Classes, ContainerStyle, Element = null }: TitleObject) => {
     return (
         <>
-            <Typography className={Classes}>
-                {Text}
-            </Typography>
+            <Box style={ContainerStyle}>
+                <Typography className={Classes}>
+                    {Text}
+                </Typography>
+                {Element}
+            </Box>
             <Divider />
         </>
     )

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
   Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip
 } from '@material-ui/core'
 import {
@@ -32,11 +32,12 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { Title } from '../../../components/managment/Title';
+import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { notificationData } = useSelector(state => state.notification)
+  const { notificationData, subAccountApiKey } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
@@ -45,7 +46,6 @@ const NotificationManagement = ({ classes }) => {
   const [scriptDirectory, setScriptDirectory] = useState(0);
   const [copyStatus, setCopyStatus] = useState(false);
   const [scriptPath, setScriptPath] = useState(0);
-  const [apiKey, setApiKey] = useState(0);
   const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
@@ -61,8 +61,7 @@ const NotificationManagement = ({ classes }) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const scriptDialogCookie = getCookie('scriptDialog')
-  const hideScriptDialog = (scriptDialogCookie === 'true')
-  const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
+  const [showScriptDialog, setShowScriptDialog] = useState(scriptDialogCookie)
   const [showLoader, setLoader] = useState(true);
   const refScriptCode = useRef(null);
   moment.locale(language)
@@ -80,18 +79,18 @@ const NotificationManagement = ({ classes }) => {
   }, [dispatch]);
 
   const handleScriptPath = async () => {
-    const scriptPath = await dispatch(getScriptPath());
-    const path = (scriptPath && scriptPath.payload) || '';
-    setScriptPath(path);
-    if (path !== '') {
+    if (!scriptPath || scriptPath === '') {
+      await dispatch(getScriptPath())
+    }
+    if (scriptPath !== '') {
       setScriptDirectory(1);
     }
   }
 
   const handleApiKey = async () => {
-    const response = await dispatch(getSubAccountApiKey());
-    const apiKey = (response && response.payload) || '';
-    setApiKey(apiKey);
+    if (!subAccountApiKey || subAccountApiKey === "") {
+      await dispatch(getSubAccountApiKey());
+    }
   }
 
   const handleScriptDirectory = async (event) => {
@@ -176,16 +175,8 @@ const NotificationManagement = ({ classes }) => {
     }
   }
 
-  const handleImplementScript = (value) => {
-    if (value) {
-      setCookie('scriptDialog', scriptDialog, { maxAge: 2147483647 });
-      dispatch(updateScriptPath(scriptPath));
-    }
-    setShowScriptDialog(false)
-  }
-
   const renderImplementDialog = () => {
-    if (hideScriptDialog) {
+    if (showScriptDialog === "false") {
       return;
     }
 
@@ -194,7 +185,7 @@ const NotificationManagement = ({ classes }) => {
       <Dialog
         classes={classes}
         open={showScriptDialog}
-        onClose={() => handleImplementScript(false)}
+        onClose={() => setShowScriptDialog(false)}
         {...dialog}>
         {dialog.content}
       </Dialog>
@@ -1068,7 +1059,7 @@ const NotificationManagement = ({ classes }) => {
 &lt;/script&gt;`;
 
     return scriptCode
-      .replace("#key#", '"' + encodeURI(apiKey) + '"')
+      .replace("#key#", '"' + encodeURI(subAccountApiKey) + '"')
       .replace("&lt;", "<")
       .replace("&gt;", ">")
       .replace("&lt;", "<")
@@ -1083,6 +1074,10 @@ const NotificationManagement = ({ classes }) => {
       .replace(/(^[ \t]*\n)/gm, "");
   }
 
+  const handleDontShowAgain = (value) => {
+    setCookie('scriptDialog', !value, { maxAge: 2147483647 });
+    handleScriptDialogCheck(value)
+  }
   const renderImplement = () => {
     return {
       title: null,
@@ -1191,7 +1186,7 @@ const NotificationManagement = ({ classes }) => {
               control={
                 <Checkbox
                   checked={scriptDialog}
-                  onChange={() => handleScriptDialogCheck(!scriptDialog)}
+                  onChange={() => handleDontShowAgain(!scriptDialog)}
                   color="primary"
                 />
               }
@@ -1200,7 +1195,7 @@ const NotificationManagement = ({ classes }) => {
           <Button
             variant='contained'
             size='small'
-            onClick={() => handleImplementScript(true)}
+            onClick={() => setShowScriptDialog(false)}
             className={clsx(
               classes.gruopsDialogButton,
               classes.dialogConfirmButton,
@@ -1221,41 +1216,44 @@ const NotificationManagement = ({ classes }) => {
     let dialog = null;
 
     switch (type) {
-      case 'preview': {
+      case DialogTypes.PREVIEW: {
         dialog = renderPreview(data)
         break;
       }
-      case 'duplicate': {
+      case DialogTypes.DUPLICATE: {
         dialog = renderDuplicate(data)
         break;
       }
-      case 'groupsById': {
+      case DialogTypes.GROUP_BY_ID: {
         dialog = renderGroupsById(data)
         break;
       }
-      case 'groups': {
+      case DialogTypes.GROUPS: {
         dialog = renderGroups(data)
         break;
       }
-      case 'delete': {
+      case DialogTypes.DELETE: {
         dialog = renderDelete(data)
         break;
       }
-      case 'restore': {
+      case DialogTypes.RESTORE: {
         dialog = renderRestore(data)
         break;
       }
-      case 'implement': {
+      case DialogTypes.IMPLEMENT: {
         dialog = renderImplement(data)
         break;
       }
-      case 'createGroup': {
+      case DialogTypes.CREATE_GROUP: {
         dialog = renderCreateGroup(data)
         break;
       }
-      case 'subscribers': {
+      case DialogTypes.SUBSCRIBERS: {
         dialog = renderSubscribers(data)
         break;
+      }
+      default: {
+        return false;
       }
     }
 
@@ -1278,7 +1276,21 @@ const NotificationManagement = ({ classes }) => {
       currentPage='notifications'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('notifications.notificationManagement')} Classes={classes.managementTitle} />
+      <Title
+        Text={t('notifications.notificationManagement')} Classes={classes.managementTitle}
+        ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
+        Element={
+          <Button onClick={() => {
+            setCookie('scriptDialog', true);
+            setShowScriptDialog(true);
+          }
+          }
+            variant='contained'
+            className={clsx(
+              classes.actionButton,
+              classes.implementButtonFlex,
+              classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
+        } />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}
@@ -1286,7 +1298,7 @@ const NotificationManagement = ({ classes }) => {
       {renderDialog()}
       {renderImplementDialog()}
       <Loader isOpen={showLoader} />
-    </DefaultScreen>
+    </DefaultScreen >
   )
 }
 
