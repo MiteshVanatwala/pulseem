@@ -14,8 +14,10 @@ const PulseemTips = ({ classes, t, isRTL }) => {
 
   const dispatch = useDispatch();
 
-  const initData = async () => {
-    dispatch(getTips());
+  const initData = () => {
+    if (!tips || tips.length === 0) {
+      dispatch(getTips());
+    }
   }
 
   useEffect(initData, [dispatch])
