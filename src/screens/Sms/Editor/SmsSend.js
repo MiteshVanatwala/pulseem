@@ -21,7 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
-import Title from '../../../components/Wizard/Title'
+import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
@@ -2633,7 +2633,7 @@ const SmsSend = ({ classes, ...props }) => {
       <div>
 
         <div>
-          <Title title={t("mainReport.smsCampaign")}
+          <WizardTitle title={t("mainReport.smsCampaign")}
             classes={classes}
             stepNumber={2}
             subTitle={t("mainReport.sendSetting")}

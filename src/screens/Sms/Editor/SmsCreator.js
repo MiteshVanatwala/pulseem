@@ -16,7 +16,7 @@ import Emoj from "../../../assets/images/smile.png";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
-import Title from '../../../components/Wizard/Title'
+import WizardTitle from '../../../components/Wizard/WizardTitle'
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 
@@ -1934,7 +1934,7 @@ const SmsCreator = ({ classes }) => {
         className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
         style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
         <Grid item sm={12} md={12} lg={8}>
-          <Title title={t("mainReport.smsCampaign")}
+          <WizardTitle title={t("mainReport.smsCampaign")}
             classes={classes}
             tooltip={t("mainReport.toolTip1")}
             stepNumber={1}

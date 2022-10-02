@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
-import Title from '../../components/Wizard/Title'
+import WizardTitle from '../../components/Wizard/WizardTitle'
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
@@ -549,7 +549,7 @@ const SiteTrackingEditor = ({ classes }) => {
         return <>
             <Grid container>
                 <Grid item xs={7}>
-                    <Title title={t("siteTracking.title")}
+                    <WizardTitle title={t("siteTracking.title")}
                         classes={classes}
                         subTitle={t("siteTracking.setUp")}
                         topZero={false}
