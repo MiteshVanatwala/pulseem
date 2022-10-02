@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction
 } from '@material-ui/core'
 import {
@@ -55,15 +55,15 @@ const SmsManagnentScreen = ({ classes }) => {
   moment.locale(language)
   const Redirect = useRedirect();
 
-  const getData = async () => {
-    await dispatch(getSmsData())
+  const getData = useCallback(() => {
+    dispatch(getSmsData())
     setLoader(false);
-  }
+  }, [dispatch])
 
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
+  }, [getData])
 
   const clearSearch = () => {
     setCampaineNameSearch('')
