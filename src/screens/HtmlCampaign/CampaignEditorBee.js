@@ -567,6 +567,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     </Box>
   }
 
+  const handleCloseReponse = () => {
+    setDialog(null);
+    setIsResponseModal(false);
+  }
+
   return (
     <DefaultScreen
       currentPage='campaignEditor'
@@ -595,8 +600,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       <ResponseModal
         classes={classes}
         isOpen={dialog && isResponseModal}
-        onClose={() => setDialog(null)}
-        onConfirm={() => setDialog(null)}
+        onClose={handleCloseReponse}
+        onConfirm={handleCloseReponse}
         summaryData={summaryData}
         message={dialog}
       />
