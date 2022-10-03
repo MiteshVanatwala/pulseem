@@ -108,7 +108,7 @@ const NewslettersReport = ({ classes }) => {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
           CampaignID: id,
-          PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedClientsCampaignID,
           TestStatusOfEmailElseSms: 1,
           Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed,
           ResultTitle: t('common.Removed') + ' - ' + t('common.campaignID') + ' ' + id

@@ -194,7 +194,7 @@ const ClientSearchResult = ({ props, classes }) => {
       if (isSessionStorageData) {
         setSearchReferrer(true);
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
-        overwriteObject.IsSearchByFilter = true;
+        overwriteObject.IsSearchByFilter = referrer.toLowerCase().includes('clientsearch') ?? true;
         setFilterSearch(overwriteObject);
       }
     }
