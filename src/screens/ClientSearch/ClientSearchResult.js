@@ -208,7 +208,7 @@ const ClientSearchResult = ({ props, classes }) => {
       SearchTerm: "",
       Status: location?.state?.Status ?? null,
       PageType: location?.state?.PageType ?? null,
-      ReportType: document.referrer.toLowerCase().indexOf('smsmainreport') > -1 ? 20 : 10,
+      ReportType: document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ? 20 : 10,
       TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
       CampaignID: id,
       Switch: "",
