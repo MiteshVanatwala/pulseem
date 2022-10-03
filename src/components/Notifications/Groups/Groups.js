@@ -253,14 +253,14 @@ const Groups = ({ classes,
         <Box className={classes.groupsContainer} key={uniqueKey}>
             {
                 windowSize === 'xs' && <Grid item xs={12}>
-                    <FormControl className={classes.margin, classes.searchInput}>
+                    <FormControl className={clsx(classes.margin, classes.searchInput)}>
                         <Input
                             autoComplete='off'
                             onChange={handleSearch}
                             placeholder={t('notifications.buttons.search')}
                             id="searchGroup"
                             startAdornment={
-                                <InputAdornment position="start" autocomplete="off">
+                                <InputAdornment position="start" autoComplete="off">
                                     <BsSearch />
                                 </InputAdornment>
                             }

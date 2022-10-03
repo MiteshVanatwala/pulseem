@@ -24,8 +24,9 @@ import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
-  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
+  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
+import { getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
@@ -38,78 +39,32 @@ import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
 }
-//#region styles
-const useStyles = makeStyles((theme) => ({
-  customWidth: {
-    maxWidth: 200,
-    backgroundColor: "black",
-    fontSize: "14px",
-    textAlign: 'center'
-  },
-  noMaxWidth: {
-    maxWidth: "none",
-  },
-}));
-
-const useSnackRecipients = makeStyles((theme) => ({
-
-  customcolor:
-  {
-    backgroundColor: "#AFE1AF",
-    color: "black",
-    minWidth: "200px",
-    height: "30px",
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    fontWeight: 700
-  }
-}));
-
-const useSnackSevere = makeStyles((theme) => ({
-
-  customcolor:
-  {
-    backgroundColor: "#F6B2B2",
-    color: "black",
-    minWidth: "200px",
-    height: "30px",
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: 'center',
-    fontWeight: 700,
-    boxShadow: '1px ​1px 10px 2px black'
-  }
-
-}));
-
-//#endregion
 //#region Tabs
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+// function TabPanel(props) {
+//   const { children, value, index, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
+//   return (
+//     <div
+//       role="tabpanel"
+//       hidden={value !== index}
+//       id={`full-width-tabpanel-${index}`}
+//       aria-labelledby={`full-width-tab-${index}`}
+//       {...other}
+//     >
+//       {value === index && (
+//         <Box p={3}>
+//           <Typography>{children}</Typography>
+//         </Box>
+//       )}
+//     </div>
+//   );
+// }
 
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
+// TabPanel.propTypes = {
+//   children: PropTypes.node,
+//   index: PropTypes.any.isRequired,
+//   value: PropTypes.any.isRequired,
+// };
 
 //#endregion
 
@@ -117,11 +72,9 @@ const SmsSend = ({ classes, ...props }) => {
   //#region initialized states
   const { id } = useParams();
   const { t } = useTranslation();
-  const styles = useStyles();
   const Redirect = useRedirect();
-  const severe = useSnackSevere();
-  const recipientSuccess = useSnackRecipients();
-  const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups } = useSelector((state) => state.sms);
+  const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
+  const { subAccountAllGroups } = useSelector((state) => state.group);
 
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector(
@@ -135,7 +88,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [boolRandom, setboolRandom] = useState(false);
   const [sendType2Dialog, setsendType2Dialog] = useState(false);
-  const [groupList, setGroupList] = useState([]);
+  const [showTestGroups, setShowTestGroups] = useState(false);
   const [totalRecords, settotalRecords] = useState(0);
   const [exceptionalDays, setExceptionalDays] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
@@ -150,9 +103,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [dropIndex, setdropIndex] = useState(-1);
   const [snackbarRecipients, setsnackbarRecipients] = useState(false);
   const [bsDot, setbsDot] = useState(false);
-  const [model, setModel] = useState({
-    ID: 0
-  });
+  const [model, setModel] = useState({ ID: 0 });
   const [togglePulse, settogglePulse] = useState(false);
   const [toggleRandom, settoggleRandom] = useState(false);
   const [summModal, setsummModal] = useState(false);
@@ -183,7 +134,6 @@ const SmsSend = ({ classes, ...props }) => {
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
   const [showLoader, setLoader] = useState(true);
-  const [totalCampaigns, settotalCampaigns] = useState([]);
   const [typedData, settypedData] = useState([]);
   const [selectArray, setselectArray] = useState([]);
   const [dataSaved, setdataSaved] = useState({
@@ -203,6 +153,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
+  const [campaignSettings, setCampaignSettings] = useState(null);
 
   //#endregion
   useEffect(() => {
@@ -276,97 +227,91 @@ const SmsSend = ({ classes, ...props }) => {
       await dispatch(IsOTPPassed(dataSaved.fromNumber));
     }
   }
-  const getData = async () => {
-    setLoader(true);
-    if (id) {
-      const finishedCampaigns = await dispatch(getFinishedCampaigns());
-      const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(id));
-      await dispatch(getTestGroups());
 
-      if (campaignSettings.payload.error) {
-        logout();
-      }
-      settotalCampaigns(finishedCampaigns.payload);
-      setGroupList(subAccountGroups.payload);
-      if (campaignSettings.payload && campaignSettings.payload.PulseSettings) {
-        setTimeType(campaignSettings.payload.PulseSettings.TimeType);
-        setPulseType(campaignSettings.payload.PulseSettings.PulseType);
-        setPulseAmount(`${campaignSettings.payload.PulseSettings.PulseAmount}`)
-        setTimeInterval(`${campaignSettings.payload.PulseSettings.TimeInterval}`)
+  useEffect(() => {
+    const initCampaignSettings = () => {
+      if (campaignSettings.PulseSettings) {
+        setTimeType(campaignSettings.PulseSettings.TimeType);
+        setPulseType(campaignSettings.PulseSettings.PulseType);
+        setPulseAmount(`${campaignSettings.PulseSettings.PulseAmount}`)
+        setTimeInterval(`${campaignSettings.PulseSettings.TimeInterval}`)
       }
 
-      if (campaignSettings.payload.Groups !== null) {
+      if (campaignSettings.Groups !== null) {
         const selectedGroupsForSend = [];
-        const seGroups = campaignSettings.payload.Groups;
+        const seGroups = campaignSettings.Groups;
         for (var i = 0; i < seGroups.length; i++) {
           const idx = i;
-          const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[idx] });
+          const g = subAccountAllGroups.filter((c) => { return c.GroupID === seGroups[idx] });
+          const tg = testGroups.filter((c) => { return c.GroupID === seGroups[idx] });
           if (g.length > 0) {
             selectedGroupsForSend.push(g[0]);
+          }
+          if (tg.length > 0) {
+            selectedGroupsForSend.push(tg[0]);
           }
         }
         setSelected(selectedGroupsForSend);
       }
-      if (campaignSettings.payload.SendExeptional != null && campaignSettings.payload.SendExeptional.Groups.length !== 0) {
+      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Groups.length !== 0) {
         setbsDot(true);
         const selectedGroups = [];
-        const seGroups = campaignSettings.payload.SendExeptional.Groups;
+        const seGroups = campaignSettings.SendExeptional.Groups;
         for (var j = 0; j < seGroups.length; j++) {
           const idx = j;
-          selectedGroups.push(subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[idx] })[0]);
+          selectedGroups.push(subAccountAllGroups.filter((c) => { return c.GroupID === seGroups[idx] })[0]);
         }
         setFilterGroups(selectedGroups);
       }
-      if (campaignSettings.payload.SendExeptional != null && campaignSettings.payload.SendExeptional.Campaigns.length !== 0) {
+      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.Campaigns.length !== 0) {
         const selectedCampaigns = [];
-        const seCampaigns = campaignSettings.payload.SendExeptional.Campaigns;
+        const seCampaigns = campaignSettings.SendExeptional.Campaigns;
         for (var h = 0; h < seCampaigns.length; h++) {
           const idx = h;
-          selectedCampaigns.push(finishedCampaigns.payload.filter((c) => { return c.SMSCampaignID === seCampaigns[idx] })[0]);
+          selectedCampaigns.push(finishedCampaigns.filter((c) => { return c.SMSCampaignID === seCampaigns[idx] })[0]);
         }
         setFilterCampaigns(selectedCampaigns);
       }
-      if (campaignSettings.payload.SendExeptional != null && campaignSettings.payload.SendExeptional.ExceptionalDays !== -1) {
-        setExceptionalDays(`${campaignSettings.payload.SendExeptional.ExceptionalDays}`)
+      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1) {
+        setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
 
       }
-      if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseSettingsID !== -1) {
+      if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
       }
-      if (campaignSettings.payload.RandomSettings != null && campaignSettings.payload.RandomSettings.RandomAmount !== 0) {
-        setrandom(campaignSettings.payload.RandomSettings.RandomAmount);
+      if (campaignSettings.RandomSettings != null && campaignSettings.RandomSettings.RandomAmount !== 0) {
+        setrandom(campaignSettings.RandomSettings.RandomAmount);
         settoggleRandom(true);
       }
-      if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 2) {
+      if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseType === 2) {
         setpulsePer("recipients");
         setpulseReci("Recipients");
       }
-      if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 1) {
+      if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.PulseType === 1) {
         setpulsePer("percent");
         setpulseReci("");
       }
-      if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 1) {
+      if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.TimeType === 1) {
         setminName("Mins");
         sethourName("");
 
       }
-      if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 2) {
+      if (campaignSettings.PulseSettings != null && campaignSettings.PulseSettings.TimeType === 2) {
         setminName("");
         sethourName("Hours");
       }
-      if (campaignSettings.payload.SendTypeID) {
-        setSendType(`${campaignSettings.payload.SendTypeID}`);
+      if (campaignSettings.SendTypeID) {
+        setSendType(`${campaignSettings.SendTypeID}`);
       }
-      if (campaignSettings.payload.FutureDateTime !== null && campaignSettings.payload.SendTypeID === 2) {
-        handleFromDate(moment(campaignSettings.payload.FutureDateTime));
+      if (campaignSettings.FutureDateTime !== null && campaignSettings.SendTypeID === 2) {
+        handleFromDate(moment(campaignSettings.FutureDateTime));
       }
-      if (campaignSettings.payload.SendTypeID === 3) {
-        setdaysBeforeAfter(campaignSettings.payload.SpecialSettings.Day);
-        setsendTime(moment(campaignSettings.payload.SpecialSettings.SendHour))
-        setDateFieldID(`${campaignSettings.payload.SpecialSettings.DateFieldID}`)
-        if (campaignSettings.payload.SpecialSettings.IntervalTypeID === -1) {
+      if (campaignSettings.SendTypeID === 3) {
+        setdaysBeforeAfter(campaignSettings.SpecialSettings.Day);
+        setsendTime(moment(campaignSettings.SpecialSettings.SendHour))
+        setDateFieldID(`${campaignSettings.SpecialSettings.DateFieldID}`)
+        if (campaignSettings.SpecialSettings.IntervalTypeID === -1) {
           settoggleB(true);
           settoggleA(false);
           setafterClick(false);
@@ -380,7 +325,32 @@ const SmsSend = ({ classes, ...props }) => {
 
       setLoader(false);
     }
-  };
+    if (campaignSettings !== null) {
+      initCampaignSettings();
+    }
+  }, [campaignSettings]);
+
+  const getData = async () => {
+    setLoader(true);
+    if (id) {
+      if (!finishedCampaigns || finishedCampaigns?.length === 0) {
+        await dispatch(getFinishedCampaigns());
+      }
+      if (!subAccountAllGroups || subAccountAllGroups?.length === 0) {
+        await dispatch(getGroupsBySubAccountId());
+      }
+      if (!testGroups || testGroups?.length === 0) {
+        await dispatch(getTestGroups());
+      }
+
+      const campaignSettingsRes = await dispatch(getCampaignSettings(id));
+
+      if (campaignSettingsRes.payload.error) {
+        logout();
+      }
+      setCampaignSettings(campaignSettingsRes.payload);
+    }
+  }
 
   useEffect(() => {
     const fetchOTPPassed = () => {
@@ -399,13 +369,11 @@ const SmsSend = ({ classes, ...props }) => {
   useEffect(() => {
     setLoader(true);
     getData();
-    setLoader(false);
     if (!extraData || extraData?.length === 0)
       getDataExtra();
   }, [dispatch]);
   const getDataExtra = async () => {
     await dispatch(getAccountExtraData());
-    setLoader(false);
   };
 
   useEffect(() => {
@@ -417,7 +385,6 @@ const SmsSend = ({ classes, ...props }) => {
   const getSavedData = async () => {
     if (id) {
       let response = await dispatch(getSmsByID(id))
-      setLoader(false)
       if (response) {
         setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text, CreditPerSms: response.payload.CreditsPerSms })
       }
@@ -425,7 +392,12 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const callbackSelectAll = () => {
     if (!allGroupsSelected) {
-      setSelected(groupList);
+      if (showTestGroups) {
+        setSelected([...testGroups, ...subAccountAllGroups]);
+      }
+      else {
+        setSelected([...subAccountAllGroups]);
+      }
     } else {
       setSelected([]);
     }
@@ -500,7 +472,7 @@ const SmsSend = ({ classes, ...props }) => {
     setsendTime(value)
   }
   const handleCombined = async () => {
-    const nameExist = groupList.filter((g) => { return g.GroupName === groupValue });
+    const nameExist = subAccountAllGroups.filter((g) => { return g.GroupName === groupValue });
     if (nameExist.length > 0) {
       setGroupNameExist(true);
       return;
@@ -516,13 +488,8 @@ const SmsSend = ({ classes, ...props }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    let r = await dispatch(smsCombinedGroup(payload));
-    let tempres = [];
-    for (let i = 0; i < groupList.length; i++) {
-      tempres.push(groupList[i]);
-    }
-    tempres.push(r.payload);
-    setGroupList(tempres);
+    await dispatch(smsCombinedGroup(payload));
+    await dispatch(getGroupsBySubAccountId());
     settoggleChecked(false);
     setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
   };
@@ -812,7 +779,7 @@ const SmsSend = ({ classes, ...props }) => {
           <Tooltip
             disableFocusListener
             title={t("smsReport.whomtoSendTip")}
-            classes={{ tooltip: styles.customWidth }}
+            classes={{ tooltip: classes.customWidth }}
           >
             <span className={classes.bodyInfo}>i</span>
           </Tooltip>
@@ -855,7 +822,7 @@ const SmsSend = ({ classes, ...props }) => {
             <Tooltip
               disableFocusListener
               title={t("smsReport.manualTip")}
-              classes={{ tooltip: styles.customWidth }}
+              classes={{ tooltip: classes.customWidth }}
             >
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
@@ -900,7 +867,7 @@ const SmsSend = ({ classes, ...props }) => {
           {groupClick ? (
             <Groups
               classes={classes}
-              list={groupList}
+              list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups]}
               selectedList={selectedGroups}
               callbackSelectedGroups={callbackSelectedGroups}
               callbackUpdateGroups={callbackUpdateGroups}
@@ -938,7 +905,7 @@ const SmsSend = ({ classes, ...props }) => {
                   <Tooltip
                     disableFocusListener
                     title={t("mainReport.tooltipCreateGroup")}
-                    classes={{ tooltip: styles.customWidth }}
+                    classes={{ tooltip: classes.customWidth }}
                     style={{ marginInlineStart: "5px" }}
                   >
                     <span className={classes.bodyInfo}>i</span>
@@ -975,7 +942,7 @@ const SmsSend = ({ classes, ...props }) => {
                   placement={'bottom'}
                   disableFocusListener
                   title={t("smsReport.finalReciTip")}
-                  classes={{ tooltip: styles.customWidth }}
+                  classes={{ tooltip: classes.customWidth }}
                   style={{ marginInlineStart: "5px" }}
                 >
                   <span className={classes.bodyInfo}>i</span>
@@ -1356,7 +1323,7 @@ const SmsSend = ({ classes, ...props }) => {
           <Tooltip
             disableFocusListener
             title={t("smsReport.pulseSendTip")}
-            classes={{ tooltip: styles.customWidth }}
+            classes={{ tooltip: classes.customWidth }}
           >
             <span className={classes.bodyInfo}>i</span>
           </Tooltip>
@@ -1454,7 +1421,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
 
     const settingsSaved = await dispatch(saveSmsCampSettings(requestPayload));
-    setLoader(false);
     if (settingsSaved.payload === true) {
       if (toggle && exit !== "exit") {
         setToastMessage(ToastMessages.SUCCESS);
@@ -1469,6 +1435,7 @@ const SmsSend = ({ classes, ...props }) => {
         setsummModal(true);
       }
     }
+    setLoader(false);
   };
   const estimatedEndDate = (summary) => {
     let date = moment();
@@ -1678,8 +1645,8 @@ const SmsSend = ({ classes, ...props }) => {
       else {
         let tempres = [];
         let temp = [];
-        for (let i = 0; i < groupList.length; i++) {
-          tempres.push(groupList[i]);
+        for (let i = 0; i < subAccountAllGroups.length; i++) {
+          tempres.push(subAccountAllGroups[i]);
         }
         for (let i = 0; i < selectedGroups.length; i++) {
           temp.push(selectedGroups[i]);
@@ -1690,13 +1657,6 @@ const SmsSend = ({ classes, ...props }) => {
           GroupName: groupNameInput,
           GroupID: r.payload.GroupID
         });
-
-        tempres.push({
-          Recipients: r.payload.Recipients,
-          GroupName: groupNameInput,
-          GroupID: r.payload.GroupID
-        });
-        setGroupList(tempres);
         setSelected(temp);
         setareaData("");
         settypedData([]);
@@ -1724,7 +1684,7 @@ const SmsSend = ({ classes, ...props }) => {
     setGroupTextError(false);
     setcolumnValidate(false);
 
-    const groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
+    const groupNameExist = subAccountAllGroups.filter((gl) => { return gl.GroupName === groupNameInput });
     let columnHasValue = false;
     headers.forEach((value) => {
       if (value === t("common.cellphone")) {
@@ -2017,7 +1977,7 @@ const SmsSend = ({ classes, ...props }) => {
                   isCampaign={false}
                   showSelectAll={false}
                   isNotifications={false}
-                  list={groupList}
+                  list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups]}
                   selectedList={selectedFilterGroups}
                   callbackUpdateGroups={callbackUpdateGroupFilterd}
                   callbackSelectedGroups={callbackFilteredGroups}
@@ -2041,7 +2001,7 @@ const SmsSend = ({ classes, ...props }) => {
                   showSelectAll={false}
                   isNotifications={false}
                   isCampaign={true}
-                  list={totalCampaigns}
+                  list={finishedCampaigns}
                   selectedList={selectedFilterCampaigns}
                   callbackUpdateGroups={callbackUpdateCampaignFilter}
                   callbackSelectedGroups={callbackFiltertedCampaigns}
@@ -2064,11 +2024,13 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const callbackShowTestGroup = async (showTestGroups) => {
     if (!showTestGroups && testGroups.length > 0) {
-      setGroupList(testGroups.concat(groupList));
+      setShowTestGroups(true);
+      //setGroupList(testGroups.concat(subAccountAllGroups));
     }
     else {
-      const g = groupList.filter((group) => { return group.IsTestGroup !== true });
-      setGroupList(g);
+      setShowTestGroups(false);
+      // const g = subAccountAllGroups.filter((group) => { return group.IsTestGroup !== true });
+      // setGroupList(g);
     }
   }
   const callbackFilteredGroups = (group) => {
@@ -2176,7 +2138,7 @@ const SmsSend = ({ classes, ...props }) => {
             <Tooltip
               disableFocusListener
               title={t("smsReport.manualTotalTooltip")}
-              classes={{ tooltip: styles.customWidth }}
+              classes={{ tooltip: classes.customWidth }}
               sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
             >
               <Typography className={classes.bodyInfo}>i</Typography>
@@ -2634,7 +2596,7 @@ const SmsSend = ({ classes, ...props }) => {
         }}
         style={{ zIndex: "9999" }}
       >
-        <Alert severity="warning" className={severe.customcolor}>
+        <Alert severity="warning" className={classes.snackBarSevere}>
           {t("smsReport.NoPulse")}
         </Alert>
       </Snackbar>
@@ -2648,7 +2610,7 @@ const SmsSend = ({ classes, ...props }) => {
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-        <Alert severity="error" className={severe.customcolor}>
+        <Alert severity="error" className={classes.snackBarSevere}>
           {t("smsReport.pulseAmount")}
         </Alert>
       </Snackbar>
@@ -2662,7 +2624,7 @@ const SmsSend = ({ classes, ...props }) => {
         }}
         style={{ zIndex: "9999", marginTop: "120px" }}
       >
-        <Alert severity="error" className={severe.customcolor}>
+        <Alert severity="error" className={classes.snackBarSevere}>
           {t("smsReport.timeAmount")}
         </Alert>
       </Snackbar>
@@ -2676,7 +2638,7 @@ const SmsSend = ({ classes, ...props }) => {
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-        <Alert severity="error" className={severe.customcolor}>
+        <Alert severity="error" className={classes.snackBarSevere}>
           {t("sms.fillRandomAmount")}
         </Alert>
       </Snackbar>
@@ -2691,7 +2653,7 @@ const SmsSend = ({ classes, ...props }) => {
           horizontal: "right",
         }}
       >
-        <Alert severity="warning" className={severe.customcolor}>
+        <Alert severity="warning" className={classes.snackBarSevere}>
           {t("sms.FillDay")}
         </Alert>
       </Snackbar>
@@ -2706,7 +2668,7 @@ const SmsSend = ({ classes, ...props }) => {
           horizontal: "right",
         }}
       >
-        <Alert severity="success" className={recipientSuccess.customcolor}>
+        <Alert severity="success" className={classes.snackBarSuccess}>
           {t("sms.filtersSave")}
         </Alert>
       </Snackbar>

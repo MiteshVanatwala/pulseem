@@ -70,7 +70,7 @@ const SmsSummary = ({ classes,
                 <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
                 <span className={classes.bodySum}>
                   {t("sms.smsSummaryDialogTotalRecipients")}:
-                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
+                  <span className={classes.bodySum}> {summaryPayload.FinalCount?.toLocaleString()}</span>
                 </span>
                 <Link onClick={() => { setdetailsHide(!detailsHide) }}
                   style={{
