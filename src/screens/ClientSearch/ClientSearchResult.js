@@ -187,14 +187,14 @@ const ClientSearchResult = ({ props, classes }) => {
     const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
     if (referrer && referrer !== '') {
       isSessionStorageData =
-        referrer.toLowerCase().includes('automationreport') ||
-        referrer.toLowerCase().includes('createautomations') ||
-        (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result') ||
+        referrer.toLowerCase().indexOf('automationreport') > -1 ||
+        referrer.toLowerCase().indexOf('createautomations') > -1 ||
+        (referrer.toLowerCase().indexOf('clientsearch') > -1 && !referrer.toLowerCase().indexOf('result') > -1 ||
           searchReferrer === true)
       if (isSessionStorageData) {
         setSearchReferrer(true);
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
-        overwriteObject.IsSearchByFilter = referrer.toLowerCase().includes('clientsearch') ?? true;
+        overwriteObject.IsSearchByFilter = referrer.toLowerCase().indexOf('clientsearch') > -1;
         setFilterSearch(overwriteObject);
       }
     }
@@ -208,7 +208,7 @@ const ClientSearchResult = ({ props, classes }) => {
       SearchTerm: "",
       Status: location?.state?.Status ?? null,
       PageType: location?.state?.PageType ?? null,
-      ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
+      ReportType: document.referrer.toLowerCase().indexOf('smsmainreport') > -1 ? 20 : 10,
       TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
       CampaignID: id,
       Switch: "",
