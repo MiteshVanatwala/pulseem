@@ -3,12 +3,10 @@ import { Tooltip } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
 import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import PropTypes from "prop-types";
 import { DateField, Dialog } from "../../../components/managment/index";
 import Toast from '../../../components/Toast/Toast.component';
 import { Loader } from '../../../components/Loader/Loader';
@@ -39,34 +37,6 @@ import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
 }
-//#region Tabs
-// function TabPanel(props) {
-//   const { children, value, index, ...other } = props;
-
-//   return (
-//     <div
-//       role="tabpanel"
-//       hidden={value !== index}
-//       id={`full-width-tabpanel-${index}`}
-//       aria-labelledby={`full-width-tab-${index}`}
-//       {...other}
-//     >
-//       {value === index && (
-//         <Box p={3}>
-//           <Typography>{children}</Typography>
-//         </Box>
-//       )}
-//     </div>
-//   );
-// }
-
-// TabPanel.propTypes = {
-//   children: PropTypes.node,
-//   index: PropTypes.any.isRequired,
-//   value: PropTypes.any.isRequired,
-// };
-
-//#endregion
 
 const SmsSend = ({ classes, ...props }) => {
   //#region initialized states

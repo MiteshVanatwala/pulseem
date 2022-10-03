@@ -240,7 +240,7 @@ const SmsCreator = ({ classes }) => {
       }
       setShowRemovalLink(!accountFeatures.includes('39'))
     }
-  }, [isPageLoaded || accountFeatures]);
+  }, [isPageLoaded, accountFeatures]);
 
   const handleSendResult = async (smsSendResult) => {
     switch (smsSendResult) {
@@ -354,14 +354,13 @@ const SmsCreator = ({ classes }) => {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
     setextraAccountDATA(defaultAccountExtraData)
-    //await dispatch(getGroupsBySubAccountId());
     if (id && FromAutomation && FromAutomation > 0) {
       setIsFromAutomation(true);
     }
     await getSavedData();
-    //await initFromNumber();
     if (!commonSettings || Object.keys(commonSettings).length === 0)
       await dispatch(getCommonFeatures());
+    setInitFromNumber(true);
     setIsPageLoaded(true);
   }
 
@@ -415,7 +414,6 @@ const SmsCreator = ({ classes }) => {
         setSmsModel(response.payload);
         setIsLinksStatistics(response.payload.IsLinksStatistics);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
-        setInitFromNumber(true);
         return response.payload;
       }
       else {
