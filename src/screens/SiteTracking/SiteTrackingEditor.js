@@ -50,6 +50,26 @@ const SiteTrackingEditor = ({ classes }) => {
 
 
     useEffect(() => {
+        const getData = async () => {
+            await dispatch(getScript());
+            await dispatch(getGroupsBySubAccountId());
+            const response = await dispatch(get(EventRequestModel.PageView));
+            const retModel = response.payload;
+            if (!response.error && retModel.length !== 0) {
+                const eventObject = retModel[0];
+                if (!eventObject.metadata) {
+                    dispatch(updateEventModel({ type: 'new' }));
+                }
+            }
+            else {
+                dispatch(updateEventModel({ type: 'new' }));
+            }
+            setShowLoader(false);
+            const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
+            if (hideScriptIntro !== 'true') {
+                setDialogType({ type: 'scriptImplementation' });
+            }
+        }
         getData();
     }, [dispatch]);
 
@@ -57,28 +77,7 @@ const SiteTrackingEditor = ({ classes }) => {
         if (event && (isValidDomain !== null || event.domain !== '')) {
             setIsValidDomain(IsValidURL(event.domain));
         }
-    }, [event]);
-
-    const getData = async () => {
-        await dispatch(getScript());
-        await dispatch(getGroupsBySubAccountId());
-        const response = await dispatch(get(EventRequestModel.PageView));
-        const retModel = response.payload;
-        if (!response.error && retModel.length !== 0) {
-            const eventObject = retModel[0];
-            if (!eventObject.metadata) {
-                dispatch(updateEventModel({ type: 'new' }));
-            }
-        }
-        else {
-            dispatch(updateEventModel({ type: 'new' }));
-        }
-        setShowLoader(false);
-        const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
-        if (hideScriptIntro !== 'true') {
-            setDialogType({ type: 'scriptImplementation' });
-        }
-    }
+    }, [event, isValidDomain]);
 
     const handleModelChange = async (name, value) => {
         await dispatch(updateEventModel({ prop: name, value: value }))
@@ -335,7 +334,7 @@ const SiteTrackingEditor = ({ classes }) => {
         setShowLoader(true);
         setDialogType(null);
         if (event.id && event.id !== '') {
-            const pResponse = await dispatch(deletePulseemSiteTracking())
+            await dispatch(deletePulseemSiteTracking())
             await dispatch(deleteSiteTrackingEvent(event.id))
             handleModelChange('id', null);
         }
@@ -652,9 +651,9 @@ const SiteTrackingEditor = ({ classes }) => {
                             </FormControl>
                             <TextField
                                 placeholder={t('siteTracking.addDomain')}
-                                inputProps={{
-                                    shrink: false
-                                }}
+                                // inputProps={{
+                                //     shrink: false
+                                // }}
                                 className={clsx(classes.textField,
                                     classes.fullWidth,
                                     isRTL ? classes.startElementNoRadius : classes.endElementNoRadius,

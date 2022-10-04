@@ -17,7 +17,6 @@ import {
 } from "@material-ui/core";
 
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
-import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -56,11 +55,10 @@ const RecipientsTab = ({ classes }) => {
 
   const styles = useStyles();
 
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector(
+  const { windowSize, rowsPerPage } = useSelector(
     (state) => state.core
   );
 
-  const { t } = useTranslation();
   const [selectintial, setselectintial] = useState("1");
   const rowsOptions = [6, 12, 18];
   const [page, setPage] = useState(1);

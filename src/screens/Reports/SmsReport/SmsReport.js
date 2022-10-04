@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
 } from '@material-ui/core'
 import Switch from "react-switch";
 import {
@@ -31,14 +31,11 @@ const SmsReport = ({ classes }) => {
   const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
-  const [fromDate, handleFromDate] = useState(priorDate);
-  const [toDate, handleToDate] = useState(null);
   const [campaignName, setCampaignNameSearch] = useState('');
   const rowsOptions = [6, 10, 20, 50]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
-  const [searchResults, setSearchResults] = useState(null)
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -131,7 +128,7 @@ const SmsReport = ({ classes }) => {
 
   useEffect(() => {
     getData(smsQuery);
-  }, [, isSearching, smsQuery.ShowTestCampaigns])
+  }, [isSearching, smsQuery.ShowTestCampaigns])
 
 
   const exportColumnHeader = {
@@ -160,10 +157,11 @@ const SmsReport = ({ classes }) => {
     setSmsQuery(resetSmsQuery);
     getData(resetSmsQuery)
     setSearching(false);
+    setPage(1);
   }
 
   const handleDownloadCsv = async () => {
-    let orderList = searchResults || smsReport;
+    let orderList = [...smsReport];
     //await OrderItems(searchResults || smsReport, Object.keys(exportColumnHeader));
 
     const exportOptions = {
@@ -193,7 +191,7 @@ const SmsReport = ({ classes }) => {
 
   const renderSearchSection = () => {
     const handleSearch = () => {
-      if (campaignName === '' && !fromDate && !toDate) {
+      if (campaignName === '' && !smsQuery.From && !smsQuery.To) {
         return;
       }
       setSearching(true);
@@ -364,7 +362,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, UpdateDate, Status } = row
+    const { Name, SendDate, UpdateDate, Status } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';

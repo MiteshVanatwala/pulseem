@@ -609,9 +609,6 @@ const SmsCreator = ({ classes }) => {
       if (0 === text) {
         return;
       }
-      if (0 === cursorPos) {
-        return;
-      }
 
       // get cursor's position:
       var startPos = tArea.selectionStart,
@@ -1071,9 +1068,8 @@ const SmsCreator = ({ classes }) => {
               width={48}
               boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
               activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              className="react-switch"
               id="material-switch"
-              className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
+              className={clsx('react-switch', isRTL ? classes.reactSwitchHe : classes.reactSwitch)}
             />
           </FormGroup>
           <div
@@ -1324,7 +1320,7 @@ const SmsCreator = ({ classes }) => {
           TestGroupsIds: groupIds,
         };
         handleSmsModelChange("SMSCampaignID", r.payload.Message);
-        let r2 = await dispatch(smsSaveGroup(payload2));
+        await dispatch(smsSaveGroup(payload2));
         await dispatch(getCampaignSumm(r.payload.Message));
         setsummary(true);
         setDialogType(null);

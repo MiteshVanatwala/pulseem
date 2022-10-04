@@ -49,7 +49,7 @@ const EventToGroups = ({
             let newSelection = currentEvent.groupIds;
             dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection, id: currentEvent.id }));
         }
-    }, [currentEvent]);
+    }, [currentEvent, dispatch, index]);
 
     const renderGroupsDialog = () => {
         const currentMetaData = event.metadata.find((item) => { return item.id === currentEvent.id });
@@ -146,9 +146,6 @@ const EventToGroups = ({
             </Box>
             <Box style={{ width: '100%' }}>
                 <TextField
-                    inputProps={{
-                        shrink: false
-                    }}
                     placeholder={t("siteTracking.placeHolderAddPageUrl")}
                     className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null)}
                     required
