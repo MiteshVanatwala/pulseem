@@ -190,6 +190,7 @@ const ClientSearchResult = ({ props, classes }) => {
         referrer.toLowerCase().indexOf('automationreport') > -1 ||
         referrer.toLowerCase().indexOf('createautomations') > -1 ||
         referrer.toLowerCase().indexOf('campaignstatistics') > -1 ||
+        referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
         ((referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1) ||
           searchReferrer === true)
       if (isSessionStorageData) {
