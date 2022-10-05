@@ -7,10 +7,10 @@ import { EventConditions } from '../../helpers/Constants'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import { FormControl, Typography, TextField, Box, Select, MenuItem, Button } from '@material-ui/core'
 import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
-import { Dialog } from '../../components/managment/index';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import { DeleteIcon } from '../../assets/images/managment/index';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 const EventToGroups = ({
     classes,
@@ -77,13 +77,13 @@ const EventToGroups = ({
         const dialog = renderGroupsDialog();
 
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={showGroupsDialog}
                 onClose={() => { setShowGroupsDialog(false) }}
                 {...dialog}>
                 {dialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
     const handleShowGroup = () => {

@@ -9,7 +9,7 @@ import {
   DeleteIcon, DuplicateIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, Switch, SearchField
+  TablePagination, ManagmentIcon, DateField, RestorDialogContent, Switch, SearchField
 } from '../../../components/managment/index'
 import {
   getAutomationsData, deleteAutomations, duplicateAutomations, restoreAutomations, activateAutomation
@@ -24,6 +24,7 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -791,13 +792,13 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (

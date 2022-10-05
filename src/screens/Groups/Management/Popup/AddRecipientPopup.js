@@ -21,7 +21,6 @@ import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
 import { addRecipient } from "../../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
@@ -29,6 +28,7 @@ import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validation
 
 
 import { Loader } from "../../../../components/Loader/Loader";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 
 const useStyles = makeStyles({
@@ -953,7 +953,7 @@ const AddRecipientPopup = ({ classes,
 
 
     return (
-        <Dialog
+        <BaseDialog
             classes={classes}
             open={isOpen}
             title={t('recipient.recipientAddPopUpTitle')}
@@ -1049,7 +1049,7 @@ const AddRecipientPopup = ({ classes,
                 }
             </Box>
             <Loader isOpen={showLaoder} />
-        </Dialog>
+        </BaseDialog>
     );
 };
 

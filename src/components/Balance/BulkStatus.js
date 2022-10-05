@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { GoPackage } from 'react-icons/go/index';
-//import { Dialog } from '../managment/index';
 import { Grid, Paper, Typography, Button, Box } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
@@ -77,14 +76,14 @@ const BulkStatus = ({ classes }) => {
       }
 
       const options = {
-        Classes: classes,
-        Open: isOpenPackageDialog,
-        OnCancel: handleDialogClose,
-        OnClose: handleDialogClose,
-        OnConfirm: handleDialogClose,
-        ShowDefaultButtons: false,
-        Style: availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null,
-        Children: dialog.content
+        classes: classes,
+        open: isOpenPackageDialog,
+        onCancel: handleDialogClose,
+        onClose: handleDialogClose,
+        onConfirm: handleDialogClose,
+        showDefaultButtons: false,
+        style: availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null,
+        children: dialog.content
       }
 
       return (

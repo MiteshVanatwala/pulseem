@@ -10,7 +10,7 @@ import {
   GroupsIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -27,6 +27,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -1043,13 +1044,13 @@ const SmsManagnentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (

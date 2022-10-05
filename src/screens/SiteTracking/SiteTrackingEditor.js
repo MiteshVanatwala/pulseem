@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel, setPurchase } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
-import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getCookie, setCookie } from '../../helpers/Functions/cookies';
@@ -22,6 +21,7 @@ import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
@@ -237,13 +237,13 @@ const SiteTrackingEditor = ({ classes }) => {
 
         if (type) {
             return (
-                dialogType && <Dialog
+                dialogType && <BaseDialog
                     classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
-                </Dialog>
+                </BaseDialog>
             )
         }
         return <></>

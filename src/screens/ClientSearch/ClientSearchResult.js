@@ -32,10 +32,10 @@ import DataTable from "../../components/Table/DataTable";
 import RenderRow from "./SubComp/RenderRow";
 import RenderPhoneRow from "./SubComp/RenderPhoneRow";
 import Toast from '../../components/Toast/Toast.component';
-import { Dialog } from '../../components/managment/index';
 import { searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 
 const ClientSearchResult = ({ classes }) => {
   const {
@@ -708,7 +708,7 @@ const ClientSearchResult = ({ classes }) => {
         )
       }
       return (
-        <Dialog
+        <BaseDialog
           cancelText="common.Cancel"
           confirmText="common.Yes"
           disableBackdropClick={true}
@@ -719,7 +719,7 @@ const ClientSearchResult = ({ classes }) => {
           // onConfirm={() => handleConfirmExport()}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }

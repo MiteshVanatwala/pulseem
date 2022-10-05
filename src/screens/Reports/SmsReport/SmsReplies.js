@@ -20,8 +20,8 @@ import { EditIcon } from '../../../assets/images/managment/index'
 import { AiOutlineUserDelete, AiOutlineUsergroupDelete, AiOutlineExclamationCircle } from 'react-icons/ai';
 import { FiPhoneOff } from 'react-icons/fi';
 import { actionURL } from '../../../config';
-import { Dialog } from "../../../components/managment/index";
 import { deleteFromGroups, removeEmailClient, removeSmsClient } from '../../../redux/reducers/clientSlice';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const SmsReplies = ({ classes, ...other }) => {
     const dispatch = useDispatch();
@@ -485,13 +485,13 @@ const SmsReplies = ({ classes, ...other }) => {
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <Dialog
+            dialogType && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onClose={handleClose}
                 {...currentDialog}>
                 {currentDialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
     const handleClose = () => {

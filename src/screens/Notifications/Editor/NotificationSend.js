@@ -13,9 +13,10 @@ import { useParams } from 'react-router-dom';
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, Link } from '@material-ui/core'
 import { getNotificationById, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../../redux/reducers/notificationSlice';
 import Groups from '../../../components/Notifications/Groups/Groups';
-import { DateField, Dialog } from '../../../components/managment/index';
+import { DateField } from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
@@ -146,14 +147,14 @@ const NotificationSend = ({ classes }) => {
             dialog = renderValidationError();
 
             return (
-                <Dialog
+                <BaseDialog
                     classes={classes}
                     open={validationErrorList}
                     onClose={handleDialogClose}
                     onConfirm={handleDialogClose}
                     {...dialog}>
                     {dialog.content}
-                </Dialog>
+                </BaseDialog>
             );
         }
     }
@@ -399,14 +400,14 @@ const NotificationSend = ({ classes }) => {
             let dialog = {};
             dialog = summaryContent();
             return (
-                <Dialog
+                <BaseDialog
                     customContainerStyle={classes.summaryContainer}
                     classes={classes}
                     open={summary}
                     onClose={() => setSummary(null)}
                     {...dialog}>
                     {dialog.content}
-                </Dialog>
+                </BaseDialog>
             );
         }
     }
@@ -612,7 +613,7 @@ const NotificationSend = ({ classes }) => {
                 )
             }
             return (
-                <Dialog
+                <BaseDialog
                     cancelText="common.No"
                     confirmText="common.Yes"
                     disableBackdropClick={true}
@@ -623,7 +624,7 @@ const NotificationSend = ({ classes }) => {
                     onConfirm={() => onCancelConfirm(true)}
                     {...dialog}>
                     {dialog.content}
-                </Dialog>
+                </BaseDialog>
             );
         }
     }
@@ -657,14 +658,14 @@ const NotificationSend = ({ classes }) => {
             };
 
             return (
-                <Dialog
+                <BaseDialog
                     showDivider={false}
                     classes={classes}
                     open={true}
                     onClose={() => { Redirect({ url: "/react/Notifications" }) }}
                     {...dialog}>
                     {dialog.content}
-                </Dialog>
+                </BaseDialog>
             );
         }
         return null;

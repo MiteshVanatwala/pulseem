@@ -9,7 +9,7 @@ import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon, GroupsIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { getMmsData, restoreMms, deleteMms, duplicteMms, getMMSByID } from '../../../redux/reducers/mmsSlice'
@@ -22,6 +22,7 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const MmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -739,13 +740,13 @@ const MmsManagnentScreen = ({ classes }) => {
     }
 
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (

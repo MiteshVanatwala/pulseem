@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from '../../../components/Loader/Loader';
-import { Dialog } from "../../../components/managment/index";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import { Typography, Box, Button, TextField } from "@material-ui/core";
 
@@ -11,6 +10,7 @@ import {
     getSMSRequestOTP,
     getSMSConfirmOTP
 } from "../../../redux/reducers/smsSlice";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) => {
     const { t } = useTranslation();
@@ -20,7 +20,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
     const [dialogType, setDialogType] = useState(null);
     const [otpValidation, setOtpValidation] = useState(false);
     const [otpMsgs, setotpMsgs] = useState(t("common.requiredField"));
-    
+
     const otpProps = {
         maxlength: "5"
     }
@@ -254,13 +254,13 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <Dialog
+            dialogType && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onClose={handleClose}
                 {...currentDialog}>
                 {currentDialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
     const handleAlertoff = () => {

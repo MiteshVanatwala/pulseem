@@ -7,7 +7,6 @@ import {
     Button
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
@@ -19,6 +18,7 @@ import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 
 const UnsubscribeOrDeletePopup = ({
@@ -508,7 +508,7 @@ const UnsubscribeOrDeletePopup = ({
 
     const RenderSummaryDialog = () => {
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={confirm || isSubmitted}
                 title={t("common.systemNotice")}
@@ -525,13 +525,13 @@ const UnsubscribeOrDeletePopup = ({
                     {updatedRows <= 0 && <Box>{t("recipient.noRecordsFound")}</Box>}
                     {updatedRows > 0 && <Box>{updatedRows === 1 ? null : updatedRows} {updatedRows === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>}
                 </Box>}
-            </Dialog>
+            </BaseDialog>
         )
     }
 
     const RenderMaximumLimitationRequest = () => {
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={limitationWarning}
                 title={t("common.systemNotice")}
@@ -556,7 +556,7 @@ const UnsubscribeOrDeletePopup = ({
                 }}
             >
                 <Typography>{t('recipient.maximumRecordLimitation')}</Typography>
-            </Dialog>
+            </BaseDialog>
         )
     }
 
@@ -604,7 +604,7 @@ const UnsubscribeOrDeletePopup = ({
 
 
     return (
-        <Dialog
+        <BaseDialog
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
@@ -657,7 +657,7 @@ const UnsubscribeOrDeletePopup = ({
                 {DropBox(classes)}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
-        </Dialog >
+        </BaseDialog >
     )
 }
 

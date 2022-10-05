@@ -17,7 +17,6 @@ import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { Dialog } from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import { IoMdImages } from 'react-icons/io'
 import moment from 'moment'
@@ -27,6 +26,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { IsValidURL } from "../../../helpers/Utils/Validations";
 import { useParams, useLocation } from 'react-router-dom';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -239,7 +239,7 @@ const NotificationEdit = ({ classes }) => {
         )
       }
       return (
-        <Dialog
+        <BaseDialog
           cancelText="common.No"
           confirmText="common.Yes"
           disableBackdropClick={true}
@@ -250,7 +250,7 @@ const NotificationEdit = ({ classes }) => {
           onConfirm={() => onCancelConfirm(true)}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -728,7 +728,7 @@ const NotificationEdit = ({ classes }) => {
       dialog = renderGalleryDialog();
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -739,7 +739,7 @@ const NotificationEdit = ({ classes }) => {
           onConfirm={handleGalleryConfirm}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -765,14 +765,14 @@ const NotificationEdit = ({ classes }) => {
       dialog = renderValidationError();
 
       return (
-        <Dialog
+        <BaseDialog
           classes={classes}
           open={validationErrorList}
           onClose={handleDialogClose}
           onConfirm={handleDialogClose}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }

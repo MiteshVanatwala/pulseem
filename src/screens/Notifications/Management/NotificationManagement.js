@@ -10,7 +10,7 @@ import {
   GroupsIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, SearchField
+  TablePagination, ManagmentIcon, DateField, RestorDialogContent, SearchField
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { useSelector, useDispatch } from 'react-redux';
@@ -31,6 +31,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
@@ -190,13 +191,13 @@ const NotificationManagement = ({ classes }) => {
 
     const dialog = renderImplement();
     return (
-      <Dialog
+      <BaseDialog
         classes={classes}
         open={showScriptDialog}
         onClose={() => handleImplementScript(false)}
         {...dialog}>
         {dialog.content}
-      </Dialog>
+      </BaseDialog>
     );
   }
 
@@ -1270,13 +1271,13 @@ const NotificationManagement = ({ classes }) => {
     }
 
     if (dialog) {
-      return (<Dialog
+      return (<BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleDialogClose}
         {...dialog}>
         {dialog.content}
-      </Dialog>);
+      </BaseDialog>);
     }
     return (
       <></>

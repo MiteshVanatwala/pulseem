@@ -10,7 +10,7 @@ import {
   PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, RestorDialogContent, Dialog, PopMassage, SearchField
+  TablePagination, ManagmentIcon, RestorDialogContent, PopMassage, SearchField
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
@@ -23,6 +23,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const { windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -701,13 +702,13 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (

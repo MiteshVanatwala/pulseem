@@ -38,7 +38,6 @@ import {
   getCommonFeatures,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
-import { Dialog } from "../../../components/managment/index";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -56,6 +55,7 @@ import MobilePreview from '../../../components/MobilePreive/Mobile'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -1905,13 +1905,13 @@ const SmsCreator = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 

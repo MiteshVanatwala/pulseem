@@ -11,7 +11,7 @@ import {
   GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, PopMassage, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -26,6 +26,8 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -48,6 +50,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
+  const [verificationDialog, setVerificationDialog] = useState(false)
 
   const getData = async () => {
     await dispatch(getNewslatterData())
@@ -150,9 +153,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
+          onKeyPress={(e) => { handleSearch(); handleKeyPress(e) }}
           onClick={handleSearch}
-          onKeyPress={handleKeyPress}
+          // onKeyPress={}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -265,6 +268,19 @@ const NewsletterManagnentScreen = ({ classes }) => {
             onClick={redirctToArchive}
           >
             {t('master.redirectToArchive')}
+          </Button>
+        </Grid>
+        <Grid item xs={windowSize === 'xs' && 12}>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonDarkBlue
+            )}
+            onClick={() => setVerificationDialog(true)}
+          >
+            {t('Open Verification')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
@@ -755,13 +771,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 
@@ -776,6 +792,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+
+      <VerificationDialog
+        isOpen={verificationDialog}
+        onClose={() => setVerificationDialog(false)}
+        onCancel={() => setVerificationDialog(false)}
+      />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

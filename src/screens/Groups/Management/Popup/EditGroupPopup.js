@@ -17,7 +17,7 @@ import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../../components/managment/Dialog";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 const EditGroupPopup = ({ classes,
     isOpen = false,
@@ -102,7 +102,7 @@ const EditGroupPopup = ({ classes,
 
     return (
         <>
-            {editableFroupData && <Dialog
+            {editableFroupData && <BaseDialog
                 classes={classes}
                 open={isOpen}
                 title={t("group.edit")}
@@ -250,7 +250,7 @@ const EditGroupPopup = ({ classes,
                     <Typography>{t("common.CreatedOn")}: {moment(editableFroupData.CreationDate).format("DD/MM/YYYY HH:mm")}</Typography>
                     <Typography>{t("common.UpdatedOn")}: {moment(editableFroupData.UpdateDate).format("DD/MM/YYYY HH:mm")}</Typography>
                 </Box>
-            </Dialog>
+            </BaseDialog>
             }
         </>
     );

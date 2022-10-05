@@ -6,7 +6,7 @@ import {
   Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
 import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon } from '../../../assets/images/managment/index'
-import { TablePagination, ManagmentIcon, DateField, Dialog, SearchField } from '../../../components/managment/index'
+import { TablePagination, ManagmentIcon, DateField, SearchField } from '../../../components/managment/index'
 import { getArchiveCampaigns, cloneArchiveCampaign } from '../../../redux/reducers/newsletterSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -20,6 +20,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -586,13 +587,13 @@ const ArchiveManagementScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 

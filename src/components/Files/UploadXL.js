@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Typography, Grid, Box, TextField } from "@material-ui/core";
-import { Dialog } from "../managment/index";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -20,6 +19,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { Button } from "@mui/material";
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -709,14 +709,14 @@ const UploadXL = ({
 
         if (type) {
             return (
-                dialogType && <Dialog
+                dialogType && <BaseDialog
                     classes={classes}
                     open={dialogType}
                     childrenStyle={classes.mb25}
                     onClose={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
-                </Dialog>
+                </BaseDialog>
             )
         }
         return <></>

@@ -34,11 +34,11 @@ import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
 import AddRecipientResponse from "./Popup/AddRecipientResponse";
 import EditGroupPopup from "./Popup/EditGroupPopup";
 import ResetGroupPopup from "./Popup/ResetGroupPopup";
-import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -918,7 +918,7 @@ const Groups = ({ classes }) => {
             )
         }
         return (
-            <Dialog
+            <BaseDialog
                 cancelText="common.Cancel"
                 confirmText="common.Yes"
                 disableBackdropClick={true}
@@ -929,7 +929,7 @@ const Groups = ({ classes }) => {
                 onConfirm={() => handleConfirmExport()}
                 {...dialog}>
                 {dialog.content}
-            </Dialog>
+            </BaseDialog>
         );
     }
     const handleResponses = (response, actions = {

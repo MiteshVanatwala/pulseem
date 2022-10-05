@@ -9,7 +9,7 @@ import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import PropTypes from "prop-types";
-import { DateField, Dialog } from "../../../components/managment/index";
+import { DateField } from "../../../components/managment/index";
 import Toast from '../../../components/Toast/Toast.component';
 import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';
@@ -34,6 +34,7 @@ import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -1805,7 +1806,7 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const renderSendType2validation = () => {
     return (<>
-      <Dialog
+      <BaseDialog
         classes={classes}
         open={sendType2Dialog}
         onClose={() => { setsendType2Dialog(false) }}
@@ -1843,11 +1844,11 @@ const SmsSend = ({ classes, ...props }) => {
             {t("mainReport.confirmSms")}
           </Button>
         </div>
-      </Dialog></>)
+      </BaseDialog></>)
   }
   const renderSpecialModal = () => {
     return (<>
-      <Dialog
+      <BaseDialog
         classes={classes}
         open={specialSettingValidation}
         onClose={() => { setspecialSettingValidation(false) }}
@@ -1888,7 +1889,7 @@ const SmsSend = ({ classes, ...props }) => {
             {t("mainReport.confirmSms")}
           </Button>
         </div>
-      </Dialog></>)
+      </BaseDialog></>)
   }
   const handleMainWarningPulse = () => {
     if (snackbarTimeBoolean == false || snackBarPulseBoolean == false) {
@@ -2604,13 +2605,13 @@ const SmsSend = ({ classes, ...props }) => {
 
     if (type) {
       return (
-        dialogType && <Dialog
+        dialogType && <BaseDialog
           classes={classes}
           open={dialogType}
           onClose={() => { setDialogType(null) }}
           {...currentDialog}>
           {currentDialog.content}
-        </Dialog>
+        </BaseDialog>
       )
     }
     return <></>

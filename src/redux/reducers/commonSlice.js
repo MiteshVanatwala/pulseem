@@ -82,11 +82,66 @@ export const getCommonFeatures = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
+export const getAuthorizedEmails = createAsyncThunk(
+  'authorization/GetAuthorizedEmails', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`authorization/GetAuthorizedEmails`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const newAuthorizeEmail = createAsyncThunk(
+  'authorization/NewAuthorizeEmail', async (data, thunkAPI) => {
+    const { email = '' } = data || {};
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await PulseemReactInstance.put(`authorization/NewAuthorizeEmail/${email}`);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+  })
+
+export const verifyEmailCode = createAsyncThunk(
+  'authorization/VerifyEmailCode', async (data, thunkAPI) => {
+    const { email = '', optinCode = 0 } = data || {};
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await PulseemReactInstance.put(`authorization/VerifyEmailCode/${email}/${optinCode}`);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+  })
+
+export const getAuthorizeNumbers = createAsyncThunk(
+  'GetRelatedSubAccountNumber', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
     Folders: []
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(getAuthorizedEmails.fulfilled, (state, { payload }) => {
+        state.verifiedEmails = payload
+      })
+    builder
+      .addCase(getAuthorizeNumbers.fulfilled, (state, { payload }) => {
+        state.verifiedNumbers = payload
+      })
   }
 })
 

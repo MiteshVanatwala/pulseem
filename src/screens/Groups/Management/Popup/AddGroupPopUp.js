@@ -19,8 +19,8 @@ import {
     createGroup,
     getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
-import { Dialog } from "../../../../components/managment/Dialog";
 
 const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog, getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
@@ -106,7 +106,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
 
     return (
         <>
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={isOpen}
                 title={t("group.createNew")}
@@ -270,7 +270,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                         </CustomTooltip>
                     </Box>
                 </Box>
-            </Dialog>
+            </BaseDialog>
         </>
     );
 };
