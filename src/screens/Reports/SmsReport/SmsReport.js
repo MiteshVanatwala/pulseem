@@ -146,7 +146,7 @@ const SmsReport = ({ classes }) => {
 
   useEffect(() => {
     getData(smsQuery);
-  }, [isSearching, smsQuery.ShowTestCampaigns]);
+  }, [smsQuery.ShowTestCampaigns]);
 
 
   const exportColumnHeader = {
@@ -182,9 +182,17 @@ const SmsReport = ({ classes }) => {
   }
 
   const clearSearch = () => {
-    const resetSmsQuery = { ...smsQuery, From: priorDate, To: null, SerachTxt: '', ShowTestCampaigns: false, SmsCampaignID: null };
+    const resetSmsQuery = {
+      ...smsQuery,
+      From: priorDate,
+      To: null,
+      SerachTxt: '',
+      ShowTestCampaigns: false,
+      SmsCampaignID: null
+    };
     setSmsQuery(resetSmsQuery);
     setSearching(false);
+    getData(resetSmsQuery);
   }
 
   const handleDownloadCsv = async () => {
@@ -207,6 +215,7 @@ const SmsReport = ({ classes }) => {
         return;
       }
       setSearching(true);
+      getData(smsQuery);
     }
 
     const handleKeyPress = (event) => {
@@ -384,6 +393,8 @@ const SmsReport = ({ classes }) => {
     const udate = UpdateDate ? moment(UpdateDate) : '';
     const showDate = SendDate ? date.format('L') : ''
     const showTime = SendDate ? date.format('LT') : ''
+    //const now =  moment().add('months',-1).utc();
+    //const isSchedule = moment(SendDate).isAfter(now.format());
     const isSchedule = moment(SendDate) > moment();
     const showUpdateDate = UpdateDate ? udate.format('L') : '';
     const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
@@ -679,7 +690,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching && smsReport.length}
+        rows={smsReport.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}

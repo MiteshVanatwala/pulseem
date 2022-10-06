@@ -284,20 +284,10 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     if (searchData) {
-      if (!searchData.IsAdvanced) {
+      if (!searchData.IsAdvanced && !searchData.IsSearchByFilter) {
         sessionStorage.removeItem('searchData')
       }
       getData();
-      //OLD version
-      // if (document.referrer.toLowerCase().indexOf("ClientSearch.aspx".toLowerCase()) > -1) {
-      //   if (searchData.IsAdvanced) {
-      //     getSearchData();
-      //   }
-      // }
-      // else {
-      //   sessionStorage.removeItem('searchData')
-      //   getData();
-      // }
     }
   }, [dispatch, searchData, page, rowsPerPage]);
 
