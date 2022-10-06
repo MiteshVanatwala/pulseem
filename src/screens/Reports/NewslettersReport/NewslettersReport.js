@@ -26,7 +26,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { voidFunction } from '../../../helpers/utils';
-
+import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionManager';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -975,7 +975,13 @@ const NewslettersReport = ({ classes }) => {
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
-        onPageChange={handlePageChange}
+        onPageChange={(e) => {
+          SetPageState({
+            "PageName": "NewsletterReport",
+            "PageNumber": e
+          });
+          handlePageChange(e)
+        }}
       />
     )
   }

@@ -25,6 +25,7 @@ import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { voidFunction } from '../../../helpers/utils';
+import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionManager';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -695,7 +696,13 @@ const SmsReport = ({ classes }) => {
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
         page={page}
-        onPageChange={setPage}
+        onPageChange={(e) => {
+          SetPageState({
+            "PageName": "SmsReport",
+            "PageNumber": e
+          });
+          setPage(e)
+        }}
       />
     )
   }
