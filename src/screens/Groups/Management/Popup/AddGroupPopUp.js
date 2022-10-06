@@ -19,6 +19,7 @@ import {
     createGroup,
     getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
+import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 
 import { Dialog } from "../../../../components/managment/Dialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
@@ -69,6 +70,8 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                         new Promise(async (resolutionFunc, rejectionFunc) => {
                             await dispatch(getGroupsBySubAccountId())
                             await resolutionFunc(getData());
+                            if (data.IsTestGroup)
+                                await dispatch(getTestGroups());
                         }).then((res) => {
                             callback?.(response.payload.Message)
                         })

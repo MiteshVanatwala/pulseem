@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
@@ -27,7 +27,7 @@ import { Title } from '../../../components/managment/Title';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const { windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { landingPagesData, landingPagesDataError, landingPagesDeletedData } = useSelector(state => state.landingPages)
+  const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
   const rowsOptions = [6, 10, 20, 50]
@@ -104,7 +104,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           classes={classes}
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
@@ -316,7 +315,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         icon: (copyData && copyData.icon) || null,
         lable: (copyData && copyData.lable) || '',
         rootClass: classes.minWidth95,
-        disable: !PageLink,
         text: (copyData && copyData.copy) || '',
         disable: !PageLink,
         type: 'copy',
@@ -632,53 +630,48 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       handleClose()
       setPage(1)
       setLoader(true);
-      const result = await dispatch(duplicteLandingPage(data))
-      //const { payload={} } = result || {};
+      await dispatch(duplicteLandingPage(data))
       await getData()
       setLoader(false);
-      // setDialogType({
-      //   type: 'duplicateSuccessful',
-      //   data: payload
-      // })
     }
   })
 
-  const getDuplicateSuccessfulDialog = (data = '') => ({
-    paperStyle: classes.maxWidth540,
-    childrenStyle: classes.duplicateSuccessMsg,
-    title: t('landingPages.duplicationSuccessful'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('landingPages.duplicationSuccessfulMessage')}
-      </Typography>
-    ),
-    renderButtons: () => (
-      <Box className={classes.spaceEvenly}>
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogCancelButton,
-          )}>
-          {t('common.Cancel')}
-        </Button>
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Edit')}
-        </Button>
-      </Box>
-    )
-  })
+  // const getDuplicateSuccessfulDialog = (data = '') => ({
+  //   paperStyle: classes.maxWidth540,
+  //   childrenStyle: classes.duplicateSuccessMsg,
+  //   title: t('landingPages.duplicationSuccessful'),
+  //   showDivider: false,
+  //   content: (
+  //     <Typography style={{ fontSize: 18 }}>
+  //       {t('landingPages.duplicationSuccessfulMessage')}
+  //     </Typography>
+  //   ),
+  //   renderButtons: () => (
+  //     <Box className={classes.spaceEvenly}>
+  //       <Button
+  //         variant='contained'
+  //         size='small'
+  //         onClick={handleClose}
+  //         className={clsx(
+  //           classes.gruopsDialogButton,
+  //           classes.dialogCancelButton,
+  //         )}>
+  //         {t('common.Cancel')}
+  //       </Button>
+  //       <Button
+  //         variant='contained'
+  //         size='small'
+  //         onClick={handleClose}
+  //         href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
+  //         className={clsx(
+  //           classes.gruopsDialogButton,
+  //           classes.dialogConfirmButton,
+  //         )}>
+  //         {t('common.Edit')}
+  //       </Button>
+  //     </Box>
+  //   )
+  // })
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}

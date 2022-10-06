@@ -1,5 +1,3 @@
-import React from 'react';
-import { } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -33,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 const Toast = ({ data, onClose }) => {
     const { t } = useTranslation();
     const { language } = useSelector(state => state.core)
-    const { isRTL } = useSelector(state => state.core);
     const classes = useStyles();
 
     moment.locale(language);

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem, InputLabel
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem
 } from '@material-ui/core';
 import { TablePagination, DateField } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
@@ -243,7 +243,7 @@ const DirectEmailReportTab = ({
       PageSize: rowsPerPage
     }
     let searchObjects = {};
-    Object.keys(param).map(item => {
+    Object.keys(param).forEach(item => {
       if (param[item]) {
         searchObjects[item] = param[item];
       }
@@ -340,7 +340,7 @@ const DirectEmailReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', Recipient = '', Reference = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', Reference = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
 
     return (
       <>

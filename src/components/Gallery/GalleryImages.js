@@ -1,8 +1,8 @@
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { Button, Grid, Box } from '@material-ui/core'
 import { Image } from './Image'
-import React, { useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { postImage, deleteGalleryFile } from '../../redux/reducers/commonSlice';
 
@@ -26,7 +26,7 @@ export const GalleryImages = ({
     const [fileToUpload, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [galleryReady, setGalleryReady] = useState(false);
-    const [isReInit, setReinit] = useState(false);
+    // const [isReInit, setReinit] = useState(false);
     const hiddenFileInput = React.useRef(null);
 
 
@@ -58,7 +58,7 @@ export const GalleryImages = ({
                     FolderName: selectedFolder
                 }
                 await dispatch(postImage(fileModel));
-                setReinit(true);
+                //setReinit(true);
                 onReInitGallery();
             });
         }
@@ -76,7 +76,7 @@ export const GalleryImages = ({
         event.stopPropagation();
         fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
         await dispatch(deleteGalleryFile(fileModel));
-        setReinit(true);
+        //setReinit(true);
         onReInitGallery();
     }
     const handleUploadClick = () => {

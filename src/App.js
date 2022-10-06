@@ -9,7 +9,7 @@ import { getCookie, setCookie, cookieListener } from './helpers/Functions/cookie
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
-import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material-ui/core/styles';
+import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -403,7 +403,7 @@ const App = ({ screenSize }) => {
       const jwt = jwt_decode(token)
       const {
         email = '',
-        unique_name = '',
+        // unique_name = '',
         nameid: companyName,
         certthumbprint: billingTypeId,
         role: isAdmin,

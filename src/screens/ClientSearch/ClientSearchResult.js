@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
 import clsx from "clsx";
 import {
   Typography,
-  Divider,
   TableBody,
   Grid,
   Button,
   TextField,
-  useTheme,
   Link
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon } from "../../assets/images/managment/index";
@@ -42,12 +40,11 @@ const ClientSearchResult = ({ classes }) => {
   const {
     language,
     windowSize,
-    email,
-    phone,
+    // email,
+    // phone,
     rowsPerPage,
-    smsOldVersion,
-    isRTL,
-    ...props
+    // smsOldVersion,
+    isRTL
   } = useSelector((state) => state.core);
 
   const { t } = useTranslation();
@@ -56,7 +53,7 @@ const ClientSearchResult = ({ classes }) => {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
 
-  const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
+  // const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks } = useSelector(state => state.client);
   const { referrer, id } = useParams();
@@ -98,8 +95,7 @@ const ClientSearchResult = ({ classes }) => {
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
-  const theme = useTheme();
-
+  
   const colorTextStyle = {
     red: classes.textColorRed,
     blue: classes.textColorBlue,

@@ -21,7 +21,7 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getSubAccountApiKey, updateScriptPath, getSubAccountRegistrations
+  getScriptPath, getSubAccountApiKey, getSubAccountRegistrations
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -66,32 +66,34 @@ const NotificationManagement = ({ classes }) => {
   const refScriptCode = useRef(null);
   moment.locale(language)
 
-  const getData = async () => {
-    await dispatch(getNotificationData());
-    setLoader(false);
-  }
-
   useEffect(() => {
+    const handleScriptPath = async () => {
+      if (!scriptPath || scriptPath === '') {
+        await dispatch(getScriptPath())
+      }
+      if (scriptPath !== '') {
+        setScriptDirectory(1);
+      }
+    }
+    const handleApiKey = async () => {
+      if (!subAccountApiKey || subAccountApiKey === "") {
+        await dispatch(getSubAccountApiKey());
+      }
+    }
+    const getData = async () => {
+      await dispatch(getNotificationData());
+      setLoader(false);
+    }
+
     setLoader(true);
     handleScriptPath();
     handleApiKey();
     getData();
-  }, [dispatch]);
+  }, [dispatch, scriptPath, subAccountApiKey]);
 
-  const handleScriptPath = async () => {
-    if (!scriptPath || scriptPath === '') {
-      await dispatch(getScriptPath())
-    }
-    if (scriptPath !== '') {
-      setScriptDirectory(1);
-    }
-  }
 
-  const handleApiKey = async () => {
-    if (!subAccountApiKey || subAccountApiKey === "") {
-      await dispatch(getSubAccountApiKey());
-    }
-  }
+
+
 
   const handleScriptDirectory = async (event) => {
     const value = parseInt(event.target.value);
@@ -225,8 +227,8 @@ const NotificationManagement = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -248,20 +250,12 @@ const NotificationManagement = ({ classes }) => {
       setSearching(true);
       setPage(1);
     }
-
-    const handleKeyPress = (e) => {
-      if (e.charCode === 13) {
-        handleSearch()
-      }
-    }
-
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
       }
       handleFromDate(value);
     }
-
     const handleNotificationNameChange = event => {
       setNotificationNameSearch(event.target.value)
     }
@@ -750,7 +744,7 @@ const NotificationManagement = ({ classes }) => {
         <Box className={classes.dialogBox}>
           <Preview classes={classes}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText !== ''}
             showID={true}
             showTitle={false}
             showOSScreen={false}

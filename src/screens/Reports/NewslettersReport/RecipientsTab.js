@@ -67,7 +67,7 @@ const RecipientsTab = ({ classes }) => {
   const [searchValue, setsearchValue] = useState("");
   const dispatch = useDispatch();
   const [SearchNewResults, setSearchNewResults] = useState(null);
-  const [tableData, settableData] = useState([
+  const tableData = [
     {
       email: "mohit.gupta@gmail.com",
       openingDate: "12.06.2020",

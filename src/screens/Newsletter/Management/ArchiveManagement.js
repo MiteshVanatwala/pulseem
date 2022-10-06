@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon } from '../../../assets/images/managment/index'
@@ -95,8 +95,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             const lastUpdate = SendDate ?
               moment(SendDate, dateFormat).valueOf()
               : moment(UpdatedDate, dateFormat).valueOf()
-            const startFromDate = values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf() || null
-            const endToDate = values.toDate && moment(values.toDate).hour(23).minute(59).valueOf() || null
+            const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+            const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
             if (!values)
               return true
@@ -271,10 +271,6 @@ const ArchiveManagementScreen = ({ classes }) => {
       setLoader(false);
     }
   }
-  const redirctToArchive = () => {
-    window.location = '/react/Campaigns/Archive'
-  }
-
 
   const renderManagmentLine = () => {
     return (

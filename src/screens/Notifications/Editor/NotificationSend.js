@@ -65,36 +65,7 @@ const NotificationSend = ({ classes }) => {
     const [showConfirmCancel, setShowConfirmCancel] = useState(false);
     const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
     const [showGroupsList, setShowGroupsList] = useState(false);
-    const getData = () => {
-        return new Promise(async (resolve) => {
-            const notificationPayload = await dispatch(getNotificationById(id));
-            setModel(notificationPayload.payload);
-            if (notificationPayload.payload.RedirectButtonText !== '') {
-                setRedirectButtonVisibillity(true);
-            }
-            resolve();
-        })
-    }
-    const getNotificationSettings = async () => {
-        const list = await dispatch(getSettings(id));
-        const selectedList = [];
-        if (list.payload.length > 0) {
-            const sendDate = list.payload[0].SendDate;
-            if (sendDate) {
-                const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
-                const d = m.format('YYYY-MM-DD HH:mm:ss');
-                handleFromDate(d);
-                setSendType('2');
-            }
-            list.payload.forEach((g) => {
-                const exist = groupList?.filter(gl => { return gl.Id === g.NotificationGroupId });
-                if (exist && exist.length > 0) {
-                    selectedList.push(exist[0]);
-                }
-            });
-        }
-        setSelected(selectedList);
-    }
+
     const toastMessages = {
         SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
         SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('notifications.settings_saved'), showAnimtionCheck: true },
@@ -106,25 +77,56 @@ const NotificationSend = ({ classes }) => {
         body.scrollIntoView({}, 100);
 
         const initSettings = async () => {
-            if (id != null && parseInt(id) > 0) {
-                if (!notificationGroups) {
-                    const groups = await dispatch(getNotificationGroups());
-                    setGroupList(groups.payload);
-                }
-                else {
-                    setGroupList(notificationGroups);
-                }
+            if (!notificationGroups) {
+                const groups = await dispatch(getNotificationGroups());
+                setGroupList(groups.payload);
+            }
+            else {
+                setGroupList(notificationGroups);
             }
         }
-        initSettings();
-    }, [dispatch]);
+        if (id !== null && parseInt(id) > 0) {
+            initSettings();
+        }
+    }, [dispatch, id, notificationGroups]);
     useEffect(() => {
+        const getNotificationSettings = async () => {
+            const list = await dispatch(getSettings(id));
+            const selectedList = [];
+            if (list.payload.length > 0) {
+                const sendDate = list.payload[0].SendDate;
+                if (sendDate) {
+                    const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+                    const d = m.format('YYYY-MM-DD HH:mm:ss');
+                    handleFromDate(d);
+                    setSendType('2');
+                }
+                list.payload.forEach((g) => {
+                    const exist = groupList?.filter(gl => { return gl.Id === g.NotificationGroupId });
+                    if (exist && exist.length > 0) {
+                        selectedList.push(exist[0]);
+                    }
+                });
+            }
+            setSelected(selectedList);
+        }
+        const getData = () => {
+            return new Promise(async (resolve) => {
+                const notificationPayload = await dispatch(getNotificationById(id));
+                setModel(notificationPayload.payload);
+                if (notificationPayload.payload.RedirectButtonText !== '') {
+                    setRedirectButtonVisibillity(true);
+                }
+                resolve();
+            })
+        }
+
         if (groupList?.length > 0) {
             getData().then(() => {
                 getNotificationSettings();
             })
         }
-    }, [groupList])
+    }, [dispatch, groupList, id])
     const renderHeader = () => {
         return (
             <>
@@ -560,14 +562,14 @@ const NotificationSend = ({ classes }) => {
                         </Grid>
                         {windowSize !== "xs" && <Grid item xs={1}></Grid>}
                         <Grid item md={4} xs={12}>
-                            <h2 className={classes.sectionTitle} style={{ marginTop: windowSize == "xs" ? "0" : null }}>{t('notifications.whenToSend')}</h2>
+                            <h2 className={classes.sectionTitle} style={{ marginTop: windowSize === "xs" ? "0" : null }}>{t('notifications.whenToSend')}</h2>
                             <FormControl component="fieldset">
                                 <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
                                     <FormControlLabel value="1" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.immediateSend")}</span>} />
                                     <FormHelperText className={classes.helpText}>{t("notifications.immediateDescription")}</FormHelperText>
                                     <FormControlLabel value="2" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.futureSend")}</span>} />
                                 </RadioGroup>
-                                <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
+                                <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType === '1' ? 'none' : 'auto' }}>
                                     <DateField
                                         minDate={moment()}
                                         classes={classes}
@@ -578,7 +580,7 @@ const NotificationSend = ({ classes }) => {
                                         autoOk
                                     />
                                 </Box>
-                                <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
+                                <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType === '1' ? 'none' : 'auto' }}>
                                     <DateField
                                         classes={classes}
                                         value={sendDate}

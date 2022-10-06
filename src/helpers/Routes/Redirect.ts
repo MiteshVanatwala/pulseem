@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { RedirectPropTypes, generalPropTypes } from '../Types/Redirect';
+import { RedirectPropTypes } from '../Types/Redirect';
 
 const useRedirect = () => {
     const navigate = useNavigate();

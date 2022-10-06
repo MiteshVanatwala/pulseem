@@ -121,7 +121,6 @@ const SmsCreator = ({ classes }) => {
     previousLandingData,
     previousCampaignData,
     getCampaignSum,
-    smsSendResult,
     commonSettings,
     testGroups,
     ToastMessages,
@@ -278,10 +277,6 @@ const SmsCreator = ({ classes }) => {
       }
     }
   }
-
-  useEffect(async () => {
-    await handleSendResult();
-  }, [smsSendResult]);
 
   useEffect(() => {
     if (commonSettings.SubAccountSettings) {

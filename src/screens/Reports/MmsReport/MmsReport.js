@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
 import Switch from "react-switch";
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, DateField, SearchField } from '../../../components/managment/index'
@@ -63,11 +63,7 @@ const MmsReport = ({ classes }) => {
             await dispatch(getMmsGraph());
         }
         getMmsData();
-    }, [isDemoSend]);
-
-    useEffect(() => {
-        handleSearch(filterValues);
-    }, [mmsReport])
+    }, [isDemoSend, dispatch]);
 
     //  HANDLERS  //
     const getHrefs = (id) => ({
@@ -203,7 +199,7 @@ const MmsReport = ({ classes }) => {
                         ...filterValues,
                         campaignName: e.target.value
                     })}
-                    onClick={() => handleSearch()}
+                    onClick={() => handleSearch(filterValues)}
                     placeholder={t('common.CampaignName')}
                 />
             )

@@ -1,5 +1,5 @@
-import { Box, Button, Divider, Grid, Tab, Typography } from '@material-ui/core';
-import React, { useState, useEffect } from 'react';
+import { Button, Grid, Tab } from '@material-ui/core';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
@@ -22,7 +22,6 @@ import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
-  // const qs = queryString.parse(props.location.search);
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
   const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
@@ -30,7 +29,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { directSmsReport } = useSelector(state => state.sms);
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
-  const [searchParam, setSearchParam] = useState({});
   const [tabValue, setTabValue] = useState(0);
   const rowsOptions = [6, 10, 20, 50];
   const [pageEmail, setPageEmail] = useState(1);
@@ -144,9 +142,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     setLoader(true);
     let isSearchingData = isSearching;
     let search = searchData;
-    let params = searchParam;
     search[key] = {};
-    params[key] = {};
     isSearchingData[key] = false;
 
     if (isArchive) {

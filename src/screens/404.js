@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, Button, Box } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { RenderHtml } from '../helpers/Utils/HtmlUtils';
@@ -7,7 +7,6 @@ import DefaultScreen from './DefaultScreen';
 
 const PageNotFound = ({ classes }) => {
     const { t } = useTranslation();
-    const Redirect = useRedirect();
     return (
         <DefaultScreen
             currentPage='pageNotFound'

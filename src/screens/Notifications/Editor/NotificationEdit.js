@@ -173,41 +173,40 @@ const NotificationEdit = ({ classes }) => {
     ERROR: { severity: 'error', color: 'error', message: t('notifications.error'), showAnimtionCheck: true },
   }
 
-  const handlePublicKey = async () => {
-    const t = await dispatch(getNotificationPublicKey());
-    if (t && t.payload) {
-      setPublicKey(t.payload.PublicKey);
-    }
-    else {
-      setPublicKey('');
-    }
-  }
-
-  const getData = async () => {
-    const notificationPayload = await dispatch(getNotificationById(id));
-    setModel(notificationPayload.payload);
-    setSourceModel(notificationPayload.payload);
-    setPublicKey(notificationPayload.payload.PublicKey);
-    if (notificationPayload.payload.RedirectButtonText != '') {
-      setRedirectButtonVisibillity(true);
-    }
-  }
-
   useEffect(() => {
     const body = document.querySelector('#root');
     body.scrollIntoView({}, 100);
+
+    const getData = async () => {
+      const notificationPayload = await dispatch(getNotificationById(id));
+      setModel(notificationPayload.payload);
+      setSourceModel(notificationPayload.payload);
+      setPublicKey(notificationPayload.payload.PublicKey);
+      if (notificationPayload.payload.RedirectButtonText !== '') {
+        setRedirectButtonVisibillity(true);
+      }
+    }
+    const handlePublicKey = async () => {
+      const t = await dispatch(getNotificationPublicKey());
+      if (t && t.payload) {
+        setPublicKey(t.payload.PublicKey);
+      }
+      else {
+        setPublicKey('');
+      }
+    }
 
     handlePublicKey();
     if (id != null && parseInt(id) > 0) {
       getData();
     }
-  }, [dispatch]);
+  }, [dispatch, id]);
 
-  useEffect(() => {
-    if (!ShowRedirectButton) {
-      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
-    }
-  }, [ShowRedirectButton])
+  // useEffect(() => {
+  //   if (!ShowRedirectButton) {
+  //     setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
+  //   }
+  // }, [ShowRedirectButton, model])
 
   const handleCancel = () => {
     if (JSON.stringify(sourceModel) !== JSON.stringify(model)) {
@@ -609,7 +608,7 @@ const NotificationEdit = ({ classes }) => {
               id="removeImage"
             >X</button>
           </div>
-          <div className={clsx(classes.footerWrapper, classes.dashed)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
+          <div className={clsx(classes.footerWrapper, classes.dashed)} style={{ flexDirection: isRTL ? (model.Direction === 1 ? 'row-reverse' : 'row') : (model.Direction === 1 ? 'row' : 'row-reverse') }}>
             <div className={classes.iconWrapper}>
               <div className={clsx(classes.flexJustifyCenter, classes.dashed, classes.icon)}
                 onMouseEnter={() => setIconHover(true)}

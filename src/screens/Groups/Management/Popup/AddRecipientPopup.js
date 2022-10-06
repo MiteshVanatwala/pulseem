@@ -1,7 +1,6 @@
 import { useState } from "react";
 import clsx from "clsx";
 import {
-    Grid,
     Typography,
     Divider,
     Button,
@@ -71,7 +70,6 @@ const AddRecipientPopup = ({ classes,
     const localClasses = useStyles()
 
     const { extraData } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);

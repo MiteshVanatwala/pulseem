@@ -4,7 +4,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
-    Box, Typography, Divider, TableBody, TableRow, TableCell,
+    Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
@@ -690,8 +690,7 @@ const Groups = ({ classes }) => {
             InvalidEmails,
             RemovedCell,
             RemovedEmails,
-            TotalRecipients,
-            GroupName
+            TotalRecipients
         } = row;
         return (
             <TableRow key={GroupID} component="div" classes={rowStyle}>

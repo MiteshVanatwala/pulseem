@@ -58,7 +58,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
   return (
     <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
       <Box className={classes.tipsTitle}>
-        <img src={LighBulb} className={classes.lightBulb} />
+        <img src={LighBulb} className={classes.lightBulb} alt="Pulseem Tips" />
         <Typography
           align='center'
           variant='h5'

@@ -5,12 +5,12 @@ import {
   TableRow,
   TableCell,
   Grid,
-  Checkbox,
-  FormControlLabel,
+  // Checkbox,
+  // FormControlLabel,
   makeStyles,
 } from "@material-ui/core";
-import { MdOutlineLockClock } from "react-icons/md"
-import { RiPagesLine } from "react-icons/ri"
+// import { MdOutlineLockClock } from "react-icons/md"
+// import { RiPagesLine } from "react-icons/ri"
 
 
 
@@ -19,18 +19,18 @@ import moment from "moment";
 import "moment/locale/he";
 
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
-import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
-import IconWrapper from "../../../components/icons/IconWrapper";
+// import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
+// import IconWrapper from "../../../components/icons/IconWrapper";
 import FlexGrid from "../../../components/Grids/FlexGrid";
 // import FlexGrid from "../../../components/";
-import { useSelector } from 'react-redux';
-import { ManagmentIcon } from '../../../components/managment';
-import {
-  EditIcon,
-  DeleteRecipient,
-  DeleteEmail,
-  DeletePhone
-} from "../../../assets/images/managment/index";
+// import { useSelector } from 'react-redux';
+// import { ManagmentIcon } from '../../../components/managment';
+// import {
+//   EditIcon,
+//   DeleteRecipient,
+//   DeleteEmail,
+//   DeletePhone
+// } from "../../../assets/images/managment/index";
 
 const useStyles = makeStyles({
   groupName: {
@@ -76,130 +76,130 @@ const RenderWebRow = ({
   //TODO: Translation left, confirm keys
   const { t } = useTranslation();
   const {
-    OpenTime,
-    LogSms_ErrorType,
-    PageType,
-    OpenDate,
-    OpenCount,
-    OpenCountry,
-    OpenCountryLocation,
+    // OpenTime,
+    // LogSms_ErrorType,
+    // PageType,
+    // OpenDate,
+    // OpenCount,
+    // OpenCountry,
+    // OpenCountryLocation,
     Revenue,
-    ClientID,
-    SubAccountID,
+    // ClientID,
+    // SubAccountID,
     Email,
     Status,
     SmsStatus,
-    FirstName,
-    LastName,
-    Telephone,
+    // FirstName,
+    // LastName,
+    // Telephone,
     Cellphone,
-    CellphoneRightDigits,
-    Address,
-    City,
-    State,
-    Country,
-    Zip,
-    Company,
-    ExtraFields,
-    BirthDate,
-    ReminderDate,
-    LastSendDate,
-    CreationDate,
-    FailedSendingCounter,
-    IsWebService,
-    LastEmailOpened,
-    LastEmailClicked,
-    BestEmailOpenTime
+    // CellphoneRightDigits,
+    // Address,
+    // City,
+    // State,
+    // Country,
+    // Zip,
+    // Company,
+    // ExtraFields,
+    // BirthDate,
+    // ReminderDate,
+    // LastSendDate,
+    // CreationDate,
+    // FailedSendingCounter,
+    // IsWebService,
+    // LastEmailOpened,
+    // LastEmailClicked,
+    // BestEmailOpenTime
   } = row;
 
   const localClasses = useStyles();
-  const { isRTL } = useSelector(state => state.core);
-  let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
-    return e === true
-  }).length;
+  //const { isRTL } = useSelector(state => state.core);
+  // let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
+  //   return e === true
+  // }).length;
 
-  const REDIRECT_OPTIONS = {
-    ShowGroup: 0,
-    ShowMails: 10,
-    ShowMailsActive: 11,
-    ShowMailsRemoved: 12,
-    ShowMailsErrored: 13,
-    ShowSms: 20,
-    ShowSmsActive: 21,
-    ShowSmsRemoved: 22,
-    ShowSmsErrored: 23
-  }
+  // const REDIRECT_OPTIONS = {
+  //   ShowGroup: 0,
+  //   ShowMails: 10,
+  //   ShowMailsActive: 11,
+  //   ShowMailsRemoved: 12,
+  //   ShowMailsErrored: 13,
+  //   ShowSms: 20,
+  //   ShowSmsActive: 21,
+  //   ShowSmsRemoved: 22,
+  //   ShowSmsErrored: 23
+  // }
 
 
-  const renderCellIcons = () => {
-    // const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row
+  // const renderCellIcons = () => {
+  //   // const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row
 
-    const iconsMap = [
-      {
-        key: 'edit',
-        icon: EditIcon,
-        lable: t("common.edit"),
-        // remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
-        rootClass: classes.paddingIcon,
-        // textClass: classes.sendIconText,
-        // href: smsOldVersion === "true" ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
-      },
+  //   const iconsMap = [
+  //     {
+  //       key: 'edit',
+  //       icon: EditIcon,
+  //       lable: t("common.edit"),
+  //       // remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
+  //       rootClass: classes.paddingIcon,
+  //       // textClass: classes.sendIconText,
+  //       // href: smsOldVersion === "true" ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
+  //     },
 
-      {
-        key: 'deleteFromGroups',
-        icon: DeleteRecipient,
-        // disable: Status !== 1 || AutomationID !== 0,
-        lable: t("recipient.deleteFromGroups"),
-        // href: smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
-        rootClass: classes.paddingIcon
-      },
-      {
-        key: 'deleteFromEmail',
-        icon: DeleteEmail,
-        lable: t("recipient.deleteEmail"),
-        rootClass: classes.paddingIcon,
-        // onClick: () => {
-        //   setDialogType({
-        //     type: 'duplicate',
-        //     data: Id
-        //   })
-        // }
-      },
-      {
-        key: 'deleteFromPhone',
-        icon: DeletePhone,
-        // disable: Groups && Groups.length === 0,
-        lable: t("recipient.deletePhone"),
-        remove: windowSize === 'xs',
-        rootClass: classes.paddingIcon,
-        // onClick: () => {
-        //   setDialogType({
-        //     type: 'groups',
-        //     data: row.Groups
-        //   })
-        // }
-      },
+  //     {
+  //       key: 'deleteFromGroups',
+  //       icon: DeleteRecipient,
+  //       // disable: Status !== 1 || AutomationID !== 0,
+  //       lable: t("recipient.deleteFromGroups"),
+  //       // href: smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
+  //       rootClass: classes.paddingIcon
+  //     },
+  //     {
+  //       key: 'deleteFromEmail',
+  //       icon: DeleteEmail,
+  //       lable: t("recipient.deleteEmail"),
+  //       rootClass: classes.paddingIcon,
+  //       // onClick: () => {
+  //       //   setDialogType({
+  //       //     type: 'duplicate',
+  //       //     data: Id
+  //       //   })
+  //       // }
+  //     },
+  //     {
+  //       key: 'deleteFromPhone',
+  //       icon: DeletePhone,
+  //       // disable: Groups && Groups.length === 0,
+  //       lable: t("recipient.deletePhone"),
+  //       remove: windowSize === 'xs',
+  //       rootClass: classes.paddingIcon,
+  //       // onClick: () => {
+  //       //   setDialogType({
+  //       //     type: 'groups',
+  //       //     data: row.Groups
+  //       //   })
+  //       // }
+  //     },
 
-    ]
-    return (
-      <Grid
-        container
-        direction='row'
-        justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
-        {iconsMap.map(icon => (
-          <Grid
-            className={icon.disable && classes.disabledCursor}
-            key={icon.key}
-            item >
-            <ManagmentIcon
-              classes={classes}
-              {...icon}
-            />
-          </Grid>
-        ))}
-      </Grid>
-    )
-  }
+  //   ]
+  //   return (
+  //     <Grid
+  //       container
+  //       direction='row'
+  //       justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
+  //       {iconsMap.map(icon => (
+  //         <Grid
+  //           className={icon.disable && classes.disabledCursor}
+  //           key={icon.key}
+  //           item >
+  //           <ManagmentIcon
+  //             classes={classes}
+  //             {...icon}
+  //           />
+  //         </Grid>
+  //       ))}
+  //     </Grid>
+  //   )
+  // }
 
   const renderNameCell = (row, fullwidth) => {
     let date = null;

@@ -83,8 +83,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const renderShortcutMenu = (num, update, index) => {
-    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+    let pageTitle = (selectedPage[num] && selectedPage[num].title) ?? '';
+    let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) ?? '';
     const open = Boolean(anchorEl[num]);
 
     if (shortcuts.length > 0) {
@@ -286,7 +286,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             color='primary'
             fullWidth
             className={classes.shortcutDottedButton}
-            onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, index)}>
+            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}>
             {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}

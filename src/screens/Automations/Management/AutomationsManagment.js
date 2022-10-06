@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
+  DeleteIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, Switch, SearchField
@@ -88,8 +88,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
           const lastUpdate = ActivatedOn ?
             moment(ActivatedOn, dateFormat).valueOf()
             : moment(ModifiedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true

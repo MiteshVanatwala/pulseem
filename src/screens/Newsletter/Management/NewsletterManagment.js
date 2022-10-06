@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
-import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
   GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
@@ -30,7 +29,7 @@ import { Title } from '../../../components/managment/Title';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
+  const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -93,8 +92,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -140,7 +139,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
@@ -470,12 +468,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </>
     )
   }
-
-  const HtmlTooltip = withStyles((theme) => ({
-    tooltip: {
-      maxWidth: 220
-    },
-  }))(Tooltip);
 
   const renderNameCell = (row) => {
     let date = null
