@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
@@ -23,14 +22,17 @@ import { exportFile } from '../../../helpers/exportFromJson';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { Loader } from '../../../components/Loader/Loader';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { voidFunction } from '../../../helpers/utils';
-import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionManager';
+import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
-  const { language, windowSize, isRTL, rowsPerPage, accountSettings, accountFeatures } = useSelector(state => state.core)
+  const { state } = useLocation();
+  const from = state?.from || "/";
+
+  const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -42,7 +44,6 @@ const NewslettersReport = ({ classes }) => {
   const [searchResults, setSearchResults] = useState(null)
   const [toFileArray, setToFileArray] = useState([])
   const [isDemoSend, setIsDemoSend] = useState(false)
-  const [csvData, setCsvData] = useState('')
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -51,7 +52,6 @@ const NewslettersReport = ({ classes }) => {
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) }
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-  const csvLinkRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
   const [hasRevenue, setHasRevenue] = useState(false);
 
@@ -66,7 +66,8 @@ const NewslettersReport = ({ classes }) => {
           CampaignID: id,
           ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
-          ResultTitle: t('common.Sent') + ' - ' + t('common.campaignID') + ' ' + id
+          ResultTitle: t('common.Sent') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
         }
       }),
     },
@@ -84,7 +85,8 @@ const NewslettersReport = ({ classes }) => {
           CampaignID: id,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID,
           TestStatusOfEmailElseSms: 1,
-          ResultTitle: t('common.OpensUnique') + ' - ' + t('common.campaignID') + ' ' + id
+          ResultTitle: t('common.OpensUnique') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
         }
       }),
       clickable: true
@@ -111,7 +113,8 @@ const NewslettersReport = ({ classes }) => {
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedClientsCampaignID,
           TestStatusOfEmailElseSms: 1,
           Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed,
-          ResultTitle: t('common.Removed') + ' - ' + t('common.campaignID') + ' ' + id
+          ResultTitle: t('common.Removed') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
         }
       }),
     },
@@ -156,7 +159,8 @@ const NewslettersReport = ({ classes }) => {
           CampaignID: id,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.NotOpenedCampaignID,
           TestStatusOfEmailElseSms: 1,
-          ResultTitle: t('common.NoOpened') + ' - ' + t('common.campaignID') + ' ' + id
+          ResultTitle: t('common.NoOpened') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
         }
       }),
     },
@@ -174,7 +178,8 @@ const NewslettersReport = ({ classes }) => {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
           CampaignID: id,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
-          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails
+          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
         }
       }),
       textStyle: { fontWeight: 900 },
@@ -206,6 +211,21 @@ const NewslettersReport = ({ classes }) => {
     setLoader(true);
     await dispatch(getNewsletterReports(isDemoSend));
     setLoader(false);
+    const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
+    if (queryState) {
+      const pageStateProperty = GetPageNyName('reports/NewsletterReports');
+      if (pageStateProperty) {
+        if (pageStateProperty.SearchData) {
+          setNotificationNameSearch(pageStateProperty.SearchData?.CampaignName);
+          handleFromDate(pageStateProperty.SearchData?.FromDate);
+          handleToDate(pageStateProperty.SearchData?.ToDate);
+          setSearching(true);
+        }
+        else {
+          setPage(pageStateProperty.PageNumber);
+        }
+      }
+    }
   }
 
   useEffect(() => {
@@ -224,7 +244,7 @@ const NewslettersReport = ({ classes }) => {
 
   useEffect(() => {
     handleSearch();
-  }, [newslettersReports])
+  }, [newslettersReports, isSearching])
 
   const renderHeader = () => {
     return (
@@ -293,6 +313,12 @@ const NewslettersReport = ({ classes }) => {
       fromDate,
       toDate
     }];
+
+    SetPageState({
+      "PageName": "reports/NewsletterReports",
+      "PageNumber": page,
+      "SearchData": { CampaignName: notificationNameSearch, FromDate: fromDate, ToDate: toDate }
+    });
 
     const filtersObject = {
       name: (row, values) => {
@@ -448,7 +474,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderManagmentLine = () => {
-    const dataLength = isSearching ? searchResults.length : newslettersReports.length;
+    const dataLength = isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0);
     return (
       <Grid container spacing={2} className={classes.linePadding}>
         {/* {windowSize !== 'xs' && <Grid item>
@@ -476,13 +502,6 @@ const NewslettersReport = ({ classes }) => {
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
-          <CSVLink
-            data={csvData}
-            filename='report.csv'
-            className='hidden'
-            ref={csvLinkRef}
-            target='_blank'
-          />
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
@@ -970,15 +989,16 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : newslettersReports.length}
+        rows={isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0)}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={(e) => {
           SetPageState({
-            "PageName": "NewsletterReport",
-            "PageNumber": e
+            "PageName": "reports/NewsletterReports",
+            "PageNumber": e,
+            "SearchData": (notificationNameSearch !== '' || fromDate || toDate) ? { CampaignName: notificationNameSearch, FromDate: fromDate, ToDate: toDate } : null
           });
           handlePageChange(e)
         }}

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { getCookie, setCookie } from './cookies';
 import { apiURL, actionURL, isProdMode, siteTrackingURL } from '../config/index'
+import { ClearPageState } from './UI/SessionStorageManager'
 
 const refreshTokenURL = `${actionURL}RefreshToken.ashx`
 const logoutURL = `${actionURL}LogoutSession.ashx`
@@ -18,7 +19,7 @@ export const logout = async () => {
     setCookie('accountFeatures', '');
     setCookie('accountSettings', '');
     setCookie('isClal', '');
-    window.sessionStorage.removeItem('searchData')
+    ClearPageState();
     redirectToLogin()
   } catch (err) {
     console.log("logout error", err)
@@ -149,43 +150,43 @@ eventsInstance.interceptors.response.use(
     return Promise.reject(error.response.data)
   })
 
-  uploaderInstance.interceptors.request.use(async config => {
-    try {
-      const jtoken = getCookie('jtoken')
-      let token = jtoken
-      if (isProdMode) {
-        if (!jtoken) {
-          redirectToLogin()
-          return Promise.reject('Unautorized')
-        }
-        const language = getCookie('Culture')
-        const { data, request } = await axios.get(refreshTokenURL, {
-          headers: {
-            language
-          }
-        })
-        if (refreshTokenURL !== request.responseURL) {
-          redirectToLogin()
-          return Promise.reject('Unautorized')
-        }
-        token = data
-        setCookie('jtoken', token)
+uploaderInstance.interceptors.request.use(async config => {
+  try {
+    const jtoken = getCookie('jtoken')
+    let token = jtoken
+    if (isProdMode) {
+      if (!jtoken) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
       }
-      config.headers.Authorization = `Bearer ${token}`
-      return config
-    } catch (err) {
+      const language = getCookie('Culture')
+      const { data, request } = await axios.get(refreshTokenURL, {
+        headers: {
+          language
+        }
+      })
+      if (refreshTokenURL !== request.responseURL) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      token = data
+      setCookie('jtoken', token)
+    }
+    config.headers.Authorization = `Bearer ${token}`
+    return config
+  } catch (err) {
+    redirectToLogin()
+  }
+})
+
+uploaderInstance.interceptors.response.use(
+  res => res,
+  error => {
+    if (error.response.status === 401) {
       redirectToLogin()
     }
+    return Promise.reject(error.response.data)
   })
-
-  uploaderInstance.interceptors.response.use(
-    res => res,
-    error => {
-      if (error.response.status === 401) {
-        redirectToLogin()
-      }
-      return Promise.reject(error.response.data)
-    })
 
 
 export { instence, customInstance, eventsInstance, uploaderInstance }

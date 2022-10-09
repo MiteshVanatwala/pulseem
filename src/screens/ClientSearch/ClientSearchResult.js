@@ -918,7 +918,19 @@ const ClientSearchResult = ({ props, classes }) => {
           <Typography className={classes.managementTitle}>
             {t("client.logPageHeaderResource1.Text")} {location?.state && location?.state?.ResultTitle ? " - " : ""} {location?.state?.ResultTitle}
           </Typography>
-          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => window.history.back()}> {t("common.back")}</Typography>
+          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
+            if (location?.state && location?.state.PageProperty) {
+              navigate(`/${location?.state.PageProperty.PageName}`, {
+                state: {
+                  from: 'clientsearchresult'
+                }
+              })
+            }
+            else {
+              window.history.back()
+            }
+          }
+          }> {t("common.back")}</Typography>
         </Box>
         <Divider />
       </>
