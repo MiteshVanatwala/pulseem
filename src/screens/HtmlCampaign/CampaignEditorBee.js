@@ -1,8 +1,7 @@
 import clsx from 'clsx';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button } from '@material-ui/core'
-import React, { useRef, useState, useEffect } from 'react'
-import EmailEditor from 'react-email-editor'
+import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -34,7 +33,7 @@ import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
-import { GetBeeToken } from '../../helpers/BeeApi';
+import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -46,7 +45,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
-  const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, accountSettings } = useSelector(state => state.core)
   const { tokenAlive } = useSelector(state => state.common)
@@ -173,18 +172,34 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     setDataReady(true);
-    setLoader(false);
+    //setLoader(false);
     const initBee = () => {
-      GetBeeToken().then((t) => {
-        const beeTest = new BeePlugin(t);
-        const template = {};
-        beeTest.start(config, template).then((p) => {
-          console.log(p);
-        });
-      })
+      dispatch(getBeeToken());
     }
     initBee();
   }
+
+  useEffect(() => {
+    if (beeToken) {
+      if (beeToken?.StatusCode === 201) {
+        const beeObject = JSON.parse(beeToken.Message);
+        const beeTest = new BeePlugin(beeObject);
+        const template = {};
+        try {
+          beeTest.start(config, template).then((p) => {
+            console.log(p);
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      else {
+        alert('something went wrong');
+      }
+      setLoader(false);
+    }
+  }, [beeToken])
+
   const initExtraDataField = () => {
     return new Promise((resolve, reject) => {
       try {
@@ -323,53 +338,53 @@ const CampaignEditor = ({ classes, ...props }) => {
       saveDesign(false, null, false);
     }
   }
-  const onLoad = () => {
-    try {
-      editorRef.current.setMergeTags(mergeData);
-      editorRef.current.editor.setSpecialLinks(specialLinks);
-      editorRef.current.editor.setBodyValues({
-        backgroundColor: "#e7e7e7",
-        contentWidth: "600px",
-        preheaderText: ""
-      });
+  // const onLoad = () => {
+  //   try {
+  //     editorRef.current.setMergeTags(mergeData);
+  //     editorRef.current.editor.setSpecialLinks(specialLinks);
+  //     editorRef.current.editor.setBodyValues({
+  //       backgroundColor: "#e7e7e7",
+  //       contentWidth: "600px",
+  //       preheaderText: ""
+  //     });
 
-      if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
-        setLoader(false);
-        return;
-      }
-      else {
-        if (campaign.JsonData) {
-          editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
-          setLoader(false);
-          return;
-        }
-        else if (campaign.HtmlData) {
-          editorRef.current.loadDesign({
-            html: campaign.HTMLtoSend,
-            classic: true
-          });
-          setLoader(false);
+  //     if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
+  //       setLoader(false);
+  //       return;
+  //     }
+  //     else {
+  //       if (campaign.JsonData) {
+  //         editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
+  //         setLoader(false);
+  //         return;
+  //       }
+  //       else if (campaign.HtmlData) {
+  //         editorRef.current.loadDesign({
+  //           html: campaign.HTMLtoSend,
+  //           classic: true
+  //         });
+  //         setLoader(false);
 
-          return;
-        }
-        else if (campaign.HTMLtoSend) {
-          editorRef.current.loadDesign({
-            html: campaign.HTMLtoSend,
-            classic: true
-          });
-          setLoader(false);
-          return;
-        }
-      }
-    }
-    catch (e) {
-      console.error(e);
-      return;
-    }
-    finally {
-      registerEvents();
-    }
-  }
+  //         return;
+  //       }
+  //       else if (campaign.HTMLtoSend) {
+  //         editorRef.current.loadDesign({
+  //           html: campaign.HTMLtoSend,
+  //           classic: true
+  //         });
+  //         setLoader(false);
+  //         return;
+  //       }
+  //     }
+  //   }
+  //   catch (e) {
+  //     console.error(e);
+  //     return;
+  //   }
+  //   finally {
+  //     registerEvents();
+  //   }
+  // }
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
     const response = await dispatch(saveCampaign({
       campaignId: beeFinalData.campaignId,

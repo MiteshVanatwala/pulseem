@@ -103,9 +103,20 @@ export const getCampaignInfo = createAsyncThunk(
         }
     });
 
+export const getBeeToken = createAsyncThunk(
+    '/CampaignEditor/GetBeeToken/', async (_, thunkAPI) => {
+        try {
+            const response = await instence.get(`/CampaignEditor/GetBeeToken`);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
+        beeToken: null,
         campaign: null,
         userBlocks: null,
         ToastMessages: {
@@ -135,6 +146,10 @@ export const campaignEditorSlice = createSlice({
             .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
                 state.campaignInfo = payload;
             })
+            .addCase(getBeeToken.fulfilled, (state, { payload }) => {
+                state.beeToken = payload;
+            })
+
     },
     reducers: {
         save: async (_, action) => {
