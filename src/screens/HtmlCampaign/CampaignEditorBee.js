@@ -181,6 +181,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
     language: isRTL ? 'he-IL' : 'en-US',
     trackChanges: true,
+    autosave: 60,
     onSave: async (jsonFile, htmlFile) => {
       try {
         const response = await dispatch(saveCampaign({
@@ -223,14 +224,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       });
       setDialog(DialogType.TEST_SEND);
     },
-    onChange: (jsonFile, response) => {
-      console.log('onChange', jsonFile);
-      console.log('onChange', response);
-      // setBeeFinalData({
-      //   campaignId: campaignId,
-      //   JsonData: JSON.stringify(jsonFile),
-      //   HtmlData: response
-      // });
+    onAutoSave: () => {
+      //saveDesign(false, null, false);
+    },
+    onChange: () => {
+      //saveDesign(false, null, false);
+    },
+    onWarning: (alertMessage) => {
+      console.log('onWarning ', alertMessage)
     },
     onError: (errorMessage) => {
       console.log('onError ', errorMessage)
