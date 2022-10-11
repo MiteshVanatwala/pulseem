@@ -39,6 +39,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch()
   const editorRef = useRef(null);
+  const saveRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
   const campaignId = props.match.params.id;
   const [dataReady, setDataReady] = useState(false);
@@ -86,7 +87,7 @@ const CampaignEditor = ({ classes, ...props }) => {
                 exData.push({ value: item, name: Object.values(extraData)[i], isExtraField: true })
               }
             });
-    
+
             exData.forEach((ed) => {
               ed.name = !ed.isExtraField ? t(ed.label) : t(ed.name);
               ed.value = "##" + ed.value + "##";
@@ -98,14 +99,14 @@ const CampaignEditor = ({ classes, ...props }) => {
             resolve();
           }
         });
-    
+
       }
       const initLandingPages = () => {
         return new Promise((resolve, reject) => {
           try {
             const titleName = t('landingPages.landingPages');
             const items = [];
-    
+
             previousLandingData.forEach((item, i) => {
               items.push({
                 type: titleName,
@@ -113,7 +114,7 @@ const CampaignEditor = ({ classes, ...props }) => {
                 link: item.PageHref
               });
             });
-    
+
             setSpecialLinks(items);
           }
           catch (e) {
@@ -180,9 +181,32 @@ const CampaignEditor = ({ classes, ...props }) => {
     container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
     language: isRTL ? 'he-IL' : 'en-US',
     trackChanges: true,
-    onSave: (jsonFile, htmlFile) => {
-      console.log(jsonFile);
-      console.log('onSave', htmlFile)
+    onSave: async (jsonFile, htmlFile) => {
+      try {
+        const response = await dispatch(saveCampaign({
+          campaignId: campaignId,
+          JsonData: jsonFile,
+          HtmlData: htmlFile
+        }));
+
+        if (response.payload === true) {
+          if (saveRef.current?.redirectAfterSave) {
+            window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
+          }
+          else if (saveRef.current?.showAnimation) {
+            setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+          }
+        }
+        else {
+          console.log(response);
+        }
+
+      } catch (e) {
+        console.error(e);
+      }
+
+      // console.log(jsonFile);
+      // console.log('onSave', htmlFile)
       //const reponse = dispatch(testSend({ ...sendRequest }));
       //onResponse(reponse.payload.StatusCode);
       //setSummaryData(reponse.payload.Summary);
@@ -210,6 +234,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     },
     onError: (errorMessage) => {
       console.log('onError ', errorMessage)
+    },
+    onLoad: (jsonFile) => {
+      console.log(jsonFile);
     }
   };
 
@@ -221,7 +248,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     setDataReady(true);
-    //setLoader(false);
     const initBee = () => {
       dispatch(getBeeToken());
     }
@@ -239,10 +265,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           case 201: {
             const beeObject = JSON.parse(beeToken.Message);
             const beeTest = new BeePlugin(beeObject);
-            const template = {};
+            const template = campaign.JsonData ? JSON.parse(campaign.JsonData) : {};
             try {
               beeTest.start(config, template).then((instance) => {
                 editorRef.current = instance;
+                editorRef.current.load();
               });
             } catch (e) {
               console.error(e);
@@ -270,7 +297,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       initRepsonse();
     }
   }, [beeToken])
-  
+
   const initSubAccountSettings = async () => {
     return accountSettings?.SubAccountSettings;
   }
@@ -356,22 +383,20 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    const response = await dispatch(saveCampaign({
-      campaignId: beeFinalData.campaignId,
-      JsonData: beeFinalData.JsonData,
-      HtmlData: beeFinalData.HtmlData
-    }));
-    if (response.payload === true) {
-      if (redirectAfterSave) {
-        window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
-      }
-      else if (showAnimation) {
-        setToastMessage(ToastMessages.CAMPAIGN_SAVED);
-      }
-    }
-    else {
-      console.log(response);
-    }
+    editorRef.current.save();
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
+
+    // if (res.payload === true) {
+    //   if (redirectAfterSave) {
+    //     window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
+    //   }
+    //   else if (showAnimation) {
+    //     setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+    //   }
+    // }
+    // else {
+    //   console.log(res);
+    // }
 
   }
   const deleteNewsletter = async () => {
@@ -596,7 +621,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         innerStyle={{ paddingInline: 15 }}
         classes={classes}
         onExit={onExit}
-        onTestSend={() => { setIsResponseModal(false); setDialog(DialogType.TEST_SEND) }}
+        onTestSend={() => { setIsResponseModal(false); editorRef.current.send(); }}
         onSave={saveDesign}
         onBack={onBack}
         onDelete={onDelete} />
