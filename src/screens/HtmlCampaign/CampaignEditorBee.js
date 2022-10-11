@@ -63,7 +63,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     message: ""
   })
   const [beeFinalData, setBeeFinalData] = useState({});
-  const [changes, setChanges] = useState(false);
   const DialogType = {
     TEST_SEND: "testSend",
     DELETE: "delete",
@@ -228,12 +227,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         console.error(e);
       }
     },
-    onSend: (htmlFile, jsonFile) => {
-      setBeeFinalData({
-        campaignId: campaignId,
-        JsonData: JSON.stringify(jsonFile),
-        HtmlData: htmlFile
-      });
+    onSend: () => {
       setDialog(DialogType.TEST_SEND);
     },
     onAutoSave: () => {
@@ -267,7 +261,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     initBee();
   }
-
   useEffect(() => {
     const initRepsonse = () => {
       //config.uid = accountSettings?.SubAccountSettings.UnlayerUniqueID;
@@ -323,25 +316,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const registerEvents = () => {
     const unlayer = editorRef.current;
     if (unlayer) {
-      // Images
-      unlayer.registerCallback('selectImage', function (data, done) {
-        setShowGallery(true);
-        setIsFileSelected(false);
-
-        const button = document.querySelector('[name="btnConfirm"]');
-        if (button) {
-          button.addEventListener('mouseup', (event) => {
-            const modal = document.querySelector('.MuiDialog-paper');
-            const selectedIcon = modal.querySelector(".image-info svg");
-            if (selectedIcon) {
-              const imgElement = selectedIcon.parentNode.previousElementSibling;
-              const style = imgElement.currentStyle || window.getComputedStyle(imgElement, false);
-              const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
-              done({ url: selectedImage });
-            }
-          });
-        }
-      });
       // blocks
       try {
         unlayer.registerCallback('block:added', async function (newBlock, done) {
@@ -354,7 +328,6 @@ const CampaignEditor = ({ classes, ...props }) => {
         });
         unlayer.registerCallback('block:modified', async function (existingBlock, done) {
           console.log('block:modified', existingBlock);
-
           // Update the block in your database here
           // and pass the updated object to done callback.
           await dispatch(updateUserBlock(existingBlock));
@@ -373,15 +346,6 @@ const CampaignEditor = ({ classes, ...props }) => {
           done(userBlocks);
         });
         unlayer.addEventListener('design:updated', function (data) {
-          // var type = data.type; // body, row, content
-          // var item = data.item;
-          // var changes = data.changes;
-          // //const heading = editorRef.current.editor.frame.iframe.getElementsByClassName("u_content_heading");
-          // if (changes.name === 'textAlign') {
-          //   console.log(isRTL);
-          //   item.values.direction = "rtl";
-          // }
-          // console.log('design:updated', type, item, changes);
           saveDesign(false, null, false);
         });
         unlayer.editor.reloadProvider('blocks');
