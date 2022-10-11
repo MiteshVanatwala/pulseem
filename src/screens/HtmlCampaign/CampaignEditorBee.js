@@ -34,6 +34,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
+import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -62,7 +63,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     title: "",
     message: ""
   })
-  const [beeFinalData, setBeeFinalData] = useState({});
   const DialogType = {
     TEST_SEND: "testSend",
     DELETE: "delete",
@@ -78,66 +78,22 @@ const CampaignEditor = ({ classes, ...props }) => {
   // On Data Ready -> Get Extra fields & Landing pages
   useEffect(() => {
     if (dataReady) {
-      const initExtraDataField = () => {
-        return new Promise((resolve, reject) => {
-          try {
-            let exData = [...ClientFields];
-            Object.keys(extraData).forEach((item, i) => {
-              if (Object.values(extraData)[i] && Object.values(extraData)[i] != '') {
-                exData.push({ value: item, name: Object.values(extraData)[i], isExtraField: true })
-              }
-            });
-
-            exData.forEach((ed) => {
-              ed.name = !ed.isExtraField ? t(ed.label) : t(ed.name);
-              ed.value = "##" + ed.value + "##";
-            });
-            setPulseemMergeData(exData);
-          } catch (e) {
-            reject(e);
-          } finally {
-            resolve();
-          }
-        });
-
+      const initFields = () => {
+        initExtraDataField(extraData, t).then((exData) => {
+          setPulseemMergeData(exData);
+        })
       }
-      const initLandingPages = () => {
-        return new Promise((resolve, reject) => {
-          try {
-            const titleName = t('landingPages.landingPages');
-            const items = [];
-
-            previousLandingData.forEach((item, i) => {
-              items.push({
-                type: titleName,
-                label: item.CampaignName,
-                link: item.PageHref
-              });
-            });
-
-            setSpecialLinks(items);
-          }
-          catch (e) {
-            reject(e);
-          }
-          finally {
-            resolve();
-          }
+      const initLP = () => {
+        initLandingPages(previousLandingData, t).then((items) => {
+          setSpecialLinks(items);
         });
       }
-      Promise.all([initExtraDataField(), initLandingPages()]).then(() => {
+      Promise.all([initFields(), initLP()]).then(() => {
         setDataLoaded(true);
       })
     }
   }, [dataReady]);
 
-  useEffect(() => {
-    if (dataLoaded) {
-      setTimeout(() => {
-        //onLoad();
-      }, 1000)
-    }
-  }, [dataLoaded]);
   // Get data by campaign id
   useEffect(() => {
     if (props.match.params.id != null && props.match.params.id > 0) {
@@ -146,11 +102,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [dispatch]);
   useEffect(() => {
     initOptions();
-    setTimeout(() => {
-      if (dataLoaded) {
-        // onLoad();
-      }
-    }, 0);
   }, [language]);
 
 
@@ -184,8 +135,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     autosave: 60,
     contentDialog: {
       filePicker: (resolve, reject, args) => {
-        console.log(reject);
-        console.log(args);
         setShowGallery(true);
         setIsFileSelected(false);
         const button = document.querySelector('[name="btnConfirm"]');
