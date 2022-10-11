@@ -63,6 +63,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     message: ""
   })
   const [beeFinalData, setBeeFinalData] = useState({});
+  const [changes, setChanges] = useState(false);
   const DialogType = {
     TEST_SEND: "testSend",
     DELETE: "delete",
@@ -182,6 +183,27 @@ const CampaignEditor = ({ classes, ...props }) => {
     language: isRTL ? 'he-IL' : 'en-US',
     trackChanges: true,
     autosave: 60,
+    contentDialog: {
+      filePicker: (resolve, reject, args) => {
+        console.log(reject);
+        console.log(args);
+        setShowGallery(true);
+        setIsFileSelected(false);
+        const button = document.querySelector('[name="btnConfirm"]');
+        if (button) {
+          button.addEventListener('mouseup', (event) => {
+            const modal = document.querySelector('.MuiDialog-paper');
+            const selectedIcon = modal.querySelector(".image-info svg");
+            if (selectedIcon) {
+              const imgElement = selectedIcon.parentNode.previousElementSibling;
+              const style = imgElement.currentStyle || window.getComputedStyle(imgElement, false);
+              const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
+              resolve({ url: selectedImage, context: selectedImage });
+            }
+          });
+        }
+      }
+    },
     onSave: async (jsonFile, htmlFile) => {
       try {
         const response = await dispatch(saveCampaign({
@@ -205,16 +227,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       } catch (e) {
         console.error(e);
       }
-
-      // console.log(jsonFile);
-      // console.log('onSave', htmlFile)
-      //const reponse = dispatch(testSend({ ...sendRequest }));
-      //onResponse(reponse.payload.StatusCode);
-      //setSummaryData(reponse.payload.Summary);
-      //setLoader(false);
-    },
-    onSaveAsTemplate: (jsonFile) => {
-      console.log('onSaveAsTemplate', jsonFile)
     },
     onSend: (htmlFile, jsonFile) => {
       setBeeFinalData({
@@ -228,7 +240,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       //saveDesign(false, null, false);
     },
     onChange: () => {
-      //saveDesign(false, null, false);
+      saveRef.current = { redirectAfterSave: false, redirectUrl: null, showAnimation: false };
+      editorRef.current.save();
     },
     onWarning: (alertMessage) => {
       console.log('onWarning ', alertMessage)
@@ -257,51 +270,46 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   useEffect(() => {
     const initRepsonse = () => {
-      initSubAccountSettings().then((settings) => {
-        //config.uid = settings.UnlayerUniqueID;
-        config.mergeTags = mergeData;
-        config.specialLinks = specialLinks;
+      //config.uid = accountSettings?.SubAccountSettings.UnlayerUniqueID;
+      config.mergeTags = mergeData;
+      config.specialLinks = specialLinks;
 
-        switch (beeToken?.StatusCode) {
-          case 201: {
-            const beeObject = JSON.parse(beeToken.Message);
-            const beeTest = new BeePlugin(beeObject);
-            const template = campaign.JsonData ? JSON.parse(campaign.JsonData) : {};
-            try {
-              beeTest.start(config, template).then((instance) => {
-                editorRef.current = instance;
-                editorRef.current.load();
-              });
-            } catch (e) {
-              console.error(e);
-            }
-            break;
+      switch (beeToken?.StatusCode) {
+        case 201: {
+          const beeObject = JSON.parse(beeToken.Message);
+          const beeTest = new BeePlugin(beeObject);
+          const template = campaign.JsonData ? JSON.parse(campaign.JsonData) : {};
+          try {
+            beeTest.start(config, template).then((instance) => {
+              editorRef.current = instance;
+              editorRef.current.load();
+            });
+          } catch (e) {
+            console.error(e);
           }
-          case 401: {
-            setDialog(DialogType.MISSING_API_KEY);
-            break;
-          }
-          case 404: {
-            setDialog(DialogType.CAMPAIGN_NOT_FOUND);
-            break;
-          }
-          case 500:
-          default: {
-            setDialog(DialogType.ERROR_OCCURED);
-            break;
-          }
+          break;
         }
-        setLoader(false);
-      });
+        case 401: {
+          setDialog(DialogType.MISSING_API_KEY);
+          break;
+        }
+        case 404: {
+          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+          break;
+        }
+        case 500:
+        default: {
+          setDialog(DialogType.ERROR_OCCURED);
+          break;
+        }
+      }
+      setLoader(false);
     }
     if (beeToken) {
       initRepsonse();
     }
   }, [beeToken])
 
-  const initSubAccountSettings = async () => {
-    return accountSettings?.SubAccountSettings;
-  }
   const initOptions = async () => {
     if (!accountSettings || accountSettings.SubAccountSettings) {
       await dispatch(getCommonFeatures());
@@ -384,21 +392,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    editorRef.current.save();
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
-
-    // if (res.payload === true) {
-    //   if (redirectAfterSave) {
-    //     window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
-    //   }
-    //   else if (showAnimation) {
-    //     setToastMessage(ToastMessages.CAMPAIGN_SAVED);
-    //   }
-    // }
-    // else {
-    //   console.log(res);
-    // }
-
+    editorRef.current.save();
   }
   const deleteNewsletter = async () => {
     setDialog(null);
