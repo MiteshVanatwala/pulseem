@@ -331,7 +331,7 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   const handleDownloadCsv = async () => {
     setLoader(true);
-    const response = await dispatch(getExportData(searchData));
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
       const data = response.payload;
       if (data.StatusCode === 201) {
@@ -733,7 +733,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const makeInvalid = async () => {
     setLoader(true);
     setDialog(null);
-    await dispatch(makeInvalidClients(searchData)).then((res) => {
+    await dispatch(makeInvalidClients({ ...searchData, PageSize: TotalCount })).then((res) => {
       handleResponses(res, {
         'S_200': {
           code: 200,
@@ -866,7 +866,8 @@ const ClientSearchResult = ({ props, classes }) => {
     const response = await dispatch(AddClientsToGroup({
       ...searchData,
       GroupName: groupData.GroupName,
-      IsTestGroup: groupData.IsTestGroup
+      IsTestGroup: groupData.IsTestGroup,
+      PageSize: TotalCount
     }));
     handleResponses(response, assignClientsActions);
     setLoader(false);
@@ -874,7 +875,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const handleUnSubscribe = async (opt) => {
     setDialog(null);
     setLoader(true);
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt })).then(res => {
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
