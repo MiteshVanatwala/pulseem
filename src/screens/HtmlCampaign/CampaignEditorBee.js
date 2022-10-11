@@ -74,13 +74,62 @@ const CampaignEditor = ({ classes, ...props }) => {
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits"
   };
+  // On Data Ready -> Get Extra fields & Landing pages
   useEffect(() => {
     if (dataReady) {
+      const initExtraDataField = () => {
+        return new Promise((resolve, reject) => {
+          try {
+            let exData = [...ClientFields];
+            Object.keys(extraData).forEach((item, i) => {
+              if (Object.values(extraData)[i] && Object.values(extraData)[i] != '') {
+                exData.push({ value: item, name: Object.values(extraData)[i], isExtraField: true })
+              }
+            });
+    
+            exData.forEach((ed) => {
+              ed.name = !ed.isExtraField ? t(ed.label) : t(ed.name);
+              ed.value = "##" + ed.value + "##";
+            });
+            setPulseemMergeData(exData);
+          } catch (e) {
+            reject(e);
+          } finally {
+            resolve();
+          }
+        });
+    
+      }
+      const initLandingPages = () => {
+        return new Promise((resolve, reject) => {
+          try {
+            const titleName = t('landingPages.landingPages');
+            const items = [];
+    
+            previousLandingData.forEach((item, i) => {
+              items.push({
+                type: titleName,
+                label: item.CampaignName,
+                link: item.PageHref
+              });
+            });
+    
+            setSpecialLinks(items);
+          }
+          catch (e) {
+            reject(e);
+          }
+          finally {
+            resolve();
+          }
+        });
+      }
       Promise.all([initExtraDataField(), initLandingPages()]).then(() => {
         setDataLoaded(true);
       })
     }
   }, [dataReady]);
+
   useEffect(() => {
     if (dataLoaded) {
       setTimeout(() => {
@@ -88,6 +137,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       }, 1000)
     }
   }, [dataLoaded]);
+  // Get data by campaign id
   useEffect(() => {
     if (props.match.params.id != null && props.match.params.id > 0) {
       getData();
@@ -103,7 +153,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [language]);
 
 
-
+  //Check session token -> tokenAlive
   useEffect(() => {
     setInterval(() => {
       if (tokenAlive) {
@@ -130,7 +180,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
     language: isRTL ? 'he-IL' : 'en-US',
     trackChanges: true,
-    //mergeTags: mergeData,
     onSave: (jsonFile, htmlFile) => {
       console.log(jsonFile);
       console.log('onSave', htmlFile)
@@ -180,77 +229,50 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
 
   useEffect(() => {
-    if (beeToken) {
-      if (beeToken?.StatusCode === 201) {
-        const beeObject = JSON.parse(beeToken.Message);
-        const beeTest = new BeePlugin(beeObject);
-        const template = {};
-        try {
-          beeTest.start(config, template).then((p) => {
-            console.log(p);
-          });
-        } catch (e) {
-          console.error(e);
+    const initRepsonse = () => {
+      initSubAccountSettings().then((settings) => {
+        //config.uid = settings.UnlayerUniqueID;
+        config.mergeTags = mergeData;
+        config.specialLinks = specialLinks;
+
+        switch (beeToken?.StatusCode) {
+          case 201: {
+            const beeObject = JSON.parse(beeToken.Message);
+            const beeTest = new BeePlugin(beeObject);
+            const template = {};
+            try {
+              beeTest.start(config, template).then((instance) => {
+                editorRef.current = instance;
+              });
+            } catch (e) {
+              console.error(e);
+            }
+            break;
+          }
+          case 401: {
+            setDialog(DialogType.MISSING_API_KEY);
+            break;
+          }
+          case 404: {
+            setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+            break;
+          }
+          case 500:
+          default: {
+            setDialog(DialogType.ERROR_OCCURED);
+            break;
+          }
         }
-      }
-      else {
-        alert('something went wrong');
-      }
-      setLoader(false);
+        setLoader(false);
+      });
+    }
+    if (beeToken) {
+      initRepsonse();
     }
   }, [beeToken])
-
-  const initExtraDataField = () => {
-    return new Promise((resolve, reject) => {
-      try {
-        let exData = [...ClientFields];
-        Object.keys(extraData).forEach((item, i) => {
-          if (Object.values(extraData)[i] && Object.values(extraData)[i] != '') {
-            exData.push({ value: item, label: Object.values(extraData)[i], isExtraField: true })
-          }
-        });
-
-        const mData = {};
-        exData.forEach((ed) => {
-          mData[ed.value] = {
-            name: !ed.isExtraField ? t(ed.label) : ed.label,
-            value: "##" + ed.value + "##"
-          }
-        });
-        setPulseemMergeData(mData);
-      } catch (e) {
-        reject(e);
-      } finally {
-        resolve();
-      }
-    });
-
-  }
-  const initLandingPages = () => {
-    return new Promise((resolve, reject) => {
-      try {
-        const titleName = t('landingPages.landingPages');
-        const sLinks = [{
-          name: titleName,
-          specialLinks: []
-        }];
-
-        previousLandingData.forEach((item, i) => {
-          sLinks[0].specialLinks.push({
-            name: item.CampaignName,
-            href: item.PageHref,
-            target: '_blank'
-          });
-        });
-        setSpecialLinks(sLinks);
-      }
-      catch (e) {
-        reject(e);
-      }
-      finally {
-        resolve();
-      }
-    });
+  
+  const initSubAccountSettings = async () => {
+    return accountSettings?.SubAccountSettings;
   }
   const initOptions = async () => {
     if (!accountSettings || accountSettings.SubAccountSettings) {
@@ -333,58 +355,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
     }
   }
-  const onReady = () => {
-    if (!campaign.JsonData && !campaign.HtmlData) {
-      saveDesign(false, null, false);
-    }
-  }
-  // const onLoad = () => {
-  //   try {
-  //     editorRef.current.setMergeTags(mergeData);
-  //     editorRef.current.editor.setSpecialLinks(specialLinks);
-  //     editorRef.current.editor.setBodyValues({
-  //       backgroundColor: "#e7e7e7",
-  //       contentWidth: "600px",
-  //       preheaderText: ""
-  //     });
-
-  //     if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
-  //       setLoader(false);
-  //       return;
-  //     }
-  //     else {
-  //       if (campaign.JsonData) {
-  //         editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
-  //         setLoader(false);
-  //         return;
-  //       }
-  //       else if (campaign.HtmlData) {
-  //         editorRef.current.loadDesign({
-  //           html: campaign.HTMLtoSend,
-  //           classic: true
-  //         });
-  //         setLoader(false);
-
-  //         return;
-  //       }
-  //       else if (campaign.HTMLtoSend) {
-  //         editorRef.current.loadDesign({
-  //           html: campaign.HTMLtoSend,
-  //           classic: true
-  //         });
-  //         setLoader(false);
-  //         return;
-  //       }
-  //     }
-  //   }
-  //   catch (e) {
-  //     console.error(e);
-  //     return;
-  //   }
-  //   finally {
-  //     registerEvents();
-  //   }
-  // }
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
     const response = await dispatch(saveCampaign({
       campaignId: beeFinalData.campaignId,
@@ -423,6 +393,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onLogoutAlert = () => {
     setIsResponseModal(false);
+    setLoader(false);
     setGenericModalData({
       title: t('common.systemNotice'),
       message: t("common.autoLogoutMessage"),
@@ -581,12 +552,10 @@ const CampaignEditor = ({ classes, ...props }) => {
       <div id="bee-plugin-container" className={classes.containerFullHeight}></div>
     </Box>
   }
-
   const handleCloseReponse = () => {
     setDialog(null);
     setIsResponseModal(false);
   }
-
   return (
     <DefaultScreen
       currentPage='campaignEditor'
