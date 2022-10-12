@@ -13,6 +13,7 @@ export const BeeConfig = (
     saveCampaign: save,
     setShowGallery: showGallery,
     setIsFileSelected: fileSelected,
+    saveRowHandler: Function,
     t: any
 ) => {
     return {
@@ -25,7 +26,36 @@ export const BeeConfig = (
         translationsUrl: `https://unlayer.reactstage.club/Content/BeeFree/${isRTL ? 'he.json' : 'en.json'}`,
         sidebarPosition: isRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
+        saveRows: true,
         contentDialog: {
+            saveRow: {
+                handler: (resolve: Function, reject: Function, args: any) => {
+                    return saveRowHandler(args);
+                }
+            },
+            onSaveRow: (rowJSON: any, rowHTML: any, pageJSON: any) => {
+                console.log(rowJSON);
+            },
+            getRows: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    // get the handle
+                    const handle = args.handle
+                    // pseudo code to get the rows with the handle...
+                    const rows: any = [];// await fakeRowsService(handle)
+                    resolve([...rows])
+                }
+            },
+            externalContentURLs: {
+                handler: (resolve: Function, reject: Function, args: any) => {
+                    return editorRef.current.onSearchSavedRows(args)
+                        .then((rows: any) => {
+                            resolve(rows)
+                        })
+                        .catch(() => {
+                            reject()
+                        })
+                }
+            },
             filePicker: (resolve: Function, reject: Function, args: any) => {
                 setShowGallery(true);
                 setIsFileSelected(false);
@@ -59,8 +89,8 @@ export const BeeConfig = (
             //saveDesign(false, null, false);
         },
         onChange: () => {
-            saveRef.current = { redirectAfterSave: false, redirectUrl: null, showAnimation: false };
-            editorRef.current.save();
+            // saveRef.current = { redirectAfterSave: false, redirectUrl: null, showAnimation: false };
+            // editorRef.current.save();
         },
         onWarning: (alertMessage: any) => {
             console.log('onWarning ', alertMessage)
@@ -85,5 +115,6 @@ export const DialogType = {
     ERROR_OCCURED: "campaigns.errorOccured",
     NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
     GENERIC: "generic",
-    NO_CREDITS_LEFT: "sms.noCredits"
+    NO_CREDITS_LEFT: "sms.noCredits",
+    SET_ROW_DETAILS: "campaigns.saveBlock"
 };

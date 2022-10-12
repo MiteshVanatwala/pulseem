@@ -35,6 +35,8 @@ import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType } from './helper/Config';
+import { getCookie } from '../../helpers/cookies';
+import { BlockMeta } from './modals/BlockMeta';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -59,6 +61,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [showGallery, setShowGallery] = useState(false);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [alertLogout, setAlertLogout] = useState(false);
+  const [userBlock, setUserBlock] = useState(null);
   const [genericModalData, setGenericModalData] = useState({
     title: "",
     message: ""
@@ -164,7 +167,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Init Bee Token & Configuration
   useEffect(() => {
     const initRepsonse = () => {
-      config.clientId = accountSettings?.SubAccountSettings.UnlayerUniqueID;
+      config.clientId = getCookie("jtoken");
       config.mergeTags = mergeData;
       config.specialLinks = specialLinks;
 
@@ -210,7 +213,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       await dispatch(getCommonFeatures());
     }
     if (editorRef.current) {
-      editorRef.current.loadConfig(BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected));
+      editorRef.current.loadConfig(BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected, saveRowHandler));
     }
   }
   //#endregion Init Bee Token & Configuration
@@ -434,7 +437,16 @@ const CampaignEditor = ({ classes, ...props }) => {
     setIsResponseModal(false);
   }
 
-  const config = BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected);
+  const saveRowHandler = (metadata) => {
+    setUserBlock(metadata);
+    setDialog(DialogType.SET_ROW_DETAILS);
+  }
+  const setBlockFinalValue = (e) => {
+    setUserBlock({ ...userBlock, e });
+    // Save via api
+  }
+
+  const config = BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected, saveRowHandler);
 
   return (
     <DefaultScreen
@@ -448,6 +460,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         classes={classes}
         onClose={() => setDialog(null)}
         isOpen={dialog === DialogType.NO_CREDITS_LEFT}
+      />
+      <BlockMeta
+        onSubmit={setBlockFinalValue}
+        isOpen={dialog === DialogType.SET_ROW_DETAILS}
+        classes={classes}
+        onClose={() => setDialog(null)}
       />
       <TestSend
         classes={classes}
