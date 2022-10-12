@@ -80,7 +80,6 @@ const PulseemSwitch = ({ classes, id, switchType, props, margin = 1, onChange = 
             />)
         }
     }
-    return <></>
 }
 
 export default PulseemSwitch;

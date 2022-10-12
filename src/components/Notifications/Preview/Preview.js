@@ -35,7 +35,7 @@ export const Preview = (
   }) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(state => state.core);
-  const [previewDeviceSelected, setPreviewDevice] = useState(showDevices == false ? 0 : 0);
+  const [previewDeviceSelected, setPreviewDevice] = useState(showDevices === false ? 0 : 0);
   const [notificationExpanded, setNotificationExpanded] = useState(!showDevices);
   TabPanel.propTypes = {
     children: PropTypes.node,
@@ -119,7 +119,7 @@ export const Preview = (
             }}>
               <b>{model.Title !== '' ? model.Title : t('notifications.exampleTitle')}</b>
             </Typography>}
-            <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
+            <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: isRTL ? (model.Direction === 1 ? 'row-reverse' : 'row') : (model.Direction === 1 ? 'row' : 'row-reverse') }}>
               <div className={classes.iconWrapper}>
                 <div className={clsx(classes.flexJustifyCenter, classes.icon)}
                   style={{
@@ -131,7 +131,7 @@ export const Preview = (
                 </div>
               </div>
               <div className={classes.notificationContent}>
-                {isChrome && <Typography style={{ textAlign: model.Direction === 1 ? "left" : "right" }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
+                {isChrome && <Typography style={{ textAlign: model.Direction === 1 ? "left" : "right" }}><b>{model.Title !== '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
                 <TextareaAutosize
                   maxRows={4}
                   style={{

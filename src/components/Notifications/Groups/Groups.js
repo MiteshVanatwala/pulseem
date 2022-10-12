@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, Select, MenuItem, Button
 } from '@material-ui/core'
@@ -39,7 +39,7 @@ const Groups = ({ classes,
     callbackShowTestGroup = () => null,
     uniqueKey = null
 }) => {
-    const { language, isRTL, windowSize } = useSelector(state => state.core)
+    const { windowSize } = useSelector(state => state.core)
     const { t } = useTranslation();
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
@@ -51,7 +51,7 @@ const Groups = ({ classes,
         setShowTestGroups(!showTestGroups);
     }
     const handleSearch = (event) => {
-        setClearInput(event.target.value != '');
+        setClearInput(event.target.value !== '');
         setGroupNameSearch(event.target.value);
     }
     const resetSearch = (event) => {
@@ -98,7 +98,7 @@ const Groups = ({ classes,
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })
@@ -253,14 +253,14 @@ const Groups = ({ classes,
         <Box className={classes.groupsContainer} key={uniqueKey}>
             {
                 windowSize === 'xs' && <Grid item xs={12}>
-                    <FormControl className={classes.margin, classes.searchInput}>
+                    <FormControl className={clsx(classes.margin, classes.searchInput)}>
                         <Input
                             autoComplete='off'
                             onChange={handleSearch}
                             placeholder={t('notifications.buttons.search')}
                             id="searchGroup"
                             startAdornment={
-                                <InputAdornment position="start" autocomplete="off">
+                                <InputAdornment position="start" autoComplete="off">
                                     <BsSearch />
                                 </InputAdornment>
                             }
@@ -274,7 +274,7 @@ const Groups = ({ classes,
                     </FormControl>
                 </Grid>
             }
-            <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)} style={{ whiteSpace: windowSize !== 'xs' ? 'noWrap': 'normal' }}>
+            <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)} style={{ whiteSpace: windowSize !== 'xs' ? 'noWrap' : 'normal' }}>
                 {windowSize !== 'xs' && <FormControl className={clsx(classes.margin, classes.searchInput)}>
                     <Input
                         autoComplete='off'
@@ -350,7 +350,7 @@ const Groups = ({ classes,
                     renderInput={(params) => selectedList.length > 0 ? (
                         <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                     ) : (
-                        <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText != '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
+                        <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText !== '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
                     )
                     }
                 />)

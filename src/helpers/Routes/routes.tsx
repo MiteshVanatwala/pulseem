@@ -316,12 +316,7 @@ export const getRoutes = (
         title: t("master.manageNotifications"),
         href: "/react/Notifications",
         isShow: true,
-      },
-      {
-        title: t("master.implementScript"),
-        uri: "/react/Notifications",
-        isShow: true,
-      },
+      }
     ],
   },
   {

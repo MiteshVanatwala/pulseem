@@ -14,7 +14,7 @@ const TFA = ({ classes,
     onConfirm = () => null
 }) => {
     const { t } = useTranslation();
-    const { windowSize, isRTL } = useSelector(state => state.core);
+    const { isRTL } = useSelector(state => state.core);
     const { companyName } = useSelector(state => state.core)
     const [hideThisMessage, setHideThisMessage] = useState(false);
 

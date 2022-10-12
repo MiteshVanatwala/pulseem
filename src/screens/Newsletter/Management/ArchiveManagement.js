@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
 import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon, DateField, SearchField } from '../../../components/managment/index'
@@ -21,6 +21,8 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { Title } from '../../../components/managment/Title';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -56,17 +58,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     getData();
     handleDefaultDates();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderArchive.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -105,8 +96,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             const lastUpdate = SendDate ?
               moment(SendDate, dateFormat).valueOf()
               : moment(UpdatedDate, dateFormat).valueOf()
-            const startFromDate = values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf() || null
-            const endToDate = values.toDate && moment(values.toDate).hour(23).minute(59).valueOf() || null
+            const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+            const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
             if (!values)
               return true
@@ -129,6 +120,11 @@ const ArchiveManagementScreen = ({ classes }) => {
         setPage(1);
       } catch (error) {
         console.log(error);
+        dispatch(sendToTeamChannel({
+          MethodName: 'handleSearch',
+          ComponentName: 'ArchiveManagement.js',
+          Text: error
+        }));
       }
     }
 
@@ -150,7 +146,6 @@ const ArchiveManagementScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
@@ -267,15 +262,16 @@ const ArchiveManagementScreen = ({ classes }) => {
       });
     } catch (e) {
       console.log(e);
+      dispatch(sendToTeamChannel({
+        MethodName: 'handleDownloadCsv',
+        ComponentName: 'ArchiveManagement.js',
+        Text: e
+      }));
     }
     finally {
       setLoader(false);
     }
   }
-  const redirctToArchive = () => {
-    window.location = '/react/Campaigns/Archive'
-  }
-
 
   const renderManagmentLine = () => {
     return (
@@ -603,7 +599,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       subPage='archiveManagement'
       classes={classes}
       containerClass={classes.managmentNarrow}>
-      {renderHeader()}
+      <Title Text={t('campaigns.logPageHeaderArchive.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

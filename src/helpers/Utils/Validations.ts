@@ -35,6 +35,11 @@ export const VerifyGetUrl = (value: string) => {
             xmlhttp.open("HEAD", value, true);
             xmlhttp.send();
         } catch (error) {
+            // Log({
+            //     MethodName: 'VerifyGetUrl',
+            //     ComponentName: 'Validation.ts',
+            //     Text: error as string
+            // })
             reject(false);
         }
     });

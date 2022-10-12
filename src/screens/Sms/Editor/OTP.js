@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Loader } from '../../../components/Loader/Loader';
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import { Typography, Box, Button, TextField } from "@material-ui/core";
@@ -43,7 +43,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
         let payload = {
             "Cellphone": campaignNumber,
         }
-        let r = await dispatch(getSMSRequestOTP(payload))
+        await dispatch(getSMSRequestOTP(payload))
         setLoader(false);
         setDialogType({ type: 'otpCode' });
     }
@@ -162,7 +162,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
             ),
             content: (
                 <Box className={classes.flexColCenter} style={{ paddingBottom: 10 }}>
-                    <img src={Gif} style={{ width: "150px", height: "150px" }} />
+                    <img src={Gif} style={{ width: "150px", height: "150px" }} alt="" />
                     <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
                         {t("sms.otpNumberValidatedDescription")}
                     </p>
@@ -185,6 +185,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
     }
     const handleOtpResult = async (otpSendResult) => {
         switch (otpSendResult) {
+            default:
             case 1: {// Request
                 break;
             }
@@ -195,6 +196,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
             case 3: {// Not_Authirized
                 setOtpValidation(true);
                 setotpMsgs(t("sms.otpNotAuthirized"));
+                break;
             }
             case 4: {// Failed
                 setOtpValidation(true);
@@ -266,14 +268,12 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
     const handleAlertoff = () => {
         setDialogType(null);
     }
+    
     return (<>
         {renderDialog()}
         <Loader isOpen={showLoader} />
     </>
     );
-
-    return (<></>)
-
 };
 
 export default OTP;

@@ -41,13 +41,14 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const initData = async () => {
-    let r = await dispatch(getShortcuts());
+  const initData = () => {
+    dispatch(getShortcuts());
   }
 
   useEffect(() => {
-    initData();
-  }, [dispatch])
+    if (!shortcuts || shortcuts.length === 0)
+      initData();
+  }, [])
 
   const handlePageChange = useCallback((title, href, update, num, index) => {
     const data = {
@@ -82,8 +83,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const renderShortcutMenu = (num, update, index) => {
-    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+    let pageTitle = (selectedPage[num] && selectedPage[num].title) ?? '';
+    let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) ?? '';
     const open = Boolean(anchorEl[num]);
 
     if (shortcuts.length > 0) {
@@ -194,15 +195,15 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const handleShortcutMenuOpen = (event, num, update, index) => {
-    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+  const handleShortcutMenuOpen = (event, num) => {
+    let pageTitle = (selectedPage[num] && selectedPage[num].title) || '';
+    let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) || '';
     let refElement = event.currentTarget || event.current || '';
     if (!refElement) {
       return;
     }
     let data = {};
-    data[num] = num == Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
+    data[num] = num === Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
@@ -265,7 +266,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         {windowSize !== 'xs' && windowSize !== 'sm' && <IconButton
           id="editIcon"
           className={classes.shortcutEditIcon}
-          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID, true, index)}>
+          onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index)}>
           {'\uE09C'}
         </IconButton>
         }
@@ -285,7 +286,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             color='primary'
             fullWidth
             className={classes.shortcutDottedButton}
-            onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, index)}>
+            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}>
             {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}
@@ -295,10 +296,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
     return newShortcutButtons;
   }
-  if (shortcuts.length > 0 && windowSize === 'xs' || windowSize !== 'xs') {
+  if ((shortcuts.length > 0 && windowSize === 'xs') || windowSize !== 'xs') {
     return (
       <Box className={classes.shortcutBox}>
-        <Paper elevation={windowSize == 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
+        <Paper elevation={windowSize === 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
           <Box className={classes.shortcutTitleSection}>
             <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
             <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>

@@ -68,7 +68,7 @@ const AppBarItem = ({
             currentStyle,
             textStyle,
             { [classes.chosenText]: chosen })}>
-          {showIcon ? (item.iconUnicode || item.icon) : item && item.title || ''}
+          {showIcon ? (item.iconUnicode || item.icon) : (item && item.title) ?? ''}
         </IconButton>
 
         {(chosen || open) && <ArrowDropUp className={classes.appBarItemArrow} />}
@@ -146,7 +146,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
   ]
 
   const item = {
-    title: languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title || '',
+    title: (languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title) ?? '',
     options: languages
   }
 
@@ -219,13 +219,13 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   const routes = getRoutes(t, cookieIsClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
-  const navigate = ({ uri }) => {
-    if (!!uri) {
-      setCookie('scriptDialog', false, { maxAge: 36000000000 });
-      dispatch(setScriptDialog(false));
-      Redirect({ url: uri });
-    }
-  }
+  // const navigate = ({ uri }) => {
+  //   if (!!uri) {
+  //     setCookie('scriptDialog', false, { maxAge: 36000000000 });
+  //     dispatch(setScriptDialog(false));
+  //     Redirect({ url: uri });
+  //   }
+  // }
   const returnToAdmin = () => {
     setCookie('accountSettings', '');
     window.location = '/Pulseem/ReactRedirect.aspx';

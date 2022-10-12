@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
-import Title from '../../components/Wizard/Title'
+import WizardTitle from '../../components/Wizard/WizardTitle'
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
@@ -22,6 +22,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
 const SiteTrackingEditor = ({ classes }) => {
     const { isRTL, windowSize } = useSelector(state => state.core);
@@ -49,6 +50,26 @@ const SiteTrackingEditor = ({ classes }) => {
 
 
     useEffect(() => {
+        const getData = async () => {
+            await dispatch(getScript());
+            await dispatch(getGroupsBySubAccountId());
+            const response = await dispatch(get(EventRequestModel.PageView));
+            const retModel = response.payload;
+            if (!response.error && retModel.length !== 0) {
+                const eventObject = retModel[0];
+                if (!eventObject.metadata) {
+                    dispatch(updateEventModel({ type: 'new' }));
+                }
+            }
+            else {
+                dispatch(updateEventModel({ type: 'new' }));
+            }
+            setShowLoader(false);
+            const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
+            if (hideScriptIntro !== 'true') {
+                setDialogType({ type: 'scriptImplementation' });
+            }
+        }
         getData();
     }, [dispatch]);
 
@@ -56,28 +77,7 @@ const SiteTrackingEditor = ({ classes }) => {
         if (event && (isValidDomain !== null || event.domain !== '')) {
             setIsValidDomain(IsValidURL(event.domain));
         }
-    }, [event]);
-
-    const getData = async () => {
-        await dispatch(getScript());
-        await dispatch(getGroupsBySubAccountId());
-        const response = await dispatch(get(EventRequestModel.PageView));
-        const retModel = response.payload;
-        if (!response.error && retModel.length !== 0) {
-            const eventObject = retModel[0];
-            if (!eventObject.metadata) {
-                dispatch(updateEventModel({ type: 'new' }));
-            }
-        }
-        else {
-            dispatch(updateEventModel({ type: 'new' }));
-        }
-        setShowLoader(false);
-        const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
-        if (hideScriptIntro !== 'true') {
-            setDialogType({ type: 'scriptImplementation' });
-        }
-    }
+    }, [event, isValidDomain]);
 
     const handleModelChange = async (name, value) => {
         await dispatch(updateEventModel({ prop: name, value: value }))
@@ -214,6 +214,11 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         catch (e) {
             console.log(e);
+            dispatch(sendToTeamChannel({
+                MethodName: 'onSaveReponse',
+                ComponentName: 'SiteTrackingEditor.js',
+                Text: e
+            }));
             setDialogType({ type: 'serverNotAble' })
         }
     }
@@ -329,7 +334,7 @@ const SiteTrackingEditor = ({ classes }) => {
         setShowLoader(true);
         setDialogType(null);
         if (event.id && event.id !== '') {
-            const pResponse = await dispatch(deletePulseemSiteTracking())
+            await dispatch(deletePulseemSiteTracking())
             await dispatch(deleteSiteTrackingEvent(event.id))
             handleModelChange('id', null);
         }
@@ -543,7 +548,7 @@ const SiteTrackingEditor = ({ classes }) => {
         return <>
             <Grid container>
                 <Grid item xs={7}>
-                    <Title title={t("siteTracking.title")}
+                    <WizardTitle title={t("siteTracking.title")}
                         classes={classes}
                         subTitle={t("siteTracking.setUp")}
                         topZero={false}
@@ -646,9 +651,9 @@ const SiteTrackingEditor = ({ classes }) => {
                             </FormControl>
                             <TextField
                                 placeholder={t('siteTracking.addDomain')}
-                                inputProps={{
-                                    shrink: false
-                                }}
+                                // inputProps={{
+                                //     shrink: false
+                                // }}
                                 className={clsx(classes.textField,
                                     classes.fullWidth,
                                     isRTL ? classes.startElementNoRadius : classes.endElementNoRadius,

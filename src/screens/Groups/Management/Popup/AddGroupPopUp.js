@@ -21,6 +21,10 @@ import {
 } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
+import { getTestGroups } from "../../../../redux/reducers/smsSlice";
+
+import { Dialog } from "../../../../components/managment/Dialog";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog, getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
@@ -68,6 +72,8 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                         new Promise(async (resolutionFunc, rejectionFunc) => {
                             await dispatch(getGroupsBySubAccountId())
                             await resolutionFunc(getData());
+                            if (data.IsTestGroup)
+                                await dispatch(getTestGroups());
                         }).then((res) => {
                             callback?.(response.payload.Message)
                         })
@@ -100,6 +106,11 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             })
 
         } catch (err) {
+            dispatch(sendToTeamChannel({
+                MethodName: 'init2FA',
+                ComponentName: 'Dashboard.js',
+                Text: err
+            }));
             return false;
         }
     };

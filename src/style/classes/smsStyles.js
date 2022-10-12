@@ -1080,5 +1080,37 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             textTransform: 'capitalize',
             fontWeight: 400
         }
+    },
+    customWidth: {
+        maxWidth: 200,
+        backgroundColor: "black",
+        fontSize: "14px",
+        textAlign: 'center'
+    },
+    noMaxWidth: {
+        maxWidth: "none",
+    },
+    snackBarSuccess:
+    {
+        backgroundColor: "#AFE1AF",
+        color: "black",
+        minWidth: "200px",
+        height: "30px",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        fontWeight: 700
+    },
+    snackBarSevere: {
+        backgroundColor: "#F6B2B2",
+        color: "black",
+        minWidth: "200px",
+        height: "30px",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: 'center',
+        fontWeight: 700,
+        boxShadow: '1px ​1px 10px 2px black'
     }
+
 });

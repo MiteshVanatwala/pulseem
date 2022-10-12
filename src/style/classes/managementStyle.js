@@ -1680,4 +1680,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: '#3291d1'
     }
   },
+  implementButtonFlex: {
+    maxHeight: '45',
+    marginTop: 'auto',
+    marginBottom: 15,
+    marginInlineStart: 'auto',
+    lineHeight: windowSize === 'xs' ? 1 : null,
+
+  }
 });

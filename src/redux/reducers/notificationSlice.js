@@ -213,7 +213,9 @@ export const notificationSlice = createSlice({
     notificationDeletedData: [],
     notificationDataError: '',
     notificationById: {},
-    notificationGroups: null
+    notificationGroups: null,
+    scriptPath: '',
+    subAccountApiKey: ''
   },
   reducers: {
     setScriptDialog: (state, action) => {
@@ -230,6 +232,12 @@ export const notificationSlice = createSlice({
     })
     builder.addCase(getNotificationGroups.fulfilled, (state, { payload }) => {
       state.notificationGroups = payload;
+    })
+    builder.addCase(getScriptPath.fulfilled, (state, { payload }) => {
+      state.scriptPath = payload;
+    })
+    builder.addCase(getSubAccountApiKey.fulfilled, (state, { payload }) => {
+      state.subAccountApiKey = payload;
     })
   }
 })

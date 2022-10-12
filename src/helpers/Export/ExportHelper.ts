@@ -2,7 +2,6 @@ import 'moment/locale/he';
 import i18n from 'i18next';
 import moment from 'moment';
 import Papa from 'papaparse';
-
 export interface ExportConditions {
     IsBoolean: boolean;
     OrderItems: boolean;
@@ -45,32 +44,49 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
             try {
                 finalExportData = await OrderItems(finalExportData, options.Order, options);
             } catch (error) {
+                // Log({
+                //     MethodName: 'HandleExportData',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
                 console.error('OrderItems');
-                reject();
+                reject(error);
             }
         }
         if (options.ReplaceNull === true) {
             try {
                 finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue);
             } catch (error) {
-                console.error('ReplaceNull');
-                reject();
+                // Log({
+                //     MethodName: 'ReplaceNull',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
+                reject(error);
             }
         }
         if ((options.ConvertStatusDescription === true || options.ConvertStatusToString === true) && options.Statuses !== null) {
             try {
                 finalExportData = await SwitchStatus(finalExportData, options.Statuses, options);
             } catch (error) {
-                console.error('SwitchStatus');
-                reject();
+                // Log({
+                //     MethodName: 'SwitchStatus',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
+                reject(error);
             }
         }
         if (options.BooleanToNumber === true) {
             try {
                 finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean);
             } catch (error) {
-                console.error('BooleanToNumber');
-                reject();
+                // Log({
+                //     MethodName: 'BooleanToNumber',
+                //     ComponentName: 'ExportHelper.ts',
+                //     Text: error as string
+                // })
+                reject(error);
             }
         }
         if (options.DeleteProperties?.length > 0) {
@@ -212,7 +228,11 @@ export const JsonToCSV = async (data: any, options: any) => {
             });
         }
         catch (e) {
-            console.error('jsonToCsv', e);
+            // Log({
+            //     MethodName: 'jsonToCsv',
+            //     ComponentName: 'ExportHelper.ts',
+            //     Text: e as string
+            // })
             reject(e);
         }
     });
@@ -223,6 +243,11 @@ export const CreateFile = (data: any, type: string) => {
             const f = new File([data], `${Date.now()}.${type}`, { type: `text/${type}` });
             resolve(f);
         } catch (error) {
+            // Log({
+            //     MethodName: 'CreateFile',
+            //     ComponentName: 'ExportHelper.ts',
+            //     Text: error as string
+            // })
             reject(error);
         }
     })

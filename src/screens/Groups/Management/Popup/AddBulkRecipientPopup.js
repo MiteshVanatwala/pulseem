@@ -1,4 +1,4 @@
-import { Box, makeStyles, Typography, Button } from "@material-ui/core";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { UploadSettings } from "../../tempConstants";
 import UploadXL from '../../../../components/Files/UploadXL'

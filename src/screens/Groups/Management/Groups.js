@@ -4,7 +4,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
-    Box, Typography, Divider, TableBody, TableRow, TableCell,
+    Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
@@ -39,6 +39,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -109,16 +110,7 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
-    const renderHeader = () => {
-        return (
-            <>
-                <Typography className={classes.managementTitle}>
-                    {t("recipient.logPageHeaderResource1.Text")}
-                </Typography>
-                <Divider />
-            </>
-        );
-    };
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -698,8 +690,7 @@ const Groups = ({ classes }) => {
             InvalidEmails,
             RemovedCell,
             RemovedEmails,
-            TotalRecipients,
-            GroupName
+            TotalRecipients
         } = row;
         return (
             <TableRow key={GroupID} component="div" classes={rowStyle}>
@@ -1200,7 +1191,7 @@ const Groups = ({ classes }) => {
             containerClass={classes.management}>
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
-                {renderHeader()}
+                <Title Text={t('recipient.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
                 {renderSearchSection()}
                 {windowSize !== 'xs' ? renderManagmentLine() :
                     <Box

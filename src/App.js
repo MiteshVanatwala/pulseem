@@ -9,7 +9,7 @@ import { getCookie, setCookie, cookieListener } from './helpers/Functions/cookie
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
-import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material-ui/core/styles';
+import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -38,6 +38,7 @@ import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
+import PageNotFound from './screens/404';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -368,6 +369,9 @@ const renderRoutes = (classes, redirect) => {
         path={`/react/SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
       />
+      <Route
+        path="*" element={<PageNotFound classes={classes} />}
+      />
     </>
   )
 }
@@ -380,15 +384,15 @@ const App = ({ screenSize }) => {
   useEffect(() => {
 
     const initFeatures = async () => {
+      const isClal = getCookie('isClal');
       if (!accountSettings) {
         const settings = await dispatch(getCommonFeatures());
         dispatch(setAccountFeatures(settings.payload));
       }
-      const response = await dispatch(isClalAccount());
-      dispatch(setIsClal(response.payload));
-      // const smsOldVersion = getCookie('OldVersion')
-      // dispatch(setSmsOldVersion(smsOldVersion))
-      setCookie('OldVersion', false);
+      if (isClal === undefined) {
+        const response = await dispatch(isClalAccount());
+        dispatch(setIsClal(response.payload));
+      }
     }
 
     const updateToken = () => {
@@ -399,7 +403,7 @@ const App = ({ screenSize }) => {
       const jwt = jwt_decode(token)
       const {
         email = '',
-        unique_name = '',
+        // unique_name = '',
         nameid: companyName,
         certthumbprint: billingTypeId,
         role: isAdmin,

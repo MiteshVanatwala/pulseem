@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer,
   TableCell, Link, FormControl, Select, MenuItem,
-  TableHead, TableRow, TextField, Typography, TableBody, InputLabel
+  TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
 import {
   TablePagination, DateField
@@ -52,7 +52,7 @@ const DirectSMSReportTab = ({
   const handleSearch = async () => {
     setLoader(true);
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null, ShowContent = false } = sms || {};
+    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
     const param = {
       FromDate,
       ToDate,
@@ -67,7 +67,7 @@ const DirectSMSReportTab = ({
       ShowContent: sms.ShowContent ?? showContent
     }
     let searchObjects = {};
-    Object.keys(param).map(item => {
+    Object.keys(param).forEach(item => {
       if (param[item]) {
         searchObjects[item] = param[item];
       }

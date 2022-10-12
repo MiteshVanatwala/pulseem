@@ -1,5 +1,5 @@
-import { Box, Button, Divider, Grid, Tab, Typography } from '@material-ui/core';
-import React, { useState, useEffect } from 'react';
+import { Button, Grid, Tab } from '@material-ui/core';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
@@ -19,9 +19,9 @@ import { EmailStatus, SmsStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSearchParams } from 'react-router-dom';
+import { Title } from '../../../components/managment/Title';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
-  // const qs = queryString.parse(props.location.search);
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
   const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
@@ -29,7 +29,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { directSmsReport } = useSelector(state => state.sms);
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
-  const [searchParam, setSearchParam] = useState({});
   const [tabValue, setTabValue] = useState(0);
   const rowsOptions = [6, 10, 20, 50];
   const [pageEmail, setPageEmail] = useState(1);
@@ -143,9 +142,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     setLoader(true);
     let isSearchingData = isSearching;
     let search = searchData;
-    let params = searchParam;
     search[key] = {};
-    params[key] = {};
     isSearchingData[key] = false;
 
     if (isArchive) {
@@ -194,17 +191,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     isSearchingData[key] = value;
 
     setSearching({ ...isSearching })
-  }
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
-        </Typography>
-        <Divider />
-      </>
-    )
   }
 
   const excelHeaders = {
@@ -424,7 +410,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes.managementTitle} />
       {renderTabs()}
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>

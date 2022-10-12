@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
 import clsx from "clsx";
 import {
   Typography,
-  Divider,
   TableBody,
   Grid,
   Button,
   TextField,
-  useTheme,
   Link
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon } from "../../assets/images/managment/index";
@@ -36,17 +34,17 @@ import { searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
+import { Title } from '../../components/managment/Title';
 
 const ClientSearchResult = ({ classes }) => {
   const {
     language,
     windowSize,
-    email,
-    phone,
+    // email,
+    // phone,
     rowsPerPage,
-    smsOldVersion,
-    isRTL,
-    ...props
+    // smsOldVersion,
+    isRTL
   } = useSelector((state) => state.core);
 
   const { t } = useTranslation();
@@ -55,7 +53,7 @@ const ClientSearchResult = ({ classes }) => {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
 
-  const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
+  // const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks } = useSelector(state => state.client);
   const { referrer, id } = useParams();
@@ -97,7 +95,6 @@ const ClientSearchResult = ({ classes }) => {
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
-  const theme = useTheme();
 
   const colorTextStyle = {
     red: classes.textColorRed,
@@ -343,18 +340,6 @@ const ClientSearchResult = ({ classes }) => {
     } else setSelectedClients([...selectedClients, id]);
   };
 
-
-  //  COMPONENTS  //
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t("client.logPageHeaderResource1.Text")}
-        </Typography>
-        <Divider />
-      </>
-    );
-  };
   // DONE
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
@@ -731,9 +716,7 @@ const ClientSearchResult = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
     >
       {renderToast()}
-      {renderHeader()}
-      {/* {renderSearchLine()} */}
-      {/* {windowSize !== "xs" ? renderManagmentLine() : null} */}
+      <Title Text={t('client.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       <Grid item lg={8} xs={windowSize === "xs" && 12} style={{ paddingTop: 40, margin: '0 auto' }}>
         {revenueSummary && <SummaryRow
           data={revenueSummary}

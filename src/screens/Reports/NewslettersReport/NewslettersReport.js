@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Checkbox, Tooltip
 } from '@material-ui/core'
 import Switch from "react-switch";
@@ -22,6 +22,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
+import { Title } from '../../../components/managment/Title';
 
 const NewslettersReport = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
@@ -171,17 +172,6 @@ const NewslettersReport = ({ classes }) => {
     handleSearch();
   }, [newslettersReports])
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('mainReport.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
-
   const clearSearch = () => {
     setNotificationNameSearch('')
     handleFromDate(null)
@@ -247,8 +237,8 @@ const NewslettersReport = ({ classes }) => {
         const lastUpdate = SendDate ?
           moment(SendDate, dateFormat).valueOf()
           : moment(LastEditDate, dateFormat).valueOf()
-        const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-        const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+        const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) || null
+        const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) || null
 
         if (!values)
           return true
@@ -915,7 +905,7 @@ const NewslettersReport = ({ classes }) => {
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

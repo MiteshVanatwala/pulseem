@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction
 } from '@material-ui/core'
 import {
@@ -28,6 +28,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -55,26 +56,15 @@ const SmsManagnentScreen = ({ classes }) => {
   moment.locale(language)
   const Redirect = useRedirect();
 
-  const getData = async () => {
-    await dispatch(getSmsData())
+  const getData = useCallback(() => {
+    dispatch(getSmsData())
     setLoader(false);
-  }
+  }, [dispatch])
 
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('sms.PageResource1.Title')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
+  }, [getData])
 
   const clearSearch = () => {
     setCampaineNameSearch('')
@@ -1058,7 +1048,7 @@ const SmsManagnentScreen = ({ classes }) => {
       currentPage='sms'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

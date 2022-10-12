@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Avatar, Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, Tab, Tabs, Typography } from "@material-ui/core";
+import React, { useState, useEffect } from 'react';
+import { Avatar, Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, Tab, Typography } from "@material-ui/core";
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,18 +12,17 @@ import { getNewsletterReportsByIds } from '../../../redux/reducers/newsletterSli
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
-import RecipientsTab from './RecipientsTab';
+// import RecipientsTab from './RecipientsTab';
 import queryString from 'query-string';
 import { Loader } from '../../../components/Loader/Loader';
 import useRedirect from '../../../helpers/Routes/Redirect';
 
 const GraphicReport = ({ props, classes }) => {
-  const { language, windowSize, isRTL } = useSelector(state => state.core)
+  const { isRTL } = useSelector(state => state.core)
   const [tabValue, setTabValue] = useState(0);
   const Redirect = useRedirect();
   const [showLoader, setLoader] = useState(true);
   const [campaignData, setData] = useState(null);
-  //const [campaignPreviewImage, setCampaignPreviewImage] = useState(null);
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const qs = queryString.parse(props.location.search);
@@ -520,7 +519,7 @@ const GraphicReport = ({ props, classes }) => {
           {<RenderCampaignSummary chartData={campaignData} />}
         </TabPanel>
         <TabPanel value={1} index={1} className={classes.p0}>
-          <RecipientsTab classes={classes} />
+          {/* <RecipientsTab classes={classes} /> */}
         </TabPanel>
         <TabPanel value={2} index={2} className={classes.p0}>
           {<RenderOpenClickTab />}

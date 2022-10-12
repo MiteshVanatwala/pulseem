@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -12,15 +12,35 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCookie } from '../../helpers/Functions/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
 const DashboardScreen = ({ classes }) => {
+  const dispatch = useDispatch();
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [showTFA, setShowTFA] = useState(false);
   const [TFAInit, setTFAInit] = useState(false);
 
   useEffect(() => {
-    const initialize = async () => {
+    const init2FA = () => {
+      try {
+        if (accountSettings && accountSettings.SubAccountSettings.TwoFactorAuthEnabled !== true) {
+          const userSelection = getCookie("2faPopupv2");
+          if (!userSelection && userSelection !== false) {
+            setShowTFA(true);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        dispatch(sendToTeamChannel({
+          MethodName: 'init2FA',
+          ComponentName: 'Dashboard.js',
+          Text: e
+        }));
+      }
+    }
+
+    const initialize = () => {
       if (document.referrer.toLocaleLowerCase().includes('login.aspx') || document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx')) {
         init2FA();
       }
@@ -29,20 +49,7 @@ const DashboardScreen = ({ classes }) => {
       initialize();
       setTFAInit(true);
     }
-  }, [accountSettings])
-
-  const init2FA = async () => {
-    try {
-      if (accountSettings && accountSettings.SubAccountSettings.TwoFactorAuthEnabled !== true) {
-        const userSelection = getCookie("2faPopupv2");
-        if (!userSelection && userSelection !== false) {
-          setShowTFA(true);
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  }, [dispatch, accountSettings, TFAInit])
 
   const onConfirm2FA = () => {
     window.location = '/Pulseem/AccountSettings.aspx?2fa=1'

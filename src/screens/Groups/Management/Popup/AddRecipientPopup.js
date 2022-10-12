@@ -1,7 +1,6 @@
 import { useState } from "react";
 import clsx from "clsx";
 import {
-    Grid,
     Typography,
     Divider,
     Button,
@@ -25,6 +24,8 @@ import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+
 
 
 import { Loader } from "../../../../components/Loader/Loader";
@@ -69,7 +70,6 @@ const AddRecipientPopup = ({ classes,
     const localClasses = useStyles()
 
     const { extraData } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
@@ -246,6 +246,11 @@ const AddRecipientPopup = ({ classes,
         }
         catch (err) {
             console.log('errr:', err)
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleSubmit',
+                ComponentName: 'AddRecipientPopup.js',
+                Text: err
+            }));
         }
         finally {
             setLoader(false)

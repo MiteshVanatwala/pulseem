@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { RedirectPropTypes, generalPropTypes } from '../Types/Redirect';
+import { RedirectPropTypes } from '../Types/Redirect';
 
 const useRedirect = () => {
     const navigate = useNavigate();
@@ -10,16 +10,12 @@ const useRedirect = () => {
             window.open(url);
             return false;
         }
-        if (url.indexOf("aspx") > -1) {
+        if (url.toLowerCase().indexOf("aspx") > -1 || url.toLowerCase().indexOf('/pulseem/') > -1) {
             window.location.href = url;
         } else {
             navigate(url);
         }
     };
-
-    // const Response: generalPropTypes = {
-    //     redirect: Redirect
-    // };
 
     return Redirect;
 };

@@ -2,50 +2,28 @@ import { Box, TableCell, TableRow, Typography } from '@material-ui/core'
 // import React from 'react'
 // import PropTypes from 'prop-types';
 import clsx from "clsx";
-import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
+// import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
 import { useTranslation } from "react-i18next";
 // import FlexGrid from '../../../components/Grids/FlexGrid';
 // import IconWrapper from '../../../components/icons/IconWrapper';
 
 
 
-const RenderPhoneRow = ({ name = '', classes, rowStyle, row, colorTextStyle, setSelectedGroups, setDialog, DialogType }) => {
+const RenderPhoneRow = ({
+    name = '',
+    classes,
+    rowStyle,
+    row,
+    // colorTextStyle, setSelectedGroups, setDialog, DialogType
+}) => {
     const { t } = useTranslation();
     const {
-        OpenTime,
-        LogSms_ErrorType,
-        PageType,
-        OpenDate,
-        OpenCount,
-        OpenCountry,
-        OpenCountryLocation,
         Revenue,
         ClientID,
-        SubAccountID,
         Email,
         Status,
         SmsStatus,
-        FirstName,
-        LastName,
-        Telephone,
         Cellphone,
-        CellphoneRightDigits,
-        Address,
-        City,
-        State,
-        Country,
-        Zip,
-        Company,
-        ExtraFields,
-        BirthDate,
-        ReminderDate,
-        LastSendDate,
-        CreationDate,
-        FailedSendingCounter,
-        IsWebService,
-        LastEmailOpened,
-        LastEmailClicked,
-        BestEmailOpenTime
     } = row;
     return (
         <TableRow key={ClientID} component="div" classes={rowStyle}>

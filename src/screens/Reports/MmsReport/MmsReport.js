@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
 import Switch from "react-switch";
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, DateField, SearchField } from '../../../components/managment/index'
@@ -19,6 +19,7 @@ import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { Title } from '../../../components/managment/Title';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -62,11 +63,7 @@ const MmsReport = ({ classes }) => {
             await dispatch(getMmsGraph());
         }
         getMmsData();
-    }, [isDemoSend]);
-
-    useEffect(() => {
-        handleSearch(filterValues);
-    }, [mmsReport])
+    }, [isDemoSend, dispatch]);
 
     //  HANDLERS  //
     const getHrefs = (id) => ({
@@ -202,7 +199,7 @@ const MmsReport = ({ classes }) => {
                         ...filterValues,
                         campaignName: e.target.value
                     })}
-                    onClick={() => handleSearch()}
+                    onClick={() => handleSearch(filterValues)}
                     placeholder={t('common.CampaignName')}
                 />
             )
@@ -615,10 +612,7 @@ const MmsReport = ({ classes }) => {
             containerClass={classes.management}
             currentPage="reports"
             subPage="MmsReport">
-            <Typography className={classes.managementTitle}>
-                {t('common.MMSReports')}
-            </Typography>
-            <Divider />
+            <Title Text={t('common.MMSReports')} Classes={classes.managementTitle} />
             {renderFilter()}
             {renderManagmentLine()}
             <DataTable

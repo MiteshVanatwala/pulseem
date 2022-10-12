@@ -11,7 +11,7 @@ import CustomTooltip from '../Tooltip/CustomTooltip';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { Dialog, Options } from '../Popup/Dialog';
+import { Dialog } from '../Popup/Dialog';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
@@ -67,7 +67,7 @@ const BulkStatus = ({ classes }) => {
       let dialog = {};
       let availablePack = null;
 
-      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType == -1 || !accountSettings.Account.IsPaying) {
+      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType === -1 || !accountSettings.Account.IsPaying) {
         dialog = renderBillingSupportDialog();
       }
       else {
