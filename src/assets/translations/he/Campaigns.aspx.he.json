@@ -564,6 +564,12 @@
       }
     }
   },
+  "newsLetterSendSettings": {
+    "title": "שלח ניוזלטר",
+    "quickMSend": "שליחה ידנית מהירה",
+    "quickMsgCautionMsg": "שליחה ידנית מהירה תשלח את הקמפיין אך ורק את לנמענים שהוזנו ידנית ובאופן מידי.",
+    "doYouWantToContinue": "האם תרצה להמשיך?"
+  },
   "sendToContact": "שלח לאיש קשר אחד",
   "successSent": "נשלח בהצלחה",
   "missingApi": "מפתח API לא נכון או לא תקין",

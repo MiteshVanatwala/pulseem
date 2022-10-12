@@ -91,6 +91,7 @@ const Groups = ({ classes,
                 onMouseLeave={() => setIsHover(null)}
                 className={groupHover === group[groupIdKey] ? classes.hoverListItem : null}
             >
+
                 <ListItemAvatar>
                     <Avatar
                         className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
@@ -281,7 +282,7 @@ const Groups = ({ classes,
                     </FormControl>
                 </Grid>
             }
-            <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)} style={{ whiteSpace: windowSize !== 'xs' ? 'noWrap': 'normal' }}>
+            <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)} style={{ whiteSpace: windowSize !== 'xs' ? 'noWrap' : 'normal' }}>
                 {windowSize !== 'xs' && <FormControl className={clsx(classes.margin, classes.searchInput)}>
                     <Input
                         autoComplete='off'

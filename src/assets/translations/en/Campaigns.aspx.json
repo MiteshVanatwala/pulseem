@@ -572,6 +572,12 @@
       }
     }
   },
+  "newsLetterSendSettings": {
+    "title": "Send Newsletter",
+    "quickMSend": "Quick manual send",
+    "quickMsgCautionMsg": "Quick manual send will immediately send the campaign to the recipients that were added manually only.",
+    "doYouWantToContinue": "Do you want to proceed?"
+  },
   "sendToContact": "Send to one contact",
   "successSent": "Sent Successfully",
   "missingApi": "Missing api key",
