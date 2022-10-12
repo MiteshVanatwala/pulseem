@@ -16,7 +16,6 @@ import {
 import { IoMdImages } from 'react-icons/io'
 import { Loader } from '../../components/Loader/Loader';
 import { options, tools } from './constants'
-import { ClientFields } from '../../model/PulseemFields/Fields'
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
 import TestSend from './modals/TestSend'
@@ -35,8 +34,10 @@ import WizardActions from '../../components/Wizard/WizardActions';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
+import { BeeConfig, DialogType } from './helper/Config';
 
 const CampaignEditor = ({ classes, ...props }) => {
+  //#region State
   const { t } = useTranslation();
   const dispatch = useDispatch()
   const editorRef = useRef(null);
@@ -51,7 +52,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, accountSettings } = useSelector(state => state.core)
   const { tokenAlive } = useSelector(state => state.common)
-  const [iframeKey, setIframeKey] = useState(0);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -63,19 +63,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     title: "",
     message: ""
   })
-  const DialogType = {
-    TEST_SEND: "testSend",
-    DELETE: "delete",
-    SUCCESS_SENT: "campaigns.successSent",
-    MISSING_API_KEY: "campaigns.missingApi",
-    CAMPAIGN_NOT_FOUND: "campaigns.campaignNotFound",
-    CANNOT_CREATE_GROUP: "campaigns.cannotCreateGroup",
-    ERROR_OCCURED: "campaigns.errorOccured",
-    NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
-    GENERIC: "generic",
-    NO_CREDITS_LEFT: "sms.noCredits"
-  };
-  // On Data Ready -> Get Extra fields & Landing pages
+  //#endregion State
+  //#region Get Extra fields & Landing pages, after Data Ready
   useEffect(() => {
     if (dataReady) {
       const initFields = () => {
@@ -93,7 +82,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       })
     }
   }, [dataReady]);
-
+  //#endregion
   // Get data by campaign id
   useEffect(() => {
     if (props.match.params.id != null && props.match.params.id > 0) {
@@ -105,7 +94,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [language]);
 
 
-  //Check session token -> tokenAlive
+  //#region Check session token -> tokenAlive
   useEffect(() => {
     setInterval(() => {
       if (tokenAlive) {
@@ -126,205 +115,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   document.addEventListener('setAlert', () => {
     setAlertLogout(true);
   });
-
-  var config = {
-    uid: 'test1-clientside', //needed for identify resources of the that user and billing stuff
-    container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-    language: isRTL ? 'he-IL' : 'en-US',
-    trackChanges: true,
-    autosave: 60,
-    contentDialog: {
-      filePicker: (resolve, reject, args) => {
-        setShowGallery(true);
-        setIsFileSelected(false);
-        const button = document.querySelector('[name="btnConfirm"]');
-        if (button) {
-          button.addEventListener('mouseup', (event) => {
-            const modal = document.querySelector('.MuiDialog-paper');
-            const selectedIcon = modal.querySelector(".image-info svg");
-            if (selectedIcon) {
-              const imgElement = selectedIcon.parentNode.previousElementSibling;
-              const style = imgElement.currentStyle || window.getComputedStyle(imgElement, false);
-              const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
-              resolve({ url: selectedImage, context: selectedImage });
-            }
-          });
-        }
-      }
-    },
-    onSave: async (jsonFile, htmlFile) => {
-      try {
-        const response = await dispatch(saveCampaign({
-          campaignId: campaignId,
-          JsonData: jsonFile,
-          HtmlData: htmlFile
-        }));
-
-        if (response.payload === true) {
-          if (saveRef.current?.redirectAfterSave) {
-            window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
-          }
-          else if (saveRef.current?.showAnimation) {
-            setToastMessage(ToastMessages.CAMPAIGN_SAVED);
-          }
-        }
-        else {
-          console.log(response);
-        }
-
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    onSend: () => {
-      setDialog(DialogType.TEST_SEND);
-    },
-    onAutoSave: () => {
-      //saveDesign(false, null, false);
-    },
-    onChange: () => {
-      saveRef.current = { redirectAfterSave: false, redirectUrl: null, showAnimation: false };
-      editorRef.current.save();
-    },
-    onWarning: (alertMessage) => {
-      console.log('onWarning ', alertMessage)
-    },
-    onError: (errorMessage) => {
-      console.log('onError ', errorMessage)
-    },
-    onLoad: (jsonFile) => {
-      console.log(jsonFile);
-    }
-  };
-
-  const getData = async () => {
-    setLoader(true);
-    await dispatch(getCampaignById(props.match.params.id));
-    await dispatch(getAccountExtraData());
-    await dispatch(getPreviousLandingData());
-    await dispatch(getTestGroups());
-    await dispatch(getUserblocks());
-    setDataReady(true);
-    const initBee = () => {
-      dispatch(getBeeToken());
-    }
-    initBee();
-  }
-  useEffect(() => {
-    const initRepsonse = () => {
-      //config.uid = accountSettings?.SubAccountSettings.UnlayerUniqueID;
-      config.mergeTags = mergeData;
-      config.specialLinks = specialLinks;
-
-      switch (beeToken?.StatusCode) {
-        case 201: {
-          const beeObject = JSON.parse(beeToken.Message);
-          const beeTest = new BeePlugin(beeObject);
-          const template = campaign.JsonData ? JSON.parse(campaign.JsonData) : {};
-          try {
-            beeTest.start(config, template).then((instance) => {
-              editorRef.current = instance;
-              editorRef.current.load();
-            });
-          } catch (e) {
-            console.error(e);
-          }
-          break;
-        }
-        case 401: {
-          setDialog(DialogType.MISSING_API_KEY);
-          break;
-        }
-        case 404: {
-          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
-          break;
-        }
-        case 500:
-        default: {
-          setDialog(DialogType.ERROR_OCCURED);
-          break;
-        }
-      }
-      setLoader(false);
-    }
-    if (beeToken) {
-      initRepsonse();
-    }
-  }, [beeToken])
-
-  const initOptions = async () => {
-    if (!accountSettings || accountSettings.SubAccountSettings) {
-      await dispatch(getCommonFeatures());
-    }
-    options.locale = language === 'he' ? 'he-IL' : 'en-US';
-    options.user = {
-      id: accountSettings?.SubAccountSettings.UnlayerUniqueID
-    }
-    setIframeKey(iframeKey + 1);
-  }
-  const registerEvents = () => {
-    const unlayer = editorRef.current;
-    if (unlayer) {
-      // blocks
-      try {
-        unlayer.registerCallback('block:added', async function (newBlock, done) {
-          // Each block should have it's own unique id
-          const res = await dispatch(saveUserBlock(newBlock));
-          const newId = res.payload.Block.ID;
-          newBlock.id = newId;
-
-          done(newBlock);
-        });
-        unlayer.registerCallback('block:modified', async function (existingBlock, done) {
-          console.log('block:modified', existingBlock);
-          // Update the block in your database here
-          // and pass the updated object to done callback.
-          await dispatch(updateUserBlock(existingBlock));
-
-          done(existingBlock);
-        });
-        unlayer.registerCallback('block:removed', async function (existingBlock, done) {
-          console.log('block:removed', existingBlock);
-
-          // Delete the block from your database here.
-          await dispatch(deleteUserBlock(existingBlock.id));
-
-          done(existingBlock);
-        });
-        unlayer.editor.registerProvider('blocks', async function (params, done) {
-          done(userBlocks);
-        });
-        unlayer.addEventListener('design:updated', function (data) {
-          saveDesign(false, null, false);
-        });
-        unlayer.editor.reloadProvider('blocks');
-      }
-      catch (e) {
-        console.error(e);
-      }
-    }
-  }
-  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
-    editorRef.current.save();
-  }
-  const deleteNewsletter = async () => {
-    setDialog(null);
-    await dispatch(deleteCampaign(campaignId));
-    window.location = `/react/Campaigns`;
-  }
-  const onDelete = () => {
-    setIsResponseModal(false);
-    setGenericModalData({
-      title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-      message: t("mainReport.confirmSure"),
-      icon: <BsTrash />,
-      onConfirm: () => deleteNewsletter(),
-      onCancel: () => setDialog(null),
-      onClose: () => setDialog(null)
-    });
-    setDialog(DialogType.GENERIC);
-  }
   const onLogoutAlert = () => {
     setIsResponseModal(false);
     setLoader(false);
@@ -353,6 +143,163 @@ const CampaignEditor = ({ classes, ...props }) => {
       ),
       onCancel: () => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' },
       onClose: () => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }
+    });
+    setDialog(DialogType.GENERIC);
+  }
+  //#endregion 
+
+  const getData = async () => {
+    setLoader(true);
+    await dispatch(getCampaignById(props.match.params.id));
+    await dispatch(getAccountExtraData());
+    await dispatch(getPreviousLandingData());
+    await dispatch(getTestGroups());
+    await dispatch(getUserblocks());
+    setDataReady(true);
+    const initBee = () => {
+      dispatch(getBeeToken());
+    }
+    initBee();
+  }
+  //#region Init Bee Token & Configuration
+  useEffect(() => {
+    const initRepsonse = () => {
+      config.clientId = accountSettings?.SubAccountSettings.UnlayerUniqueID;
+      config.mergeTags = mergeData;
+      config.specialLinks = specialLinks;
+
+      switch (beeToken?.StatusCode) {
+        case 201: {
+          const beeObject = JSON.parse(beeToken.Message);
+          if (beeToken.Message === "null") {
+            setDialog(DialogType.MISSING_API_KEY);
+          }
+          else {
+            const beeTest = new BeePlugin(beeObject);
+            const template = campaign.JsonData ? JSON.parse(campaign.JsonData) : {};
+            beeTest.start(config, template).then((instance) => {
+              editorRef.current = instance;
+              editorRef.current.load();
+            });
+          }
+          break;
+        }
+        case 401: {
+          setDialog(DialogType.MISSING_API_KEY);
+          break;
+        }
+        case 404: {
+          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+          break;
+        }
+        case 500:
+        default: {
+          setDialog(DialogType.ERROR_OCCURED);
+          break;
+        }
+      }
+      setLoader(false);
+    }
+    if (beeToken) {
+      initRepsonse();
+    }
+  }, [beeToken])
+
+  const initOptions = async () => {
+    if (!accountSettings || accountSettings.SubAccountSettings) {
+      await dispatch(getCommonFeatures());
+    }
+    if (editorRef.current) {
+      editorRef.current.loadConfig(BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected));
+    }
+  }
+  //#endregion Init Bee Token & Configuration
+  // const registerEvents = () => {
+  //   const unlayer = editorRef.current;
+  //   if (unlayer) {
+  //     // blocks
+  //     try {
+  //       unlayer.registerCallback('block:added', async function (newBlock, done) {
+  //         // Each block should have it's own unique id
+  //         const res = await dispatch(saveUserBlock(newBlock));
+  //         const newId = res.payload.Block.ID;
+  //         newBlock.id = newId;
+
+  //         done(newBlock);
+  //       });
+  //       unlayer.registerCallback('block:modified', async function (existingBlock, done) {
+  //         console.log('block:modified', existingBlock);
+  //         // Update the block in your database here
+  //         // and pass the updated object to done callback.
+  //         await dispatch(updateUserBlock(existingBlock));
+
+  //         done(existingBlock);
+  //       });
+  //       unlayer.registerCallback('block:removed', async function (existingBlock, done) {
+  //         console.log('block:removed', existingBlock);
+
+  //         // Delete the block from your database here.
+  //         await dispatch(deleteUserBlock(existingBlock.id));
+
+  //         done(existingBlock);
+  //       });
+  //       unlayer.editor.registerProvider('blocks', async function (params, done) {
+  //         done(userBlocks);
+  //       });
+  //       unlayer.addEventListener('design:updated', function (data) {
+  //         saveDesign(false, null, false);
+  //       });
+  //       unlayer.editor.reloadProvider('blocks');
+  //     }
+  //     catch (e) {
+  //       console.error(e);
+  //     }
+  //   }
+  // }
+
+  //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
+  const onSave = async (args) => {
+    try {
+      const response = await dispatch(saveCampaign({
+        campaignId: args.campaignId,
+        JsonData: args.JsonData,
+        HtmlData: args.HtmlData
+      }));
+
+      if (response.payload === true) {
+        if (saveRef.current?.redirectAfterSave) {
+          window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+        }
+        else if (saveRef.current?.showAnimation) {
+          setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+        }
+      }
+      else {
+        console.log(response);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
+    saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
+    editorRef.current.save();
+  }
+  const deleteNewsletter = async () => {
+    setDialog(null);
+    await dispatch(deleteCampaign(campaignId));
+    window.location = `/react/Campaigns`;
+  }
+  const onDelete = () => {
+    setIsResponseModal(false);
+    setGenericModalData({
+      title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
+      message: t("mainReport.confirmSure"),
+      icon: <BsTrash />,
+      onConfirm: () => deleteNewsletter(),
+      onCancel: () => setDialog(null),
+      onClose: () => setDialog(null)
     });
     setDialog(DialogType.GENERIC);
   }
@@ -435,7 +382,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     return null;
   }
-  /* #region  Gallery Dialog */
+  //#endregion Pulseem Methods (Save, Delete, Exit, Back, Test Send)
+  //#region  Gallery Dialog
   const handleSelectedImage = (image) => {
     setShowGallery(false);
   }
@@ -480,16 +428,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       )
     };
   }
-  /* #endregion */
-  const renderEditor = () => {
-    return <Box className={classes.containerFullHeight}>
-      <div id="bee-plugin-container" className={classes.containerFullHeight}></div>
-    </Box>
-  }
+  //#endregion Gallery Dialog
   const handleCloseReponse = () => {
     setDialog(null);
     setIsResponseModal(false);
   }
+
+  const config = BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected);
+
   return (
     <DefaultScreen
       currentPage='campaignEditor'
@@ -523,7 +469,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         summaryData={summaryData}
         message={dialog}
       />
-      {renderEditor()}
+      <Box className={classes.containerFullHeight}>
+        <div id="bee-plugin-container" className={classes.containerFullHeight}></div>
+      </Box>
       {showGalleryModal()}
       <WizardActions
         campaignId={campaignId}
