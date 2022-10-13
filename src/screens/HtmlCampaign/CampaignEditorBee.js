@@ -37,6 +37,7 @@ import { initExtraDataField, initLandingPages } from './helper/MigratePulseemDat
 import { BeeConfig, DialogType } from './helper/Config';
 import { getCookie } from '../../helpers/cookies';
 import { BlockMeta } from './modals/BlockMeta';
+import { makeId } from '../../helpers/functions';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -94,7 +95,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [dispatch]);
   useEffect(() => {
     initOptions();
-  }, [language]);
+  }, [language, userBlocks]);
 
 
   //#region Check session token -> tokenAlive
@@ -159,14 +160,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups());
     await dispatch(getUserblocks());
     setDataReady(true);
-    const initBee = () => {
+    const initBeeToken = () => {
       dispatch(getBeeToken());
     }
-    initBee();
+    initBeeToken();
   }
   //#region Init Bee Token & Configuration
   useEffect(() => {
-    const initRepsonse = () => {
+    const initBeeEditor = () => {
       config.clientId = getCookie("jtoken");
       config.mergeTags = mergeData;
       config.specialLinks = specialLinks;
@@ -204,62 +205,21 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLoader(false);
     }
     if (beeToken) {
-      initRepsonse();
+      initBeeEditor();
     }
-  }, [beeToken])
+  }, [beeToken]);
 
   const initOptions = async () => {
     if (!accountSettings || accountSettings.SubAccountSettings) {
       await dispatch(getCommonFeatures());
     }
     if (editorRef.current) {
-      editorRef.current.loadConfig(BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected, saveRowHandler));
+      const c = getConfig();
+      editorRef.current.loadConfig(c);
     }
   }
+
   //#endregion Init Bee Token & Configuration
-  // const registerEvents = () => {
-  //   const unlayer = editorRef.current;
-  //   if (unlayer) {
-  //     // blocks
-  //     try {
-  //       unlayer.registerCallback('block:added', async function (newBlock, done) {
-  //         // Each block should have it's own unique id
-  //         const res = await dispatch(saveUserBlock(newBlock));
-  //         const newId = res.payload.Block.ID;
-  //         newBlock.id = newId;
-
-  //         done(newBlock);
-  //       });
-  //       unlayer.registerCallback('block:modified', async function (existingBlock, done) {
-  //         console.log('block:modified', existingBlock);
-  //         // Update the block in your database here
-  //         // and pass the updated object to done callback.
-  //         await dispatch(updateUserBlock(existingBlock));
-
-  //         done(existingBlock);
-  //       });
-  //       unlayer.registerCallback('block:removed', async function (existingBlock, done) {
-  //         console.log('block:removed', existingBlock);
-
-  //         // Delete the block from your database here.
-  //         await dispatch(deleteUserBlock(existingBlock.id));
-
-  //         done(existingBlock);
-  //       });
-  //       unlayer.editor.registerProvider('blocks', async function (params, done) {
-  //         done(userBlocks);
-  //       });
-  //       unlayer.addEventListener('design:updated', function (data) {
-  //         saveDesign(false, null, false);
-  //       });
-  //       unlayer.editor.reloadProvider('blocks');
-  //     }
-  //     catch (e) {
-  //       console.error(e);
-  //     }
-  //   }
-  // }
-
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
   const onSave = async (args) => {
     try {
@@ -437,16 +397,77 @@ const CampaignEditor = ({ classes, ...props }) => {
     setIsResponseModal(false);
   }
 
-  const saveRowHandler = (metadata) => {
-    setUserBlock(metadata);
-    setDialog(DialogType.SET_ROW_DETAILS);
+  let category = '';
+  const checkBlockDialogState = async () => {
+    return new Promise((resolve) => {
+      const d = document.getElementsByClassName('MuiDialog-container');
+      resolve(d.length > 0);
+    });
+  }
+  const saveBlockHandler = async (json) => {
+    const obj = { ...json };
+    if (!obj.metadata) {
+      obj.metadata = {};
+    }
+    obj.metadata.id = obj.uuid;
+    setUserBlock({ data: obj });
+    setDialog(DialogType.SET_USER_BLOCK);
+    return new Promise((resolve) => {
+      const interval = setInterval(() => {
+        checkBlockDialogState().then((d) => {
+          if (!d) {
+            resolve({ category });
+            clearInterval(interval);
+          }
+        });
+      }, 3000)
+    })
   }
   const setBlockFinalValue = (e) => {
-    setUserBlock({ ...userBlock, e });
-    // Save via api
+    setLoader(true);
+    category = e.category;
+    const blockRequest = { ...userBlock, category: e.category, tags: e.tags };
+    setUserBlock(blockRequest);
+    dispatch(saveUserBlock(blockRequest)).then(() => {
+      setLoader(false);
+      setDialog(null);
+      editorRef.current.load();
+    });
+  }
+  const handleDeleteBlock = (e) => {
+    const id = e.row.metadata.id;
+    dispatch(deleteUserBlock(id)).then((result) => {
+      console.log(result);
+    })
   }
 
-  const config = BeeConfig(saveRef, editorRef, isRTL, setDialog, campaignId, onSave, setShowGallery, setIsFileSelected, saveRowHandler);
+  const getConfig = () => {
+    return BeeConfig({
+      IsRTL: isRTL,
+      OnReload: onReload,
+      SaveCampaign: onSave,
+      SetDialog: setDialog,
+      CampaignId: campaignId,
+      UserBlocks: userBlocks?.map((ub) => {
+        return ub?.data;
+      }),
+      EditBlock: onEditBlock,
+      DeleteBlock: handleDeleteBlock,
+      SetShowGallery: setShowGallery,
+      SaveBlockHandler: saveBlockHandler,
+      SetIsFileSelected: setIsFileSelected,
+      t: t
+    });
+  }
+
+  const onReload = () => {
+    dispatch(getUserblocks());
+  }
+  const onEditBlock = (args) => {
+    console.log(args);
+  }
+
+  const config = getConfig();
 
   return (
     <DefaultScreen
@@ -463,7 +484,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       />
       <BlockMeta
         onSubmit={setBlockFinalValue}
-        isOpen={dialog === DialogType.SET_ROW_DETAILS}
+        isOpen={dialog === DialogType.SET_USER_BLOCK}
         classes={classes}
         onClose={() => setDialog(null)}
       />

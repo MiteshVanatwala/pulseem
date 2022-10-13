@@ -31,7 +31,7 @@ export const saveUserBlock = createAsyncThunk(
             const jsonData = {
                 Category: block.category,
                 Data: JSON.stringify(block.data),
-                Tags: block.tags
+                Tags: block.tags.split(',')
             }
             const response = await instence.post(`/CampaignEditor/SaveUserBlock/`, jsonData);
             return JSON.parse(response.data)

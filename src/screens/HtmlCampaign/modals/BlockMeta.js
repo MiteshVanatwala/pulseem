@@ -16,12 +16,14 @@ export const BlockMeta = ({
     const [category, setCategory] = useState('');
     const [tags, setTags] = useState('');
 
-    const prepareForSubmit = () => {
-        const retVal = {
-            category: category,
-            tags: tags
-        }
-        onSubmit(retVal);
+    const confirm = () => {
+        return new Promise((resolve) => {
+            const retVal = {
+                category: category,
+                tags: tags
+            }
+            resolve(onSubmit(retVal));
+        })
     }
 
     const handleCategoryChange = (e) => {
@@ -44,7 +46,7 @@ export const BlockMeta = ({
                     showDivider={isOpen}
                     onClose={onClose}
                     onCancel={onClose}
-                    onConfirm={() => prepareForSubmit()}
+                    onConfirm={confirm}
                     contentStyle={classes.testSendDialog}
                     reduceTitle
                     style={{ minWidth: 240, zIndex: '100 !important' }}

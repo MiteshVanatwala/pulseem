@@ -584,5 +584,6 @@
   "summaryTotal": "Total cost",
   "totalSize": "Total size",
   "kb": "KB",
-  "saveBlock": "Save Block"
+  "saveBlock": "Save Block",
+  "savedBlocks": "Saved blocks"
 }

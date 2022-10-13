@@ -3,62 +3,98 @@ type fileSelected = (a: Boolean) => void;
 type dialog = (a: any) => void;
 type save = (a: any) => void;
 
-
-export const BeeConfig = (
-    saveRef: any,
-    editorRef: any,
-    isRTL: Boolean,
-    setDialog: dialog,
-    campaignId: Number,
-    saveCampaign: save,
-    setShowGallery: showGallery,
-    setIsFileSelected: fileSelected,
-    saveRowHandler: Function,
+export interface ConfigOptions {
+    IsRTL: Boolean,
+    SetDialog: dialog,
+    SaveCampaign: save,
+    SetShowGallery: showGallery,
+    SetIsFileSelected: fileSelected,
+    SaveBlockHandler: Function,
+    DeleteBlock: Function,
+    EditBlock: Function,
+    CampaignId: Number,
+    UserBlocks: any,
+    OnReload: Function,
     t: any
-) => {
+}
+
+export const BeeConfig = (Options: ConfigOptions) => {
+    const {
+        IsRTL,
+        EditBlock,
+        OnReload,
+        SetDialog,
+        CampaignId,
+        UserBlocks,
+        DeleteBlock,
+        SaveCampaign,
+        SaveBlockHandler,
+        SetShowGallery,
+        SetIsFileSelected,
+        t
+    } = Options;
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-        language: isRTL ? 'he-IL' : 'en-US',
+        language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
         autosave: 60,
         customCss: 'https://unlayer.reactstage.club/Content/BeeFree/custom-bee.css',
-        translationsUrl: `https://unlayer.reactstage.club/Content/BeeFree/${isRTL ? 'he.json' : 'en.json'}`,
-        sidebarPosition: isRTL ? 'right' : 'left',
+        translationsUrl: `https://unlayer.reactstage.club/Content/BeeFree/${IsRTL ? 'he.json' : 'en.json'}`,
+        sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
-        contentDialog: {
-            saveRow: {
-                handler: (resolve: Function, reject: Function, args: any) => {
-                    return saveRowHandler(args);
+        rowsConfiguration: {
+            emptyRows: true,
+            defaultRows: false,
+            externalContentURLs: [
+                {
+                    name: t("campaigns.savedBlocks"),
+                    value: "saved-rows",
+                    handle: 'saved-rows',
+                    isLocal: true,
+                    behaviors: {
+                        canEdit: true,
+                        canDelete: true,
+                    },
                 }
-            },
-            onSaveRow: (rowJSON: any, rowHTML: any, pageJSON: any) => {
-                console.log(rowJSON);
-            },
+            ]
+        },
+        hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    // get the handle
-                    const handle = args.handle
-                    // pseudo code to get the rows with the handle...
-                    const rows: any = [];// await fakeRowsService(handle)
-                    resolve([...rows])
+                    resolve(UserBlocks);
+                }
+            }
+        },
+        onSaveRow: async (jsonFile: any) => {
+            await OnReload();
+        },
+        contentDialog: {
+            saveRow: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    const results = await SaveBlockHandler(args);
+                    const metadata = {
+                        name: results?.category
+                    }
+                    resolve(metadata);
                 }
             },
-            externalContentURLs: {
-                handler: (resolve: Function, reject: Function, args: any) => {
-                    return editorRef.current.onSearchSavedRows(args)
-                        .then((rows: any) => {
-                            resolve(rows)
-                        })
-                        .catch(() => {
-                            reject()
-                        })
+            onDeleteRow: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    await DeleteBlock(args);
+                    resolve(true);
+                }
+            },
+            onEditRow: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    await EditBlock(args);
+                    resolve(true);
                 }
             },
             filePicker: (resolve: Function, reject: Function, args: any) => {
-                setShowGallery(true);
-                setIsFileSelected(false);
+                SetShowGallery(true);
+                SetIsFileSelected(false);
                 const button = document.querySelector('[name="btnConfirm"]');
                 if (button) {
                     button.addEventListener('mouseup', (event) => {
@@ -76,14 +112,14 @@ export const BeeConfig = (
         },
         //#region Methods
         onSave: async (jsonFile: any, htmlFile: any) => {
-            saveCampaign({
-                campaignId: campaignId,
+            SaveCampaign({
+                campaignId: CampaignId,
                 JsonData: jsonFile,
                 HtmlData: htmlFile
             });
         },
         onSend: () => {
-            setDialog(DialogType.TEST_SEND);
+            SetDialog(DialogType.TEST_SEND);
         },
         onAutoSave: () => {
             //saveDesign(false, null, false);
@@ -116,5 +152,5 @@ export const DialogType = {
     NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits",
-    SET_ROW_DETAILS: "campaigns.saveBlock"
+    SET_USER_BLOCK: "campaigns.saveBlock"
 };
