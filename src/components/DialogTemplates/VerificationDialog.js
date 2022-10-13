@@ -71,6 +71,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
         verificationCode && setVerificationCode('')
         if (localStorage.getItem('verificationTrial')) localStorage.removeItem('verificationTrial')
         setAuthorizedTypeDisabled(false);
+        variant === 'email' && dispatch(getAuthorizedEmails());
+        variant === 'sms' && dispatch(getAuthorizeNumbers());
     }
 
     const handleVerifyCode = async () => {
