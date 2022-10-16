@@ -24,7 +24,6 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { Title } from '../../../components/managment/Title';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
