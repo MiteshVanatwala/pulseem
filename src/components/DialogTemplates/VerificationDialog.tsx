@@ -79,12 +79,7 @@ const VerificationDialog = ({
 
   useEffect(() => {
     variant === "email" && dispatch(getAuthorizedEmails());
-    if (variant === "sms") {
-      const handleVerificationDialog = async () => {
-        await dispatch(getAuthorizeNumbers());
-      };
-      handleVerificationDialog();
-    }
+    variant === "sms" && dispatch(getAuthorizeNumbers());
   }, []);
 
   const NextSlide = () => {
