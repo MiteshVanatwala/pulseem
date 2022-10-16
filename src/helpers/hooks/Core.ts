@@ -3,6 +3,7 @@ import { useClasses } from "../../style/classes/index";
 
 type generalPropTypes = {
   classes: any;
+  isRTL: any;
 };
 
 const useCore = () => {
@@ -13,6 +14,7 @@ const useCore = () => {
 
   const generalProps: generalPropTypes = {
     classes: classes,
+    isRTL: isRTL
   };
 
   return generalProps;
