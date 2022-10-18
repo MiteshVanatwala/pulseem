@@ -284,9 +284,9 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     if (searchData) {
-      if (!searchData.IsAdvanced && !searchData.IsSearchByFilter) {
-        sessionStorage.removeItem('searchData')
-      }
+      // if (!searchData.IsAdvanced && !searchData.IsSearchByFilter) {
+      //   sessionStorage.removeItem('searchData')
+      // }
       getData();
     }
   }, [dispatch, searchData, page, rowsPerPage]);
