@@ -183,7 +183,8 @@ const ClientSearchResult = ({ props, classes }) => {
       }
     }
     let isSessionStorageData = null;
-    let overwriteObject = location?.state;
+    let overwriteObject = location?.state ?? window.history.state;
+    // console.log(window.history.state);
     const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
     const sessionData = window.sessionStorage?.getItem('searchData');
     if (referrer && referrer !== '') {
