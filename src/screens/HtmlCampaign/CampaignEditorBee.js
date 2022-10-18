@@ -168,7 +168,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Init Bee Token & Configuration
   useEffect(() => {
     const initBeeEditor = () => {
-      config.uid = accountSettings?.SubAccountSettings?.UnlayerUniqueID;
+      //config.clientId = accountSettings?.SubAccountSettings?.UnlayerUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinks;
 
