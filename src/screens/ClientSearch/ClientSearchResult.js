@@ -182,53 +182,62 @@ const ClientSearchResult = ({ props, classes }) => {
         dispatch(getGroupsBySubAccountId());
       }
     }
-    let isSessionStorageData = null;
-    let overwriteObject = location?.state ?? window.history.state;
-    // console.log(window.history.state);
-    const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
-    const sessionData = window.sessionStorage?.getItem('searchData');
-    if (referrer && referrer !== '') {
-      isSessionStorageData =
-        referrer.toLowerCase().indexOf('automationreport') > -1 ||
-        referrer.toLowerCase().indexOf('createautomations') > -1 ||
-        referrer.toLowerCase().indexOf('campaignstatistics') > -1 ||
-        referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
-        ((referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1) ||
-          searchReferrer === true)
-      if (isSessionStorageData && sessionData) {
-        setSearchReferrer(true);
-        overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
-        overwriteObject.IsSearchByFilter = referrer.toLowerCase().indexOf('clientsearch') > -1;
-        setFilterSearch(overwriteObject);
+    const initSearchData = () => {
+      let isSessionStorageData = null;
+      let overwriteObject = location?.state;
+      // console.log(window.history.state);
+      const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
+      const sessionData = window.sessionStorage?.getItem('searchData');
+      if (referrer && referrer !== '') {
+        isSessionStorageData =
+          referrer.toLowerCase().indexOf('automationreport') > -1 ||
+          referrer.toLowerCase().indexOf('createautomations') > -1 ||
+          referrer.toLowerCase().indexOf('campaignstatistics') > -1 ||
+          referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
+          ((referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1) ||
+            searchReferrer === true)
+        if (isSessionStorageData && sessionData) {
+          setSearchReferrer(true);
+          overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
+          overwriteObject.IsSearchByFilter = referrer.toLowerCase().indexOf('clientsearch') > -1;
+          setFilterSearch(overwriteObject);
+        }
       }
+      else {
+        if (!overwriteObject) {
+          overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
+        }
+        window.sessionStorage.setItem("searchData", JSON.stringify(overwriteObject));
+      }
+
+      let isSmsReport = false;
+
+      if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
+        isSmsReport = true;
+      }
+
+      // On load
+      let initSearchData = {
+        IsSearchByFilter: false,
+        IsAdvanced: false,
+        PageSize: rowsPerPage,
+        PageIndex: page,
+        SearchTerm: "",
+        Status: location?.state?.Status ?? null,
+        PageType: location?.state?.PageType ?? null,
+        ReportType: isSmsReport ? 20 : 10,
+        TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
+        CampaignID: id,
+        Switch: "",
+        CountryOrRegion: "",
+        GroupIds: [],
+        NodeID: "",
+        OrderBy: 0,
+        ...overwriteObject,
+      };
+      setSearchData(initSearchData);
     }
-
-    let isSmsReport = false;
-
-    if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
-      isSmsReport = true;
-    }
-
-    // On load
-    let initSearchData = {
-      IsSearchByFilter: false,
-      IsAdvanced: false,
-      PageSize: rowsPerPage,
-      PageIndex: page,
-      SearchTerm: "",
-      Status: location?.state?.Status ?? null,
-      PageType: location?.state?.PageType ?? null,
-      ReportType: isSmsReport ? 20 : 10,
-      TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
-      CampaignID: id,
-      Switch: "",
-      CountryOrRegion: "",
-      GroupIds: [],
-      NodeID: "",
-      OrderBy: 0,
-      ...overwriteObject,
-    };
-    setSearchData(initSearchData);
+    initSearchData();
     initExtraFields();
   }, []);
   useEffect(() => {
