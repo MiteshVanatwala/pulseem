@@ -301,7 +301,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     if (searchData) {
-      if (!searchData.IsAdvanced && !searchData.IsSearchByFilter) {
+      if (!searchData.IsAdvanced && !searchData.IsSearchByFilter && document.referrer.toLocaleLowerCase().indexOf('campaignstatistics') < 0) {
         sessionStorage.removeItem('searchData')
       }
       getData();
