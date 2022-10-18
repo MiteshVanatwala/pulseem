@@ -569,7 +569,7 @@ const NewslettersReport = ({ classes }) => {
           colorTextStyle[type] || '',
           { [classes.iconsFont]: !!icon })}
           target="_blank">
-          {icon ? icon : `${percentage || '0'}%`}
+          {icon ? icon : `${percentage?.toString().substring(0,4) ?? '0'}%`}
         </Typography>
         <Typography className={clsx(
           classes.middleWrapText, classes.lineHeight1point2,
