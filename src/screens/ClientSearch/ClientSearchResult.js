@@ -185,6 +185,7 @@ const ClientSearchResult = ({ props, classes }) => {
     let isSessionStorageData = null;
     let overwriteObject = location?.state;
     const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
+    const sessionData = window.sessionStorage?.getItem('searchData');
     if (referrer && referrer !== '') {
       isSessionStorageData =
         referrer.toLowerCase().indexOf('automationreport') > -1 ||
@@ -193,12 +194,18 @@ const ClientSearchResult = ({ props, classes }) => {
         referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
         ((referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1) ||
           searchReferrer === true)
-      if (isSessionStorageData) {
+      if (isSessionStorageData && sessionData) {
         setSearchReferrer(true);
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
         overwriteObject.IsSearchByFilter = referrer.toLowerCase().indexOf('clientsearch') > -1;
         setFilterSearch(overwriteObject);
       }
+    }
+
+    let isSmsReport = false;
+
+    if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
+      isSmsReport = true;
     }
 
     // On load
@@ -210,7 +217,7 @@ const ClientSearchResult = ({ props, classes }) => {
       SearchTerm: "",
       Status: location?.state?.Status ?? null,
       PageType: location?.state?.PageType ?? null,
-      ReportType: document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ? 20 : 10,
+      ReportType: isSmsReport ? 20 : 10,
       TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
       CampaignID: id,
       Switch: "",
@@ -284,9 +291,9 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     if (searchData) {
-      // if (!searchData.IsAdvanced && !searchData.IsSearchByFilter) {
-      //   sessionStorage.removeItem('searchData')
-      // }
+      if (!searchData.IsAdvanced && !searchData.IsSearchByFilter) {
+        sessionStorage.removeItem('searchData')
+      }
       getData();
     }
   }, [dispatch, searchData, page, rowsPerPage]);
@@ -888,6 +895,7 @@ const ClientSearchResult = ({ props, classes }) => {
           Func: () => {
             setDialog(null)
             setTimeout(() => {
+              sessionStorage.removeItem('searchData');
               window.history.back();
             }, 4000);
             //getData()
@@ -928,6 +936,7 @@ const ClientSearchResult = ({ props, classes }) => {
               })
             }
             else {
+              sessionStorage.removeItem('searchData');
               window.history.back()
             }
           }
