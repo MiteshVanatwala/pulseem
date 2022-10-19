@@ -183,31 +183,22 @@ const ClientSearchResult = ({ props, classes }) => {
       }
     }
     const initSearchData = () => {
-      let isSessionStorageData = null;
       let overwriteObject = location?.state;
-      // console.log(window.history.state);
       const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
-      const sessionData = window.sessionStorage?.getItem('searchData');
-      if (referrer && referrer !== '') {
-        isSessionStorageData =
-          referrer.toLowerCase().indexOf('automationreport') > -1 ||
-          referrer.toLowerCase().indexOf('createautomations') > -1 ||
-          referrer.toLowerCase().indexOf('campaignstatistics') > -1 ||
-          referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
-          ((referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1) ||
-            searchReferrer === true)
-        if (isSessionStorageData && sessionData) {
+      let isSessionStorageData = referrer.toLowerCase().indexOf('automationreport') > -1 ||
+        referrer.toLowerCase().indexOf('createautomations') > -1 ||
+        referrer.toLowerCase().indexOf('campaignstatistics') > -1 ||
+        referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
+        ((referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1) ||
+          searchReferrer === true);
+      if (!overwriteObject || isSessionStorageData) {
+        const sessionData = window.sessionStorage?.getItem('searchData');
+        if (sessionData) {
           setSearchReferrer(true);
-          overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
-          overwriteObject.IsSearchByFilter = referrer.toLowerCase().indexOf('clientsearch') > -1;
+          overwriteObject = JSON.parse(sessionData);
+          overwriteObject.IsSearchByFilter = true;
           setFilterSearch(overwriteObject);
         }
-      }
-      else {
-        if (!overwriteObject) {
-          overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
-        }
-        window.sessionStorage.setItem("searchData", JSON.stringify(overwriteObject));
       }
 
       let isSmsReport = false;
