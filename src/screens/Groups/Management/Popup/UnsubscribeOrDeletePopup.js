@@ -4,7 +4,12 @@ import {
     Typography,
     FormControlLabel,
     Switch,
-    Button
+    Button,
+    FormControl,
+    FormLabel,
+    RadioGroup,
+    Radio,
+    Tooltip
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../../components/managment/Dialog";
@@ -28,7 +33,9 @@ const UnsubscribeOrDeletePopup = ({
     selectedGroups,
     handleResponses = (response, actions) => null,
     ToastMessages,
-    getData
+    getData,
+    showDropBox = true,
+    onSubmit = null
 }) => {
     const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
@@ -39,7 +46,7 @@ const UnsubscribeOrDeletePopup = ({
     const [finalData, setFinalData] = useState(null);
     const [updatedRows, setUpdatedRows] = useState(-1);
     const [advanceOpt, setAdvanceOpt] = useState(false)
-    const [activeTab, setActiveTab] = useState(0)
+    const [activeTab, setActiveTab] = useState(showDropBox ? '0' : 0)
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
@@ -48,99 +55,123 @@ const UnsubscribeOrDeletePopup = ({
     const [enteredValue, setEnteredValues] = useState(null);
     const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [unsubscribeOption, setUnsubscribeOption] = useState(0);
 
     const AdvanceOptions = () => {
         return (
             <>
-                <FormControlLabel
-                    control={
-                        <Switch checked={advanceOpt} onClick={() => {
-                            setActiveTab(0)
-                            setAdvanceOpt(!advanceOpt)
-                        }} className={classes.toggleSwitch} />
-                    }
-                    label={t("recipient.advanceOptions")}
-                />
-
-                <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} style={{ height: 26 }}>
-                    {advanceOpt && (<>
+                {!showDropBox ? (<>
+                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} style={{ height: 26 }}>
                         <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
                         <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
-                    </>
-                    )}
-                </Box>
+                    </Box>
+                </>) : (
+                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
+                        <FormControl>
+                            <FormLabel id="unsubRadio" className={clsx(classes.f20, classes.p5)}><strong>{t('recipient.unsubSettings')}</strong></FormLabel>
+                            <RadioGroup
+                                aria-labelledby="unsubRadio"
+                                defaultValue="female"
+                                name="unsubRadio-group"
+                                value={`${unsubscribeOption}`}
+                                onChange={(e) => setUnsubscribeOption(e.target.value)}
+                            >
+                                <FormControlLabel value={'0'} className={classes.unSubAdvanceOptns} control={<Radio />} label={t('recipient.removeDetailsFrmWndw') + '.'} />
+                                <FormControlLabel value={'1'} className={classes.unSubAdvanceOptns} control={<Radio />} label={
+                                    <Box style={{ display: 'flex' }}>
+                                        {t('recipient.RemoveAllEmailandCellphones') + '.'}
+                                        <CustomTooltip
+                                            arrow
+                                            isSimpleTooltip={false}
+                                            // title={t('recipient.unsubSetting1Tooltip')}
+                                            classes={classes}
+                                            interactive={true}
+                                            // arrow={true}
+                                            placement={'top'}
+                                            title={<Typography noWrap={false}>{t('recipient.unsubSetting1Tooltip')}</Typography>}
+                                            text={<span>
+                                                <BsInfoCircleFill />
+                                            </span>}
+                                        />
+                                    </Box>
+                                } />
+                            </RadioGroup>
+                        </FormControl>
+                    </Box>
+                )}
             </>
         )
     }
 
+    // useEffect(() => {
+    //     const updateFinalData = () => {
+    //         if (!finalData || finalData.length === 0) {
+    //             return;
+    //         }
+
+
+    //         let tempData = null;
+    //         if (!allData) {
+    //             setAllData(finalData);
+    //             setEnteredValues(finalData);
+    //         }
+
+    //         let output = typeof allData == "string" ? 1 : 0;
+    //         if (output === 0) output = Array.isArray(allData) ? 2 : 0;
+
+    //         switch (activeTab) {
+    //             case 0:
+    //             default: {
+    //                 if (allData && output === 1) {
+    //                     tempData = allData?.split("\n") ?? finalData;
+    //                 }
+    //                 else {
+    //                     tempData = finalData;
+    //                 }
+    //                 break;
+    //             }
+    //             case 1: {
+    //                 if (allData && output === 1) {
+    //                     tempData = allData?.split("\n").filter((f) => {
+    //                         return f.indexOf('@') > -1;
+    //                     });
+    //                 }
+    //                 else {
+    //                     tempData = allData.filter((f) => {
+    //                         return f.indexOf('@') > -1;
+    //                     });
+    //                 }
+    //                 break;
+    //             }
+    //             case 2: {
+    //                 if (allData && output === 1) {
+    //                     tempData = allData?.split("\n").filter((f) => {
+    //                         return f.indexOf('@') === -1;
+    //                     });
+    //                 }
+    //                 else {
+    //                     tempData = allData.filter((f) => {
+    //                         return f.indexOf('@') === -1;
+    //                     });
+    //                 }
+    //                 break;
+    //             }
+    //         }
+
+    //         handleFinalData(tempData);
+    //     }
+
+    //     updateFinalData();
+
+    // }, [activeTab])
+
     useEffect(() => {
-        const updateFinalData = () => {
-            if (!finalData || finalData.length === 0) {
-                return;
-            }
-
-
-            let tempData = null;
-            if (!allData) {
-                setAllData(finalData);
-                setEnteredValues(finalData);
-            }
-
-            let output = typeof allData == "string" ? 1 : 0;
-            if (output === 0) output = Array.isArray(allData) ? 2 : 0;
-
-            switch (activeTab) {
-                case 0:
-                default: {
-                    if (allData && output === 1) {
-                        tempData = allData?.split("\n") ?? finalData;
-                    }
-                    else {
-                        tempData = finalData;
-                    }
-                    break;
-                }
-                case 1: {
-                    if (allData && output === 1) {
-                        tempData = allData?.split("\n").filter((f) => {
-                            return f.indexOf('@') > -1;
-                        });
-                    }
-                    else {
-                        tempData = allData.filter((f) => {
-                            return f.indexOf('@') > -1;
-                        });
-                    }
-                    break;
-                }
-                case 2: {
-                    if (allData && output === 1) {
-                        tempData = allData?.split("\n").filter((f) => {
-                            return f.indexOf('@') === -1;
-                        });
-                    }
-                    else {
-                        tempData = allData.filter((f) => {
-                            return f.indexOf('@') === -1;
-                        });
-                    }
-                    break;
-                }
-            }
-
-            handleFinalData(tempData);
-        }
-
-        updateFinalData();
-
-    }, [activeTab])
-
-    useEffect(() => {
-        if (confirmUnsubscsribe === true && finalData) {
+        if (confirmUnsubscsribe === true) {
             handleUnsubSubmit();
         }
-    }, [confirmUnsubscsribe]);
+    }, [confirmUnsubscsribe, unsubscribeOption]);
+
     useEffect(() => {
         if (confirmDelete === true && finalData) {
             openConfirmDialog();
@@ -294,9 +325,6 @@ const UnsubscribeOrDeletePopup = ({
     const handleFinalData = (data) => {
         if (!data && data.length === 0)
             return;
-        else if (data.length > 1000) {
-            setLimitationWarning(true);
-        }
 
         setError(null);
         let filteredData = clearInvalidData(data);
@@ -308,6 +336,9 @@ const UnsubscribeOrDeletePopup = ({
         setareaData(tempData.join(',').trim().replace(',', "\n"));
         setLoader(false);
 
+        if (filteredData.length > 1000) {
+            setLimitationWarning(true);
+        }
     }
 
     const areaChange = (e) => {
@@ -407,6 +438,10 @@ const UnsubscribeOrDeletePopup = ({
     }
 
     const handleUnsubSubmit = async () => {
+
+        if (onSubmit) {
+            return onSubmit(activeTab);
+        }
         if (!finalData || finalData.length === 0) {
             setError(t("recipient.errors.noDeleteRecFound"))
             return;
@@ -415,7 +450,11 @@ const UnsubscribeOrDeletePopup = ({
         try {
             const payload = {
                 ListOfValues: finalData,
-                RemovingOption: activeTab
+                UnsubscribeOption: -1
+            }
+
+            if (showDropBox) {
+                payload.UnsubscribeOption = unsubscribeOption;
             }
 
             const response = await dispatch(unsubRecipients(payload))
@@ -476,7 +515,9 @@ const UnsubscribeOrDeletePopup = ({
             title: t('recipient.unsubRecipients'),
             onClose: onClose,
             onConfirm: () => {
-                handleFinalData(enteredValue);
+                if (enteredValue) {
+                    handleFinalData(enteredValue);
+                }
                 setConfirmUnsubscsribe(true);
             },
             summaryOnClose: () => { setIsSubmitted(false); onClose(); setConfirmUnsubscsribe(false); },
@@ -608,7 +649,7 @@ const UnsubscribeOrDeletePopup = ({
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
-            childrenStyle={classes.h50v}
+            childrenStyle={showDropBox ? classes.h50v : classes.h10v}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
@@ -635,14 +676,12 @@ const UnsubscribeOrDeletePopup = ({
                             </span>
                         </CustomTooltip>
                     </Box>
-                    <Box style={{ cursor: 'pointer' }}>
+                    {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
                             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
                         </label>
-                    </Box>
-                </Box >
-
-
+                    </Box>}
+                </Box>
             }
             icon={< div className={classes.dialogIconContent} >
                 {'\uE0D5'}
@@ -651,10 +690,11 @@ const UnsubscribeOrDeletePopup = ({
             onClose={onClose}
             onCancel={onClose}
             onConfirm={DialogObject[dialogType].onConfirm}
-            customContainerStyle={classes.addRecipientDialog}
+        // customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
-                {DropBox(classes)}
+                {showDropBox && DropBox(classes)}
+                {/* {!showDropBox && } */}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
         </Dialog >

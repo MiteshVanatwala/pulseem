@@ -69,6 +69,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "Assistant",
     fontWeight: "bold",
     marginTop: 20,
+    whiteSpace: windowSize === "xs" ? "break-spaces" : null,
   },
   tableRow: {
     marginBox: 20,
@@ -113,6 +114,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   maxWidth75: {
     maxWidth: "75px!important",
   },
+  maxWidth275: {
+    maxWidth: '275px !important'
+  },
+  maxWidth325: {
+    maxWidth: '300px !important'
+  },
+  maxWidth450: {
+    maxWidth: '450px !important'
+  },
+
   paddingRightLeft10: {
     padding: "0 10px!important",
   },
@@ -383,6 +394,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   textColorBlue: {
     color: "#3498DB",
   },
+  textColorGrey: {
+    color: "#959595",
+  },
   actionButtonLightBlue: {
     backgroundColor: "#3498DB",
     // marginInlineEnd: '10px',
@@ -518,7 +532,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flex: 0.5,
   },
   flex5: {
-    flex: 4,
+    flex: 5,
     borderBottom: 0,
     justifyContent: "center",
   },
@@ -1680,4 +1694,20 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: '#3291d1'
     }
   },
+  removedPaddingAutoComplete: {
+    minWidth: 200,
+    '& .MuiTextField-root': {
+      '& .MuiAutocomplete-inputRoot': {
+        padding: '0 65px 0 0', margin: 9,
+      }
+    }
+  },
+  unSubAdvanceOptns: {
+    '& span': {
+      padding: '2px 9px',
+      '&.Mui-checked': {
+        color: '#0371ad'
+      }
+    },
+  }
 });

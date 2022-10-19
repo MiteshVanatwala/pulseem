@@ -1,24 +1,25 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
 import clsx from "clsx";
 import {
+  Box,
   Typography,
   Divider,
   TableBody,
   Grid,
   Button,
   TextField,
-  useTheme,
-  Link
+  TableRow,
+  TableCell,
+  makeStyles
 } from "@material-ui/core";
-import { SearchIcon, ExportIcon } from "../../assets/images/managment/index";
-import { CSVLink } from "react-csv";
+import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
+import { DateField, ManagmentIcon } from "../../components/managment/index";
 import {
   TablePagination,
   SearchField,
 } from "../../components/managment/index";
-
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -26,18 +27,60 @@ import moment from "moment";
 import "moment/locale/he";
 import { Loader } from "../../components/Loader/Loader";
 import { setRowsPerPage } from "../../redux/reducers/coreSlice";
-import { setCookie } from "../../helpers/cookies";
 import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
-import RenderRow from "./SubComp/RenderRow";
-import RenderPhoneRow from "./SubComp/RenderPhoneRow";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
-import { searchAllClients } from "../../redux/reducers/clientSlice";
+import {
+  AddClientsToGroup,
+  deleteFromGroups,
+  makeInvalidClients,
+  removeEmailClient,
+  removeSmsClient,
+  searchAllClients,
+  getExportData,
+  setUnsubscribedClients
+} from "../../redux/reducers/clientSlice";
+import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
-
-const ClientSearchResult = ({ classes }) => {
+import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
+import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
+import FlexGrid from "../../components/Grids/FlexGrid";
+import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
+import { exportAsXLSX } from '../../helpers/exportFromJson';
+import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
+import { ClientStatus } from "../../helpers/PulseemArrays";
+import { switchClientStatus } from '../../helpers/functions';
+import { useLocation } from "react-router";
+import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
+import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import { useNavigate } from 'react-router';
+const useStyles = makeStyles({
+  groupName: {
+    "@media screen and (max-width: 1160px)": {
+      fontSize: '16px'
+    }
+  },
+  noWrap: {
+    whiteSpace: 'nowrap',
+    '& p': {
+      whiteSpace: 'nowrap',
+    }
+  },
+  dataBox: {
+    whiteSpaces: 'nowrap',
+    "@media screen and (max-width: 1350px)": {
+      fontSize: '14px'
+    }
+  },
+  date: {
+    "@media screen and (max-width: 1160px)": {
+      fontSize: '13px'
+    }
+  }
+});
+const ClientSearchResult = ({ props, classes }) => {
   const {
     language,
     windowSize,
@@ -45,118 +88,490 @@ const ClientSearchResult = ({ classes }) => {
     phone,
     rowsPerPage,
     smsOldVersion,
-    isRTL,
-    ...props
+    isRTL
   } = useSelector((state) => state.core);
-
   const { t } = useTranslation();
+  const { extraData } = useSelector(state => state.sms);
+  const navigate = useNavigate()
+  const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
+  const localClasses = useStyles();
+  const location = useLocation()
+  // const { groupData, ToastMessages } = useSelector((state) => state.group);
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
-
-  const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { ClientData, TotalCount, TotalRevenue, CampaignClicks } = useSelector(state => state.client);
-  const { referrer, id } = useParams();
+  const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
   const [filterMax, setFilterMax] = useState("");
-  const [filterSearch, setFilterSearch] = useState(false);
-  const [totalClients, setTotalClients] = useState(TotalCount);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
-  const [serachData, setSearchData] = useState({
-    PageSize: 6,
-    PageIndex: 0,
-    SearchTerm: "",
-    Status: 0,
-    PageType: 15,
-    ReportType: referrer === 'sms' ? 20 : 10,
-    IsSmsCampaign: false,
-    CampaignID: id,
-    Switch: "",
-    CountryOrRegion: "",
-    GroupIds: [],
-    NodeID: ""
+  const [searchData, setSearchData] = useState(null);
+  const [filterSearch, setFilterSearch] = useState(null);
+  const [searchReferrer, setSearchReferrer] = useState(false);
+  const [date, setDate] = useState({
+    FromDate: null,
+    ToDate: null,
   });
-
+  const exportColumnHeader = useRef(null);
+  const assignClientsActions =
+  {
+    S_201: {
+      code: 201,
+      message: ToastMessages.RECIPIENT_ADDED_TO_GROUP,
+      Func: () => null
+    },
+    S_400: {
+      code: 400,
+      message: ToastMessages.GROUP_INPUT_INCORRECT,
+      Func: () => null
+    },
+    S_401: {
+      code: 401,
+      message: ToastMessages.GROUP_INVALID_API,
+      Func: () => null
+    },
+    S_405: {
+      code: 405,
+      message: ToastMessages.GROUP_ERROR,
+      Func: () => null
+    },
+    S_422: {
+      code: 422,
+      message: ToastMessages.GROUP_ALREADY_EXIST,
+      Func: () => null
+    },
+    S_406: {
+      code: 406,
+      message: ToastMessages.GROUP_ERROR,
+      Func: () => null
+    },
+    default: {
+      message: ToastMessages.GROUP_ERROR,
+      Func: () => null
+    },
+  };
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
     head: classes.tableCellHead,
     body: classes.tableCellBody,
     root: classes.tableCellRoot,
   };
-  const noBorderCellStyle = {
-    body: classes.tableCellBodyNoBorder,
-    root: clsx(classes.tableCellRoot, classes.minWidth50),
-  };
   const [dialog, setDialog] = useState(null);
   const [showLoader, setLoader] = useState(false);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
-  const theme = useTheme();
-
-  const colorTextStyle = {
-    red: classes.textColorRed,
-    blue: classes.textColorBlue,
-    green: classes.sendIconText,
-  };
-
   const DialogType = {
-    ADD_GROUP: "addGroup",
-    EDIT_GROUP: "editGroup",
-    DELETE_GROUP: "delete group",
-    ADD_RECIPIENT: "add recipient",
-    ADD_RECIPIENTS: "add recipients",
-    UNSUB_RECIPIENT: "unsubscribe recipients",
-    DELETE_RECIPIENT: "delete recipients",
-    RESET_GROUP: 'reset group',
-    MESSAGE: "message",
-    SUMMARY: "summary",
-    EXPORT_ALL: "exportAll",
-    EXPORT_SELECTED: "exportSelected",
-    SIMPLY_CLUB: "simplyclub"
+    ADD_GROUP: "ADD_GROUP",
+    EDIT_RECIPIENT: "EDIT_RECIPIENT",
+    CONFIRM_DELETE_FROM_GROUPS: "CONFIRM_DELETE_FROM_GROUPS",
+    CONFIRM_REMOVE_EMAIL: "CONFIRM_REMOVE_EMAIL",
+    CONFIRM_REMOVE_PHONE: "CONFIRM_REMOVE_PHONE",
+    UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
+    CONFIRM_INVALID: "CONFIRM_INVALID"
   };
-
-  const sortData = () => {
-    if (data && data.length > 0) {
-      let tempData = [...data].sort((a, b) => {
-        return a.Revenue !== null && b.Revenue !== null
-          ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
-          : -1
+  useEffect(() => {
+    const initExtraFields = async () => {
+      dispatch(getAccountExtraData());
+      if (subAccountAllGroups.length === 0) {
+        dispatch(getGroupsBySubAccountId());
       }
-      );
-      setData(tempData);
+    }
+    const initSearchData = () => {
+      let overwriteObject = location?.state;
+      const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
+      const isSearchByFilter = referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1;
+      let isSessionStorageData = referrer.toLowerCase().indexOf('automationreport') > -1 ||
+        referrer.toLowerCase().indexOf('createautomations') > -1 ||
+        referrer.toLowerCase().indexOf('campaignstatistics') > -1 ||
+        referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
+        (isSearchByFilter || searchReferrer === true);
+      if (!overwriteObject || isSessionStorageData) {
+        const sessionData = window.sessionStorage?.getItem('searchData');
+        if (sessionData) {
+          setSearchReferrer(true);
+          overwriteObject = JSON.parse(sessionData);
+          overwriteObject.IsSearchByFilter = (isSearchByFilter || referrer === '');
+          setFilterSearch(overwriteObject);
+        }
+      }
+
+      let isSmsReport = false;
+
+      if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
+        isSmsReport = true;
+      }
+
+      // On load
+      let initSearchData = {
+        IsSearchByFilter: false,
+        IsAdvanced: false,
+        PageSize: rowsPerPage,
+        PageIndex: page,
+        SearchTerm: "",
+        Status: location?.state?.Status ?? null,
+        PageType: location?.state?.PageType ?? null,
+        ReportType: isSmsReport ? 20 : 10,
+        TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
+        CampaignID: id,
+        Switch: "",
+        CountryOrRegion: "",
+        GroupIds: [],
+        NodeID: "",
+        OrderBy: 0,
+        ...overwriteObject,
+      };
+      setSearchData(initSearchData);
+    }
+    initSearchData();
+    initExtraFields();
+  }, []);
+  useEffect(() => {
+    if (extraData && Object.entries(extraData).length > 0) {
+      let updatingObject = {
+        "Status": t('common.Status'),
+        "SmsStatus": t('common.smsStatus'),
+        "CreationDate": location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
+        "FirstName": t('smsReport.firstName'),
+        "LastName": t('smsReport.lastName'),
+        "Email": t("common.Mail"),
+        "Telephone": t('common.telephone'),
+        "Cellphone": t('common.Cellphone'),
+        "Address": t('common.address'),
+        "BirthDate": t('common.birthDate'),
+        "City": t('common.city'),
+        "State": t('common.state'),
+        "Country": t('common.country'),
+        "Zip": t('common.zip'),
+        "Company": t('common.company'),
+        "ReminderDate": t('recipient.reminderDate'),
+      };
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+        updatingObject["Revenue"] = t('common.campaignRevenue');
+      }
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
+        updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
+      }
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+        updatingObject["snt_OpeningDate"] = t('common.OpenTime');
+      }
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
+        location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
+        updatingObject["SentDate"] = t('sms.sendingTime');
+      }
+      updatingObject = {
+        ...updatingObject,
+        "ExtraDate1": t('common.ExtraDate1'),
+        "ExtraDate2": t('common.ExtraDate2'),
+        "ExtraDate3": t('common.ExtraDate3'),
+        "ExtraDate4": t('common.ExtraDate4'),
+        "ExtraField1": t('common.ExtraField1'),
+        "ExtraField2": t('common.ExtraField2'),
+        "ExtraField3": t('common.ExtraField3'),
+        "ExtraField4": t('common.ExtraField4'),
+        "ExtraField5": t('common.ExtraField5'),
+        "ExtraField6": t('common.ExtraField6'),
+        "ExtraField7": t('common.ExtraField7'),
+        "ExtraField8": t('common.ExtraField8'),
+        "ExtraField9": t('common.ExtraField9'),
+        "ExtraField10": t('common.ExtraField10'),
+        "ExtraField11": t('common.ExtraField11'),
+        "ExtraField12": t('common.ExtraField12'),
+        "ExtraField13": t('common.ExtraField13'),
+      }
+      updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
+      exportColumnHeader.current = updatingObject;
+    }
+  }, [extraData])
+
+
+  useEffect(() => {
+    if (searchData) {
+      if (!searchData.IsAdvanced && !searchData.IsSearchByFilter && document.referrer.toLocaleLowerCase().indexOf('campaignstatistics') < 0) {
+        sessionStorage.removeItem('searchData')
+      }
+      getData();
+    }
+  }, [dispatch, searchData, page, rowsPerPage]);
+
+  const handleFromDateChange = (value) => {
+    if (value > date.ToDate) {
+      setDate({ ...date, ToDate: null });
+    }
+    setDate({ ...date, FromDate: value });
+  }
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13 || event.code === "Enter" || event.code === 'NumpadEnter') {
+      setSearchData({
+        ...searchData,
+        PageIndex: 1,
+        PageSize: rowsPerPage,
+        FromDate: date.FromDate,
+        ToDate: date.ToDate,
+        SearchTerm: searchStr,
+        MyActivities: null,
+        MyConditions: null
+      });
+      setPage(1);
+      handleFilter();
+    }
+  };
+  const handleKeyPress = (e) => {
+    if (e.charCode === 13 || e.code === "Enter") {
+      setSearchData({
+        ...searchData,
+        PageIndex: 1,
+        PageSize: rowsPerPage,
+        FromDate: date.FromDate,
+        ToDate: date.ToDate,
+        SearchTerm: searchStr,
+        MyActivities: null,
+        MyConditions: null
+      });
+      setPage(1);
+      handleFilter();
+    }
+  };
+  const handleDownloadCsv = async () => {
+    setLoader(true);
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
+    if (response && response.payload) {
+      const data = response.payload;
+      if (data.StatusCode === 201) {
+        let orderList = await data.Clients.map((client) => {
+          let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
+          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+          client.Status = t(tempStatus.value);
+          client.SmsStatus = t(tempSmsStatus.value);
+          return client;
+        }, []);
+        orderList = orderList.map((ol) => { return flatObject(ol) });
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+        }
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+          searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+          orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+        }
+        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
+        orderList = formatDateTime(orderList, t);
+        const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+
+        await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
+      }
+      else {
+        setToastMessage(t('common.errorOccured'));
+      }
+    }
+    setLoader(false);
+  }
+  const sortData = (key) => {
+    if (key === 'CreationDate' || key === 'Date') {
+      setSearchData({
+        ...searchData,
+        OrderBy: descSortDirection ? 0 : 1
+      });
       setSortDirection(!descSortDirection);
+    }
+    else {
+      if (data && data.length > 0) {
+        let tempData = [...data].sort((a, b) => {
+          return a.Revenue !== null && b.Revenue !== null
+            ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
+            : -1
+        }
+        );
+        setData(tempData);
+        setSortDirection(!descSortDirection);
+      }
     }
     return;
   }
-
   const handleFilter = () => {
+    setIsSearching(true);
     if (filterMin !== '' || filterMax !== '') {
       const sortedData = [...ClientData].filter((f) => {
         return f.Revenue >= parseInt(filterMin !== "" ? filterMin : 0) && f.Revenue <= parseInt(filterMax !== "" ? filterMax : 1000000)
       });
       setData(sortedData);
-      setTotalClients(sortedData.length);
-      setIsSearching(true);
-    }
-    else {
-      resetSearch();
     }
   }
-
-  const resetSearch = () => {
-    setData(ClientData);
-    setFilterMin("");
-    setFilterMax("");
-    setIsSearching(false);
-    setTotalClients(ClientData ? ClientData.length : 0);
+  const handlePageChange = (val) => {
+    setPage(val);
+    setSearchData({ ...searchData, PageIndex: val });
   }
-
+  const Min = () => <Grid item>
+    <TextField
+      variant="outlined"
+      size="small"
+      value={filterMin}
+      onChange={(e) => setFilterMin(e.target.value)}
+      className={clsx(classes.textField, classes.minWidth252)}
+      placeholder={t("siteTracking.minimumRevenue")}
+      type="number"
+    />
+  </Grid>
+  const Max = () => <Grid item>
+    <TextField
+      variant="outlined"
+      size="small"
+      value={filterMax}
+      onChange={(e) => setFilterMax(e.target.value)}
+      className={clsx(classes.textField, classes.minWidth252)}
+      placeholder={t("siteTracking.maximumRevenue")}
+      type="number"
+    />
+  </Grid>
+  const FromDate = () => windowSize !== 'xs' ?
+    <Grid item>
+      <DateField
+        toolbarDisabled={false}
+        classes={classes}
+        value={date.FromDate}
+        onChange={handleFromDateChange}
+        placeholder={t('mms.locFromDateResource1.Text')}
+      />
+    </Grid>
+    : null
+  const ToDate = () => windowSize !== 'xs' ?
+    <Grid item>
+      <DateField
+        toolbarDisabled={false}
+        classes={classes}
+        value={date.ToDate}
+        onChange={(value) => setDate({ ...date, ToDate: value })}
+        placeholder={t('mms.locToDateResource1.Text')}
+        minDate={date.FromDate ? date.FromDate : undefined}
+      />
+    </Grid>
+    : null
+  const PageTypeObject = {
+    '1': {
+      title: t("common.OpenDate"),
+      sortKey: 'Date',
+      component: {
+        mobile: ({ snt_OpeningDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.OpenTime")}
+          </Typography>
+          <Typography>
+            {snt_OpeningDate ? moment(snt_OpeningDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ snt_OpeningDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {snt_OpeningDate ? moment(snt_OpeningDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
+      },
+      filterComponents: [FromDate, ToDate]
+    },
+    '4': {
+      title: t("common.SendDate"),
+      sortKey: 'Date',
+      component: {
+        mobile: ({ SentDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.OpenTime")}
+          </Typography>
+          <Typography>
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ SentDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
+      },
+      filterComponents: [FromDate, ToDate]
+    },
+    '3': {
+      title: t("client.subscribedOn"),
+      sortKey: 'Date',
+      component: {
+        mobile: ({ CreationDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("sms.sendingTime")}
+          </Typography>
+          <Typography>
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ CreationDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
+      },
+      filterComponents: [FromDate, ToDate]
+    },
+    '8': {
+      title: t("sms.sendingTime"),
+      sortKey: 'Date',
+      component: {
+        mobile: ({ CreationDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("sms.sendingTime")}
+          </Typography>
+          <Typography>
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ CreationDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
+      },
+      filterComponents: [FromDate, ToDate]
+    },
+    '10': {
+      title: t("common.ErrorEmail"),
+      sortKey: '',
+      component: {
+        mobile: ({ LogSms_ErrorType = '', ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.ErrorEmail")}
+          </Typography>
+          <Typography>
+            {LogSms_ErrorType}
+          </Typography>
+        </>),
+        web: ({ LogSms_ErrorType = '', ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {LogSms_ErrorType}
+          </Typography>
+        )
+      },
+      // filterComponents: [ErrorDropDown]
+    },
+    '15': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      component: {
+        mobile: ({ Revenue = 0, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.campaignRevenue")}
+          </Typography>
+          <Typography>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </>),
+        web: ({ Revenue = 0, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        )
+      },
+      filterComponents: [Min, Max]
+    },
+  }
   const TABLE_HEAD = [
     {
       label: t("common.RecipientsName"),
@@ -164,25 +579,10 @@ const ClientSearchResult = ({ classes }) => {
       className: classes.flex4,
       align: "center",
     },
-    // {
-    //   label: t(""),
-    //   classes: cellStyle,
-    //   className: classes.flex6,
-    //   align: "center",
-    // },
     {
-      label: <div className={classes.flex}>
-        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        <div className={classes.flex1}>
-          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-            onClick={() => { sortData() }}
-            style={{ minWidth: 40 }}>
-            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
-          </Button>
-        </div>
-      </div>,
+      label: t(""),
       classes: cellStyle,
-      className: clsx(classes.flex2),
+      className: classes.flex6,
       align: "center",
     },
     {
@@ -198,24 +598,21 @@ const ClientSearchResult = ({ classes }) => {
       align: "center",
     },
   ];
-
   const getData = async () => {
     setLoader(true);
-    if (serachData.CampaignID > -1) {
-      await dispatch(searchAllClients(serachData));
-    }
+    await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
     setLoader(false);
   };
-
+  // const getSearchData = async () => {
+  //   setLoader(true);
+  //   await dispatch(searchAdvancedClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
+  //   setLoader(false);
+  // }
   useEffect(() => {
-    getData(); // BUG: UNCOMMENT THIS
-  }, [dispatch, serachData]);
-
-  useEffect(() => {
-    handleFilter();
+    // setData(Static_CSR_Data)
     setData(ClientData);
-
     if (TotalRevenue) {
+      handleFilter();
       setRevenueSummary([
         { title: t('client.Purchased'), value: TotalCount },
         { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
@@ -224,7 +621,6 @@ const ClientSearchResult = ({ classes }) => {
       ]);
     }
   }, [ClientData, isRTL]);
-
   //  HANDLERS  //
   const handleResponses = (response, actions = {
     'S_200': {
@@ -244,6 +640,11 @@ const ClientSearchResult = ({ classes }) => {
     },
     'S_401': {
       code: 401,
+      message: '',
+      Func: () => null
+    },
+    'S_404': {
+      code: 404,
       message: '',
       Func: () => null
     },
@@ -272,7 +673,7 @@ const ClientSearchResult = ({ classes }) => {
       Func: () => null
     },
   }) => {
-    switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
+    switch (response.payload?.StatusCode || response.payload?.Message.StatusCode) {
       case 200: {
         actions?.S_200?.Func?.();
         actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
@@ -291,6 +692,11 @@ const ClientSearchResult = ({ classes }) => {
       case 401: {
         actions?.S_401?.Func?.();
         actions?.S_401?.message && setToastMessage(actions?.S_401?.message);
+        break;
+      }
+      case 404: {
+        actions?.S_404?.Func?.();
+        actions?.S_404?.message && setToastMessage(actions?.S_404?.message);
         break;
       }
       case 405: {
@@ -318,12 +724,11 @@ const ClientSearchResult = ({ classes }) => {
         actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
+        setLoader(false);
     }
   }
-
   const renderToast = () => {
     if (toastMessage) {
-
       setTimeout(() => {
         setToastMessage(null);
       }, 4000);
@@ -333,54 +738,225 @@ const ClientSearchResult = ({ classes }) => {
     }
     return null;
   }
-
-  const handleSelected = (id) => {
-    const index = selectedClients.indexOf(id);
-    if (index !== -1) {
-      let temp = [...selectedClients];
-      temp.splice(index, 1);
-      setSelectedClients([...temp]);
-    } else setSelectedClients([...selectedClients, id]);
-  };
-
-
+  const makeInvalid = async () => {
+    setLoader(true);
+    setDialog(null);
+    await dispatch(makeInvalidClients({ ...searchData, PageSize: TotalCount })).then((res) => {
+      handleResponses(res, {
+        'S_200': {
+          code: 200,
+          message: ToastMessages.SUCCESS,
+          Func: () => setDialog(null)
+        },
+        'S_201': {
+          code: 201,
+          message: ToastMessages.SET_INVALID_SUCCESS,
+          Func: () => {
+            getData();
+            //navigate(-1)
+          }
+        },
+        'S_401': {
+          code: 401,
+          message: ToastMessages.GROUP_INVALID_API,
+          Func: () => null
+        },
+        'S_404': {
+          code: 404,
+          message: ToastMessages.NO_CLIENTS_FOUND,
+          Func: () => null
+        },
+        'S_500': {
+          code: 500,
+          message: ToastMessages.GROUP_ERROR,
+          Func: () => null
+        },
+      })
+    })
+  }
+  const removeRecipientFromAllGroups = async () => {
+    setDialog(null);
+    setLoader(true);
+    const response = await dispatch(deleteFromGroups(selectedClients[0]))
+    //TODO: (Rishabh) add handle response for delete responses
+    if (response && response.payload === 'true') {
+      setToastMessage(ToastMessages.RECIPIENT_DELETED_FROM_GROUP);
+      getData();
+    }
+    else {
+      // show delete failed message
+    }
+    setLoader(false);
+  }
+  const removeEmailRecipient = async () => {
+    setDialog(null);
+    setLoader(true);
+    const response = await dispatch(removeEmailClient(selectedClients[0]))
+    if (response) {
+      //TODO: show delete success message
+      handleResponses(response,
+        {
+          S_201: {
+            code: 201,
+            message: ToastMessages.SUCCESS,
+            Func: () => null
+          },
+          S_400: {
+            code: 400,
+            message: ToastMessages.SOMETHING_WENT_WRONG,
+            Func: () => null
+          },
+          'S_401': {
+            code: 401,
+            message: ToastMessages.GROUP_INVALID_API,
+            Func: () => null
+          },
+          'S_404': {
+            code: 404,
+            message: ToastMessages.NO_CLIENTS_FOUND,
+            Func: () => null
+          },
+          'S_500': {
+            code: 500,
+            message: ToastMessages.GROUP_ERROR,
+            Func: () => null
+          },
+        }
+      );
+      getData();
+      setDialog(null);
+    }
+    setLoader(false);
+  }
+  const removeSMSRecipient = async () => {
+    setDialog(null);
+    setLoader(true);
+    const response = await dispatch(removeSmsClient(selectedClients[0]))
+    if (response) {
+      //TODO: show delete success message
+      handleResponses(response,
+        {
+          S_201: {
+            code: 201,
+            message: ToastMessages.SUCCESS,
+            Func: () => null
+          },
+          S_400: {
+            code: 400,
+            message: ToastMessages.SOMETHING_WENT_WRONG,
+            Func: () => null
+          },
+          'S_401': {
+            code: 401,
+            message: ToastMessages.GROUP_INVALID_API,
+            Func: () => null
+          },
+          'S_404': {
+            code: 404,
+            message: ToastMessages.NO_CLIENTS_FOUND,
+            Func: () => null
+          },
+          'S_500': {
+            code: 500,
+            message: ToastMessages.GROUP_ERROR,
+            Func: () => null
+          },
+        }
+      );
+      getData()
+      setDialog(null);
+    }
+    setLoader(false);
+  }
+  const handleAssignClientsToGroup = async (groupData) => {
+    setDialog(null);
+    setLoader(true);
+    const response = await dispatch(AddClientsToGroup({
+      ...searchData,
+      GroupName: groupData.GroupName,
+      IsTestGroup: groupData.IsTestGroup,
+      PageSize: TotalCount
+    }));
+    handleResponses(response, assignClientsActions);
+    setLoader(false);
+  }
+  const handleUnSubscribe = async (opt) => {
+    setDialog(null);
+    setLoader(true);
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount })).then(res => {
+      handleResponses(res, {
+        'S_200': {
+          code: 200,
+          message: ToastMessages.SUCCESS,
+          Func: () => setDialog(null)
+        },
+        'S_201': {
+          code: 201,
+          message: ToastMessages.UNSUBSCRIBED_SUCCESS,
+          Func: () => {
+            setDialog(null)
+            setTimeout(() => {
+              sessionStorage.removeItem('searchData');
+              window.history.back();
+            }, 4000);
+            //getData()
+          }
+        },
+        'S_401': {
+          code: 401,
+          message: ToastMessages.GROUP_INVALID_API,
+          Func: () => null
+        },
+        'S_404': {
+          code: 404,
+          message: ToastMessages.NO_CLIENTS_FOUND,
+          Func: () => null
+        },
+        'S_500': {
+          code: 500,
+          message: ToastMessages.GROUP_ERROR,
+          Func: () => null
+        },
+      })
+    })
+  }
   //  COMPONENTS  //
   const renderHeader = () => {
     return (
       <>
-        <Typography className={classes.managementTitle}>
-          {t("client.logPageHeaderResource1.Text")}
-        </Typography>
+        <Box className={clsx(classes.flex, classes.spaceBetween)}>
+          <Typography className={classes.managementTitle}>
+            {t("client.logPageHeaderResource1.Text")} {location?.state && location?.state?.ResultTitle ? " - " : ""} {location?.state?.ResultTitle}
+          </Typography>
+          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
+            if (location?.state && location?.state.PageProperty) {
+              navigate(`/${location?.state.PageProperty.PageName}`, {
+                state: {
+                  from: 'clientsearchresult'
+                }
+              })
+            }
+            else {
+              sessionStorage.removeItem('searchData');
+              window.history.back()
+            }
+          }
+          }> {t("common.back")}</Typography>
+        </Box>
         <Divider />
       </>
     );
   };
+  const handleSearch = (searchData) => {
+    let sessionSearchData = null;
+    if (searchReferrer === true) {
+      sessionSearchData = JSON.parse(window.sessionStorage?.getItem('searchData'));
+      sessionSearchData.IsSearchByFilter = true;
+    }
+    setSearchData({ ...searchData, ...sessionSearchData })
+  }
   // DONE
   const renderSearchLine = () => {
-    const handleKeyDown = (event) => {
-      if (event.keyCode === 13 || event.code === "Enter") {
-        setSearchData({
-          PageIndex: 1,
-          PageSize: rowsPerPage,
-          SearchTerm: searchStr,
-        });
-        setPage(1);
-        handleFilter();
-      }
-    };
-
-    const handleKeyPress = (e) => {
-      if (e.charCode === 13 || e.code === "Enter") {
-        setSearchData({
-          PageIndex: 1,
-          PageSize: rowsPerPage,
-          SearchTerm: searchStr,
-        });
-        setPage(1);
-        handleFilter();
-      }
-    };
-
     if (windowSize === "xs") {
       return (
         <SearchField
@@ -388,23 +964,19 @@ const ClientSearchResult = ({ classes }) => {
           value={searchStr}
           onChange={(e) => setSearchStr(e.target.value)}
           onClick={() => {
-            setSearchData({
+            handleSearch({
+              ...searchData,
               PageIndex: 1,
               PageSize: rowsPerPage,
-              SearchTerm: searchStr,
+              SearchTerm: searchStr
             });
             setPage(1);
           }}
           onKeyPress={handleKeyPress}
-          placeholder={t("common.CampaignName")}
+          placeholder={t("appbar.search")}
         />
       );
     }
-
-    // const handleFilterSearch = () => {
-    //   setFilterSearch(!filterSearch);
-    // }
-
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -415,42 +987,24 @@ const ClientSearchResult = ({ classes }) => {
             onKeyPress={handleKeyDown}
             onChange={(e) => setSearchStr(e.target.value)}
             className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t("report.clientName")}
+            placeholder={t("appBar.groups.search")}
           />
         </Grid>
-        {filterSearch && <>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              size="small"
-              value={filterMin}
-              onChange={(e) => setFilterMin(e.target.value)}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t("siteTracking.minimumRevenue")}
-              type="number"
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              size="small"
-              value={filterMax}
-              onChange={(e) => setFilterMax(e.target.value)}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t("siteTracking.maximumRevenue")}
-              type="number"
-            />
-          </Grid>
-        </>}
+        {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
         <Grid item>
           <Button
             size="large"
             variant="contained"
             onClick={() => {
-              setSearchData({
+              handleSearch({
+                ...searchData,
                 PageIndex: 1,
                 PageSize: rowsPerPage,
+                FromDate: date.FromDate,
+                ToDate: date.ToDate,
                 SearchTerm: searchStr,
+                MyActivities: null,
+                MyConditions: null
               });
               setPage(1);
               handleFilter();
@@ -460,35 +1014,15 @@ const ClientSearchResult = ({ classes }) => {
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
-          <Link
-            color='initial'
-            component='button'
-            underline='none'
-            onClick={() => setFilterSearch(!filterSearch)}
-            className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-            {t(!filterSearch ? 'report.filterSearch' : 'report.closeFilterSearch')}
-          </Link>
         </Grid>
-        {isSearching && <Grid item>
-          <Button
-            size='large'
-            variant='contained'
-            onClick={() => {
-              resetSearch();
-            }}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
-            {t('common.clear')}
-          </Button>
-        </Grid>}
         {
-          serachData.SearchTerm && (
+          searchData?.SearchTerm && (
             <Grid item>
               <Button
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  setSearchData({ ...serachData, SearchTerm: "" });
+                  handleSearch({ ...searchData, SearchTerm: "", ...filterSearch });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();
@@ -506,7 +1040,7 @@ const ClientSearchResult = ({ classes }) => {
   };
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding}>
+      <Grid container spacing={2} className={classes.linePadding} style={{ width: '100%' }}>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
@@ -536,15 +1070,13 @@ const ClientSearchResult = ({ classes }) => {
               variant="contained"
               size="medium"
               className={clsx(classes.actionButton, classes.actionButtonRed)}
-            // onClick={() => {
-            //   selectedClients.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
-            // }}
+              // onClick={() => selectedClients.length === 0 ? setToastMessage(ToastMessages.CLIENT_ZERO_SELECT) : setDialog(DialogType.CONFIRM_INVALID)}
+              onClick={() => setDialog(DialogType.CONFIRM_INVALID)}
             >
               {t("client.makeInvalid")}
             </Button>
           </Grid>
         )}
-
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
@@ -553,61 +1085,38 @@ const ClientSearchResult = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonGreen
             )}
-            onClick={() => setShowConfirmDialog(true)}
+            onClick={handleDownloadCsv}
             startIcon={<ExportIcon />}
           >
             {t("campaigns.exportFile")}
           </Button>
-          <CSVLink
-            data={[
-              ["firstname", "lastname", "email"],
-              ["Ahmed", "Tomi", "ah@smthing.co.com"],
-              ["Raed", "Labes", "rl@smthing.co.com"],
-              ["Yezzi", "Min l3b", "ymin@cocococo.com"],
-            ]}
-            filename="report.csv"
-            className="hidden"
-            ref={null}
-            target="_blank"
-          />
         </Grid>
-        <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+        {location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+          <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
+            <Box>
+              <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
+                {`${TotalCount.toLocaleString()} ${t("common.Clients")}`}
+              </Typography>
+            </Box>
+          </Grid>
+        }
+        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
           {revenueSummary && <SummaryRow
             data={revenueSummary}
             classes={classes} />
           }
-        </Grid>
-
-        {/* <Grid
-          item
-          xs={windowSize === "xs" && 12}
-          className={clsx(classes.groupsLableContainer)}
-          style={{ alignItems: 'center' }}
-        >
-          <Box>
-            <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
-              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
-            </Typography>
-          </Box>
-
-        </Grid> */}
+        </Grid>}
       </Grid>
     );
   };
-  const handleRowsPerPageChange = async (val) => {
-    await dispatch(setRowsPerPage(val));
-    setSearchData({
-      ...serachData,
-      PageSize: val
-    })
-    setCookie("rpp", val, { maxAge: 2147483647 });
-  };
-  const renderNameCell = (row, fullwidth) => {
+  const handleRowsPerPageChange = (val) => {
+    dispatch(setRowsPerPage(val))
+  }
+  const renderPhoneNameCell = (row, fullwidth) => {
     let date = null;
     const { FirstName, LastName } = row;
     let text = t("common.UpdatedOn");
     date = moment(row.CreationDate, dateFormat);
-
     return (
       <>
         <CustomTooltip
@@ -642,59 +1151,432 @@ const ClientSearchResult = ({ classes }) => {
       </>
     );
   };
-
-  const renderTableBody = useMemo(() => {
-    let sortedData = data ? data : [];
-    let rpp = parseInt(rowsPerPage)
-    if (sortedData.length <= 0) {
-      return <></>;
-    }
-
-    sortedData = data.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-
+  const renderWebNameCell = (row, fullwidth) => {
+    let date = null;
+    const { FirstName, LastName, CreationDate, ClientID } = row;
+    let text = t("common.UpdatedOn");
+    date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
     return (
-      <TableBody>
-        {sortedData.map((obj, idx) =>
-          windowSize === "xs" ?
-            (
-              <RenderPhoneRow
-                key={idx}
-                row={obj}
-                rowStyle={rowStyle}
-                name={renderNameCell(obj, true)}
-                classes={classes}
-                colorTextStyle={colorTextStyle}
-              // setSelectedClients={(id) => setSelectedClients([id])}
-              // DialogType={DialogType}
-              // setDialog={(val) => setDialog(val)}
-              />
-            )
-            : (
-              <RenderRow
-                key={idx}
-                row={obj}
-                classes={classes}
-                // setDialog={(val) => setDialog(val)}
-                handleSelected={(id) => handleSelected(id)}
-                selectedClients={selectedClients}
-                setSelectedClients={(id) => setSelectedClients([id])}
-                // DialogType={DialogType}
-                windowSize={windowSize}
-                dateFormat={dateFormat}
-                rowStyle={rowStyle}
-                cellStyle={cellStyle}
-                noBorderCellStyle={noBorderCellStyle}
-                colorTextStyle={colorTextStyle}
-              // handleDeleteGroup={handleDeleteGroup}
-              />
-            )
-        )}
-      </TableBody>
+      <Grid container spacing={1}>
+        <Grid item sm={12} style={{ textAlign: 'start' }}>
+          <CustomTooltip
+            isSimpleTooltip={false}
+            interactive={true}
+            classes={{
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+              arrow: classes.fBlack
+            }}
+            arrow={true}
+            style={{ fontSize: 18, fontWeight: 'bold' }}
+            placement={'top'}
+            title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
+            text={`${FirstName} ${LastName}`}
+          >
+            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
+          </CustomTooltip>
+          <Typography
+            className={classes.grayTextCell}>
+            {date ? `${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}` : text}
+          </Typography>
+        </Grid>
+      </Grid>
     );
-  }, [data, rowsPerPage, page, classes, selectedClients]);
-
-  const clientLength = totalClients !== 0 ? totalClients : 0;
-
+  };
+  const RenderWebRow = (row) => {
+    //TODO: Translation left, confirm keys
+    // const { t } = useTranslation();
+    const {
+      Revenue,
+      ClientID,
+      Email,
+      Status,
+      SmsStatus,
+      Cellphone,
+      FirstName,
+      LastName,
+      UpdateDate,
+      LogSms_ErrorType,
+      SentDate,
+      CreationDate,
+      LastSendDate,
+      snt_OpeningDate,
+      ErrorTypeText
+    } = row;
+    let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
+      return e === true
+    }).length;
+    const renderCellIcons = () => {
+      const iconsMap = [
+        {
+          key: 'edit',
+          icon: EditIcon,
+          lable: t("common.edit"),
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.EDIT_RECIPIENT)
+          }
+        },
+        {
+          key: 'deleteFromGroups',
+          icon: DeleteRecipient,
+          lable: t("recipient.deleteFromGroups"),
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.CONFIRM_DELETE_FROM_GROUPS)
+          }
+        },
+        {
+          key: 'deleteFromEmail',
+          icon: DeleteEmail,
+          lable: t("recipient.deleteEmail"),
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.CONFIRM_REMOVE_EMAIL)
+          }
+        },
+        {
+          key: 'deleteFromPhone',
+          icon: DeletePhone,
+          lable: t("recipient.deletePhone"),
+          remove: windowSize === 'xs',
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.CONFIRM_REMOVE_PHONE)
+          }
+        },
+      ]
+      return (
+        <Grid
+          container
+          direction='row'
+          justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
+          {iconsMap.map(icon => (
+            <Grid
+              className={icon.disable && classes.disabledCursor}
+              key={icon.key}
+              item >
+              <ManagmentIcon
+                classes={classes}
+                {...icon}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )
+    }
+    const switchStatus = (isEmail) => {
+      if (Email && isEmail && Email !== '') {
+        return t(switchClientStatus('email', Status))
+      }
+      else if (Cellphone && !isEmail && Cellphone !== '') {
+        return t(switchClientStatus('sms', SmsStatus))
+      }
+      return t("emailStatus.noStatus")
+    }
+    const cssClasses = (isEmail) => {
+      if (isEmail) {
+        switch (Status) {
+          case 1: {
+            return classes.sendIconText;
+          }
+          case 5: {
+            return classes.grayTextCell;
+          }
+          default: {
+            return Email ? classes.textColorRed : classes.textColorBlue;
+          }
+        }
+      }
+      else {
+        switch (SmsStatus) {
+          case 0: {
+            return classes.sendIconText;
+          }
+          case 5: {
+            return classes.grayTextCell;
+          }
+          default: {
+            return Cellphone ? classes.textColorRed : classes.textColorBlue;
+          }
+        }
+      }
+    }
+    return (
+      <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex4}>
+          <Grid container direction="row">
+            <Grid item sm={12 - iconsCells}>
+              {/* {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })} */}
+              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate })}
+            </Grid>
+          </Grid>
+        </TableCell>
+        <TableCell
+          classes={cellStyle}
+          align="center"
+          className={classes.flex6}
+        >
+          {renderCellIcons()}
+        </TableCell>
+        {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
+          <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({
+              Revenue: Revenue,
+              snt_OpeningDate: snt_OpeningDate,
+              LastSendDate: LastSendDate,
+              SentDate: SentDate,
+              CreationDate: CreationDate,
+              LogSms_ErrorType: ErrorTypeText
+            })}
+          </TableCell>}
+        {/* <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </TableCell> */}
+        <TableCell classes={cellStyle} align="center" className={classes.flex4}>
+          <FlexGrid
+            customStyle={{ justifyContent: 'space-between' }}
+            gridArr={[
+              {
+                label: t(""),
+                component: (
+                  <CustomTooltip
+                    isSimpleTooltip={false}
+                    interactive={true}
+                    classes={{
+                      tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                      arrow: classes.fBlack,
+                    }}
+                    arrow={true}
+                    style={{ fontWeight: "bold" }}
+                    placement={"top"}
+                    title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
+                    text={`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}
+                  >
+                  </CustomTooltip>
+                ),
+                classes: { text: localClasses.noWrap },
+              },
+              {
+                label: "",
+                component: <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
+                classes: { text: localClasses.noWrap },
+              }
+            ]}
+            variant="body1"
+            align="center"
+          />
+        </TableCell>
+        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none' }}>
+          <FlexGrid
+            customStyle={{ justifyContent: 'space-between' }}
+            gridArr={[
+              {
+                label: t(""),
+                component: (
+                  <Typography className={classes.bold}>{Cellphone}</Typography>
+                ),
+                classes: { text: localClasses.noWrap },
+              },
+              {
+                label: "",
+                component: <Typography className={clsx(classes.bold, cssClasses(false))}>{switchStatus(false)}</Typography>,
+                classes: { text: localClasses.noWrap },
+              }
+            ]}
+            variant="body1"
+            align="center"
+          />
+        </TableCell>
+      </TableRow>
+    );
+  };
+  const RenderPhoneRow = (row) => {
+    const {
+      Revenue,
+      ClientID,
+      Email,
+      Status,
+      SmsStatus,
+      Cellphone,
+      LogSms_ErrorType,
+      LastSendDate,
+      snt_OpeningDate
+    } = row;
+    return (
+      <TableRow key={ClientID} component="div" classes={rowStyle}>
+        <TableCell
+          style={{ flex: 1 }}
+          classes={{ root: classes.tableCellRoot }}
+          className={classes.p20}
+        >
+          <Box className={classes.spaceBetween}>
+            <Box className={classes.inlineGrid}>
+              {renderPhoneNameCell(row)}
+            </Box>
+            <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
+              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
+              {/* <Typography className={classes.bold}>
+                {t("common.campaignRevenue")}
+              </Typography>
+              <Typography>
+                {Revenue}
+              </Typography> */}
+            </Box>
+          </Box>
+          <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
+            <Box className={classes.flex}>
+              <Box className={clsx(classes.flex6)}>
+                <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
+                <Typography >{Email}</Typography>
+              </Box>
+              <Box className={clsx(classes.flex4)}>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+              </Box>
+            </Box>
+          </Box>
+          <Box className={clsx(classes.mt2)} style={{ maxWidth: '90%' }}>
+            <Box className={classes.flex}>
+              <Box className={clsx(classes.flex6)}>
+                <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
+                <Typography >{Cellphone}</Typography>
+              </Box>
+              <Box className={clsx(classes.flex4)}>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+              </Box>
+            </Box>
+          </Box>
+        </TableCell>
+      </TableRow>
+    )
+  }
+  const ConfirmDialog = () => {
+    const DialogObject = {
+      "CONFIRM_INVALID": {
+        title: t("client.confirmMakeInvalidTitle"),
+        bodyText: t("client.confirmMakeInvalidText"),
+        onClose: () => setDialog(null),
+        onConfirm: makeInvalid,
+      },
+      "CONFIRM_DELETE_FROM_GROUPS": {
+        title: t('recipient.deleteRecipientFromGroup'),
+        bodyText: t('client.confirmDeleteFromAllGroups'),
+        onClose: () => setDialog(null),
+        onConfirm: removeRecipientFromAllGroups,
+      },
+      "CONFIRM_REMOVE_EMAIL": {
+        title: t('recipient.removeRecipientEmail'),
+        bodyText: t('client.confirmRemoveEmail'),
+        onClose: () => setDialog(null),
+        onConfirm: removeEmailRecipient,
+      },
+      "CONFIRM_REMOVE_PHONE": {
+        title: t('recipient.removeRecipientPhone'),
+        bodyText: t('client.confirmRemovePhone'),
+        onClose: () => setDialog(null),
+        onConfirm: removeSMSRecipient,
+      },
+    };
+    return (
+      <Dialog
+        classes={classes}
+        open={
+          dialog === DialogType.CONFIRM_INVALID ||
+          dialog === DialogType.CONFIRM_DELETE_FROM_GROUPS ||
+          dialog === DialogType.CONFIRM_REMOVE_EMAIL ||
+          dialog === DialogType.CONFIRM_REMOVE_PHONE
+        }
+        // title={t("group.delete")}
+        title={DialogObject[dialog]?.title || ''}
+        icon={<Box className={classes.dialogAlertIcon}>
+          !
+        </Box>}
+        showDivider={true}
+        onClose={DialogObject[dialog]?.onClose || ''}
+        onCancel={DialogObject[dialog]?.onClose || ''}
+        onConfirm={DialogObject[dialog]?.onConfirm || null}
+        cancelText="common.Cancel"
+        confirmText="common.Ok"
+      >
+        <Box>
+          <Typography variant="subtitle1">
+            {DialogObject[dialog]?.bodyText || ''}
+          </Typography>
+        </Box>
+      </Dialog>
+    )
+  }
+  const renderTableBody = () => {
+    let sortedData = data ?? null; // data : [];
+    let rpp = parseInt(rowsPerPage)
+    if (sortedData && sortData.length > 0) {
+      sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
+    }
+    if (PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title) {
+      TABLE_HEAD.splice(2, 0, {
+        label: <div className={classes.flex}>
+          <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title}
+          </div>
+          {!!PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey &&
+            //TODO: SORTING is left for multiple sort keys
+            <div className={classes.flex1}>
+              <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
+                onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey) }}
+                style={{ minWidth: 40 }}>
+                {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+              </Button>
+            </div>
+          }
+        </div>,
+        classes: cellStyle,
+        className: clsx(classes.flex2),
+        align: "center",
+      })
+    }
+    return (
+      <>
+        <DataTable
+          tableContainer={{
+            className:
+              windowSize === "xs"
+                ? clsx(classes.mt3, classes.tableStyle)
+                : classes.tableStyle,
+          }}
+          table={{ className: classes.tableContainer }}
+          tableHead={{
+            tableHeadCells: TABLE_HEAD,
+            classes: rowStyle,
+            className: windowSize === "xs" && classes.dNone,
+          }}
+        >
+          <TableBody>
+            {!sortedData || sortedData.length === 0 ?
+              <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+                <Typography>{t("common.NoDataTryFilter")}</Typography>
+              </Box> :
+              sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
+          </TableBody>
+        </DataTable>
+        <TablePagination
+          classes={classes}
+          rows={TotalCount}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          rowsPerPageOptions={[6, 10, 20, 50]}
+          page={page}
+          onPageChange={(val) => {
+            handlePageChange(val);
+          }}
+        />
+      </>
+    );
+  };
   const renderConfirmDialog = () => {
     if (showConfirmDialog) {
       let dialog = {
@@ -723,54 +1605,108 @@ const ClientSearchResult = ({ classes }) => {
       );
     }
   }
+  const showDialog = () => {
+    if (dialog !== null) {
+      switch (dialog) {
+        case DialogType.ADD_GROUP: {
+          return <AddGroupPopUp
+            classes={classes}
+            isOpen={dialog === DialogType.ADD_GROUP}
+            onClose={() => setDialog(null)}
+            setLoader={setLoader}
+            windowSize={windowSize}
+            ToastMessages={ToastMessages}
+            setToastMessage={setToastMessage}
+            addClientByQuery={true}
+            createGroupCallback={(groupData) => { handleAssignClientsToGroup(groupData); }}
+            handleResponses={(response, actions) => handleResponses(response, actions)}
+            getData={() => null}
+          />
+        }
+        case DialogType.EDIT_RECIPIENT: {
+          let mappedGroups = [];
+          if (data && data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.length > 0) {
+            mappedGroups = data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.split(',')?.map(function (x) {
+              return parseInt(x, 10);
+            });
+          }
+          else if (searchData?.GroupIds && searchData?.GroupIds?.length > 0) {
+            // mappedGroups = searchData?.GroupIds?.split(',')?.map(function (x) {
+            mappedGroups = searchData?.GroupIds?.map(function (x) {
+              return parseInt(x, 10);
+            })
+          }
 
+          return <AddRecipientPopup
+            classes={classes}
+            isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
+            onClose={() => { setDialog(null); setSelectedClients([]); }}
+            setLoader={setLoader}
+            windowSize={windowSize}
+            ToastMessages={ToastMessages}
+            setToastMessage={setToastMessage}
+            Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
+            // selectGroup={(idArr) => setSelectedGroups(idArr)}
+            DialogType={DialogType}
+            selectedGroups={mappedGroups}
+            setDialog={setDialog}
+            handleResponses={(response, actions) => { handleResponses(response, actions); }}
+            onAddRecipient={(closeDialog = true) => {
+              closeDialog && setDialog(null);
+              getData();
+            }}
+            recipientData={
+              selectedClients[0] && (data?.find((obj) => obj?.ClientID === selectedClients[0]))
+            }
+          />
+        }
+        case DialogType.UNSUB_RECIPIENT: {
+          return <UnsubscribeOrDeletePopup
+            classes={classes}
+            isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
+            onClose={() => { setDialog(null); }}
+            setLoader={setLoader}
+            windowSize={windowSize}
+            ToastMessages={ToastMessages}
+            setToastMessage={setToastMessage}
+            // selectedGroups={selectedGroups}
+            onSubmit={(opt) => handleUnSubscribe(opt)}
+            clientData={{ ...searchData }}
+            dialogType={dialog}
+            getData={getData}
+            handleResponses={(response, actions) => handleResponses(response, actions)}
+            showDropBox={false}
+          />;
+        }
+        case DialogType.CONFIRM_INVALID:
+        case DialogType.CONFIRM_DELETE_FROM_GROUPS:
+        case DialogType.CONFIRM_REMOVE_EMAIL:
+        case DialogType.CONFIRM_REMOVE_PHONE:
+          {
+            return ConfirmDialog()
+          }
+        default: {
+          return <></>
+        }
+      }
+    }
+    return <></>;
+  }
   return (
     <DefaultScreen
       currentPage="groups"
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
-      {renderToast()}
+      {toastMessage && renderToast()}
       {renderHeader()}
-      {/* {renderSearchLine()} */}
-      {/* {windowSize !== "xs" ? renderManagmentLine() : null} */}
-      <Grid item lg={8} xs={windowSize === "xs" && 12} style={{ paddingTop: 40, margin: '0 auto' }}>
-        {revenueSummary && <SummaryRow
-          data={revenueSummary}
-          classes={classes} />
-        }
-      </Grid>
-      <DataTable
-        tableContainer={{
-          className:
-            windowSize === "xs"
-              ? clsx(classes.mt3, classes.tableStyle)
-              : clsx(classes.tableStyle, classes.mt25),
-        }}
-        table={{ className: classes.tableContainer }}
-        tableHead={{
-          tableHeadCells: TABLE_HEAD,
-          classes: rowStyle,
-          className: windowSize === "xs" && classes.dNone,
-        }}
-      >
-        {renderTableBody}
-      </DataTable>
-      <TablePagination
-        classes={classes}
-        rows={clientLength}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleRowsPerPageChange}
-        rowsPerPageOptions={[6, 10, 20, 50]}
-        page={page}
-        onPageChange={(val) => {
-          setPage(val);
-        }}
-      />
+      {renderSearchLine()}
+      {windowSize !== "xs" ? renderManagmentLine() : null}
+      {renderTableBody()}
       {renderConfirmDialog()}
+      {showDialog()}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );
 };
-
 export default ClientSearchResult;

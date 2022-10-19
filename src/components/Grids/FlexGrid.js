@@ -7,7 +7,7 @@ const useStyles = makeStyles({
         width: '100%',
         "@media screen and (max-width: 1320px)": {
             flexWrap: 'wrap',
-            justifyContent: 'right',
+            justifyContent: (props) => props.justifyContent || 'right',
             marginInline: 5
         }
     },
@@ -35,22 +35,26 @@ const FlexGrid = ({ gridArr = [],
     alignText = "center",
     direction,
     reverse,
+    justifyContent,
     ...props
 }) => {
-    const localClasses = useStyles({ direction: direction, textVariant: textVariant })
+    const localClasses = useStyles({ direction: direction, justifyContent: justifyContent, textVariant: textVariant })
     return (
         <>
             <Box className={localClasses.flexBox} style={props.customStyle}>
                 {
                     gridArr.map((obj, idx) => {
+                        if(!obj.component){
+                            return <></>
+                        }
                         return (
                             <Box className={localClasses.iconBox} key={idx} onClick={() => obj.onClick?.()} style={{ cursor: obj.isDisabled ? 'not-allowed' : 'pointer' }}>
                                 {reverse &&
-                                    <Typography variant={textVariant} align={alignText} className={obj.classes.text}>{obj.label}</Typography>
+                                    <Typography variant={textVariant} align={alignText} className={obj.classes?.text || 0}>{obj.label}</Typography>
                                 }
                                 {obj.component}
                                 {!reverse &&
-                                    <Typography variant={textVariant} align={alignText} className={obj.classes.text}>{obj.label}</Typography>
+                                    <Typography variant={textVariant} align={alignText} className={obj.classes?.text || 0}>{obj.label}</Typography>
                                 }
                             </Box>
 

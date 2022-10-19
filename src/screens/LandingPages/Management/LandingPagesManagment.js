@@ -18,7 +18,7 @@ import {
 } from '../../../redux/reducers/landingPagesSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { openInNewTab } from '../../../helpers/functions'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
@@ -27,8 +27,10 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
+  const navigate = useNavigate()
   const { windowSize, rowsPerPage } = useSelector(state => state.core)
   const { landingPagesData, landingPagesDataError, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
@@ -448,20 +450,31 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderSubscribersCell = ({ ID, Submits }) => {
+    const subscribtions = Submits && Submits > 0;
     return (
       <>
-        <Typography
-          className={classes.middleText}>
-          {(Submits && Submits.toLocaleString()) || 0}
-        </Typography>
-        {windowSize === 'xs' ?
-          <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-          : <a
-            href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-            className={clsx(classes.middleText, classes.pt2)}>
-            {t('landingPages.SubmitsResource1.HeaderText')}
-          </a>
-        }
+        <a
+          style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
+          onClick={() => {
+            if (Submits && Submits > 0) {
+              navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                  ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                  CampaignID: ID,
+                  PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+                  ResultTitle: t("common.clientSubscriptionResultTitle") + ' ' + ID
+                }
+              })
+            } else { return false }
+          }
+          }
+          className={clsx(classes.middleText, classes.pt2)}>
+          <Typography
+            className={classes.middleText}>
+            {(Submits && Submits.toLocaleString()) || 0}
+          </Typography>
+          {t('landingPages.SubmitsResource1.HeaderText')}
+        </a>
       </>
     )
   }

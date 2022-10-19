@@ -19,9 +19,12 @@ import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useLocation } from 'react-router';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
-  const qs = queryString.parse(props.location.search);
+  const location = useLocation();
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
+
   const { showContent } = useSelector(state => state.report);
   const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
@@ -29,7 +32,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
   const [searchParam, setSearchParam] = useState({});
-  const [tabValue, setTabValue] = useState((qs.t ? parseInt(qs.t) : 0) || 0);
+  const [tabValue, setTabValue] = useState((qs?.t ? parseInt(qs?.t) : 0) || 0);
   const rowsOptions = [6, 10, 20, 50];
   const [pageEmail, setPageEmail] = useState(1);
   const [pageSms, setPageSms] = useState(1);
@@ -39,6 +42,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
+
 
   const defaultsDates = {
     archive: {

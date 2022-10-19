@@ -472,5 +472,46 @@
   "restorecampaignTitle": "בחר את הקמפיינים שברצונך לשחזר",
   "dialogDuplicateTitle": "שיכפול קמפיין",
   "dialogDuplicateContent": "האם ברצונך לשכפל את הקמפיין?",
-  "newsletters": "ניוזלטרים"
+  "newsletters": "ניוזלטרים",
+  "newsLetterMgmt": {
+    "popupTitle": "אימות כתובת אימייל לשליחה",
+    "popupDesc": "על מנת להבטיח את אבטחת חשבונך, עלינו לאמת שכתובת אימייל זאת שייכת לך זהו תהליך חד פעמי לכל כתובת אימייל המשמשת לשליחה",
+    "firstSlide": {
+      "verifiedEmails": "אימיילים מאומתים",
+      "verifyEmailAddr": "Verify Email Address",
+      "addNewToVerify": "אמת כתובת אימייל נוספת"
+    },
+    "secondSlide": {
+      "title": "אימות קצר לפני שממשיכים",
+      "desc1": "ברצוננו לוודא שהאימייל שהזנתם לשליחה נמצא בבעלותכם",
+      "desc2": "זהו תהליך חד פעמי עבור כל אימייל לשליחה",
+      "error1": "Email is required",
+      "error2": "Invalid Email",
+      "btnText": "שלחו לי אימייל לאימות",
+      "anyProblem": "נתקלת בבעיה?",
+      "contactUs": "צרו איתנו קשר"
+    },
+    "thirdSlide": {
+      "title": "שלחנו!",
+      "desc1": "קוד אימות נשלח בהצלחה לאימייל ",
+      "desc2": "שימו לב, הקוד תקף ל-10 הדקות הקרובות בלבד ",
+      "error1": "הקוד שגוי. נסו שוב או בחרו בשליחה חוזרת",
+      "error2": "Code is required",
+      "did_not_recieved": "לא קיבלתם?",
+      "resend": "שליחה חוזרת",
+      "resendSuccess": "קוד נשלח"
+    },
+    "ErrorSlide": {
+      "title": "יותר מדי נסיונות",
+      "desc": "הכנסתם קוד שגוי יותר מדי פעמים",
+      "contactSupport": "אנא צרו קשר עם התמיכה",
+      "phone": "טלפון",
+      "email": "אימייל"
+    },
+    "successSlide": {
+      "title": "האימייל אומת בהצלחה",
+      "desc": "מעתה תוכלו לשלוח דרך אימייל זה ללא צורך באימות חוזר",
+      "btnTxt": "Continue to campaigns"
+    }
+  }
 }
