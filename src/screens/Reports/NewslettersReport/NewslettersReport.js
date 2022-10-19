@@ -23,6 +23,8 @@ import { exportFile } from '../../../helpers/exportFromJson';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { Loader } from '../../../components/Loader/Loader';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const NewslettersReport = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage, accountSettings, accountFeatures } = useSelector(state => state.core)
@@ -49,6 +51,8 @@ const NewslettersReport = ({ classes }) => {
   const csvLinkRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
   const [hasRevenue, setHasRevenue] = useState(false);
+  const [dialogType, setDialog] = useState(null);
+
 
   moment.locale(language)
 
@@ -193,7 +197,7 @@ const NewslettersReport = ({ classes }) => {
     setSearching(false)
   }
 
-  const handleDownloadCsv = async () => {
+  const handleDownloadCsv = async (formatType) => {
     let orderList = [];
 
     if (toFileArray.length > 0) {
@@ -206,7 +210,7 @@ const NewslettersReport = ({ classes }) => {
         exportFile({
           data: orderList,
           fileName: 'emailReport',
-          exportType: 'xls',
+          exportType: formatType,
           fields: exportColumnHeader
         });
     }
@@ -219,7 +223,7 @@ const NewslettersReport = ({ classes }) => {
       exportFile({
         data: orderList,
         fileName: 'emailReport',
-        exportType: 'xls',
+        exportType: formatType,
         fields: exportColumnHeader
       });
     }
@@ -569,7 +573,7 @@ const NewslettersReport = ({ classes }) => {
           colorTextStyle[type] || '',
           { [classes.iconsFont]: !!icon })}
           target="_blank">
-          {icon ? icon : `${percentage?.toString().substring(0,4) ?? '0'}%`}
+          {icon ? icon : `${percentage?.toString().substring(0, 4) ?? '0'}%`}
         </Typography>
         <Typography className={clsx(
           classes.middleWrapText, classes.lineHeight1point2,
@@ -932,6 +936,17 @@ const NewslettersReport = ({ classes }) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(e) => handleDownloadCsv(e)}
+        onCancel={() => setDialog(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   )

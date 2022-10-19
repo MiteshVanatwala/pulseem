@@ -565,5 +565,6 @@
   "NIS": "₪",
   "systemNotice": "System Notice",
   "birthDate": "Birth Date",
-  "uploadInProgress": "Upload in progress..."
+  "uploadInProgress": "Upload in progress...",
+  "SelectFormat": "Select format"
 }
