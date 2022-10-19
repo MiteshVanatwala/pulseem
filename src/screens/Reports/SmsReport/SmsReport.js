@@ -36,6 +36,9 @@ const SmsReport = ({ classes }) => {
   const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
+  const [fromDate, handleFromDate] = useState(priorDate);
+  const [toDate, handleToDate] = useState(null);
+  const [campaignName, setCampaignNameSearch] = useState('');
   const rowsOptions = [6, 10, 20, 50]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
@@ -189,6 +192,7 @@ const SmsReport = ({ classes }) => {
       setHasRevenue(true);
     }
   }, [accountFeatures])
+
 
   useEffect(() => {
     const getGraph = async () => {

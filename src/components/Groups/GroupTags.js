@@ -67,6 +67,25 @@ const GroupTags = ({ classes,
                         })}
                     </Box>
                 ) : null}
+                {/* {selectedGroups && selectedGroups.length > 0 ? (
+                    <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
+                        {selectedGroups.map((item, index) => {
+                            return (
+                                <Box key={index} className={clsx(classes.selectedGroupsDiv)}>
+                                    <span className={clsx(classes.ellipsisText, classes.nameGroup)}>
+                                        {item.GroupName}
+                                    </span>
+                                    <RiCloseFill
+                                        className={classes.groupCloseicn}
+                                        onClick={(event) => {
+                                            handleRemoveGroup(event, item.GroupID);
+                                        }}
+                                    />
+                                </Box>
+                            );
+                        })}
+                    </Box>
+                ) : null} */}
             </Box>
         </Box>
     )
