@@ -196,7 +196,7 @@ const ClientSearchResult = ({ props, classes }) => {
         if (sessionData) {
           setSearchReferrer(true);
           overwriteObject = JSON.parse(sessionData);
-          overwriteObject.IsSearchByFilter = isSearchByFilter;
+          overwriteObject.IsSearchByFilter = (isSearchByFilter || referrer === '');
           setFilterSearch(overwriteObject);
         }
       }
