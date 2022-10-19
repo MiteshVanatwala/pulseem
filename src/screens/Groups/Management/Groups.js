@@ -910,6 +910,7 @@ const Groups = ({ classes }) => {
             const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
             queryString += `&GroupName=${groupName.replace(' ', '-')}`;
         }
+        // This should be change in the .NET site for support the format file selection POP UP 
         window.open(`/Pulseem/ClientExport.csv?${queryString}`);
         setShowConfirmDialog(false);
     }
