@@ -185,18 +185,18 @@ const ClientSearchResult = ({ props, classes }) => {
     const initSearchData = () => {
       let overwriteObject = location?.state;
       const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
+      const isSearchByFilter = referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1;
       let isSessionStorageData = referrer.toLowerCase().indexOf('automationreport') > -1 ||
         referrer.toLowerCase().indexOf('createautomations') > -1 ||
         referrer.toLowerCase().indexOf('campaignstatistics') > -1 ||
         referrer.toLowerCase().indexOf('dynamicgroups') > -1 ||
-        ((referrer.toLowerCase().indexOf('clientsearch') > -1 && referrer.toLowerCase().indexOf('result') === -1) ||
-          searchReferrer === true);
+        (isSearchByFilter || searchReferrer === true);
       if (!overwriteObject || isSessionStorageData) {
         const sessionData = window.sessionStorage?.getItem('searchData');
         if (sessionData) {
           setSearchReferrer(true);
           overwriteObject = JSON.parse(sessionData);
-          overwriteObject.IsSearchByFilter = true;
+          overwriteObject.IsSearchByFilter = isSearchByFilter;
           setFilterSearch(overwriteObject);
         }
       }
