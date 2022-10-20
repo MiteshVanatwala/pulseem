@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import { TextField, Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
@@ -13,24 +13,17 @@ export const BlockMeta = ({
     onSubmit
 }) => {
     const { t } = useTranslation();
-    const [category, setCategory] = useState('');
-    const [tags, setTags] = useState('');
+    const [block, setBlock] = useState({ category: '', tags: '' });
 
-    const confirm = () => {
-        return new Promise((resolve) => {
-            const retVal = {
-                category: category,
-                tags: tags
-            }
-            resolve(onSubmit(retVal));
-        })
-    }
+    const confirm = React.useCallback(() => {
+        onSubmit(block);
+    }, [block, onSubmit])
 
     const handleCategoryChange = (e) => {
-        setCategory(e.target.value);
+        setBlock({ ...block, category: e.target.value });
     }
     const handleTagsChange = (e) => {
-        setTags(e.target.value);
+        setBlock({ ...block, tags: e.target.value });
     }
     return !isOpen ? (<></>) :
         (
@@ -58,7 +51,7 @@ export const BlockMeta = ({
                             <TextField
                                 variant="outlined"
                                 size="small"
-                                value={category}
+                                value={block.category}
                                 className={clsx(classes.textField, classes.minWidth252)}
                                 placeholder={t("common.GroupName")}
                                 onChange={handleCategoryChange}
@@ -70,7 +63,7 @@ export const BlockMeta = ({
                             <TextField
                                 variant="outlined"
                                 size="small"
-                                value={tags}
+                                value={block.tags}
                                 className={clsx(classes.textField, classes.minWidth252)}
                                 placeholder={t("common.GroupName")}
                                 onChange={handleTagsChange}

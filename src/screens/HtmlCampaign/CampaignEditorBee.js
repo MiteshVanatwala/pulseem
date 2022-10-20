@@ -38,6 +38,17 @@ import { BeeConfig, DialogType } from './helper/Config';
 import { getCookie } from '../../helpers/cookies';
 import { BlockMeta } from './modals/BlockMeta';
 import { makeId } from '../../helpers/functions';
+/* Bee */
+// Simulate database API
+import useMockAPI from './hooks/useMockAPI'
+
+// User input controls
+import { EditRow } from './components/ContentDialogs'
+
+// Generic modal component with event hooks
+import useModals from './hooks/useModals'
+import { DemoModal } from './components/DemoModal'
+/* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -48,7 +59,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [showLoader, setLoader] = useState(true);
   const campaignId = props.match.params.id;
   const [dataReady, setDataReady] = useState(false);
-  const [dataLoaded, setDataLoaded] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
@@ -67,6 +77,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     title: "",
     message: ""
   })
+  const { modals, openModal } = useModals()
+  const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI()
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   useEffect(() => {
@@ -82,7 +94,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         });
       }
       Promise.all([initFields(), initLP()]).then(() => {
-        setDataLoaded(true);
+        return true;
       })
     }
   }, [dataReady]);
@@ -399,12 +411,12 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
 
   let category = '';
-  const checkBlockDialogState = async () => {
-    return new Promise((resolve) => {
-      const d = document.getElementsByClassName('MuiDialog-container');
-      resolve(d.length > 0);
-    });
-  }
+  // const checkBlockDialogState = async () => {
+  //   return new Promise((resolve) => {
+  //     const d = document.getElementsByClassName('MuiDialog-container');
+  //     resolve(d.length > 0);
+  //   });
+  // }
   const saveBlockHandler = async (json) => {
     const obj = { ...json };
     if (!obj.metadata) {
@@ -413,16 +425,18 @@ const CampaignEditor = ({ classes, ...props }) => {
     obj.metadata.id = obj.uuid;
     setUserBlock({ data: obj });
     setDialog(DialogType.SET_USER_BLOCK);
-    return new Promise((resolve) => {
-      const interval = setInterval(() => {
-        checkBlockDialogState().then((d) => {
-          if (!d) {
-            resolve({ category });
-            clearInterval(interval);
-          }
-        });
-      }, 3000)
-    })
+
+    //resolve({ data: obj });
+    // return new Promise((resolve) => {
+    //   const interval = setInterval(() => {
+    //     checkBlockDialogState().then((d) => {
+    //       if (!d) {
+    //         resolve({ category });
+    //         clearInterval(interval);
+    //       }
+    //     });
+    //   }, 3000)
+    // })
   }
   const setBlockFinalValue = (e) => {
     setLoader(true);
@@ -444,8 +458,14 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const getConfig = () => {
     return BeeConfig({
+      setRow,
+      getRows,
+      handleDeleteRow,
+      handleEditRow,
       IsRTL: isRTL,
+      EditRow: EditRow,
       OnReload: onReload,
+      openModal: openModal,
       SaveCampaign: onSave,
       SetDialog: setDialog,
       CampaignId: campaignId,
@@ -483,12 +503,13 @@ const CampaignEditor = ({ classes, ...props }) => {
         onClose={() => setDialog(null)}
         isOpen={dialog === DialogType.NO_CREDITS_LEFT}
       />
-      <BlockMeta
+      {/* <BlockMeta
         onSubmit={setBlockFinalValue}
         isOpen={dialog === DialogType.SET_USER_BLOCK}
         classes={classes}
         onClose={() => setDialog(null)}
-      />
+      /> */}
+      <DemoModal modals={modals} />
       <TestSend
         classes={classes}
         isOpen={dialog === DialogType.TEST_SEND}

@@ -4,8 +4,14 @@ type dialog = (a: any) => void;
 type save = (a: any) => void;
 
 export interface ConfigOptions {
+    setRow: Function,
+    getRows: Function,
+    handleDeleteRow: Function,
+    handleEditRow: Function,
     IsRTL: Boolean,
+    openModal: any,
     SetDialog: dialog,
+    EditRow: Function,
     SaveCampaign: save,
     SetShowGallery: showGallery,
     SetIsFileSelected: fileSelected,
@@ -20,7 +26,13 @@ export interface ConfigOptions {
 
 export const BeeConfig = (Options: ConfigOptions) => {
     const {
+        setRow,
+        getRows,
+        handleDeleteRow,
+        handleEditRow,
         IsRTL,
+        EditRow,
+        openModal,
         EditBlock,
         OnReload,
         SetDialog,
@@ -73,7 +85,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         contentDialog: {
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    const results = await SaveBlockHandler(args);
+                    const results = await openModal(EditRow, args);
                     const metadata = {
                         name: results?.category
                     }
