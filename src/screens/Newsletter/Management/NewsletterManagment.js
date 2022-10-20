@@ -28,7 +28,6 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import GetEmailVerificationDialog from '../../Verification/Email';
-import SliderDialog from '../../../components/DialogTemplates/SliderDialog';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -779,12 +778,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTablePagination()}
       {renderDialog()}
 
-      <SliderDialog
-        slides={[<>h1</>, <>h2</>, <>h3</>]}
-        rollBack={true}
-        isOpen={true}
-        navigationButtons={false}
-      />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
