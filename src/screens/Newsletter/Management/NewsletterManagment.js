@@ -26,8 +26,9 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { Title } from '../../../components/managment/Title';
+import GetEmailVerificationDialog from '../../Verification/Email';
+import SliderDialog from '../../../components/DialogTemplates/SliderDialog';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -50,7 +51,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
-  const [verificationDialog, setVerificationDialog] = useState(false)
+
 
   const getData = async () => {
     await dispatch(getNewslatterData())
@@ -267,7 +268,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={() => setVerificationDialog(true)}
+            // onClick={() => setVerificationDialog(true)}
+            onClick={() => setDialogType({ type: 'verifyEmail' })}
           >
             {t('Open Verification')}
           </Button>
@@ -749,7 +751,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
+      verifyEmail: GetEmailVerificationDialog({ onClose: () => setDialogType(null) }),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -776,10 +779,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTablePagination()}
       {renderDialog()}
 
-      <VerificationDialog
-        isOpen={verificationDialog}
-        onClose={() => setVerificationDialog(false)}
-        onCancel={() => setVerificationDialog(false)}
+      <SliderDialog
+        slides={[<>h1</>, <>h2</>, <>h3</>]}
+        rollBack={true}
+        isOpen={true}
+        navigationButtons={false}
       />
       <Loader isOpen={showLoader} />
     </DefaultScreen>

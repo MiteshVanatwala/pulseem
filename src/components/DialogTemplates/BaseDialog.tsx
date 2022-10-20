@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
-import useCore from "../../helpers/Hooks/Core";
+import useCore from "../../helpers/hooks/Core";
 
 export const BaseDialog = ({
   childrenPadding = true,

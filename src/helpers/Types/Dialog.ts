@@ -1,10 +1,11 @@
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
+import { TYPE_JSX } from "./common";
 export type DialogOptions = {
   childrenPadding?: boolean;
   open: boolean;
   title: any;
   icon?: any;
-  children: JSX.Element;
+  children: TYPE_JSX;
   showDivider?: boolean;
   onClose?: Function;
   onCancel?: Function;
@@ -23,4 +24,18 @@ export type DialogOptions = {
   exitButton?: any;
   maxHeight?: string | number | undefined;
   reduceTitle?: boolean;
+};
+
+export type Slider_Dialog_PropTypes = {
+  slides: TYPE_JSX[];
+  isOpen: boolean;
+  VARIABLE_SLIDE_HEIGHTS?: null | String[];
+  navigationButtons?: boolean;
+  defaultButtons?: boolean;
+  customButtons?: TYPE_JSX | string;
+  confirmText?: string;
+  cancelText?: string;
+  onClose?: Function;
+  onConfirm?: Function;
+  rollBack?: boolean;
 };
