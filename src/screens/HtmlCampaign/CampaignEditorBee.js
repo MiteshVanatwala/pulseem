@@ -184,6 +184,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               editorRef.current.load();
+              beeTest.load(template)
             });
           }
           break;
