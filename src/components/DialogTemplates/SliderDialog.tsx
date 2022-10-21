@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import clsx from "clsx";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
@@ -12,7 +12,6 @@ import { Slider_Dialog_PropTypes } from "../../helpers/Types/Dialog";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
 import { POPUP_OBJECT_TYPE } from "../../helpers/Types/Verification";
 import { Button } from "@material-ui/core";
-import { TYPE_JSX } from "../../helpers/Types/common";
 
 const SliderDialog = ({
   slides = [],
@@ -22,10 +21,12 @@ const SliderDialog = ({
   defaultButtons = true,
   customButtons = "",
   confirmText = "common.Ok",
-  cancelText = "common.Cancel",
+  backText = "notifications.back",
   onClose = () => {},
   onConfirm = () => {},
   rollBack = false,
+  currentStep = 0,
+  setCurrentStep = () => {},
 }: Slider_Dialog_PropTypes) => {
   const { classes } = useCore();
   const { t } = useTranslation();
@@ -33,28 +34,40 @@ const SliderDialog = ({
   const { isRTL } = useSelector((state: { core: any }) => state.core);
   const [step, setStep] = useState(0);
 
-  const NextSlide = () => {
-    step < slides.length - 1
-      ? setStep(step + 1)
-      : step === slides.length - 1 && rollBack && setStep(0);
-    // if (verificationStep === 4) {
-    //   return setVerificationStep(0);
-    // }
-    // if (setVerificationError) {
-    //   setVerificationError(null);
-    // }
-    // setCodeResend(false);
-    // return setVerificationStep(verificationStep + 1);
+  const NextSlide = async (callback?: Function) => {
+    try {
+      await callback?.();
+      if (navigationButtons) {
+        step < slides.length - 1
+          ? setStep(step + 1)
+          : step === slides.length - 1 && rollBack && setStep(0);
+      }
+      if (!navigationButtons && setCurrentStep && currentStep) {
+        currentStep < slides.length - 1
+          ? setCurrentStep(currentStep || 0 + 1)
+          : currentStep === slides.length - 1 && rollBack && setCurrentStep(0);
+      }
+    } catch (error) {
+      console.error("Slide-Next Error:", error);
+    }
   };
 
-  const PrevSlide = () => {
-    step >= 0
-      ? setStep(step - 1)
-      : step === 0 && rollBack && setStep(slides.length - 1);
-    // if (verificationStep === 0) {
-    //   return setVerificationStep(5);
-    // }
-    // return setVerificationStep(verificationStep - 1);
+  const PrevSlide = async (callback?: Function) => {
+    try {
+      await callback?.();
+      if (navigationButtons) {
+        step >= 0
+          ? setStep(step - 1)
+          : step === 0 && rollBack && setStep(slides.length - 1);
+      }
+      if (!navigationButtons) {
+        currentStep >= 0
+          ? setCurrentStep(currentStep - 1)
+          : currentStep === 0 && rollBack && setCurrentStep(slides.length - 1);
+      }
+    } catch (error) {
+      console.error("Slide-Prev Error:", error);
+    }
   };
 
   const handleClose = (callback?: Function) => {
@@ -71,28 +84,46 @@ const SliderDialog = ({
 
   const defaultDialogButtons = () => (
     <>
-      <Button
-        name="btnConfirm"
-        variant="contained"
-        size="small"
-        onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
-        className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
-      >
-        <>{t(confirmText)}</>
-      </Button>
-      <Button
-        variant="contained"
-        size="small"
-        onClick={(e: React.MouseEvent<HTMLElement>) => {
-          if (onClose) {
-            onClose();
-          }
-          return false;
-        }}
-        className={clsx(classes.dialogButton, classes.dialogCancelButton)}
-      >
-        <>{t(cancelText)}</>
-      </Button>
+      {step === 0 && (
+        <Button
+          name="btnConfirm"
+          variant="contained"
+          size="small"
+          onClick={async (e: React.MouseEvent<HTMLElement>) => {
+            NextSlide(onConfirm?.());
+            // try {
+            //   await onConfirm();
+            //   NextSlide();
+            // } catch (error) {
+            //   console.log("Error:", error);
+            // }
+          }}
+          className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+        >
+          <>{t(confirmText)}</>
+        </Button>
+      )}
+      {step > 0 && step < slides.length - 1 && (
+        <Button
+          variant="contained"
+          size="small"
+          onClick={async (e: React.MouseEvent<HTMLElement>) => {
+            PrevSlide(onClose?.());
+            // if (onClose) {
+            // try {
+            //   await onClose?.();
+            //   PrevSlide();
+            // } catch (error) {
+            //   console.log("ERROR-Back:", error);
+            // }
+            // }
+            // return false;
+          }}
+          className={clsx(classes.dialogButton, classes.dialogCancelButton)}
+        >
+          <>{t(backText)}</>
+        </Button>
+      )}
     </>
   );
 
@@ -168,7 +199,9 @@ const SliderDialog = ({
         classes.emailVerItemContainer
       )}
       style={{
-        transform: `translate(${isRTL ? step * 100 : -(step * 100)}%)`,
+        transform: `translate(${
+          isRTL ? step || currentStep * 100 : -(step || currentStep * 100)
+        }%)`,
         ...slideStyle,
       }}
     >
@@ -187,11 +220,15 @@ const SliderDialog = ({
     ),
     content: (
       <>
-        {slides.map((elem: any) =>
-          Slide({
-            children: elem,
-            style_SlideBody: { height: 300, width: 500 },
-          })
+        {slides.map(
+          (elem: any) =>
+            Slide({
+              ...elem,
+            })
+          //   Slide({
+          //     children: elem,
+          //     style_SlideBody: { height: 300, width: 500 },
+          //   })
         )}
       </>
     ),

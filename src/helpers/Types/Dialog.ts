@@ -27,15 +27,17 @@ export type DialogOptions = {
 };
 
 export type Slider_Dialog_PropTypes = {
-  slides: TYPE_JSX[];
+  slides: any[];
   isOpen: boolean;
   VARIABLE_SLIDE_HEIGHTS?: null | String[];
   navigationButtons?: boolean;
   defaultButtons?: boolean;
   customButtons?: TYPE_JSX | string;
   confirmText?: string;
-  cancelText?: string;
+  backText?: string;
   onClose?: Function;
   onConfirm?: Function;
   rollBack?: boolean;
+  currentStep?: number;
+  setCurrentStep?: Function;
 };
