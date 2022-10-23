@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import {
     Grid,
@@ -11,6 +11,12 @@ import {
     AccordionSummary,
     AccordionDetails,
     makeStyles,
+    Checkbox,
+    Paper,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 
 } from "@material-ui/core";
 import { DateField } from '../../../../components/managment/index'
@@ -20,16 +26,23 @@ import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
-import { addRecipient } from "../../../../redux/reducers/groupSlice";
+import { addRecipient, deleteRecipients } from "../../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
+import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
 
 import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 
 
 import { Loader } from "../../../../components/Loader/Loader";
+import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
+import { Autocomplete } from "@material-ui/lab";
+import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
+import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
+import { Close } from "@material-ui/icons";
+import { IoMdClose } from "react-icons/io";
 
 
 const useStyles = makeStyles({
@@ -51,6 +64,24 @@ const useStyles = makeStyles({
         '& .MuiAccordionSummary-content': {
             margin: 0
         }
+    },
+    dateBox: {
+        position: 'relative',
+        '& .resetDate': {
+            fontSize: 19,
+            position: 'absolute',
+            right: 40,
+            top: 8.5,
+            opacity: 0.6,
+            cursor: 'pointer',
+            width: 26,
+            textAlign: 'center',
+            '&:hover': {
+                opacity: 0.8,
+                background: '#f5f5f5',
+                borderRadius: '50%'
+            }
+        }
     }
 });
 
@@ -58,17 +89,19 @@ const AddRecipientPopup = ({ classes,
     isOpen = false,
     onClose,
     windowSize,
-    selectedGroups,
+    selectedGroups = [],
     selectGroup,
     ToastMessages,
+    onAddRecipient = () => null,
     onRecipientAdded = () => null,
     onAnotherRecipientAdded = () => null,
-    handleResponses = (response, actions) => null
+    handleResponses = (response, actions) => null,
+    setDialog = () => null,
+    recipientData = null
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const localClasses = useStyles()
-
     const { extraData } = useSelector((state) => state.sms);
     const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
@@ -80,8 +113,50 @@ const AddRecipientPopup = ({ classes,
         Cellphone: '',
         Groups: ''
     })
+    const [selectedLocalGroups, setSelectedLocalGroups] = useState([])
+    const extraFieldsTemp = {
+        "ExtraField1": t('common.ExtraField1'),
+        "ExtraField2": t('common.ExtraField2'),
+        "ExtraField3": t('common.ExtraField3'),
+        "ExtraField4": t('common.ExtraField4'),
+        "ExtraField5": t('common.ExtraField5'),
+        "ExtraField6": t('common.ExtraField6'),
+        "ExtraField7": t('common.ExtraField7'),
+        "ExtraField8": t('common.ExtraField8'),
+        "ExtraField9": t('common.ExtraField9'),
+        "ExtraField10": t('common.ExtraField10'),
+        "ExtraField11": t('common.ExtraField11'),
+        "ExtraField12": t('common.ExtraField12'),
+        "ExtraField13": t('common.ExtraField13'),
+        "ExtraDate1": t('common.ExtraDate1'),
+        "ExtraDate2": t('common.ExtraDate2'),
+        "ExtraDate3": t('common.ExtraDate3'),
+        "ExtraDate4": t('common.ExtraDate4')
+    }
+
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
+    const getData = async () => {
+
+        setLoader(true);
+        if (!extraData || extraData.length === 0) {
+            dispatch(getAccountExtraData());
+        }
+        setLoader(false)
+    };
+
+    useEffect(() => {
+        getData()
+        if (recipientData) {
+            let { ExtraFields, ...restData } = { ...addRecipientData, ...recipientData }
+            setAddRecipientData({ ...restData, ...ExtraFields })
+            setSelectedLocalGroups([...selectedLocalGroups, ...selectedGroups])
+        }
+    }, [recipientData])
+
+    useEffect(() => {
+        console.log("SELECTE_LOCAL:", selectedLocalGroups)
+    }, [selectedLocalGroups])
 
 
     const handleBlur = (e) => {
@@ -104,18 +179,40 @@ const AddRecipientPopup = ({ classes,
     }
 
 
+    const StatusDropdown = ({ data = [], onSelect = () => null, label = '', value = null }) => {
+        return (
+            <FormControl variant="standard" className={classes.selectInputFormControl}>
+                <Select
+                    labelId="statusSelect"
+                    id="statusSelect"
+                    label={label}
+                    value={value}
+                    onChange={(e) => onSelect(e.target.value)}
+                >
+                    {
+                        data.map((obj, idx) => <MenuItem
+                            key={idx}
+                            style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
+                            disabled={obj.status === -1}
+                            value={obj.status}>{t(obj.text)}</MenuItem>
+                        )
+                    }
+                </Select>
+            </FormControl >
+        )
+    }
 
     const handleChange = (e, dateField = null, isExtraData = false, customValue = null) => {
         if (dateField) {
             const { date, field } = dateField;
             if (isExtraData) {
                 setAccountExtraFields({
-                    ...accountExtraFields, [field]: moment(date, dateFormat)
+                    ...accountExtraFields, [field]: moment(date, dateFormat).format().split('T')[0]
                 });
             }
             else {
                 setAddRecipientData({
-                    ...addRecipientData, [field]: moment(date, dateFormat)
+                    ...addRecipientData, [field]: moment(date, dateFormat).format().split('T')[0]
                 })
             }
         }
@@ -128,6 +225,9 @@ const AddRecipientPopup = ({ classes,
                 setAccountExtraFields({
                     ...accountExtraFields, [e.target.name]: e.target.value
                 });
+                setAddRecipientData({
+                    ...addRecipientData, [e.target.name]: e.target.value
+                })
             }
             else {
                 if (e.target.name === "Email") {
@@ -155,9 +255,8 @@ const AddRecipientPopup = ({ classes,
     const handleSubmit = async (callback) => {
         const data = {
             ClientsData: addRecipientData,
-            GroupIds: [...selectedGroups]
+            GroupIds: recipientData ? [...selectedLocalGroups] : [...selectedGroups]
         }
-
         const tempError = { ...errors }
 
         if (!data.ClientsData.Email &&
@@ -179,7 +278,14 @@ const AddRecipientPopup = ({ classes,
             setActiveTab(0);
             return
         }
-        else if (selectedGroups.length === 0) {
+        else if (!data.ClientsData.Email && data.ClientsData.Cellphone &&
+            (data.ClientsData.Cellphone.length < 10 || data.ClientsData.Cellphone.length > 12)) {
+            tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength)
+            setErrors({ ...tempError })
+            setActiveTab(0);
+            return
+        }
+        else if (!recipientData && selectedGroups.length === 0 && selectedLocalGroups.length === 0) {
             tempError.Groups = t(ADD_RECIPIENT_REQUIRED_ERRORS.Groups)
             setErrors({ ...tempError })
             setActiveTab(4);
@@ -189,17 +295,25 @@ const AddRecipientPopup = ({ classes,
             setLoader(true)
             const clientsData = [];
             clientsData.push({ ...addRecipientData, ...accountExtraFields });
+            const finalData = recipientData ? { ...addRecipientData, ...accountExtraFields, Overwrite: true, OverwriteOption: 1 } : { ...addRecipientData, ...accountExtraFields };
 
             const request = {
-                ClientsData: clientsData,
-                GroupIds: [...selectedGroups]
+                ClientsData: [finalData],
+                GroupIds: recipientData ? [...selectedLocalGroups] : [...selectedGroups]
+                //BUG: INITIALLY when dialog opens local selected groups is empty, this will result in removal of clients from selected groups 
             }
             const response = await dispatch(addRecipient(request))
             handleResponses(response, {
                 'S_201': {
                     code: 201,
-                    message: ToastMessages.RECIPIENT_ADDED,
-                    Func: callback?.()
+                    message: recipientData ? ToastMessages.RECIPIENT_UPDATED : ToastMessages.RECIPIENT_ADDED,
+                    Func: () => {
+                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                            resolutionFunc(onAddRecipient());
+                        }).then((res) => {
+                            callback?.()
+                        })
+                    },
                 },
                 'S_400': {
                     code: 400,
@@ -366,7 +480,7 @@ const AddRecipientPopup = ({ classes,
                                     handleChange(e)
                                 }
                             }}
-                            inputProps={{ maxLength: 16 }}
+                            inputProps={{ maxlength: 16 }}
                             error={errors.Cellphone}
                             helperText={errors.Cellphone}
                             onBlur={handleBlur}
@@ -396,7 +510,7 @@ const AddRecipientPopup = ({ classes,
                             helperText={errors.Email}
                             onBlur={handleBlur}
                             style={{ textAlign: 'left' }}
-                            maxLength={100}
+                            maxlength={100}
                         />,
                         gridSize: { xs: 12, sm: 9 }
                     }
@@ -495,7 +609,7 @@ const AddRecipientPopup = ({ classes,
                                 handleChange(e)
                             }
                         }}
-                        inputProps={{ maxLength: 12 }}
+                        inputProps={{ maxlength: 12 }}
                         error={errors.Cellphone}
                         helperText={errors.Cellphone}
                         onBlur={handleBlur}
@@ -750,13 +864,18 @@ const AddRecipientPopup = ({ classes,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
-                            content: <DateField
-                                name="BirthDate"
-                                classes={classes}
-                                value={addRecipientData.BirthDate}
-                                onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
-                                toolbarDisabled={false}
-                            />,
+                            content: <Box className={localClasses.dateBox}>
+                                <DateField
+                                    name="BirthDate"
+                                    classes={classes}
+                                    value={addRecipientData.BirthDate}
+                                    onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
+                                    toolbarDisabled={false}
+                                />
+                                {addRecipientData.BirthDate && <span className="resetDate"
+                                    onClick={(e) => setAddRecipientData({ ...addRecipientData, BirthDate: null })}
+                                ><IoMdClose /></span>}
+                            </Box>,
                             gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
@@ -771,13 +890,20 @@ const AddRecipientPopup = ({ classes,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
-                            content: <DateField
-                                name="ReminderDate"
-                                classes={classes}
-                                value={addRecipientData.ReminderDate}
-                                onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
-                                toolbarDisabled={false}
-                            />,
+                            content:
+                                <Box className={localClasses.dateBox}>
+                                    <DateField
+                                        name="ReminderDate"
+                                        classes={classes}
+                                        value={addRecipientData.ReminderDate}
+                                        onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
+                                        toolbarDisabled={false}
+                                    />
+                                    {addRecipientData.ReminderDate && <span className="resetDate"
+                                        onClick={(e) => setAddRecipientData({ ...addRecipientData, ReminderDate: null })}
+                                    ><IoMdClose /></span>}
+                                </Box>
+                            ,
                             gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
@@ -824,27 +950,35 @@ const AddRecipientPopup = ({ classes,
         temp = temp.forEach((t) => {
             tempp[t.key] = t.value
         });
-        let extraFields = Object.keys(tempp).filter((key, index) => { return Object.values(tempp)[index] && Object.values(tempp)[index] !== '' });
+        let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
         const json = windowSize === 'xs' ?
             extraFields.map((ef) => {
                 return {
-                    content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
-                        classes={classes}
-                        value={accountExtraFields && accountExtraFields[ef] ? accountExtraFields[ef] : null}
-                        onChange={e => handleChange(e, { date: e, field: ef }, true)}
-                        toolbarDisabled={false}
-                        removePadding
-                    /> : <TextField
-                        id="outlined-basic"
-                        label=""
-                        placeholder={extraData[ef]}
-                        variant="outlined"
-                        name={ef}
-                        value={addRecipientData[extraData[ef]]}
-                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                        autoComplete="off"
-                        onChange={e => handleChange(e, null, true)}
-                    />
+                    content: ef.toLowerCase().indexOf('date') > -1 ?
+                        <Box className={localClasses.dateBox}>
+                            <DateField
+                                classes={classes}
+                                value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
+                                onChange={e => handleChange(e, { date: e, field: ef }, true)}
+                                toolbarDisabled={false}
+                                removePadding
+                            />
+                            {accountExtraFields?.[ef] && <span className="resetDate"
+                                onClick={(e) => setAccountExtraFields({ ...accountExtraFields, [ef]: null })}
+                            ><IoMdClose /></span>}
+                        </Box>
+
+                        : <TextField
+                            id="outlined-basic"
+                            label=""
+                            placeholder={extraFieldsTemp[ef]}
+                            variant="outlined"
+                            name={ef}
+                            value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            autoComplete="off"
+                            onChange={e => handleChange(e, null, true)}
+                        />
                 }
             })
             :
@@ -853,25 +987,36 @@ const AddRecipientPopup = ({ classes,
                     content: <SimpleGrid
                         gridArr={[
                             {
-                                content: <Typography title={extraData[ef]} align="right" className={clsx(classes.pl5, classes.pr10, classes.ellipsisText, classes.alignDir)}>{extraData[ef]}</Typography>,
+                                content: <Typography
+                                    title={extraFieldsTemp[ef]}
+                                    align="right"
+                                    className={clsx(classes.pl5, classes.pr10, classes.textEllipses, classes.alignDir)}
+                                >{extraFieldsTemp[ef]}</Typography>,
                                 gridSize: { xs: 12, sm: 3 }
                             },
                             {
-                                content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
-                                    classes={classes}
-                                    value={accountExtraFields && accountExtraFields[ef] ? accountExtraFields[ef] : null}
-                                    onChange={e => handleChange(e, { date: e, field: ef }, true)}
-                                    toolbarDisabled={false}
-                                /> : <TextField
-                                    id="outlined-basic"
-                                    label=""
-                                    variant="outlined"
-                                    name={ef}
-                                    value={addRecipientData[extraData[ef]]}
-                                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                    autoComplete="off"
-                                    onChange={e => handleChange(e, null, true)}
-                                />,
+                                content: ef.toLowerCase().indexOf('date') > -1 ?
+                                    <Box className={localClasses.dateBox}>
+                                        <DateField
+                                            classes={classes}
+                                            value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
+                                            onChange={e => handleChange(e, { date: e, field: ef }, true)}
+                                            toolbarDisabled={false}
+                                        />
+                                        {accountExtraFields?.[ef] && <span className="resetDate"
+                                            onClick={(e) => setAccountExtraFields({ ...accountExtraFields, [ef]: null })}
+                                        ><IoMdClose /></span>}
+                                    </Box>
+                                    : <TextField
+                                        id="outlined-basic"
+                                        label=""
+                                        variant="outlined"
+                                        name={ef}
+                                        value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
+                                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                        autoComplete="off"
+                                        onChange={e => handleChange(e, null, true)}
+                                    />,
                                 gridSize: { xs: 12, sm: 9 }
                             }
                         ]}
@@ -893,14 +1038,17 @@ const AddRecipientPopup = ({ classes,
                 style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 dropdown
                 dropDownProps={{
-                    onChange: (e, val) => {
+                    onChange: (e, val, reason, details) => {
+                        if (reason === "remove-option" || val.length === 0) {
+                            handleRemoveFromGroups(recipientData.Cellphone || recipientData.Email, reason === "remove-option" ? [details?.option?.GroupID] : selectedLocalGroups)
+                        }
                         const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
-                        selectGroup(idArr)
+                        recipientData ? setSelectedLocalGroups(idArr) : selectGroup(idArr)
                         if (idArr.length > 0) {
                             setErrors({ ...errors, Groups: '' })
                         }
                     },
-                    selectedGroups: selectedGroups
+                    selectedGroups: recipientData ? selectedLocalGroups : selectedGroups
                 }
                 }
                 error={errors.Groups}
@@ -909,6 +1057,179 @@ const AddRecipientPopup = ({ classes,
         </div>)
 
 
+    const handleRemoveFromGroups = async (clientId, groupId) => {
+        const payload = {
+            GroupIDs: groupId,
+            ListOfValues: [clientId]
+        }
+        const response = await dispatch(deleteRecipients(payload))
+
+        handleResponses(response, {
+            S_201: {
+                code: 201,
+                message: ToastMessages.RECIPIENT_DELETED_FROM_GROUP
+            },
+            S_400: {
+                code: 400,
+                message: ToastMessages.INVALID_CLIENT_ID,
+                Func: () => null
+            },
+            S_401: {
+                code: 401,
+                message: ToastMessages.GROUP_INVALID_API,
+                Func: () => null
+            },
+            S_404: {
+                code: 405,
+                message: ToastMessages.SOMETHING_WENT_WRONG,
+                Func: () => null
+            },
+            default: {
+                message: ToastMessages.GENERIC_ERROR,
+                Func: () => null
+            }
+        });
+    }
+    const handleEmailStatus = async (val) => {
+        setLoader(true)
+        let response = await dispatch(changeClientStatus({
+            ClientID: recipientData.ClientID,
+            RemovingOption: 1, // Email
+            EmailStatus: val
+        }))
+        handleResponses(response, {
+            S_201: {
+                code: 201,
+                message: ToastMessages.STATUS_UPDATED,
+                Func: () => {
+                    onAddRecipient(false);
+                    //setDialog('EDIT_RECIPIENT');
+                }
+            },
+            S_400: {
+                code: 400,
+                message: ToastMessages.INVALID_CLIENT_ID,
+                Func: () => null
+            },
+            S_401: {
+                code: 401,
+                message: ToastMessages.GROUP_INVALID_API,
+                Func: () => null
+            },
+            S_404: {
+                code: 405,
+                message: ToastMessages.SOMETHING_WENT_WRONG,
+                Func: () => null
+            },
+            default: {
+                message: ToastMessages.GENERIC_ERROR,
+                Func: () => null
+            }
+        }
+        )
+        setLoader(false)
+    }
+
+    const handleSmsStatus = async (val) => {
+        setLoader(true)
+        let response = await dispatch(changeClientStatus({
+            ClientID: recipientData.ClientID,
+            RemovingOption: 2, // Sms
+            SmsStatus: val
+        }))
+        handleResponses(response, {
+            S_201: {
+                code: 201,
+                message: ToastMessages.STATUS_UPDATED,
+                Func: () => {
+                    onAddRecipient(false);
+                    //setDialog('EDIT_RECIPIENT');
+                }
+            },
+            S_400: {
+                code: 400,
+                message: ToastMessages.INVALID_CLIENT_ID,
+                Func: () => null
+            },
+            S_401: {
+                code: 401,
+                message: ToastMessages.GROUP_INVALID_API,
+                Func: () => null
+            },
+            S_404: {
+                code: 405,
+                message: ToastMessages.SOMETHING_WENT_WRONG,
+                Func: () => null
+            },
+            default: {
+                message: ToastMessages.GENERIC_ERROR,
+                Func: () => null
+            }
+        }
+        )
+        setLoader(false)
+    }
+
+    const STATUS_FORM = () => (
+        <SimpleGrid
+            spacing={3}
+            gridArr={[
+                {
+                    content: <SimpleGrid
+                        spacing={3}
+                        gridArr={[
+                            {
+
+                                content: <Typography title={t("common.first_name")} className={classes.alignDir}>{t('common.emailStatus')}</Typography>,
+                                gridSize: { xs: 12, sm: 3 }
+
+                            },
+                            {
+
+                                content: StatusDropdown({
+                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
+                                    onSelect: (val) => {
+                                        handleEmailStatus(val)
+                                    },
+                                    value: addRecipientData.Status ?? CLIENT_CONSTANTS.STATUSES.active.status,
+                                    label: t('common.emailStatus')
+                                }),
+                                gridSize: { xs: 12, sm: 9 }
+
+                            }
+                        ]}
+                    />,
+                    gridSize: { xs: 12, sm: 6 }
+                },
+                {
+                    content: <SimpleGrid
+                        spacing={3}
+                        gridArr={[
+                            {
+
+                                content: <Typography title={t("common.first_name")} className={classes.alignDir}>{t('common.smsStatus')}</Typography>,
+                                gridSize: { xs: 12, sm: 3 },
+
+                            },
+                            {
+                                content: StatusDropdown({
+                                    data: Object.values(CLIENT_CONSTANTS.SMS_STATUSES).map((obj) => obj),
+                                    onSelect: (val) => {
+                                        handleSmsStatus(val)
+
+                                    },
+                                    value: addRecipientData.SmsStatus ?? CLIENT_CONSTANTS.SMS_STATUSES.noStatus.status,
+                                    label: t('common.smsStatus'),
+                                }),
+                                gridSize: { xs: 12, sm: 6 }
+                            }
+                        ]}
+                    />,
+                    gridSize: { xs: 12, sm: 6 }
+                },
+            ]}
+        />
+    )
 
     const ActiveForm = (label, index) => {
         return (
@@ -951,15 +1272,11 @@ const AddRecipientPopup = ({ classes,
     }
 
 
-
-
-
-
     return (
         <Dialog
             classes={classes}
             open={isOpen}
-            title={t('recipient.recipientAddPopUpTitle')}
+            title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
             icon={<div className={classes.dialogIconContent}>
                 {'\uE0D5'}
             </div>}
@@ -970,77 +1287,81 @@ const AddRecipientPopup = ({ classes,
             reduceTitle
             style={{ minWidth: 240 }}
             renderButtons={() => (
-
-                <Box container spacing={2} className={clsx(classes.responsiveLinePadding, classes.maxWidth540, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap, classes.pt0, classes.pb0)}>
-                    <Box
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        md={4}
-                        className={clsx(classes.txtCenter, classes.mt5)}
-                    >
-                        <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogButtonResponive,
-                                classes.dialogCancelButton
-                            )}
-                            onClick={onClose}
-                        >
-                            {t("group.cancel")}
-                        </Button>
-                    </Box>
-                    <Box
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        md={4}
-                        className={clsx(classes.txtCenter, classes.mt5)}
-                    >
-                        <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogButtonResponive,
-                                classes.dialogConfirmButton,
-                                classes.textCapitalize
-                            )}
-
-                            onClick={() => handleSubmit(onRecipientAdded)}
-                        >
-                            {t("group.ok")}
-                        </Button>
-                    </Box>
-                    {windowSize !== "xs" && <Box
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        md={4}
-                        className={clsx(classes.txtCenter, classes.mt5, classes.maxContent)}
-                    >
-                        <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(
-                                classes.maxContent,
-                                classes.dialogButton,
-                                classes.dialogButtonResponive,
-                                classes.dialogConfirmButton
-                            )}
-                            onClick={() => handleSubmit(() => {
-                                setAddRecipientData(DEFAULT_RECIPIENT_DATA);
-                                onAnotherRecipientAdded()
-                            })}
-                        >
-                            {t("recipient.addAnotherRecipient")}
-                        </Button>
+                <div>
+                    {recipientData && <Box style={{ paddingInline: '5%' }} container spacing={2} className={clsx(classes.responsiveLinePadding, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap,)}>
+                        {STATUS_FORM()}
                     </Box>}
 
-                </Box>
+                    <Box container spacing={2} className={clsx(classes.responsiveLinePadding, classes.maxWidth540, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap, classes.pt0, classes.pb0)}>
+                        <Box
+                            item
+                            xs={windowSize === "xs" && 12}
+                            sm={4}
+                            md={4}
+                            className={clsx(classes.txtCenter, classes.mt5)}
+                        >
+                            <Button
+                                variant="contained"
+                                size="medium"
+                                className={clsx(
+                                    classes.dialogButton,
+                                    classes.dialogButtonResponive,
+                                    classes.dialogCancelButton
+                                )}
+                                onClick={onClose}
+                            >
+                                {t("group.cancel")}
+                            </Button>
+                        </Box>
+                        <Box
+                            item
+                            xs={windowSize === "xs" && 12}
+                            sm={4}
+                            md={4}
+                            className={clsx(classes.txtCenter, classes.mt5)}
+                        >
+                            <Button
+                                variant="contained"
+                                size="medium"
+                                className={clsx(
+                                    classes.dialogButton,
+                                    classes.dialogButtonResponive,
+                                    classes.dialogConfirmButton,
+                                    classes.textCapitalize
+                                )}
 
+                                onClick={() => handleSubmit(onRecipientAdded)}
+                            >
+                                {t("group.ok")}
+                            </Button>
+                        </Box>
+                        {!recipientData && windowSize !== "xs" && <Box
+                            item
+                            xs={windowSize === "xs" && 12}
+                            sm={4}
+                            md={4}
+                            className={clsx(classes.txtCenter, classes.mt5, classes.maxContent)}
+                        >
+                            <Button
+                                variant="contained"
+                                size="medium"
+                                className={clsx(
+                                    classes.maxContent,
+                                    classes.dialogButton,
+                                    classes.dialogButtonResponive,
+                                    classes.dialogConfirmButton
+                                )}
+                                onClick={() => handleSubmit(() => {
+                                    setAccountExtraFields(null)
+                                    setAddRecipientData(DEFAULT_RECIPIENT_DATA)
+                                })}
+                            >
+                                {t("recipient.addAnotherRecipient")}
+                            </Button>
+                        </Box>}
+
+                    </Box>
+                </div>
             )}
             customContainerStyle=""
             cancelText="common.Cancel"

@@ -31,30 +31,15 @@ const GroupTags = ({ classes,
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const dispatch = useDispatch();
 
+    console.log("SLEEEGROPU:", dropDownProps.selectedGroups)
+
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
-        // const newList = groups.filter((g) => { return g !== groupId });
         const newList = groupSelected.filter((g) => { return g !== groupId });
-        // setGroups(newList)
         onRemoveGroup(newList);
-        // dispatch(setSelectedGroups(newList));
     }
 
-    // useEffect(() => {
-    //     if (groupSelected && subAccountAllGroups) {
-    //         // groupSelected.forEach((grp) => {
-    //         //     const findGroup = subAccountAllGroups.find((g) => { return g.GroupID === grp });
-    //         //     if (findGroup) {
-    //         //         tmpGroups.push(findGroup)
-    //         //     }
-    //         // });
-
-    //         setGroups(tmpGroups);
-    //         dispatch(setSelectedGroups(tmpGroups));
-
-    //     }
-    // }, [groupSelected])
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box
@@ -115,7 +100,7 @@ const GroupTags = ({ classes,
             disableCloseOnSelect
             options={subAccountAllGroups ?? []}
             getOptionLabel={(option) => option?.GroupName}
-            defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
+            value={subAccountAllGroups.reduce((prevVal, newVal) => {
                 if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
                     return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
                 }

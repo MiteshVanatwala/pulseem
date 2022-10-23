@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box
+  Grid, Button, TextField, Box, Link
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SearchIcon,
@@ -18,19 +18,19 @@ import {
 } from '../../../redux/reducers/landingPagesSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { openInNewTab } from '../../../helpers/functions'
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
+  const navigate = useNavigate()
   const { windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { landingPagesData, landingPagesDataError, landingPagesDeletedData } = useSelector(state => state.landingPages)
+  const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
   const rowsOptions = [6, 10, 20, 50]
@@ -447,21 +447,32 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     )
   }
 
-  const renderSubscribersCell = ({ ID, Submits }) => {
+  const renderSubscribersCell = ({ ID, Submits, Name }) => {
+    const subscribtions = Submits && Submits > 0;
     return (
       <>
-        <Typography
-          className={classes.middleText}>
-          {(Submits && Submits.toLocaleString()) || 0}
-        </Typography>
-        {windowSize === 'xs' ?
-          <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-          : <a
-            href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-            className={clsx(classes.middleText, classes.pt2)}>
-            {t('landingPages.SubmitsResource1.HeaderText')}
-          </a>
-        }
+        <Link
+          style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
+          onClick={() => {
+            if (Submits && Submits > 0) {
+              navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                  ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                  CampaignID: ID,
+                  PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+                  ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+                }
+              })
+            } else { return false }
+          }
+          }
+          className={clsx(classes.middleText, classes.pt2)}>
+          <Typography
+            className={classes.middleText}>
+            {(Submits && Submits.toLocaleString()) || 0}
+          </Typography>
+          {t('landingPages.SubmitsResource1.HeaderText')}
+        </Link>
       </>
     )
   }

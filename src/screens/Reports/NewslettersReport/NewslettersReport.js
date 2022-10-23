@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
@@ -23,9 +22,17 @@ import { exportFile } from '../../../helpers/exportFromJson';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { Loader } from '../../../components/Loader/Loader';
+import { useNavigate, useLocation } from 'react-router';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { voidFunction } from '../../../helpers/utils';
+import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 
 const NewslettersReport = ({ classes }) => {
-  const { language, windowSize, isRTL, rowsPerPage, accountSettings, accountFeatures } = useSelector(state => state.core)
+  const navigate = useNavigate()
+  const { state } = useLocation();
+  const from = state?.from || "/";
+
+  const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -37,7 +44,6 @@ const NewslettersReport = ({ classes }) => {
   const [searchResults, setSearchResults] = useState(null)
   const [toFileArray, setToFileArray] = useState([])
   const [isDemoSend, setIsDemoSend] = useState(false)
-  const [csvData, setCsvData] = useState('')
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -46,87 +52,138 @@ const NewslettersReport = ({ classes }) => {
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) }
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-  const csvLinkRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
   const [hasRevenue, setHasRevenue] = useState(false);
 
   moment.locale(language)
 
-  const getHrefs = (id) => ({
+  const getHrefs = (id, revenue = 0) => ({
     TotalSendCompleted: {
-      href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`
-      //href: `/CampaignStatistics/${id}`
+      href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
+          ResultTitle: t('common.Sent') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
+        }
+      }),
     },
     OpenCount: {
       title: windowSize === 'xs' ? t('common.Total') : t('mainReport.GridButtonColumnResource1.HeaderText'),
       href: ``,
       clickable: false
-      //href: `/CampaignStatistics/${id}?tab=2`
     },
     OpenCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID,
+          TestStatusOfEmailElseSms: 1,
+          ResultTitle: t('common.OpensUnique') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
+        }
+      }),
       clickable: true
-      //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCount: {
       title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
       href: ``,
       clickable: false
-      //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
-      clickable: true
-      //href: `/CampaignStatistics/${id}?tab=2`
+      clickable: true,
+      onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
     },
     RemovedClients: {
       title: windowSize === 'xs' ? '' : t('common.Removed'),
-      href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
-      //href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedClientsCampaignID,
+          TestStatusOfEmailElseSms: 1,
+          Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed,
+          ResultTitle: t('common.Removed') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
+        }
+      }),
     },
     SendError: {
       title: windowSize === 'xs' ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
-      href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
-      //href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
+      onClick: () => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true` }
+      // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+      //   state: {
+      //     ...CLIENT_CONSTANTS.QUERY_PARAMS,
+      //     CampaignID: id,
+      //     PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+      //     TestStatusOfEmailElseSms: 1,
+      //     Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Invalid,
+      //     ResultTitle: t('common.charStatus.error') + ' - ' + t('common.campaignID') + ' ' + id
+      //   }
+      // }),
     },
     PercetangeRemovedClients: {
       title: t('mainReport.removedPercents'),
       href: ``,
       //href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
       clickable: false,
-      //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercentageOpens: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
-      href: ``,
-      //href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
-      clickable: false,
-      //href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      onClick: () => null,
     },
     PercetangeClicks: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
       href: ``,
       //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
       clickable: false
-      //href: `/CampaignStatistics/${id}?tab=2`
     },
     NotOpened: {
       title: windowSize === 'xs' ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
-      href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`
-      //href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.NotOpenedCampaignID,
+          TestStatusOfEmailElseSms: 1,
+          ResultTitle: t('common.NoOpened') + ' - ' + t('common.campaignID') + ' ' + id,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
+        }
+      }),
     },
     RemoveReasons: {
       title: t("mainReport.locRemovedReason.HeaderText"),
       href: `/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`,
+      onClick: () => navigate(`/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`),
       icon: '\uE15D'
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/email/${id}`,
+      href: `/react/ClientSearchResult/${id}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
+          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+          PageProperty: GetPageNyName('reports/NewsletterReports')
+        }
+      }),
       textStyle: { fontWeight: 900 },
-      isRevenueCol: true
+      isRevenueCol: revenue > 0
     }
   })
 
@@ -154,6 +211,21 @@ const NewslettersReport = ({ classes }) => {
     setLoader(true);
     await dispatch(getNewsletterReports(isDemoSend));
     setLoader(false);
+    const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
+    if (queryState) {
+      const pageStateProperty = GetPageNyName('reports/NewsletterReports');
+      if (pageStateProperty) {
+        if (pageStateProperty.SearchData) {
+          setNotificationNameSearch(pageStateProperty.SearchData?.CampaignName);
+          handleFromDate(pageStateProperty.SearchData?.FromDate);
+          handleToDate(pageStateProperty.SearchData?.ToDate);
+          setSearching(true);
+        }
+        else {
+          setPage(pageStateProperty.PageNumber);
+        }
+      }
+    }
   }
 
   useEffect(() => {
@@ -172,7 +244,7 @@ const NewslettersReport = ({ classes }) => {
 
   useEffect(() => {
     handleSearch();
-  }, [newslettersReports])
+  }, [newslettersReports, isSearching])
 
   const renderHeader = () => {
     return (
@@ -241,6 +313,12 @@ const NewslettersReport = ({ classes }) => {
       fromDate,
       toDate
     }];
+
+    SetPageState({
+      "PageName": "reports/NewsletterReports",
+      "PageNumber": page,
+      "SearchData": { CampaignName: notificationNameSearch, FromDate: fromDate, ToDate: toDate }
+    });
 
     const filtersObject = {
       name: (row, values) => {
@@ -396,7 +474,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderManagmentLine = () => {
-    const dataLength = isSearching ? searchResults.length : newslettersReports.length;
+    const dataLength = isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0);
     return (
       <Grid container spacing={2} className={classes.linePadding}>
         {/* {windowSize !== 'xs' && <Grid item>
@@ -424,13 +502,6 @@ const NewslettersReport = ({ classes }) => {
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
-          <CSVLink
-            data={csvData}
-            filename='report.csv'
-            className='hidden'
-            ref={csvLinkRef}
-            target='_blank'
-          />
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
@@ -560,16 +631,20 @@ const NewslettersReport = ({ classes }) => {
     green: classes.sendIconText
   }
   const renderPercetangeData = (percentage = 0, type, data = {}, clickable = true) => {
-    const { title = '', href = '', icon = '' } = data;
+    const { title = '', href = '', icon = '', onClick } = data;
     const innerHref = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }} >
-        <Typography component={innerHref ? 'a' : 'p'} href={innerHref} className={clsx(
-          classes.middleTxt,
-          colorTextStyle[type] || '',
-          { [classes.iconsFont]: !!icon })}
+        {/* <Typography component={innerHref ? 'a' : 'p'} */}
+        <Typography component={'p'}
+          // href={innerHref}
+          onClick={onClick}
+          className={clsx(
+            classes.middleTxt,
+            colorTextStyle[type] || '',
+            { [classes.iconsFont]: !!icon })}
           target="_blank">
-          {icon ? icon : `${percentage || '0'}%`}
+          {icon ? icon : `${percentage?.toString().substring(0,4) ?? '0'}%`}
         </Typography>
         <Typography className={clsx(
           classes.middleWrapText, classes.lineHeight1point2,
@@ -582,7 +657,8 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderDataTooltip = (value, type, data = {}, tooltip) => {
-    const { title = t("notifications.tblBody.total"), href = '', clickable = false } = data
+    const { title = t("notifications.tblBody.total"), textStyle = null, onClick } = data
+    const isLink = onClick && onClick !== null && value > 0;
     return (
       <Tooltip
         title={`${t(tooltip)}`}
@@ -592,17 +668,19 @@ const NewslettersReport = ({ classes }) => {
           tooltip: classes.tooltipBlack,
           arrow: classes.fBlack
         }}>
-        <Box className={classes.cellText}>
+        <Box className={classes.cellText}
+          style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
+          onClick={isLink ? onClick : voidFunction}>
           <Typography
-            component={clickable && value > 0 ? 'a' : 'p'}
-            href={href}
+            // component={clickable && value > 0 ? 'a' : 'p'}
+            component={'p'}
+            style={{ textDecoration: isLink ? 'underline' : null }}
+            // href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
-            {value && value.toLocaleString() || '0'}
+            {(value && value.toLocaleString()) || '0'}
           </Typography>
-          <Typography component={clickable && value > 0 ? 'a' : 'p'}
-            href={href}
-            target="_blank"
+          <Typography style={{ textDecoration: isLink ? 'underline' : null }}
             className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
           </Typography>
@@ -612,21 +690,21 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null, isRevenueCol = false } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
+    const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
-      <Box className={classes.cellText}>
-        <Typography component={href !== '' && clickable && (value > 0 || isRevenueCol) ? 'a' : 'p'}
-          href={href !== '' ? href : ''}
-          style={textStyle}
+      <Box className={classes.cellText}
+        onClick={isLink ? onClick : voidFunction}
+        style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
+        <Typography component={isLink ? 'a' : 'p'}
+          style={{ textDecoration: isLink ? 'underline' : null }}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
           target="_blank">
           {(value && value.toLocaleString()) || '0'}
         </Typography>
-        <Typography component={href !== '' && (value > 0 || isRevenueCol) ? 'a' : 'p'}
-          href={href !== '' ? href : ''}
-          style={textStyle}
-          target="_blank"
-          className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+        <Typography
+          className={clsx(classes.middleWrapText, colorTextStyle[type])}
+          style={{ textDecoration: isLink ? 'underline' : null }}>
           <span className={classes.hideInMiddleScreen} style={textStyle}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
         </Typography>
       </Box>
@@ -668,7 +746,7 @@ const NewslettersReport = ({ classes }) => {
       NotOpened,
       Revenue = 0
     } = row
-    const hrefs = getHrefs(CampaignID)
+    const hrefs = getHrefs(CampaignID, Revenue)
     return (
       <TableRow
         key={CampaignID}
@@ -685,7 +763,7 @@ const NewslettersReport = ({ classes }) => {
           align='center'
           classes={noBorderCellStyle}
           className={classes.flex1}>
-          {renderIntData(TotalSendPlan, '', row, windowSize !== 'xs', t("mainReport.totalSendPlan"))}
+          {renderIntData(TotalSendPlan, '', row, false, t("mainReport.totalSendPlan"))}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
@@ -717,13 +795,13 @@ const NewslettersReport = ({ classes }) => {
           className={classes.flex4}>
           <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+              {renderDataTooltip(ClickCount + 1, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+              {renderDataTooltip(ClickCountUnique + 1, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
+              {renderPercetangeData(PercetangeClicks + 1, 'blue', hrefs.PercetangeClicks)}
             </Grid>
           </Grid>
         </TableCell>
@@ -911,12 +989,19 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : newslettersReports.length}
+        rows={isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0)}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
-        onPageChange={handlePageChange}
+        onPageChange={(e) => {
+          SetPageState({
+            "PageName": "reports/NewsletterReports",
+            "PageNumber": e,
+            "SearchData": (notificationNameSearch !== '' || fromDate || toDate) ? { CampaignName: notificationNameSearch, FromDate: fromDate, ToDate: toDate } : null
+          });
+          handlePageChange(e)
+        }}
       />
     )
   }

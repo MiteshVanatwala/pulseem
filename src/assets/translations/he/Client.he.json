@@ -5,6 +5,20 @@
   "removeClientFromAccountDescription": "האם ברצונך להסיר את הלקוח מהחשבון?",
   "removeClientFromSmsTitle": "הסרת לקוח משירותי SMS",
   "removeClientFromSmsDescription": "האם אתה בטוח שברצונך להסיר לקוח משירותי SMS?",
+  "confirmMakeInvalidTitle": "הפוך לשגויים",
+  "confirmMakeInvalidText": "האם אתה בטוח שברצונך להפוך לקוחות אלו לשגויים?",
+  "confirmDeleteFromAllGroups": "האם אתה בטוח שברצונך למחוק את לקוחות אלו מכל הקבוצות?",
+  "confirmRemoveEmail": "האם אתה בטוח שברצונך להסיר לקוח מייל זה מהחשבון?",
+  "confirmRemovePhone": "האם אתה בטוח שברצונך להסיר לקוח סמס זה מהחשבון?",
+  "automationClientsUpdated": "לקוחות אוטומציה עודכנו בהצלחה",
+  "statusUpdated": "סטאטוס עודכן בהצלחה",
+  "invalidClientId": "מזהה לקוח שגוי",
+  "errors": {
+    "zeroSelected": "לא נבחרו לקוחות",
+    "noClientsFound": "לא נמצאו לקוחות לעדכון",
+    "somethingWentWrong": "משהו השתבש בתהליך",
+    "genericError": "שגיאה כללית"
+  },
   "logPageHeaderResource1": {
     "Text": "תוצאות חיפוש לקוחות"
   },
@@ -13,5 +27,40 @@
   "Purchased": "רכישות",
   "totalRevenue": "הכנסה כוללת",
   "avgOrderRevenue": "סכום רכישה ממוצע",
-  "conversionRate": "יחס המרה"
+  "conversionRate": "יחס המרה",
+  "titles": {
+    "searchResult": {
+      "newsletter": {
+        "total": "כל נמעני ניוזלטר",
+        "error": "נמעני ניוזלטר שגויים",
+        "active": "נמעני ניוזלטר פעילים",
+        "removed": "נמעני ניוזלטר מוסרים"
+      },
+      "sms": {
+        "total": "כל נמעני SMS/MMS",
+        "error": "נמעני SMS/MMS שגויים",
+        "active": "נמעני SMS/MMS פעילים",
+        "removed": "נמעני SMS/MMS מוסרים"
+      }
+    }
+  },
+  "setInvalidSucceeded": "הנמענים עודכנו כשגויים.",
+  "subscribedOn": "תאריך הרשמה",
+  "clientStatus": {
+    "email": {
+      "NoEmail": "אין סטטוס",
+      "Active": "פעיל",
+      "Removed": "מוסר",
+      "Restricted": "חסום",
+      "Invalid": "שגוי",
+      "Pending": "ממתין לאישור"
+    },
+    "sms": {
+      "NoSms": "אין סטטוס",
+      "Active": "פעיל",
+      "Removed": "מוסר",
+      "Invalid": "שגוי",
+      "Pending": "ממתין לאישור"
+    }
+  }
 }

@@ -15,16 +15,18 @@ import TabList from '@material-ui/lab/TabList';
 import RecipientsTab from './RecipientsTab';
 import queryString from 'query-string';
 import { Loader } from '../../../components/Loader/Loader';
+import { useLocation } from 'react-router';
 
 const GraphicReport = ({ props, classes }) => {
   const { language, windowSize, isRTL } = useSelector(state => state.core)
+  const location = useLocation();
   const [tabValue, setTabValue] = useState(0);
   const [showLoader, setLoader] = useState(true);
   const [campaignData, setData] = useState(null);
   //const [campaignPreviewImage, setCampaignPreviewImage] = useState(null);
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const qs = queryString.parse(props.location.search);
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
 
   const getData = async () => {
     const newsletterReport = await dispatch(getNewsletterReportsByIds(props.match.params.campaignID));

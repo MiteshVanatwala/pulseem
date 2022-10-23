@@ -83,4 +83,4 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
     )
 }
 
-export default React.memo(GraphReport);
+export default GraphReport;

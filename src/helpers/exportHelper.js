@@ -91,7 +91,31 @@ export const formatDateTime = (arr, t) => {
         if (a.DATE) {
             a.DATE = moment(a.DATE).format("DD/MM/YYYY HH:mm");
         }
-        if (a.SendDate === '' || !a.SendDate) {
+        if (a.SentDate) {
+            a.SentDate = moment(a.SentDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.snt_OpeningDate) {
+            a.snt_OpeningDate = moment(a.snt_OpeningDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ExtraDate1) {
+            a.ExtraDate1 = moment(a.ExtraDate1).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ExtraDate2) {
+            a.ExtraDate2 = moment(a.ExtraDate2).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ExtraDate3) {
+            a.ExtraDate1 = moment(a.ExtraDate3).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ExtraDate4) {
+            a.ExtraDate2 = moment(a.ExtraDate4).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ReminderDate) {
+            a.ReminderDate = moment(a.ReminderDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.BirthDate) {
+            a.BirthDate = moment(a.BirthDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.SendDate === '') {
             a.SendDate = t('common.notSent');
         }
 
@@ -137,3 +161,24 @@ export const replaceClientStatus = (obj) => {
     });
     return obj;
 }
+
+export const replaceExtraFieldHeader = (obj, accountExtraFields) => {
+    Object.entries(accountExtraFields).forEach((ef) => {
+        const key = ef[0];
+        const val = ef[1];
+        if (val && val !== '') {
+            obj[key] = val;
+        }
+        else {
+            delete obj[key];
+        }
+    });
+    return obj;
+}
+
+export const flatObject = (obj = {}) => Object.keys(obj || {}).reduce((acc, cur) => {
+    if (typeof obj[cur] === 'object') {
+        acc = { ...acc, ...flatObject(obj[cur]) }
+    } else { acc[cur] = obj[cur] }
+    return acc
+}, {})

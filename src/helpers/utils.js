@@ -15,3 +15,14 @@ export const renderHtml = (html) => {
         <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
 }
+
+export const getQueryParams = async () => {
+    var searchParams = new URLSearchParams(window.location.search);
+    let queryParams = {}
+    await new Promise((resolve, reject) => resolve(searchParams.forEach(function (value, key) {
+        queryParams = { ...queryParams, [key]: value }
+    })));
+    return queryParams
+}
+
+export const voidFunction = () => null

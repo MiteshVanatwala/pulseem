@@ -38,6 +38,9 @@ import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
+import { useNavigate } from 'react-router';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { voidFunction } from '../../../helpers/utils';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -53,7 +56,7 @@ const Groups = ({ classes }) => {
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) };
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) };
-    const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText };
+    const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText, grey: classes.textColorGrey };
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
@@ -65,6 +68,7 @@ const Groups = ({ classes }) => {
         PageSize: rowsPerPage,
         SearchTerm: "",
     });
+    const navigate = useNavigate()
     moment.locale(language);
 
     const DialogType = {
@@ -98,13 +102,13 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.sms/mms"),
             classes: cellStyle,
-            className: clsx(classes.flex2, classes.textUppercase),
+            className: clsx(classes.flex2, classes.textUppercase, classes.maxWidth325),
             align: "center",
         },
         {
             label: "",
             classes: cellStyle,
-            className: classes.flex4,
+            className: clsx(classes.flex4, classes.maxWidth450),
             align: "center",
         },
     ];
@@ -429,7 +433,10 @@ const Groups = ({ classes }) => {
             AutomationID,
             IsAutoResponder,
             CreationDate,
-            UpdateDate
+            UpdateDate,
+            PendingClients,
+            PendingSmsClients,
+            PendingEmails
         } = row;
         let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
             return e === true
@@ -493,112 +500,385 @@ const Groups = ({ classes }) => {
                         }
                     </Grid>
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-                    <NameValueGridStructure
+                <TableCell classes={cellStyle} align="center" className={classes.flex3}>
+                    <FlexGrid
                         gridArr={[
                             {
-                                name: t("campaigns.recipients"),
-                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0),
-                                classes: {
-                                    name: clsx(colorTextStyle.blue, classes.dataBox),
-                                    value: colorTextStyle.blue,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("campaigns.recipients"),
+                                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0),
+                                                classes: {
+                                                    name: clsx(colorTextStyle.blue, classes.f09rem),
+                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                        GroupIds: [GroupID],
+                                                        Status: 100,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
                             },
                             {
-                                name: t("recipient.Active"),
-                                value: ActiveEmails,
-                                classes: {
-                                    name: clsx(colorTextStyle.green, classes.dataBox),
-                                    value: colorTextStyle.green,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Active"),
+                                                value: ActiveEmails,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.green, classes.f09rem),
+                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                                        GroupIds: [GroupID],
+                                                        Status: 1,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
                             },
                             {
-                                name: t("recipient.Removed"),
-                                value: RemovedEmails,
-                                classes: {
-                                    name: clsx(colorTextStyle.red, classes.dataBox),
-                                    value: colorTextStyle.red,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Removed"),
+                                                value: RemovedEmails,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.red, classes.f09rem),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                                        GroupIds: [GroupID],
+                                                        Status: 2,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
+
                             },
                             {
-                                name: t("recipient.Bounced"),
-                                value: InvalidEmails,
-                                classes: {
-                                    name: clsx(colorTextStyle.red, classes.dataBox),
-                                    value: colorTextStyle.red,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Bounced"),
+                                                value: InvalidEmails,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.red, classes.f09rem),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                                        GroupIds: [GroupID],
+                                                        Status: 4,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
+
                             },
+                            {
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Pending"),
+                                                value: PendingClients || 0,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.grey, classes.f09rem),
+                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (PendingClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                        GroupIds: [GroupID],
+                                                        Status: 5,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
+
+                            },
+
                         ]}
-                        gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
-                        variant="body1"
+                        textVariant="body1"
                         align="center"
                     />
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-                    <NameValueGridStructure
+
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.maxWidth325)}>
+                    <FlexGrid
                         gridArr={[
                             {
-                                name: t("campaigns.recipients"),
-                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0),
-                                classes: {
-                                    name: clsx(colorTextStyle.blue, classes.dataBox),
-                                    value: colorTextStyle.blue,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("campaigns.recipients"),
+                                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0),
+                                                classes: {
+                                                    name: clsx(colorTextStyle.blue, classes.f09rem),
+                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                        GroupIds: [GroupID],
+                                                        Status: 100,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
                             },
                             {
-                                name: t("recipient.Active"),
-                                value: ActiveCell,
-                                classes: {
-                                    name: clsx(colorTextStyle.green, classes.dataBox),
-                                    value: colorTextStyle.green,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Active"),
+                                                value: ActiveCell,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.green, classes.f09rem),
+                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                                        GroupIds: [GroupID],
+                                                        Status: 0,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
                             },
                             {
-                                name: t("recipient.Removed"),
-                                value: RemovedCell,
-                                classes: {
-                                    name: clsx(colorTextStyle.red, classes.dataBox),
-                                    value: colorTextStyle.red,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Removed"),
+                                                value: RemovedCell,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.red, classes.f09rem),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                                        GroupIds: [GroupID],
+                                                        Status: 1,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
+
                             },
                             {
-                                name: t("recipient.Bounced"),
-                                value: InvalidCell,
-                                classes: {
-                                    name: clsx(colorTextStyle.red, classes.dataBox),
-                                    value: colorTextStyle.red,
-                                },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Bounced"),
+                                                value: InvalidCell,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.red, classes.f09rem),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                                        GroupIds: [GroupID],
+                                                        Status: 4,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
+                                                    }
+                                                }) : voidFunction
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
+
                             },
+                            {
+
+                                component: (
+                                    <NameValueGridStructure
+                                        gridArr={[
+                                            {
+                                                name: t("recipient.Pending"),
+                                                value: PendingSmsClients || 0,
+                                                classes: {
+                                                    name: clsx(colorTextStyle.grey, classes.f09rem),
+                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem),
+                                                },
+                                                onClick: (PendingSmsClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                        GroupIds: [GroupID],
+                                                        Status: 5,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
+                                                    }
+                                                }) : voidFunction
+                                                // onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsPending}&GroupID=${GroupID}`)
+                                            }]}
+
+                                        variant="body1"
+                                        gridSize={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+                                    />
+                                ),
+
+                            },
+
                         ]}
-                        gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
-                        variant="body1"
+                        textVariant="body1"
                         align="center"
                     />
                 </TableCell>
                 <TableCell
                     classes={noBorderCellStyle}
                     align="center"
-                    className={classes.flex4}
+                    className={clsx(classes.flex4, classes.maxWidth450)}
                 >
                     <FlexGrid
                         gridArr={[
                             {
-                                onClick: () => {
-                                    window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
-                                },
+                                onClick:
+                                    (
+                                        (ActiveEmails || 0) +
+                                        (RemovedEmails || 0) +
+                                        (RestrictedEmails || 0) +
+                                        (InvalidEmails || 0) +
+                                        (PendingClients || 0)
+                                    ) > 0
+                                        ||
+                                        (
+                                            (ActiveCell || 0) +
+                                            (RemovedCell || 0) +
+                                            (InvalidCell || 0) +
+                                            (PendingSmsClients || 0)
+                                        ) > 0 ?
+                                        () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                            state: {
+                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                                GroupIds: [GroupID],
+                                                ResultTitle: GroupName
+                                            }
+                                        }) : voidFunction,
                                 label: t("recipient.preview"),
                                 component: (
                                     <IconWrapper iconName="preview" className={classes.mxAuto} />
                                 ),
-                                classes: { text: classes.noWrap },
+                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
                             },
                             {
                                 onClick: () => {
@@ -613,7 +893,7 @@ const Groups = ({ classes }) => {
 
                                     />
                                 ),
-                                classes: { text: classes.noWrap },
+                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
                             },
                             {
                                 onClick: () => {
@@ -627,7 +907,7 @@ const Groups = ({ classes }) => {
                                         className={classes.mxAuto}
                                     />
                                 ),
-                                classes: { text: classes.noWrap },
+                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
                             },
                             {
                                 onClick: () => {
@@ -638,7 +918,7 @@ const Groups = ({ classes }) => {
                                 component: (
                                     <IconWrapper iconName="reset" className={classes.mxAuto} />
                                 ),
-                                classes: { text: classes.noWrap },
+                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
                             },
                             {
                                 onClick: () => {
@@ -647,12 +927,9 @@ const Groups = ({ classes }) => {
                                 },
                                 label: t("recipient.settings"),
                                 component: (
-                                    <IconWrapper iconName="settings" className={classes.mxAuto}
-
-                                    />
-
+                                    <IconWrapper iconName="settings" className={classes.mxAuto} />
                                 ),
-                                classes: { text: classes.noWrap },
+                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
                             },
                             //TODO: Disable if !== null
                             {
@@ -668,7 +945,6 @@ const Groups = ({ classes }) => {
                                 classes: { text: clsx(classes.noWrap, !AutomationID ? classes.disabled : null) },
                                 isDisabled: !AutomationID
                             },
-                            //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
                             {
                                 onClick: () => {
                                     if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
@@ -706,7 +982,10 @@ const Groups = ({ classes }) => {
             RemovedCell,
             RemovedEmails,
             TotalRecipients,
-            GroupName
+            RestrictedEmails,
+            GroupName,
+            PendingClients,
+            PendingSmsClients,
         } = row;
         return (
             <TableRow key={GroupID} component="div" classes={rowStyle}>
@@ -720,7 +999,7 @@ const Groups = ({ classes }) => {
                         {renderNameCell(row)}
                         <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
                             <IconWrapper
-                                iconName="delete"
+                                iconName="addRecipient"
                                 className={classes.mxAuto}
                                 onClick={() => {
                                     setSelectedGroups([GroupID])
@@ -731,95 +1010,303 @@ const Groups = ({ classes }) => {
                     </Box>
                     <Box className={classes.mt3}>
                         <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
-                        <NameValueGridStructure
-                            rootClass={classes.autoAlign}
-                            gridSize={{ xs: 3, sm: 3 }}
+                        <FlexGrid
+                            justifyContent="space-between"
                             gridArr={[
                                 {
-                                    name: t("campaigns.recipients"),
-                                    value: TotalRecipients,
-                                    classes: {
-                                        name: colorTextStyle.blue,
-                                        value: colorTextStyle.blue,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("campaigns.recipients"),
+                                                value: TotalRecipients,
+                                                classes: {
+                                                    name: colorTextStyle.blue,
+                                                    value: colorTextStyle.blue,
+                                                },
+                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                        GroupIds: [GroupID],
+                                                        Status: 100,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />
+                                    ),
                                 },
                                 {
-                                    name: t("recipient.Active"),
-                                    value: ActiveEmails,
-                                    classes: {
-                                        name: colorTextStyle.green,
-                                        value: colorTextStyle.green,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
-                                },
-                                {
-                                    name: t("recipient.Removed"),
-                                    value: RemovedEmails,
-                                    classes: {
-                                        name: colorTextStyle.red,
-                                        value: colorTextStyle.red,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
-                                },
-                                {
-                                    name: t("recipient.Bounced"),
-                                    value: InvalidEmails,
-                                    classes: {
-                                        name: colorTextStyle.red,
-                                        value: colorTextStyle.red,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
-                                },
-                            ]}
 
-                            variant="body1"
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Active"),
+                                                value: ActiveEmails,
+                                                classes: {
+                                                    name: colorTextStyle.green,
+                                                    value: colorTextStyle.green,
+                                                },
+                                                onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                                        GroupIds: [GroupID],
+                                                        Status: 1,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />
+                                    ),
+                                },
+                                {
+
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Removed"),
+                                                value: RemovedEmails,
+                                                classes: {
+                                                    name: colorTextStyle.red,
+                                                    value: colorTextStyle.red,
+                                                },
+                                                onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                                        GroupIds: [GroupID],
+                                                        Status: 2,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />
+                                    ),
+
+                                },
+                                {
+
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Bounced"),
+                                                value: InvalidEmails,
+                                                classes: {
+                                                    name: colorTextStyle.red,
+                                                    value: colorTextStyle.red,
+                                                },
+                                                onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                                        GroupIds: [GroupID],
+                                                        Status: 4,
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />),
+
+                                },
+                                {
+
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Pending"),
+                                                value: PendingSmsClients || 0,
+                                                classes: {
+                                                    name: colorTextStyle.grey,
+                                                    value: colorTextStyle.grey,
+                                                },
+                                                onClick: (PendingSmsClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                        GroupIds: [GroupID],
+                                                        Status: 5,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />
+                                    ),
+
+                                },
+
+                            ]}
+                            textVariant="body1"
+                            align="center"
                         />
                     </Box>
-                    <Box className={classes.mt2}>
-                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth, classes.textUppercase)}>{t("recipient.sms/mms")}</Typography>
-                        <NameValueGridStructure
-                            rootClass={classes.autoAlign}
-                            gridSize={{ xs: 3, sm: 3 }}
+                    <Box className={classes.mt3}>
+                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
+                        <FlexGrid
+                            justifyContent="space-between"
                             gridArr={[
                                 {
-                                    name: t("campaigns.recipients"),
-                                    value: TotalRecipients,
-                                    classes: {
-                                        name: colorTextStyle.blue,
-                                        value: colorTextStyle.blue,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("campaigns.recipients"),
+                                                value: TotalRecipients,
+                                                classes: {
+                                                    name: colorTextStyle.blue,
+                                                    value: colorTextStyle.blue,
+                                                },
+                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                        GroupIds: [GroupID],
+                                                        Status: 100,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />
+                                    ),
                                 },
                                 {
-                                    name: t("recipient.Active"),
-                                    value: ActiveCell,
-                                    classes: {
-                                        name: colorTextStyle.green,
-                                        value: colorTextStyle.green,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Active"),
+                                                value: ActiveCell,
+                                                classes: {
+                                                    name: colorTextStyle.green,
+                                                    value: colorTextStyle.green,
+                                                },
+                                                onClick: () => (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                                        GroupIds: [GroupID],
+                                                        Status: 0,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />
+                                    ),
                                 },
                                 {
-                                    name: t("recipient.Removed"),
-                                    value: RemovedCell,
-                                    classes: {
-                                        name: colorTextStyle.red,
-                                        value: colorTextStyle.red,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Removed"),
+                                                value: RemovedCell,
+                                                classes: {
+                                                    name: colorTextStyle.red,
+                                                    value: colorTextStyle.red,
+                                                },
+                                                onClick: () => (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                                        GroupIds: [GroupID],
+                                                        Status: 1,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />
+                                    ),
                                 },
                                 {
-                                    name: t("recipient.Bounced"),
-                                    value: InvalidCell,
-                                    classes: {
-                                        name: colorTextStyle.red,
-                                        value: colorTextStyle.red,
-                                    },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+
+                                    component: (
+                                        <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Bounced"),
+                                                value: InvalidCell,
+                                                classes: {
+                                                    name: colorTextStyle.red,
+                                                    value: colorTextStyle.red,
+                                                },
+                                                onClick: () => (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                                        GroupIds: [GroupID],
+                                                        Status: 4,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]} />),
+
                                 },
+                                {
+
+                                    component: (
+                                        accountFeatures.includes("6") && <NameValueGridStructure
+                                            rootClass={classes.textCenter}
+                                            gridSize={{ xs: 12, sm: 12 }}
+                                            gridArr={[{
+                                                name: t("recipient.Pending"),
+                                                value: PendingClients || 0,
+                                                classes: {
+                                                    name: colorTextStyle.grey,
+                                                    value: colorTextStyle.grey,
+                                                },
+                                                onClick: (PendingClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    state:
+                                                    {
+                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                        GroupIds: [GroupID],
+                                                        Status: 5,
+                                                        TestStatusOfEmailElseSms: 0,
+                                                        ResultTitle: GroupName
+                                                    }
+                                                }) : voidFunction
+                                            }]
+                                            } />),
+                                },
+
                             ]}
-                            variant="body1"
+                            textVariant="body1"
                             align="center"
                         />
                     </Box>
@@ -1064,7 +1551,8 @@ const Groups = ({ classes }) => {
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
-                        openARDialog={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
+                        addClientByQuery={false}
+                        addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
                         getData={getData}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
                     />
@@ -1204,7 +1692,8 @@ const Groups = ({ classes }) => {
             currentPage='groups'
             subPage='groupManagement'
             classes={classes}
-            containerClass={classes.management}>
+            containerClass={classes.management}
+        >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
                 {renderHeader()}
@@ -1226,7 +1715,7 @@ const Groups = ({ classes }) => {
                 {dialog !== null && showDialog()}
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>
-        </DefaultScreen >
+        </DefaultScreen>
     )
 }
 

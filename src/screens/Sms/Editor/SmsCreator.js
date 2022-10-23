@@ -23,7 +23,7 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
 
-import { useHistory } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
@@ -111,7 +111,7 @@ const SmsCreator = ({ classes, ...props }) => {
     maxLength: "13"
   }
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, accountFeatures } = useSelector(
     (state) => state.core
@@ -127,6 +127,7 @@ const SmsCreator = ({ classes, ...props }) => {
     testGroups,
     ToastMessages
   } = useSelector((state) => state.sms);
+  const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [showEmoji, setShowEmoji] = useState(false);
@@ -247,7 +248,9 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   }, [isPageLoaded || accountFeatures]);
 
-  const qs = queryString.parse(props.location.search);
+  const params = useParams()
+
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
 
   const renderHtml = (html) => {
     function createMarkup() {
@@ -347,7 +350,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const initDispatch = async () => {
     setLoader(true);
-    setCampaignId(props && props.match.params.id ? props.match.params.id : -1);
+    setCampaignId(props && params?.id ? params?.id : -1);
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
@@ -407,8 +410,8 @@ const SmsCreator = ({ classes, ...props }) => {
     return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
   }
   const getSavedData = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (props && params?.id) {
+      let response = await dispatch(getSmsByID(params?.id))
       if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
@@ -532,10 +535,10 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleSend = async () => {
     if (phone !== "") {
-      if (props && props.match.params.id) {
+      if (props && params?.id) {
         const smsQuickSendData = {
-          ...quickSendPayload, SmsCampaignID: props.match.params.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: props.match.params.id, Credits: messageCount,
+          ...quickSendPayload, SmsCampaignID: params?.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: params?.id, Credits: messageCount,
             TotalRecipients: 1
           }
         }
@@ -646,7 +649,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
-        <Grid item={true} xs={12} md={4} sm={12} className={classes.buttonForm}>
+        <Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
           </Typography>
@@ -666,7 +669,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campDesc")}
           </Typography>
         </Grid>
-        <Grid item={true} xs={12} md={4} sm={12} className={classes.buttonForm}>
+        <Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Box className={classes.inputCampDiv}>
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
@@ -699,7 +702,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campRemovalDesc")}
           </Typography>
         </Grid>
-        <Grid item={true} xs={12} md={4} sm={12} >
+        <Grid item="true" xs={12} md={4} sm={12} >
           {restoreBool && removalNumber !== null ? (
             <Box className={classes.buttonForm}>
               <Typography className={clsx(classes.buttonHead)}>
@@ -779,7 +782,7 @@ const SmsCreator = ({ classes, ...props }) => {
     return (
       <Grid container className={clsx(classes.msgDiv)}>
         <Grid container>
-          <Grid item={true} xs={12} md={8} className={classes.boxDiv}>
+          <Grid item="true" xs={12} md={8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
               {t("mainReport.yourMessage")}
             </Typography>
@@ -1003,7 +1006,7 @@ const SmsCreator = ({ classes, ...props }) => {
               </Box>
             </Box>
           </Grid>
-          <Grid item={true} xs={12} md={4} sm={12}>
+          <Grid item="true" xs={12} md={4} sm={12}>
             <Box className={classes.switchDiv}>
               <FormGroup>
                 <Switch
@@ -1076,7 +1079,7 @@ const SmsCreator = ({ classes, ...props }) => {
               width={48}
               boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
               activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              className="react-switch"
+              // className="react-switch"
               id="material-switch"
               className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
             />
@@ -1247,13 +1250,13 @@ const SmsCreator = ({ classes, ...props }) => {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
-          history.push(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+          navigate(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
           setToastMessage(null);
         }, 1500);
       } else if (returnToAutomation) {
         window.location = getAutomationReturnUrl(campaignId);
       } else {
-        history.push(`/sms/send/${campaignId}`);
+        navigate(`/sms/send/${campaignId}`);
       }
     }
     else if (r.payload.Status === 3) {
@@ -1302,18 +1305,18 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleDelete = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (props && params?.id) {
+      let response = await dispatch(getSmsByID(params?.id))
       if (response) {
         dispatch(deleteSms(response.payload.SMSCampaignID));
         handleClose();
-        history.push("/SMSCampaigns");
+        navigate("/SMSCampaigns");
       }
     }
     else {
       dispatch(deleteSms(-1));
       handleClose();
-      history.push("/SMSCampaigns");
+      navigate("/SMSCampaigns");
     }
   };
 
@@ -1369,7 +1372,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
-          history.push("/SMSCampaigns");
+          navigate("/SMSCampaigns");
 
         }
         else {
@@ -1383,7 +1386,7 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
     else if (saveBeforeExit === false) {
-      history.push("/SMSCampaigns");
+      navigate("/SMSCampaigns");
       setDialogType(null);
     }
   };
@@ -1968,28 +1971,28 @@ const SmsCreator = ({ classes, ...props }) => {
         spacing={windowSize === "xs" ? 0 : 3}
         className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
         style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
-      <Grid item sm={12} md={12} lg={8}>
-        <Title title={t("mainReport.smsCampaign")}
-          classes={classes}
-          tooltip={t("mainReport.toolTip1")}
-          stepNumber={1}
-          subTitle={t("mainReport.createContent")}
-          topZero={false}
-        />
-        {renderFields()}
-        {renderMsg()}
+        <Grid item sm={12} md={12} lg={8}>
+          <Title title={t("mainReport.smsCampaign")}
+            classes={classes}
+            tooltip={t("mainReport.toolTip1")}
+            stepNumber={1}
+            subTitle={t("mainReport.createContent")}
+            topZero={false}
+          />
+          {renderFields()}
+          {renderMsg()}
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={4}>
+          <Box style={{ maxWidth: 420, marginTop: 20 }}>
+            {renderPhone()}
+          </Box>
+        </Grid>
+        {renderButtons()}
       </Grid>
-      <Grid item xs={12} sm={12} md={12} lg={4}>
-        <Box style={{ maxWidth: 420, marginTop: 20 }}>
-          {renderPhone()}
-        </Box>
-      </Grid>
-      {renderButtons()}
-    </Grid>
-      { renderDialog() }
-  { renderSummary() }
-  { otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} /> }
-  <Loader isOpen={showLoader} />
+      {renderDialog()}
+      {renderSummary()}
+      {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+      <Loader isOpen={showLoader} />
     </DefaultScreen >
   );
 };
