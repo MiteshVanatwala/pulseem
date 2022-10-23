@@ -29,8 +29,8 @@ export const saveUserBlock = createAsyncThunk(
     '/CampaignEditor/SaveUserBlock/', async (block, thunkAPI) => {
         try {
             const jsonData = {
-                //Category: block.category,
-                Data: JSON.stringify(block),
+                Category: block.Category,
+                Data: JSON.stringify(block.Data),
                 //Tags: block.tags.split(',')
             }
             const response = await instence.post(`/CampaignEditor/SaveUserBlock/`, jsonData);
@@ -137,8 +137,7 @@ export const campaignEditorSlice = createSlice({
                     return {
                         id: b.ID,
                         category: b.Category,
-                        data: JSON.parse(b.Data),
-                        Tags: b.TagsAsString.split(',')
+                        data: JSON.parse(b.Data)
                     }
                 });
                 state.userBlocks = blocks

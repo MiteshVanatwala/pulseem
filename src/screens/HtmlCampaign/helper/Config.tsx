@@ -8,10 +8,6 @@ type save = (a: any) => void;
 export interface ConfigOptions {
     classes: any,
     onSaveUserBlock: Function,
-    setRow: Function,
-    getRows: Function,
-    handleDeleteRow: Function,
-    handleEditRow: Function,
     IsRTL: Boolean,
     openModal: any,
     SetDialog: dialog,
@@ -30,10 +26,6 @@ export interface ConfigOptions {
 export const BeeConfig = (Options: ConfigOptions) => {
     const {
         classes,
-        setRow,
-        getRows,
-        handleDeleteRow,
-        handleEditRow,
         onSaveUserBlock,
         IsRTL,
         EditRow,
@@ -49,7 +41,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         SetIsFileSelected,
         t
     } = Options;
-    const dispatch = useDispatch()
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
@@ -85,16 +76,24 @@ export const BeeConfig = (Options: ConfigOptions) => {
             }
         },
         onSaveRow: async (jsonFile: any) => {
-            onSaveUserBlock(jsonFile)
+            if (jsonFile) {
+                const json = JSON.parse(jsonFile)
+                const rowName = json.metadata.name;
+                onSaveUserBlock(jsonFile, rowName);
+                OnReload();
+            }
         },
         contentDialog: {
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     const results = await openModal(EditRow, args, classes);
-                    const metadata: any = {
-                        name: results?.name
+                    if (results?.name) {
+                        const metadata: any = {
+                            name: results?.name
+                        }
+                        resolve(metadata);
                     }
-                    resolve(metadata);
+                    reject();
                 }
             },
             onDeleteRow: {

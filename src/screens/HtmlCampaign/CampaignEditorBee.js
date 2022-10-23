@@ -35,12 +35,6 @@ import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType } from './helper/Config';
-import { getCookie } from '../../helpers/cookies';
-import { BlockMeta } from './modals/BlockMeta';
-import { makeId } from '../../helpers/functions';
-/* Bee */
-// Simulate database API
-import useMockAPI from './hooks/useMockAPI'
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -78,7 +72,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     message: ""
   })
   const { modals, openModal } = useModals()
-  const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI()
+
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
   useEffect(() => {
@@ -180,7 +174,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Init Bee Token & Configuration
   useEffect(() => {
     const initBeeEditor = () => {
-      config.uid = accountSettings?.SubAccountSettings?.UnlayerUniqueID;
+      config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinks;
 
@@ -229,8 +223,15 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (editorRef.current) {
       const c = getConfig();
       editorRef.current.loadConfig(c);
+      editorRef.current.load();
     }
   }
+
+  useEffect(() => {
+    if (userBlocks) {
+      initOptions();
+    }
+  }, [userBlocks])
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
@@ -410,13 +411,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     setIsResponseModal(false);
   }
 
-  const onSaveUserBlock = (e) => {
+  const onSaveUserBlock = (json, blockName) => {
     setLoader(true);
-    const blockRequest = { ...userBlock, Data: e };
+    const blockRequest = { ...userBlock, Data: json, Category: blockName };
     setUserBlock(blockRequest);
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
       setDialog(null);
+      onReload();
     });
   }
   const handleDeleteBlock = (e) => {
@@ -429,10 +431,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const getConfig = () => {
     return BeeConfig({
       classes,
-      setRow,
-      getRows,
-      handleDeleteRow,
-      handleEditRow,
       onSaveUserBlock,
       IsRTL: isRTL,
       EditRow: EditRow,
@@ -442,7 +440,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       SetDialog: setDialog,
       CampaignId: campaignId,
       UserBlocks: userBlocks?.map((ub) => {
-        return ub?.data;
+        return JSON.parse(ub?.data);
       }),
       EditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,

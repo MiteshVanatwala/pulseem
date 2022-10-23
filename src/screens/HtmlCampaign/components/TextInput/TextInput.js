@@ -1,12 +1,12 @@
 import React from 'react'
 
-const TextInput = ({ onChange, value = '' }) => (
+const TextInput = ({ onChange, value = '', placeholder = '' }) => (
   <>
     <input
       type="text"
       value={value}
       onChange={onChange}
-      placeholder="Row name"
+      placeholder={placeholder}
     />
   </>
 )

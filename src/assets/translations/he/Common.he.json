@@ -570,5 +570,7 @@
   "invalidEmail": "כתובת דואר אלקטרוני לא חוקית",
   "adaptive": "מותאם לסלולר",
   "responsive": "רספונסיבי",
-  "chooseFile": "טען קובץ"
+  "chooseFile": "טען קובץ",
+  "createOrEdit": "צור או ערוך תבנית",
+  "templateName": "שם התבנית"
 }

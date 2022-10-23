@@ -26,7 +26,7 @@ const useModals = () => {
       const modalSettings = {
         isOpen: true,
         hasTitleBar: true,
-        content: <Component close={close} save={save} args={args} classes={classes} />,
+        content: <Component onClose={close} save={save} args={args} classes={classes} />,
         close,
         save,
         key: uuidv4()
