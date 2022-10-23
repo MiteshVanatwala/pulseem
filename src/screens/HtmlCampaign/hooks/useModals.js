@@ -13,7 +13,7 @@ const useModals = () => {
     setModals([])
   }
 
-  const openModal = useCallback((Component, args) => {
+  const openModal = useCallback((Component, args, classes) => {
     return new Promise((resolve, reject) => {
       const close = () => {
         setClose()
@@ -26,7 +26,7 @@ const useModals = () => {
       const modalSettings = {
         isOpen: true,
         hasTitleBar: true,
-        content: <Component close={close} save={save} args={args} />,
+        content: <Component close={close} save={save} args={args} classes={classes} />,
         close,
         save,
         key: uuidv4()

@@ -10,14 +10,15 @@ const useMockAPI = () => {
 
   const handleDeleteRow = async (args) => setRows(prevRows => [...prevRows.filter(row => (row?.metadata?.name === args?.row?.metadata?.name) ? false : true)])
 
-  const handleEditRow = async (args, newValue) => setRows(prevRows => {
+  const handleEditRow = async (args, category, tags) => setRows(prevRows => {
     const newRows = prevRows.map(
-      row => (row.metadata.name === args.row.metadata.name
+      row => (row.metadata.category === args.row.metadata.category
         ? {
           ...row,
           metadata: {
             ...row.metadata,
-            name: `${newValue}`,
+            category: `${category}`,
+            tags: `${tags}`
           }
         }
         : row)

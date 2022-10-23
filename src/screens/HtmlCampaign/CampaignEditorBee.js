@@ -192,7 +192,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           else {
             const beeTest = new BeePlugin(beeObject);
-            const template = campaign.JsonData ? JSON.parse(campaign.JsonData) : {};
+            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : {};
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               editorRef.current.load();
@@ -410,43 +410,13 @@ const CampaignEditor = ({ classes, ...props }) => {
     setIsResponseModal(false);
   }
 
-  let category = '';
-  // const checkBlockDialogState = async () => {
-  //   return new Promise((resolve) => {
-  //     const d = document.getElementsByClassName('MuiDialog-container');
-  //     resolve(d.length > 0);
-  //   });
-  // }
-  const saveBlockHandler = async (json) => {
-    const obj = { ...json };
-    if (!obj.metadata) {
-      obj.metadata = {};
-    }
-    obj.metadata.id = obj.uuid;
-    setUserBlock({ data: obj });
-    setDialog(DialogType.SET_USER_BLOCK);
-
-    //resolve({ data: obj });
-    // return new Promise((resolve) => {
-    //   const interval = setInterval(() => {
-    //     checkBlockDialogState().then((d) => {
-    //       if (!d) {
-    //         resolve({ category });
-    //         clearInterval(interval);
-    //       }
-    //     });
-    //   }, 3000)
-    // })
-  }
-  const setBlockFinalValue = (e) => {
+  const onSaveUserBlock = (e) => {
     setLoader(true);
-    category = e.category;
-    const blockRequest = { ...userBlock, category: e.category, tags: e.tags };
+    const blockRequest = { ...userBlock, Data: e };
     setUserBlock(blockRequest);
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
       setDialog(null);
-      editorRef.current.load();
     });
   }
   const handleDeleteBlock = (e) => {
@@ -458,10 +428,12 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const getConfig = () => {
     return BeeConfig({
+      classes,
       setRow,
       getRows,
       handleDeleteRow,
       handleEditRow,
+      onSaveUserBlock,
       IsRTL: isRTL,
       EditRow: EditRow,
       OnReload: onReload,
@@ -475,7 +447,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       EditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
       SetShowGallery: setShowGallery,
-      SaveBlockHandler: saveBlockHandler,
       SetIsFileSelected: setIsFileSelected,
       t: t
     });

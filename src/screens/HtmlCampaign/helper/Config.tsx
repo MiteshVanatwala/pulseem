@@ -1,9 +1,13 @@
+import { useDispatch } from 'react-redux';
+
 type showGallery = (a: Boolean) => void;
 type fileSelected = (a: Boolean) => void;
 type dialog = (a: any) => void;
 type save = (a: any) => void;
 
 export interface ConfigOptions {
+    classes: any,
+    onSaveUserBlock: Function,
     setRow: Function,
     getRows: Function,
     handleDeleteRow: Function,
@@ -15,7 +19,6 @@ export interface ConfigOptions {
     SaveCampaign: save,
     SetShowGallery: showGallery,
     SetIsFileSelected: fileSelected,
-    SaveBlockHandler: Function,
     DeleteBlock: Function,
     EditBlock: Function,
     CampaignId: Number,
@@ -26,10 +29,12 @@ export interface ConfigOptions {
 
 export const BeeConfig = (Options: ConfigOptions) => {
     const {
+        classes,
         setRow,
         getRows,
         handleDeleteRow,
         handleEditRow,
+        onSaveUserBlock,
         IsRTL,
         EditRow,
         openModal,
@@ -40,11 +45,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
         UserBlocks,
         DeleteBlock,
         SaveCampaign,
-        SaveBlockHandler,
         SetShowGallery,
         SetIsFileSelected,
         t
     } = Options;
+    const dispatch = useDispatch()
     return {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
@@ -80,14 +85,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
             }
         },
         onSaveRow: async (jsonFile: any) => {
-            await OnReload();
+            onSaveUserBlock(jsonFile)
         },
         contentDialog: {
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    const results = await openModal(EditRow, args);
-                    const metadata = {
-                        name: results?.category
+                    const results = await openModal(EditRow, args, classes);
+                    const metadata: any = {
+                        name: results?.name
                     }
                     resolve(metadata);
                 }
