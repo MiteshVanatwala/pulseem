@@ -154,9 +154,9 @@ const AddRecipientPopup = ({ classes,
         }
     }, [recipientData])
 
-    useEffect(() => {
-        console.log("SELECTE_LOCAL:", selectedLocalGroups)
-    }, [selectedLocalGroups])
+    // useEffect(() => {
+    //     console.log("SELECTE_LOCAL:", selectedLocalGroups)
+    // }, [selectedLocalGroups])
 
 
     const handleBlur = (e) => {

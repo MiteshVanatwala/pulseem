@@ -31,8 +31,6 @@ const GroupTags = ({ classes,
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const dispatch = useDispatch();
 
-    console.log("SLEEEGROPU:", dropDownProps.selectedGroups)
-
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
