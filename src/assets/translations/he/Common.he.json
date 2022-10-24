@@ -563,5 +563,6 @@
   "uploadInProgress": "הקובץ בתהליך טעינה...",
   "back": "חזור",
   "clientSubscriptionResultTitle": "הרשמות לפי ",
-  "OpenTime": "זמן פתיחה"
+  "OpenTime": "זמן פתיחה",
+  "SelectFormat": "בחר פורמט"
 }

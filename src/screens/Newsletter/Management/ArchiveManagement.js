@@ -23,6 +23,8 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -238,7 +240,7 @@ const ArchiveManagementScreen = ({ classes }) => {
     </>
   }
 
-  const handleDownloadCsv = async () => {
+  const handleDownloadCsv = async (formatType) => {
     const exportColumnHeader = {
       "Name": t('common.CampaignName'),
       "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
@@ -256,9 +258,10 @@ const ArchiveManagementScreen = ({ classes }) => {
     exportFile({
       data: orderList,
       fileName: 'emailReport',
-      exportType: 'xls',
+      exportType: formatType,
       fields: exportColumnHeader
     });
+    setDialogType(null)
   }
   const redirctToArchive = () => {
     window.location = '/react/Campaigns/Archive'
@@ -277,7 +280,7 @@ const ArchiveManagementScreen = ({ classes }) => {
               classes.actionButtonGreen,
               newsletterArchiveData.length > 0 ? null : classes.disabled
             )}
-            onClick={handleDownloadCsv}
+            onClick={() => setDialogType("exportFormat")}
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
@@ -569,6 +572,9 @@ const ArchiveManagementScreen = ({ classes }) => {
   const renderDialog = () => {
     const { data, type } = dialogType || {}
 
+    if (!type)
+      return;
+
     const dialogContent = {
       duplicate: getDuplicateDialog(data)
     }
@@ -597,6 +603,17 @@ const ArchiveManagementScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(e) => handleDownloadCsv(e)}
+        onCancel={() => setDialogType(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

@@ -21,6 +21,8 @@ import { FiPhoneOff } from 'react-icons/fi';
 import { actionURL } from '../../../config';
 import { Dialog } from "../../../components/managment/index";
 import { deleteFromGroups, removeEmailClient, removeSmsClient } from '../../../redux/reducers/clientSlice';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const SmsReplies = ({ classes, ...other }) => {
     const dispatch = useDispatch();
@@ -70,7 +72,7 @@ const SmsReplies = ({ classes, ...other }) => {
                                 classes.actionButtonGreen,
                                 smsReplies && smsReplies.length > 0 ? null : classes.disabled
                             )}
-                            onClick={handleDownloadCsv}
+                            onClick={() => setDialogType('exportFormat')}
                             startIcon={<ExportIcon />}>
                             {t('campaigns.exportFile')}
                         </Button>
@@ -112,7 +114,7 @@ const SmsReplies = ({ classes, ...other }) => {
 
     }
 
-    const handleDownloadCsv = async () => {
+    const handleDownloadCsv = async (formatType) => {
         let orderList = preferredOrder(smsReplies, Object.keys(exportColumnHeader));
         orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
@@ -120,9 +122,10 @@ const SmsReplies = ({ classes, ...other }) => {
         exportFile({
             data: orderList,
             fileName: `smsReplies_${other.props.match.params.id}`,
-            exportType: 'xls',
+            exportType: formatType,
             fields: exportColumnHeader
         });
+        setDialogType(null)
     }
 
     const renderTable = () => {
@@ -496,6 +499,17 @@ const SmsReplies = ({ classes, ...other }) => {
             {renderTable()}
             {renderTablePagination()}
             {renderDialog()}
+            <ConfirmRadioDialog
+                classes={classes}
+                isOpen={dialogType === 'exportFormat'}
+                title={t('campaigns.exportFile')}
+                radioTitle={t('common.SelectFormat')}
+                onConfirm={(e) => handleDownloadCsv(e)}
+                onCancel={() => setDialogType(null)}
+                cookieName={'exportFormat'}
+                defaultValue="xls"
+                options={ExportFileTypes}
+            />
             <Loader isOpen={showLoader} showBackdrop={true} />
         </DefaultScreen>
     )

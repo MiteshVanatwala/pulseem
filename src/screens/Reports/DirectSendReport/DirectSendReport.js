@@ -20,6 +20,8 @@ import { ExportIcon } from '../../../assets/images/managment/index'
 import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useLocation } from 'react-router';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const location = useLocation();
@@ -42,6 +44,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
+  const [dialogType, setDialog] = useState(null);
 
 
   const defaultsDates = {
@@ -238,7 +241,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     }
   };
 
-  const handleExportFile = async () => {
+  const handleExportFile = async (formatType) => {
     setLoader(true);
     let response, finalData, headers, fileName = null;
 
@@ -278,7 +281,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     exportFile({
       data: finalData,
       fileName: fileName,
-      exportType: 'csv',
+      exportType: formatType,
       fields: headers
     });
     setLoader(false);
@@ -323,7 +326,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                     classes.actionButtonGreen,
                     classes.exportButton, exportEnable === false ? classes.disabled : ''
                   )}
-                  onClick={handleExportFile}
+                  onClick={() => setDialog('exportFormat')}
                   startIcon={<ExportIcon />}
                 >
                   {t('campaigns.exportFile')}
@@ -396,6 +399,17 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       containerClass={classes.management}>
       {renderHeader()}
       {renderTabs()}
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(e) => handleExportFile(e)}
+        onCancel={() => setDialog(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   );
