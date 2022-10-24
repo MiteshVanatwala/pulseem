@@ -153,6 +153,7 @@ const MmsReport = ({ classes }) => {
             exportType: formatType,
             fields: exportColumnHeader
         });
+        setDialog(null)
     }
 
     const colorTextStyle = {

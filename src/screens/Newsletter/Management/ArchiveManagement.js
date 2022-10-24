@@ -261,6 +261,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       exportType: formatType,
       fields: exportColumnHeader
     });
+    setDialogType(null)
   }
   const redirctToArchive = () => {
     window.location = '/react/Campaigns/Archive'

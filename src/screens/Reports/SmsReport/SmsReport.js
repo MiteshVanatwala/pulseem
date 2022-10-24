@@ -190,6 +190,7 @@ const SmsReport = ({ classes }) => {
       exportType: formatType,
       fields: exportColumnHeader
     });
+    setDialogType(null)
   }
 
   const renderSearchSection = () => {

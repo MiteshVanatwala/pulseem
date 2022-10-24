@@ -125,6 +125,7 @@ const SmsReplies = ({ classes, ...other }) => {
             exportType: formatType,
             fields: exportColumnHeader
         });
+        setDialogType(null)
     }
 
     const renderTable = () => {
