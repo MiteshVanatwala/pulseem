@@ -24,7 +24,7 @@ const ConfirmRadioDialog = ({
 
     const handleValue = (e) => {
         if (cookieName) {
-            setCookie(cookieName, e.target.value);
+            setCookie(cookieName, e.target.value, { maxAge: 36000000000 });
         }
         setValue(e.target.value);
     }
