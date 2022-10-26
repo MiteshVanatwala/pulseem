@@ -42,6 +42,7 @@ import { EditRow } from './components/ContentDialogs'
 // Generic modal component with event hooks
 import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
+import useMockAPI from './hooks/useMockAPI';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -66,12 +67,12 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [showGallery, setShowGallery] = useState(false);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [alertLogout, setAlertLogout] = useState(false);
-  const [userBlock, setUserBlock] = useState(null);
   const [genericModalData, setGenericModalData] = useState({
     title: "",
     message: ""
   })
   const { modals, openModal } = useModals()
+  const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
 
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -100,7 +101,15 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }, [dispatch]);
   useEffect(() => {
-    initOptions();
+    if (userBlocks) {
+      return new Promise((resolve) => {
+        userBlocks.forEach(x => setRow(x.data));
+        resolve();
+      });
+    }
+    else {
+      initOptions();
+    }
   }, [language, userBlocks]);
 
 
@@ -226,12 +235,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       editorRef.current.load();
     }
   }
-
-  useEffect(() => {
-    if (userBlocks) {
-      initOptions();
-    }
-  }, [userBlocks])
 
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
@@ -413,12 +416,11 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const onSaveUserBlock = (json, blockName) => {
     setLoader(true);
-    const blockRequest = { ...userBlock, Data: json, Category: blockName };
-    setUserBlock(blockRequest);
+    const blockRequest = { Data: json, Category: blockName };
+    setRow(json);
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
       setDialog(null);
-      onReload();
     });
   }
   const handleDeleteBlock = (e) => {
@@ -434,24 +436,17 @@ const CampaignEditor = ({ classes, ...props }) => {
       onSaveUserBlock,
       IsRTL: isRTL,
       EditRow: EditRow,
-      OnReload: onReload,
       openModal: openModal,
       SaveCampaign: onSave,
       SetDialog: setDialog,
+      setRow, getRows, handleDeleteRow, handleEditRow,
       CampaignId: campaignId,
-      UserBlocks: userBlocks?.map((ub) => {
-        return JSON.parse(ub?.data);
-      }),
       EditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
       SetShowGallery: setShowGallery,
       SetIsFileSelected: setIsFileSelected,
       t: t
     });
-  }
-
-  const onReload = () => {
-    dispatch(getUserblocks());
   }
   const onEditBlock = (args) => {
     console.log(args);
@@ -472,12 +467,6 @@ const CampaignEditor = ({ classes, ...props }) => {
         onClose={() => setDialog(null)}
         isOpen={dialog === DialogType.NO_CREDITS_LEFT}
       />
-      {/* <BlockMeta
-        onSubmit={setBlockFinalValue}
-        isOpen={dialog === DialogType.SET_USER_BLOCK}
-        classes={classes}
-        onClose={() => setDialog(null)}
-      /> */}
       <DemoModal modals={modals} />
       <TestSend
         classes={classes}

@@ -25,9 +25,16 @@ const useMockAPI = () => {
     return [...newRows]
   })
 
-  const setRow = async (row) => setRows(prevRows => [...prevRows, JSON.parse(row)])
+  const setRow = async (row) => {
+    setRows(prevRows => [...prevRows, JSON.parse(row)])
+  }
 
-  const getRows = async handle => ref.current
+  const getRows = async (handle) => {
+    console.log(handle);
+    return new Promise((resolve) => {
+      resolve(ref.current)
+    })
+  }
 
   return {
     handleDeleteRow,
