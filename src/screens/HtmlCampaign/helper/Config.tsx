@@ -1,7 +1,3 @@
-import { useDispatch } from 'react-redux';
-
-type showGallery = (a: Boolean) => void;
-type fileSelected = (a: Boolean) => void;
 type dialog = (a: any) => void;
 type save = (a: any) => void;
 
@@ -13,13 +9,12 @@ export interface ConfigOptions {
     SetDialog: dialog,
     EditRow: Function,
     SaveCampaign: save,
-    SetShowGallery: showGallery,
-    SetIsFileSelected: fileSelected,
     DeleteBlock: Function,
     EditBlock: Function,
     CampaignId: Number,
-    UserBlocks: any,
-    OnReload: Function,
+    getRows: Function,
+    handleDeleteRow: Function,
+    handleEditRow: Function,
     t: any
 }
 
@@ -31,14 +26,13 @@ export const BeeConfig = (Options: ConfigOptions) => {
         EditRow,
         openModal,
         EditBlock,
-        OnReload,
         SetDialog,
         CampaignId,
-        UserBlocks,
         DeleteBlock,
         SaveCampaign,
-        SetShowGallery,
-        SetIsFileSelected,
+        getRows,
+        handleDeleteRow,
+        handleEditRow,
         t
     } = Options;
     return {
@@ -71,7 +65,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    resolve(UserBlocks);
+                    const rows = await getRows(args.handle);
+                    resolve(rows);
                 }
             }
         },
@@ -80,20 +75,22 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 const json = JSON.parse(jsonFile)
                 const rowName = json.metadata.name;
                 onSaveUserBlock(jsonFile, rowName);
-                OnReload();
             }
         },
         contentDialog: {
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    const results = await openModal(EditRow, args, classes);
-                    if (results?.name) {
-                        const metadata: any = {
-                            name: results?.name
+                    try {
+                        const results = await openModal(EditRow, args, classes);
+                        if (results?.name) {
+                            const metadata: any = {
+                                name: results?.name
+                            }
+                            resolve(metadata);
                         }
-                        resolve(metadata);
+                    } catch (e) {
+                        reject();
                     }
-                    reject();
                 }
             },
             onDeleteRow: {
@@ -106,23 +103,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     await EditBlock(args);
                     resolve(true);
-                }
-            },
-            filePicker: (resolve: Function, reject: Function, args: any) => {
-                SetShowGallery(true);
-                SetIsFileSelected(false);
-                const button = document.querySelector('[name="btnConfirm"]');
-                if (button) {
-                    button.addEventListener('mouseup', (event) => {
-                        const modal = document.querySelector('.MuiDialog-paper');
-                        const selectedIcon = modal?.querySelector(".image-info svg");
-                        if (selectedIcon) {
-                            const imgElement: ChildNode | any = selectedIcon?.parentNode?.previousSibling;
-                            const style = imgElement?.currentStyle || window.getComputedStyle(imgElement, 'false');
-                            const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
-                            resolve({ url: selectedImage, context: selectedImage });
-                        }
-                    });
                 }
             }
         },
