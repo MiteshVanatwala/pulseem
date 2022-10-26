@@ -684,7 +684,7 @@ const NewslettersReport = ({ classes }) => {
             // href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
-            {(value && value.toLocaleString()) || '0'}
+            {value?.toLocaleString() ?? '0'}
           </Typography>
           <Typography style={{ textDecoration: isLink ? 'underline' : null }}
             className={clsx(classes.middleWrapText, colorTextStyle[type])}>
@@ -812,13 +812,13 @@ const NewslettersReport = ({ classes }) => {
           className={classes.flex4}>
           <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCount + 1, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+              {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCountUnique + 1, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+              {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderPercetangeData(PercetangeClicks + 1, 'blue', hrefs.PercetangeClicks)}
+              {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
             </Grid>
           </Grid>
         </TableCell>
