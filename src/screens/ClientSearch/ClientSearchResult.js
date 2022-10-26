@@ -48,7 +48,7 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportAsXLSX } from '../../helpers/exportFromJson';
+import { exportAsXLSX, exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { switchClientStatus } from '../../helpers/functions';
@@ -56,6 +56,8 @@ import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
+import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
+import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -173,7 +175,8 @@ const ClientSearchResult = ({ props, classes }) => {
     CONFIRM_REMOVE_EMAIL: "CONFIRM_REMOVE_EMAIL",
     CONFIRM_REMOVE_PHONE: "CONFIRM_REMOVE_PHONE",
     UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
-    CONFIRM_INVALID: "CONFIRM_INVALID"
+    CONFIRM_INVALID: "CONFIRM_INVALID",
+    EXPORT_FORMAT: "EXPORT_FORMAT"
   };
   useEffect(() => {
     const initExtraFields = async () => {
@@ -337,7 +340,7 @@ const ClientSearchResult = ({ props, classes }) => {
       handleFilter();
     }
   };
-  const handleDownloadCsv = async () => {
+  const handleDownloadCsv = async (formatType) => {
     setLoader(true);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
@@ -362,13 +365,26 @@ const ClientSearchResult = ({ props, classes }) => {
         orderList = formatDateTime(orderList, t);
         const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
-        await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
+        if (formatType === 'csv') {
+          // Pay attention -> We set XLSX for better header's order.
+          // CSV not supporting numeric extra fields order.
+          exportFile({
+            data: orderList,
+            exportType: formatType,
+            fields: exportColumnHeader.current,
+            fileName: `${fileName}.${formatType}`
+          })
+        }
+        else {
+          await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
+        }
       }
       else {
         setToastMessage(t('common.errorOccured'));
       }
     }
     setLoader(false);
+    setDialog(null);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
@@ -1087,7 +1103,7 @@ const ClientSearchResult = ({ props, classes }) => {
               classes.actionButton,
               classes.actionButtonGreen
             )}
-            onClick={handleDownloadCsv}
+            onClick={() => setDialog(DialogType.EXPORT_FORMAT)}
             startIcon={<ExportIcon />}
           >
             {t("campaigns.exportFile")}
@@ -1707,6 +1723,17 @@ const ClientSearchResult = ({ props, classes }) => {
       {renderTableBody()}
       {renderConfirmDialog()}
       {showDialog()}
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialog === DialogType.EXPORT_FORMAT}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(e) => handleDownloadCsv(e)}
+        onCancel={() => setDialog(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

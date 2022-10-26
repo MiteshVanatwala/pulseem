@@ -29,6 +29,8 @@ import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -58,6 +60,7 @@ const MmsReport = ({ classes }) => {
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const csvLinkRef = useRef(null)
     const [showLoader, setLoader] = useState(true);
+    const [dialogType, setDialog] = useState(null);
 
     moment.locale(language)
 
@@ -146,7 +149,7 @@ const MmsReport = ({ classes }) => {
         "Amount": t('mmsreport.sendAmout'),
     }
 
-    const handleDownloadCsv = async () => {
+    const handleDownloadCsv = async (formatType) => {
         let orderList = preferredOrder(filteredResults, Object.keys(exportColumnHeader));
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
@@ -158,13 +161,14 @@ const MmsReport = ({ classes }) => {
             },
             []
         );
-        console.log("OrderLIST: ", orderList)
+
         exportFile({
             data: orderList,
             fileName: 'mmsReport',
-            exportType: 'csv',
+            exportType: formatType,
             fields: exportColumnHeader
         });
+        setDialog(null)
     }
 
     const colorTextStyle = {
@@ -348,7 +352,7 @@ const MmsReport = ({ classes }) => {
                             classes.actionButtonGreen,
                             mmsReport.length > 0 ? null : classes.disabled
                         )}
-                        onClick={() => handleDownloadCsv()}
+                        onClick={() => setDialog('exportFormat')}
                         startIcon={<ExportIcon />}
                     >
 
@@ -683,6 +687,17 @@ const MmsReport = ({ classes }) => {
                 onPageChange={handlePageChange}
             />
             <GraphReport classes={classes} showLoader={!mmsGraph} reportData={mmsGraph} />
+            <ConfirmRadioDialog
+                classes={classes}
+                isOpen={dialogType === 'exportFormat'}
+                title={t('campaigns.exportFile')}
+                radioTitle={t('common.SelectFormat')}
+                onConfirm={(e) => handleDownloadCsv(e)}
+                onCancel={() => setDialog(null)}
+                cookieName={'exportFormat'}
+                defaultValue="xls"
+                options={ExportFileTypes}
+            />
             <Loader isOpen={showLoader} showBackdrop={true} />
         </DefaultScreen>
     )

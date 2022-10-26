@@ -568,5 +568,6 @@
   "birthDate": "Birth Date",
   "uploadInProgress": "Upload in progress...",
   "back": "Back",
-  "clientSubscriptionResultTitle": "Subscribers of Landing page "
+  "clientSubscriptionResultTitle": "Subscribers of Landing page ",
+  "SelectFormat": "Select format"
 }

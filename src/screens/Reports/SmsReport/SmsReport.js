@@ -26,6 +26,8 @@ import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { voidFunction } from '../../../helpers/utils';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -53,6 +55,7 @@ const SmsReport = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const [smsQuery, setSmsQuery] = useState({ SerachTxt: '', From: priorDate, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
   const [hasRevenue, setHasRevenue] = useState(false);
+  const [dialogType, setDialogType] = useState(null);
 
   moment.locale(language)
 
@@ -254,7 +257,7 @@ const SmsReport = ({ classes }) => {
     });
   }
 
-  const handleDownloadCsv = async () => {
+  const handleDownloadCsv = async (formatType) => {
     let orderList = preferredOrder(smsReport, Object.keys(exportColumnHeader));
     orderList = await statusNumberToString(t, orderList, smsReportStatus);
     orderList = await formatDateTime(orderList, t);
@@ -263,9 +266,10 @@ const SmsReport = ({ classes }) => {
     exportFile({
       data: orderList,
       fileName: 'smsReport',
-      exportType: 'xls',
+      exportType: formatType,
       fields: exportColumnHeader
     });
+    setDialogType(null)
   }
 
   const handleSearch = () => {
@@ -419,7 +423,7 @@ const SmsReport = ({ classes }) => {
               classes.actionButtonGreen,
               smsReport.length > 0 ? null : classes.disabled
             )}
-            onClick={handleDownloadCsv}
+            onClick={() => setDialogType('exportFormat')}
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
@@ -790,6 +794,17 @@ const SmsReport = ({ classes }) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(e) => handleDownloadCsv(e)}
+        onCancel={() => setDialogType(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>

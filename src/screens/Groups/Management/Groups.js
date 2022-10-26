@@ -34,13 +34,14 @@ import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
 import AddRecipientResponse from "./Popup/AddRecipientResponse";
 import EditGroupPopup from "./Popup/EditGroupPopup";
 import ResetGroupPopup from "./Popup/ResetGroupPopup";
-import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { voidFunction } from '../../../helpers/utils';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -1388,8 +1389,8 @@ const Groups = ({ classes }) => {
             }
         }
     }
-    const handleConfirmExport = () => {
-        let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+    const handleConfirmExport = (formatType) => {
+        let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
         if (selectedGroups && selectedGroups.length > 0) {
             queryString += `&Groups=${selectedGroups.join(',')}`;
         }
@@ -1397,33 +1398,24 @@ const Groups = ({ classes }) => {
             const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
             queryString += `&GroupName=${groupName.replace(' ', '-')}`;
         }
+        // This should be change in the .NET site for support the format file selection POP UP 
         window.open(`/Pulseem/ClientExport.csv?${queryString}`);
         setShowConfirmDialog(false);
     }
     const renderConfirmDialog = () => {
-        let dialog = {
-            showDivider: true,
-            icon: <ExportIcon />,
-            title: t("common.ExportGroups"),
-            content: (
-                <Typography style={{ marginBottom: 20 }}>
-                    {!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
-                </Typography>
-            )
-        }
         return (
-            <Dialog
-                cancelText="common.Cancel"
-                confirmText="common.Yes"
-                disableBackdropClick={true}
+            <ConfirmRadioDialog
                 classes={classes}
-                open={showConfirmDialog}
+                isOpen={showConfirmDialog}
+                title={t('common.ExportGroups')}
+                text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
+                radioTitle={t('common.SelectFormat')}
+                onConfirm={(e) => handleConfirmExport(e)}
                 onCancel={() => setShowConfirmDialog(false)}
-                onClose={() => setShowConfirmDialog(false)}
-                onConfirm={() => handleConfirmExport()}
-                {...dialog}>
-                {dialog.content}
-            </Dialog>
+                cookieName={'exportFormat'}
+                defaultValue="xls"
+                options={ExportFileTypes}
+            />
         );
     }
     const handleResponses = (response, actions = {

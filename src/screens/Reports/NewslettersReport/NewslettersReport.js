@@ -26,6 +26,8 @@ import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { voidFunction } from '../../../helpers/utils';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -54,6 +56,8 @@ const NewslettersReport = ({ classes }) => {
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const [showLoader, setLoader] = useState(true);
   const [hasRevenue, setHasRevenue] = useState(false);
+  const [dialogType, setDialog] = useState(null);
+
 
   moment.locale(language)
 
@@ -266,7 +270,7 @@ const NewslettersReport = ({ classes }) => {
     setSearching(false)
   }
 
-  const handleDownloadCsv = async () => {
+  const handleDownloadCsv = async (formatType) => {
     let orderList = [];
 
     if (toFileArray.length > 0) {
@@ -279,7 +283,7 @@ const NewslettersReport = ({ classes }) => {
         exportFile({
           data: orderList,
           fileName: 'emailReport',
-          exportType: 'xls',
+          exportType: formatType,
           fields: exportColumnHeader
         });
     }
@@ -292,12 +296,13 @@ const NewslettersReport = ({ classes }) => {
       exportFile({
         data: orderList,
         fileName: 'emailReport',
-        exportType: 'xls',
+        exportType: formatType,
         fields: exportColumnHeader
       });
     }
 
     setToFileArray([]);
+    setDialog(null)
 
   }
 
@@ -497,9 +502,9 @@ const NewslettersReport = ({ classes }) => {
             className={clsx(
               classes.actionButton,
               classes.actionButtonGreen,
-              newslettersReports.length > 0 ? null : classes.disabled
+              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
             )}
-            onClick={handleDownloadCsv}
+            onClick={() => setDialog('exportFormat')}
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
@@ -679,7 +684,7 @@ const NewslettersReport = ({ classes }) => {
             // href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
-            {(value && value.toLocaleString()) || '0'}
+            {value?.toLocaleString() ?? '0'}
           </Typography>
           <Typography style={{ textDecoration: isLink ? 'underline' : null }}
             className={clsx(classes.middleWrapText, colorTextStyle[type])}>
@@ -807,13 +812,13 @@ const NewslettersReport = ({ classes }) => {
           className={classes.flex4}>
           <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCount + 1, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+              {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCountUnique + 1, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+              {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderPercetangeData(PercetangeClicks + 1, 'blue', hrefs.PercetangeClicks)}
+              {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
             </Grid>
           </Grid>
         </TableCell>
@@ -1029,6 +1034,17 @@ const NewslettersReport = ({ classes }) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
+      <ConfirmRadioDialog
+        classes={classes}
+        isOpen={dialogType === 'exportFormat'}
+        title={t('campaigns.exportFile')}
+        radioTitle={t('common.SelectFormat')}
+        onConfirm={(e) => handleDownloadCsv(e)}
+        onCancel={() => setDialog(null)}
+        cookieName={'exportFormat'}
+        defaultValue="xls"
+        options={ExportFileTypes}
+      />
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   )
