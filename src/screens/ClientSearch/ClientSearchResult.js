@@ -895,6 +895,8 @@ const ClientSearchResult = ({ props, classes }) => {
     }));
     handleResponses(response, assignClientsActions);
     setLoader(false);
+    dispatch(getGroupsBySubAccountId());
+    getData();
   }
   const handleUnSubscribe = async (opt) => {
     setDialog(null);

@@ -181,6 +181,7 @@ const NewslettersReport = ({ classes }) => {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
           CampaignID: id,
+          TestStatusOfEmailElseSms: 1,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
           ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
           PageProperty: GetPageNyName('reports/NewsletterReports')
@@ -717,16 +718,27 @@ const NewslettersReport = ({ classes }) => {
 
   }
   const renderRevenueData = (value, type, data = {}) => {
-    const { href = '', textStyle = null, isRevenueCol = false } = data
+    const { href = '', textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
+      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : voidFunction}>
+        <Typography
+          component={'p'}
+          style={{...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0))  ? 'underline' : null,  cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
+          className={clsx(classes.middleText, colorTextStyle[type] || '')}
+          target="_blank">
+          {(value && value.toLocaleString()) || '0'}  {t("common.NIS")}
+        </Typography>
+        {/* <Typography
+          onClick={() => {
+            onClick()
+          }}
+          component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
           href={href !== '' ? href : ''}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           style={textStyle}
-          target="_blank">
+        >
           {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
-        </Typography>
+        </Typography> */}
       </Box>
     )
   }
