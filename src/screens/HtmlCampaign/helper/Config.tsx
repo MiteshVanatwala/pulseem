@@ -1,5 +1,3 @@
-type showGallery = (a: Boolean) => void;
-type fileSelected = (a: Boolean) => void;
 type dialog = (a: any) => void;
 type save = (a: any) => void;
 
@@ -11,8 +9,6 @@ export interface ConfigOptions {
     SetDialog: dialog,
     EditRow: Function,
     SaveCampaign: save,
-    SetShowGallery: showGallery,
-    SetIsFileSelected: fileSelected,
     DeleteBlock: Function,
     EditBlock: Function,
     CampaignId: Number,
@@ -34,8 +30,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         CampaignId,
         DeleteBlock,
         SaveCampaign,
-        SetShowGallery,
-        SetIsFileSelected,
         getRows,
         handleDeleteRow,
         handleEditRow,
@@ -109,23 +103,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     await EditBlock(args);
                     resolve(true);
-                }
-            },
-            filePicker: (resolve: Function, reject: Function, args: any) => {
-                SetShowGallery(true);
-                SetIsFileSelected(false);
-                const button = document.querySelector('[name="btnConfirm"]');
-                if (button) {
-                    button.addEventListener('mouseup', (event) => {
-                        const modal = document.querySelector('.MuiDialog-paper');
-                        const selectedIcon = modal?.querySelector(".image-info svg");
-                        if (selectedIcon) {
-                            const imgElement: ChildNode | any = selectedIcon?.parentNode?.previousSibling;
-                            const style = imgElement?.currentStyle || window.getComputedStyle(imgElement, 'false');
-                            const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
-                            resolve({ url: selectedImage, context: selectedImage });
-                        }
-                    });
                 }
             }
         },

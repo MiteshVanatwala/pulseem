@@ -13,9 +13,7 @@ import {
   updateUserBlock,
   deleteUserBlock
 } from '../../redux/reducers/campaignEditorSlice';
-import { IoMdImages } from 'react-icons/io'
 import { Loader } from '../../components/Loader/Loader';
-import { options, tools } from './constants'
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
 import TestSend from './modals/TestSend'
@@ -26,12 +24,9 @@ import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
-import Gallery from '../../components/Gallery/Gallery.component';
-import { Dialog } from '../../components/managment/index';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
-import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType } from './helper/Config';
@@ -64,8 +59,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [isResponseModal, setIsResponseModal] = useState(false);
-  const [showGallery, setShowGallery] = useState(false);
-  const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [alertLogout, setAlertLogout] = useState(false);
   const [genericModalData, setGenericModalData] = useState({
     title: "",
@@ -363,52 +356,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     return null;
   }
   //#endregion Pulseem Methods (Save, Delete, Exit, Back, Test Send)
-  //#region  Gallery Dialog
-  const handleSelectedImage = (image) => {
-    setShowGallery(false);
-  }
-  const handleGalleryConfirm = () => {
-    setIsFileSelected(true);
-  }
-  const showGalleryModal = () => {
-    if (showGallery) {
-      let dialog = {};
-      dialog = renderGalleryDialog();
-
-      return (
-        <Dialog
-          maxHeight="calc(70vh)"
-          disableBackdropClick={true}
-          style={{ minHeight: 400 }}
-          showDivider={false}
-          classes={classes}
-          open={showGallery}
-          onClose={() => { setShowGallery(false) }}
-          onConfirm={handleGalleryConfirm}
-          {...dialog}>
-          {dialog.content}
-        </Dialog>
-      );
-    }
-  }
-  const renderGalleryDialog = () => {
-    return {
-      showDivider: false,
-      icon: (
-        <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-      ),
-      title: t("common.imageGallery"),
-      content: (
-        <Gallery
-          classes={classes}
-          isConfirm={isGalleryConfirmed}
-          callbackSelectFile={handleSelectedImage}
-          style={{ minWidth: 400 }}
-          folderType={PulseemFolderType.CLIENT_IMAGES} />
-      )
-    };
-  }
-  //#endregion Gallery Dialog
   const handleCloseReponse = () => {
     setDialog(null);
     setIsResponseModal(false);
@@ -443,8 +390,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       CampaignId: campaignId,
       EditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
-      SetShowGallery: setShowGallery,
-      SetIsFileSelected: setIsFileSelected,
       t: t
     });
   }
@@ -491,7 +436,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       <Box className={classes.containerFullHeight}>
         <div id="bee-plugin-container" className={classes.containerFullHeight}></div>
       </Box>
-      {showGalleryModal()}
       <WizardActions
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
