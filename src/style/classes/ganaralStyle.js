@@ -293,6 +293,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   p10: {
     padding: 10,
   },
+  pbt5: {
+    padding: "5px 0",
+  },
   p20: {
     padding: 20,
   },
@@ -371,15 +374,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mbNeg10: {
     marginBottom: -10,
   },
-  mt5: {
-    marginTop: 5,
+  mlr10: {
+    marginInline: 10,
   },
   ml0: {
     marginLeft: 0,
     marginInlineStart: 0,
   },
   ml5: {
-    marginInlineStart: 5,
+    marginInline: 5,
   },
   ml10: {
     marginInlineStart: 10,
@@ -585,6 +588,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt4: {
     marginTop: 20,
   },
+  mt5: {
+    marginTop: 25,
+  },
+  mt6: {
+    marginTop: 30,
+  },
   mb1: {
     marginBottom: 5,
   },
@@ -630,6 +639,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font30: {
     fontSize: 30,
+  },
+  w100: {
+    width: '100%'
+  },
+  h100: {
+    height: '100%'
+  },
+  hAuto: {
+    height: 'auto'
+  },
+  pRelative: {
+    position: 'ralative'
   },
   borderBox: {
     border: "3px solid #0371ad",
@@ -1517,6 +1538,40 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "700",
     marginTop: "20px",
   },
+  cancelBtn: {
+    outline: "none",
+    padding: "10px",
+    borderRadius: "30px",
+    height: "30px",
+    boxShadow: "0 1px 2px #a5a2a2",
+    border: "0",
+    width: "130px",
+    borderColor: "#c9302c",
+    backgroundColor: "#c9302c",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "700",
+    marginTop: "20px",
+  },
+  saveButton: {
+    outline: "none",
+    padding: "10px",
+    borderRadius: "30px",
+    height: "30px",
+    boxShadow: "0 1px 2px #a5a2a2",
+    border: "0",
+    width: "130px",
+    borderColor: "#4678a1",
+    backgroundColor: "#4678a1",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "700",
+    marginTop: "20px",
+  },
   dropDiv: {
     position: "absolute",
     width: "200px",
@@ -2328,7 +2383,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   marginBlock20: {
     marginBlock: 20,
   },
-
   MuiChipRoot: {
     backgroundColor: "#1c82b2 !important",
     "& span": {
@@ -2411,7 +2465,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflowY: 'scroll',
 
   },
-
   switchButton: {
     background: '#e4e4e4',
     padding: '2px 10px 3px 10px',
@@ -2467,5 +2520,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         right: isRTL ? 'auto' : 10,
       }
     }
+  },
+  dialogZindex: {
+    zIndex: '1000 !important'
+  },
+  testSendDialog: {
+    width: 440,
+    maxWidth: 440
+  },
+  containerFullHeight: {
+    minHeight: 'calc(100vh - 120px)',
+    height: 'calc(100vh - 120px)'
   }
 });

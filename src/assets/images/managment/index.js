@@ -23,6 +23,12 @@ import AddRecipient from './addRecipient.png'
 import AddRecipients from './addRecipients.png'
 import Reset from './reset.png'
 import CloseIcon from './x.png'
+import Word from '../doc.png'
+import File from '../file.png'
+import Excel from '../xls.png'
+import Pdf from '../pdf.png'
+import Ppt from '../ppt.png'
+import Txt from '../txt.png'
 
 
 export {
@@ -50,5 +56,11 @@ export {
   DeletePhone,
   AddRecipient,
   AddRecipients,
-  Reset
+  Reset,
+  Word,
+  File,
+  Excel,
+  Pdf,
+  Ppt,
+  Txt
 }

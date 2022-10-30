@@ -34,6 +34,7 @@ import {
 } from '../../../assets/images/settings/index'
 import { isValidUrl } from '../../../helpers/UrlHelper';
 import { useParams } from 'react-router-dom';
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -1256,7 +1257,8 @@ const NotificationEditor = ({ classes, ...props }) => {
           classes={classes}
           isConfirm={isGalleryConfirmed}
           callbackSelectFile={handleSelectedImage}
-          style={{ minWidth: 400 }} />
+          style={{ minWidth: 400 }}
+          folderType={PulseemFolderType.CLIENT_IMAGES} />
       )
     };
   }

@@ -465,6 +465,7 @@
   "recipients": "נמענים",
   "automation": "אוטומציות",
   "create": "יצירת קמפיין",
+  "createNewsLetterHeader": "יצירת קמפיין ניזלטר",
   "restoreDeleted": "שחזור מחוקים",
   "exportFile": "ייצוא קובץ",
   "lastUpdate": "עודכן ב",
@@ -473,45 +474,108 @@
   "dialogDuplicateTitle": "שיכפול קמפיין",
   "dialogDuplicateContent": "האם ברצונך לשכפל את הקמפיין?",
   "newsletters": "ניוזלטרים",
+  "newsLetterEditor": {
+    "fromName": "שם השולח",
+    "fromEmail": "כתובת אימייל השולח",
+    "campaignSubject": "נושא הקמפיין",
+    "personalization": "מידע אישי בשורת הנושא",
+    "dontSee_clickHere_mail": "אם אינך רואה מייל זה לחץ כאן",
+    "printMail": "הדפס דיוור",
+    "removeCustomerFromMail": "הסרת לקוח מרשימת התפוצה",
+    "updateCustomerInfo": "עדכון פרטי לקוח",
+    "atBeginning": "בראשית המייל",
+    "atBottom": "בתחתית המייל",
+    "mobileSupport": "תמיכה בסלולר",
+    "language": "שפת דיוור",
+    "pre_text": "טקסט מקדים",
+    "gAnalytics": "גוגל אנליטיקס",
+    "textAdditions": "תוספות טקסט",
+    "helpTexts": {
+      "Name": "משמש לזיהוי הקמפיין במערכת. הנמענים לא יראו שם זה",
+      "FromName": "זהו שדה חובה",
+      "FromEmail": "זהו שדה חובה",
+      "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול עלול לפגוע בעבירות.",
+      "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
+      "upload": "יופיע כקובץ מצורף במייל שתשלחו"
+    },
+    "errors": {
+      "invaliApiKey": "Invalid or missing API KEY",
+      "fileExtNotAlwd": "File extension not allowed",
+      "fileCanNotNull": "File cannot be null",
+      "generalError": "Error Occured",
+      "campaignName": "אנא מלא שם קמפיין",
+      "fromName": "אנא מלא שם שולח",
+      "fromEmail": "נא מלא כתובת מייל לשליחה",
+      "campaignSubject": "נא לרשום נושא קומפיין"
+    },
+    "success": "Success"
+  },
   "newsLetterMgmt": {
-    "popupTitle": "אימות כתובת אימייל לשליחה",
-    "popupDesc": "על מנת להבטיח את אבטחת חשבונך, עלינו לאמת שכתובת אימייל זאת שייכת לך זהו תהליך חד פעמי לכל כתובת אימייל המשמשת לשליחה",
-    "firstSlide": {
-      "verifiedEmails": "אימיילים מאומתים",
-      "verifyEmailAddr": "Verify Email Address",
-      "addNewToVerify": "אמת כתובת אימייל נוספת"
-    },
-    "secondSlide": {
-      "title": "אימות קצר לפני שממשיכים",
-      "desc1": "ברצוננו לוודא שהאימייל שהזנתם לשליחה נמצא בבעלותכם",
-      "desc2": "זהו תהליך חד פעמי עבור כל אימייל לשליחה",
-      "error1": "Email is required",
-      "error2": "Invalid Email",
-      "btnText": "שלחו לי אימייל לאימות",
-      "anyProblem": "נתקלת בבעיה?",
-      "contactUs": "צרו איתנו קשר"
-    },
-    "thirdSlide": {
-      "title": "שלחנו!",
-      "desc1": "קוד אימות נשלח בהצלחה לאימייל ",
-      "desc2": "שימו לב, הקוד תקף ל-10 הדקות הקרובות בלבד ",
-      "error1": "הקוד שגוי. נסו שוב או בחרו בשליחה חוזרת",
-      "error2": "Code is required",
-      "did_not_recieved": "לא קיבלתם?",
-      "resend": "שליחה חוזרת",
-      "resendSuccess": "קוד נשלח"
-    },
-    "ErrorSlide": {
-      "title": "יותר מדי נסיונות",
-      "desc": "הכנסתם קוד שגוי יותר מדי פעמים",
-      "contactSupport": "אנא צרו קשר עם התמיכה",
-      "phone": "טלפון",
-      "email": "אימייל"
-    },
-    "successSlide": {
-      "title": "האימייל אומת בהצלחה",
-      "desc": "מעתה תוכלו לשלוח דרך אימייל זה ללא צורך באימות חוזר",
-      "btnTxt": "Continue to campaigns"
+    "emailVerification": {
+      "emailVerificationBtnText": "אימות אימייל",
+      "popupTitle": "אימות כתובת אימייל לשליחה",
+      "popupDesc1": "על מנת להבטיח את אבטחת חשבונך, עלינו לאמת שכתובת אימייל זאת שייכת לך",
+      "popupDesc2": "זהו תהליך חד פעמי לכל כתובת אימייל המשמשת לשליחה",
+      "firstSlide": {
+        "verifiedEmails": "אימיילים מאומתים",
+        "verifyEmailAddr": "אישור כתובת אימייל",
+        "addNewToVerify": "אמת כתובת אימייל נוספת"
+      },
+      "secondSlide": {
+        "title": "אימות קצר לפני שממשיכים",
+        "desc1": ".ברצוננו לוודא שהאימייל שהזנתם לשליחה נמצא בבעלותכם",
+        "desc2": ".זהו תהליך חד פעמי עבור כל אימייל לשליחה",
+        "error1": "אימייל לא תקין",
+        "error2": "אימייל הוא חובה",
+        "error_not_match": "הקוד שהוקלד אינו תואם את הקוד שנשלח",
+        "error_expired": "פג תוקף הקוד",
+        "btnText": "שלחו לי אימייל לאימות",
+        "anyProblem": "נתקלת בבעיה?",
+        "contactUs": "צרו איתנו קשר",
+        "placeholder": "הקלד אימייל"
+      },
+      "thirdSlide": {
+        "title": "שלחנו!",
+        "desc1": "קוד אימות נשלח בהצלחה לאימייל ",
+        "desc2": "שימו לב, הקוד תקף ל-10 הדקות הקרובות בלבד ",
+        "error1": "הקוד שגוי. נסו שוב או בחרו בשליחה חוזרת",
+        "error_not_match": "הקוד שהזנת אינו תואם לקוד שנשלח",
+        "error2": "קוד הוא חובה",
+        "did_not_recieved": "לא קיבלתם?",
+        "resend": "שליחה חוזרת",
+        "resendSuccess": "קוד נשלח",
+        "placeholder": "הזינו אותו כאן",
+        "btnText": "אישור"
+      },
+      "errorSlide": {
+        "title": "יותר מדי נסיונות",
+        "desc": "הכנסתם קוד שגוי יותר מדי פעמים",
+        "contactSupport": "אנא צרו קשר עם התמיכה",
+        "phone": "טלפון",
+        "email": "אימייל"
+      },
+      "successSlide": {
+        "title": "האימייל אומת בהצלחה",
+        "desc": "מעתה תוכלו לשלוח דרך אימייל זה ללא צורך באימות חוזר",
+        "btnTxt": "המשך ל קמפיינים"
+      }
     }
-  }
+  },
+  "sendToContact": "שלח לאיש קשר אחד",
+  "successSent": "נשלח בהצלחה",
+  "missingApi": "מפתח API לא נכון או לא תקין",
+  "campaignNotFound": "לא נמצא קמפיין, או נכשל בשכפול קמפיין לצורך שליחה",
+  "cannotCreateGroup": "לא ניתן ליצור קבוצה לשליחת נסיון",
+  "errorOccured": "אירעה שגיאה",
+  "noneActiveRecipientsFound": "לא נמצאו לקוחות פעילים",
+  "recipientBlocked": "הנמען חסום לקבלת ניוזלטר",
+  "campaignSaved": "הקמפיין נשמר בהצלחה!",
+  "sendTest": "שליחת ניסיון",
+  "rightToLeft": "ימין לשמאל",
+  "leftToRight": "שמאל לימין",
+  "summaryTotal": "סה\"כ עלות",
+  "totalSize": "סה\"כ נפח",
+  "kb": "KB",
+  "saveBlock": "שמור תבנית",
+  "savedBlocks": "תבניות שמורות"
 }
