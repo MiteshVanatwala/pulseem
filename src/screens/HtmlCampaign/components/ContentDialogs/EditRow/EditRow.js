@@ -1,22 +1,29 @@
 import React from 'react'
-import { TextInput } from '../../TextInput'
 import { SolidDialog } from '../../../../../components/managment/SolidDialog';
 import { useTranslation } from "react-i18next";
+import { Box, TextField, Typography } from '@material-ui/core'
+import clsx from 'clsx';
 
 const EditRow = ({ onClose, save, args, classes }) => {
   const { t } = useTranslation();
   const [text, setText] = React.useState(args?.row?.name)
+  //const [tags, setTags] = React.useState(args?.row?.tags);
 
   const onHandleSave = React.useCallback(() => {
     save({
       success: true,
       name: text
+      // tags: tags
     })
   }, [text, save])
+  // }, [text, tags, save])
 
   const handleTextChange = React.useCallback((event) => {
     setText(event?.target?.value)
   }, [])
+  // const handleTagChange = React.useCallback((event) => {
+  //   setTags(event?.target?.value)
+  // }, [])
 
   return (
     <>
@@ -33,12 +40,28 @@ const EditRow = ({ onClose, save, args, classes }) => {
         onClose={onClose}
         children={
           <>
-            <div style={{ width: '100%', display: 'inline-block', position: 'relative', padding: '5px' }}>
-              <TextInput 
-                value={text} 
+            <Box className={clsx(classes.mt15, classes.mb15)}>
+              <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.templateName')}</Typography>
+              <TextField
+                variant='outlined'
+                size='small'
+                value={text}
                 onChange={handleTextChange}
-                placeholder={t("common.templateName")} />
-            </div>
+                className={clsx(classes.textField, classes.minWidth252)}
+                placeholder={t('common.templateName')}
+              />
+            </Box>
+            {/* <Box className={clsx(classes.mt15, classes.mb15)}>
+              <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.tags')}</Typography>
+              <TextField
+                variant='outlined'
+                size='small'
+                value={tags}
+                onChange={handleTagChange}
+                className={clsx(classes.textField, classes.minWidth252)}
+                placeholder={t('common.templateName')}
+              />
+            </Box> */}
           </>
         }
       >

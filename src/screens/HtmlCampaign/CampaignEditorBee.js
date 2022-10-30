@@ -363,17 +363,18 @@ const CampaignEditor = ({ classes, ...props }) => {
     setIsResponseModal(false);
   }
 
-  const onSaveUserBlock = (json, blockName) => {
+  const onSaveUserBlock = (json, block) => {
     setLoader(true);
-    const blockRequest = { Data: json, Category: blockName };
-    setRow(json);
+    const blockRequest = { Data: JSON.stringify(json), Category: block?.metadata?.name, uuid: block?.uuid };
+    const j = JSON.parse(json);
+    j.uuid = block?.uuid;
+    setRow(JSON.stringify(j));
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
-      setDialog(null);
     });
   }
   const handleDeleteBlock = (e) => {
-    const id = e.row.metadata.id;
+    const id = e?.row?.uuid;
     dispatch(deleteUserBlock(id)).then((result) => {
       console.log(result);
     })

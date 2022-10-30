@@ -28,12 +28,7 @@ export const saveCampaign = createAsyncThunk(
 export const saveUserBlock = createAsyncThunk(
     '/CampaignEditor/SaveUserBlock/', async (block, thunkAPI) => {
         try {
-            const jsonData = {
-                Category: block.Category,
-                Data: JSON.stringify(block.Data),
-                //Tags: block.tags.split(',')
-            }
-            const response = await instence.post(`/CampaignEditor/SaveUserBlock/`, jsonData);
+            const response = await instence.post(`/CampaignEditor/SaveUserBlock/`, block);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });

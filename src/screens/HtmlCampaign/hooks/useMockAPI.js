@@ -30,7 +30,6 @@ const useMockAPI = () => {
   }
 
   const getRows = async (handle) => {
-    console.log(handle);
     return new Promise((resolve) => {
       resolve(ref.current)
     })

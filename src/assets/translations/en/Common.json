@@ -582,5 +582,6 @@
   "responsive": "Responsive",
   "chooseFile": "Upload File",
   "createOrEdit": "Create or Edit block",
-  "templateName": "Template name"
+  "templateName": "Template name",
+  "tags": "Tags"
 }

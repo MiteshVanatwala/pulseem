@@ -10,7 +10,6 @@ export interface ConfigOptions {
     EditRow: Function,
     SaveCampaign: save,
     DeleteBlock: Function,
-    EditBlock: Function,
     CampaignId: Number,
     getRows: Function,
     handleDeleteRow: Function,
@@ -25,7 +24,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         IsRTL,
         EditRow,
         openModal,
-        EditBlock,
         SetDialog,
         CampaignId,
         DeleteBlock,
@@ -73,23 +71,20 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onSaveRow: async (jsonFile: any) => {
             if (jsonFile) {
                 const json = JSON.parse(jsonFile)
-                const rowName = json.metadata.name;
-                onSaveUserBlock(jsonFile, rowName);
+                //const rowName = json.metadata.name;
+                onSaveUserBlock(jsonFile, json);
             }
         },
         contentDialog: {
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    try {
-                        const results = await openModal(EditRow, args, classes);
-                        if (results?.name) {
-                            const metadata: any = {
-                                name: results?.name
-                            }
-                            resolve(metadata);
+                    const results = await openModal(EditRow, args, classes);
+                    if (results?.name) {
+                        const metadata: any = {
+                            name: results?.name,
+                            tags: results?.tags
                         }
-                    } catch (e) {
-                        reject();
+                        resolve(metadata);
                     }
                 }
             },
@@ -101,8 +96,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
             },
             onEditRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    await EditBlock(args);
-                    resolve(true);
+                    const results = await openModal(EditRow, args, classes);
+                    if (results?.name) {
+                        const metadata: any = {
+                            name: results?.name
+                            // tags: results?.tags
+                        }
+                        resolve(metadata);
+                    }
                 }
             }
         },
@@ -119,10 +120,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         },
         onAutoSave: () => {
             //saveDesign(false, null, false);
-        },
-        onChange: () => {
-            // saveRef.current = { redirectAfterSave: false, redirectUrl: null, showAnimation: false };
-            // editorRef.current.save();
         },
         onWarning: (alertMessage: any) => {
             console.log('onWarning ', alertMessage)
