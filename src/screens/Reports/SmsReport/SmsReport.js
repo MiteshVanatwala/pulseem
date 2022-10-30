@@ -258,6 +258,9 @@ const SmsReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    if (hasRevenue)
+      exportColumnHeader["Revenue"] = t("common.revenue");
+
     let orderList = preferredOrder(smsReport, Object.keys(exportColumnHeader));
     orderList = await statusNumberToString(t, orderList, smsReportStatus);
     orderList = await formatDateTime(orderList, t);
