@@ -144,11 +144,11 @@ const renderRoutes = (classes, history) => {
       <Route
         exact
         path="/Campaigns/editor"
-        render={props => <CampaignEditorBee {...props} classes={classes} />}
+        element={<CampaignEditorBee classes={classes} />}
       />
       <Route
         path="/Campaigns/editor/:id"
-        render={props => <CampaignEditorBee {...props} classes={classes} />}
+        element={<CampaignEditorBee classes={classes} />}
       />
       <Route
         exact

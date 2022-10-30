@@ -38,16 +38,18 @@ import { EditRow } from './components/ContentDialogs'
 import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
+import { useParams } from 'react-router-dom';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
   const { t } = useTranslation();
   const dispatch = useDispatch()
+  const params = useParams();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
-  const campaignId = props.match.params.id;
+  const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
@@ -89,7 +91,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#endregion
   // Get data by campaign id
   useEffect(() => {
-    if (props.match.params.id != null && props.match.params.id > 0) {
+    if (params?.id != null && params?.id > 0) {
       getData();
     }
   }, [dispatch]);
@@ -162,7 +164,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(getCampaignById(props.match.params.id));
+    await dispatch(getCampaignById(params?.id));
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
@@ -418,7 +420,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         isOpen={dialog === DialogType.TEST_SEND}
         onClose={() => setDialog(null)}
         onSubmit={onTestSendSubmit}
-        campaignId={campaignId || props.match.params.id}
+        campaignId={campaignId || params?.id}
       />
       <GenericModal
         classes={classes}
