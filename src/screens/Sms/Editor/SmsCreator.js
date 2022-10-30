@@ -1363,7 +1363,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleExit = async (saveBeforeExit) => {
     if (saveBeforeExit) {
-      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
+      const payloadToPush = { ...smsModel, SmsCampaignID: smsCampaignId, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
       let saveResponse = await dispatch(smsSave(payloadToPush));
       if (saveResponse) {
         if (saveResponse.payload.Status === 3) {
