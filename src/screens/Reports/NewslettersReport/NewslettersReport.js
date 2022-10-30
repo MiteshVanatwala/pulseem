@@ -271,6 +271,9 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    if (hasRevenue)
+      exportColumnHeader["Revenue"] = t("common.revenue");
+      
     let orderList = [];
 
     if (toFileArray.length > 0) {
@@ -723,7 +726,7 @@ const NewslettersReport = ({ classes }) => {
       <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : voidFunction}>
         <Typography
           component={'p'}
-          style={{...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0))  ? 'underline' : null,  cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
+          style={{ ...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0)) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
           {(value && value.toLocaleString()) || '0'}  {t("common.NIS")}
