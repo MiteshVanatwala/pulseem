@@ -372,7 +372,7 @@ const ClientSearchResult = ({ props, classes }) => {
             data: orderList,
             exportType: formatType,
             fields: exportColumnHeader.current,
-            fileName: `${fileName}.${formatType}`
+            fileName: fileName
           })
         }
         else {
