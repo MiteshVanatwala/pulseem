@@ -7,6 +7,7 @@ import {
   Dialog,
   Paper,
   Divider,
+  Box
 } from "@material-ui/core";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
@@ -15,6 +16,8 @@ import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/Hooks/Core";
+import { ManagmentIcon } from '../managment/index'
+import { CloseIcon } from '../../assets/images/managment/index'
 
 export const BaseDialog = ({
   childrenPadding = true,
@@ -23,9 +26,9 @@ export const BaseDialog = ({
   icon = <AlertIcon />,
   children,
   showDivider = false,
-  onClose = () => {},
-  onCancel = () => {},
-  onConfirm = () => {},
+  onClose = () => { },
+  onCancel = () => { },
+  onConfirm = () => { },
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -54,20 +57,35 @@ export const BaseDialog = ({
 
   const onExit = () => {
     onCancel?.();
+    onClose?.();
   };
 
-  const RenderExitButton = () =>
-    exitButton ?? (
-      <Stack
-        onClick={onExit}
-        className={clsx(classes.dialogExitButton, {
-          [classes.dialogExitButtonRTL]: isRTL,
-          [classes.dialogExitButtonLTR]: !isRTL,
-        })}
-      >
-        x
-      </Stack>
-    );
+  // const RenderExitButton = () =>
+  //   exitButton ?? (
+  //     <Stack
+  //       onClick={onExit}
+  //       className={clsx(classes.dialogExitButton, {
+  //         [classes.dialogExitButtonRTL]: isRTL,
+  //         [classes.dialogExitButtonLTR]: !isRTL,
+  //       })}
+  //     >
+  //       x
+  //     </Stack>
+  //   );
+
+  const RenderExitButton = () => {
+    return <Box
+      onClick={onExit}
+      className={clsx(
+        classes.solidDialogExitButton
+      )}>
+      <ManagmentIcon
+        classes={classes}
+        icon={CloseIcon}
+        uIcon={null}
+      />
+    </Box>
+  }
 
   const RenderTitleDefault = () => (
     <>
@@ -128,20 +146,6 @@ export const BaseDialog = ({
     );
   };
 
-  const RenderIcon = () => {
-    const alertIcon = <AlertIcon />;
-    return (
-      <Stack
-        className={clsx(classes.dialogIconContainer, {
-          [classes.dialogIconContainerRTL]: isRTL,
-          [classes.dialogIconContainerLTR]: !isRTL,
-        })}
-      >
-        {icon || alertIcon}
-      </Stack>
-    );
-  };
-
   const RenderChildren = () => {
     return (
       <Stack
@@ -150,8 +154,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-            ? "calc(65vh)"
-            : "calc(45vh)",
+              ? "calc(65vh)"
+              : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}
@@ -163,15 +167,18 @@ export const BaseDialog = ({
 
   const RenderContent = () => {
     return (
-      <Stack
-        dir={direction[isRTL]}
-        className={clsx(classes.dialogContent, contentStyle)}
-      >
-        {renderTitle ? renderTitle() : RenderTitleDefault()}
-        {RenderChildren()}
+      <>
+        <RenderExitButton />
+        <Stack
+          dir={direction[isRTL]}
+          className={clsx(classes.solidDialog, contentStyle)}
+        >
+          {renderTitle ? renderTitle() : RenderTitleDefault()}
+          {RenderChildren()}
 
-        {renderButtons ? renderButtons() : RenderButtonsDefault()}
-      </Stack>
+          {renderButtons ? renderButtons() : RenderButtonsDefault()}
+        </Stack>
+      </>
     );
   };
 
@@ -187,9 +194,7 @@ export const BaseDialog = ({
       }}
     >
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
-        {RenderExitButton()}
         {RenderContent()}
-        {icon !== "NONE" && RenderIcon()}
       </Paper>
     </Dialog>
   );

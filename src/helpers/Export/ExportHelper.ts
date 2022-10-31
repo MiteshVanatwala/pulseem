@@ -2,6 +2,7 @@ import 'moment/locale/he';
 import i18n from 'i18next';
 import moment from 'moment';
 import Papa from 'papaparse';
+import { AccountExtraFields } from '../../Models/Account/AccountExtraFields';
 export interface ExportConditions {
     IsBoolean: boolean;
     OrderItems: boolean;
@@ -267,3 +268,22 @@ export const StringToArrayBuffer = (str: string) => {
         }
     })
 }
+export const ReplaceExtraFieldHeader = (obj: any, accountExtraFields: AccountExtraFields) => {
+    Object.entries(accountExtraFields).forEach((ef: any) => {
+        const key = ef[0];
+        const val = ef[1];
+        if (val && val !== '') {
+            obj[key] = val;
+        }
+        else {
+            delete obj[key];
+        }
+    });
+    return obj;
+}
+export const FlatObject = (obj: any = {}) => Object.keys(obj || {}).reduce((acc: any, cur: any) => {
+    if (typeof obj[cur] === 'object') {
+        acc = { ...acc, ...FlatObject(obj[cur]) }
+    } else { acc[cur] = obj[cur] }
+    return acc
+}, {})

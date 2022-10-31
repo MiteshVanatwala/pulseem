@@ -98,9 +98,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   dialogContainer: {
-    // zIndex: "1500 !important",
     "& .MuiPaper-root": {
+      borderRadius: 25,
       overflowX: "hidden",
+      boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
+      backgroundColor: '#fff'
     },
     "& .MuiDialog-scrollPaper": {
       "@media screen and (max-width: 450px)": {
@@ -2160,16 +2162,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   dialogExitButton: {
-    width: 25,
-    height: 25,
+    fontSize: 30,
+    fontFamily: 'Assistant',
     textAlign: "center",
-    color: "#fff",
-    borderRadius: 25,
+    color: "#000",
     fontWeight: "700",
-    backgroundColor: "#0371ad",
     position: "absolute",
-    top: "0.5rem",
-    cursor: "pointer",
+    top: 0,
+    cursor: "pointer"
   },
   dialogExitButtonRTL: {
     left: "0.5rem",
@@ -2183,7 +2183,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     margin: "1rem",
     padding: "1rem",
     minWidth: dialogWidth[windowSize],
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     '& .title': {
       '& p': {
         color: '#000',
@@ -2196,7 +2196,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContent: {
     display: "flex",
     flexDirection: "column",
-    border: "3px solid #0371ad",
+    // border: "3px solid #0371ad",
     borderRadius: 5,
     margin: "1rem",
     padding: "1rem",

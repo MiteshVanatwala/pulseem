@@ -272,7 +272,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
     textDecoration: "none",
     width: "100%",
-    padding: iconPadding[windowSize],
+    // padding: iconPadding[windowSize],
     color: "#333",
     "@media screen and (max-width: 768px) and (min-width: 480px)": {
       padding: 0,

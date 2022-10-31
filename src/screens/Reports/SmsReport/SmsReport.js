@@ -24,7 +24,7 @@ import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
+import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
@@ -275,7 +275,7 @@ const SmsReport = ({ classes }) => {
 
   const renderSearchSection = () => {
     const handleSearch = () => {
-      if (campaignName === '' && !smsQuery.From && !smsQuery.To) {
+      if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
         return;
       }
       setSearching(true);
@@ -494,7 +494,7 @@ const SmsReport = ({ classes }) => {
     const isLink = value > 0 && !!onClick;
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
-        onClick={isLink ? onClick : voidFunction}>
+        onClick={isLink ? onClick : VoidFunction}>
         <Typography
           component={'a'}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}

@@ -1,5 +1,6 @@
 import exportFromJSON from 'export-from-json'
 import { ExportType } from 'export-from-json';
+import * as XLSX from 'xlsx';
 
 const defaultData = { fileName: 'PulseemReport', exportType: 'csv' };
 
@@ -47,5 +48,26 @@ const ExportFile = (options: Options) => {
         return result;
     })
 }
+const exportAsXLSX = async (jsonObject: any, heading = null, fileName = "pulseemExport.XLSX", sheetName = 'Sheet1') => {
+    return new Promise((resolve: Function) => {
+        const options: any = {
+            origin: 'A2',
+            skipHeader: true
+        };
+        const ws = XLSX.utils.json_to_sheet(jsonObject, options);
+        const wb = XLSX.utils.book_new();
 
-export { ExportFile }
+        if (heading) {
+            const newHeading = Object.entries(Object.values(heading));
+            const finalHeading = newHeading.map(e => { return e[1] });
+            XLSX.utils.sheet_add_aoa(ws, [finalHeading], { origin: 'A1' });
+        }
+
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+        XLSX.writeFile(wb, fileName, { bookType: 'xlsx', type: 'buffer' });
+
+        resolve();
+    })
+}
+
+export { ExportFile, exportAsXLSX }

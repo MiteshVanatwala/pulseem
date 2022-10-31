@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
 import clsx from "clsx";
@@ -11,7 +11,8 @@ import {
   TextField,
   TableRow,
   TableCell,
-  makeStyles
+  makeStyles,
+  Divider
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
@@ -47,16 +48,17 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportAsXLSX, exportFile } from '../../helpers/exportFromJson';
-import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
-import { ClientStatus } from "../../helpers/PulseemArrays";
-import { switchClientStatus } from '../../helpers/functions';
+import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
+import { HandleExportData, FlatObject, FormatDate, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
+import { ClientStatus, SmsStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
+import { ConvertClientStatus, SourceType } from '../../helpers/UI/TableText';
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -288,7 +290,7 @@ const ClientSearchResult = ({ props, classes }) => {
         "ExtraField12": t('common.ExtraField12'),
         "ExtraField13": t('common.ExtraField13'),
       }
-      updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
+      updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
   }, [extraData])
@@ -347,29 +349,32 @@ const ClientSearchResult = ({ props, classes }) => {
     if (response && response.payload) {
       const data = response.payload;
       if (data.StatusCode === 201) {
-        let orderList = await data.Clients.map((client) => {
-          let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
-          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
-          client.Status = t(tempStatus.value);
-          client.SmsStatus = t(tempSmsStatus.value);
-          return client;
-        }, []);
-        orderList = orderList.map((ol) => { return flatObject(ol) });
+        let orderList = [];
+        orderList = orderList.map((ol) => { return FlatObject(ol) });
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+          orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+          orderList = DeletePropertyFromArrayObject(orderList, "SendDate");
         }
-        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
-        orderList = formatDateTime(orderList, t);
+
         const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
         if (formatType === 'csv') {
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: true,
+            Statuses: SmsStatus,
+            Order: Object.keys(exportColumnHeader.current),
+            DeleteProperties: ["Status"]
+          };
+
+          const result = await HandleExportData(orderList, exportOptions);
           // Pay attention -> We set XLSX for better header's order.
           // CSV not supporting numeric extra fields order.
-          exportFile({
+          ExportFile({
             data: orderList,
             exportType: formatType,
             fields: exportColumnHeader.current,
@@ -377,6 +382,15 @@ const ClientSearchResult = ({ props, classes }) => {
           })
         }
         else {
+          orderList = await data.Clients.map((client) => {
+            let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
+            let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+            client.Status = t(tempStatus.value);
+            client.SmsStatus = t(tempSmsStatus.value);
+            return client;
+          }, []);
+          orderList = OrderItems(orderList, Object.keys(exportColumnHeader.current));
+          orderList = FormatDate(orderList, t);
           await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
         }
       }
@@ -1289,10 +1303,10 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
-        return t(switchClientStatus('email', Status))
+        return t(ConvertClientStatus(Status, SourceType.EMAIL))
       }
       else if (Cellphone && !isEmail && Cellphone !== '') {
-        return t(switchClientStatus('sms', SmsStatus))
+        return t(ConvertClientStatus(SmsStatus, SourceType.SMS))
       }
       return t("emailStatus.noStatus")
     }
@@ -1352,11 +1366,6 @@ const ClientSearchResult = ({ props, classes }) => {
               LogSms_ErrorType: ErrorTypeText
             })}
           </TableCell>}
-        {/* <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-          <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
-          </Typography>
-        </TableCell> */}
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>
           <FlexGrid
             customStyle={{ justifyContent: 'space-between' }}

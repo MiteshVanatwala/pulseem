@@ -215,3 +215,48 @@ export const TranslateKeys = (key: string, t: any) => {
         default: { return { key: 'adjustTitle', value: t("sms.adjustTitle") } }
     }
 }
+export const ConvertClientStatus = (value: string, type: SourceType) => {
+    if (type === SourceType.SMS) {
+        switch (value.toString()) {
+            case '-1':
+            default: {
+                return 'client.clientStatus.sms.NoSms';
+            }
+            case '0': {
+                return 'client.clientStatus.sms.Active';
+            }
+            case '1': {
+                return 'client.clientStatus.sms.Removed';
+            }
+            case '4': {
+                return 'client.clientStatus.sms.Invalid';
+            }
+            case '5': {
+                return 'client.clientStatus.sms.Pending';
+            }
+        }
+    }
+    if (type === SourceType.EMAIL) {
+        switch (value.toString()) {
+            case '-1':
+            default: {
+                return 'client.clientStatus.email.NoEmail';
+            }
+            case '1': {
+                return 'client.clientStatus.email.Active';
+            }
+            case '2': {
+                return 'client.clientStatus.email.Removed';
+            }
+            case '3': {
+                return 'client.clientStatus.email.Restricted';
+            }
+            case '4': {
+                return 'client.clientStatus.email.Invalid';
+            }
+            case '5': {
+                return 'client.clientStatus.email.Pending';
+            }
+        }
+    }
+}

@@ -39,12 +39,11 @@ import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
+import { VoidFunction } from '../../../helpers/Types/common';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -514,7 +513,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -546,7 +545,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Active")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -578,7 +577,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -611,7 +610,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -643,7 +642,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -686,7 +685,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -718,7 +717,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Active")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -750,7 +749,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -782,7 +781,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -814,7 +813,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                                 // onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsPending}&GroupID=${GroupID}`)
                                             }]}
 
@@ -860,7 +859,7 @@ const Groups = ({ classes }) => {
                                                 GroupIds: [GroupID],
                                                 ResultTitle: GroupName
                                             }
-                                        }) : voidFunction,
+                                        }) : VoidFunction,
                                 label: t("recipient.preview"),
                                 component: (
                                     <IconWrapper iconName="preview" className={classes.mxAuto} />
@@ -1023,7 +1022,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1051,7 +1050,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1079,7 +1078,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
 
@@ -1108,7 +1107,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 1,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />),
 
                                 },
@@ -1136,7 +1135,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
 
@@ -1175,7 +1174,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1203,7 +1202,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1231,7 +1230,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1259,7 +1258,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />),
 
                                 },
@@ -1287,7 +1286,7 @@ const Groups = ({ classes }) => {
                                                         TestStatusOfEmailElseSms: 0,
                                                         ResultTitle: GroupName
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]
                                             } />),
                                 },

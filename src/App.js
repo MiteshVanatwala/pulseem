@@ -470,9 +470,7 @@ const App = ({ screenSize }) => {
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'}>
-          <Routes>
-            {renderRoutes(classes, redirect)}
-          </Routes>
+          {renderRoutes(classes, redirect)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>

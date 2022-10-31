@@ -22,7 +22,7 @@ import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
 import { addRecipient, deleteRecipients } from "../../../../redux/reducers/groupSlice";
-import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
+// import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
@@ -94,6 +94,7 @@ const AddRecipientPopup = ({ classes,
     const dispatch = useDispatch();
     const localClasses = useStyles()
     const { extraData } = useSelector((state) => state.sms);
+    const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
@@ -943,7 +944,8 @@ const AddRecipientPopup = ({ classes,
         temp = temp.forEach((t) => {
             tempp[t.key] = t.value
         });
-        let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
+        //let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
+        let extraFields = Object.keys(tempp).filter((key, index) => { return Object.values(tempp)[index] && Object.values(tempp)[index] !== '' });
         const json = windowSize === 'xs' ?
             extraFields.map((ef) => {
                 return {
