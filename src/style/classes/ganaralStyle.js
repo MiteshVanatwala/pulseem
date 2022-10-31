@@ -87,7 +87,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRadius: 25,
       overflowX: "hidden",
       boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
-      backgroundColor: '#f5f5f5'
+      backgroundColor: '#fff'
     },
     "& .MuiDialog-paperWidthSm": {
       minWidth: minDialogWidth[windowSize],

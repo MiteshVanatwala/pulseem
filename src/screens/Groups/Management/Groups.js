@@ -1375,6 +1375,7 @@ const Groups = ({ classes }) => {
         }
     }
     const handleConfirmExport = (formatType) => {
+        setShowConfirmDialog(false);
         let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
         if (selectedGroups && selectedGroups.length > 0) {
             queryString += `&Groups=${selectedGroups.join(',')}`;
@@ -1385,7 +1386,6 @@ const Groups = ({ classes }) => {
         }
         // This should be change in the .NET site for support the format file selection POP UP 
         window.open(`/Pulseem/ClientExport.csv?${queryString}`);
-        setShowConfirmDialog(false);
     }
     const renderConfirmDialog = () => {
         return (
