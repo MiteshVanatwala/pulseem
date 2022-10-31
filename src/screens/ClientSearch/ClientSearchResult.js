@@ -345,61 +345,56 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   const handleDownloadCsv = async (formatType) => {
     setLoader(true);
+    setDialog(null);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
       const data = response.payload;
+      const promiseArray = [];
       if (data.StatusCode === 201) {
         let orderList = [];
-        orderList = orderList.map((ol) => { return FlatObject(ol) });
+        orderList = data.Clients.map((ol) => { return FlatObject(ol) });
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-          orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
+          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          orderList = DeletePropertyFromArrayObject(orderList, "SendDate");
+          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
         }
 
-        const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
-
-        if (formatType === 'csv') {
+        Promise.all(promiseArray).then(() => {
+          const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
           const exportOptions = {
             OrderItems: true,
             FormatDate: true,
             ConvertStatusToString: true,
-            Statuses: SmsStatus,
+            Statuses: ClientStatus.Sms,
             Order: Object.keys(exportColumnHeader.current),
             DeleteProperties: ["Status"]
           };
 
-          const result = await HandleExportData(orderList, exportOptions);
-          // Pay attention -> We set XLSX for better header's order.
-          // CSV not supporting numeric extra fields order.
-          ExportFile({
-            data: orderList,
-            exportType: formatType,
-            fields: exportColumnHeader.current,
-            fileName: fileName
-          })
-        }
-        else {
-          orderList = await data.Clients.map((client) => {
-            let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
-            let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
-            client.Status = t(tempStatus.value);
-            client.SmsStatus = t(tempSmsStatus.value);
-            return client;
-          }, []);
-          orderList = OrderItems(orderList, Object.keys(exportColumnHeader.current));
-          orderList = FormatDate(orderList, t);
-          await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
-        }
+          HandleExportData(orderList, exportOptions).then((result) => {
+            // Pay attention -> We set XLSX for better header's order.
+            // CSV not supporting numeric extra fields order.
+            if (formatType === 'csv') {
+              ExportFile({
+                data: result,
+                exportType: formatType,
+                fields: exportColumnHeader.current,
+                fileName: fileName
+              });
+            }
+            else {
+              exportAsXLSX(result, exportColumnHeader.current, `${fileName}.XLSX`);
+            }
+
+          });
+        });
       }
       else {
-        setToastMessage(t('common.errorOccured'));
+        setToastMessage(ToastMessages.GENERIC_ERROR);
       }
     }
     setLoader(false);
-    setDialog(null);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
@@ -1626,7 +1621,6 @@ const ClientSearchResult = ({ props, classes }) => {
           open={showConfirmDialog}
           onCancel={() => setShowConfirmDialog(false)}
           onClose={() => setShowConfirmDialog(false)}
-          // onConfirm={() => handleConfirmExport()}
           {...dialog}>
           {dialog.content}
         </BaseDialog>
@@ -1738,7 +1732,7 @@ const ClientSearchResult = ({ props, classes }) => {
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}
-        onConfirm={(e) => handleDownloadCsv(e)}
+        onConfirm={(e) => { setShowConfirmDialog(false); handleDownloadCsv(e) }}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
         defaultValue="xls"
