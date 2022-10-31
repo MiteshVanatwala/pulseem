@@ -27,7 +27,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
-import GetEmailVerificationDialog from '../../Verification/Email';
+import EmailVerification from '../../Verification/EmailVerification';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -751,7 +751,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
-      verifyEmail: GetEmailVerificationDialog({ onClose: () => setDialogType(null) }),
+      // verifyEmail: GetEmailVerificationDialog({ onClose: () => setDialogType(null) }),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -777,7 +777,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-
+      <EmailVerification isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

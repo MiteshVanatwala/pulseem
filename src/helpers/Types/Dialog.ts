@@ -26,13 +26,20 @@ export type DialogOptions = {
   reduceTitle?: boolean;
 };
 
+export type Slide_PropTypes = {
+  children: any;
+  className_SlideBody?: any;
+  style_SlideBody?: CSSProperties;
+  slideStyle?: CSSProperties;
+};
+
 export type Slider_Dialog_PropTypes = {
-  slides: any[];
+  slides: Slide_PropTypes[];
   isOpen: boolean;
   VARIABLE_SLIDE_HEIGHTS?: null | String[];
   navigationButtons?: boolean;
   defaultButtons?: boolean;
-  customButtons?: TYPE_JSX | string;
+  customButtons?: TYPE_JSX | null;
   confirmText?: string;
   backText?: string;
   onClose?: Function;
@@ -40,4 +47,9 @@ export type Slider_Dialog_PropTypes = {
   rollBack?: boolean;
   currentStep?: number;
   setCurrentStep?: Function;
+};
+
+export type Verification_Dailog_PropTypes = {
+  isOpen: boolean;
+  onClose: Function;
 };

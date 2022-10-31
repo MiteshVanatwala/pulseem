@@ -8,7 +8,10 @@ import { Stack } from "@mui/material";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import useCore from "../../helpers/hooks/Core";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
-import { Slider_Dialog_PropTypes } from "../../helpers/Types/Dialog";
+import {
+  Slider_Dialog_PropTypes,
+  Slide_PropTypes,
+} from "../../helpers/Types/Dialog";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
 import { POPUP_OBJECT_TYPE } from "../../helpers/Types/Verification";
 import { Button } from "@material-ui/core";
@@ -19,7 +22,7 @@ const SliderDialog = ({
   VARIABLE_SLIDE_HEIGHTS = null,
   navigationButtons = true,
   defaultButtons = true,
-  customButtons = "",
+  customButtons = null,
   confirmText = "common.Ok",
   backText = "notifications.back",
   onClose = () => {},
@@ -61,7 +64,7 @@ const SliderDialog = ({
           : step === 0 && rollBack && setStep(slides.length - 1);
       }
       if (!navigationButtons) {
-        currentStep >= 0
+        currentStep > 0
           ? setCurrentStep(currentStep - 1)
           : currentStep === 0 && rollBack && setCurrentStep(slides.length - 1);
       }
@@ -71,6 +74,7 @@ const SliderDialog = ({
   };
 
   const handleClose = (callback?: Function) => {
+    onClose();
     // callback?.();
     // onClose?.();
     // verificationStep && setVerificationStep(0);
@@ -84,7 +88,7 @@ const SliderDialog = ({
 
   const defaultDialogButtons = () => (
     <>
-      {step === 0 && (
+      {(step || currentStep) === 0 && (
         <Button
           name="btnConfirm"
           variant="contained"
@@ -103,12 +107,13 @@ const SliderDialog = ({
           <>{t(confirmText)}</>
         </Button>
       )}
-      {step > 0 && step < slides.length - 1 && (
+      {(step || currentStep) > 0 && (step || currentStep) < slides.length - 1 && (
         <Button
           variant="contained"
           size="small"
           onClick={async (e: React.MouseEvent<HTMLElement>) => {
-            PrevSlide(onClose?.());
+            // PrevSlide(onClose?.());
+            PrevSlide();
             // if (onClose) {
             // try {
             //   await onClose?.();
@@ -174,7 +179,7 @@ const SliderDialog = ({
           spacing={2}
         >
           {defaultButtons && defaultDialogButtons()}
-          {customButtons}
+          {customButtons && customButtons}
         </Stack>
         <Stack>{navigationButtons && BtnNext}</Stack>
       </Stack>
@@ -186,12 +191,7 @@ const SliderDialog = ({
     className_SlideBody = "",
     style_SlideBody = {},
     slideStyle = {},
-  }: {
-    children: any;
-    className_SlideBody?: any;
-    style_SlideBody?: CSSProperties;
-    slideStyle?: CSSProperties;
-  }) => (
+  }: Slide_PropTypes) => (
     <Stack
       className={clsx(
         classes.carouselItem,
