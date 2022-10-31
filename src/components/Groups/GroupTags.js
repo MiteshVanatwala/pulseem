@@ -4,10 +4,10 @@ import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { setSelectedGroups } from '../../redux/reducers/groupSlice';
+//import { setSelectedGroups } from '../../redux/reducers/groupSlice';
 
 
 const GroupTags = ({ classes,
@@ -25,11 +25,11 @@ const GroupTags = ({ classes,
     ...props
 }) => {
     const { t } = useTranslation();
-    const [groups, setGroups] = useState([]);
-    const { selectedGroups, subAccountAllGroups } = useSelector((state) => state.group);
+    // const [groups, setGroups] = useState([]);
+    const { subAccountAllGroups } = useSelector((state) => state.group);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();

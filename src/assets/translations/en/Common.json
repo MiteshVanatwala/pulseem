@@ -569,5 +569,6 @@
   "uploadInProgress": "Upload in progress...",
   "back": "Back",
   "clientSubscriptionResultTitle": "Subscribers of Landing page ",
-  "SelectFormat": "Select format"
+  "SelectFormat": "Select format",
+  "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>"
 }

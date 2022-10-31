@@ -2,27 +2,27 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
-import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
-import { TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField } from '../../../components/managment/index'
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { TablePagination, ManagmentIcon, DateField, SearchField } from '../../../components/managment/index'
 import { getArchiveCampaigns, cloneArchiveCampaign } from '../../../redux/reducers/newsletterSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { EmailStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { Title } from '../../../components/managment/Title';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
@@ -61,17 +61,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     handleDefaultDates();
   }, [dispatch])
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderArchive.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
-
   const clearSearch = () => {
     setCampaineNameSearch('');
     handleFromDate(null);
@@ -109,8 +98,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             const lastUpdate = SendDate ?
               moment(SendDate, dateFormat).valueOf()
               : moment(UpdatedDate, dateFormat).valueOf()
-            const startFromDate = values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf() || null
-            const endToDate = values.toDate && moment(values.toDate).hour(23).minute(59).valueOf() || null
+            const startFromDate = (values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf()) ?? null
+            const endToDate = (values.toDate && moment(values.toDate).hour(23).minute(59).valueOf()) ?? null
 
             if (!values)
               return true
@@ -133,6 +122,11 @@ const ArchiveManagementScreen = ({ classes }) => {
         setPage(1);
       } catch (error) {
         console.log(error);
+        dispatch(sendToTeamChannel({
+          MethodName: 'handleSearch',
+          ComponentName: 'ArchiveManagement.js',
+          Text: error
+        }));
       }
     }
 
@@ -154,7 +148,6 @@ const ArchiveManagementScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
@@ -248,25 +241,38 @@ const ArchiveManagementScreen = ({ classes }) => {
       "StatusName": t('mainReport.statusName'),
     }
 
-    let orderList = [];
+    const list = searchResults ?? newsletterArchiveData;
 
-    const list = searchResults || newsletterArchiveData;
-    orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
-    orderList = await statusNumberToString(t, orderList, EmailStatus);
-    orderList = await formatDateTime(orderList, t);
-    orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
-      data: orderList,
-      fileName: 'emailReport',
-      exportType: formatType,
-      fields: exportColumnHeader
-    });
-    setDialogType(null)
-  }
-  const redirctToArchive = () => {
-    window.location = '/react/Campaigns/Archive'
-  }
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      Statuses: EmailStatus,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    };
 
+    try {
+      const result = await HandleExportData(list, exportOptions);
+
+      ExportFile({
+        data: result,
+        fileName: 'emailReport',
+        exportType: formatType,
+        fields: exportColumnHeader
+      });
+    } catch (e) {
+      console.log(e);
+      dispatch(sendToTeamChannel({
+        MethodName: 'handleDownloadCsv',
+        ComponentName: 'ArchiveManagement.js',
+        Text: e
+      }));
+    }
+    finally {
+      setLoader(false);
+    }
+  }
 
   const renderManagmentLine = () => {
     return (
@@ -581,13 +587,13 @@ const ArchiveManagementScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 
@@ -597,7 +603,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       subPage='archiveManagement'
       classes={classes}
       containerClass={classes.managmentNarrow}>
-      {renderHeader()}
+      <Title Text={t('campaigns.logPageHeaderArchive.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

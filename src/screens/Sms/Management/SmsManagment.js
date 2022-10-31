@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction
 } from '@material-ui/core'
 import {
@@ -10,7 +10,7 @@ import {
   GroupsIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -22,11 +22,13 @@ import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-//import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import useRedirect from '../../../helpers/Routes/Redirect';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -52,27 +54,17 @@ const SmsManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
+  const Redirect = useRedirect();
 
-  const getData = async () => {
-    await dispatch(getSmsData())
+  const getData = useCallback(() => {
+    dispatch(getSmsData())
     setLoader(false);
-  }
+  }, [dispatch])
 
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('sms.PageResource1.Title')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
+  }, [getData])
 
   const clearSearch = () => {
     setCampaineNameSearch('')
@@ -237,8 +229,9 @@ const SmsManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href="/react/sms/create"
-            //href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
+            onClick={() => {
+              Redirect({ url: "/react/sms/create" })
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -308,7 +301,6 @@ const SmsManagnentScreen = ({ classes }) => {
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/react/sms/send/${Id}`
-        //href: smsOldVersion === "true" ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
       },
       {
         key: 'preview',
@@ -330,7 +322,6 @@ const SmsManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         href: `/react/sms/edit/${Id}`,
-        //href: smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
         rootClass: classes.paddingIcon
       },
       {
@@ -1043,13 +1034,13 @@ const SmsManagnentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (
@@ -1057,7 +1048,7 @@ const SmsManagnentScreen = ({ classes }) => {
       currentPage='sms'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

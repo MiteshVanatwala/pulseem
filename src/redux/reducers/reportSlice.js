@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-//import { instence } from '../../helpers/api';
+import { createSlice } from '@reduxjs/toolkit';
 
 export const reportSlice = createSlice({
   name: 'report',

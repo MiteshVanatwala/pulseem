@@ -564,5 +564,6 @@
   "back": "חזור",
   "clientSubscriptionResultTitle": "הרשמות לפי ",
   "OpenTime": "זמן פתיחה",
-  "SelectFormat": "בחר פורמט"
+  "SelectFormat": "בחר פורמט",
+  "pageNotFound": "<h1>אווופס... 404!</h1><br/><p>הלכת לאיבוד :(</p><p>אל דאגה. השארנו את שורת תפריט הניווט כאן למעלה, במיוחד בשבילך :)</p>"
 }

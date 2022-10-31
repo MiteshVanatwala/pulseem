@@ -5,11 +5,11 @@ import AutomationManagment from './screens/Automations/Management/AutomationsMan
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
 import MmsManagment from './screens/Mms/Management/MmsManagment';
 import SmsManagment from './screens/Sms/Management/SmsManagment';
-import { getCookie, setCookie, cookieListener } from './helpers/cookies'
+import { getCookie, setCookie, cookieListener } from './helpers/Functions/cookies'
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
-import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material-ui/core/styles';
+import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,7 +23,7 @@ import MomentUtils from '@date-io/moment';
 import moment from 'moment'
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
-import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
+import NotificationEdit from './screens/Notifications/Editor/NotificationEdit';
 import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
@@ -36,8 +36,10 @@ import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
+import NotificationSend from './screens/Notifications/Editor/NotificationSend';
+import PageNotFound from './screens/404';
 
-const renderRoutes = (classes, history) => {
+const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
     const { campaignID, automationID, id, notificationID } = useParams()
     const addParam = {
@@ -54,30 +56,30 @@ const renderRoutes = (classes, history) => {
     <Routes>
       <Route
         exact
-        path="/"
+        path="/react"
         element={<DashboardScreen classes={classes} />}
       />
       <Route
 
-        path="/sms/create/"
+        path="/react/sms/create/"
         element={<SmsCreator classes={classes} />}
       />
       <Route
-        path="/sms/edit/:id"
+        path="/react/sms/edit/:id"
         element={<SmsCreator classes={classes} />}
       />
       <Route
 
-        path="/sms/send/:id"
+        path="/react/sms/send/:id"
         element={<SmsSend classes={classes} />}
       />
       <Route
-        path={`/notifications/edit/:notificationID`}
-        element={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
+        path={`/react/notifications/edit/:notificationID`}
+        component={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
       />
       <Route
-        path={`/SendCampaign/:campaignID`}
-        element={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
+        path={`/react/SendCampaign/:campaignID`}
+        component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/PreviewCampaign/:campaignID`}
@@ -92,20 +94,12 @@ const renderRoutes = (classes, history) => {
         element={transferUrl('/Pulseem/DuplicateCampign/', 'campaign')}
       />
       <Route
-        path={`/CampaignStatistics/:campaignID`}
-        // element={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
+        path={`/react/CampaignStatistics/:campaignID`}
+        // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
         element={<GraphicReport classes={classes} />}
       />
       <Route
-        path={`/homepage`}
-        element={transferUrl('/Pulseem/homepage.aspx')}
-      />
-      {/* <Route
-        path={`/Groups`}
-        element={transferUrl('/Pulseem/Groups.aspx')}
-      /> */}
-      <Route
-        path={'/Groups'}
+        path={'/react/Groups'}
         element={<Groups classes={classes} />}
       />
       <Route
@@ -127,12 +121,12 @@ const renderRoutes = (classes, history) => {
       {/* Newsletter */}
       <Route
         exact
-        path="/Campaigns"
+        path="/react/Campaigns"
         element={<NewsletterManagment classes={classes} />}
       />
       <Route
         exact
-        path="/Campaigns/Archive"
+        path="/react/Campaigns/Archive"
         element={<ArchiveManagement classes={classes} />}
       />
       <Route
@@ -161,7 +155,7 @@ const renderRoutes = (classes, history) => {
       />
       {/* SMS */}
       <Route
-        path={`/SMSCampaigns`}
+        path={`/react/SMSCampaigns`}
         element={<SmsManagment classes={classes} />}
       />
       <Route
@@ -187,7 +181,7 @@ const renderRoutes = (classes, history) => {
 
       {/* MMS */}
       <Route
-        path="/MmsCampaigns"
+        path="/react/MmsCampaigns"
         element={<MmsManagment classes={classes} />}
       />
       <Route
@@ -221,7 +215,7 @@ const renderRoutes = (classes, history) => {
         path="/ClientSearchResult"
         element={<ClientSearchResult classes={classes} />}
       /> */}
-      <Route path="/ClientSearchResult/">
+      <Route path="/react/ClientSearchResult/">
         <Route
           path=""
           element={<ClientSearchResult classes={classes} />}
@@ -232,7 +226,7 @@ const renderRoutes = (classes, history) => {
         />
       </Route>
       <Route
-        path="/EditRegistrationPage"
+        path="/react/EditRegistrationPage"
         element={<LandingPagesesManagment classes={classes} />}
       />
       <Route
@@ -245,8 +239,7 @@ const renderRoutes = (classes, history) => {
       />
       {/* Reports */}
       <Route
-        path={`/Reports/NewsletterReports`}
-        //component={transferUrl('/Pulseem/MainReport.aspx')}
+        path={`/react/Reports/NewsletterReports`}
         element={<NewslettersReport classes={classes} />}
       />
       <Route
@@ -254,16 +247,16 @@ const renderRoutes = (classes, history) => {
         element={transferUrl('/Pulseem/ClalReport.aspx')}
       />
       <Route
-        path={`/Reports/SMSMainReport`}
+        path={`/react/Reports/SMSMainReport`}
         element={<SmsReport classes={classes} />}
       />
       <Route
         exact
-        path={"/Reports/SmsReplies/:id"}
+        path={"/react/Reports/SmsReplies/:id"}
         element={<SmsReplies classes={classes} />}
       />
       <Route
-        path={`/Reports/MmsMainReport`}
+        path={`/react/Reports/MmsMainReport`}
         element={<MmsReport classes={classes} />}
       />
       <Route
@@ -296,12 +289,12 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={`/Reports/DirectSendReport`}
+        path={`/react/Reports/DirectSendReport`}
         element={<DirectSendReport classes={classes} isArchive={false} />}
       />
       <Route
         exact
-        path={`/Reports/DirectSendReport/Archive`}
+        path={`/react/Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />
       <Route
@@ -310,7 +303,7 @@ const renderRoutes = (classes, history) => {
       />
       {/* Automations */}
       <Route
-        path="/Automations"
+        path="/react/Automations"
         element={<AutomationManagment classes={classes} />}
       />
       <Route
@@ -333,23 +326,23 @@ const renderRoutes = (classes, history) => {
       {/* Notifications */}
       <Route
         exact
-        path={`/Notifications`}
+        path={`/react/Notifications`}
         element={<NotificationManagement classes={classes} />}
       />
       <Route
         exact
-        path={"/Notification/create"}
-        element={<NotificationEditor classes={classes} />}
+        path={"/react/Notification/create"}
+        element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
-        path={"/Notification/edit/:id"}
-        element={<NotificationEditor classes={classes} />}
+        path={"/react/Notification/edit/:id"}
+        element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
-        path={"/Notification/send/:id"}
-        element={<NotificationEditor classes={classes} />}
+        path={"/react/Notification/send/:id"}
+        element={<NotificationSend classes={classes} />}
       />
       {/* Settings */}
       <Route
@@ -386,64 +379,35 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={`/SiteTracking`}
+        path={`/react/SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
+      />
+      <Route
+        path="*"
+        element={<PageNotFound classes={classes} />}
       />
     </Routes>
   )
 }
 
-const App = ({ isRTL, classes, theme, language }) => {
-  return (
-    <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
-      <MuiThemeProvider theme={theme}>
-        <div dir={isRTL ? 'rtl' : 'ltr'}>
-          {renderRoutes(classes)}
-        </div>
-      </MuiThemeProvider>
-    </MuiPickersUtilsProvider>
-
-  )
-}
-
-function useWidth() {
-  const { language } = useSelector(state => state.core)
-  const theme = getTheme(language);
-  const keys = [...theme.breakpoints.keys].reverse();
-  return (
-    keys.reduce((output, key) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const matches = useMediaQuery(theme.breakpoints.up(key));
-      return !output && matches ? key : output;
-    }, null) || 'xs'
-  );
-}
-
-const AppContainer = () => {
+const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
-  const classes = useClasses(windowSize, isRTL)()
-  const theme = getTheme(language)
-  // const navigate = useNavigate()
-  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
-  const width = useWidth();
-  dispatch(setWindowSize(width))
-  // screenSize && dispatch(setWindowSize(screenSize))
+  screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
+
     const initFeatures = async () => {
+      const isClal = getCookie('isClal');
       if (!accountSettings) {
-        //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
         const settings = await dispatch(getCommonFeatures());
         dispatch(setAccountFeatures(settings.payload));
       }
-      const response = await dispatch(isClalAccount());
-      dispatch(setIsClal(response.payload));
-      // const smsOldVersion = getCookie('OldVersion')
-      // dispatch(setSmsOldVersion(smsOldVersion))
-      setCookie('OldVersion', false);
+      if (isClal === undefined) {
+        const response = await dispatch(isClalAccount());
+        dispatch(setIsClal(response.payload));
+      }
     }
-
 
     const updateToken = () => {
       const culture = getCookie('Culture')
@@ -453,7 +417,7 @@ const AppContainer = () => {
       const jwt = jwt_decode(token)
       const {
         email = '',
-        unique_name = '',
+        // unique_name = '',
         nameid: companyName,
         certthumbprint: billingTypeId,
         role: isAdmin,
@@ -494,21 +458,49 @@ const AppContainer = () => {
   }, [dispatch])
 
 
+  const classes = useClasses(windowSize, isRTL)()
+  const theme = getTheme(language)
+  const redirect = useNavigate()
   document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
   return (
+    <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
+      <MuiThemeProvider theme={theme}>
+        <div dir={isRTL ? 'rtl' : 'ltr'}>
+          <Routes>
+            {renderRoutes(classes, redirect)}
+          </Routes>
+        </div>
+      </MuiThemeProvider>
+    </MuiPickersUtilsProvider>
+
+  )
+}
+
+function useWidth() {
+  const { language } = useSelector(state => state.core)
+  const theme = getTheme(language);
+  const keys = [...theme.breakpoints.keys].reverse();
+  return (
+    keys.reduce((output, key) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const matches = useMediaQuery(theme.breakpoints.up(key));
+      return !output && matches ? key : output;
+    }, null) || 'xs'
+  );
+}
+
+const AppContainer = () => {
+  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
+  const width = useWidth();
+
+  return (
     <StylesProvider jss={jss}>
-      <BrowserRouter basename='/react'>
-
-        <App isRTL={isRTL}
-          classes={classes}
-          // navigate={navigate}
-          theme={theme}
-          language={language} />
-
+      <BrowserRouter basename='/'>
+        <App screenSize={width} />
       </BrowserRouter>
     </StylesProvider>
   )

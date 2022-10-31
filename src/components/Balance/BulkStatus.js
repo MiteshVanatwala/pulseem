@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { GoPackage } from 'react-icons/go/index';
-import { Dialog } from '../managment/index';
 import { Grid, Paper, Typography, Button, Box } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +10,8 @@ import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { setAccountFeatures } from '../../redux/reducers/coreSlice'
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { Dialog } from '../Popup/Dialog';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
@@ -61,21 +62,12 @@ const BulkStatus = ({ classes }) => {
     dispatch(getPackagesDetails());
   }
 
-  const renderHtml = (html) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
-
   const renderPackagesDialog = () => {
     if (isOpenPackageDialog === true && accountSettings !== null) {
       let dialog = {};
       let availablePack = null;
 
-      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType == -1 || !accountSettings.Account.IsPaying) {
+      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType === -1 || !accountSettings.Account.IsPaying) {
         dialog = renderBillingSupportDialog();
       }
       else {
@@ -83,17 +75,19 @@ const BulkStatus = ({ classes }) => {
         availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
       }
 
+      const options = {
+        classes: classes,
+        open: isOpenPackageDialog,
+        onCancel: handleDialogClose,
+        onClose: handleDialogClose,
+        onConfirm: handleDialogClose,
+        showDefaultButtons: false,
+        style: availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null,
+        children: dialog.content
+      }
+
       return (
-        <Dialog
-          classes={classes}
-          open={isOpenPackageDialog}
-          onClose={handleDialogClose}
-          onConfirm={handleDialogClose}
-          showDefaultButtons={false}
-          style={availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null}
-          {...dialog}>
-          {dialog.content}
-        </Dialog>
+        <Dialog {...options}></Dialog>
       );
     }
   }
@@ -108,7 +102,7 @@ const BulkStatus = ({ classes }) => {
       content: (
         <Grid item xs={12} style={{ paddingBottom: 5 }}>
           <Typography className={classes.f20}>
-            {renderHtml(t("common.contactSupportForBilling"))}
+            {RenderHtml(t("common.contactSupportForBilling"))}
           </Typography>
           <Box className={clsx(classes.mt25, classes.flexColCenter)}>
             <Button

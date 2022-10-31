@@ -5,7 +5,6 @@ import clsx from "clsx";
 import {
   Box,
   Typography,
-  Divider,
   TableBody,
   Grid,
   Button,
@@ -86,10 +85,10 @@ const ClientSearchResult = ({ props, classes }) => {
   const {
     language,
     windowSize,
-    email,
-    phone,
+    // email,
+    // phone,
     rowsPerPage,
-    smsOldVersion,
+    // smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
@@ -104,6 +103,8 @@ const ClientSearchResult = ({ props, classes }) => {
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { id } = useParams();
   const [data, setData] = useState([]);
@@ -1608,7 +1609,7 @@ const ClientSearchResult = ({ props, classes }) => {
         )
       }
       return (
-        <Dialog
+        <BaseDialog
           cancelText="common.Cancel"
           confirmText="common.Yes"
           disableBackdropClick={true}
@@ -1619,7 +1620,7 @@ const ClientSearchResult = ({ props, classes }) => {
           // onConfirm={() => handleConfirmExport()}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }

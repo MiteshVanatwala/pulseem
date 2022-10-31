@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Checkbox, Tooltip
 } from '@material-ui/core'
 import Switch from "react-switch";
@@ -17,10 +17,10 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { getCookie, setCookie } from '../../../helpers/cookies';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { EmailStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
@@ -28,6 +28,7 @@ import { voidFunction } from '../../../helpers/utils';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -251,17 +252,6 @@ const NewslettersReport = ({ classes }) => {
     handleSearch();
   }, [newslettersReports, isSearching])
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('mainReport.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
-
   const clearSearch = () => {
     setNotificationNameSearch('')
     handleFromDate(null)
@@ -271,42 +261,38 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
-    if (hasRevenue)
-      exportColumnHeader["Revenue"] = t("common.revenue");
-      
-    let orderList = [];
+    let listToExport = null;
 
     if (toFileArray.length > 0) {
-      const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
-      orderList = await preferredOrder(fileArray, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      orderList =
-        exportFile({
-          data: orderList,
-          fileName: 'emailReport',
-          exportType: formatType,
-          fields: exportColumnHeader
-        });
+      listToExport = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
     }
     else {
-      const list = searchResults || newslettersReports;
-      orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      exportFile({
-        data: orderList,
+      listToExport = searchResults || newslettersReports;
+    }
+
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      Statuses: EmailStatus,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    };
+
+    try {
+      const result = await HandleExportData(listToExport, exportOptions);
+      ExportFile({
+        data: result,
         fileName: 'emailReport',
         exportType: formatType,
         fields: exportColumnHeader
       });
+
+      setToFileArray([]);
+      setDialog(null)
+    } catch (error) {
+      console.log(error);
     }
-
-    setToFileArray([]);
-    setDialog(null)
-
   }
 
 
@@ -338,8 +324,8 @@ const NewslettersReport = ({ classes }) => {
         const lastUpdate = SendDate ?
           moment(SendDate, dateFormat).valueOf()
           : moment(LastEditDate, dateFormat).valueOf()
-        const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-        const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+        const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) || null
+        const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) || null
 
         if (!values)
           return true
@@ -443,7 +429,6 @@ const NewslettersReport = ({ classes }) => {
           <Switch
             checked={isDemoSend}
             onColor="#0371ad"
-            //onHandleColor="#e6f6ff"
             handleDiameter={20}
             uncheckedIcon={false}
             checkedIcon={false}
@@ -572,7 +557,7 @@ const NewslettersReport = ({ classes }) => {
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {Name}
           </Typography>
-          {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+          {Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
@@ -1032,7 +1017,7 @@ const NewslettersReport = ({ classes }) => {
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

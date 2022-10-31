@@ -1709,5 +1709,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         color: '#0371ad'
       }
     },
+  },
+  implementButtonFlex: {
+    maxHeight: '45',
+    marginTop: 'auto',
+    marginBottom: 15,
+    marginInlineStart: 'auto',
+    lineHeight: windowSize === 'xs' ? 1 : null,
+
   }
 });

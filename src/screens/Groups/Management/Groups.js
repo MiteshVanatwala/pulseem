@@ -4,7 +4,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
-    Box, Typography, Divider, TableBody, TableRow, TableCell,
+    Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
@@ -42,6 +42,9 @@ import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { voidFunction } from '../../../helpers/utils';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -113,24 +116,7 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
-    const renderHeader = () => {
-        return (
-            <>
-                <Typography className={classes.managementTitle}>
-                    {t("recipient.logPageHeaderResource1.Text")}
-                </Typography>
-                <Divider />
-            </>
-        );
-    };
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -986,7 +972,7 @@ const Groups = ({ classes }) => {
             RestrictedEmails,
             GroupName,
             PendingClients,
-            PendingSmsClients,
+            PendingSmsClients
         } = row;
         return (
             <TableRow key={GroupID} component="div" classes={rowStyle}>
@@ -1369,7 +1355,7 @@ const Groups = ({ classes }) => {
                 break;
             }
             case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
                 setDialog(DialogType.MESSAGE);
                 break;
             }
@@ -1688,7 +1674,7 @@ const Groups = ({ classes }) => {
         >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
-                {renderHeader()}
+                <Title Text={t('recipient.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
                 {renderSearchSection()}
                 {windowSize !== 'xs' ? renderManagmentLine() :
                     <Box
