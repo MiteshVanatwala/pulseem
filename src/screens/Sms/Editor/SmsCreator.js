@@ -49,7 +49,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import MobilePreview from '../../../components/MobilePreive/Mobile'
+import MobilePreview from '../../../components/MobilePreivew/Mobile'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";

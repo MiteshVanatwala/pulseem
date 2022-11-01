@@ -3,7 +3,7 @@ import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
 import { Box, Grid, Button } from "@material-ui/core";
-import MobilePreview from '../../../components/MobilePreive/Mobile'
+import MobilePreview from '../../../components/MobilePreivew/Mobile'
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux'
