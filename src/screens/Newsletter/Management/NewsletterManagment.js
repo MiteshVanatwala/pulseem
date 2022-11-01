@@ -270,7 +270,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             // onClick={() => setVerificationDialog(true)}
             onClick={() => setDialogType({ type: 'verifyEmail' })}
           >
-            {t('Open Verification')}
+            {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
