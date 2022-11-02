@@ -1079,9 +1079,8 @@ const SmsCreator = ({ classes, ...props }) => {
               width={48}
               boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
               activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              // className="react-switch"
               id="material-switch"
-              className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
+              className={clsx("react-switch", isRTL ? classes.reactSwitchHe : classes.reactSwitch)}
             />
           </FormGroup>
           <div

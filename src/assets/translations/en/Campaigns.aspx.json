@@ -474,6 +474,7 @@
   "recipients": "Recipients",
   "automation": "Automation",
   "create": "Create New Newsletter",
+  "createNewsLetterHeader": "Create New Newsletter Campaign",
   "restoreDeleted": "Restore Deleted",
   "exportFile": "Export File",
   "lastUpdate": "Last update",
@@ -482,36 +483,82 @@
   "dialogDuplicateTitle": "Duplicate campaign",
   "dialogDuplicateContent": "Do you want to duplicate the campaign?",
   "newsletters": "Newsletters",
+  "newsLetterEditor": {
+    "fromName": "From Name",
+    "fromEmail": "From Email",
+    "campaignSubject": "Campaign Subject",
+    "personalization": "Personalization",
+    "dontSee_clickHere_mail": "If you do not see this email, click here",
+    "printMail": "Print mail",
+    "removeCustomerFromMail": "Remove cunstomer from mail list",
+    "updateCustomerInfo": "Update customer information",
+    "atBeginning": "At the beginning",
+    "atBottom": "At the bottom",
+    "mobileSupport": "Mobile support",
+    "language": "Language",
+    "pre_text": "Preview text",
+    "gAnalytics": "Google Analytics",
+    "textAdditions": "Text Additions",
+    "helpTexts": {
+      "Name": "Used to identify the campaign in the system. Recipients will not see this name",
+      "FromName": "This field is mandatory",
+      "FromEmail": "Only verified emails are allowed,",
+      "clickToVerify": "Click here to verify",
+      "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
+      "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
+      "upload": "The file will appear as an attached file in your mail"
+    },
+    "errors": {
+      "invaliApiKey": "Invalid or missing API KEY",
+      "fileExtNotAlwd": "File extension not allowed",
+      "fileCanNotNull": "File cannot be null",
+      "generalError": "Error Occured",
+      "campaignName": "Please fill in campaign name",
+      "fromName": "Please fill in name",
+      "fromEmail": "Please fill in an email address",
+      "campaignSubject": "Please fill in a campaign subject",
+      "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
+      "CampaignNotFound": "Campaign not found or deleted"
+    },
+    "success": "Success"
+  },
   "newsLetterMgmt": {
     "emailVerification": {
+      "emailVerificationBtnText": "Email Verification",
       "popupTitle": "Verification of email to send",
-      "popupDesc": "To ensure the security of your account, we need to verify this email address belongs to you. This is 2 one-time process for each email you send from.",
+      "popupDesc1": "To ensure the security of your account, we need to verify this email address belongs to you.",
+      "popupDesc2": "This is 2 one-time process for each email you send from.",
       "firstSlide": {
         "verifiedEmails": "Verified emails",
         "verifyEmailAddr": "Verify Email Address",
         "addNewToVerify": "Verify Another Email"
       },
       "secondSlide": {
-        "title": "A short verification before we move on",
-        "desc1": "We want to ensure the email you submitted belongs to you",
+        "title": "A short verification before we move on.",
+        "desc1": "We want to ensure the email you submitted belongs to you.",
         "desc2": "This is a one-time process for each email address",
         "btnText": "Send me a verification email",
-        "error1": "Email is required",
-        "error2": "Invalid Email",
+        "error1": "Invalid Email",
+        "error2": "Email is required",
         "anyProblem": "Did you encounter a problem?",
-        "contactUs": "Contact us"
+        "contactUs": "Contact us",
+        "placeholder": "Enter email"
       },
       "thirdSlide": {
         "title": "Sent!",
         "desc1": "A verification code was sent successfully to",
         "desc2": "This code will be valid for the next 10 minutes only",
-        "error1": "Please try again or click on resend below",
+        "error1": "Incorrect code. Please try again or click on resend below",
         "error2": "Code is required",
+        "error_not_match": "The code you entered is not match",
+        "error_expired": "This code is expired",
         "did_not_recieved": "Didn’t receive it?",
         "resend": "Resend",
-        "resendSuccess": "Code Sent"
+        "resendSuccess": "Code Sent",
+        "placeholder": "Enter code",
+        "btnText": "Verify"
       },
-      "ErrorSlide": {
+      "errorSlide": {
         "title": "Too many attempts",
         "desc": "You entered an invalid code too many times",
         "contactSupport": "Please contact support",
@@ -524,5 +571,26 @@
         "btnTxt": "Continue to campaigns"
       }
     }
-  }
+  },
+  "newsLetterSendSettings": {
+    "title": "Send Newsletter",
+    "quickMSend": "Quick manual send",
+    "quickMsgCautionMsg": "Quick manual send will immediately send the campaign to the recipients that were added manually only.",
+    "doYouWantToContinue": "Do you want to proceed?"
+  },
+  "sendToContact": "Send to one contact",
+  "successSent": "Sent Successfully",
+  "missingApi": "Missing api key",
+  "campaignNotFound": "Campaign was not found or cannot duplicated for sending",
+  "cannotCreateGroup": "Cannot create default group for test send",
+  "errorOccured": "Error Occured",
+  "noneActiveRecipientsFound": "None active recipients were found",
+  "recipientBlocked": "Recipient is blocked for Newsletters",
+  "campaignSaved": "Campaign successfully saved!",
+  "sendTest": "Send Test",
+  "rightToLeft": "Right to left",
+  "leftToRight": "Left to right",
+  "summaryTotal": "Total cost",
+  "totalSize": "Total size",
+  "kb": "KB"
 }

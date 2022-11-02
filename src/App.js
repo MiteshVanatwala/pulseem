@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import CampaignEditor from './screens/HtmlCampaign/CampaignEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
@@ -35,6 +36,7 @@ import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
+import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 
 const renderRoutes = (classes, history) => {
@@ -129,6 +131,24 @@ const renderRoutes = (classes, history) => {
         exact
         path="/Campaigns"
         element={<NewsletterManagment classes={classes} />}
+      />
+      <Route
+        exact
+        path="/Campaigns/Create"
+        element={<NewsLetterWizard  classes={classes} />}
+      />
+      <Route
+        path="/Campaigns/Create/:id"
+        element={<NewsLetterWizard classes={classes} />}
+      />
+      <Route
+        exact
+        path="/Campaigns/editor"
+        render={props => <CampaignEditor {...props} classes={classes} />}
+      />
+      <Route
+        path="/Campaigns/editor/:id"
+        render={props => <CampaignEditor {...props} classes={classes} />}
       />
       <Route
         exact
@@ -428,7 +448,6 @@ const AppContainer = () => {
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
   const width = useWidth();
   dispatch(setWindowSize(width))
-  // screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
     const initFeatures = async () => {
@@ -439,8 +458,6 @@ const AppContainer = () => {
       }
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      // const smsOldVersion = getCookie('OldVersion')
-      // dispatch(setSmsOldVersion(smsOldVersion))
       setCookie('OldVersion', false);
     }
 
@@ -502,13 +519,12 @@ const AppContainer = () => {
   return (
     <StylesProvider jss={jss}>
       <BrowserRouter basename='/react'>
-
         <App isRTL={isRTL}
           classes={classes}
           // navigate={navigate}
           theme={theme}
-          language={language} />
-
+          language={language}
+          screenSize={width} />
       </BrowserRouter>
     </StylesProvider>
   )

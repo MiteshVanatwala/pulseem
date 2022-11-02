@@ -5,7 +5,7 @@ import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
   GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
@@ -17,6 +17,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
 } from '../../../redux/reducers/newsletterSlice'
+import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -26,12 +27,14 @@ import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { getCookie } from '../../../helpers/cookies'
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
+  const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -49,11 +52,15 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const accountFeatures = getCookie("accountFeatures")
+  const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
+
   moment.locale(language)
 
-  const getData = async () => {
-    await dispatch(getNewslatterData())
+  const getData = () => {
+    dispatch(getNewslatterData())
+    dispatch(getAuthorizedEmails());
     setLoader(false);
   }
 
@@ -153,7 +160,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
@@ -227,6 +233,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
     window.location = '/react/Campaigns/Archive'
   }
 
+  const handleVerificationDialog = () => {
+
+    setShowEmailVerDialog(true)
+  }
+
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
@@ -234,7 +245,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
+            href='/react/Campaigns/Create'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -268,6 +279,22 @@ const NewsletterManagnentScreen = ({ classes }) => {
             onClick={redirctToArchive}
           >
             {t('master.redirectToArchive')}
+          </Button>
+        </Grid>
+        <Grid item xs={windowSize === 'xs' && 12}>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonDarkBlue
+            )}
+            onClick={() => {
+              handleVerificationDialog();
+            }
+            }
+          >
+            {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
@@ -332,7 +359,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        href: row.IsNewEditor && accountFeatures.includes('41') ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -553,7 +580,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           scope="row"
           classes={{ root: classes.tableCellRoot }}
           className={classes.flex12}>
-          {renderCellIcons(row)}
+          {accountFeatures && renderCellIcons(row)}
 
         </TableCell>
       </TableRow>
@@ -746,6 +773,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       getData()
     }
   })
+
   const renderDialog = () => {
     const { data, type } = dialogType || {}
 
@@ -753,7 +781,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -762,6 +790,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
         {currentDialog.content}
       </Dialog>
@@ -779,6 +808,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      {showEmailVerDialog && <VerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
