@@ -269,7 +269,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
         }
         const createNewFolder = async (event) => {
             event.preventDefault();
-            const folderExists = folders.filter(f => f.FolderName === folderName).length > 0;
+            const folderExists = folders?.filter(f => f.FolderName === folderName).length > 0;
             if (!folderExists) {
                 await dispatch(createFolder({ FolderName: folderName, FolderType: folderType }));
                 initGallery(true);
