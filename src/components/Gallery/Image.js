@@ -2,7 +2,6 @@ import LazyBackground from './Lazy/LazyBackground';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { Typography, Grid, Box } from '@material-ui/core'
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
-import IconWrapper from '../icons/IconWrapper'
 import {
     Word,
     File,
@@ -25,32 +24,19 @@ export const Image = ({
     fileExtension = null,
     folderType = PulseemFolderType.CLIENT_IMAGES }) => {
 
-    const getFileIcon = () => {
-        switch (fileExtension.toLowerCase()) {
-            case 'xlsv':
-            case 'xlsx':
-            case 'xls':
-            case 'csv': {
-                return Excel;
-            }
-            case 'docx':
-            case 'doc': {
-                return Word;
-            }
-            case 'pdf': {
-                return Pdf;
-            }
-            case 'ppt': {
-                return Ppt;
-            }
-            case 'txt': {
-                return Txt;
-            }
-            default: {
-                return File;
-            }
-        }
+    const icons = {
+        xlsv: Excel,
+        xlsx: Excel,
+        xls: Excel,
+        csv: Excel,
+        doc: Word,
+        docx: Word,
+        pdf: Pdf,
+        ppt: Ppt,
+        txt: Txt,
+        '': File
     }
+
     const imageEnter = (fileId) => () => {
         const elem = document.getElementById(fileId);
         if (elem)
@@ -80,7 +66,7 @@ export const Image = ({
                                 onClick={onDelete(imgFile)}
                             >X</button>
                         </LazyBackground>) : (
-                            <LazyBackground url={getFileIcon()} style={[{ backgroundSize: 'auto !important' }]}>
+                            <LazyBackground url={icons[fileExtension.toLowerCase()]} style={[{ backgroundSize: 'auto !important' }]}>
                                 <button
                                     id={`file_${fileIndex}`}
                                     className={clsx(classes.absTopRight)}
