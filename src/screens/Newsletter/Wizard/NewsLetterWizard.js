@@ -23,7 +23,7 @@ import PulseemTags from '../../../components/Tags/PulseemTags'
 import { makeId } from '../../../helpers/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -147,6 +147,7 @@ const NewsLetterWizard = ({ classes }) => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [showCostLoader, setShowCostLoader] = useState(false);
+    const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
         Subject: 200,
@@ -353,7 +354,7 @@ const NewsLetterWizard = ({ classes }) => {
                     //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
-                    window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
+                    navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
                 }
             });
         }
@@ -949,6 +950,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             // checked={selectedRadio.a === 'a1' }
                                                             checked={campaingnValues.WebViewLocation === 1}
                                                             onChange={handleSelectionRadio}
@@ -977,6 +979,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             checked={campaingnValues.PrintLocation === 1}
                                                             onChange={handleSelectionRadio}
                                                             disabled={!!!selectedCheck.PrintLocation}
@@ -1002,6 +1005,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             checked={campaingnValues.UnsubscribeLocation === 1}
                                                             onChange={handleSelectionRadio}
                                                             disabled={!!!selectedCheck.UnsubscribeLocation}
@@ -1027,6 +1031,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             checked={campaingnValues.UpdateClient === 1}
                                                             onChange={handleSelectionRadio}
                                                             disabled={!!!selectedCheck.UpdateClient}
@@ -1064,6 +1069,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             // checked={selectedRadio.a === 'a1' }
                                                             checked={campaingnValues.WebViewLocation === 2}
                                                             onChange={handleSelectionRadio}
@@ -1100,6 +1106,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             checked={campaingnValues.PrintLocation === 2}
                                                             onChange={handleSelectionRadio}
                                                             disabled={!!!selectedCheck.PrintLocation}
@@ -1126,6 +1133,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             checked={campaingnValues.UnsubscribeLocation === 2}
                                                             onChange={handleSelectionRadio}
                                                             disabled={!!!selectedCheck.UnsubscribeLocation}
@@ -1151,6 +1159,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
+                                                            color="primary"
                                                             checked={campaingnValues.UpdateClient === 2}
                                                             onChange={handleSelectionRadio}
                                                             disabled={!!!selectedCheck.UpdateClient}

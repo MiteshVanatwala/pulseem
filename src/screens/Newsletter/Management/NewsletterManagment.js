@@ -30,6 +30,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import { useNavigate } from 'react-router-dom';
 
 
 const NewsletterManagnentScreen = ({ classes }) => {
@@ -55,6 +56,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
+  const navigate = useNavigate();
 
   moment.locale(language)
 
@@ -245,7 +247,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/react/Campaigns/Create'
+            onClick={() => {
+              navigate('/Campaigns/Create');
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen

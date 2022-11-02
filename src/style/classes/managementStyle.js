@@ -1792,10 +1792,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           top: 0,
           right: 10
         },
-        '& .btnVerifyNewRTL': {
+        '& .btnVerifyNewRtl': {
           position: "absolute",
           top: 0,
-          left: 0
+          left: 10
         },
         '& .MuiDivider-root': {
           marginTop: 6,

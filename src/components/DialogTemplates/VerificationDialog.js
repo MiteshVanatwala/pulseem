@@ -1,9 +1,8 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import { Typography, Button, TextField, Box, makeStyles, Divider, Avatar } from '@material-ui/core'
+import { Typography, Button, TextField, Box, Divider, Avatar } from '@material-ui/core'
 import { Dialog } from '../../components/managment/index'
 import 'moment/locale/he'
-import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonSlice';
@@ -25,7 +24,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     const [selectedVerificationContact, setSelectedVerificationContact] = useState('')
     const [codeResend, setCodeResend] = useState(false)
     const [verificationCode, setVerificationCode] = useState('')
-    const verificationSource = useRef();
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
 
 
@@ -189,7 +187,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         <Button className={clsx(
                             classes.actionButton,
                             classes.actionButtonDarkBlue,
-                            isRTL ? 'btnVerifyNewRTL' : 'btnVerifyNewLtr'
+                            isRTL ? 'btnVerifyNewRtl' : 'btnVerifyNewLtr'
                         )}
                             onClick={() => {
                                 setSelectedVerificationContact('')
@@ -402,7 +400,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         <Button className={clsx(
                             classes.actionButton,
                             classes.actionButtonDarkBlue,
-                            'btnVerifyNewLtr'
+                            isRTL ? 'btnVerifyNewRtl' : 'btnVerifyNewLtr'
                         )}
                             onClick={() => {
                                 setSelectedVerificationContact('')
