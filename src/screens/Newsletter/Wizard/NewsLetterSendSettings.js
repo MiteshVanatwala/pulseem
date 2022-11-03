@@ -31,6 +31,7 @@ import clsx from "clsx";
 // import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/api'
+import { Stack } from "@mui/material";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -481,7 +482,6 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         settoggleB(false);
     };
     const callbackFilter = () => {
-        setDialogType({ type: null });
         setDialogType({ type: "filterRecipients" });
     };
     const handleDatePicker = (value) => {
@@ -508,7 +508,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         setsendTime(value)
     }
     const handleCombined = async () => {
-        const nameExist = groupList.filter((g) => { return g.GroupName === groupValue });
+        const nameExist = groupList.filter((g) => { return g?.GroupName === groupValue });
         if (nameExist.length > 0) {
             setGroupNameExist(true);
             return;
@@ -1148,264 +1148,288 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         setSourcePulses({ timeType: timeType, pulseType: pulseType, pulseAmount: pulseAmount, timeInterval, timeInterval, randomAmount: random });
         setDialogType({ type: "pulses" });
     }
-    // const renderRight = () => {
-    //     return (
-    //         <div>
-    //             <Grid item md={10} xs={12}>
-    //                 <h2
-    //                     className={classes.sectionTitle}
-    //                     style={{ marginTop: windowSize === "xs" ? 15 : null }}
-    //                 >
-    //                     {t("notifications.whenToSend")}
-    //                 </h2>
-    //                 <FormControl component="fieldset">
-    //                     <RadioGroup
-    //                         aria-label="gender"
-    //                         name="sendType"
-    //                         onChange={handleSendType}
-    //                         value={sendType}
-    //                     >
-    //                         <FormControlLabel
-    //                             value="1"
-    //                             control={<Radio color="primary" className={sendType !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
-    //                             label={
-    //                                 <span className={classes.radioText}>
-    //                                     {t("notifications.immediateSend")}
-    //                                 </span>
-    //                             }
-    //                         />
-    //                         <FormHelperText className={classes.helpText}>
-    //                             {t("notifications.immediateDescription")}
-    //                         </FormHelperText>
-    //                         <FormControlLabel
-    //                             value="2"
-    //                             control={<Radio color="primary" className={sendType !== "2" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
-    //                             label={
-    //                                 <span className={classes.radioText}>
-    //                                     {t("notifications.futureSend")}
-    //                                 </span>
-    //                             }
-    //                         />
-    //                         <Box
-    //                             className={classes.dateBox}
-    //                             style={{
-    //                                 pointerEvents: sendType == "2" ? "auto" : "none",
-    //                             }}
-    //                         >
-    //                             <DateField
-    //                                 minDate={moment()}
-    //                                 classes={classes}
-    //                                 value={sendType == "2" ? sendDate : null}
-    //                                 onChange={handleDatePicker}
-    //                                 placeholder={t("notifications.date")}
-    //                                 timePickerOpen={true}
-    //                                 dateActive={sendType == "2" ? false : true}
-    //                             />
-    //                         </Box>
-    //                         <Box
-    //                             className={classes.dateBox}
-    //                             style={{
-    //                                 marginTop: 10,
-    //                                 pointerEvents: sendType == "2" ? "auto" : "none",
-    //                             }}
-    //                         >
-    //                             <DateField
-    //                                 minDate={moment()}
-    //                                 classes={classes}
-    //                                 value={sendType == "2" ? sendDate : null}
-    //                                 onTimeChange={handleTimePicker}
-    //                                 placeholder={t("notifications.hour")}
-    //                                 isTimePicker={true}
-    //                                 ampm={false}
-    //                                 timeActive={sendType == "2" ? false : true}
-    //                                 timePickerOpen={timePickerOpen}
-    //                             />
-    //                         </Box>
-    //                         <FormControlLabel
-    //                             value="3"
-    //                             control={<Radio color="primary" className={sendType !== "3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
-    //                             label={
-    //                                 <span className={classes.radioText}>
-    //                                     {t("mainReport.specialDate")}
-    //                                 </span>
-    //                             }
-    //                         />
-    //                         <Box
-    //                             className={classes.dateBox}
-    //                             style={{
-    //                                 marginTop: 10,
-    //                                 pointerEvents: sendType == "3" ? "auto" : "none",
-    //                             }}
-    //                         >
-    //                             <select
-    //                                 placeholder={t("common.select")}
-    //                                 style={{
-    //                                     border: "1px solid #818181",
-    //                                     backgroundColor: "white",
-    //                                     padding: "10px",
-    //                                     borderRadius: "4px",
-    //                                     width: 300,
-    //                                     outline: "none",
-    //                                     marginBottom: "10px",
-    //                                 }}
-    //                                 disabled={sendType === "3" ? false : true}
-    //                                 onChange={(e) => { handleSelectChange(e) }}
-    //                                 value={sendType === "3" ? spectialDateFieldID : "0"}
-    //                             >
-    //                                 <option value="0">{t("common.select")}</option>
-    //                                 <option value="1">{t("mainReport.birthday")}</option>
-    //                                 <option value="2">{t("mainReport.creationDay")}</option>
-    //                                 {extraData && Object.keys(extraData).map((item, i) => {
-    //                                     if (extraData[item]) {
-    //                                         return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
-    //                                     }
-    //                                     return <></>
-    //                                 })}
-    //                             </select>
-    //                         </Box>
+    const renderRight = () => {
+        return (
+            <div>
+                <Grid item md={10} xs={12}>
+                    <h2
+                        className={classes.sectionTitle}
+                        style={{ marginTop: windowSize === "xs" ? 15 : null }}
+                    >
+                        {t("notifications.whenToSend")}
+                    </h2>
+                    <FormControl component="fieldset">
+                        <RadioGroup
+                            aria-label="gender"
+                            name="sendType"
+                            onChange={handleSendType}
+                            value={sendType}
+                        >
+                            <FormControlLabel
+                                value="1"
+                                control={<Radio color="primary" className={sendType !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                                label={
+                                    <span className={classes.radioText}>
+                                        {t("notifications.immediateSend")}
+                                    </span>
+                                }
+                            />
+                            <FormHelperText className={classes.helpText}>
+                                {t("notifications.immediateDescription")}
+                            </FormHelperText>
+                            <FormControlLabel
+                                value="2"
+                                control={<Radio color="primary" className={sendType !== "2" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                                label={
+                                    <span className={classes.radioText}>
+                                        {t("notifications.futureSend")}
+                                    </span>
+                                }
+                            />
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    pointerEvents: sendType == "2" ? "auto" : "none",
+                                }}
+                            >
+                                <DateField
+                                    minDate={moment()}
+                                    classes={classes}
+                                    value={sendType == "2" ? sendDate : null}
+                                    onChange={handleDatePicker}
+                                    placeholder={t("notifications.date")}
+                                    timePickerOpen={true}
+                                    dateActive={sendType == "2" ? false : true}
+                                />
+                            </Box>
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    pointerEvents: sendType == "2" ? "auto" : "none",
+                                }}
+                            >
+                                <DateField
+                                    minDate={moment()}
+                                    classes={classes}
+                                    value={sendType == "2" ? sendDate : null}
+                                    onTimeChange={handleTimePicker}
+                                    placeholder={t("notifications.hour")}
+                                    isTimePicker={true}
+                                    ampm={false}
+                                    timeActive={sendType == "2" ? false : true}
+                                    timePickerOpen={timePickerOpen}
+                                />
+                            </Box>
+                            <FormControlLabel
+                                value="3"
+                                control={<Radio color="primary" className={sendType !== "3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                                label={
+                                    <span className={classes.radioText}>
+                                        {t("mainReport.specialDate")}
+                                    </span>
+                                }
+                            />
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    pointerEvents: sendType == "3" ? "auto" : "none",
+                                }}
+                            >
+                                <select
+                                    placeholder={t("common.select")}
+                                    style={{
+                                        border: "1px solid #818181",
+                                        backgroundColor: "white",
+                                        padding: "10px",
+                                        borderRadius: "4px",
+                                        width: 300,
+                                        outline: "none",
+                                        marginBottom: "10px",
+                                    }}
+                                    disabled={sendType === "3" ? false : true}
+                                    onChange={(e) => { handleSelectChange(e) }}
+                                    value={sendType === "3" ? spectialDateFieldID : "0"}
+                                >
+                                    <option value="0">{t("common.select")}</option>
+                                    <option value="1">{t("mainReport.birthday")}</option>
+                                    <option value="2">{t("mainReport.creationDay")}</option>
+                                    {extraData && Object.keys(extraData).map((item, i) => {
+                                        if (extraData[item]) {
+                                            return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                                        }
+                                        return <></>
+                                    })}
+                                </select>
+                            </Box>
 
-    //                         <Box
-    //                             className={classes.dateBox}
-    //                             style={{
-    //                                 marginTop: 10,
-    //                                 display: "flex",
-    //                                 alignItems: "center",
-    //                                 width: "370px",
-    //                                 pointerEvents: sendType === "3" ? "auto" : "none",
-    //                             }}
-    //                         >
-    //                             <input
-    //                                 type="text"
-    //                                 className={classes.inputDays}
-    //                                 placeholder="0"
-    //                                 disabled={sendType == "3" ? false : true}
-    //                                 value={sendType == "3" ? daysBeforeAfter : ""}
-    //                                 onChange={(e) => { handleSpecialDayChange(e) }}
-    //                                 maxLength="3"
-    //                             />
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "370px",
+                                    pointerEvents: sendType === "3" ? "auto" : "none",
+                                }}
+                            >
+                                <input
+                                    type="text"
+                                    className={classes.inputDays}
+                                    placeholder="0"
+                                    disabled={sendType == "3" ? false : true}
+                                    value={sendType == "3" ? daysBeforeAfter : ""}
+                                    onChange={(e) => { handleSpecialDayChange(e) }}
+                                    maxLength="3"
+                                />
 
-    //                             <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
-    //                                 {t("mainReport.days")}
-    //                             </span>
+                                <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
+                                    {t("mainReport.days")}
+                                </span>
 
-    //                             {isRTL ?
-    //                                 <div style={{ display: "flex" }}>
-    //                                     <span
-    //                                         className={
-    //                                             sendType == "3" ? toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-    //                                         }
-    //                                         onClick={() => {
-    //                                             handlebef();
-    //                                         }}
-    //                                     >
-    //                                         {t("mainReport.before")}
-    //                                     </span>
-    //                                     <span
-    //                                         className={
-    //                                             sendType == "3" ? toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
-    //                                         }
-    //                                         onClick={() => {
-    //                                             handleaf();
-    //                                         }}
-    //                                     >
-    //                                         {t("mainReport.after")}
-    //                                     </span>
+                                {isRTL ?
+                                    <div style={{ display: "flex" }}>
+                                        <span
+                                            className={
+                                                sendType == "3" ? toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            }
+                                            onClick={() => {
+                                                handlebef();
+                                            }}
+                                        >
+                                            {t("mainReport.before")}
+                                        </span>
+                                        <span
+                                            className={
+                                                sendType == "3" ? toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            }
+                                            onClick={() => {
+                                                handleaf();
+                                            }}
+                                        >
+                                            {t("mainReport.after")}
+                                        </span>
 
-    //                                 </div> : <div style={{ display: "flex" }}>
-    //                                     <span
-    //                                         className={
-    //                                             sendType == "3" ? toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
-    //                                         }
-    //                                         onClick={() => {
-    //                                             handlebef();
-    //                                         }}
-    //                                     >
-    //                                         {t("mainReport.before")}
-    //                                     </span>
-    //                                     <span
-    //                                         className={
-    //                                             sendType == "3" ? toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-    //                                         }
-    //                                         onClick={() => {
-    //                                             handleaf();
-    //                                         }}
-    //                                     >
-    //                                         {t("mainReport.after")}
-    //                                     </span>
-    //                                 </div>}
-    //                         </Box>
-    //                         <Box
-    //                             className={classes.dateBox}
-    //                             style={{
-    //                                 marginTop: 10,
-    //                                 pointerEvents: sendType == "3" ? "auto" : "none",
-    //                                 marginBottom: '1rem'
-    //                             }}
-    //                         >
-    //                             <DateField
-    //                                 classes={classes}
-    //                                 value={sendType == "3" ? sendTime : null}
+                                    </div> : <div style={{ display: "flex" }}>
+                                        <span
+                                            className={
+                                                sendType == "3" ? toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            }
+                                            onClick={() => {
+                                                handlebef();
+                                            }}
+                                        >
+                                            {t("mainReport.before")}
+                                        </span>
+                                        <span
+                                            className={
+                                                sendType == "3" ? toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            }
+                                            onClick={() => {
+                                                handleaf();
+                                            }}
+                                        >
+                                            {t("mainReport.after")}
+                                        </span>
+                                    </div>}
+                            </Box>
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    pointerEvents: sendType == "3" ? "auto" : "none",
+                                    marginBottom: '1rem'
+                                }}
+                            >
+                                <DateField
+                                    classes={classes}
+                                    value={sendType == "3" ? sendTime : null}
 
-    //                                 onTimeChange={handleRadioTime}
-    //                                 placeholder={t("notifications.hour")}
-    //                                 isTimePicker={true}
-    //                                 buttons={{
-    //                                     ok: t("common.confirm"),
-    //                                     cancel: t("common.cancel"),
-    //                                 }}
-    //                                 ampm={false}
-    //                                 timePickerOpen={timePickerOpen}
-    //                                 timeActive={sendType == "3" ? false : true}
-    //                                 disabled={sendType == "3" ? false : true}
-    //                                 autoOk
-    //                             />
-    //                         </Box>
-    //                     </RadioGroup>
-    //                 </FormControl>
-    //             </Grid>
-    //             <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
-    //             <div className={classes.pulseDiv}>
-    //                 <span
-    //                     className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
-    //                     onClick={() => {
-    //                         handlePulseDialog();
-    //                     }}
-    //                 >
-    //                     <FaRegCalendarAlt style={{ fontSize: '125%' }} />
-    //                     {t("mainReport.pulseSend")}
-    //                 </span>
-    //                 <Tooltip
-    //                     disableFocusListener
-    //                     title={t("smsReport.pulseSendTip")}
-    //                     classes={{ tooltip: styles.customWidth }}
-    //                 >
-    //                     <span className={classes.bodyInfo}>i</span>
-    //                 </Tooltip>
-    //             </div>
-    //             <div
-    //                 style={{
-    //                     display: "flex",
-    //                     flexDirection: "column",
-    //                     justifyContent: "center",
-    //                     color: "#7f7f7f",
-    //                     fontWeight: "400",
-    //                     fontSize: "14px",
-    //                 }}
-    //             >
+                                    onTimeChange={handleRadioTime}
+                                    placeholder={t("notifications.hour")}
+                                    isTimePicker={true}
+                                    buttons={{
+                                        ok: t("common.confirm"),
+                                        cancel: t("common.cancel"),
+                                    }}
+                                    ampm={false}
+                                    timePickerOpen={timePickerOpen}
+                                    timeActive={sendType == "3" ? false : true}
+                                    disabled={sendType == "3" ? false : true}
+                                    autoOk
+                                />
+                            </Box>
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+                <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
+                <Stack className={classes.pulseDiv} spacing={2} direction="row">
+                    <Stack direction="row" justifyContent="center" alignItems="center">
+                        <span
+                            className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
+                            onClick={() => {
+                                // handlePulseDialog();
+                            }}
+                        >
+                            <FaRegCalendarAlt style={{ fontSize: '125%' }} />
+                            {t("mainReport.pulseSend")}
+                        </span>
+                        <Tooltip
+                            disableFocusListener
+                            title={t("smsReport.pulseSendTip")}
+                            classes={{ tooltip: styles.customWidth }}
+                        >
+                            <span className={classes.bodyInfo}>i</span>
+                        </Tooltip>
 
-    //                 {togglePulse ? (
-    //                     <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-    //                         {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" || pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-    //                         {t("sms.every")} {timeInterval} {hourName == "" || minName == "mins" ? t("common.minutes") : t("common.hours")}
-    //                     </span>
-    //                 ) : null}
-    //                 {toggleRandom ? (
-    //                     <span>{t("smsReport.randomSend")} - {random} {t("smsReport.randomRecipients")}</span>
-    //                 ) : null}
-    //             </div>
-    //         </div>
-    //     );
-    // }
+                    </Stack>
+                    <span
+                        // className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
+                        className={classes.pulse}
+                        onClick={() => {
+                            // handlePulseDialog();
+                        }}
+                    >
+                        {/* <FaRegCalendarAlt style={{ fontSize: '125%' }} /> */}
+                        {t("button1")}
+                    </span>
+                    <span
+                        // className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
+                        className={classes.pulse}
+                        onClick={() => {
+                            // handlePulseDialog();
+                        }}
+                    >
+                        {/* <FaRegCalendarAlt style={{ fontSize: '125%' }} /> */}
+                        {t("button2")}
+                    </span>
+
+                </Stack>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        color: "#7f7f7f",
+                        fontWeight: "400",
+                        fontSize: "14px",
+                    }}
+                >
+
+                    {togglePulse ? (
+                        <span style={{ marginBottom: "5px", marginTop: "5px" }}>
+                            {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" || pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
+                            {t("sms.every")} {timeInterval} {hourName == "" || minName == "mins" ? t("common.minutes") : t("common.hours")}
+                        </span>
+                    ) : null}
+                    {toggleRandom ? (
+                        <span>{t("smsReport.randomSend")} - {random} {t("smsReport.randomRecipients")}</span>
+                    ) : null}
+                </div>
+            </div>
+        );
+    }
 
     const onSaveSettings = async (toggle, exit) => {
         if (otpPassed === false) {
@@ -1776,9 +1800,11 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
 
     const handleDelete = () => {
         if (props && props.match.params.id) {
-            dispatch(deleteSms(props.match.params.id));
+            //TODO: ADD Newsletter campaign delete api call
+            // dispatch(deleteSms(props.match.params.id));
             setDialogType(null);
-            history.push("/SMSCampaigns");
+            //TODO: Navigate to Newsletter Management
+            // history.push("/SMSCampaigns");
         }
     };
     const renderToast = () => {
@@ -1926,7 +1952,8 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                         )}
                         color="primary"
                         style={{ margin: '8px' }}
-                        onClick={() => { handlePreviousPage() }}>
+                        onClick={() => { handlePreviousPage() }}
+                    >
                         <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
                         {t("smsReport.back")}
                     </Button>
@@ -1952,7 +1979,8 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                         )}
                         color="primary"
                         style={{ margin: '8px' }}
-                        onClick={() => { setDialogType({ type: "exit" }) }}>
+                        onClick={() => { setDialogType({ type: "exit" }) }}
+                    >
                         {t('mainReport.exitSms')}
                     </Button>
                     <Button
@@ -1965,9 +1993,10 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                         )}
                         color="primary"
                         style={{ margin: '8px' }}
-                        onClick={() => {
-                            onSaveSettings(true);
-                        }}>
+                    // onClick={() => {
+                    //     onSaveSettings(true);
+                    // }}
+                    >
                         {t('mainReport.saveSms')}
                     </Button>
                     <Button
@@ -1985,9 +2014,10 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                             backgroundColor:
                                 selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
                         }}
-                        onClick={() => {
-                            onSaveSettings(false)
-                        }}>
+                    // onClick={() => {
+                    //     onSaveSettings(false)
+                    // }}
+                    >
                         {t("mainReport.summary")}
                     </Button>
                 </div>
@@ -2098,7 +2128,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
             setGroupList(testGroups.concat(groupList));
         }
         else {
-            const g = groupList.filter((group) => { return group.IsTestGroup !== true });
+            const g = groupList?.filter((group) => { return group?.IsTestGroup !== true });
             setGroupList(g);
         }
     }
@@ -2565,7 +2595,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
             showDefaultButtons: true,
             onClose: () => { setDialogType(null); },
             onCancel: () => { setDialogType(null); },
-            onConfirm: () => { handleDelete() }
+            // onConfirm: () => { handleDelete() }
         }
     }
     const exitDialog = () => {
@@ -2588,7 +2618,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
             cancelText: t("common.No"),
             onClose: () => { history.push("/SMSCampaigns"); },
             onCancel: () => { setDialogType(null) },
-            onConfirm: () => { onSaveSettings(true, "exit") }
+            // onConfirm: () => { onSaveSettings(true, "exit") }
         }
     }
     const sendSuccessDialog = () => {
@@ -2685,9 +2715,9 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                             {renderBody()}
                         </Grid>
                         <Grid item md={1} xs={12}></Grid>
-                        {/* <Grid item md={4} xs={12}>
+                        <Grid item md={4} xs={12}>
                             {renderRight()}
-                        </Grid> */}
+                        </Grid>
                     </Grid>
                 </div>
                 <WizardButtons />

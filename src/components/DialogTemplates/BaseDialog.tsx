@@ -132,7 +132,7 @@ export const BaseDialog = ({
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
             className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
           >
-            {t(confirmText)}
+            <>{t(confirmText)}</>
           </Button>
         </Grid>
         <Grid item>
@@ -144,7 +144,7 @@ export const BaseDialog = ({
             }}
             className={clsx(classes.dialogButton, classes.dialogCancelButton)}
           >
-            {t(cancelText)}
+            <>{t(cancelText)}</>
           </Button>
         </Grid>
       </Grid>

@@ -480,7 +480,7 @@ export const smsSlice = createSlice({
     })
     builder.addCase(getTestGroups.fulfilled, (state, { payload }) => {
       state.testGroups = payload;
-      state.testGroups.forEach((c) => c.IsTestGroup = true);
+      state.testGroups.length && state.testGroups.forEach((c) => c.IsTestGroup = true);
     })
     builder.addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
       state.commonSettings = payload
