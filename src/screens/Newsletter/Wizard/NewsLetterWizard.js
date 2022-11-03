@@ -179,21 +179,17 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         personalDatatoSubject: "",
         FromName: "",
         FromEmail: "",
-        WebViewLocation: 0,
+        WebViewLocation: 1,
         PrintLocation: 0,
-        UnsubscribeLocation: 0,
+        UnsubscribeLocation: 2,
         UpdateClient: 0,
         IsResponsive: 1,
         FilesProperties: []
     })
 
-    const [selectedRadio, setSelectedRadio] = useState({ a: null, b: null, c: null, d: null })
-    const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
+    const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: true, PrintLocation: false, UnsubscribeLocation: true, UpdateClient: false })
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
-
-
-
 
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
@@ -486,8 +482,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 }
                                                 )}
                                             </Select>
-                                            {/* error={errors.FromEmail}
-                                                    helperText={helperTexts.FromEmail} */}
                                             <FormHelperText>{errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}{!errors.FromEmail && <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>}</FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }
