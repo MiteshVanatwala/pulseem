@@ -11,6 +11,7 @@ import { MdOutlineMarkEmailRead } from 'react-icons/md';
 import {
     getAuthorizeNumbers, sendVerificationCode, verifyCode
 } from '../../redux/reducers/smsSlice'
+import { renderHtml } from '../../helpers/functions';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, variant = 'email', ...props }) => {
@@ -160,8 +161,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '90%' }} >
-                        <Typography className={clsx(classes.pb25, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                    <Box style={{ position: 'relative', height: '70%' }} >
+                        <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                         <Box className={clsx('contactDataBox', classes.sidebar)}>
                             {
                                 verifiedEmails.map((obj) => (
@@ -249,8 +250,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')} <span className={classes.link}>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs')}</span></Typography>
-                        <Typography variant='body1'>{t('common.phone')} 03-5240290 / {t('common.email')} support@pulseem.com</Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
+                        <Typography variant='body1'>{renderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
                     </Box>
                 </Box>
             </Box>
@@ -363,18 +364,15 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                             {t('sms.verificationDialogTitle')}
                         </Typography>
                         <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-                            {t('sms.verificationBody')}
-                        </Typography>
-                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-                            <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
+                            {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
                         </Typography>
                         <Typography style={{ fontSize: 15, textDecoration: 'underline' }} className={classes.mt15}>
                             {t('sms.verificationNote')}
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '90%' }} >
-                        <Typography className={clsx(classes.pbt15, classes.bold)} variant='h6' >{t('sms.numbersAccount')} </Typography>
+                    <Box style={{ position: 'relative', height: '70%' }} >
+                        <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
                         <Box className={clsx('contactDataBox', classes.sidebar)}>
                             {
                                 (verifiedNumbers || verifiedEmails).map((obj) => (
@@ -465,7 +463,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('sms.havingIssuesMessage')} </Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
+                        <Typography variant='body1'>{renderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
                     </Box>
                 </Box>
             </Box>
@@ -621,6 +620,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     return (
         <Dialog
             classes={classes}
+            contentStyle={classes.maxWidth900}
             open={isOpen}
             onClose={handleClose}
             renderButtons={Popup().renderButtons || null}

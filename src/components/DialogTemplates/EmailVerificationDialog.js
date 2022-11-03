@@ -5,6 +5,7 @@ import { Dialog } from '../../components/managment/index'
 import 'moment/locale/he'
 import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
 import { useTranslation } from 'react-i18next';
+import { renderHtml } from '../../helpers/functions';
 
 const staticEmails = [
   {
@@ -209,8 +210,8 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
             </Box>
           </Box>
           <Box>
-            <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')} <span className={classes.link}>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs')}</span></Typography>
-            <Typography variant='body1'>Number 03-5240290 or email support@pulseem.com</Typography>
+            <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
+            <Typography variant='body1'>{renderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
           </Box>
         </Box>
       </Box>
