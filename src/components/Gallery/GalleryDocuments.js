@@ -136,8 +136,7 @@ export const GalleryDocuments = ({
             {
                 docs && docs.map((f, index) => {
                     const fileKey = f.FileName;
-                    // const fileKey = `${f.FolderName.replace('\\', '')}_${index}`;
-                    const fileExtension = f.FileURL.split('.')[f.FileURL.split('.').length - 1];
+                    const fileExtension = f?.Extension?.replace('.', '');
                     return <Image
                         classes={classes}
                         onSelectFile={onSelectFile}
