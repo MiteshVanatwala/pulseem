@@ -74,4 +74,4 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   )
 }
 
-export default DefaultScreen
+export default DefaultScreen;

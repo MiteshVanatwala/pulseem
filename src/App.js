@@ -38,6 +38,7 @@ import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
+import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -200,6 +201,14 @@ const renderRoutes = (classes, redirect) => {
         path='/SendMmsCampaign/:id'
         element={transferUrl('/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=', 'id')}
       />
+
+      {/* Whatsapp */}
+
+      <Route
+        path={`/react/Whatsapp/create`}
+        element={<WhatsappCreator classes={classes} />}
+      />
+
       {/* Landing Pages */}
 
       <Route
