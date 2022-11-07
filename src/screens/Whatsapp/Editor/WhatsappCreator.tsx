@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
-import { IWhatsappCreator } from "../../../Models/Whatsapp/whatsappCreator";
+import { WhatsappCreatorProps } from "./types";
 import { Title } from "../../../components/managment/Title";
 
-const WhatsappCreator = ({ classes }: IWhatsappCreator) => {
+const WhatsappCreator = ({ classes }: WhatsappCreatorProps) => {
   const { t } = useTranslation();
   return (
     <DefaultScreen subPage={"create"} currentPage="whatsapp" classes={classes} customPadding={true} containerClass="">
