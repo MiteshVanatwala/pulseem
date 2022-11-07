@@ -105,7 +105,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     const results = await openModal(EditRow, args, classes);
                     if (results?.name) {
                         const metadata: any = {
-                            name: results?.name
+                            name: results?.name,
+                            uuid: args?.row?.metadata?.uuid
                             // tags: results?.tags
                         }
                         resolve(metadata);
