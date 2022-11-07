@@ -1779,8 +1779,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           },
           '& .emailText': {
             paddingInline: 4,
-            maxWidth: 250,
-            minWidth: 160
+            maxWidth: 320,
+            minWidth: 160,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           },
           '& .emailVerLink': {
             paddingInline: 3

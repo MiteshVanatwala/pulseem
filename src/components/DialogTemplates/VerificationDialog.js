@@ -172,7 +172,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                                                 {obj.IsOptIn ? '\uE134' : '\uE0A7'}
                                             </div>
                                         </Avatar>
-                                        <Typography className='emailText'>{obj.Number} </Typography>
+                                        <Typography className='emailText' title={obj.Number}>{obj.Number} </Typography>
                                         {!obj.IsOptIn && <Typography className={clsx(classes.link, 'emailVerLink')}
                                             onClick={() => {
                                                 setSelectedVerificationContact(obj.Number);
