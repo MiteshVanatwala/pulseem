@@ -22,6 +22,7 @@ import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 import PulseemTags from '../../../components/Tags/PulseemTags'
 import { makeId } from '../../../helpers/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
+import { useParams } from 'react-router-dom';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -129,7 +130,7 @@ const useStyles = makeStyles({
     }
 })
 
-const NewsLetterWizard = ({ classes, ...props }) => {
+const NewsLetterWizard = ({ classes }) => {
     const { accountFeatures } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
@@ -144,6 +145,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [showCostLoader, setShowCostLoader] = useState(false);
+    const { id } = useParams();
     const maxCharLimits = {
         Name: 100,
         Subject: 200,
@@ -255,8 +257,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     useEffect(() => {
         const preload = async () => {
             await dispatch(getAuthorizedEmails());
-            if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
-                const campaignId = parseInt(props.match.params.id);
+            if (id != null && parseInt(id) > 0) {
+                const campaignId = parseInt(id);
                 const response = await dispatch(getCampaignInfo(campaignId))
                 handleGetNewsletterResponse(JSON.parse(response.payload))
             }
@@ -1310,7 +1312,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                     classes={classes}
                     onSave={handleSubmit}
                     onBack={() => { console.log('show return message') }}
-                    onDelete={props.match.params.id > 0 && getDeleteStatus}
+                    onDelete={id > 0 && getDeleteStatus}
                 />
             </Box>
             <Dialog

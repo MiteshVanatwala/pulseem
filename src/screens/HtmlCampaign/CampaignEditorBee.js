@@ -193,8 +193,6 @@ const CampaignEditor = ({ classes, ...props }) => {
             const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : {};
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
-              editorRef.current.load();
-              beeTest.load(template)
             });
           }
           break;
