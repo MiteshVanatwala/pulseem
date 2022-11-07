@@ -4,10 +4,10 @@ import { WhatsappCreatorProps } from "./types";
 import { Title } from "../../../components/managment/Title";
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps) => {
-  const { t } = useTranslation();
+  const { t: translator } = useTranslation();
   return (
     <DefaultScreen subPage={"create"} currentPage="whatsapp" classes={classes} customPadding={true}>
-      <Title Text={t("whatsapp.header")} Classes={classes.whatsappTemplateTitle} ContainerStyle={{}} Element={null} />
+      <Title Text={translator("whatsapp.header")} Classes={classes.whatsappTemplateTitle} ContainerStyle={{}} Element={null} />
     </DefaultScreen>
   );
 };
