@@ -222,6 +222,8 @@
     "Text": "Clone"
   },
   "GridButtonColumnResource2": {
+    "confirmExit": "You are about to exit the campaign settings",
+    "confirmExitText": "Would you like to save the campaign before exit?",
     "ConfirmText": "Do you want to delete the campaign?",
     "ConfirmTitle": "Delete campaign",
     "CurrentFilterValue": "",
@@ -475,6 +477,7 @@
   "automation": "Automation",
   "create": "Create New Newsletter",
   "createNewsLetterHeader": "Create New Newsletter Campaign",
+  "createNewsLetterSubTitle": "Setup Newsletter Campaign",
   "restoreDeleted": "Restore Deleted",
   "exportFile": "Export File",
   "lastUpdate": "Last update",

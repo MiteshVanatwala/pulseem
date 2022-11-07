@@ -24,6 +24,7 @@ import { makeId } from '../../../helpers/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
+import Title from '../../../components/Wizard/Title';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -192,6 +193,7 @@ const NewsLetterWizard = ({ classes }) => {
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: true, PrintLocation: false, UnsubscribeLocation: true, UpdateClient: false })
     const [confirmDelete, setConfirmDelete] = useState(false)
+    const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
     const handleGetNewsletterResponse = (res) => {
@@ -338,7 +340,7 @@ const NewsLetterWizard = ({ classes }) => {
         return isError
     }
 
-    const handleSubmit = async (isContiue) => {
+    const handleSubmit = async (isContiue, isExit = false) => {
         // TODO: [PR-570] Fix this validation
         if (!handleValidations()) {
             setLoader(true);
@@ -352,6 +354,9 @@ const NewsLetterWizard = ({ classes }) => {
                 if (isContiue) {
                     window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
                     //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                }
+                else if (isExit === true) {
+                    navigate(`/Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
@@ -1269,6 +1274,19 @@ const NewsLetterWizard = ({ classes }) => {
         };
     }
 
+    const handleExit = (confirmSave) => {
+        setConfirmExit(false);
+        if (confirmSave === null) {
+            return false;
+        }
+        if (confirmSave === true) {
+            handleSubmit(false, true);
+        }
+        else {
+            navigate(`/Campaigns`);
+        }
+    }
+
     return (
         <DefaultScreen
             currentPage="Campaingn Settings"
@@ -1277,6 +1295,11 @@ const NewsLetterWizard = ({ classes }) => {
         >
             {showGalleryModal()}
             {renderToast()}
+            {/* <Title
+                classes={classes}
+                stepNumber="1"
+                title={t("campaigns.createNewsLetterHeader")}
+                subTitle={t("campaigns.createNewsLetterSubTitle")} /> */}
             <Typography className={classes.managementTitle}>
                 {t("campaigns.createNewsLetterHeader")}
             </Typography>
@@ -1302,10 +1325,31 @@ const NewsLetterWizard = ({ classes }) => {
                 <WizardActions
                     classes={classes}
                     onSave={handleSubmit}
-                    onBack={() => { console.log('show return message') }}
+                    onBack={() => { setConfirmExit(true) }}
                     onDelete={id > 0 && getDeleteStatus}
                 />
             </Box>
+            <Dialog
+                classes={classes}
+                open={confirmExit}
+                title={t("campaigns.GridButtonColumnResource2.confirmExit")}
+                icon={<Box className={classes.dialogAlertIcon}>
+                    !
+                </Box>}
+                showDivider={true}
+                onClose={() => handleExit(false)}
+                onCancel={() => handleExit(null)}
+                onConfirm={() => handleExit(true)}
+                disableBackdropClick={true}
+                cancelText="common.No"
+                confirmText="common.Yes"
+            >
+                <Box>
+                    <Typography variant="subtitle1">
+                        {t("campaigns.GridButtonColumnResource2.confirmExitText")}
+                    </Typography>
+                </Box>
+            </Dialog>
             <Dialog
                 classes={classes}
                 open={confirmDelete}

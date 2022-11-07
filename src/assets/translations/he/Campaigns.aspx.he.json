@@ -222,6 +222,8 @@
     "Text": "שכפל"
   },
   "GridButtonColumnResource2": {
+    "confirmExit": "אתה עומד לצאת מהגדרות ניוזלטר",
+    "confirmExitText": "תרצה לשמור את הקמפיין לפני היציאה?",
     "ConfirmText": "האם ברצונך למחוק את הקמפיין?",
     "ConfirmTitle": "מחיקת קמפיין",
     "CurrentFilterValue": "",
@@ -465,7 +467,8 @@
   "recipients": "נמענים",
   "automation": "אוטומציות",
   "create": "יצירת קמפיין",
-  "createNewsLetterHeader": "יצירת קמפיין ניזלטר",
+  "createNewsLetterHeader": "יצירת קמפיין ניוזלטר",
+  "createNewsLetterSubTitle": "הגדרות ניוזלטר",
   "restoreDeleted": "שחזור מחוקים",
   "exportFile": "ייצוא קובץ",
   "lastUpdate": "עודכן ב",

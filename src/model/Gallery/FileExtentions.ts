@@ -11,5 +11,6 @@ export const AllowedExentions = [
     'jpeg',
     'png',
     'gif',
-    'ppt'
+    'ppt',
+    'pptx'
 ]
