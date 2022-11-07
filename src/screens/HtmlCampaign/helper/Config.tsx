@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 type dialog = (a: any) => void;
 type save = (a: any) => void;
 
@@ -39,7 +41,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
         autosave: 60,
-        customCss: 'https://unlayer.reactstage.club/Content/BeeFree/custom-bee.css',
+        // customCss: 'https://unlayer.reactstage.club/Content/BeeFree/custom-bee.css',
         translationsUrl: `https://unlayer.reactstage.club/Content/BeeFree/${IsRTL ? 'he.json' : 'en.json'}`,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
@@ -82,7 +84,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (results?.name) {
                         const metadata: any = {
                             name: results?.name,
-                            tags: results?.tags
+                            tags: results?.tags,
+                            uuid: uuidv4()
                         }
                         resolve(metadata);
                     }
@@ -90,8 +93,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
             },
             onDeleteRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    await DeleteBlock(args);
-                    resolve(true);
+                    // get the unique row id from metadata
+                    const row_id = args?.row?.metadata?.uuid;
+                    // pseudo code to delete a row and refresh the panel...
+                    await DeleteBlock(args, row_id);
+                    resolve(true)
                 }
             },
             onEditRow: {
@@ -118,9 +124,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onSend: () => {
             SetDialog(DialogType.TEST_SEND);
         },
-        onAutoSave: () => {
-            //saveDesign(false, null, false);
-        },
         onWarning: (alertMessage: any) => {
             console.log('onWarning ', alertMessage)
         },
@@ -129,6 +132,10 @@ export const BeeConfig = (Options: ConfigOptions) => {
         },
         onLoad: (jsonFile: any) => {
             console.log(jsonFile);
+        },
+        // Auto Save here
+        onChange: () => {
+
         }
         //#endregion
     }

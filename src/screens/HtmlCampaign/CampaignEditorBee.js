@@ -185,7 +185,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       switch (beeToken?.StatusCode) {
         case 201: {
           const beeObject = JSON.parse(beeToken.Message);
-          if (beeToken.Message === "null") {
+          if (beeToken.Message === "null" || beeToken.Message === null) {
             setDialog(DialogType.MISSING_API_KEY);
           }
           else {
@@ -363,17 +363,15 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const onSaveUserBlock = (json, block) => {
     setLoader(true);
-    const blockRequest = { Data: JSON.stringify(json), Category: block?.metadata?.name, uuid: block?.uuid };
-    const j = JSON.parse(json);
-    j.uuid = block?.uuid;
-    setRow(JSON.stringify(j));
+    const blockRequest = { Data: JSON.stringify(json), Category: block?.metadata?.name, uuid: block?.metadata?.uuid };
+    setRow(JSON.stringify(json));
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
     });
   }
-  const handleDeleteBlock = (e) => {
-    const id = e?.row?.uuid;
-    dispatch(deleteUserBlock(id)).then((result) => {
+  const handleDeleteBlock = (e, row_id) => {
+    handleDeleteRow(e);
+    dispatch(deleteUserBlock(row_id)).then((result) => {
       console.log(result);
     })
   }
