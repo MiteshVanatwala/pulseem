@@ -575,5 +575,6 @@
   "invalidEmail": "כתובת דואר אלקטרוני לא חוקית",
   "adaptive": "מותאם לסלולר",
   "responsive": "רספונסיבי",
-  "chooseFile": "טען קובץ"
+  "chooseFile": "טען קובץ",
+  "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר."
 }

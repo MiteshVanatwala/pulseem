@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { deleteGalleryFile, uploadFile } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { Loader } from '../Loader/Loader';
+import { AllowedExentions } from '../../model/Gallery/FileExtentions';
 
 export const GalleryDocuments = ({
     classes,
@@ -39,13 +40,24 @@ export const GalleryDocuments = ({
             setLoader(true);
             setIsFilePicked(false);
             setFileToUpload(null);
-            const formData = new FormData();
-            formData.append('File', fileToUpload);
-            if (fileToUpload.size > 1048576) {
-                onToast({ severity: 'error', color: 'error', message: t('common.maxDocumentSize'), showAnimtionCheck: false })
+            const splitFileName = fileToUpload.name.split('.');
+            const fileExtension = splitFileName[splitFileName.length - 1];
+            if (!AllowedExentions.find(x => x === fileExtension)) {
+                onToast({ severity: 'error', color: 'error', message: t('common.notAllowedExtension'), showAnimtionCheck: false })
                 setFileToUpload(null);
+                setLoader(false);
                 return;
             }
+
+            if (fileToUpload.size > 1048576) {
+                onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
+                setFileToUpload(null);
+                setLoader(false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('File', fileToUpload);
             new Promise(resolve => {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);

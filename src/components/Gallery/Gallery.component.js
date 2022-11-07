@@ -38,14 +38,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
     const { windowSize, language, isRTL } = useSelector(state => state.core)
     const { gallery } = useSelector(state => state.gallery)
 
-
-    useEffect(() => {
-        console.log("SELECTED-1:", selected)
-        console.log("SELECTED-2:", selectedFile)
-    }, [selectedFile])
-
-
-
     const renderToast = () => {
         if (toastMessage) {
             setTimeout(() => {

@@ -580,5 +580,6 @@
   "invalidEmail": "Invalid Email address",
   "adaptive": "Adaptive",
   "responsive": "Responsive",
-  "chooseFile": "Upload File"
+  "chooseFile": "Upload File",
+  "notAllowedExtension": "This file extension is not allowed! Please try another file."
 }
