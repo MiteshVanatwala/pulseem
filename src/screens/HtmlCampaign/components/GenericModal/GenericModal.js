@@ -16,7 +16,16 @@ const GenericModal = (props) => {
 
   return (
     <Modal
-      style={{ backgroundColor: 'transparent' }}
+      style={{
+        backgroundColor: 'transparent',
+        overlay: {
+          backgroundColor: 'transparent'
+        },
+        content: {
+          border: 'none',
+          backgroundColor: 'transparent'
+        }
+      }}
       isOpen={isOpen}
       appElement={document.querySelector('body')}
     >

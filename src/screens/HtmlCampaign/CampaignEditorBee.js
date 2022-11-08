@@ -364,13 +364,17 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onSaveUserBlock = (json, block) => {
     setLoader(true);
     const blockRequest = { Data: JSON.stringify(json), Category: block?.metadata?.name, uuid: block?.metadata?.uuid };
-    setRow(JSON.stringify(json));
+    dispatch(saveUserBlock(blockRequest)).then(() => {
+      setLoader(false);
+    });
+  }
+  const onEditBlock = (blockRequest) => {
+    setLoader(true);
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
     });
   }
   const handleDeleteBlock = (e, row_id) => {
-    handleDeleteRow(e);
     dispatch(deleteUserBlock(row_id)).then((result) => {
       console.log(result);
     })
@@ -385,17 +389,16 @@ const CampaignEditor = ({ classes, ...props }) => {
       openModal: openModal,
       SaveCampaign: onSave,
       SetDialog: setDialog,
-      setRow, getRows, handleDeleteRow, handleEditRow,
       CampaignId: campaignId,
-      EditBlock: onEditBlock,
+      PulseemEditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
+      setRow,
+      getRows,
+      handleEditRow,
+      handleDeleteRow,
       t: t
     });
   }
-  const onEditBlock = (args) => {
-    console.log(args);
-  }
-
   const config = getConfig();
 
   return (

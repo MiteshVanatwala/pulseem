@@ -13,7 +13,9 @@ export interface ConfigOptions {
     SaveCampaign: save,
     DeleteBlock: Function,
     CampaignId: Number,
+    PulseemEditBlock: Function,
     getRows: Function,
+    setRow: Function,
     handleDeleteRow: Function,
     handleEditRow: Function,
     t: any
@@ -30,9 +32,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
         CampaignId,
         DeleteBlock,
         SaveCampaign,
+        setRow,
         getRows,
-        handleDeleteRow,
         handleEditRow,
+        handleDeleteRow,
+        PulseemEditBlock,
         t
     } = Options;
     return {
@@ -75,6 +79,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 const json = JSON.parse(jsonFile)
                 //const rowName = json.metadata.name;
                 onSaveUserBlock(jsonFile, json);
+                setRow(jsonFile);
             }
         },
         contentDialog: {
@@ -84,7 +89,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (results?.name) {
                         const metadata: any = {
                             name: results?.name,
-                            tags: results?.tags,
+                            tags: results?.tags ?? 'saved-rows',
                             uuid: uuidv4()
                         }
                         resolve(metadata);
@@ -93,26 +98,46 @@ export const BeeConfig = (Options: ConfigOptions) => {
             },
             onDeleteRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    // get the unique row id from metadata
                     const row_id = args?.row?.metadata?.uuid;
-                    // pseudo code to delete a row and refresh the panel...
                     await DeleteBlock(args, row_id);
+                    handleDeleteRow(args);
                     resolve(true)
                 }
             },
+            // onEditRow
             onEditRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    const results = await openModal(EditRow, args, classes);
-                    if (results?.name) {
-                        const metadata: any = {
-                            name: results?.name,
-                            uuid: args?.row?.metadata?.uuid
-                            // tags: results?.tags
+                    try {
+                        const results = await openModal(EditRow, args, classes);
+                        args.row.metadata.name = results?.name;
+                        args.row.metadata.tags = results?.tags ?? 'saved-rows';
+
+                        await handleEditRow(args, results?.name, results?.tags ?? 'saved-rows');
+
+                        const rows = await getRows(args.handle);
+                        const row = rows.find((r: any) => {
+                            return r.metadata.uuid === args.row?.metadata?.uuid
+                        });
+
+                        row.metadata.name = results?.name;
+                        row.metadata.tags = results?.tags ?? 'saved-rows';
+
+                        const saveBlockObj = {
+                            Category: results?.name,
+                            Tags: results?.tags ?? 'saved-rows',
+                            Data: JSON.stringify(JSON.stringify(row)),
+                            uuid: args.row?.metadata?.uuid ?? uuidv4()
                         }
-                        resolve(metadata);
+                        await PulseemEditBlock(saveBlockObj);
+                        resolve(true);
                     }
+                    catch (e) {
+                        reject(e);
+                    }
+
                 }
-            }
+
+            },
         },
         //#region Methods
         onSave: async (jsonFile: any, htmlFile: any) => {

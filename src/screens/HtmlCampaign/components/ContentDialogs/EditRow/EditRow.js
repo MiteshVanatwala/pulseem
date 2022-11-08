@@ -7,23 +7,22 @@ import clsx from 'clsx';
 const EditRow = ({ onClose, save, args, classes }) => {
   const { t } = useTranslation();
   const [text, setText] = React.useState(args?.row?.name)
-  //const [tags, setTags] = React.useState(args?.row?.tags);
+  const [tags, setTags] = React.useState(args?.row?.tags);
 
   const onHandleSave = React.useCallback(() => {
     save({
       success: true,
-      name: text
-      // tags: tags
+      name: text,
+      tags: tags
     })
-  }, [text, save])
-  // }, [text, tags, save])
+  }, [text, tags, save])
 
   const handleTextChange = React.useCallback((event) => {
     setText(event?.target?.value)
   }, [])
-  // const handleTagChange = React.useCallback((event) => {
-  //   setTags(event?.target?.value)
-  // }, [])
+  const handleTagChange = React.useCallback((event) => {
+    setTags(event?.target?.value)
+  }, [])
 
   return (
     <>
@@ -51,7 +50,7 @@ const EditRow = ({ onClose, save, args, classes }) => {
                 placeholder={t('common.templateName')}
               />
             </Box>
-            {/* <Box className={clsx(classes.mt15, classes.mb15)}>
+            <Box className={clsx(classes.mt15, classes.mb15)}>
               <Typography className={clsx(classes.mb5, classes.f18)}>{t('common.tags')}</Typography>
               <TextField
                 variant='outlined'
@@ -59,9 +58,9 @@ const EditRow = ({ onClose, save, args, classes }) => {
                 value={tags}
                 onChange={handleTagChange}
                 className={clsx(classes.textField, classes.minWidth252)}
-                placeholder={t('common.templateName')}
+                placeholder={t('common.tags')}
               />
-            </Box> */}
+            </Box>
           </>
         }
       >
