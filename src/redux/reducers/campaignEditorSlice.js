@@ -1,6 +1,5 @@
 import { instence } from '../../helpers/api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createStore } from 'redux'
 
 
 export const getCampaignById = createAsyncThunk(
@@ -35,21 +34,11 @@ export const saveUserBlock = createAsyncThunk(
         }
     });
 
-export const updateUserBlock = createAsyncThunk(
-    '/CampaignEditor/UpdateUserBlock/', async (campaign, thunkAPI) => {
-        try {
-            const response = await instence.put(`/CampaignEditor/UpdateUserBlock/`, campaign);
-            return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-
 export const getUserblocks = createAsyncThunk(
     '/CampaignEditor/GetUserblocks/', async (thunkAPI) => {
         try {
             const response = await instence.get(`/CampaignEditor/GetUserblocks`);
-            return JSON.parse(response.data)
+            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
@@ -130,9 +119,10 @@ export const campaignEditorSlice = createSlice({
             .addCase(getUserblocks.fulfilled, (state, { payload }) => {
                 const blocks = payload.map((b) => {
                     return {
-                        id: b.ID,
+                        uuid: b.uuid,
                         category: b.Category,
-                        data: JSON.parse(b.Data)
+                        data: JSON.parse(b.Data),
+                        tags: b?.TagsAsString?.split(',')
                     }
                 });
                 state.userBlocks = blocks
@@ -144,22 +134,7 @@ export const campaignEditorSlice = createSlice({
                 state.beeToken = payload;
             })
 
-    },
-    reducers: {
-        save: async (_, action) => {
-            const res = await saveUserBlock(action.payload);
-            return res;
-        },
-        update: async (_, action) => {
-            await updateUserBlock(action.payload);
-        },
-        remove: async (_, action) => {
-            await deleteUserBlock(action.payload);
-        }
-    },
+    }
 })
 
-
-export const { save, update, remove } = campaignEditorSlice.actions
-export const store = createStore(campaignEditorSlice.reducer);
 export default campaignEditorSlice.reducer

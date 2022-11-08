@@ -10,7 +10,6 @@ import {
   getUserblocks,
   testSend,
   saveUserBlock,
-  updateUserBlock,
   deleteUserBlock
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
@@ -176,11 +175,34 @@ const CampaignEditor = ({ classes, ...props }) => {
     initBeeToken();
   }
   //#region Init Bee Token & Configuration
+  const initTags = () => {
+    let tempTags = [...new Set(userBlocks.map(item => item.tags))];
+    var tags = [].concat.apply([], tempTags);
+    if (tags && tags?.length > 0) {
+      config.rowsConfiguration.externalContentURLs = [];
+      tags?.forEach((tag, idx) => {
+        if (tag && tag !== undefined && tag !== null) {
+          config.rowsConfiguration.externalContentURLs.push({
+            name: tag,
+            value: tag.replace(' ', ''),
+            handle: tag.replace(' ', ''),
+            isLocal: true,
+            behaviors: {
+              canEdit: true,
+              canDelete: true,
+            },
+          });
+        }
+      });
+    }
+  }
   useEffect(() => {
     const initBeeEditor = () => {
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinks;
+
+      initTags();
 
       switch (beeToken?.StatusCode) {
         case 201: {
@@ -363,9 +385,15 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const onSaveUserBlock = (json, block) => {
     setLoader(true);
-    const blockRequest = { Data: JSON.stringify(json), Category: block?.metadata?.name, uuid: block?.metadata?.uuid };
+    const blockRequest = {
+      Data: JSON.stringify(json),
+      Category: block?.metadata?.name,
+      Tags: block?.metadata?.tags?.split(','),
+      uuid: block?.metadata?.uuid
+    };
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
+      dispatch(getUserblocks());
     });
   }
   const onEditBlock = (blockRequest) => {

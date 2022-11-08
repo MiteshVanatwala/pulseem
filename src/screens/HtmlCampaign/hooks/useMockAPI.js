@@ -33,9 +33,16 @@ const useMockAPI = () => {
   }
 
   const getRows = async (handle) => {
-    console.log(handle);
+    let items = ref.current;
+    if (ref?.current.length > 0) {
+      items = ref?.current.filter((row) => {
+        return row.metadata.tags.split(',').find((tag) => {
+          return tag.trim() === handle
+        });
+      });
+    }
     return new Promise((resolve) => {
-      resolve(ref.current)
+      resolve(items)
     })
   }
 
