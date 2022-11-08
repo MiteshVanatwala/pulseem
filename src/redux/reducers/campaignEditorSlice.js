@@ -117,7 +117,7 @@ export const campaignEditorSlice = createSlice({
                 state.campaign = payload
             })
             .addCase(getUserblocks.fulfilled, (state, { payload }) => {
-                const blocks = payload.map((b) => {
+                const blocks = payload?.map((b) => {
                     return {
                         uuid: b.uuid,
                         category: b.Category,
