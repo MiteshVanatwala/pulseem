@@ -338,6 +338,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt14: {
     paddingTop: 14,
   },
+  pt15: {
+    paddingTop: 15
+  },
   pt2: {
     paddingTop: 1.4,
   },

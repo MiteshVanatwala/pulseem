@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { BiUpload } from 'react-icons/bi';
 import { FaGoogle } from 'react-icons/fa';
 import { IoMdImages } from 'react-icons/io';
-import { Box, Divider, Typography, TextField, Checkbox, Radio, makeStyles, FormControl, Select, OutlinedInput, MenuItem, FormHelperText } from '@material-ui/core'
+import { Grid, Box, Divider, Typography, TextField, Checkbox, Radio, FormControlLabel, RadioGroup, makeStyles, FormControl, Select, OutlinedInput, MenuItem, FormHelperText } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -25,6 +25,8 @@ import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
 import Title from '../../../components/Wizard/Title';
+import { AdditionalText } from './components/AdditionalText';
+import { AdvancedSettings } from './components/AdvancedSettings';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -134,7 +136,7 @@ const useStyles = makeStyles({
 
 const NewsLetterWizard = ({ classes }) => {
     const { id } = useParams();
-    const { accountFeatures } = useSelector((state) => state.core);
+    const { accountSettings } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -152,7 +154,8 @@ const NewsLetterWizard = ({ classes }) => {
     const maxCharLimits = {
         Name: 100,
         Subject: 200,
-        FromName: 100
+        FromName: 100,
+        PreviewText: 200
     }
     const [errors, setErrors] = useState({
         Name: "",
@@ -166,6 +169,7 @@ const NewsLetterWizard = ({ classes }) => {
         Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
         FromName: t('common.requiredField'),
         FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
+        PreviewText: t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')
     }
 
     const ErrorTexts = {
@@ -184,6 +188,7 @@ const NewsLetterWizard = ({ classes }) => {
         FromName: "",
         FromEmail: "",
         WebViewLocation: 1,
+        PreviewText: "",
         PrintLocation: 0,
         UnsubscribeLocation: 2,
         UpdateClient: 0,
@@ -196,10 +201,21 @@ const NewsLetterWizard = ({ classes }) => {
     const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
+    useEffect(() => {
+        if (campaingnValues.FromEmail === '') {
+            const defaultEmail = verifiedEmails.find((email) => {
+                return email.Number === accountSettings.DefaultFromMail;
+            });
+            if (defaultEmail?.IsOptIn) {
+                campaingnValues.FromEmail = defaultEmail.Number;
+            }
+        }
+    }, [verifiedEmails]);
+
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
             case 201: {
-                setCampaingnValues({ ...JSON.parse(res?.Message) })
+                setCampaingnValues({ ...res?.Message })
                 break;
             }
             case 401: {
@@ -258,7 +274,7 @@ const NewsLetterWizard = ({ classes }) => {
             if (id != null && parseInt(id) > 0) {
                 const campaignId = parseInt(id);
                 const response = await dispatch(getCampaignInfo(campaignId))
-                handleGetNewsletterResponse(JSON.parse(response.payload))
+                handleGetNewsletterResponse(response.payload)
             }
             setLoader(false);
             setIsSilenceUpdated(false);
@@ -286,7 +302,7 @@ const NewsLetterWizard = ({ classes }) => {
         const silenceSaveAndLoad = async () => {
             await dispatch(saveCampaignInfo(campaingnValues))
             const response = await dispatch(getCampaignInfo(campaingnValues.CampaignID))
-            handleGetNewsletterResponse(JSON.parse(response.payload))
+            handleGetNewsletterResponse(response.payload)
             setShowCostLoader(false);
         }
 
@@ -426,7 +442,7 @@ const NewsLetterWizard = ({ classes }) => {
                                         label=""
                                         variant="outlined"
                                         name="FromName"
-                                        value={campaingnValues.FromName}
+                                        value={campaingnValues.FromName !== '' ? campaingnValues.FromName : accountSettings?.DefaultFromName}
                                         className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
                                         autoComplete="off"
                                         onChange={handleChange}
@@ -453,20 +469,13 @@ const NewsLetterWizard = ({ classes }) => {
                                                 native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
-                                                value={campaingnValues?.FromEmail}
+                                                value={campaingnValues.FromEmail}
                                                 onChange={(event, val) => {
                                                     setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
                                                 }}
 
                                                 name="FromEmail"
                                                 input={<OutlinedInput />}
-                                                renderValue={(selected) => {
-                                                    if (!selected) {
-                                                        return <option>{t("common.select")}</option>;
-                                                    }
-
-                                                    return selected;
-                                                }}
                                                 MenuProps={{
                                                     PaperProps: {
                                                         style: {
@@ -599,604 +608,6 @@ const NewsLetterWizard = ({ classes }) => {
             />
         </Box>
     )
-    const CampaignBox2 = () => (
-        <Box pt={3}>
-            <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
-            <SimpleGrid
-                spacing={3}
-                centerlize={true}
-                gridArr={
-                    [
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.mobileSupport")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.mobileSupport")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content: <FormControl className={localClasses.select}>
-                                        <Select
-                                            native
-                                            displayEmpty
-                                            value={campaingnValues?.IsResponsive ? 1 : 0}
-                                            onChange={(event) => {
-                                                setCampaingnValues({
-                                                    ...campaingnValues,
-                                                    IsResponsive: event.target.value === 1 ? true : false
-                                                })
-                                            }}
-                                            input={<OutlinedInput />}
-                                            renderValue={(selected) => {
-                                                const lc = MobileSupport.find(e => { return e.value === selected });
-                                                return t(lc.label);
-                                            }}
-                                            MenuProps={{
-                                                PaperProps: {
-                                                    style: {
-                                                        maxHeight: 48 * 4.5 + 8,
-                                                        width: 250,
-                                                    },
-                                                },
-                                            }}
-                                            inputProps={{ 'aria-label': 'Without label' }}
-                                        >
-                                            {MobileSupport.map((item) => (
-                                                <option
-                                                    key={item.value}
-                                                    value={item.value}
-                                                >
-                                                    {t(item.label)}
-                                                </option>
-                                            ))}
-                                        </Select>
-                                    </FormControl>,
-                                    gridSize: { xs: 12, sm: 12 },
-                                }
-                                ]}
-                                spacing={1}
-                                gridStyles={localClasses.contentCenter}
-                            />,
-                            gridSize: { xs: 12, sm: 6 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.pre_text")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.pre_text")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content: <TextField
-                                        id="outlined-basic"
-                                        label=""
-                                        variant="outlined"
-                                        name="Name"
-                                        // value={campaingnValues.Name}
-                                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
-                                        autoComplete="off"
-                                        // onChange={handleChange}
-                                        // error={errors.Name}
-                                        helperText={t("campaigns.newsLetterEditor.helpTexts.pre_helper_text")}
-                                    />,
-                                    gridSize: { xs: 12, sm: 12 },
-                                }
-                                ]}
-                                spacing={1}
-                                gridStyles={localClasses.contentCenter}
-                            />,
-                            gridSize: { xs: 12, sm: 6 }
-                        },
-
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("campaigns.newsLetterEditor.language")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.language")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content:
-                                        <FormControl className={localClasses.select}>
-                                            <Select
-                                                native
-                                                displayEmpty
-                                                // value={campaingnValues?.personalDatatoSubject}
-                                                value={campaingnValues.LanguageCode}
-                                                onChange={(event) => {
-                                                    setCampaingnValues({ ...campaingnValues, LanguageCode: event.target.value })
-                                                }}
-                                                input={<OutlinedInput />}
-                                                renderValue={(selected) => {
-                                                    const lc = LangugeCode.find(e => { return e.value === selected });
-                                                    return t(lc.label);
-                                                }}
-                                                MenuProps={{
-                                                    PaperProps: {
-                                                        style: {
-                                                            maxHeight: 48 * 4.5 + 8,
-                                                            width: 250,
-                                                        },
-                                                    },
-                                                }}
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                            >
-                                                {LangugeCode.map((item) => (
-                                                    <option
-                                                        key={item.value}
-                                                        value={item.value}
-                                                    >
-                                                        {t(item.label)}
-                                                    </option>
-                                                ))}
-                                            </Select>
-                                        </FormControl>,
-                                    gridSize: { xs: 12, sm: 12 },
-
-                                }, {
-
-                                    content: accountFeatures?.indexOf(PulseemFeatures.GOOGLE_LINKS) > -1 && <Box className={clsx(classes.flex, localClasses.googleCheck)}>
-                                        <Checkbox
-                                            color="primary"
-                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                            name='googleAnalytics'
-                                            // className={ }
-                                            checked={campaingnValues.GoogleAnalytics === true}
-                                            onClick={() => {
-                                                setCampaingnValues({ ...campaingnValues, GoogleAnalytics: !campaingnValues.GoogleAnalytics })
-                                            }}
-                                        />
-                                        <FaGoogle />
-                                        <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.gAnalytics")} align="left">{t("campaigns.newsLetterEditor.gAnalytics")}</Typography>
-                                    </Box>
-                                    ,
-                                    gridSize: { xs: 12, sm: 12 }
-                                }
-                                ]}
-                                spacing={1}
-                                gridStyles={localClasses.contentCenter}
-                            />,
-                            gridSize: { xs: 12, sm: 6 }
-                        },
-                        {
-                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 &&
-                                <SimpleGrid
-                                    gridArr={[{
-                                        content:
-                                            <CustomTooltip
-                                                isSimpleTooltip={false}
-                                                classes={classes}
-                                                interactive={true}
-                                                arrow={true}
-                                                placement={'top'}
-                                                title={<Typography noWrap={false}>{t("Upload File")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>}
-                                                text={t("Upload File - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt")}
-                                            >
-                                                <Typography noWrap={false}>{t("common.UploadFile")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>
-                                            </CustomTooltip>,
-                                        gridSize: { xs: 12, sm: 12 }
-                                    },
-                                    {
-                                        content: <>
-                                            <PulseemTags
-                                                title={""}
-                                                style={null}
-                                                classes={classes}
-                                                tagStyle={{ maxWidth: 150 }}
-                                                items={campaingnValues.FilesProperties?.map((f) => {
-                                                    return {
-                                                        Name: f.Name ?? f.FileName,
-                                                        ID: f.ID
-                                                    };
-                                                })}
-                                                onShowModal={() => setShowGallery(true)}
-                                                handleRemove={removeAttachmentFile}
-                                                icon={<BiUpload />}
-                                            />
-                                            <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
-                                        </>
-                                        ,
-                                        gridSize: { xs: 12, sm: 12 },
-                                    },
-                                    {
-                                        content: campaingnValues?.FilesProperties?.length > 0 && <>
-                                            <Box className={classes.dFlex} style={{ justifyContent: 'space-between' }}>
-                                                <Box className={classes.lightBlueTicket}>
-                                                    <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues?.TotalBytes?.toLocaleString() || '0'} {t('campaigns.kb')}</label>
-                                                    {/* <Loader isOpen={showCostLoader} key="campaigns.kb" size={25} showBackdrop={false} color={"#c9302c"} /> */}
-                                                </Box>
-                                                <Box className={classes.lightBlueTicket}>
-                                                    <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues?.TotalCost?.toLocaleString() || '0'} {t('report.Credits')}</label>
-                                                    {/* <Loader isOpen={showCostLoader} key="report.Credits" size={25} showBackdrop={false} color={"#c9302c"} /> */}
-                                                </Box>
-                                            </Box>
-                                        </>
-                                        ,
-                                        gridSize: { xs: 12, sm: 12 },
-                                    }
-                                    ]}
-                                    spacing={1}
-                                    gridStyles={localClasses.contentCenter}
-                                />,
-                            gridSize: { xs: 12, sm: 6 }
-                        },
-                    ]
-                }
-
-            />
-        </Box>
-    )
-    const CampaignBox3 = () => (
-        <Box pt={3}>
-            <Typography className={localClasses.suHeading}>{t("campaigns.newsLetterEditor.textAdditions")}</Typography>
-
-            <SimpleGrid
-                spacing={2}
-                centerlize={true}
-                gridArr={
-                    [
-                        {
-                            content: <SimpleGrid
-                                spacing={2}
-                                centerlize={true}
-                                gridArr={
-                                    [
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Checkbox
-
-                                                            color="primary"
-                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                                            name='WebViewLocation'
-                                                            checked={!!selectedCheck.WebViewLocation}
-                                                            onClick={handleChangeCheckbox}
-                                                        />,
-                                                        gridSize: { xs: 6, sm: 2 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.dontSee_clickHere_mail")} align="left">{t("campaigns.newsLetterEditor.dontSee_clickHere_mail")}</Typography>,
-                                                        gridSize: { xs: 6, sm: 10 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 },
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Checkbox
-
-                                                            color="primary"
-                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                                            name='PrintLocation'
-                                                            checked={!!selectedCheck.PrintLocation}
-                                                            onClick={handleChangeCheckbox}
-                                                        />,
-                                                        gridSize: { xs: 6, sm: 2 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.printMail")} align="left">{t("campaigns.newsLetterEditor.printMail")}</Typography>,
-                                                        gridSize: { xs: 6, sm: 10 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Checkbox
-
-                                                            color="primary"
-                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                                            name='UnsubscribeLocation'
-                                                            checked={!!selectedCheck.UnsubscribeLocation}
-                                                            onClick={handleChangeCheckbox}
-                                                        />,
-                                                        gridSize: { xs: 6, sm: 2 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.removeCustomerFromMail")} align="left">{t("campaigns.newsLetterEditor.removeCustomerFromMail")}</Typography>,
-                                                        gridSize: { xs: 6, sm: 10 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Checkbox
-
-                                                            color="primary"
-                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                                            name='UpdateClient'
-                                                            checked={!!selectedCheck.UpdateClient}
-                                                            onClick={handleChangeCheckbox}
-                                                        />,
-                                                        gridSize: { xs: 6, sm: 2 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.updateCustomerInfo")} align="left">{t("campaigns.newsLetterEditor.updateCustomerInfo")}</Typography>,
-                                                        gridSize: { xs: 6, sm: 10 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                    ]
-                                }
-                            />,
-                            gridSize: { xs: 12, sm: 6 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                spacing={2}
-                                centerlize={true}
-                                gridArr={
-                                    [
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            // checked={selectedRadio.a === 'a1' }
-                                                            checked={campaingnValues.WebViewLocation === 1}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.WebViewLocation}
-                                                            // value="a1"
-                                                            value={1}
-                                                            // name="a"
-                                                            name="WebViewLocation"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            checked={campaingnValues.PrintLocation === 1}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.PrintLocation}
-                                                            value={1}
-                                                            name="PrintLocation"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            checked={campaingnValues.UnsubscribeLocation === 1}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.UnsubscribeLocation}
-                                                            value={1}
-                                                            name="UnsubscribeLocation"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            checked={campaingnValues.UpdateClient === 1}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.UpdateClient}
-                                                            value={1}
-                                                            name="UpdateClient"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                    ]
-                                }
-
-                            />,
-                            gridSize: { xs: 12, sm: 3 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                spacing={2}
-                                centerlize={true}
-                                gridArr={
-                                    [
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            // checked={selectedRadio.a === 'a1' }
-                                                            checked={campaingnValues.WebViewLocation === 2}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.WebViewLocation}
-                                                            // value="a1"
-                                                            value={2}
-                                                            // name="a"
-                                                            name="WebViewLocation"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        // content: <Radio
-                                                        //     checked={selectedRadio.a === 'a2'}
-                                                        //     onChange={handleSelectionRadio}
-                                                        //     disabled={!!!selectedCheck.a}
-                                                        //     value="a2"
-                                                        //     name="a"
-                                                        //     inputProps={{ 'aria-label': 'A' }}
-                                                        // />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            checked={campaingnValues.PrintLocation === 2}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.PrintLocation}
-                                                            value={2}
-                                                            name="PrintLocation"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            checked={campaingnValues.UnsubscribeLocation === 2}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.UnsubscribeLocation}
-                                                            value={2}
-                                                            name="UnsubscribeLocation"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[
-                                                    {
-                                                        content: <Radio
-                                                            color="primary"
-                                                            checked={campaingnValues.UpdateClient === 2}
-                                                            onChange={handleSelectionRadio}
-                                                            disabled={!!!selectedCheck.UpdateClient}
-                                                            value={2}
-                                                            name="UpdateClient"
-                                                            inputProps={{ 'aria-label': 'A' }}
-                                                        />,
-                                                        gridSize: { xs: 12, sm: 3 }
-                                                    },
-                                                    {
-                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
-                                                        gridSize: { xs: 12, sm: 9 }
-                                                    },
-
-                                                ]}
-                                                spacing={1}
-                                                gridStyles={localClasses.contentCenter}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                    ]
-                                }
-
-                            />,
-                            gridSize: { xs: 12, sm: 3 }
-                        },
-
-                    ]}
-
-            />
-        </Box>
-    )
     const removeAttachmentFile = (event, fileId) => {
         event.preventDefault();
         event.stopPropagation();
@@ -1295,31 +706,36 @@ const NewsLetterWizard = ({ classes }) => {
         >
             {showGalleryModal()}
             {renderToast()}
-            {/* <Title
-                classes={classes}
-                stepNumber="1"
-                title={t("campaigns.createNewsLetterHeader")}
-                subTitle={t("campaigns.createNewsLetterSubTitle")} /> */}
             <Typography className={classes.managementTitle}>
                 {t("campaigns.createNewsLetterHeader")}
             </Typography>
             <Divider />
             {CampaignBox1()}
             <Divider />
-            <SimpleGrid
-                spacing={3}
-                centerlize={true}
-                gridArr={[
-                    {
-                        content: <CampaignBox3 />,
-                        gridSize: { xs: 12, sm: 5 }
-                    },
-                    {
-                        content: <CampaignBox2 />,
-                        gridSize: { xs: 12, sm: 7 }
-                    },
-                ]}
-            />
+            <Grid container spacing={3}>
+                {/* Additional Text */}
+                <Grid item xs={12} sm={5}>
+                    <AdditionalText
+                        classes={classes}
+                        localClasses={localClasses}
+                        selectedCheck={selectedCheck}
+                        campaingnValues={campaingnValues}
+                        handleChangeCheckbox={handleChangeCheckbox}
+                        handleSelectionRadio={handleSelectionRadio}
+                    />
+                </Grid>
+                {/* Advanced settings */}
+                <Grid item xs={12} sm={7}>
+                    <AdvancedSettings
+                        classes={classes}
+                        localClasses={localClasses}
+                        campaingnValues={campaingnValues}
+                        setCampaingnValues={setCampaingnValues}
+                        setShowGallery={setShowGallery}
+                        removeAttachmentFile={removeAttachmentFile}
+                    />
+                </Grid>
+            </Grid>
 
             <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
                 <WizardActions
@@ -1372,7 +788,7 @@ const NewsLetterWizard = ({ classes }) => {
             </Dialog>
             {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
             <Loader isOpen={showLoader} />
-        </DefaultScreen>
+        </DefaultScreen >
     )
 }
 
