@@ -1,9 +1,9 @@
 import React from "react";
 import MobilePreview from "../../../components/MobilePreivew/MobilePreivew";
-import { RenderPhoneProps } from "./types";
+import { PhoneProps } from "./WhatsappCreator.types";
 import { Box } from "@material-ui/core";
 
-const RenderPhone = ({ classes }: RenderPhoneProps) => {
+const Phone = ({ classes }: PhoneProps["classes"]) => {
   return (
     <>
       {" "}
@@ -19,4 +19,4 @@ const RenderPhone = ({ classes }: RenderPhoneProps) => {
   );
 };
 
-export default React.memo(RenderPhone);
+export default React.memo(Phone);

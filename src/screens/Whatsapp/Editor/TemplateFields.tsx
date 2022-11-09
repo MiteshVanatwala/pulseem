@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
-import { WhatsappCreatorProps, core } from "./types";
+import { WhatsappCreatorProps, core } from "./WhatsappCreator.types";
+import { ClassesType } from "../../Classes.types";
 import { TextField, Typography, MenuItem, Grid } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 
-const RenderFields = ({
+const TemplateFields = ({
   classes,
   templateName,
   savedTemplate,
   onTemplateNameChange,
   onSavedTemplateChange,
-}: WhatsappCreatorProps) => {
+}: WhatsappCreatorProps & ClassesType) => {
   const { windowSize } = useSelector((state: { core: core }) => state.core);
   const { t: translator } = useTranslation();
-  const [campaignBool, setcampaignBool] = useState(false);
+  const [isCampaign, setIsCampaign] = useState(false);
 
   const names = [
     "Oliver Hansen",
@@ -48,7 +49,7 @@ const RenderFields = ({
             type="text"
             placeholder={translator("whatsapp.templateNamePlaceholder")}
             className={
-              campaignBool
+              isCampaign
                 ? clsx(classes.buttonField, classes.error)
                 : clsx(classes.buttonField, classes.success)
             }
@@ -73,7 +74,7 @@ const RenderFields = ({
             type="text"
             placeholder={translator("whatsapp.selectSavedTemplatePlaceholder")}
             className={
-              campaignBool
+              isCampaign
                 ? clsx(classes.buttonField, classes.error)
                 : clsx(classes.buttonField, classes.success)
             }
@@ -92,4 +93,4 @@ const RenderFields = ({
   );
 };
 
-export default React.memo(RenderFields);
+export default React.memo(TemplateFields);

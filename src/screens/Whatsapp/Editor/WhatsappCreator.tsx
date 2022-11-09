@@ -1,20 +1,21 @@
 import React, { BaseSyntheticEvent, useState } from "react";
 import { useSelector } from "react-redux";
 import DefaultScreen from "../../DefaultScreen";
-import WizardTitle from "../../../components/Wizard/WizardTitle";
-import RenderFields from "./RenderFields";
-import RenderButtons from "./RenderButtons";
-import RenderPhone from "./RenderPhone";
-import { WhatsappCreatorProps, core } from "./types";
+import { Title } from "../../../components/managment/Title";
+import TemplateFields from "./TemplateFields";
+import Buttons from "./Buttons";
+import Phone from "./Phone";
+import { WhatsappCreatorProps, core } from "./WhatsappCreator.types";
+import { ClassesType } from "../../Classes.types";
 import { useTranslation } from "react-i18next";
 import { Box, Grid } from "@material-ui/core";
 
-const WhatsappCreator = ({ classes }: WhatsappCreatorProps) => {
+const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
   const { windowSize } = useSelector((state: { core: core }) => state.core);
   const { t: translator } = useTranslation();
 
-  const [templateName, setTemplateName] = useState<String>("");
-  const [savedTemplate, setSavedTemplate] = useState<String>("");
+  const [templateName, setTemplateName] = useState<string>("");
+  const [savedTemplate, setSavedTemplate] = useState<string>("");
 
   const onTemplateNameChange = (e: BaseSyntheticEvent) => {
     console.log(e.target.value);
@@ -55,15 +56,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps) => {
             }}
           >
             <Grid item sm={12} md={12} lg={8}>
-              <WizardTitle
-                title={translator("whatsapp.whatsappTemplate")}
-                classes={classes}
-                tooltip={translator("whatsapp.toolTip1")}
-                stepNumber={1}
-                subTitle={translator("whatsapp.createContent")}
-                topZero={false}
+              <Title
+                Text={translator("whatsapp.header")}
+                Classes={classes.whatsappTemplateTitle}
+                ContainerStyle={{}}
+                Element={null}
               />
-              <RenderFields
+              <TemplateFields
                 classes={classes}
                 templateName={templateName}
                 savedTemplate={savedTemplate}
@@ -74,10 +73,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps) => {
 
             <Grid item xs={12} sm={12} md={12} lg={4}>
               <Box style={{ maxWidth: 420, marginTop: 20 }}>
-                <RenderPhone classes={classes} />
+                <Phone classes={classes} />
               </Box>
             </Grid>
-            <RenderButtons classes={classes} />
+            <Buttons classes={classes} />
           </Grid>
         </DefaultScreen>
       </form>

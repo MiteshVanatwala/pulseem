@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
-import { core, RenderButtonsProps } from "./types";
+import { core, ButtonsProps } from "./WhatsappCreator.types";
 import { Button, Box } from "@material-ui/core";
 import { BsTrash } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
 
-const RenderButtons = ({ classes }: RenderButtonsProps) => {
+const Buttons = ({ classes }: ButtonsProps["classes"]) => {
   const { t: translator } = useTranslation();
 
   const { isRTL } = useSelector((state: { core: core }) => state.core);
-  const [isFromAutomation, setIsFromAutomation] = useState<Boolean>(false);
+  const [isFromAutomation, setIsFromAutomation] = useState<boolean>(false);
 
   return (
     <>
@@ -67,4 +67,4 @@ const RenderButtons = ({ classes }: RenderButtonsProps) => {
   );
 };
 
-export default React.memo(RenderButtons);
+export default React.memo(Buttons);
