@@ -35,52 +35,48 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <DefaultScreen
-          subPage={"create"}
-          currentPage="whatsapp"
-          classes={classes}
-          customPadding={true}
+    <form onSubmit={handleSubmit}>
+      <DefaultScreen
+        subPage={"create"}
+        currentPage="whatsapp"
+        classes={classes}
+        customPadding={true}
+      >
+        <Grid
+          container
+          spacing={windowSize === "xs" ? 0 : 3}
+          className={
+            windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : ""
+          }
+          style={{
+            height: windowSize !== "xs" ? "calc(100vh - 75px)" : "auto",
+          }}
         >
-          <Grid
-            container
-            spacing={windowSize === "xs" ? 0 : 3}
-            className={
-              windowSize === "xs" || windowSize === "sm"
-                ? classes.mobileGrid
-                : ""
-            }
-            style={{
-              height: windowSize !== "xs" ? "calc(100vh - 75px)" : "auto",
-            }}
-          >
-            <Grid item sm={12} md={12} lg={8}>
-              <Title
-                Text={translator("whatsapp.header")}
-                Classes={classes.whatsappTemplateTitle}
-                ContainerStyle={{}}
-                Element={null}
-              />
-              <TemplateFields
-                classes={classes}
-                templateName={templateName}
-                savedTemplate={savedTemplate}
-                onTemplateNameChange={(e) => onTemplateNameChange(e)}
-                onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={12} md={12} lg={4}>
-              <Box style={{ maxWidth: 420, marginTop: 20 }}>
-                <Phone classes={classes} />
-              </Box>
-            </Grid>
-            <Buttons classes={classes} />
+          <Grid item sm={12} md={12} lg={8}>
+            <Title
+              Text={translator("whatsapp.header")}
+              Classes={classes.whatsappTemplateTitle}
+              ContainerStyle={{}}
+              Element={null}
+            />
+            <TemplateFields
+              classes={classes}
+              templateName={templateName}
+              savedTemplate={savedTemplate}
+              onTemplateNameChange={(e) => onTemplateNameChange(e)}
+              onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
+            />
           </Grid>
-        </DefaultScreen>
-      </form>
-    </>
+
+          <Grid item xs={12} sm={12} md={12} lg={4}>
+            <Box style={{ maxWidth: 420, marginTop: 20 }}>
+              <Phone classes={classes} />
+            </Box>
+          </Grid>
+          <Buttons classes={classes} />
+        </Grid>
+      </DefaultScreen>
+    </form>
   );
 };
 

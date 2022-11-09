@@ -5,17 +5,14 @@ import { Box } from "@material-ui/core";
 
 const Phone = ({ classes }: PhoneProps["classes"]) => {
   return (
-    <>
-      {" "}
-      <Box className={classes.mobilePreviewContainer}>
-        <MobilePreview
-          classes={classes}
-          campaignNumber=""
-          text=""
-          keyItem="edtiorPreview"
-        />
-      </Box>
-    </>
+    <Box className={classes.mobilePreviewContainer}>
+      <MobilePreview
+        classes={classes}
+        campaignNumber=""
+        text=""
+        keyItem="edtiorPreview"
+      />
+    </Box>
   );
 };
 
