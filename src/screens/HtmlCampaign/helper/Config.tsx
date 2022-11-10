@@ -173,16 +173,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
             console.log(jsonFile);
         },
         // Auto Save here
-        onChange: (jsonFile: any) => {
-            const interval = setInterval(() => {
-                SaveCampaign({
-                    campaignId: CampaignId,
-                    JsonData: jsonFile,
-                    HtmlData: null
-                });
-                clearInterval(interval);
-            }, AUTO_SAVE_SECONDS);
-        }
+        // onChange: (jsonFile: any) => {
+        //     const interval = setInterval(() => {
+        //         SaveCampaign({
+        //             campaignId: CampaignId,
+        //             JsonData: jsonFile,
+        //             HtmlData: null
+        //         });
+        //         clearInterval(interval);
+        //     }, AUTO_SAVE_SECONDS);
+        // }
         //#endregion
     }
 };
