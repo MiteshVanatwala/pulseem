@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from './Languages';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -45,8 +46,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
         autosave: 60,
-        // customCss: 'https://unlayer.reactstage.club/Content/BeeFree/custom-bee.css',
-        translationsUrl: `https://unlayer.reactstage.club/Content/BeeFree/${IsRTL ? 'he.json' : 'en.json'}`,
+        translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
