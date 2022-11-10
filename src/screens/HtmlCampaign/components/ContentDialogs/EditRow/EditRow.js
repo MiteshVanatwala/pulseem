@@ -7,7 +7,7 @@ import clsx from 'clsx';
 const EditRow = ({ onClose, save, args, classes }) => {
   const { t } = useTranslation();
   const [text, setText] = React.useState(args?.row?.name)
-  const [tags, setTags] = React.useState(args?.row?.tags);
+  const [tags, setTags] = React.useState(args?.row?.metadata?.tags);
 
   const onHandleSave = React.useCallback(() => {
     save({

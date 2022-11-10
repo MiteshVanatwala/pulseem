@@ -3,6 +3,7 @@ import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from './Languages';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
+const AUTO_SAVE_SECONDS = 60000; // 1 minute
 
 export interface ConfigOptions {
     classes: any,
@@ -50,6 +51,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
+        defaultForm: {
+
+        },
+        workspace: {
+            type: 'mixed',
+            contentWidth: 600,
+            popup: {
+                contentWidth: 600,
+                contentWidthMobile: 300
+            }
+        },
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
@@ -79,7 +91,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 const json = JSON.parse(jsonFile)
                 //const rowName = json.metadata.name;
                 onSaveUserBlock(jsonFile, json);
-                setRow(jsonFile);
             }
         },
         contentDialog: {
@@ -109,26 +120,28 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     try {
                         const results = await openModal(EditRow, args, classes);
-                        args.row.metadata.name = results?.name;
-                        args.row.metadata.tags = results?.tags ?? 'saved-rows';
+                        if (results?.name) {
+                            args.row.metadata.name = results?.name;
+                            args.row.metadata.tags = results?.tags ?? 'saved-rows';
 
-                        await handleEditRow(args, results?.name, results?.tags ?? 'saved-rows');
+                            const rows = await getRows(args.handle);
+                            const row = rows.find((r: any) => {
+                                return r.metadata.uuid === args.row?.metadata?.uuid
+                            });
 
-                        const rows = await getRows(args.handle);
-                        const row = rows.find((r: any) => {
-                            return r.metadata.uuid === args.row?.metadata?.uuid
-                        });
+                            row.metadata.name = results?.name;
+                            row.metadata.tags = results?.tags ?? 'saved-rows';
 
-                        row.metadata.name = results?.name;
-                        row.metadata.tags = results?.tags ?? 'saved-rows';
-
-                        const saveBlockObj = {
-                            Category: results?.name,
-                            Tags: results?.tags ?? 'saved-rows',
-                            Data: JSON.stringify(JSON.stringify(row)),
-                            uuid: args.row?.metadata?.uuid ?? uuidv4()
+                            const saveBlockObj = {
+                                Category: results?.name,
+                                Tags: results?.tags?.split(',') ?? 'saved-rows',
+                                Data: JSON.stringify(JSON.stringify(row)),
+                                uuid: args.row?.metadata?.uuid ?? uuidv4(),
+                                Json: row
+                            }
+                            await PulseemEditBlock(saveBlockObj);
+                            await handleEditRow(args, results?.name, results?.tags ?? 'saved-rows');
                         }
-                        await PulseemEditBlock(saveBlockObj);
                         resolve(true);
                     }
                     catch (e) {
@@ -140,11 +153,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
             },
         },
         //#region Methods
-        onSave: async (jsonFile: any, htmlFile: any) => {
-            SaveCampaign({
+        onSave: async (jsonFile: any, htmlFile: any, ampHtml: any) => {
+            await SaveCampaign({
                 campaignId: CampaignId,
                 JsonData: jsonFile,
-                HtmlData: htmlFile
+                HtmlData: ampHtml ?? htmlFile
             });
         },
         onSend: () => {
@@ -160,8 +173,15 @@ export const BeeConfig = (Options: ConfigOptions) => {
             console.log(jsonFile);
         },
         // Auto Save here
-        onChange: () => {
-
+        onChange: (jsonFile: any) => {
+            const interval = setInterval(() => {
+                SaveCampaign({
+                    campaignId: CampaignId,
+                    JsonData: jsonFile,
+                    HtmlData: null
+                });
+                clearInterval(interval);
+            }, AUTO_SAVE_SECONDS);
         }
         //#endregion
     }

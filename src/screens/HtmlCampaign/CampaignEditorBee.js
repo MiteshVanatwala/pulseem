@@ -88,6 +88,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }, [dataReady]);
   //#endregion
+  useEffect(() => {
+    if (editorRef && editorRef.current) {
+      initBeeEditor();
+    }
+  }, [isRTL]);
   // Get data by campaign id
   useEffect(() => {
     if (params?.id != null && params?.id > 0) {
@@ -196,45 +201,45 @@ const CampaignEditor = ({ classes, ...props }) => {
       });
     }
   }
-  useEffect(() => {
-    const initBeeEditor = () => {
-      config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
-      config.mergeTags = mergeData;
-      config.specialLinks = specialLinks;
+  const initBeeEditor = () => {
+    config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
+    config.mergeTags = mergeData;
+    config.specialLinks = specialLinks;
 
-      initTags();
+    initTags();
 
-      switch (beeToken?.StatusCode) {
-        case 201: {
-          const beeObject = JSON.parse(beeToken.Message);
-          if (beeToken.Message === "null" || beeToken.Message === null) {
-            setDialog(DialogType.MISSING_API_KEY);
-          }
-          else {
-            const beeTest = new BeePlugin(beeObject);
-            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : {};
-            beeTest.start(config, template).then((instance) => {
-              editorRef.current = instance;
-            });
-          }
-          break;
-        }
-        case 401: {
+    switch (beeToken?.StatusCode) {
+      case 201: {
+        const beeObject = JSON.parse(beeToken.Message);
+        if (beeToken.Message === "null" || beeToken.Message === null) {
           setDialog(DialogType.MISSING_API_KEY);
-          break;
         }
-        case 404: {
-          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
-          break;
+        else {
+          const beeTest = new BeePlugin(beeObject);
+          const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : {};
+          beeTest.start(config, template).then((instance) => {
+            editorRef.current = instance;
+          });
         }
-        case 500:
-        default: {
-          setDialog(DialogType.ERROR_OCCURED);
-          break;
-        }
+        break;
       }
-      setLoader(false);
+      case 401: {
+        setDialog(DialogType.MISSING_API_KEY);
+        break;
+      }
+      case 404: {
+        setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+        break;
+      }
+      case 500:
+      default: {
+        setDialog(DialogType.ERROR_OCCURED);
+        break;
+      }
     }
+    setLoader(false);
+  }
+  useEffect(() => {
     if (beeToken) {
       initBeeEditor();
     }
@@ -279,7 +284,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
-    editorRef.current.save();
+    await editorRef.current.save();
   }
   const deleteNewsletter = async () => {
     setDialog(null);
@@ -321,48 +326,45 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onBack = () => {
     saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
   }
-  const onTestSendSubmit = (sendRequest) => {
+  const onTestSendSubmit = async (sendRequest) => {
     setLoader(true);
-    saveDesign(false, null, false).then(async (r) => {
-      const reponse = await dispatch(testSend({ ...sendRequest }));
-      onResponse(reponse.payload.StatusCode);
-      setSummaryData(reponse.payload.Summary);
-      setLoader(false);
-    });
-
-    const onResponse = (statusCode) => {
-      setIsResponseModal(statusCode !== 402);
-      switch (statusCode) {
-        case 201: {
-          setDialog(DialogType.SUCCESS_SENT);
-          break;
-        }
-        case 401: {
-          setDialog(DialogType.MISSING_API_KEY);
-          break;
-        }
-        case 402: {
-          setDialog(DialogType.NO_CREDITS_LEFT);
-          break;
-        }
-        case 404: {
-          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
-          break;
-        }
-        case 405: {
-          setDialog(DialogType.CANNOT_CREATE_GROUP);
-          break;
-        }
-        case 406: {
-          setDialog(null);
-          setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
-          break;
-        }
-        case 500:
-        default: {
-          setDialog(DialogType.ERROR_OCCURED);
-          break;
-        }
+    const reponse = await dispatch(testSend({ ...sendRequest }));
+    onTestSendResponse(reponse.payload.StatusCode);
+    setSummaryData(reponse.payload.Summary);
+    setLoader(false);
+  }
+  const onTestSendResponse = (statusCode) => {
+    setIsResponseModal(statusCode !== 402);
+    switch (statusCode) {
+      case 201: {
+        setDialog(DialogType.SUCCESS_SENT);
+        break;
+      }
+      case 401: {
+        setDialog(DialogType.MISSING_API_KEY);
+        break;
+      }
+      case 402: {
+        setDialog(DialogType.NO_CREDITS_LEFT);
+        break;
+      }
+      case 404: {
+        setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+        break;
+      }
+      case 405: {
+        setDialog(DialogType.CANNOT_CREATE_GROUP);
+        break;
+      }
+      case 406: {
+        setDialog(null);
+        setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
+        break;
+      }
+      case 500:
+      default: {
+        setDialog(DialogType.ERROR_OCCURED);
+        break;
       }
     }
   }
@@ -400,12 +402,19 @@ const CampaignEditor = ({ classes, ...props }) => {
     setLoader(true);
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
+      setRow(JSON.stringify(blockRequest?.Json));
     });
   }
   const handleDeleteBlock = (e, row_id) => {
     dispatch(deleteUserBlock(row_id)).then((result) => {
       console.log(result);
     })
+  }
+  const handleOpenTestSend = () => {
+    saveDesign(false, null, false).then(async (r) => {
+      setIsResponseModal(false);
+      editorRef.current.send();
+    });
   }
 
   const getConfig = () => {
@@ -471,7 +480,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         innerStyle={{ paddingInline: 15 }}
         classes={classes}
         onExit={onExit}
-        onTestSend={() => { setIsResponseModal(false); editorRef.current.send(); }}
+        onTestSend={handleOpenTestSend}
         onSave={saveDesign}
         onBack={onBack}
         onDelete={onDelete} />
