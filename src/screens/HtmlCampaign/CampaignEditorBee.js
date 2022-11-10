@@ -417,6 +417,10 @@ const CampaignEditor = ({ classes, ...props }) => {
     });
   }
 
+  // const handleAutoSave = () => {
+  //   saveDesign(false, null, false);
+  // }
+
   const getConfig = () => {
     return BeeConfig({
       classes,
@@ -429,6 +433,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       CampaignId: campaignId,
       PulseemEditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
+      // HandleAutoSave: handleAutoSave,
       setRow,
       getRows,
       handleEditRow,

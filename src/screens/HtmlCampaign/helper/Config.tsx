@@ -20,6 +20,7 @@ export interface ConfigOptions {
     setRow: Function,
     handleDeleteRow: Function,
     handleEditRow: Function,
+    // HandleAutoSave: Function,
     t: any
 }
 
@@ -37,6 +38,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         setRow,
         getRows,
         handleEditRow,
+        // HandleAutoSave,
         handleDeleteRow,
         PulseemEditBlock,
         t
@@ -45,15 +47,12 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
-        trackChanges: true,
+        trackChanges: false,
         autosave: 60,
         translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
-        loadingSpinnerTheme: 'light',
+        loadingSpinnerTheme: 'dark',
         saveRows: true,
-        defaultForm: {
-
-        },
         workspace: {
             type: 'mixed',
             contentWidth: 600,
@@ -173,13 +172,20 @@ export const BeeConfig = (Options: ConfigOptions) => {
             console.log(jsonFile);
         },
         // Auto Save here
+        onChange: (jsonFile: any) => {
+            const interval = setInterval(() => {
+                SaveCampaign({
+                    campaignId: CampaignId,
+                    JsonData: jsonFile,
+                    HtmlData: null
+                });
+                clearInterval(interval);
+            }, AUTO_SAVE_SECONDS);
+        }
+        // Auto Save here
         // onChange: (jsonFile: any) => {
         //     const interval = setInterval(() => {
-        //         SaveCampaign({
-        //             campaignId: CampaignId,
-        //             JsonData: jsonFile,
-        //             HtmlData: null
-        //         });
+        //         HandleAutoSave();
         //         clearInterval(interval);
         //     }, AUTO_SAVE_SECONDS);
         // }
