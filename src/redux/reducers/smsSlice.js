@@ -309,15 +309,6 @@ export const saveSmsCampSettings = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const smsCombinedGroup = createAsyncThunk(
-  'smsCampaign/CreateCombinedGroup', async (data, thunkAPI) => {
-    try {
-      const response = await instence.post(`smsCampaign/CreateCombinedGroup`, data);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  })
 export const smsQuick = createAsyncThunk(
   'smsCampaign/QuickSend', async (data, thunkAPI) => {
     try {

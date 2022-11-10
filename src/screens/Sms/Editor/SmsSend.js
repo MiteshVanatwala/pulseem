@@ -23,7 +23,7 @@ import * as XLSX from 'xlsx';
 import Title from '../../../components/Wizard/Title'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
-  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
+  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
@@ -32,6 +32,7 @@ import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/api'
 import { useParams } from 'react-router-dom';
+import { combinedGroup } from "../../../redux/reducers/groupSlice";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -526,7 +527,7 @@ const SmsSend = ({ classes, ...props }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    let r = await dispatch(smsCombinedGroup(payload));
+    let r = await dispatch(combinedGroup(payload));
     let tempres = [];
     for (let i = 0; i < groupList.length; i++) {
       tempres.push(groupList[i]);
