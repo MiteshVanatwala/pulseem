@@ -341,6 +341,7 @@ const ClientSearchResult = ({ props, classes }) => {
     }
   };
   const handleDownloadCsv = async (formatType) => {
+    setDialog(null);
     setLoader(true);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
@@ -384,7 +385,6 @@ const ClientSearchResult = ({ props, classes }) => {
       }
     }
     setLoader(false);
-    setDialog(null);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {

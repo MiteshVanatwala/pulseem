@@ -38,9 +38,6 @@ const SmsReport = ({ classes }) => {
   const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
-  const [fromDate, handleFromDate] = useState(priorDate);
-  const [toDate, handleToDate] = useState(null);
-  const [campaignName, setCampaignNameSearch] = useState('');
   const rowsOptions = [6, 10, 20, 50]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
@@ -258,6 +255,8 @@ const SmsReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setDialogType(null);
+    setLoader(true);
     if (hasRevenue)
       exportColumnHeader["Revenue"] = t("common.revenue");
 
@@ -272,7 +271,7 @@ const SmsReport = ({ classes }) => {
       exportType: formatType,
       fields: exportColumnHeader
     });
-    setDialogType(null)
+    setLoader(false);
   }
 
   const handleSearch = () => {
