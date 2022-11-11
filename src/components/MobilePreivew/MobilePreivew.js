@@ -2,7 +2,7 @@ import Mobile from "../../assets/images/mobileiphone.png";
 import { Box } from "@material-ui/core";
 import clsx from "clsx";
 
-const MobilePreivew = ({ classes, fromNumber, text, keyItem }) => {
+const MobilePreivew = ({ classes, campaignNumber, text, keyItem }) => {
     return (
         <Box className={classes.phoneDiv}>
             <img src={Mobile} className={classes.phoneImg} alt="Phone Simulation" />

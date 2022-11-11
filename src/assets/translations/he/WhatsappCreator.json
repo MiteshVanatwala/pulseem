@@ -1,5 +1,18 @@
 {
     "Title": "Whatsapp",
     "NewWhatsappCampaign": " WhatsApp יצירת תבנית",
-    "header": " WhatsApp יצירת תבנית"
+    "header": " WhatsApp יצירת תבנית",
+    "template": {
+        "textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
+        "callToActionTooltip": "Call To Action",
+        "callToAction": "Call To Action",
+        "quickReplayTooltip": "Quick Replay",
+        "quickReplay": "Quick Replay",
+        "removalLinkTooltip": "Removal Link",
+        "removalLink": "Removal Link",
+        "removalTextTooltip": "Removal Text",
+        "removalText": "Removal Text",
+        "dynamicFieldTooltip": "Dynamic Field",
+        "dynamicField": "Dynamic Field"
+    }
 }

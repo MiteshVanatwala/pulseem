@@ -1,5 +1,18 @@
 {
     "Title": "Whatsapp",
     "NewWhatsappCampaign": "Create WhatsApp Template",
-    "header": "Create WhatsApp Template"
+    "header": "Create WhatsApp Template",
+    "template": {
+        "textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
+        "callToActionTooltip": "Call To Action",
+        "callToAction": "Call To Action",
+        "quickReplayTooltip": "Quick Replay",
+        "quickReplay": "Quick Replay",
+        "removalLinkTooltip": "Removal Link",
+        "removalLink": "Removal Link",
+        "removalTextTooltip": "Removal Text",
+        "removalText": "Removal Text",
+        "dynamicFieldTooltip": "Dynamic Field",
+        "dynamicField": "Dynamic Field"
+    }
 }
