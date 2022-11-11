@@ -18,5 +18,7 @@
   "templateNamePlaceholder": "Template Name",
   "templateDesc": "Only you will see the name",
   "selectSavedTemplate": "Select Saved Template",
-  "selectSavedTemplatePlaceholder": "Select Saved Template"
+  "selectSavedTemplatePlaceholder": "Select Saved Template",
+  "typeText": "Insert text here - upto 1024 characters",
+  "yourMessage": "Your Message"
 }

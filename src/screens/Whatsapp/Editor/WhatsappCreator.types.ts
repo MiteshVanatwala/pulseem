@@ -9,6 +9,10 @@ export type WhatsappCreatorProps = {
   onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
 };
 
+export type MessageEditorProps = {
+  classes: ClassesType;
+};
+
 export type PhoneProps = {
   classes: ClassesType;
 };
