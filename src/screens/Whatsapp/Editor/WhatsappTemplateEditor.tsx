@@ -76,116 +76,114 @@ const WhatsappTemplateEditor = ({ classes }: WhatsappCreatorProps) => {
 
   return (
     <>
-      <Grid item xs={12} md={5} className={classes.boxDiv}>
-        <textarea
-          placeholder={translator("whatsapp.template.textareaPlaceholder")}
-          maxLength={1024}
-          id="whatsapp-template-text"
-          className={clsx(classes.msgArea, classes.sidebar)}
-          style={{ textAlign: alignment === 'right' ? 'right' : 'left' }}
-          onChange={onTemplateChange}
-          // onSelect={handleMsgSelect}
-          value={templateText}
-        ></textarea>
+      <textarea
+        placeholder={translator("whatsapp.template.textareaPlaceholder")}
+        maxLength={1024}
+        id="whatsapp-template-text"
+        className={clsx(classes.msgArea, classes.sidebar)}
+        style={{ textAlign: alignment === 'right' ? 'right' : 'left' }}
+        onChange={onTemplateChange}
+        // onSelect={handleMsgSelect}
+        value={templateText}
+      ></textarea>
 
-        <Box className={classes.whatsappActionButtonsWrapper}>
-          {actionButtons.map((actionButton) => (
-            <Box key={actionButton.buttonTitle} className={classes.whatsappActionButtonsBox}>
-              <DeleteOutlinedIcon style={{ color: 'red', cursor: 'pointer' }} onClick={() => console.log(actionButton)} />
-              <Button className={classes.whatsappActionButtons}>{actionButton.buttonTitle}</Button>
-            </Box>
-          ))}
-        </Box>
-
-        <Box className={classes.smallInfoDiv}>
-          <span className={classes.textInfoWrapper}>
-            {linkCount}
-            <span className={classes.textInfo}>{linkCount === 1 ? translator("mainReport.link") : translator("mainReport.links")}</span>
-          </span>
-
-          <span className={classes.textInfoWrapper}>
-            {messageCount}
-            <span className={classes.textInfo}>{messageCount === 1 ? translator("sms.message") : translator("sms.messages")}</span>
-          </span>
-
-          <span className={classes.textInfoWrapper}>
-            {characterCount}/1024
-            <span className={classes.textInfo}>{translator("mainReport.char")}</span>
-          </span>
-        </Box>
-
-        <Box className={classes.whatsappFuncDiv}>
-
-          <Box
-            className={isRTL ? classes.emojiHe : classes.emoji}
-          >
-            {isRTL ? (
-              <>
-                <Tooltip
-                  disableFocusListener
-                  title={translator("mainReport.aligntoRight")}
-                  classes={{ tooltip: styles.customWidth }}
-                  placement="top-start"
-                  arrow
-                >
-                  <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
-                </Tooltip>
-                <Tooltip
-                  disableFocusListener
-                  title={translator("mainReport.alignToLeft")}
-                  classes={{ tooltip: styles.customWidth }}
-                  placement="top-start"
-                  arrow
-                >
-                  <FormatAlignLeftIcon onClick={() => { setAlignment('left') }} />
-                </Tooltip>
-              </>
-            ) : (
-              <>
-                <Tooltip
-                  disableFocusListener
-                  title={translator("mainReport.alignToLeft")}
-                  classes={{ tooltip: styles.customWidth }}
-                  placement="top-start"
-                  arrow
-                >
-                  <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('left') }} />
-                </Tooltip>
-                <Tooltip
-                  disableFocusListener
-                  title={translator("mainReport.aligntoRight")}
-                  classes={{ tooltip: styles.customWidth }}
-                  placement="top-start"
-                  arrow
-                >
-                  <FormatAlignRightIcon onClick={() => { setAlignment('right') }} />
-                </Tooltip>
-              </>
-            )}
+      <Box className={classes.whatsappActionButtonsWrapper}>
+        {actionButtons.map((actionButton) => (
+          <Box key={actionButton.buttonTitle} className={classes.whatsappActionButtonsBox}>
+            <DeleteOutlinedIcon style={{ color: 'red', cursor: 'pointer' }} onClick={() => console.log(actionButton)} />
+            <Button className={classes.whatsappActionButtons}>{actionButton.buttonTitle}</Button>
           </Box>
+        ))}
+      </Box>
 
-          <Box className={classes.whatsappBaseButtons}>
-            {buttons.map((button) => (
+      <Box className={classes.smallInfoDiv}>
+        <span className={classes.textInfoWrapper}>
+          {linkCount}
+          <span className={classes.textInfo}>{linkCount === 1 ? translator("mainReport.link") : translator("mainReport.links")}</span>
+        </span>
+
+        <span className={classes.textInfoWrapper}>
+          {messageCount}
+          <span className={classes.textInfo}>{messageCount === 1 ? translator("sms.message") : translator("sms.messages")}</span>
+        </span>
+
+        <span className={classes.textInfoWrapper}>
+          {characterCount}/1024
+          <span className={classes.textInfo}>{translator("mainReport.char")}</span>
+        </span>
+      </Box>
+
+      <Box className={classes.whatsappFuncDiv}>
+
+        <Box
+          className={isRTL ? classes.emojiHe : classes.emoji}
+        >
+          {isRTL ? (
+            <>
               <Tooltip
                 disableFocusListener
-                title={translator(button.tooltipTitle)}
+                title={translator("mainReport.aligntoRight")}
                 classes={{ tooltip: styles.customWidth }}
-                placement="top"
+                placement="top-start"
                 arrow
-                key={button.buttonTitle}
               >
-                <Button
-                  className={clsx(classes.whatsappInfoButtons, button.isDisable ? classes.disabled : null)}
-                  onClick={() => console.log(button)}
-                >
-                  {translator(button.buttonTitle)}
-                </Button>
+                <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
               </Tooltip>
-            ))}
-
-          </Box>
+              <Tooltip
+                disableFocusListener
+                title={translator("mainReport.alignToLeft")}
+                classes={{ tooltip: styles.customWidth }}
+                placement="top-start"
+                arrow
+              >
+                <FormatAlignLeftIcon onClick={() => { setAlignment('left') }} />
+              </Tooltip>
+            </>
+          ) : (
+            <>
+              <Tooltip
+                disableFocusListener
+                title={translator("mainReport.alignToLeft")}
+                classes={{ tooltip: styles.customWidth }}
+                placement="top-start"
+                arrow
+              >
+                <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('left') }} />
+              </Tooltip>
+              <Tooltip
+                disableFocusListener
+                title={translator("mainReport.aligntoRight")}
+                classes={{ tooltip: styles.customWidth }}
+                placement="top-start"
+                arrow
+              >
+                <FormatAlignRightIcon onClick={() => { setAlignment('right') }} />
+              </Tooltip>
+            </>
+          )}
         </Box>
-      </Grid>
+
+        <Box className={classes.whatsappBaseButtons}>
+          {buttons.map((button) => (
+            <Tooltip
+              disableFocusListener
+              title={translator(button.tooltipTitle)}
+              classes={{ tooltip: styles.customWidth }}
+              placement="top"
+              arrow
+              key={button.buttonTitle}
+            >
+              <Button
+                className={clsx(classes.whatsappInfoButtons, button.isDisable ? classes.disabled : null)}
+                onClick={() => console.log(button)}
+              >
+                {translator(button.buttonTitle)}
+              </Button>
+            </Tooltip>
+          ))}
+
+        </Box>
+      </Box>
     </>
   );
 };

@@ -2,6 +2,23 @@
     "Title": "Whatsapp",
     "NewWhatsappCampaign": "Create WhatsApp Template",
     "header": "Create WhatsApp Template",
+    "WAMenuItemResource": {
+        "Text": "New WhatsApp Template"
+    },
+    "PageResource1": {
+        "Title": "WhatsApp Campaign Management"
+    },
+    "submit": "Submit",
+    "saveSms": "Save",
+    "saveAndExit": "Save and Exit",
+    "whatsappTemplate": "Create New WhatsApp Template",
+    "toolTip1": "Create the content you want to send to your recipients and then choose how, when and to whom to send",
+    "createContent": "Create Content",
+    "templateName": "Template Name",
+    "templateNamePlaceholder": "Template Name",
+    "templateDesc": "Only you will see the name",
+    "selectSavedTemplate": "Select Saved Template",
+    "selectSavedTemplatePlaceholder": "Select Saved Template",
     "template": {
         "textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
         "callToActionTooltip": "Call To Action",
