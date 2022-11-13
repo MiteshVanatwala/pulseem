@@ -135,7 +135,7 @@ const renderRoutes = (classes, history) => {
       <Route
         exact
         path="/Campaigns/Create"
-        element={<NewsLetterWizard  classes={classes} />}
+        element={<NewsLetterWizard classes={classes} />}
       />
       <Route
         path="/Campaigns/Create/:id"
@@ -450,18 +450,6 @@ const AppContainer = () => {
   dispatch(setWindowSize(width))
 
   useEffect(() => {
-    const initFeatures = async () => {
-      if (!accountSettings) {
-        //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
-        const settings = await dispatch(getCommonFeatures());
-        dispatch(setAccountFeatures(settings.payload));
-      }
-      const response = await dispatch(isClalAccount());
-      dispatch(setIsClal(response.payload));
-      setCookie('OldVersion', false);
-    }
-
-
     const updateToken = () => {
       const culture = getCookie('Culture')
       const token = getCookie('jtoken')
@@ -494,6 +482,20 @@ const AppContainer = () => {
       dispatch(setLanguage(lang.toLowerCase()))
       dispatch(setUsername(companyName))
 
+
+      const initFeatures = async () => {
+        if (!accountSettings) {
+          //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
+          const settings = await dispatch(getCommonFeatures({ companyName }));
+          dispatch(setAccountFeatures(settings.payload));
+        }
+        const response = await dispatch(isClalAccount());
+        dispatch(setIsClal(response.payload));
+        setCookie('OldVersion', false);
+      }
+
+      initFeatures();
+
     }
 
     const cookieFunctionObj = {
@@ -507,7 +509,6 @@ const AppContainer = () => {
         cookieFunction()
     })
     updateToken()
-    initFeatures()
   }, [dispatch])
 
 
