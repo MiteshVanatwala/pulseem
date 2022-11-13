@@ -261,9 +261,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onSave = async (args) => {
     try {
       const response = await dispatch(saveCampaign({
+        Name: campaign.Name,
         campaignId: args.campaignId,
         JsonData: args.JsonData,
-        HtmlData: args.HtmlData
+        HTML: args.HtmlData
       }));
 
       if (response.payload === true) {

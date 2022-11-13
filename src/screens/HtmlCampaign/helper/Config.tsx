@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from './Languages';
+import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
