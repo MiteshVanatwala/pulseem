@@ -514,7 +514,7 @@
       "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
       "CampaignNotFound": "קמפיין לא נמצא או נמחק"
     },
-    "success": "Success"
+    "success": "הקמפיין נשמר בהצלחה"
   },
   "newsLetterMgmt": {
     "emailVerification": {

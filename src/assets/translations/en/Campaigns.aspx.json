@@ -523,7 +523,7 @@
       "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
       "CampaignNotFound": "Campaign not found or deleted"
     },
-    "success": "Success"
+    "success": "Campaign successfully saved"
   },
   "newsLetterMgmt": {
     "emailVerification": {

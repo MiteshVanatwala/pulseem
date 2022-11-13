@@ -138,13 +138,11 @@ const NewsLetterWizard = ({ classes }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { campaignInfo } = useSelector(state => state.campaignEditor);
     const { verifiedEmails } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
-    const [showCostLoader, setShowCostLoader] = useState(false);
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -318,19 +316,18 @@ const NewsLetterWizard = ({ classes }) => {
             handleGetNewsletterResponse(response.payload)
         }
     }
-    const silenceSaveAndLoad = async () => {
+    const silenceSave = async () => {
         await dispatch(saveCampaignInfo(campaingnValues))
-        setShowCostLoader(false);
     }
 
     useEffect(() => {
         if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
-            setShowCostLoader(true);
-            silenceSaveAndLoad();
-            initFilesAndCredits(campaingnValues?.CampaignID);
-            setIsSilenceUpdated(false);
+            silenceSave().then(() => {
+                initFilesAndCredits(campaingnValues?.CampaignID);
+                setIsSilenceUpdated(false);
+            })
         }
-    }, [campaingnValues['FilesProperties']])
+    }, [isSilenceUpdated])
 
     const handleSelectionRadio = (e) => {
         setCampaingnValues({ ...campaingnValues, [e.target.name]: Number(e.target.value) })
@@ -634,19 +631,32 @@ const NewsLetterWizard = ({ classes }) => {
     const handleSelectedImage = (files) => {
         const existsFiles = [...campaingnValues.FilesProperties];
 
+        if (!files || files[0] === '') {
+            setShowGallery(false);
+            setIsFileSelected(false);
+            return;
+        }
+
         files = files.split(',');
 
         for (var i = 0; i < files.length; i++) {
             const file = files[i];
-            let fileName = file.split('/')[file.split('/').length - 1];
-            const newFile = {
-                Name: fileName,
-                FileName: fileName,
-                FolderType: PulseemFolderType.DOCUMENT,
-                FileURL: file,
-                ID: makeId()
+
+            const existFile = campaingnValues.FilesProperties.find((f) => {
+                return f.FileURL === file
+            });
+
+            if (!existFile) {
+                let fileName = file.split('/')[file.split('/').length - 1];
+                const newFile = {
+                    Name: fileName,
+                    FileName: fileName,
+                    FolderType: PulseemFolderType.DOCUMENT,
+                    FileURL: file,
+                    ID: makeId()
+                }
+                existsFiles.push(newFile);
             }
-            existsFiles.push(newFile);
         }
 
         setCampaingnValues({ ...campaingnValues, FilesProperties: [...existsFiles] })

@@ -177,7 +177,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
                 selectedFileURL.indexOf(fileUrl) == -1 ?
                     [...selectedFileURL, fileUrl] : selectedFileURL.filter(obj => obj !== fileUrl)
             )
-            // [...selectedFileURL, fileUrl] 
             : fileUrl);
     }
 
