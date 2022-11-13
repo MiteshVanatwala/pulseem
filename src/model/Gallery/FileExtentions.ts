@@ -4,6 +4,7 @@ export const AllowedExentions = [
     'pdf',
     'rtf',
     'xls',
+    'xlsx',
     'xlsv',
     'csv',
     'txt',

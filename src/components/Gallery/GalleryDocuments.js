@@ -1,7 +1,7 @@
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { Button, Grid, Box } from '@material-ui/core'
 import { Image } from './Image'
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { deleteGalleryFile, uploadFile } from '../../redux/reducers/gallerySlice';
@@ -30,7 +30,7 @@ export const GalleryDocuments = ({
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [galleryReady, setGalleryReady] = useState(false);
     const [isReInit, setReinit] = useState(false);
-    const hiddenFileInput = React.useRef(null);
+    const hiddenFileInput = useRef(null);
     const [showLoader, setLoader] = useState(false);
     const { uploadProgress } = useSelector(state => state.gallery);
 
@@ -42,14 +42,14 @@ export const GalleryDocuments = ({
             setFileToUpload(null);
             const splitFileName = fileToUpload.name.split('.');
             const fileExtension = splitFileName[splitFileName.length - 1];
-            if (!AllowedExentions.find(x => x === fileExtension)) {
+            if (!AllowedExentions.find(x => x?.toLowerCase() === fileExtension?.toLowerCase())) {
                 onToast({ severity: 'error', color: 'error', message: t('common.notAllowedExtension'), showAnimtionCheck: false })
                 setFileToUpload(null);
                 setLoader(false);
                 return;
             }
 
-            if (fileToUpload.size > 1048576) {
+            if (fileToUpload.size > 10485760) {
                 onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
                 setFileToUpload(null);
                 setLoader(false);
