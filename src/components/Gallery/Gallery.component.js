@@ -379,12 +379,12 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
             </Grid>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container>
-                <Grid item md={6} xs={12}>
+                <Grid item md={folderType === PulseemFolderType.CLIENT_IMAGES ? 6 : 12} xs={12}>
                     {renderCreateFolder()}
                 </Grid>
-                <Grid item md={6} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null, display: 'flex', justifyContent: 'flex-end' }}>
+                {folderType === PulseemFolderType.CLIENT_IMAGES && <Grid item md={6} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null, display: 'flex', justifyContent: 'flex-end' }}>
                     {renderUploadNotice()}
-                </Grid>
+                </Grid>}
             </Grid>
             {renderToast()}
         </div>

@@ -202,15 +202,15 @@ const NewsLetterWizard = ({ classes }) => {
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
     useEffect(() => {
-        if (campaingnValues.FromEmail === '') {
+        if (campaingnValues.FromEmail === '' && verifiedEmails && accountSettings) {
             const defaultEmail = verifiedEmails.find((email) => {
-                return email.Number === accountSettings.DefaultFromMail;
+                return email?.Number === accountSettings?.DefaultFromMail;
             });
             if (defaultEmail?.IsOptIn) {
                 campaingnValues.FromEmail = defaultEmail.Number;
             }
         }
-    }, [verifiedEmails]);
+    }, [verifiedEmails, accountSettings]);
 
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {

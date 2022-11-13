@@ -25,8 +25,9 @@ export const getCommonFeatures = createAsyncThunk(
     try {
       const settings = getCookie('accountSettings');
       if ((!settings || settings === '') || (req && req.forceRequest === true) ||
-        document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx') ||
-        document.referrer.toLocaleLowerCase().includes('login')) {
+        document.referrer.toLocaleLowerCase().indexOf('accountsmanage.aspx') > -1 ||
+        document.referrer.toLocaleLowerCase().indexOf('login') > -1 ||
+        req?.companyName !== settings?.SubAccountName) {
         const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
         return JSON.parse(response.data)
       }
@@ -111,6 +112,10 @@ export const commonSlice = createSlice({
     builder
       .addCase(getAuthorizeNumbers.fulfilled, (state, { payload }) => {
         state.verifiedNumbers = payload
+      })
+    builder
+      .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+        setCookie('accountSettings', payload);
       })
   }
 })
