@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 //import CampaignEditor from './screens/HtmlCampaign/CampaignEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
@@ -448,6 +448,18 @@ const AppContainer = () => {
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
   const width = useWidth();
   dispatch(setWindowSize(width))
+  const userName = useRef();
+
+  const initFeatures = async () => {
+    if (!accountSettings) {
+      //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
+      const settings = await dispatch(getCommonFeatures({ companyName: userName.current }));
+      dispatch(setAccountFeatures(settings.payload));
+    }
+    const response = await dispatch(isClalAccount());
+    dispatch(setIsClal(response.payload));
+    setCookie('OldVersion', false);
+  }
 
   useEffect(() => {
     const updateToken = () => {
@@ -481,21 +493,7 @@ const AppContainer = () => {
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang.toLowerCase()))
       dispatch(setUsername(companyName))
-
-
-      const initFeatures = async () => {
-        if (!accountSettings) {
-          //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
-          const settings = await dispatch(getCommonFeatures({ companyName }));
-          dispatch(setAccountFeatures(settings.payload));
-        }
-        const response = await dispatch(isClalAccount());
-        dispatch(setIsClal(response.payload));
-        setCookie('OldVersion', false);
-      }
-
-      initFeatures();
-
+      userName.current = companyName;
     }
 
     const cookieFunctionObj = {
@@ -508,7 +506,8 @@ const AppContainer = () => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    updateToken()
+    updateToken();
+    initFeatures();
   }, [dispatch])
 
 
