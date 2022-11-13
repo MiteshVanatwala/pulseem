@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { deleteGalleryFile, uploadFile } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { Loader } from '../Loader/Loader';
-import { AllowedExentions } from '../../model/Gallery/FileExtentions';
+import { AllowedExentions, ImageExtensions } from '../../model/Gallery/FileExtentions';
 
 export const GalleryDocuments = ({
     classes,
@@ -149,6 +149,10 @@ export const GalleryDocuments = ({
                 docs && docs.map((f, index) => {
                     const fileKey = f.FileName;
                     const fileExtension = f?.Extension?.replace('.', '');
+                    let imageType = PulseemFolderType.DOCUMENT;
+                    if (ImageExtensions.find(x => x === fileExtension)?.length > 0) {
+                        imageType = PulseemFolderType.CLIENT_IMAGES;
+                    }
                     return <Image
                         classes={classes}
                         onSelectFile={onSelectFile}
@@ -159,7 +163,7 @@ export const GalleryDocuments = ({
                         selectedFile={selectedFile}
                         imgFile={f}
                         key={`g_${index}`}
-                        folderType={PulseemFolderType.DOCUMENT}
+                        folderType={imageType}
                         fileExtension={fileExtension}
                     />
                 })

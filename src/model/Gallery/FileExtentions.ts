@@ -15,3 +15,7 @@ export const AllowedExentions = [
     'ppt',
     'pptx'
 ]
+
+export const ImageExtensions = [
+    'jpg', 'jpeg', 'png', 'gif'
+]
