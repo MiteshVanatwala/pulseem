@@ -45,7 +45,6 @@ export const AdvancedSettings = ({
                         }}
                         input={<OutlinedInput />}
                         renderValue={(selected) => {
-                            console.log('selected',selected)
                             const lc = MobileSupport.find(e => { return e.value === selected });
                             return t(lc.label);
                         }}
@@ -176,7 +175,7 @@ export const AdvancedSettings = ({
         </Grid>
         <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
-                {accountFeatures?.indexOf(PulseemFeatures.GOOGLE_LINKS) > -1 && <Box className={clsx(classes.flex, localClasses.googleCheck)}>
+                <Box className={clsx(classes.flex, localClasses.googleCheck)}>
                     <Checkbox
                         color="primary"
                         inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -189,7 +188,6 @@ export const AdvancedSettings = ({
                     <FaGoogle />
                     <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.gAnalytics")} align="left">{t("campaigns.newsLetterEditor.gAnalytics")}</Typography>
                 </Box>
-                }
             </Grid>
         </Grid>
     </Box>

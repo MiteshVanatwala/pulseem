@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { BiUpload } from 'react-icons/bi';
-import { FaGoogle } from 'react-icons/fa';
 import { IoMdImages } from 'react-icons/io';
-import { Grid, Box, Divider, Typography, TextField, Checkbox, Radio, FormControlLabel, RadioGroup, makeStyles, FormControl, Select, OutlinedInput, MenuItem, FormHelperText } from '@material-ui/core'
+import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,19 +10,16 @@ import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { Dialog } from "../../../components/managment/Dialog";
-import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { saveCampaignInfo, getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { ClientFields, LangugeCode, MobileSupport, PulseemFolderType, PulseemFeatures } from "../../../model/PulseemFields/Fields";
+import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
 import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
-import PulseemTags from '../../../components/Tags/PulseemTags'
 import { makeId } from '../../../helpers/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
-import Title from '../../../components/Wizard/Title';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
 
@@ -671,7 +666,7 @@ const NewsLetterWizard = ({ classes }) => {
             icon: (
                 <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
             ),
-            title: t("common.imageGallery"),
+            title: t("common.documentGallery"),
             content: (
                 <Gallery
                     classes={classes}
