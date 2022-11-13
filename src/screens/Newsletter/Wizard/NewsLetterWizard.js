@@ -360,7 +360,7 @@ const NewsLetterWizard = ({ classes }) => {
 
                 const savedCampaign = response.payload;
                 handleSubmitNewsletterResponse(savedCampaign)
-                const saveInfo = JSON.parse(savedCampaign.Message);
+                const saveInfo = savedCampaign.Message;
 
                 if (isContiue) {
                     window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
@@ -724,7 +724,7 @@ const NewsLetterWizard = ({ classes }) => {
                     <AdvancedSettings
                         classes={classes}
                         localClasses={localClasses}
-                        campaingnValues={campaingnValues}
+                        campaingnValues={{ ...campaingnValues }}
                         setCampaingnValues={setCampaingnValues}
                         setShowGallery={setShowGallery}
                         removeAttachmentFile={removeAttachmentFile}
