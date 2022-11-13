@@ -26,6 +26,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     const [codeResend, setCodeResend] = useState(false)
     const [verificationCode, setVerificationCode] = useState('')
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
+    const [resendDisabled, setResendDisalbed] = useState(false);
+    const [resendInterval, setResendInterval] = useState(10);
 
 
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
@@ -127,11 +129,41 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                     setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
                     break;
                 }
+                default: {
+                    setVerificationError({ code: t('common.ErrorOccured') })
+                    break;
+                }
             }
         }
     }
 
+    const handleResendInterval = () => {
+        let intervalTime = 10;
+
+        const startInterval = () => {
+            if (intervalTime === 0) {
+                stopInterval();
+            }
+            setResendInterval(intervalTime--);
+        }
+        const stopInterval = () => {
+            setCodeResend(false);
+            setResendInterval(10);
+            clearInterval(interval);
+            setResendDisalbed(false);
+        }
+
+        const interval = setInterval(startInterval, 1000);
+    }
+
+    useEffect(() => {
+        if (codeResend === true) {
+            handleResendInterval();
+        }
+    }, [codeResend])
+
     const handleSendCode = (val, isResend = false) => {
+        setResendDisalbed(isResend);
         variant === 'email' && dispatch(newAuthorizeEmail({ email: val })).then((result) => {
             setCodeResend(isResend);
             return result?.payload;
@@ -305,7 +337,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={classes.link} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span></Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && <span>{resendInterval}</span>}</Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>

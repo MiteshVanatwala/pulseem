@@ -191,7 +191,7 @@ const NewsLetterWizard = ({ classes }) => {
         FilesProperties: []
     })
 
-    const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: true, PrintLocation: false, UnsubscribeLocation: true, UpdateClient: false })
+    const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
@@ -207,11 +207,24 @@ const NewsLetterWizard = ({ classes }) => {
                 }
             }
             if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
-                setCampaingnValues({ ...campaingnValues, FromName: accountSettings?.DefaultFromName })
+                setCampaingnValues({ ...campaingnValues, FromName: accountSettings?.DefaultFromName });
             }
         }
-
     }, [verifiedEmails, accountSettings]);
+
+    useEffect(() => {
+        handleTextSelectionValues();
+    }, [campaingnValues]);
+
+    const handleTextSelectionValues = () => {
+        setSelectedCheck({
+            ...selectedCheck,
+            UpdateClient: campaingnValues.UpdateClient && campaingnValues.UpdateClient !== 0,
+            PrintLocation: campaingnValues.PrintLocation && campaingnValues.PrintLocation !== 0,
+            WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
+            UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
+        })
+    }
 
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
@@ -715,8 +728,8 @@ const NewsLetterWizard = ({ classes }) => {
                     <AdditionalText
                         classes={classes}
                         localClasses={localClasses}
-                        selectedCheck={selectedCheck}
-                        campaingnValues={campaingnValues}
+                        selectedCheck={{ ...selectedCheck }}
+                        campaingnValues={{ ...campaingnValues }}
                         handleChangeCheckbox={handleChangeCheckbox}
                         handleSelectionRadio={handleSelectionRadio}
                     />
