@@ -173,7 +173,7 @@ export const AdvancedSettings = ({
                 }
             </Grid>
         </Grid>
-        <Grid container spacing={3}>
+        <Grid container>
             <Grid item xs={12} sm={6}>
                 <Box className={clsx(classes.flex, localClasses.googleCheck)}>
                     <Checkbox
