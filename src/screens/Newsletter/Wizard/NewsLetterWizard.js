@@ -299,17 +299,22 @@ const NewsLetterWizard = ({ classes }) => {
         preload();
     }, [])
 
-    useEffect(() => {
-        const silenceSaveAndLoad = async () => {
-            await dispatch(saveCampaignInfo(campaingnValues))
-            const response = await dispatch(getCampaignInfo(campaingnValues.CampaignID))
+    const initFilesAndCredits = async (cid) => {
+        if (campaingnValues.FilesProperties) {
+            const response = await dispatch(getCampaignInfo(cid))
             handleGetNewsletterResponse(response.payload)
-            setShowCostLoader(false);
         }
+    }
+    const silenceSaveAndLoad = async () => {
+        await dispatch(saveCampaignInfo(campaingnValues))
+        setShowCostLoader(false);
+    }
 
+    useEffect(() => {
         if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
             setShowCostLoader(true);
             silenceSaveAndLoad();
+            initFilesAndCredits(campaingnValues?.CampaignID);
             setIsSilenceUpdated(false);
         }
     }, [campaingnValues['FilesProperties']])
@@ -330,16 +335,6 @@ const NewsLetterWizard = ({ classes }) => {
             setErrors({ ...errors, [e.target.name]: '' })
             setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
         }
-    }
-
-    const handleEmailValue = (e) => {
-        if (!!e.target.value && (e.target.style.direction === null || !e.target.style.direction)) {
-            e.target.style.direction = 'ltr'
-        } else if (!e.target.value && e.target.style.direction === 'ltr') {
-            e.target.style.direction = null
-        }
-
-        handleChange(e)
     }
 
     const handleValidations = () => {
@@ -377,6 +372,7 @@ const NewsLetterWizard = ({ classes }) => {
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                    initFilesAndCredits(saveInfo.CampaignID);
                 }
             });
         }
