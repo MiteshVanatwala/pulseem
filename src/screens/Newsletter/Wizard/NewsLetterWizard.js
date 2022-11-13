@@ -197,14 +197,20 @@ const NewsLetterWizard = ({ classes }) => {
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
     useEffect(() => {
-        if (campaingnValues.FromEmail === '' && verifiedEmails && accountSettings) {
-            const defaultEmail = verifiedEmails.find((email) => {
-                return email?.Number === accountSettings?.DefaultFromMail;
-            });
-            if (defaultEmail?.IsOptIn) {
-                campaingnValues.FromEmail = defaultEmail.Number;
+        if (accountSettings) {
+            if (campaingnValues.FromEmail === '' && verifiedEmails) {
+                const defaultEmail = verifiedEmails.find((email) => {
+                    return email?.Number === accountSettings?.DefaultFromMail;
+                });
+                if (defaultEmail?.IsOptIn) {
+                    campaingnValues.FromEmail = defaultEmail.Number;
+                }
+            }
+            if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
+                setCampaingnValues({ ...campaingnValues, FromName: accountSettings?.DefaultFromName })
             }
         }
+
     }, [verifiedEmails, accountSettings]);
 
     const handleGetNewsletterResponse = (res) => {
@@ -360,7 +366,7 @@ const NewsLetterWizard = ({ classes }) => {
 
                 const savedCampaign = response.payload;
                 handleSubmitNewsletterResponse(savedCampaign)
-                const saveInfo = savedCampaign.Message;
+                const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
                     window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
