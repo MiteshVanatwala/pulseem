@@ -1214,7 +1214,7 @@ const SmsCreator = ({ classes, ...props }) => {
         if (!smsModel.Text.includes('ref') && isLinksStatistics) {
           let text = smsModel.Text;
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
-          const originalLink = startIndex.split(' ') || startIndex.split('\n');
+          const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
           let originUrl = originalLink[0];
           let newUrl = originUrl.trim();
           newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
