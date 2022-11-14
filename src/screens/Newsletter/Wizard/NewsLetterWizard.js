@@ -195,7 +195,28 @@ const NewsLetterWizard = ({ classes }) => {
     const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
+    //#region default values
     useEffect(() => {
+        if (accountSettings) {
+            setDefaultEmailAndName();
+        }
+    }, [verifiedEmails, accountSettings, campaignLoaded]);
+
+    useEffect(() => {
+        handleInitialValues();
+    }, [campaingnValues]);
+
+    const handleInitialValues = () => {
+        setSelectedCheck({
+            ...selectedCheck,
+            UpdateClient: campaingnValues.UpdateClient && campaingnValues.UpdateClient !== 0,
+            PrintLocation: campaingnValues.PrintLocation && campaingnValues.PrintLocation !== 0,
+            WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
+            UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
+        });
+    }
+
+    const setDefaultEmailAndName = () => {
         if (accountSettings) {
             if (campaingnValues.FromEmail === '' && verifiedEmails) {
                 const defaultEmail = verifiedEmails.find((email) => {
@@ -217,23 +238,9 @@ const NewsLetterWizard = ({ classes }) => {
                 setCampaingnValues({ ...campaingnValues, FromName: accountSettings?.DefaultFromName });
             }
         }
-    }, [verifiedEmails, accountSettings, campaignLoaded]);
-
-    useEffect(() => {
-        const handleInitialValues = () => {
-            setSelectedCheck({
-                ...selectedCheck,
-                UpdateClient: campaingnValues.UpdateClient && campaingnValues.UpdateClient !== 0,
-                PrintLocation: campaingnValues.PrintLocation && campaingnValues.PrintLocation !== 0,
-                WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
-                UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
-            });
-        }
-        handleInitialValues();
-    }, [campaingnValues]);
-
-
-
+    }
+    //#endregion
+    
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
             case 201: {
@@ -261,8 +268,6 @@ const NewsLetterWizard = ({ classes }) => {
             }
         }
     }
-
-
     const handleSubmitNewsletterResponse = (res) => {
         switch (res?.StatusCode) {
             case 201: {
@@ -290,7 +295,6 @@ const NewsLetterWizard = ({ classes }) => {
             }
         }
     }
-
     useEffect(() => {
         const preload = async () => {
             await dispatch(getAuthorizedEmails());
