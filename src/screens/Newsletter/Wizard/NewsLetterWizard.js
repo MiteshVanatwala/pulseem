@@ -143,6 +143,7 @@ const NewsLetterWizard = ({ classes }) => {
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
+    const [campaignLoaded, setCampaignLoaded] = useState(false);
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -179,7 +180,7 @@ const NewsLetterWizard = ({ classes }) => {
         Subject: "",
         personalDatatoSubject: "",
         FromName: "",
-        FromEmail: "",
+        FromEmail: "-1",
         WebViewLocation: 1,
         PreviewText: "",
         PrintLocation: 0,
@@ -204,39 +205,40 @@ const NewsLetterWizard = ({ classes }) => {
                     campaingnValues.FromEmail = defaultEmail.Number;
                 }
             }
+            else {
+                const emailVerified = verifiedEmails.find((email) => {
+                    return email?.Number === campaingnValues?.FromEmail;
+                });
+                if (!emailVerified) {
+                    campaingnValues.FromEmail = '-1';
+                }
+            }
             if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
                 setCampaingnValues({ ...campaingnValues, FromName: accountSettings?.DefaultFromName });
             }
         }
-    }, [verifiedEmails, accountSettings]);
+    }, [verifiedEmails, accountSettings, campaignLoaded]);
 
     useEffect(() => {
+        const handleInitialValues = () => {
+            setSelectedCheck({
+                ...selectedCheck,
+                UpdateClient: campaingnValues.UpdateClient && campaingnValues.UpdateClient !== 0,
+                PrintLocation: campaingnValues.PrintLocation && campaingnValues.PrintLocation !== 0,
+                WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
+                UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
+            });
+        }
         handleInitialValues();
     }, [campaingnValues]);
 
-    const handleInitialValues = () => {
-        setSelectedCheck({
-            ...selectedCheck,
-            UpdateClient: campaingnValues.UpdateClient && campaingnValues.UpdateClient !== 0,
-            PrintLocation: campaingnValues.PrintLocation && campaingnValues.PrintLocation !== 0,
-            WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
-            UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
-        });
 
-        // Validate From Email
-        const emailVerified = verifiedEmails.find((email) => {
-            return email?.Number === campaingnValues?.FromEmail;
-        });
-
-        if (!emailVerified) {
-            setCampaingnValues({ ...campaingnValues, FromEmail: '' });
-        }
-    }
 
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
             case 201: {
                 setCampaingnValues({ ...res?.Message })
+                setCampaignLoaded(true);
                 break;
             }
             case 401: {
@@ -485,7 +487,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
-                                                value={campaingnValues.FromEmail}
+                                                value={campaingnValues?.FromEmail}
                                                 onChange={(event, val) => {
                                                     setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
                                                 }}
@@ -502,7 +504,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 }}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                <option disabled value="" key="-1">{t("common.select")}</option>
+                                                <option disabled value="-1" key="-1">{t("common.select")}</option>
                                                 {verifiedEmails.map((item, index) => {
                                                     if (item.IsOptIn) {
                                                         return <option
