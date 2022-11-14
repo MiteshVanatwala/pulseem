@@ -131,6 +131,11 @@ const useStyles = makeStyles({
 
 const NewsLetterWizard = ({ classes }) => {
     const { id } = useParams();
+    const queryParams = new URLSearchParams(window.location.search)
+    const isNew = queryParams.get("new")
+    const isFromAutomation = queryParams.get("FromAutomation")
+    const NodeToEdit = queryParams.get("NodeToEdit")
+
     const { accountSettings } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
@@ -220,20 +225,25 @@ const NewsLetterWizard = ({ classes }) => {
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
-            if (campaingnValues.FromEmail === '' && verifiedEmails) {
-                const defaultEmail = verifiedEmails.find((email) => {
-                    return email?.Number === accountSettings?.DefaultFromMail;
-                });
-                if (defaultEmail?.IsOptIn) {
-                    campaingnValues.FromEmail = defaultEmail.Number;
+            if ((campaingnValues.FromEmail === '' || campaingnValues.FromEmail === '-1') && verifiedEmails) {
+                if (campaingnValues?.CampaignID === '') {
+                    const defaultEmail = verifiedEmails.find((email) => {
+                        return email?.Number === accountSettings?.DefaultFromMail;
+                    });
+                    if (defaultEmail?.IsOptIn) {
+                        campaingnValues.FromEmail = defaultEmail.Number;
+                    }
+                    else {
+                        campaingnValues.FromEmail = '-1';
+                    }
                 }
-            }
-            else {
-                const emailVerified = verifiedEmails.find((email) => {
-                    return email?.Number === campaingnValues?.FromEmail;
-                });
-                if (!emailVerified) {
-                    campaingnValues.FromEmail = '-1';
+                else {
+                    const emailVerified = verifiedEmails.find((email) => {
+                        return email?.Number === campaingnValues?.FromEmail;
+                    });
+                    if (!emailVerified && Number(campaingnValues?.CampaignID) > 0) {
+                        campaingnValues.FromEmail = '-1';
+                    }
                 }
             }
             if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
@@ -373,9 +383,15 @@ const NewsLetterWizard = ({ classes }) => {
         let isError = false;
 
         Object.keys(tempError).forEach((key) => {
-            if (!data[key] || !data[key].trim()) {
+            if (key === 'FromEmail' && data[key] === '-1') {
                 tempError[key] = ErrorTexts[key];
                 isError = !data[key]
+            }
+            else {
+                if (!data[key] || !data[key].trim()) {
+                    tempError[key] = ErrorTexts[key];
+                    isError = !data[key]
+                }
             }
         })
         setErrors({ ...tempError })
@@ -394,14 +410,28 @@ const NewsLetterWizard = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
-                    //window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
-                    navigate(`/react/Campaigns/editor/${saveInfo.CampaignID}`);
+                    if (isFromAutomation) {
+                        if (isNew) {
+                            navigate(`/Campaigns/editor/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`);
+                        }
+                        else {
+                            navigate(`/Campaigns/editor/${saveInfo.CampaignID}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`);
+                        }
+                    }
+                    else {
+                        navigate(`/Campaigns/editor/${saveInfo.CampaignID}`);
+                    }
                 }
                 else if (isExit === true) {
                     navigate(`/Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
-                    navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                    if (isFromAutomation) {
+                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                    }
+                    else {
+                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                    }
                     initFilesAndCredits(saveInfo.CampaignID);
                 }
             });
@@ -410,7 +440,7 @@ const NewsLetterWizard = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        window.location = '/react/Campaigns'
+        navigate('/Campaigns');
     }
     const renderToast = () => {
         if (toastMessage) {
@@ -782,7 +812,7 @@ const NewsLetterWizard = ({ classes }) => {
                     classes={classes}
                     onSave={handleSubmit}
                     onBack={() => { setConfirmExit(true) }}
-                    onDelete={id > 0 && getDeleteStatus}
+                    onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                 />
             </Box>
             <Dialog

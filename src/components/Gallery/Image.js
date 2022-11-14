@@ -56,7 +56,7 @@ export const Image = ({
             style={{ padding: "6px 10px" }}
         >
             <Box className="select-image" onClick={onSelectFile(imgSrc, imgKey)}>
-                <Box className="img-container" style={{ border: (selectedFile === imgKey || selectedFile?.indexOf(imgKey) !== -1) ? "1px solid #000" : null }}>
+                <Box className="img-container" style={{ border: selectedFile && (selectedFile === imgKey || selectedFile?.indexOf(imgKey) !== -1) ? "1px solid #000" : null }}>
                     {folderType === PulseemFolderType.CLIENT_IMAGES ?
                         (<LazyBackground url={imgSrc}>
                             <button
@@ -80,7 +80,7 @@ export const Image = ({
                         <Typography className="elipsis-text" style={{ fontSize: 14 }}>
                             {imgFile.FileName}
                         </Typography>
-                        {(selectedFile === imgKey || selectedFile.indexOf(imgKey) !== -1) &&
+                        {selectedFile && (selectedFile === imgKey || selectedFile.indexOf(imgKey) !== -1) &&
                             <AiOutlineCheckCircle style={{ color: 'green', fontSize: 24, padding: '0 10px', width: 40 }} />
                         }
                     </Box>
