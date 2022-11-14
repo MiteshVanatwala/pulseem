@@ -195,6 +195,8 @@ const NewsLetterWizard = ({ classes }) => {
     const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
+    const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
+
     //#region default values
     useEffect(() => {
         if (accountSettings) {
@@ -240,7 +242,7 @@ const NewsLetterWizard = ({ classes }) => {
         }
     }
     //#endregion
-    
+
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
             case 201: {
@@ -350,6 +352,9 @@ const NewsLetterWizard = ({ classes }) => {
     const handleChangeCheckbox = (e) => {
         if (selectedCheck[e.target.name]) {
             setCampaingnValues({ ...campaingnValues, [e.target.name]: 0 })
+        }
+        else {
+            setCampaingnValues({ ...campaingnValues, [e.target.name]: defaultValues[e.target.name] })
         }
         setSelectedCheck({ ...selectedCheck, [e.target.name]: !selectedCheck[e.target.name] })
     }
