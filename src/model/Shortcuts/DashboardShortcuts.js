@@ -33,7 +33,7 @@ export const DASHBOARD_SHORTCUT = {
       pages: [
         {
           title: 'campaigns.create',
-          link: '/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
+          link: '/react/Campaigns/Create'
         },
         {
           title: 'master.RadMenuItemResource9.Text',

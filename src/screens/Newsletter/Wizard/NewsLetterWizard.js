@@ -394,8 +394,8 @@ const NewsLetterWizard = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
-                    window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
-                    //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                    //window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
+                    navigate(`/react/Campaigns/editor/${saveInfo.CampaignID}`);
                 }
                 else if (isExit === true) {
                     navigate(`/Campaigns`);
