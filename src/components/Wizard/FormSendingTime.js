@@ -1,0 +1,394 @@
+import React, { useEffect, useState } from "react";
+import { Tooltip } from "@material-ui/core";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { makeStyles } from "@material-ui/core/styles";
+import moment from "moment";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { DateField } from "../managment/index";
+import { Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider } from "@material-ui/core";
+import clsx from "clsx";
+import { Stack } from "@mui/material";
+
+
+const useStyles = makeStyles((theme) => ({
+    customWidth: {
+        maxWidth: 200,
+        backgroundColor: "black",
+        fontSize: "14px",
+        textAlign: 'center'
+    },
+    noMaxWidth: {
+        maxWidth: "none",
+    },
+}));
+
+
+const FormSendingTime = ({
+    extraButtons = null,
+    classes,
+    ToastMessages,
+    setToastMessage = () => null,
+    pulseValues = {},
+    enablePulse = false,
+    sendingTimeFormValues = {},
+    setSendingTimeFormValues = () => null
+
+}) => {
+    const { t } = useTranslation();
+    const styles = useStyles();
+    const { extraData } = useSelector((state) => state.sms);
+
+    const { windowSize, isRTL } = useSelector(
+        (state) => state.core
+    );
+    const [sendDate, setSendDate] = useState(null);
+    const [sendTime, setSendTime] = useState(null);
+    const [timePickerOpen, setTimePickerOpen] = useState(false);
+    const [toggleB, settoggleB] = useState(true);
+    const [toggleA, settoggleA] = useState(false);
+    const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
+    const [spectialDateFieldID, setDateFieldID] = useState("0");
+
+
+
+    const handleSendType = (e) => {
+        setSendingTimeFormValues({ ...sendingTimeFormValues, sendType: e.target.value })
+        // setSendType(e.target.value)
+    }
+
+    const handleDatePicker = (value) => {
+        setSendDate(value)
+    }
+
+    const handleTimePicker = (value) => {
+        var date = moment(sendDate);
+        var time = moment(value, "HH:mm");
+
+        date.set({
+            hour: time.get("hour"),
+            minute: time.get("minute"),
+        });
+
+        if (date < moment()) {
+            date = moment();
+            setToastMessage(ToastMessages.DATE_PASS);
+        }
+
+        setSendDate(date);
+        setTimePickerOpen(false);
+    }
+
+    const handleSelectChange = (e) => {
+        if (e.target.value === "0") {
+            setDateFieldID("0");
+        }
+        else {
+            setDateFieldID(e.target.value)
+            {
+                Object.keys(extraData).map((item, i) => {
+                    if (e.target.value == i + 3) {
+                        setSendingTimeFormValues({ ...sendingTimeFormValues, selectedSpecialValue: item })
+                    }
+                    else if (e.target.value == 1) {
+                        setSendingTimeFormValues({ ...sendingTimeFormValues, selectedSpecialValue: "Birthday" })
+                    }
+                    else if (e.target.value == 2) {
+                        setSendingTimeFormValues({ ...sendingTimeFormValues, selectedSpecialValue: "Creation day" })
+                    }
+                })
+            }
+        }
+    }
+
+    const handleSpecialDayChange = (e) => {
+        const re = /^[0-9\b]+$/;
+        if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <= 999)) {
+            setdaysBeforeAfter(e.target.value);
+        }
+
+    }
+
+    const handlebef = () => {
+        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: false })
+        settoggleA(false);
+        settoggleB(true);
+    };
+
+    const handleaf = () => {
+        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: true })
+        settoggleA(true);
+        settoggleB(false);
+    };
+
+    const handleRadioTime = (value) => {
+        setSendTime(value)
+    }
+
+    const renderForm = () => {
+        return (
+            <div>
+                <Grid item md={10} xs={12}>
+                    <h2
+                        className={classes.sectionTitle}
+                        style={{ marginTop: windowSize === "xs" ? 15 : null }}
+                    >
+                        {t("notifications.whenToSend")}
+                    </h2>
+                    <FormControl component="fieldset">
+                        <RadioGroup
+                            aria-label="gender"
+                            name="sendingTimeFormValues.sendType"
+                            onChange={handleSendType}
+                            value={sendingTimeFormValues.sendType}
+                        >
+                            <FormControlLabel
+                                value="1"
+                                control={<Radio color="primary" className={sendingTimeFormValues.sendType !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                                label={
+                                    <span className={classes.radioText}>
+                                        {t("notifications.immediateSend")}
+                                    </span>
+                                }
+                            />
+                            <FormHelperText className={classes.helpText}>
+                                {t("notifications.immediateDescription")}
+                            </FormHelperText>
+                            <FormControlLabel
+                                value="2"
+                                control={<Radio color="primary" className={sendingTimeFormValues.sendType !== "2" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                                label={
+                                    <span className={classes.radioText}>
+                                        {t("notifications.futureSend")}
+                                    </span>
+                                }
+                            />
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    pointerEvents: sendingTimeFormValues.sendType == "2" ? "auto" : "none",
+                                }}
+                            >
+                                <DateField
+                                    minDate={moment()}
+                                    classes={classes}
+                                    value={sendingTimeFormValues.sendType == "2" ? sendDate : null}
+                                    onChange={handleDatePicker}
+                                    placeholder={t("notifications.date")}
+                                    timePickerOpen={true}
+                                    dateActive={sendingTimeFormValues.sendType == "2" ? false : true}
+                                />
+                            </Box>
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    pointerEvents: sendingTimeFormValues.sendType == "2" ? "auto" : "none",
+                                }}
+                            >
+                                <DateField
+                                    minDate={moment()}
+                                    classes={classes}
+                                    value={sendingTimeFormValues.sendType == "2" ? sendDate : null}
+                                    onTimeChange={handleTimePicker}
+                                    placeholder={t("notifications.hour")}
+                                    isTimePicker={true}
+                                    ampm={false}
+                                    timeActive={sendingTimeFormValues.sendType == "2" ? false : true}
+                                    timePickerOpen={timePickerOpen}
+                                />
+                            </Box>
+                            <FormControlLabel
+                                value="3"
+                                control={<Radio color="primary" className={sendingTimeFormValues.sendType !== "3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                                label={
+                                    <span className={classes.radioText}>
+                                        {t("mainReport.specialDate")}
+                                    </span>
+                                }
+                            />
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    pointerEvents: sendingTimeFormValues.sendType == "3" ? "auto" : "none",
+                                }}
+                            >
+                                <select
+                                    placeholder={t("common.select")}
+                                    style={{
+                                        border: "1px solid #818181",
+                                        backgroundColor: "white",
+                                        padding: "10px",
+                                        borderRadius: "4px",
+                                        width: 300,
+                                        outline: "none",
+                                        marginBottom: "10px",
+                                    }}
+                                    disabled={sendingTimeFormValues.sendType === "3" ? false : true}
+                                    onChange={(e) => { handleSelectChange(e) }}
+                                    value={sendingTimeFormValues.sendType === "3" ? spectialDateFieldID : "0"}
+                                >
+                                    <option value="0">{t("common.select")}</option>
+                                    <option value="1">{t("mainReport.birthday")}</option>
+                                    <option value="2">{t("mainReport.creationDay")}</option>
+                                    {extraData && Object.keys(extraData).map((item, i) => {
+                                        if (extraData[item]) {
+                                            return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                                        }
+                                        return <></>
+                                    })}
+                                </select>
+                            </Box>
+
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "370px",
+                                    pointerEvents: sendingTimeFormValues.sendType === "3" ? "auto" : "none",
+                                }}
+                            >
+                                <input
+                                    type="text"
+                                    className={classes.inputDays}
+                                    placeholder="0"
+                                    disabled={sendingTimeFormValues.sendType == "3" ? false : true}
+                                    value={sendingTimeFormValues.sendType == "3" ? daysBeforeAfter : ""}
+                                    onChange={(e) => { handleSpecialDayChange(e) }}
+                                    maxLength="3"
+                                />
+
+                                <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
+                                    {t("mainReport.days")}
+                                </span>
+
+                                {isRTL ?
+                                    <div style={{ display: "flex" }}>
+                                        <span
+                                            className={
+                                                sendingTimeFormValues.sendType == "3" ? toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            }
+                                            onClick={() => {
+                                                handlebef();
+                                            }}
+                                        >
+                                            {t("mainReport.before")}
+                                        </span>
+                                        <span
+                                            className={
+                                                sendingTimeFormValues.sendType == "3" ? toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            }
+                                            onClick={() => {
+                                                handleaf();
+                                            }}
+                                        >
+                                            {t("mainReport.after")}
+                                        </span>
+
+                                    </div> : <div style={{ display: "flex" }}>
+                                        <span
+                                            className={
+                                                sendingTimeFormValues.sendType == "3" ? toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            }
+                                            onClick={() => {
+                                                handlebef();
+                                            }}
+                                        >
+                                            {t("mainReport.before")}
+                                        </span>
+                                        <span
+                                            className={
+                                                sendingTimeFormValues.sendType == "3" ? toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            }
+                                            onClick={() => {
+                                                handleaf();
+                                            }}
+                                        >
+                                            {t("mainReport.after")}
+                                        </span>
+                                    </div>}
+                            </Box>
+                            <Box
+                                className={classes.dateBox}
+                                style={{
+                                    marginTop: 10,
+                                    pointerEvents: sendingTimeFormValues.sendType == "3" ? "auto" : "none",
+                                    marginBottom: '1rem'
+                                }}
+                            >
+                                <DateField
+                                    classes={classes}
+                                    value={sendingTimeFormValues.sendType == "3" ? sendTime : null}
+
+                                    onTimeChange={handleRadioTime}
+                                    placeholder={t("notifications.hour")}
+                                    isTimePicker={true}
+                                    buttons={{
+                                        ok: t("common.confirm"),
+                                        cancel: t("common.cancel"),
+                                    }}
+                                    ampm={false}
+                                    timePickerOpen={timePickerOpen}
+                                    timeActive={sendingTimeFormValues.sendType == "3" ? false : true}
+                                    disabled={sendingTimeFormValues.sendType == "3" ? false : true}
+                                    autoOk
+                                />
+                            </Box>
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+                <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
+                <Stack className={classes.pulseDiv} spacing={2} direction="row">
+                    <Stack direction="row" justifyContent="center" alignItems="center">
+                        <span
+                            className={enablePulse ? classes.pulse : classes.pulseDisable}
+                            onClick={() => {
+                                // handlePulseDialog();
+                            }}
+                        >
+                            <FaRegCalendarAlt style={{ fontSize: '125%' }} />
+                            {t("mainReport.pulseSend")}
+                        </span>
+                        <Tooltip
+                            disableFocusListener
+                            title={t("smsReport.pulseSendTip")}
+                            classes={{ tooltip: styles.customWidth }}
+                        >
+                            <span className={classes.bodyInfo}>i</span>
+                        </Tooltip>
+                    </Stack>
+                    {extraButtons}
+
+                </Stack>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        color: "#7f7f7f",
+                        fontWeight: "400",
+                        fontSize: "14px",
+                    }}
+                >
+
+                    {pulseValues.togglePulse ? (
+                        <span style={{ marginBottom: "5px", marginTop: "5px" }}>
+                            {t("smsReport.packetSend")} - {pulseValues.pulseAmount} {pulseValues.pulsePer == "" || pulseValues.pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
+                            {t("sms.every")} {pulseValues.timeInterval} {pulseValues.hourName == "" || pulseValues.minName == "mins" ? t("common.minutes") : t("common.hours")}
+                        </span>
+                    ) : null}
+                    {pulseValues.toggleRandom ? (
+                        <span>{t("smsReport.randomSend")} - {pulseValues.random} {t("smsReport.randomRecipients")}</span>
+                    ) : null}
+                </div>
+            </div>
+        );
+    }
+
+    return renderForm()
+}
+
+export default FormSendingTime

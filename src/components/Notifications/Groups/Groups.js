@@ -82,10 +82,11 @@ const Groups = ({ classes,
     const renderGroups = () => {
         const groupIdKey = isNotifications ? "Id" : "GroupID";
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
+        console.log("SELECTED:", selectedList)
         return list?.filter((g) => {
             return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((group) => {
-            const isExist = selectedList.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
+            const isExist = selectedList?.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
             return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
                 onMouseEnter={() => setIsHover(group[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
