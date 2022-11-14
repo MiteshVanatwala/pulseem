@@ -275,6 +275,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxWidth540: {
     maxWidth: 540,
   },
+  maxWidth900: {
+    maxWidth: 900,
+  },
   flex2: {
     flex: 2,
   },
@@ -334,6 +337,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt14: {
     paddingTop: 14,
+  },
+  pt15: {
+    paddingTop: 15
   },
   pt2: {
     paddingTop: 1.4,
@@ -2531,5 +2537,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   containerFullHeight: {
     minHeight: 'calc(100vh - 120px)',
     height: 'calc(100vh - 120px)'
+  },
+  pb15: {
+    paddingBottom: 15
+  },
+  pb25: {
+    paddingBottom: 25
+  },
+  pbt10: {
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+  pbt15: {
+    paddingTop: 15,
+    paddingBottom: 15
+  },
+  buttonMinWidth: {
+    minWidth: 167
   }
 });

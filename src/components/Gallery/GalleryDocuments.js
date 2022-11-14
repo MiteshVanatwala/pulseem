@@ -1,12 +1,13 @@
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { Button, Grid, Box } from '@material-ui/core'
 import { Image } from './Image'
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { deleteGalleryFile, uploadFile } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { Loader } from '../Loader/Loader';
+import { AllowedExentions, ImageExtensions } from '../../model/Gallery/FileExtentions';
 
 export const GalleryDocuments = ({
     classes,
@@ -29,7 +30,7 @@ export const GalleryDocuments = ({
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [galleryReady, setGalleryReady] = useState(false);
     const [isReInit, setReinit] = useState(false);
-    const hiddenFileInput = React.useRef(null);
+    const hiddenFileInput = useRef(null);
     const [showLoader, setLoader] = useState(false);
     const { uploadProgress } = useSelector(state => state.gallery);
 
@@ -39,13 +40,24 @@ export const GalleryDocuments = ({
             setLoader(true);
             setIsFilePicked(false);
             setFileToUpload(null);
-            const formData = new FormData();
-            formData.append('File', fileToUpload);
-            if (fileToUpload.size > 1048576) {
-                onToast({ severity: 'error', color: 'error', message: t('common.maxDocumentSize'), showAnimtionCheck: false })
+            const splitFileName = fileToUpload.name.split('.');
+            const fileExtension = splitFileName[splitFileName.length - 1];
+            if (!AllowedExentions.find(x => x?.toLowerCase() === fileExtension?.toLowerCase())) {
+                onToast({ severity: 'error', color: 'error', message: t('common.notAllowedExtension'), showAnimtionCheck: false })
                 setFileToUpload(null);
+                setLoader(false);
                 return;
             }
+
+            if (fileToUpload.size > 10485760) {
+                onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
+                setFileToUpload(null);
+                setLoader(false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('File', fileToUpload);
             new Promise(resolve => {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
@@ -126,7 +138,7 @@ export const GalleryDocuments = ({
                         ref={hiddenFileInput}
                         onChange={changeHandler}
                         hidden
-                        accept=".doc,.docx,.pdf,.rtf,.xls,.xlsv,.csv,.txt,.jpg,.jpeg,.ppt" />
+                        accept=".doc,.docx,.pdf,.rtf,.xls,.xlsx,.xlsv,.csv,.txt,.jpg,.jpeg,.png,.ppt,.pptx" />
                     <Box className="img-container drag-here">
                         <AiOutlineCloudUpload style={{ fontSize: 30 }} />
                         {t('common.chooseFile')}
@@ -136,8 +148,11 @@ export const GalleryDocuments = ({
             {
                 docs && docs.map((f, index) => {
                     const fileKey = f.FileName;
-                    // const fileKey = `${f.FolderName.replace('\\', '')}_${index}`;
-                    const fileExtension = f.FileURL.split('.')[f.FileURL.split('.').length - 1];
+                    const fileExtension = f?.Extension?.replace('.', '');
+                    let imageType = PulseemFolderType.DOCUMENT;
+                    if (ImageExtensions.find(x => x === fileExtension)?.length > 0) {
+                        imageType = PulseemFolderType.CLIENT_IMAGES;
+                    }
                     return <Image
                         classes={classes}
                         onSelectFile={onSelectFile}
@@ -148,7 +163,7 @@ export const GalleryDocuments = ({
                         selectedFile={selectedFile}
                         imgFile={f}
                         key={`g_${index}`}
-                        folderType={PulseemFolderType.DOCUMENT}
+                        folderType={imageType}
                         fileExtension={fileExtension}
                     />
                 })

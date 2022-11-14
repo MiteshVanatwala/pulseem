@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
@@ -139,7 +139,7 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         path="/Campaigns/Create/:id"
-        element={<NewsLetterWizard  classes={classes} />}
+        element={<NewsLetterWizard classes={classes} />}
       />
       <Route
         exact
@@ -155,7 +155,7 @@ const renderRoutes = (classes, history) => {
         path="/Campaigns/Archive"
         element={<ArchiveManagement classes={classes} />}
       />
-      <Route
+      {/* <Route
         path={`/Editor/CampaignInfo`}
         element={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
       />
@@ -448,20 +448,20 @@ const AppContainer = () => {
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
   const width = useWidth();
   dispatch(setWindowSize(width))
+  const userName = useRef();
+
+  const initFeatures = async () => {
+    if (!accountSettings) {
+      //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
+      const settings = await dispatch(getCommonFeatures({ companyName: userName.current }));
+      dispatch(setAccountFeatures(settings.payload));
+    }
+    const response = await dispatch(isClalAccount());
+    dispatch(setIsClal(response.payload));
+    setCookie('OldVersion', false);
+  }
 
   useEffect(() => {
-    const initFeatures = async () => {
-      if (!accountSettings) {
-        //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
-        const settings = await dispatch(getCommonFeatures());
-        dispatch(setAccountFeatures(settings.payload));
-      }
-      const response = await dispatch(isClalAccount());
-      dispatch(setIsClal(response.payload));
-      setCookie('OldVersion', false);
-    }
-
-
     const updateToken = () => {
       const culture = getCookie('Culture')
       const token = getCookie('jtoken')
@@ -493,7 +493,7 @@ const AppContainer = () => {
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang.toLowerCase()))
       dispatch(setUsername(companyName))
-
+      userName.current = companyName;
     }
 
     const cookieFunctionObj = {
@@ -506,8 +506,8 @@ const AppContainer = () => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    updateToken()
-    initFeatures()
+    updateToken();
+    initFeatures();
   }, [dispatch])
 
 

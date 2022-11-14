@@ -115,6 +115,8 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
+        setDialogType(null);
+        setShowLoader(true);
         let orderList = preferredOrder(smsReplies, Object.keys(exportColumnHeader));
         orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
@@ -125,7 +127,7 @@ const SmsReplies = ({ classes, ...other }) => {
             exportType: formatType,
             fields: exportColumnHeader
         });
-        setDialogType(null)
+        setShowLoader(false)
     }
 
     const renderTable = () => {

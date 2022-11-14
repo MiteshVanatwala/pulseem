@@ -222,6 +222,8 @@
     "Text": "Clone"
   },
   "GridButtonColumnResource2": {
+    "confirmExit": "You are about to exit the campaign settings",
+    "confirmExitText": "Would you like to save the campaign before exit?",
     "ConfirmText": "Do you want to delete the campaign?",
     "ConfirmTitle": "Delete campaign",
     "CurrentFilterValue": "",
@@ -475,6 +477,7 @@
   "automation": "Automation",
   "create": "Create New Newsletter",
   "createNewsLetterHeader": "Create New Newsletter Campaign",
+  "createNewsLetterSubTitle": "Setup Newsletter Campaign",
   "restoreDeleted": "Restore Deleted",
   "exportFile": "Export File",
   "lastUpdate": "Last update",
@@ -502,7 +505,8 @@
     "helpTexts": {
       "Name": "Used to identify the campaign in the system. Recipients will not see this name",
       "FromName": "This field is mandatory",
-      "FromEmail": "This field is mandatory",
+      "FromEmail": "Only verified emails are allowed,",
+      "clickToVerify": "Click here to verify",
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
       "upload": "The file will appear as an attached file in your mail"
@@ -515,9 +519,11 @@
       "campaignName": "Please fill in campaign name",
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
-      "campaignSubject": "Please fill in a campaign subject"
+      "campaignSubject": "Please fill in a campaign subject",
+      "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
+      "CampaignNotFound": "Campaign not found or deleted"
     },
-    "success": "Success"
+    "success": "Campaign successfully saved"
   },
   "newsLetterMgmt": {
     "emailVerification": {
@@ -538,7 +544,7 @@
         "error1": "Invalid Email",
         "error2": "Email is required",
         "anyProblem": "Did you encounter a problem?",
-        "contactUs": "Contact us",
+        "contactUs": "Contact us at <a href='tel:03-524-0290'>03-524-0290</a> or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
         "placeholder": "Enter email"
       },
       "thirdSlide": {
@@ -568,6 +574,12 @@
         "btnTxt": "Continue to campaigns"
       }
     }
+  },
+  "newsLetterSendSettings": {
+    "title": "Send Newsletter",
+    "quickMSend": "Quick manual send",
+    "quickMsgCautionMsg": "Quick manual send will immediately send the campaign to the recipients that were added manually only.",
+    "doYouWantToContinue": "Do you want to proceed?"
   },
   "sendToContact": "Send to one contact",
   "successSent": "Sent Successfully",

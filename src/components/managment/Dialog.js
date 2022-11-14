@@ -151,7 +151,7 @@ export const Dialog = ({
 
   return (
     <BaseDialog
-      style={style}
+      style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={(event, reason) => {

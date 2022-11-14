@@ -25,8 +25,9 @@ export const getCommonFeatures = createAsyncThunk(
     try {
       const settings = getCookie('accountSettings');
       if ((!settings || settings === '') || (req && req.forceRequest === true) ||
-        document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx') ||
-        document.referrer.toLocaleLowerCase().includes('login')) {
+        document.referrer.toLocaleLowerCase().indexOf('accountsmanage.aspx') > -1 ||
+        document.referrer.toLocaleLowerCase().indexOf('login') > -1 ||
+        req?.companyName !== settings?.SubAccountName) {
         const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
         return JSON.parse(response.data)
       }
@@ -85,17 +86,36 @@ export const verifyEmailCode = createAsyncThunk(
     })
   })
 
+export const getAuthorizeNumbers = createAsyncThunk(
+  'GetRelatedSubAccountNumber', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
     Folders: [],
-    verifiedEmails: []
+    verifiedEmails: [],
+    verifiedNumbers: []
   },
   extraReducers: builder => {
     builder
       .addCase(getAuthorizedEmails.fulfilled, (state, { payload }) => {
         state.verifiedEmails = payload
+      })
+    builder
+      .addCase(getAuthorizeNumbers.fulfilled, (state, { payload }) => {
+        state.verifiedNumbers = payload
+      })
+    builder
+      .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+        setCookie('accountSettings', payload);
       })
   }
 })

@@ -1563,6 +1563,8 @@ const SmsSend = ({ classes, ...props }) => {
   };
 
   const onApiCall = async () => {
+    setsummModal(false);
+    setLoader(true);
     let payload = {
       "SmsCampaignID": params.id,
       "SubAccountID": -1,
@@ -1570,12 +1572,10 @@ const SmsSend = ({ classes, ...props }) => {
       "Credits": dataSaved.CreditPerSms,
       "TotalRecipients": getCampaignSum.FinalCount
     }
-    setLoader(true);
-    let r = await dispatch(sendSms(payload))
-    setLoader(false);
 
-    setsummModal(false);
+    let r = await dispatch(sendSms(payload))
     handleSendResult(r.payload);
+    setLoader(false);
   };
   const handleCautionCancel = () => {
     if (dropClick === true) {

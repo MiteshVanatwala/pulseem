@@ -138,7 +138,7 @@ export const SolidDialog = ({
 
   return (
     <BaseDialog
-      style={style}
+      style={style ?? null}
       open={!!open}
       className={clsx(classes.solidDialogContainer, customContainerStyle)}
       onClose={(event, reason) => {

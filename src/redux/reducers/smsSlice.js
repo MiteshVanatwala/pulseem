@@ -155,18 +155,18 @@ export const exportSMSDirectReport = createAsyncThunk(
     }
   })
 
-  export const exportArchiveSmsDirect = createAsyncThunk(
-    'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
-      try {
-        const response = await instence.post(`directReport/ExportArchiveSmsDirect`, data);
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    })
+export const exportArchiveSmsDirect = createAsyncThunk(
+  'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`directReport/ExportArchiveSmsDirect`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 
-  
+
 
 export const restoreSms = createAsyncThunk(
   'smsCampaign/restoreSmsCampaigns', async (deletedsms, thunkAPI) => {
@@ -230,12 +230,14 @@ export const getAuthorizeNumbers = createAsyncThunk(
 export const sendVerificationCode = createAsyncThunk(
   'authorization/newAuthorizeNumbers', async (data, thunkAPI) => {
     const { username = '', number = '' } = data || {};
-    try {
-      const response = await instence.put(`authorization/newAuthorizeNumbers/${username}/${number}`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await instence.put(`authorization/newAuthorizeNumbers/${username}/${number}`);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject({ error: error.message });
+      }
+    });
   })
 
 export const verifyCode = createAsyncThunk(
@@ -478,7 +480,7 @@ export const smsSlice = createSlice({
     })
     builder.addCase(getTestGroups.fulfilled, (state, { payload }) => {
       state.testGroups = payload;
-      state.testGroups.forEach((c) => c.IsTestGroup = true);
+      state.testGroups.length && state.testGroups.forEach((c) => c.IsTestGroup = true);
     })
     builder.addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
       state.commonSettings = payload

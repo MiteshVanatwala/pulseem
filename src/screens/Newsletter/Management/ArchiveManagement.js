@@ -241,6 +241,8 @@ const ArchiveManagementScreen = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setDialogType(null);
+    setLoader(true)
     const exportColumnHeader = {
       "Name": t('common.CampaignName'),
       "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
@@ -261,12 +263,8 @@ const ArchiveManagementScreen = ({ classes }) => {
       exportType: formatType,
       fields: exportColumnHeader
     });
-    setDialogType(null)
+    setLoader(false);
   }
-  const redirctToArchive = () => {
-    window.location = '/react/Campaigns/Archive'
-  }
-
 
   const renderManagmentLine = () => {
     return (

@@ -7,7 +7,6 @@ import { Autocomplete } from '@material-ui/lab';
 import React, { useState, useEffect } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { setSelectedGroups } from '../../redux/reducers/groupSlice';
 
 
 const GroupTags = ({ classes,
@@ -27,7 +26,7 @@ const GroupTags = ({ classes,
 }) => {
     const { t } = useTranslation();
     const [groups, setGroups] = useState([]);
-    const { selectedGroups, subAccountAllGroups } = useSelector((state) => state.group);
+    const { subAccountAllGroups } = useSelector((state) => state.group);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const dispatch = useDispatch();
@@ -39,21 +38,6 @@ const GroupTags = ({ classes,
         onRemoveGroup(newList);
     }
 
-    useEffect(() => {
-        if (groupSelected && groupsToShow) {
-            let tmpGroups = [];
-            groupSelected.forEach((grp) => {
-                const findGroup = groupsToShow.find((g) => { return g.GroupID === grp });
-                if (findGroup) {
-                    tmpGroups.push(findGroup)
-                }
-            });
-
-            setGroups(tmpGroups);
-            dispatch(setSelectedGroups(tmpGroups));
-
-        }
-    }, [groupSelected])
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box
@@ -114,7 +98,7 @@ const GroupTags = ({ classes,
             disableCloseOnSelect
             options={groupsToShow ?? []}
             getOptionLabel={(option) => option?.GroupName}
-            defaultValue={groupsToShow?.reduce((prevVal, newVal) => {
+            value={subAccountAllGroups.reduce((prevVal, newVal) => {
                 if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
                     return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
                 }

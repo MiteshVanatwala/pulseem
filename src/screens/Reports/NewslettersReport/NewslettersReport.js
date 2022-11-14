@@ -271,9 +271,11 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setLoader(true);
+    setDialog(null)
     if (hasRevenue)
       exportColumnHeader["Revenue"] = t("common.revenue");
-      
+
     let orderList = [];
 
     if (toFileArray.length > 0) {
@@ -305,8 +307,7 @@ const NewslettersReport = ({ classes }) => {
     }
 
     setToFileArray([]);
-    setDialog(null)
-
+    setLoader(false);
   }
 
 

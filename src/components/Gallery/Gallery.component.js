@@ -38,14 +38,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
     const { windowSize, language, isRTL } = useSelector(state => state.core)
     const { gallery } = useSelector(state => state.gallery)
 
-
-    useEffect(() => {
-        console.log("SELECTED-1:", selected)
-        console.log("SELECTED-2:", selectedFile)
-    }, [selectedFile])
-
-
-
     const renderToast = () => {
         if (toastMessage) {
             setTimeout(() => {
@@ -185,7 +177,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
                 selectedFileURL.indexOf(fileUrl) == -1 ?
                     [...selectedFileURL, fileUrl] : selectedFileURL.filter(obj => obj !== fileUrl)
             )
-            // [...selectedFileURL, fileUrl] 
             : fileUrl);
     }
 
@@ -269,7 +260,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
         }
         const createNewFolder = async (event) => {
             event.preventDefault();
-            const folderExists = folders.filter(f => f.FolderName === folderName).length > 0;
+            const folderExists = folders?.filter(f => f.FolderName === folderName).length > 0;
             if (!folderExists) {
                 await dispatch(createFolder({ FolderName: folderName, FolderType: folderType }));
                 initGallery(true);
@@ -387,12 +378,12 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
             </Grid>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container>
-                <Grid item md={6} xs={12}>
+                <Grid item md={folderType === PulseemFolderType.CLIENT_IMAGES ? 6 : 12} xs={12}>
                     {renderCreateFolder()}
                 </Grid>
-                <Grid item md={6} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null, display: 'flex', justifyContent: 'flex-end' }}>
+                {folderType === PulseemFolderType.CLIENT_IMAGES && <Grid item md={6} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null, display: 'flex', justifyContent: 'flex-end' }}>
                     {renderUploadNotice()}
-                </Grid>
+                </Grid>}
             </Grid>
             {renderToast()}
         </div>

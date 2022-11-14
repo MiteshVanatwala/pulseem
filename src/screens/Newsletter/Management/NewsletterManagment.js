@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
   GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
@@ -27,17 +27,15 @@ import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
-import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
-import EmailVerificationDialog from '../../../components/DialogTemplates/EmailVerificationDialog';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import { useNavigate } from 'react-router-dom';
 
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
-  const { verifiedEmails } = useSelector(state => state.common);
-  const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
+  const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -58,6 +56,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
+  const navigate = useNavigate();
 
   moment.locale(language)
 
@@ -248,7 +247,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/react/Campaigns/Create'
+            onClick={() => {
+              navigate('/Campaigns/Create');
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -811,7 +812,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      {showEmailVerDialog && <EmailVerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
+      {showEmailVerDialog && <VerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

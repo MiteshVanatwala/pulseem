@@ -222,6 +222,8 @@
     "Text": "שכפל"
   },
   "GridButtonColumnResource2": {
+    "confirmExit": "אתה עומד לצאת מהגדרות ניוזלטר",
+    "confirmExitText": "תרצה לשמור את הקמפיין לפני היציאה?",
     "ConfirmText": "האם ברצונך למחוק את הקמפיין?",
     "ConfirmTitle": "מחיקת קמפיין",
     "CurrentFilterValue": "",
@@ -465,7 +467,8 @@
   "recipients": "נמענים",
   "automation": "אוטומציות",
   "create": "יצירת קמפיין",
-  "createNewsLetterHeader": "יצירת קמפיין ניזלטר",
+  "createNewsLetterHeader": "יצירת קמפיין ניוזלטר",
+  "createNewsLetterSubTitle": "הגדרות ניוזלטר",
   "restoreDeleted": "שחזור מחוקים",
   "exportFile": "ייצוא קובץ",
   "lastUpdate": "עודכן ב",
@@ -493,7 +496,8 @@
     "helpTexts": {
       "Name": "משמש לזיהוי הקמפיין במערכת. הנמענים לא יראו שם זה",
       "FromName": "זהו שדה חובה",
-      "FromEmail": "זהו שדה חובה",
+      "FromEmail": "ניתן לשלוח מכתובת אימייל מאומתת בלבד,",
+      "clickToVerify": "לאימות לחץ כאן",
       "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול עלול לפגוע בעבירות.",
       "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
       "upload": "יופיע כקובץ מצורף במייל שתשלחו"
@@ -506,9 +510,11 @@
       "campaignName": "אנא מלא שם קמפיין",
       "fromName": "אנא מלא שם שולח",
       "fromEmail": "נא מלא כתובת מייל לשליחה",
-      "campaignSubject": "נא לרשום נושא קומפיין"
+      "campaignSubject": "נא לרשום נושא קומפיין",
+      "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
+      "CampaignNotFound": "קמפיין לא נמצא או נמחק"
     },
-    "success": "Success"
+    "success": "הקמפיין נשמר בהצלחה"
   },
   "newsLetterMgmt": {
     "emailVerification": {
@@ -531,7 +537,7 @@
         "error_expired": "פג תוקף הקוד",
         "btnText": "שלחו לי אימייל לאימות",
         "anyProblem": "נתקלת בבעיה?",
-        "contactUs": "צרו איתנו קשר",
+        "contactUs": "צור איתנו קשר בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או במייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
         "placeholder": "הקלד אימייל"
       },
       "thirdSlide": {
@@ -560,6 +566,12 @@
         "btnTxt": "המשך ל קמפיינים"
       }
     }
+  },
+  "newsLetterSendSettings": {
+    "title": "שלח ניוזלטר",
+    "quickMSend": "שליחה ידנית מהירה",
+    "quickMsgCautionMsg": "שליחה ידנית מהירה תשלח את הקמפיין אך ורק את לנמענים שהוזנו ידנית ובאופן מידי.",
+    "doYouWantToContinue": "האם תרצה להמשיך?"
   },
   "sendToContact": "שלח לאיש קשר אחד",
   "successSent": "נשלח בהצלחה",
