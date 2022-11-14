@@ -126,6 +126,16 @@ export const getExternalClientsByGroups = createAsyncThunk(
         }
     });
 
+export const combinedGroup = createAsyncThunk(
+    'group/CreateCombinedGroup', async (data, thunkAPI) => {
+        try {
+            const response = await instence.post(`group/CreateCombinedGroup`, data);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 export const groupSlice = createSlice({
     name: 'group',
