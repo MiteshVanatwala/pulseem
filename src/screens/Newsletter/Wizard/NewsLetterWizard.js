@@ -211,17 +211,26 @@ const NewsLetterWizard = ({ classes }) => {
     }, [verifiedEmails, accountSettings]);
 
     useEffect(() => {
-        handleTextSelectionValues();
+        handleInitialValues();
     }, [campaingnValues]);
 
-    const handleTextSelectionValues = () => {
+    const handleInitialValues = () => {
         setSelectedCheck({
             ...selectedCheck,
             UpdateClient: campaingnValues.UpdateClient && campaingnValues.UpdateClient !== 0,
             PrintLocation: campaingnValues.PrintLocation && campaingnValues.PrintLocation !== 0,
             WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
-        })
+        });
+
+        // Validate From Email
+        const emailVerified = verifiedEmails.find((email) => {
+            return email?.Number === campaingnValues?.FromEmail;
+        });
+
+        if (!emailVerified) {
+            setCampaingnValues({ ...campaingnValues, FromEmail: '' });
+        }
     }
 
     const handleGetNewsletterResponse = (res) => {
