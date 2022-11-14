@@ -5,7 +5,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { createFolder, getFileGallery } from '../../redux/reducers/commonSlice';
+import { createFolder, getFileGallery } from '../../redux/reducers/gallerySlice';
 import clsx from 'clsx';
 import './Gallery.styles.css';
 import moment from 'moment'
@@ -17,24 +17,26 @@ import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import PropTypes from 'prop-types';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 
 import Toast from '../Toast/Toast.component';
 import { GalleryImages } from './GalleryImages'
+import { GalleryDocuments } from './GalleryDocuments'
 
-
-const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
+const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemFolderType.CLIENT_IMAGES, multiSelect = false, selected = [] }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [folders, setFolders] = useState(null);
     const [folderName, setFolderName] = useState('');
     const [scrollIndex, setScrollIndex] = useState(0);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(multiSelect ? selected : null);
     const [toastMessage, setToastMessage] = useState(null);
     const [selectedNode, setSelectedNode] = useState('k_0');
-    const [selectedFileURL, setSelectedFileURL] = useState(null);
+    const [selectedFileURL, setSelectedFileURL] = useState(multiSelect ? [] : null);
     const [selectedFolder, setSelectedFolder] = useState('main');
     const [folderCreationState, setShowFolderCreation] = useState(false);
     const { windowSize, language, isRTL } = useSelector(state => state.core)
+    const { gallery } = useSelector(state => state.gallery)
 
     const renderToast = () => {
         if (toastMessage) {
@@ -50,31 +52,27 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
 
     moment.locale(language);
 
-    const initGallery = async () => {
-        const data = await dispatch(getFileGallery());
-        if (data.error) {
-            return;
+    const initGallery = async (forceInit) => {
+        if (!gallery || forceInit) {
+            await dispatch(getFileGallery(folderType));
         }
-
-        const f = Object.keys(data.payload);
-        const tmpFolders = [];
-        f.forEach((folder, index) => {
-            if (index === 0) {
-                tmpFolders.push({
-                    FolderName: "main", files: data.payload[folder].sort((a, b) => {
-                        return new Date(b.CreatedDate) - new Date(a.CreatedDate);
-                    })
-                });
-            } else {
-                tmpFolders.push({
-                    FolderName: folder.split("\\")[1], files: data.payload[folder].sort((a, b) => {
-                        return new Date(b.CreatedDate) - new Date(a.CreatedDate);
-                    })
-                });
-            }
-        });
-        setFolders(tmpFolders);
     }
+
+    useEffect(() => {
+        if (gallery) {
+            const f = Object.keys(gallery);
+            const tmpFolders = [];
+            f.forEach((folder, index) => {
+                const folderFiles = [...gallery[folder]];
+                const folderName = index === 0 ? "main" : folder.split("\\")[1];
+                var files = folderFiles.sort((a, b) => {
+                    return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
+                });
+                tmpFolders.push({ FolderName: folderName, files: files });
+            });
+            setFolders(tmpFolders);
+        }
+    }, [gallery])
 
     useEffect(() => {
         initGallery();
@@ -168,13 +166,24 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         setScrollIndex(0);
     }
     const handleSelectFile = (fileUrl, fileIndex) => () => {
-        setSelectedFile(fileIndex);
-        setSelectedFileURL(fileUrl);
+        setSelectedFile(multiSelect ?
+            (
+                selectedFile.indexOf(fileIndex) == -1 ?
+                    [...selectedFile, fileIndex] : selectedFile.filter(obj => obj !== fileIndex)
+            )
+            : fileIndex);
+        setSelectedFileURL(multiSelect ?
+            (
+                selectedFileURL.indexOf(fileUrl) == -1 ?
+                    [...selectedFileURL, fileUrl] : selectedFileURL.filter(obj => obj !== fileUrl)
+            )
+            : fileUrl);
     }
 
     useEffect(() => {
         if (isConfirm) {
-            callbackSelectFile(encodeURI(selectedFileURL));
+            // callbackSelectFile(encodeURI(selectedFileURL));
+            callbackSelectFile(multiSelect ? selectedFileURL.join(',') : selectedFileURL);
         }
     }, [isConfirm])
 
@@ -251,10 +260,10 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         }
         const createNewFolder = async (event) => {
             event.preventDefault();
-            const folderExists = folders.filter(f => f.FolderName === folderName).length > 0;
+            const folderExists = folders?.filter(f => f.FolderName === folderName).length > 0;
             if (!folderExists) {
-                await dispatch(createFolder(folderName));
-                initGallery();
+                await dispatch(createFolder({ FolderName: folderName, FolderType: folderType }));
+                initGallery(true);
                 handleCreateFolderRow();
                 setFolderName('');
             }
@@ -338,28 +347,43 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                 </Grid>
                 <Grid item md={9} xs={12} className={clsx(classes.sidebar, classes.gallery)}
                     onScroll={handleScroll} ref={paneDidMount}>
-                    {folders && <GalleryImages
-                        classes={classes}
-                        folder={folders.find((f) => { return f.FolderName === selectedFolder })}
-                        onReInitGallery={initGallery}
-                        selectedFolder={selectedFolder}
-                        scrollIndex={scrollIndex}
-                        isRTL={isRTL}
-                        selectedFile={selectedFile}
-                        onSelectFile={handleSelectFile}
-                        onToast={setToastMessage}
-                        onReachToLimit={removeScrollHanlder} />
+                    {
+                        (folders && folderType === PulseemFolderType.CLIENT_IMAGES) ? <GalleryImages
+                            classes={classes}
+                            folder={folders.find((f) => { return f.FolderName === selectedFolder })}
+                            onReInitGallery={() => { initGallery(true) }}
+                            selectedFolder={selectedFolder}
+                            scrollIndex={scrollIndex}
+                            isRTL={isRTL}
+                            selectedFile={selectedFile}
+                            onSelectFile={handleSelectFile}
+                            onToast={setToastMessage}
+                            onReachToLimit={removeScrollHanlder} />
+                            :
+                            (folders && folderType === PulseemFolderType.DOCUMENT) ? <GalleryDocuments
+                                classes={classes}
+                                folder={folders.find((f) => { return f.FolderName === selectedFolder })}
+                                onReInitGallery={() => { initGallery(true) }}
+                                selectedFolder={selectedFolder}
+                                scrollIndex={scrollIndex}
+                                isRTL={isRTL}
+                                selectedFile={selectedFile}
+                                onSelectFile={handleSelectFile}
+                                onToast={setToastMessage}
+                                onReachToLimit={removeScrollHanlder} />
+                                :
+                                <></>
                     }
                 </Grid>
             </Grid>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container>
-                <Grid item md={6} xs={12}>
+                <Grid item md={folderType === PulseemFolderType.CLIENT_IMAGES ? 6 : 12} xs={12}>
                     {renderCreateFolder()}
                 </Grid>
-                <Grid item md={6} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null, display: 'flex', justifyContent: 'flex-end' }}>
+                {folderType === PulseemFolderType.CLIENT_IMAGES && <Grid item md={6} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null, display: 'flex', justifyContent: 'flex-end' }}>
                     {renderUploadNotice()}
-                </Grid>
+                </Grid>}
             </Grid>
             {renderToast()}
         </div>

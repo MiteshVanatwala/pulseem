@@ -150,6 +150,8 @@ const MmsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
+        setDialog(null);
+        setLoader(true);
         let orderList = preferredOrder(filteredResults, Object.keys(exportColumnHeader));
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
@@ -168,7 +170,7 @@ const MmsReport = ({ classes }) => {
             exportType: formatType,
             fields: exportColumnHeader
         });
-        setDialog(null)
+        setLoader(false);
     }
 
     const colorTextStyle = {

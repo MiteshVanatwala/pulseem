@@ -1,6 +1,15 @@
 import LazyBackground from './Lazy/LazyBackground';
 import { AiOutlineCheckCircle } from 'react-icons/ai';
 import { Typography, Grid, Box } from '@material-ui/core'
+import { PulseemFolderType } from '../../model/PulseemFields/Fields';
+import {
+    Word,
+    File,
+    Excel,
+    Pdf,
+    Ppt,
+    Txt
+} from '../../assets/images/managment/index';
 import clsx from 'clsx';
 
 export const Image = ({
@@ -10,8 +19,24 @@ export const Image = ({
     imgSrc,
     imgKey,
     fileIndex,
-    selectedFile,
-    imgFile }) => {
+    selectedFile = "",
+    imgFile,
+    fileExtension = null,
+    folderType = PulseemFolderType.CLIENT_IMAGES }) => {
+
+    const icons = {
+        xlsv: Excel,
+        xlsx: Excel,
+        xls: Excel,
+        csv: Excel,
+        doc: Word,
+        docx: Word,
+        pdf: Pdf,
+        ppt: Ppt,
+        txt: Txt,
+        '': File
+    }
+
     const imageEnter = (fileId) => () => {
         const elem = document.getElementById(fileId);
         if (elem)
@@ -31,20 +56,31 @@ export const Image = ({
             style={{ padding: "6px 10px" }}
         >
             <Box className="select-image" onClick={onSelectFile(imgSrc, imgKey)}>
-                <Box className="img-container" style={{ border: selectedFile === imgKey ? "1px solid #000" : null }}>
-                    <LazyBackground url={imgSrc}>
-                        <button
-                            id={`file_${fileIndex}`}
-                            className={clsx(classes.absTopRight)}
-                            style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
-                            onClick={onDelete(imgFile)}
-                        >X</button>
-                    </LazyBackground>
+                <Box className="img-container" style={{ border: selectedFile && (selectedFile === imgKey || selectedFile?.indexOf(imgKey) !== -1) ? "1px solid #000" : null }}>
+                    {folderType === PulseemFolderType.CLIENT_IMAGES ?
+                        (<LazyBackground url={imgSrc}>
+                            <button
+                                id={`file_${fileIndex}`}
+                                className={clsx(classes.absTopRight)}
+                                style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
+                                onClick={onDelete(imgFile)}
+                            >X</button>
+                        </LazyBackground>) : (
+                            <LazyBackground url={icons[fileExtension.toLowerCase()]} style={[{ backgroundSize: 'auto !important' }]}>
+                                <button
+                                    id={`file_${fileIndex}`}
+                                    className={clsx(classes.absTopRight)}
+                                    style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
+                                    onClick={onDelete(imgFile)}
+                                >X</button>
+                            </LazyBackground>
+                        )
+                    }
                     <Box title={imgFile.FileName} className="image-info">
                         <Typography className="elipsis-text" style={{ fontSize: 14 }}>
                             {imgFile.FileName}
                         </Typography>
-                        {selectedFile === imgKey &&
+                        {selectedFile && (selectedFile === imgKey || selectedFile.indexOf(imgKey) !== -1) &&
                             <AiOutlineCheckCircle style={{ color: 'green', fontSize: 24, padding: '0 10px', width: 40 }} />
                         }
                     </Box>

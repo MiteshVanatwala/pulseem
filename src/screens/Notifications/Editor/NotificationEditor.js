@@ -34,6 +34,7 @@ import {
 } from '../../../assets/images/settings/index'
 import { isValidUrl } from '../../../helpers/UrlHelper';
 import { useParams } from 'react-router-dom';
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -897,7 +898,7 @@ const NotificationEditor = ({ classes, ...props }) => {
           </Box>
         </Grid>
         <div className={classes.notification} id={model.ID}>
-          <div style={{ marginBottom: 5, backgroundImage: `url(${model.Image})` }} className={clsx(
+          <div className={clsx(
             classes.flexJustifyCenter,
             classes.dashed,
             classes.notificationTop,
@@ -906,6 +907,10 @@ const NotificationEditor = ({ classes, ...props }) => {
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onClick={openGallery(false)}
+            style={{
+              backgroundImage: `url(${model.Image})`,
+              marginBottom: 5
+            }}
           >
             {model == null || !model.Image ? chooseImage() : ""
             }
@@ -1256,7 +1261,8 @@ const NotificationEditor = ({ classes, ...props }) => {
           classes={classes}
           isConfirm={isGalleryConfirmed}
           callbackSelectFile={handleSelectedImage}
-          style={{ minWidth: 400 }} />
+          style={{ minWidth: 400 }}
+          folderType={PulseemFolderType.CLIENT_IMAGES} />
       )
     };
   }

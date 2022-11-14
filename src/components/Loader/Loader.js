@@ -19,7 +19,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     position: 'absolute',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    zIndex: 9000
   },
   progressBar: {
     left: 0,

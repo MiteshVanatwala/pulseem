@@ -1079,9 +1079,8 @@ const SmsCreator = ({ classes, ...props }) => {
               width={48}
               boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
               activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              // className="react-switch"
               id="material-switch"
-              className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
+              className={clsx("react-switch", isRTL ? classes.reactSwitchHe : classes.reactSwitch)}
             />
           </FormGroup>
           <div
@@ -1215,7 +1214,7 @@ const SmsCreator = ({ classes, ...props }) => {
         if (!smsModel.Text.includes('ref') && isLinksStatistics) {
           let text = smsModel.Text;
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
-          const originalLink = startIndex.split(' ') || startIndex.split('\n');
+          const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
           let originUrl = originalLink[0];
           let newUrl = originUrl.trim();
           newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';

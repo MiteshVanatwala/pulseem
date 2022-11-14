@@ -303,7 +303,7 @@ const DirectSMSReportTab = ({
             component='button'
             underline='none'
             onClick={() => handleAdvanceSearch(!advanceSearch)}
-            className={clsx(classes.dBlock, classes.mt5, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
+            className={clsx(classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
             {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
           </Link>
           }
