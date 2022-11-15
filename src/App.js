@@ -1,4 +1,4 @@
-import React, { useEffect, lazy, Suspense } from "react";
+import React, { useEffect } from "react";
 import NewsletterManagment from "./screens/Newsletter/Management/NewsletterManagment";
 import ArchiveManagement from "./screens/Newsletter/Management/ArchiveManagement";
 import AutomationManagment from "./screens/Automations/Management/AutomationsManagment";
@@ -58,13 +58,10 @@ import Groups from "./screens/Groups/Management/Groups";
 import MmsReport from "./screens/Reports/MmsReport/MmsReport.js";
 import ClientSearchResult from "./screens/ClientSearch/ClientSearchResult";
 import NotificationSend from "./screens/Notifications/Editor/NotificationSend";
+import WhatsappCreator from "./screens/Whatsapp/Editor/WhatsappCreator";
 import PageNotFound from "./screens/404";
 
 const renderRoutes = (classes, redirect) => {
-  const WhatsappCreator = React.lazy(() =>
-    import("./screens/Whatsapp/Editor/WhatsappCreator")
-  );
-
   const transferUrl =
     (url = "", param = "") =>
     () => {
@@ -221,11 +218,7 @@ const renderRoutes = (classes, redirect) => {
 
       <Route
         path={`/react/Whatsapp/create`}
-        element={
-          <Suspense fallback={<div>Loading...</div>}>
-            <WhatsappCreator classes={classes} />
-          </Suspense>
-        }
+        element={<WhatsappCreator classes={classes} />}
       />
 
       {/* MMS */}

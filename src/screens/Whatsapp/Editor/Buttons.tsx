@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
-import { core, ButtonsProps } from "./WhatsappCreator.types";
+import { coreProps, ButtonsProps } from "./WhatsappCreator.types";
 import { Button, Box } from "@material-ui/core";
 import { BsTrash } from "react-icons/bs";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 const Buttons = ({ classes }: ButtonsProps["classes"]) => {
   const { t: translator } = useTranslation();
 
-  const { isRTL } = useSelector((state: { core: core }) => state.core);
+  const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
   const [isFromAutomation, setIsFromAutomation] = useState<boolean>(false);
 
   return (

@@ -1,14 +1,15 @@
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { coreProps, WhatsappCreatorProps } from "./types";
+import { actionButtonProps, coreProps, WhatsappCreatorProps } from "./WhatsappCreator.types";
 import clsx from "clsx";
 import { Box, Button, Grid, makeStyles, Tooltip } from "@material-ui/core";
 import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import { ClassesType } from "../../Classes.types";
 
-const WhatsappTemplateEditor = ({ classes }: WhatsappCreatorProps) => {
+const WhatsappTemplateEditor = ({ classes, onButtonClick }: WhatsappCreatorProps & ClassesType) => {
   const { t: translator } = useTranslation();
   const useStyles = makeStyles(() => ({
     customWidth: {
@@ -37,7 +38,7 @@ const WhatsappTemplateEditor = ({ classes }: WhatsappCreatorProps) => {
     setCharacterCount(e.target.value?.length)
   }
 
-  const buttons = [
+  const buttons: actionButtonProps[] = [
     {
       tooltipTitle: "whatsapp.template.callToActionTooltip",
       buttonTitle: 'whatsapp.template.callToAction',
@@ -173,12 +174,14 @@ const WhatsappTemplateEditor = ({ classes }: WhatsappCreatorProps) => {
               arrow
               key={button.buttonTitle}
             >
-              <Button
-                className={clsx(classes.whatsappInfoButtons, button.isDisable ? classes.disabled : null)}
-                onClick={() => console.log(button)}
-              >
-                {translator(button.buttonTitle)}
-              </Button>
+              {onButtonClick && (
+                <Button
+                  className={clsx(classes.whatsappInfoButtons, button.isDisable ? classes.disabled : null)}
+                  onClick={() => onButtonClick(button)}
+                >
+                  {translator(button.buttonTitle)}
+                </Button>
+              )}
             </Tooltip>
           ))}
 

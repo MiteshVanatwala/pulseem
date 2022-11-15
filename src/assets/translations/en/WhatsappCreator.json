@@ -19,6 +19,8 @@
     "templateDesc": "Only you will see the name",
     "selectSavedTemplate": "Select Saved Template",
     "selectSavedTemplatePlaceholder": "Select Saved Template",
+    "typeText": "Insert text here - upto 1024 characters",
+    "yourMessage": "Your Message",
     "template": {
         "textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
         "callToActionTooltip": "Call To Action",
