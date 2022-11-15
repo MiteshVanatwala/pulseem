@@ -385,7 +385,7 @@ const NewsLetterWizard = ({ classes }) => {
         Object.keys(tempError).forEach((key) => {
             if (key === 'FromEmail' && data[key] === '-1') {
                 tempError[key] = ErrorTexts[key];
-                isError = !data[key]
+                isError = true
             }
             else {
                 if (!data[key] || !data[key].trim()) {
