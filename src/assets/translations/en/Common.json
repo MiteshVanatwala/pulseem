@@ -585,5 +585,6 @@
   "createOrEdit": "Create or Edit block",
   "templateName": "Template name",
   "tags": "Tags",
-  "notAllowedExtension": "This file extension is not allowed! Please try another file."
+  "notAllowedExtension": "This file extension is not allowed! Please try another file.",
+  "uploadImage": "Upload Image"
 }

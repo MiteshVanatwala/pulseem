@@ -6,6 +6,7 @@ import { RiSendPlaneFill } from 'react-icons/ri'
 import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md'
+import { RiImageAddLine } from 'react-icons/ri'
 
 const WizardActions = ({
     classes,
@@ -14,7 +15,8 @@ const WizardActions = ({
     onExit = null,
     onBack = null,
     onDelete = null,
-    onTestSend = null
+    onTestSend = null,
+    onShowGallery = null
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
@@ -49,6 +51,18 @@ const WizardActions = ({
                                 onClick={() => { onDelete() }}
                             >
                                 <BsTrash style={{ fontSize: "25" }} />
+                            </Button>
+                        }
+                        {onShowGallery &&
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                onClick={() => onShowGallery()}
+                                style={{ marginInline: 8, paddingInline: 10 }}
+                                className={clsx(classes.actionButton,
+                                    classes.actionButtonOutlinedBlue)}>
+                                <RiImageAddLine style={{ fontSize: "20", paddingInline: 5 }} />
+                                {t("common.imageGallery")}
                             </Button>
                         }
                         {onTestSend &&

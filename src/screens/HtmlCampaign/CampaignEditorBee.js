@@ -29,6 +29,10 @@ import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType } from './helper/Config';
+import { IoMdImages } from 'react-icons/io';
+import { Dialog } from "../../components/managment/Dialog";
+import Gallery from '../../components/Gallery/Gallery.component';
+import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -67,6 +71,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   })
   const { modals, openModal } = useModals()
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
+  const [showGallery, setShowGallery] = useState(false);
 
   //#endregion State
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -444,6 +449,42 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const config = getConfig();
 
+  const showGalleryModal = () => {
+    if (showGallery) {
+      let dialog = {
+        showDivider: false,
+        icon: (
+          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+        ),
+        title: t("common.imageGallery"),
+        content: (
+          <Gallery
+            classes={classes}
+            // isConfirm={isGalleryConfirmed}
+            // callbackSelectFile={handleSelectedImage}
+            style={{ minWidth: 400 }}
+            multiSelect={false}
+            folderType={PulseemFolderType.CLIENT_IMAGES} />
+        )
+      };
+
+      return (
+        <Dialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          showDivider={false}
+          classes={classes}
+          open={showGallery}
+          onClose={() => { setShowGallery(false) }}
+          onConfirm={() => { setShowGallery(false) }}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+
   return (
     <DefaultScreen
       currentPage='campaignEditor'
@@ -452,6 +493,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       containerClass={[classes.fullWidth, classes.noPadding]}
     >
       {renderToast()}
+      {showGalleryModal()}
       <NoCreditsModal
         classes={classes}
         onClose={() => setDialog(null)}
@@ -489,7 +531,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         onTestSend={handleOpenTestSend}
         onSave={saveDesign}
         onBack={onBack}
-        onDelete={onDelete} />
+        onDelete={onDelete}
+        onShowGallery={() => { setShowGallery(true) }}
+      />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )
