@@ -31,7 +31,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate } from 'react-router-dom';
-
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
@@ -363,7 +363,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: row.IsNewEditor && accountFeatures.indexOf('41') > -1 ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        href: row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
