@@ -11,7 +11,7 @@ import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { Dialog } from "../../../components/managment/Dialog";
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
+import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
@@ -385,7 +385,7 @@ const NewsLetterWizard = ({ classes }) => {
         Object.keys(tempError).forEach((key) => {
             if (key === 'FromEmail' && data[key] === '-1') {
                 tempError[key] = ErrorTexts[key];
-                isError = !data[key]
+                isError = true
             }
             else {
                 if (!data[key] || !data[key].trim()) {
@@ -665,12 +665,18 @@ const NewsLetterWizard = ({ classes }) => {
             />
         </Box>
     )
-    const removeAttachmentFile = (event, fileId) => {
+    const removeAttachmentFile = async (event, fileId) => {
         event.preventDefault();
         event.stopPropagation();
         const newAttachments = [...campaingnValues.FilesProperties];
         setCampaingnValues({ ...campaingnValues, FilesProperties: newAttachments.filter((f) => f.ID !== fileId) });
         setIsSilenceUpdated(true);
+
+        const filteredAttachments = newAttachments.filter((f) => f.ID !== fileId);
+        if (filteredAttachments.length > 0) {
+            const response = await dispatch(getCreditsByFileTotalBytes({ ...campaingnValues, FilesProperties: filteredAttachments }));
+            handleGetNewsletterResponse(response.payload)
+        }
     }
     const getDeleteStatus = () => {
         return setConfirmDelete(true)
@@ -678,7 +684,7 @@ const NewsLetterWizard = ({ classes }) => {
     const handleGalleryConfirm = () => {
         setIsFileSelected(true);
     }
-    const handleSelectedImage = (files) => {
+    const handleSelectedImage = async (files) => {
         const existsFiles = [...campaingnValues.FilesProperties];
 
         if (!files || files[0] === '') {
@@ -713,6 +719,9 @@ const NewsLetterWizard = ({ classes }) => {
         setShowGallery(false);
         setIsFileSelected(false);
         setIsSilenceUpdated(true);
+        const response = await dispatch(getCreditsByFileTotalBytes({ ...campaingnValues, FilesProperties: [...existsFiles] }));
+        handleGetNewsletterResponse(response.payload)
+
     }
     const showGalleryModal = () => {
         if (showGallery) {
