@@ -24,7 +24,7 @@ import { ClassesType } from "../../Classes.types";
 import uniqid from "uniqid";
 import { useTranslation } from "react-i18next";
 
-const ActionCallPopOver = ({ classes }: ClassesType) => {
+const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
   const { t: translator } = useTranslation();
 
   const websiteField: callToActionFieldProps[] = [
@@ -124,26 +124,15 @@ const ActionCallPopOver = ({ classes }: ClassesType) => {
     setRows([...updatedRows]);
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
-    setRows([]);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleSubmit = () => {
     console.log("Submission Values", rows);
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        {translator("whatsapp.callToActionButton")}
-      </Button>
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={isCallToActionOpen}
+        onClose={closeCallToAction}
         aria-labelledby="form-dialog-title"
         fullWidth
         maxWidth="md"
@@ -152,7 +141,7 @@ const ActionCallPopOver = ({ classes }: ClassesType) => {
           {translator("whatsapp.callToActionTitle")}
           <IconButton
             aria-label="close"
-            onClick={handleClose}
+            onClick={closeCallToAction}
             style={{ position: "absolute", top: 0, right: 0 }}
           >
             <CloseIcon />
@@ -257,7 +246,7 @@ const ActionCallPopOver = ({ classes }: ClassesType) => {
                 {translator("whatsapp.callToActionAddMoreButton")}
               </Button>
             )}
-            <Button onClick={handleClose} variant="contained" color="secondary">
+            <Button onClick={closeCallToAction} variant="contained" color="secondary">
               {translator("whatsapp.callToActionExitButton")}
             </Button>
             <Button
