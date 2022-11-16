@@ -959,7 +959,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
           <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
             if (location?.state && location?.state.PageProperty) {
-              navigate(`/${location?.state.PageProperty.PageName}`, {
+              navigate(`/react/${location?.state.PageProperty.PageName}`, {
                 state: {
                   from: 'clientsearchresult'
                 }
