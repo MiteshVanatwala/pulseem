@@ -16,7 +16,7 @@ import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
 import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
-import { makeId } from '../../../helpers/functions';
+import { RandomID } from '../../../helpers/Functions/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -710,7 +710,7 @@ const NewsLetterWizard = ({ classes }) => {
                     FileName: fileName,
                     FolderType: PulseemFolderType.DOCUMENT,
                     FileURL: file,
-                    ID: makeId()
+                    ID: RandomID()
                 }
                 existsFiles.push(newFile);
             }
@@ -722,7 +722,6 @@ const NewsLetterWizard = ({ classes }) => {
         setIsSilenceUpdated(true);
         const response = await dispatch(getCreditsByFileTotalBytes({ ...campaingnValues, FilesProperties: [...existsFiles] }));
         handleGetNewsletterResponse(response.payload)
-
     }
     const showGalleryModal = () => {
         if (showGallery) {

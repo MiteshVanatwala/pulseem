@@ -49,7 +49,6 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   },
   appBarItemPaper: {
     borderRadius: 0,
-    //backgroundColor: '#F5F5F5',
   },
   appBarItemMenuItem: {
     fontSize: 14,

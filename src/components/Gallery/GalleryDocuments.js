@@ -67,7 +67,7 @@ export const GalleryDocuments = ({
             }).then(async (result) => {
                 await dispatch(uploadFile(result));
                 setLoader(false);
-                setReinit(true);
+                //setReinit(true);
                 onReInitGallery();
             });
         }
@@ -87,7 +87,7 @@ export const GalleryDocuments = ({
         fModel.FolderName = fileModel.FolderName.replace('main\\', '');
         fModel.FolderType = PulseemFolderType.DOCUMENT;
         await dispatch(deleteGalleryFile(fModel));
-        setReinit(true);
+        //setReinit(true);
         onReInitGallery();
     }
     const handleUploadClick = () => {

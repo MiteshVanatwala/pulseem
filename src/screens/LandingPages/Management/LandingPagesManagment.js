@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Link
 } from '@material-ui/core'
 import {
@@ -10,15 +10,14 @@ import {
   PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, RestorDialogContent, Dialog, PopMassage, SearchField
+  TablePagination, ManagmentIcon, RestorDialogContent, PopMassage, SearchField
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
   duplicteLandingPage, downloadReport, exportSurvey
 } from '../../../redux/reducers/landingPagesSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
-import { openInNewTab } from '../../../helpers/functions'
 import { useNavigate } from "react-router-dom";
+import { openInNewTab } from '../../../helpers/Functions/functions'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
@@ -26,6 +25,8 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
@@ -43,7 +44,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   const [showCopied, setShowCopied] = useState(null)
   const [copyRef, setCopyRef] = useState(null)
   const [restoreArray, setRestoreArray] = useState([])
-  const history = useCtrlHistory()
   const dispatch = useDispatch()
   const [showLoader, setLoader] = useState(true);
 
@@ -56,17 +56,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('landingPages.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setLandingPageNameSearch('');
@@ -119,7 +108,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           classes={classes}
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
@@ -331,7 +319,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         icon: (copyData && copyData.icon) || null,
         lable: (copyData && copyData.lable) || '',
         rootClass: classes.minWidth95,
-        disable: !PageLink,
         text: (copyData && copyData.copy) || '',
         disable: !PageLink,
         type: 'copy',
@@ -658,53 +645,48 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       handleClose()
       setPage(1)
       setLoader(true);
-      const result = await dispatch(duplicteLandingPage(data))
-      //const { payload={} } = result || {};
+      await dispatch(duplicteLandingPage(data))
       await getData()
       setLoader(false);
-      // setDialogType({
-      //   type: 'duplicateSuccessful',
-      //   data: payload
-      // })
     }
   })
 
-  const getDuplicateSuccessfulDialog = (data = '') => ({
-    paperStyle: classes.maxWidth540,
-    childrenStyle: classes.duplicateSuccessMsg,
-    title: t('landingPages.duplicationSuccessful'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('landingPages.duplicationSuccessfulMessage')}
-      </Typography>
-    ),
-    renderButtons: () => (
-      <Box className={classes.spaceEvenly}>
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogCancelButton,
-          )}>
-          {t('common.Cancel')}
-        </Button>
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Edit')}
-        </Button>
-      </Box>
-    )
-  })
+  // const getDuplicateSuccessfulDialog = (data = '') => ({
+  //   paperStyle: classes.maxWidth540,
+  //   childrenStyle: classes.duplicateSuccessMsg,
+  //   title: t('landingPages.duplicationSuccessful'),
+  //   showDivider: false,
+  //   content: (
+  //     <Typography style={{ fontSize: 18 }}>
+  //       {t('landingPages.duplicationSuccessfulMessage')}
+  //     </Typography>
+  //   ),
+  //   renderButtons: () => (
+  //     <Box className={classes.spaceEvenly}>
+  //       <Button
+  //         variant='contained'
+  //         size='small'
+  //         onClick={handleClose}
+  //         className={clsx(
+  //           classes.gruopsDialogButton,
+  //           classes.dialogCancelButton,
+  //         )}>
+  //         {t('common.Cancel')}
+  //       </Button>
+  //       <Button
+  //         variant='contained'
+  //         size='small'
+  //         onClick={handleClose}
+  //         href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
+  //         className={clsx(
+  //           classes.gruopsDialogButton,
+  //           classes.dialogConfirmButton,
+  //         )}>
+  //         {t('common.Edit')}
+  //       </Button>
+  //     </Box>
+  //   )
+  // })
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}
@@ -717,13 +699,13 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (
@@ -731,7 +713,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       currentPage='landingPages'
       classes={classes}
       containerClass={classes.management}>
-      {renderHeader()}
+      <Title Text={t('landingPages.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

@@ -4,7 +4,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
-    Box, Typography, Divider, TableBody, TableRow, TableCell,
+    Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
@@ -39,9 +39,11 @@ import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { Title } from '../../../components/managment/Title';
+import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 
 const Groups = ({ classes }) => {
@@ -116,24 +118,7 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
-    const renderHeader = () => {
-        return (
-            <>
-                <Typography className={classes.managementTitle}>
-                    {t("recipient.logPageHeaderResource1.Text")}
-                </Typography>
-                <Divider />
-            </>
-        );
-    };
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -590,7 +575,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -623,7 +608,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -656,7 +641,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -690,7 +675,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -723,7 +708,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -767,7 +752,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -800,7 +785,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -833,7 +818,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -866,7 +851,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -899,7 +884,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                                 // onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsPending}&GroupID=${GroupID}`)
                                             }]}
 
@@ -946,7 +931,7 @@ const Groups = ({ classes }) => {
                                                 ResultTitle: GroupName,
                                                 PageProperty: pageProperty.current
                                             }
-                                        }) : voidFunction,
+                                        }) : VoidFunction,
                                 label: t("recipient.preview"),
                                 component: (
                                     <IconWrapper iconName="preview" className={classes.mxAuto} />
@@ -1058,7 +1043,7 @@ const Groups = ({ classes }) => {
             RestrictedEmails,
             GroupName,
             PendingClients,
-            PendingSmsClients,
+            PendingSmsClients
         } = row;
         return (
             <TableRow key={GroupID} component="div" classes={rowStyle}>
@@ -1110,7 +1095,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1139,7 +1124,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1168,7 +1153,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
 
@@ -1198,7 +1183,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />),
 
                                 },
@@ -1227,7 +1212,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
 
@@ -1267,7 +1252,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1296,7 +1281,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1325,7 +1310,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1354,7 +1339,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]} />),
 
                                 },
@@ -1383,7 +1368,7 @@ const Groups = ({ classes }) => {
                                                         ResultTitle: GroupName,
                                                         PageProperty: pageProperty.current
                                                     }
-                                                }) : voidFunction
+                                                }) : VoidFunction
                                             }]
                                             } />),
                                 },
@@ -1460,7 +1445,7 @@ const Groups = ({ classes }) => {
                 break;
             }
             case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
                 setDialog(DialogType.MESSAGE);
                 break;
             }
@@ -1481,6 +1466,7 @@ const Groups = ({ classes }) => {
         }
     }
     const handleConfirmExport = (formatType) => {
+        setShowConfirmDialog(false);
         let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
         if (selectedGroups && selectedGroups.length > 0) {
             queryString += `&Groups=${selectedGroups.join(',')}`;
@@ -1491,7 +1477,6 @@ const Groups = ({ classes }) => {
         }
         // This should be change in the .NET site for support the format file selection POP UP 
         window.open(`/Pulseem/ClientExport.csv?${queryString}`);
-        setShowConfirmDialog(false);
     }
     const renderConfirmDialog = () => {
         return (
@@ -1779,7 +1764,7 @@ const Groups = ({ classes }) => {
         >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
-                {renderHeader()}
+                <Title Text={t('recipient.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
                 {renderSearchSection()}
                 {windowSize !== 'xs' ? renderManagmentLine() :
                     <Box

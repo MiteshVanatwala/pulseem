@@ -1,4 +1,4 @@
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { createStore } from 'redux'
 
@@ -6,7 +6,7 @@ import { createStore } from 'redux'
 export const getCampaignById = createAsyncThunk(
     '/CampaignEditor/GetCampaignById/', async (id, thunkAPI) => {
         try {
-            const response = await instence.get(`/CampaignEditor/GetCampaignById/${id}`);
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetCampaignById/${id}`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -17,7 +17,7 @@ export const saveCampaign = createAsyncThunk(
     '/CampaignEditor/SaveCampaign/', async (campaign, thunkAPI) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const response = await instence.post(`/CampaignEditor/SaveCampaign/`, campaign);
+                const response = await PulseemReactInstance.post(`/CampaignEditor/SaveCampaign/`, campaign);
                 resolve(JSON.parse(response.data))
             } catch (error) {
                 reject(thunkAPI.rejectWithValue({ error: error.message }));
@@ -33,7 +33,7 @@ export const saveUserBlock = createAsyncThunk(
                 Data: JSON.stringify(block.data),
                 Tags: block.tags
             }
-            const response = await instence.post(`/CampaignEditor/SaveUserBlock/`, jsonData);
+            const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, jsonData);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -43,7 +43,7 @@ export const saveUserBlock = createAsyncThunk(
 export const updateUserBlock = createAsyncThunk(
     '/CampaignEditor/UpdateUserBlock/', async (campaign, thunkAPI) => {
         try {
-            const response = await instence.put(`/CampaignEditor/UpdateUserBlock/`, campaign);
+            const response = await PulseemReactInstance.put(`/CampaignEditor/UpdateUserBlock/`, campaign);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -53,7 +53,7 @@ export const updateUserBlock = createAsyncThunk(
 export const getUserblocks = createAsyncThunk(
     '/CampaignEditor/GetUserblocks/', async (thunkAPI) => {
         try {
-            const response = await instence.get(`/CampaignEditor/GetUserblocks`);
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -63,7 +63,7 @@ export const getUserblocks = createAsyncThunk(
 export const deleteUserBlock = createAsyncThunk(
     '/CampaignEditor/DeleteUserBlock/', async (id, thunkAPI) => {
         try {
-            const response = await instence.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
+            const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -73,7 +73,7 @@ export const deleteUserBlock = createAsyncThunk(
 export const testSend = createAsyncThunk(
     '/CampaignEditor/TestSend/', async (payload, thunkAPI) => {
         try {
-            const response = await instence.post(`/CampaignEditor/TestSend/`, payload);
+            const response = await PulseemReactInstance.post(`/CampaignEditor/TestSend/`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -84,7 +84,7 @@ export const saveCampaignInfo = createAsyncThunk(
     'CampaignEditor/CreateOrUpdate', async (campaign, thunkAPI) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const response = await instence.post(`CampaignEditor/CreateOrUpdate`, campaign);
+                const response = await PulseemReactInstance.post(`CampaignEditor/CreateOrUpdate`, campaign);
                 resolve(JSON.parse(response.data))
             } catch (error) {
                 reject(thunkAPI.rejectWithValue({ error: error.message }));
@@ -96,7 +96,17 @@ export const saveCampaignInfo = createAsyncThunk(
 export const getCampaignInfo = createAsyncThunk(
     'CampaignEditor/GetCampaignInfo', async (campaignId, thunkAPI) => {
         try {
-            const response = await instence.get(`CampaignEditor/GetCampaignInfo/${campaignId}`);
+            const response = await PulseemReactInstance.get(`CampaignEditor/GetCampaignInfo/${campaignId}`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+export const getCreditsByFileTotalBytes = createAsyncThunk(
+    'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`CampaignEditor/GetCreditsByFileTotalBytes`, campaign);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });

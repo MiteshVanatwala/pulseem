@@ -1,8 +1,8 @@
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { Button, Grid, Box } from '@material-ui/core'
 import { Image } from './Image'
-import React, { useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { postFile, deleteGalleryFile } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
@@ -27,7 +27,7 @@ export const GalleryImages = ({
     const [fileToUpload, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [galleryReady, setGalleryReady] = useState(false);
-    const [isReInit, setReinit] = useState(false);
+    // const [isReInit, setReinit] = useState(false);
     const hiddenFileInput = React.useRef(null);
 
 
@@ -60,7 +60,7 @@ export const GalleryImages = ({
                     FolderType: PulseemFolderType.CLIENT_IMAGES
                 }
                 await dispatch(postFile(fileModel));
-                setReinit(true);
+                //setReinit(true);
                 onReInitGallery();
             });
         }
@@ -76,11 +76,10 @@ export const GalleryImages = ({
     const deleteImage = (fileModel) => async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        const file = { ...fileModel };
-        file.FolderName = fileModel.FolderName.replace('main\\', '');
-        file.FolderType = PulseemFolderType.CLIENT_IMAGES;
-        await dispatch(deleteGalleryFile(file));
-        setReinit(true);
+        fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
+        fileModel.FolderType = PulseemFolderType.CLIENT_IMAGES;
+        await dispatch(deleteGalleryFile(fileModel));
+        //setReinit(true);
         onReInitGallery();
     }
     const handleUploadClick = () => {

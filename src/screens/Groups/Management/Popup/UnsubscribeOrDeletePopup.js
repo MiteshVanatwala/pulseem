@@ -12,7 +12,6 @@ import {
     Tooltip
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
@@ -22,9 +21,11 @@ import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
-import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const UnsubscribeOrDeletePopup = ({
     classes,
@@ -283,6 +284,11 @@ const UnsubscribeOrDeletePopup = ({
             }
             catch (error) {
                 setLoader(false);
+                dispatch(sendToTeamChannel({
+                    MethodName: 'handleFiles',
+                    ComponentName: 'UnsubscribeOrDeletePopup.js',
+                    Text: error
+                }));
                 reject(error);
             }
         });
@@ -304,12 +310,12 @@ const UnsubscribeOrDeletePopup = ({
                 return null;
             }
 
-            if (ValidateNumber(m)) {
+            if (IsValidPhone(m)) {
                 if (m.length >= 9 && m.length <= 13) {
                     return m.trim();
                 }
             }
-            if (ValidateEmail(m)) {
+            if (IsValidEmail(m)) {
                 return m.trim();
             }
 
@@ -433,6 +439,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleDeleteSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            }));
             setLoader(false);
         }
     }
@@ -504,7 +515,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
-            //TODO: Something went wrong
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleUnsubSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            }));
             setLoader(false);
         }
     }
@@ -549,7 +564,7 @@ const UnsubscribeOrDeletePopup = ({
 
     const RenderSummaryDialog = () => {
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={confirm || isSubmitted}
                 title={t("common.systemNotice")}
@@ -566,13 +581,13 @@ const UnsubscribeOrDeletePopup = ({
                     {updatedRows <= 0 && <Box>{t("recipient.noRecordsFound")}</Box>}
                     {updatedRows > 0 && <Box>{updatedRows === 1 ? null : updatedRows} {updatedRows === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>}
                 </Box>}
-            </Dialog>
+            </BaseDialog>
         )
     }
 
     const RenderMaximumLimitationRequest = () => {
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={limitationWarning}
                 title={t("common.systemNotice")}
@@ -597,7 +612,7 @@ const UnsubscribeOrDeletePopup = ({
                 }}
             >
                 <Typography>{t('recipient.maximumRecordLimitation')}</Typography>
-            </Dialog>
+            </BaseDialog>
         )
     }
 
@@ -645,7 +660,7 @@ const UnsubscribeOrDeletePopup = ({
 
 
     return (
-        <Dialog
+        <BaseDialog
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
@@ -697,7 +712,7 @@ const UnsubscribeOrDeletePopup = ({
                 {/* {!showDropBox && } */}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
-        </Dialog >
+        </BaseDialog >
     )
 }
 

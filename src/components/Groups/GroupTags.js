@@ -4,7 +4,7 @@ import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 

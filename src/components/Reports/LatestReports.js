@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link, Button } from '@material-ui/core';
+import { Box, Grid, Paper, Tab, Tabs, Typography, Tooltip, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
@@ -11,7 +11,7 @@ import { HiUserGroup } from 'react-icons/hi';
 import { actionURL } from '../../config/index';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 
-const LatestReports = ({ classes, windowSize, t, isRTL }) => {
+const LatestReports = ({ classes, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
@@ -224,7 +224,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                     classes={classes}
                     title={tabType === 'newsletter' ? t("dashboard.createFirstNewsletter") : t("dashboard.createFirstSms")}
                     buttonText={tabType === 'newsletter' ? t('common.CreateNewsletter') : t('sms.create')}
-                    redirect={tabType === 'newsletter' ? `/Pulseem/Editor/CampaignInfo?new=1&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/create`}
+                    redirect={tabType === 'newsletter' ? `/react/Campaigns/Create` : `/react/sms/create`}
                     buttonClass={classes.createButton} />
                 )
             }

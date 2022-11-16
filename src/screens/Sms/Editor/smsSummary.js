@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
 import { Box, Grid, Button } from "@material-ui/core";
-import MobilePreview from '../../../components/MobilePreive/Mobile'
+import MobilePreview from '../../../components/MobilePreivew/MobilePreivew'
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux'
 import clsx from "clsx";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 
 const SmsSummary = ({ classes,
@@ -35,7 +35,7 @@ const SmsSummary = ({ classes,
 
   return (
     <Box>
-      {open && <Dialog
+      {open && <BaseDialog
         style={{ paddingBottom: 20 }}
         title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
         showDivider={true}
@@ -70,7 +70,7 @@ const SmsSummary = ({ classes,
                 <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
                 <span className={classes.bodySum}>
                   {t("sms.smsSummaryDialogTotalRecipients")}:
-                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
+                  <span className={classes.bodySum}> {summaryPayload.FinalCount?.toLocaleString()}</span>
                 </span>
                 <Link onClick={() => { setdetailsHide(!detailsHide) }}
                   style={{
@@ -84,7 +84,7 @@ const SmsSummary = ({ classes,
               </Box>
             </Box>
             <Box className={classes.sumRight}>
-              <MobilePreview classes={classes} campaignNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
+              <MobilePreview classes={classes} fromNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
             </Box>
           </Box>
 
@@ -232,7 +232,7 @@ const SmsSummary = ({ classes,
             </Button>
           </Grid>
         </Grid>
-      </Dialog>}
+      </BaseDialog>}
     </Box>
   )
 }

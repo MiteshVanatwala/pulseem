@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
 import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
-import { setCookie, getCookie } from '../../helpers/cookies';
+import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 
 const ConfirmRadioDialog = ({
     classes,

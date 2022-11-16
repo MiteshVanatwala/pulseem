@@ -1,12 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
-import { exportFile } from '../../helpers/exportFromJson';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { ExportFile } from '../../helpers/Export/ExportFile';
 
 export const getNewslatterData = createAsyncThunk(
   'email/getEmailCampaigns', async (_, thunkAPI) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await instence.get(`email/getEmailCampaigns`);
+        const response = await PulseemReactInstance.get(`email/getEmailCampaigns`);
         resolve(JSON.parse(response.data))
       } catch (error) {
         reject(thunkAPI.rejectWithValue({ error: error.message }));
@@ -18,7 +18,7 @@ export const getNewslatterData = createAsyncThunk(
 export const getNewsletterReports = createAsyncThunk(
   'reports/EmailReports/', async (demo = false, thunkAPI) => {
     try {
-      const response = await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
+      const response = await PulseemReactInstance.get(`reports/EmailReports?includeTestCampaign=${demo}`)
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -29,7 +29,7 @@ export const getNewsletterReports = createAsyncThunk(
 export const getNewsletterDirectReport = createAsyncThunk(
   'directReport/GetEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/GetEmailDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/GetEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -40,7 +40,7 @@ export const getNewsletterDirectReport = createAsyncThunk(
 export const getArchiveDirectReport = createAsyncThunk(
   'directReport/GetArchiveEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/GetArchiveEmailDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/GetArchiveEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -51,7 +51,7 @@ export const getArchiveDirectReport = createAsyncThunk(
 export const exportNewsletterDirectReport = createAsyncThunk(
   'directReport/ExportEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/ExportEmailDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/ExportEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -62,7 +62,7 @@ export const exportNewsletterDirectReport = createAsyncThunk(
 export const exportArchiveEmailDirectReport = createAsyncThunk(
   'directReport/ExportArchiveEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/ExportArchiveEmailDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/ExportArchiveEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -73,7 +73,7 @@ export const exportArchiveEmailDirectReport = createAsyncThunk(
 export const getNewsletterReportsByIds = createAsyncThunk(
   'email/EmailReportsByIds', async (id, thunkAPI) => {
     try {
-      const response = await instence.post(`email/EmailReportsByIds`, [{ ID: id }])
+      const response = await PulseemReactInstance.post(`email/EmailReportsByIds`, [{ ID: id }])
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -84,7 +84,7 @@ export const getNewsletterReportsByIds = createAsyncThunk(
 export const restoreCampaigns = createAsyncThunk(
   'email/restoreEmailCampaigns', async (deletedCampaigns, thunkAPI) => {
     try {
-      const response = await instence.put(`email/restoreEmailCampaigns`, deletedCampaigns);
+      const response = await PulseemReactInstance.put(`email/restoreEmailCampaigns`, deletedCampaigns);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -95,7 +95,7 @@ export const restoreCampaigns = createAsyncThunk(
 export const deleteCampaign = createAsyncThunk(
   'email/deleteEmailCampaign/', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`email/deleteEmailCampaign/${id}`);
+      const response = await PulseemReactInstance.delete(`email/deleteEmailCampaign/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -105,7 +105,7 @@ export const deleteCampaign = createAsyncThunk(
 export const duplicteCampaign = createAsyncThunk(
   'email/cloneCampaign', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`email/cloneCampaign/${id}`);
+      const response = await PulseemReactInstance.put(`email/cloneCampaign/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -122,9 +122,9 @@ export const downloadNewsletterReport = createAsyncThunk(
         }
       }
 
-      const response = await instence.post('email/EmailReportsByIds/', json);
+      const response = await PulseemReactInstance.post('email/EmailReportsByIds/', json);
 
-      exportFile({
+      ExportFile({
         data: JSON.parse(response.data),
         fileName: 'emailReport',
         exportType: 'xls'
@@ -138,7 +138,7 @@ export const downloadNewsletterReport = createAsyncThunk(
 export const getArchiveCampaigns = createAsyncThunk(
   'email/GetArchiveCampaigns', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`email/GetArchiveCampaigns`);
+      const response = await PulseemReactInstance.get(`email/GetArchiveCampaigns`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -147,7 +147,7 @@ export const getArchiveCampaigns = createAsyncThunk(
 export const cloneArchiveCampaign = createAsyncThunk(
   'email/CloneArchiveCampaign', async (campaignId, thunkAPI) => {
     try {
-      const response = await instence.put(`email/CloneArchiveCampaign/${campaignId}`);
+      const response = await PulseemReactInstance.put(`email/CloneArchiveCampaign/${campaignId}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
