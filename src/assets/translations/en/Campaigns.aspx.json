@@ -595,5 +595,7 @@
   "leftToRight": "Left to right",
   "summaryTotal": "Total cost",
   "totalSize": "Total size",
-  "kb": "KB"
+  "kb": "KB",
+  "saveBlock": "Save Block",
+  "savedBlocks": "Saved blocks"
 }

@@ -22,6 +22,8 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
+import { getCookie } from '../../../helpers/cookies';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -201,6 +203,7 @@ const NewsLetterWizard = ({ classes }) => {
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
+    const accountFeatures = getCookie("accountFeatures")
 
     //#region default values
     useEffect(() => {
@@ -385,7 +388,7 @@ const NewsLetterWizard = ({ classes }) => {
         Object.keys(tempError).forEach((key) => {
             if (key === 'FromEmail' && data[key] === '-1') {
                 tempError[key] = ErrorTexts[key];
-                isError = !data[key]
+                isError = true
             }
             else {
                 if (!data[key] || !data[key].trim()) {
@@ -410,18 +413,16 @@ const NewsLetterWizard = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
+                    let redirectUrl = accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ? `/react/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
-                            window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`
+                            redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
                         }
                         else {
-                            window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`
+                            redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
                         }
                     }
-                    else {
-                        window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
-                    }
-                    //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                    navigate(redirectUrl);
                 }
                 else if (isExit === true) {
                     navigate(`/Campaigns`);
@@ -441,7 +442,7 @@ const NewsLetterWizard = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        window.location = '/react/Campaigns'
+        navigate('/Campaigns');
     }
     const renderToast = () => {
         if (toastMessage) {

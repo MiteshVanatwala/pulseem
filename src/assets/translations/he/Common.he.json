@@ -578,5 +578,9 @@
   "adaptive": "מותאם לסלולר",
   "responsive": "רספונסיבי",
   "chooseFile": "טען קובץ",
-  "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר."
+  "createOrEdit": "צור או ערוך תבנית",
+  "templateName": "שם התבנית",
+  "tags": "תגיות",
+  "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר.",
+  "uploadImage": "העלאת תמונה"
 }

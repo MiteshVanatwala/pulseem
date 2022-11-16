@@ -587,5 +587,7 @@
   "leftToRight": "שמאל לימין",
   "summaryTotal": "סה\"כ עלות",
   "totalSize": "סה\"כ נפח",
-  "kb": "KB"
+  "kb": "KB",
+  "saveBlock": "שמור תבנית",
+  "savedBlocks": "תבניות שמורות"
 }

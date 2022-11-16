@@ -583,5 +583,9 @@
   "adaptive": "Adaptive",
   "responsive": "Responsive",
   "chooseFile": "Upload File",
-  "notAllowedExtension": "This file extension is not allowed! Please try another file."
+  "createOrEdit": "Create or Edit block",
+  "templateName": "Template name",
+  "tags": "Tags",
+  "notAllowedExtension": "This file extension is not allowed! Please try another file.",
+  "uploadImage": "Upload Image"
 }

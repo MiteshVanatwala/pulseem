@@ -60,7 +60,7 @@ export const GalleryImages = ({
                     FolderType: PulseemFolderType.CLIENT_IMAGES
                 }
                 await dispatch(postFile(fileModel));
-                //setReinit(true);
+                // setReinit(true);
                 onReInitGallery();
             });
         }
@@ -76,10 +76,11 @@ export const GalleryImages = ({
     const deleteImage = (fileModel) => async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
-        fileModel.FolderType = PulseemFolderType.CLIENT_IMAGES;
-        await dispatch(deleteGalleryFile(fileModel));
-        //setReinit(true);
+        const file = { ...fileModel };
+        file.FolderName = fileModel.FolderName.replace('main\\', '');
+        file.FolderType = PulseemFolderType.CLIENT_IMAGES;
+        await dispatch(deleteGalleryFile(file));
+        // setReinit(true);
         onReInitGallery();
     }
     const handleUploadClick = () => {
