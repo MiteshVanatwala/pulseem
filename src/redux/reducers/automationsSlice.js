@@ -67,8 +67,8 @@ export const automationsSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(getAutomationsData.fulfilled, (state, { payload }) => {
-      state.automationsData = payload.filter(row => !row.IsDeleted)
-      state.automationsDeletedData = payload.filter(row => row.IsDeleted)
+      state.automationsData = payload.filter(row => !row?.IsDeleted)
+      state.automationsDeletedData = payload.filter(row => row?.IsDeleted)
     })
     builder.addCase(getAutomationsData.rejected, (state, action) => {
       state.automationsDataError = action.error.message

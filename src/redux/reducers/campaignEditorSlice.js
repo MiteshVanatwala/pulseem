@@ -113,16 +113,6 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
         }
     });
 
-export const getCreditsByFileTotalBytes = createAsyncThunk(
-    'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
-        try {
-            const response = await instence.post(`CampaignEditor/GetCreditsByFileTotalBytes`, campaign);
-            return response.data
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-
 
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
