@@ -530,7 +530,7 @@
       "emailVerificationBtnText": "Email Verification",
       "popupTitle": "Verification of email to send",
       "popupDesc1": "To ensure the security of your account, we need to verify this email address belongs to you.",
-      "popupDesc2": "This is 2 one-time process for each email you send from.",
+      "popupDesc2": "This is a one-time process for each email you send from.",
       "firstSlide": {
         "verifiedEmails": "Verified emails",
         "verifyEmailAddr": "Verify Email Address",
