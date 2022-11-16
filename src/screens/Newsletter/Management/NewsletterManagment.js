@@ -237,7 +237,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             variant='contained'
             size='medium'
             onClick={() => {
-              navigate('/Campaigns/Create');
+              navigate('/react/Campaigns/Create');
             }}
             className={clsx(
               classes.actionButton,
