@@ -115,17 +115,8 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
 export const getBeeToken = createAsyncThunk(
     '/CampaignEditor/GetBeeToken/', async (_, thunkAPI) => {
         try {
-            const response = await instence.get(`/CampaignEditor/GetBeeToken`);
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeToken`);
             return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-export const getCreditsByFileTotalBytes = createAsyncThunk(
-    'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
-        try {
-            const response = await instence.post(`CampaignEditor/GetCreditsByFileTotalBytes`, campaign);
-            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }

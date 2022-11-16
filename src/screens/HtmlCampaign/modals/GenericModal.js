@@ -2,7 +2,7 @@ import { Box, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { Dialog } from "../../../components/managment/Dialog";
-import { renderHtml } from '../../../helpers/functions';
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 
 const GenericModal = ({
   classes,
@@ -32,7 +32,7 @@ const GenericModal = ({
       renderButtons={modalData.renderButtons}
     >
       <Box className={classes.dialogBox}>
-        <Typography>{renderHtml(t(modalData.message))}</Typography>
+        <Typography>{RenderHtml(t(modalData.message))}</Typography>
       </Box>
     </Dialog>
   );
