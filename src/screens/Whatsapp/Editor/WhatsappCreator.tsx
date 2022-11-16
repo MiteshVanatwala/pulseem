@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { Box, Grid } from "@material-ui/core";
 import WhatsappTemplateEditor from "./WhatsappTemplateEditor";
 import { actionButtonProps } from "./WhatsappCreator.types";
+import QuickReply from "./QuickReply";
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
   const { windowSize } = useSelector((state: { core: coreProps }) => state.core);
@@ -19,6 +20,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
   const [templateName, setTemplateName] = useState<string>("");
   const [savedTemplate, setSavedTemplate] = useState<string>("");
+  const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 
   const onTemplateNameChange = (e: BaseSyntheticEvent) => {
     console.log(e.target.value);
@@ -40,6 +42,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
   const onButtonClick = (button: actionButtonProps) => {
     if (button.buttonTitle.includes("callToAction")) {
       alert("callto action clicked")
+    } else if (button.buttonTitle.includes("quickReplay")) {
+      setIsQuickReplyOpen(true)
     }
   }
 
@@ -52,12 +56,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
         customPadding={true}
       >
         <Title
-            Text={translator("whatsapp.header")}
-            Classes={classes.whatsappTemplateTitle}
-            ContainerStyle={{}}
-            Element={null}
-          />
-          <br/>
+          Text={translator("whatsapp.header")}
+          Classes={classes.whatsappTemplateTitle}
+          ContainerStyle={{}}
+          Element={null}
+        />
+        <br />
         <Grid container>
           <Grid item xs={12} md={5} sm={12}>
             <TemplateFields
@@ -88,6 +92,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
             </Grid>
           </Grid>
         </Grid>
+        <QuickReply classes={classes} isQuickReplyOpen={isQuickReplyOpen} closeQuickReply={() => setIsQuickReplyOpen(false)} />
       </DefaultScreen>
     </form>
   );

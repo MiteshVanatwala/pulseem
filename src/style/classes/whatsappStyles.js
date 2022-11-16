@@ -146,5 +146,35 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
         "&:not(:last-child)": {
             marginRight: "10px"
         }
-      }
+      },
+      quickReplyDelete: {
+        alignItems: 'center',
+        color: "#ff0000",
+        cursor: "pointer",
+        paddingTop: "22px",
+        paddingLeft: isRTL ? '0px' : '10px',
+        paddingRight: isRTL ? '10px' : '0px',
+      },
+      quickReplayDialog: {
+        direction: isRTL ? 'rtl' : 'ltr'
+      },
+      quickReplayDialogClose: {
+        position: 'absolute',
+        top: 0,
+        left: isRTL ? 0 : 'unset',
+        right: isRTL ? 'unset' : 0
+      },
+      quickReplayDialogHeader: {
+        fontSize: 14,
+        fontFamily: 'OpenSansHebrew-Bold',
+        color: "#0371ad",
+        paddingBottom: '0px',
+        textAlign: isRTL ? 'right' : 'left'
+      },
+      quickReplayDialogHeaderDescription: {
+        fontSize: 12,
+        fontFamily: 'OpenSansHebrew',
+        marginTop: '-8px',
+        textAlign: isRTL ? 'right' : 'left'
+      },
 });
