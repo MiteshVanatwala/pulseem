@@ -101,6 +101,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                             setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts') })
                             break;
                         }
+                        case "abused": {
+                            setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_abused') })
+                        }
                         default: {
                             setVerificationError({ code: t('common.ErrorOccured') })
                             break;
@@ -128,6 +131,13 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                     localStorage.setItem('verificationTrial', trials + 1)
                     setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
                     break;
+                }
+                case "toomuch": {
+                    setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts') })
+                    break;
+                }
+                case "abused": {
+                    setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_abused') })
                 }
                 default: {
                     setVerificationError({ code: t('common.ErrorOccured') })

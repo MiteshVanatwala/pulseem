@@ -559,7 +559,9 @@
         "resend": "Resend",
         "resendSuccess": "Code Sent",
         "placeholder": "Enter code",
-        "btnText": "Verify"
+        "btnText": "Verify",
+        "error_abused": "Due to too many verification attempts this email/number was blocked for verification, please address customer support.",
+        "error_tooMuchAttempts": "Too many verification attempts, please click resend and verify with the new code"
       },
       "errorSlide": {
         "title": "Too many attempts",
