@@ -1,27 +1,26 @@
 const shortcutEditLeft = {
-    xs: '8%',
-    sm: '18px',
-    md: '15px',
-    lg: '22px',
-    xl: '28px'
-}
+  xs: "8%",
+  sm: "18px",
+  md: "15px",
+  lg: "22px",
+  xl: "28px",
+};
 
 const shortcutPaperHeight = {
-    xs: '',
-    sm: '100%',
-    md: '100%',
-    lg: '100%',
-    xl: 'calc(100vh - 47px)'
-}
+  xs: "",
+  sm: "100%",
+  md: "100%",
+  lg: "100%",
+  xl: "calc(100vh - 47px)",
+};
 
 const shortcutBoxWidth = {
-    xs: 'auto',
-    sm: '100%',
-    md: '100%',
-    lg: '100%',
-    xl: 'auto'
-}
-
+  xs: "auto",
+  sm: "100%",
+  md: "100%",
+  lg: "100%",
+  xl: "auto",
+};
 
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
     whatsappTemplateTitle: {

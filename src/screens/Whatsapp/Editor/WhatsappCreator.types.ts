@@ -18,6 +18,21 @@ export type MessageEditorProps = {
   classes: ClassesType;
 };
 
+export type callToActionFieldProps = {
+  fieldName: string;
+  type: string;
+  placeholder: string;
+  value: string;
+};
+
+export type callToActionRowProps = {
+  id: string;
+  typeOfAction: string;
+  fields: callToActionFieldProps[];
+};
+
+export type callToActionProps = callToActionRowProps[];
+
 export type PhoneProps = {
   classes: ClassesType;
 };

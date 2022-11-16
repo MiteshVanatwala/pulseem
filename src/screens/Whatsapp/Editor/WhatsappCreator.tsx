@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import DefaultScreen from "../../DefaultScreen";
 import { Title } from "../../../components/managment/Title";
 import TemplateFields from "./TemplateFields";
-import MessageEditor from "./MessageEditor";
+import ActionCallPopOver from "./ActionCallPopOver";
 import Buttons from "./Buttons";
 import Phone from "./Phone";
 import { WhatsappCreatorProps, coreProps } from "./WhatsappCreator.types";
@@ -67,6 +67,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
               onTemplateNameChange={(e) => onTemplateNameChange(e)}
               onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
             />
+            <ActionCallPopOver classes={classes} />
           </Grid>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={5}>
