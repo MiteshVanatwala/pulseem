@@ -344,6 +344,7 @@ const ClientSearchResult = ({ props, classes }) => {
     }
   };
   const handleDownloadCsv = async (formatType) => {
+    setDialog(null);
     setLoader(true);
     setDialog(null);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));

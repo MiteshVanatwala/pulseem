@@ -839,7 +839,7 @@ const NotificationManagement = ({ classes }) => {
         <Box className={classes.myGroupsTitleSection}>
           <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
           <Link
-            className={clsx(classes.f15, classes.bold, classes.mt5)}
+            className={clsx(classes.f15, classes.bold, classes.mt1)}
             component="button"
             color="textPrimary"
             underline="always"

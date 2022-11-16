@@ -234,6 +234,8 @@ const ArchiveManagementScreen = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setDialogType(null);
+    setLoader(true)
     const exportColumnHeader = {
       "Name": t('common.CampaignName'),
       "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),

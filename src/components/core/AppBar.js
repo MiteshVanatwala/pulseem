@@ -29,7 +29,8 @@ const AppBarItem = ({
   showIcon = false,
   classes,
   menuWidth = 290,
-  onInnerClick = () => null
+  onMainClick = () => null,
+  onInnerClick = () => null,
 }) => {
   const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
@@ -59,8 +60,13 @@ const AppBarItem = ({
         style={{ whiteSpace: 'nowrap' }}
         className={classes.appBarHrefContainer}
         onClick={() => {
-          handleOpen()
-          Redirect({ url: item.href })
+          if (onMainClick) {
+            onMainClick();
+          }
+          else {
+            handleOpen()
+            Redirect({ url: item.href })
+          }
         }}>
         <IconButton
           ref={buttonRef}
@@ -242,6 +248,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           chosen={route.key === currentPage}
           showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
           onInnerClick={() => Redirect({ url: route.href })}
+          onMainClick={null}
         />
       ))}
       {windowSize === 'xl' || windowSize === 'lg' ? <>
@@ -402,7 +409,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
             <AppBarItem
               classes={classes}
               item={{ title: t('appBar.logout') }}
-              onMainClick={logout}
+              onMainClick={() => { logout() }}
             />
           </>
           }

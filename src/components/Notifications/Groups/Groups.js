@@ -76,7 +76,7 @@ const Groups = ({ classes,
         const groupIdKey = isNotifications ? "Id" : "GroupID";
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
         return list.filter((g) => {
-            return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
+            return g?.GroupName?.toLowerCase().includes(groupNameSearch?.toLowerCase()) || '';
         }).map((group) => {
             const isExist = selectedList.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
             return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
@@ -84,6 +84,7 @@ const Groups = ({ classes,
                 onMouseLeave={() => setIsHover(null)}
                 className={groupHover === group[groupIdKey] ? classes.hoverListItem : null}
             >
+
                 <ListItemAvatar>
                     <Avatar
                         className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
@@ -105,7 +106,7 @@ const Groups = ({ classes,
     }
 
     const renderCampaigns = () => {
-        return list.filter((c) => {
+        return list?.filter((c) => {
             return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((campaign) => {
             const isExist = selectedList.map((c) => { return c.SMSCampaignID }).includes(campaign.SMSCampaignID);

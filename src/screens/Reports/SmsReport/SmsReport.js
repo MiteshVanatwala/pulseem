@@ -242,10 +242,16 @@ const SmsReport = ({ classes }) => {
     setSmsQuery(resetSmsQuery);
     getData(resetSmsQuery)
     setSearching(false);
-    setPage(1);
+    getData(resetSmsQuery);
+    SetPageState({
+      "PageName": "reports/SMSMainReport",
+      "PageNumber": page,
+      "SearchData": resetSmsQuery
+    });
   }
-
-  const handleDownloadCsv = async () => {
+  const handleDownloadCsv = async (formatType) => {
+    setDialogType(null);
+    setLoader(true);
     let orderList = [...smsReport];
 
     const exportOptions = {
@@ -271,6 +277,7 @@ const SmsReport = ({ classes }) => {
     } catch (error) {
       console.log(error);
     }
+    setLoader(false);
   }
 
   const renderSearchSection = () => {

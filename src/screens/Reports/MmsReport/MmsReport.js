@@ -131,6 +131,8 @@ const MmsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
+        setDialog(null);
+        setLoader(true);
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
@@ -160,7 +162,8 @@ const MmsReport = ({ classes }) => {
         }
         catch (e) {
             console.error(e);
-        };
+        }
+        setLoader(false);
     }
 
     const colorTextStyle = {

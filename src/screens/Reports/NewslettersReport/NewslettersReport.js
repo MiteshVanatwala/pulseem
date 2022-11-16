@@ -261,6 +261,10 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setLoader(true);
+    setDialog(null)
+    if (hasRevenue)
+      exportColumnHeader["Revenue"] = t("common.revenue");
     let listToExport = null;
 
     if (toFileArray.length > 0) {

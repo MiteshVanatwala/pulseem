@@ -1485,6 +1485,8 @@ const SmsSend = ({ classes, ...props }) => {
   };
 
   const onApiCall = async () => {
+    setsummModal(false);
+    setLoader(true);
     let payload = {
       "SmsCampaignID": id,
       "SubAccountID": -1,
@@ -1492,12 +1494,10 @@ const SmsSend = ({ classes, ...props }) => {
       "Credits": dataSaved.CreditPerSms,
       "TotalRecipients": getCampaignSum.FinalCount
     }
-    setLoader(true);
-    let r = await dispatch(sendSms(payload))
-    setLoader(false);
 
-    setsummModal(false);
+    let r = await dispatch(sendSms(payload))
     handleSendResult(r.payload);
+    setLoader(false);
   };
   const handleCautionCancel = () => {
     if (dropClick === true) {
@@ -2477,7 +2477,7 @@ const SmsSend = ({ classes, ...props }) => {
       content: (
         <Box>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="" />
+            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="Success" />
             <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}

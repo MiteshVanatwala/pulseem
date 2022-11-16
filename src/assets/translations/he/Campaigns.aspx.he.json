@@ -222,6 +222,8 @@
     "Text": "שכפל"
   },
   "GridButtonColumnResource2": {
+    "confirmExit": "אתה עומד לצאת מהגדרות ניוזלטר",
+    "confirmExitText": "תרצה לשמור את הקמפיין לפני היציאה?",
     "ConfirmText": "האם ברצונך למחוק את הקמפיין?",
     "ConfirmTitle": "מחיקת קמפיין",
     "CurrentFilterValue": "",
@@ -465,6 +467,8 @@
   "recipients": "נמענים",
   "automation": "אוטומציות",
   "create": "יצירת קמפיין",
+  "createNewsLetterHeader": "יצירת קמפיין ניוזלטר",
+  "createNewsLetterSubTitle": "הגדרות ניוזלטר",
   "restoreDeleted": "שחזור מחוקים",
   "exportFile": "ייצוא קובץ",
   "lastUpdate": "עודכן ב",
@@ -510,7 +514,7 @@
       "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
       "CampaignNotFound": "קמפיין לא נמצא או נמחק"
     },
-    "success": "Success"
+    "success": "הקמפיין נשמר בהצלחה"
   },
   "newsLetterMgmt": {
     "emailVerification": {
@@ -533,7 +537,7 @@
         "error_expired": "פג תוקף הקוד",
         "btnText": "שלחו לי אימייל לאימות",
         "anyProblem": "נתקלת בבעיה?",
-        "contactUs": "צרו איתנו קשר",
+        "contactUs": "צור איתנו קשר בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או במייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
         "placeholder": "הקלד אימייל"
       },
       "thirdSlide": {

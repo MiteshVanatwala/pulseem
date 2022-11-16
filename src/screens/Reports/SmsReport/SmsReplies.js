@@ -115,6 +115,8 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
+        setDialogType(null);
+        setShowLoader(true);
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
@@ -136,6 +138,7 @@ const SmsReplies = ({ classes, ...other }) => {
         } catch (e) {
             console.log(e);
         }
+        setShowLoader(false)
     }
 
     const renderTable = () => {

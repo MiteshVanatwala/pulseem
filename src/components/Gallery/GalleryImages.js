@@ -4,7 +4,8 @@ import { Image } from './Image'
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { postImage, deleteGalleryFile } from '../../redux/reducers/commonSlice';
+import { postFile, deleteGalleryFile } from '../../redux/reducers/gallerySlice';
+import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 
 export const GalleryImages = ({
     classes,
@@ -55,9 +56,10 @@ export const GalleryImages = ({
                 const fileModel = {
                     FileName: fileToUpload.name,
                     Base64: result,
-                    FolderName: selectedFolder
+                    FolderName: selectedFolder,
+                    FolderType: PulseemFolderType.CLIENT_IMAGES
                 }
-                await dispatch(postImage(fileModel));
+                await dispatch(postFile(fileModel));
                 //setReinit(true);
                 onReInitGallery();
             });
@@ -75,6 +77,7 @@ export const GalleryImages = ({
         event.preventDefault();
         event.stopPropagation();
         fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
+        fileModel.FolderType = PulseemFolderType.CLIENT_IMAGES;
         await dispatch(deleteGalleryFile(fileModel));
         //setReinit(true);
         onReInitGallery();
@@ -136,14 +139,14 @@ export const GalleryImages = ({
             </Grid>
             {
                 images && images.map((f, index) => {
-                    const filePath = `${f.Path}/${f.FolderName === "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
-                    const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
+                    // const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
+                    const imgKey = f.FileName;
                     return (
                         <Image
                             classes={classes}
                             onSelectFile={onSelectFile}
                             onDelete={deleteImage}
-                            imgSrc={filePath}
+                            imgSrc={f.FileURL}
                             imgKey={imgKey}
                             fileIndex={index}
                             selectedFile={selectedFile}
@@ -158,4 +161,3 @@ export const GalleryImages = ({
     }
     return <></>
 }
-

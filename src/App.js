@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+//import CampaignEditor from './screens/HtmlCampaign/CampaignEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
@@ -35,6 +36,7 @@ import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
+import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
@@ -126,12 +128,26 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path="/react/Campaigns/Archive"
-        element={<ArchiveManagement classes={classes} />}
+        path="/react/Campaigns/Create"
+        element={<NewsLetterWizard classes={classes} />}
       />
       <Route
-        path={`/Editor/CampaignInfo`}
-        element={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
+        path="/react/Campaigns/Create/:id"
+        element={<NewsLetterWizard classes={classes} />}
+      />
+      {/* <Route
+        exact
+        path="/Campaigns/editor"
+        render={props => <CampaignEditor {...props} classes={classes} />}
+      />
+      <Route
+        path="/Campaigns/editor/:id"
+        render={props => <CampaignEditor {...props} classes={classes} />}
+      /> */}
+      <Route
+        exact
+        path="/Campaigns/Archive"
+        element={<ArchiveManagement classes={classes} />}
       />
       <Route
         path={`/CampaignsByResults`}
@@ -391,6 +407,7 @@ const renderRoutes = (classes, redirect) => {
 }
 
 const App = ({ screenSize }) => {
+  const userName = useRef();
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
   screenSize && dispatch(setWindowSize(screenSize))
@@ -440,7 +457,7 @@ const App = ({ screenSize }) => {
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang.toLowerCase()))
       dispatch(setUsername(companyName))
-
+      userName.current = companyName;
     }
 
     const cookieFunctionObj = {
@@ -453,8 +470,8 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    updateToken()
-    initFeatures()
+    updateToken();
+    initFeatures();
   }, [dispatch])
 
 

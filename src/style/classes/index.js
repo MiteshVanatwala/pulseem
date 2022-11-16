@@ -6,7 +6,8 @@ import { getGeneralStyle } from './ganaralStyle'
 import { getNotificationStyle } from './notificationsStyles';
 import { getDashboardStyle } from './dashboardStyles';
 import { getSmsStyle } from './smsStyles';
-import { getSiteTrackingStyle } from './siteTrackingStyles'
+import { getSiteTrackingStyle } from './siteTrackingStyles';
+import { getCampaignEditorStyle } from './campaignEditorStyles';
 import { getGroupStyle } from './groupStyle'
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
@@ -18,5 +19,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDashboardStyle(windowSize, isRTL, theme),
   ...getSmsStyle(windowSize, isRTL, theme),
   ...getSiteTrackingStyle(windowSize, isRTL),
+  ...getCampaignEditorStyle(windowSize, isRTL),
   ...getGroupStyle(windowSize, isRTL, theme)
 }))

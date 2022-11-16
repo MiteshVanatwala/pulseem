@@ -85,6 +85,7 @@ export const Dialog = ({
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
         <Grid item>
           <Button
+            name="btnConfirm"
             variant='contained'
             size='small'
             onClick={onConfirm}
@@ -150,7 +151,7 @@ export const Dialog = ({
 
   return (
     <BaseDialog
-      style={style}
+      style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={(event, reason) => {
@@ -162,7 +163,7 @@ export const Dialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {renderExitButton()}
         {renderContent()}
-        {renderIcon()}
+        {icon !== 'NONE' && renderIcon()}
       </Paper>
     </BaseDialog>
   )

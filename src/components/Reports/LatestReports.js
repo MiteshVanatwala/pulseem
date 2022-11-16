@@ -224,7 +224,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                     classes={classes}
                     title={tabType === 'newsletter' ? t("dashboard.createFirstNewsletter") : t("dashboard.createFirstSms")}
                     buttonText={tabType === 'newsletter' ? t('common.CreateNewsletter') : t('sms.create')}
-                    redirect={tabType === 'newsletter' ? `/Pulseem/Editor/CampaignInfo?new=1&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/create`}
+                    redirect={tabType === 'newsletter' ? `/react/Campaigns/Create` : `/react/sms/create`}
                     buttonClass={classes.createButton} />
                 )
             }

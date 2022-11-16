@@ -16,6 +16,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
 } from '../../../redux/reducers/newsletterSlice'
+import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
@@ -28,9 +29,11 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { Title } from '../../../components/managment/Title';
+import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../../../helpers/Functions/cookies';
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -48,12 +51,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [restoreArray, setRestoreArray] = useState([])
   const [showLoader, setLoader] = useState(true);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const accountFeatures = getCookie("accountFeatures")
+  const navigate = useNavigate();
+
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
 
-  const getData = async () => {
-    await dispatch(getNewslatterData())
+  const getData = () => {
+    dispatch(getNewslatterData())
+    dispatch(getAuthorizedEmails());
     setLoader(false);
   }
 
@@ -216,6 +223,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
     window.location = '/react/Campaigns/Archive'
   }
 
+  const handleVerificationDialog = () => {
+
+    setVerificationDialog(true)
+  }
+
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
@@ -223,7 +235,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
+            onClick={() => {
+              navigate('/Campaigns/Create');
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -267,9 +281,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={() => setVerificationDialog(true)}
+            onClick={() => {
+              handleVerificationDialog();
+            }
+            }
           >
-            {t('Open Verification')}
+            {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
@@ -334,7 +351,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        href: row.IsNewEditor && accountFeatures.includes('41') ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -549,7 +566,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           scope="row"
           classes={{ root: classes.tableCellRoot }}
           className={classes.flex12}>
-          {renderCellIcons(row)}
+          {accountFeatures && renderCellIcons(row)}
 
         </TableCell>
       </TableRow>
@@ -742,6 +759,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       getData()
     }
   })
+
   const renderDialog = () => {
     const { data, type } = dialogType || {}
 
@@ -749,7 +767,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -758,6 +776,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>
@@ -777,12 +796,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderDialog()}
 
       <VerificationDialog
+        classes={classes}
         isOpen={verificationDialog}
         onClose={() => setVerificationDialog(false)}
         onCancel={() => setVerificationDialog(false)}
       />
       <Loader isOpen={showLoader} />
-    </DefaultScreen>
+    </DefaultScreen >
   )
 }
 

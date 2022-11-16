@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
@@ -37,13 +37,14 @@ import ResetGroupPopup from "./Popup/ResetGroupPopup";
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import { VoidFunction } from '../../../helpers/Types/common';
+import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -53,7 +54,6 @@ const Groups = ({ classes }) => {
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
     const rowsOptions = [6, 10, 20, 50];
-    const [page, setPage] = useState(1);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
@@ -73,6 +73,9 @@ const Groups = ({ classes }) => {
     });
     const navigate = useNavigate()
     moment.locale(language);
+    const { state } = useLocation();
+    const from = state?.from || "/";
+    const pageProperty = useRef();
 
     const DialogType = {
         ADD_GROUP: "ADD_GROUP",
@@ -127,9 +130,10 @@ const Groups = ({ classes }) => {
     const getSubAccountGroups = async () => {
         dispatch(getGroupsBySubAccountId());
     }
-    const getData = async () => {
+    const getData = async (customSearch = null) => {
+        const search = { ...serachData, PageSize: rowsPerPage, ...customSearch };
         setLoader(true);
-        await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage, PageIndex: page }));
+        await dispatch(getGroups(search));
         if (!extraData || extraData.length === 0) {
             await dispatch(getAccountExtraData());
         }
@@ -139,29 +143,60 @@ const Groups = ({ classes }) => {
         }
     };
     useEffect(() => {
-        getData();
-    }, [dispatch, serachData, page, rowsPerPage]);
+        const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
+        pageProperty.current = GetPageNyName('groups');
+        let lastSearch = { ...serachData };
+        if (queryState && pageProperty.current) {
+            let tempSearchData = pageProperty.current?.SearchData;
+            lastSearch = { ...serachData, ...tempSearchData };
+        }
+        setSearchData(lastSearch);
+        SetPageState({
+            "PageName": "groups",
+            "PageNumber": lastSearch?.PageNumber ?? 1,
+            "SearchData": lastSearch,
+            "SearchTerm": lastSearch.SearchTerm
+        });
+
+        getData(lastSearch);
+        if (lastSearch?.SearchTerm) {
+            setSearchStr(lastSearch?.SearchTerm ?? "");
+        }
+    }, [dispatch, serachData.PageIndex, rowsPerPage]);
 
 
     const renderSearchSection = () => {
         const handleKeyDown = (event) => {
             if (event.keyCode === 13 || event.code === "Enter") {
-                setSearchData({
+                const searchObject = {
                     PageIndex: 1,
                     PageSize: rowsPerPage,
                     SearchTerm: searchStr,
+                };
+                setSearchData(searchObject);
+                SetPageState({
+                    "PageName": "groups",
+                    "PageNumber": 1,
+                    "SearchData": searchObject,
+                    "SearchTerm": searchStr
                 });
-                setPage(1);
             }
         };
         const handleKeyPress = (e) => {
             if (e.charCode === 13 || e.code === "Enter") {
-                setSearchData({
+                const searchObject = {
                     PageIndex: 1,
                     PageSize: rowsPerPage,
                     SearchTerm: searchStr,
+                };
+
+                setSearchData(searchObject);
+                SetPageState({
+                    "PageName": "groups",
+                    "PageNumber": 1,
+                    "SearchData": searchObject,
+                    "SearchTerm": searchStr
                 });
-                setPage(1);
             }
         };
 
@@ -172,12 +207,18 @@ const Groups = ({ classes }) => {
                     value={searchStr}
                     onChange={(e) => setSearchStr(e.target.value)}
                     onClick={() => {
-                        setSearchData({
+                        const searchObject = {
                             PageIndex: 1,
                             PageSize: rowsPerPage,
                             SearchTerm: searchStr,
+                        };
+
+                        setSearchData(searchObject);
+                        SetPageState({
+                            "PageName": "groups",
+                            "PageNumber": 1,
+                            "SearchData": searchObject
                         });
-                        setPage(1);
                     }}
                     onKeyPress={handleKeyPress}
                     placeholder={t("common.GroupName")}
@@ -203,12 +244,19 @@ const Groups = ({ classes }) => {
                         size="large"
                         variant="contained"
                         onClick={() => {
-                            setSearchData({
+                            const searchObject = {
                                 PageIndex: 1,
                                 PageSize: rowsPerPage,
                                 SearchTerm: searchStr,
+                            };
+                            setSearchData(searchObject);
+
+                            SetPageState({
+                                "PageName": "groups",
+                                "PageNumber": 1,
+                                "SearchData": searchObject
                             });
-                            setPage(1);
+                            getData(searchObject);
                         }}
                         className={classes.searchButton}
                         endIcon={<SearchIcon />}
@@ -222,9 +270,23 @@ const Groups = ({ classes }) => {
                             size="large"
                             variant="contained"
                             onClick={() => {
-                                setSearchData({ ...serachData, SearchTerm: "" });
+                                const searchObject = {
+                                    ...serachData,
+                                    PageIndex: 1,
+                                    PageSize: rowsPerPage,
+                                    SearchTerm: "",
+                                };
+                                setSearchData(searchObject);
+
+                                SetPageState({
+                                    "PageName": "groups",
+                                    "PageNumber": 1,
+                                    "SearchData": searchObject,
+                                    "SearchTerm": ""
+                                });
+
                                 setSearchStr("");
-                                setPage(1);
+                                getData(searchObject);
                             }}
                             className={classes.searchButton}
                             endIcon={<ClearIcon />}
@@ -502,7 +564,6 @@ const Groups = ({ classes }) => {
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem),
                                                 },
                                                 onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-
                                                     state:
                                                     {
                                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -511,7 +572,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 100,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -543,7 +605,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 1,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -575,7 +638,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 2,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -608,7 +672,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 4,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -640,7 +705,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 5,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -683,7 +749,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 100,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -715,7 +782,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 0,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -747,7 +815,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 1,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -779,7 +848,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 4,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]}
@@ -811,7 +881,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 5,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                                 // onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsPending}&GroupID=${GroupID}`)
@@ -857,7 +928,8 @@ const Groups = ({ classes }) => {
                                                 ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                                 PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
                                                 GroupIds: [GroupID],
-                                                ResultTitle: GroupName
+                                                ResultTitle: GroupName,
+                                                PageProperty: pageProperty.current
                                             }
                                         }) : VoidFunction,
                                 label: t("recipient.preview"),
@@ -1020,7 +1092,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 100,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />
@@ -1048,7 +1121,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 1,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />
@@ -1076,7 +1150,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 2,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />
@@ -1105,7 +1180,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 4,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />),
@@ -1133,7 +1209,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 5,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />
@@ -1172,7 +1249,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 100,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />
@@ -1200,7 +1278,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 0,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />
@@ -1228,7 +1307,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 1,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />
@@ -1256,7 +1336,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 4,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]} />),
@@ -1284,7 +1365,8 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 5,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: GroupName,
+                                                        PageProperty: pageProperty.current
                                                     }
                                                 }) : VoidFunction
                                             }]
@@ -1331,7 +1413,16 @@ const Groups = ({ classes }) => {
         dispatch(setRowsPerPage(val))
     }
     const handlePageChange = (val) => {
-        setPage(val);
+        SetPageState({
+            "PageName": "groups",
+            "PageNumber": val,
+            "SearchTerm": serachData.SearchTerm,
+            "SearchData": (serachData.SearchTerm !== '') ? {
+                SearchTerm: serachData.SearchTerm,
+                PageIndex: val
+            } : null
+        });
+        setSearchData({ ...serachData, PageIndex: val });
     }
     const renderTablePagination = () => {
         return (
@@ -1341,7 +1432,7 @@ const Groups = ({ classes }) => {
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageChange}
                 rowsPerPageOptions={rowsOptions}
-                page={page}
+                page={serachData.PageIndex}
                 onPageChange={handlePageChange}
             />
         )
@@ -1412,12 +1503,12 @@ const Groups = ({ classes }) => {
         'S_201': {
             code: 201,
             message: '',
-            Func: () => getData()
+            Func: () => getData(null)
         },
         'S_202': {
             code: 202,
             message: '',
-            Func: () => getData()
+            Func: () => getData(null)
         },
         'S_400': {
             code: 400,
@@ -1469,7 +1560,7 @@ const Groups = ({ classes }) => {
                 actions?.S_202?.Func?.();
                 actions?.S_202?.message && setToastMessage(actions?.S_202?.message);
                 setDialog(null);
-                getData()
+                getData(null)
                 break;
             }
             case 400: {
@@ -1514,7 +1605,7 @@ const Groups = ({ classes }) => {
         await dispatch(getGroupsBySubAccountId())
         setSelectedGroups([]);
         setDialog(null);
-        getData();
+        getData(null);
     };
     const showDialog = () => {
         if (dialog !== null) {
@@ -1530,7 +1621,7 @@ const Groups = ({ classes }) => {
                         setToastMessage={setToastMessage}
                         addClientByQuery={false}
                         addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
-                        getData={getData}
+                        getData={() => getData(null)}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
                     />
                 }
@@ -1545,7 +1636,7 @@ const Groups = ({ classes }) => {
                         setToastMessage={setToastMessage}
                         selectedGroup={selectedGroups[0]}
                         openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
-                        getData={getData}
+                        getData={() => getData(null)}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
                     />
                 }
@@ -1560,7 +1651,7 @@ const Groups = ({ classes }) => {
                             ToastMessages={ToastMessages}
                             setToastMessage={setToastMessage}
                             selectedGroup={{ GroupID: selectedGroups[0] }}
-                            getData={getData}
+                            getData={() => getData(null)}
                             handleResponses={(response, actions) => handleResponses(response, actions)}
                         />
                     }
@@ -1581,8 +1672,8 @@ const Groups = ({ classes }) => {
                         DialogType={DialogType}
                         setDialog={setDialog}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
-                        onRecipientAdded={() => { setDialog(null); getData(); }}
-                        onAnotherRecipientAdded={() => { setDialog(null); getData(); setDialog(DialogType.ADD_RECIPIENT); }}
+                        onRecipientAdded={() => { setDialog(null); getData(null); }}
+                        onAnotherRecipientAdded={() => { setDialog(null); getData(null); setDialog(DialogType.ADD_RECIPIENT); }}
                     />;
                 }
                 case DialogType.ADD_RECIPIENTS: {
@@ -1612,7 +1703,7 @@ const Groups = ({ classes }) => {
                         setToastMessage={setToastMessage}
                         selectedGroups={selectedGroups}
                         dialogType={dialog}
-                        getData={getData}
+                        getData={() => getData(null)}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
                     />;
                 }
@@ -1629,7 +1720,7 @@ const Groups = ({ classes }) => {
                     return <AddRecipientResponse
                         classes={classes}
                         isOpen={dialog === DialogType.MESSAGE}
-                        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
                         windowSize={windowSize}
                         title={responseMessage.title}
                         message={responseMessage.message}
@@ -1651,7 +1742,7 @@ const Groups = ({ classes }) => {
                             ToastMessages={ToastMessages}
                             SelectedGroupIds={[...selectedGroups]}
                             setSelectedGroupIds={() => setSelectedGroups([])}
-                            getData={() => { setDialog(null); getData(); }}
+                            getData={() => { setDialog(null); getData(null); }}
                         />
                     }
                     return <></>

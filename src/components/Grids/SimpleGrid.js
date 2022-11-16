@@ -16,6 +16,7 @@ const SimpleGrid = ({ gridArr = [],
     direction = "row",
     spacing = 1,
     className = '',
+    gridStyles,
     ...props
 }) => {
 
@@ -23,7 +24,7 @@ const SimpleGrid = ({ gridArr = [],
 
     return (
         <>
-            <Grid container direction={direction} spacing={spacing}>
+            <Grid container direction={direction} spacing={spacing} className={gridStyles || ''}>
                 {
                     gridArr.map((obj, idx) => {
                         return (
