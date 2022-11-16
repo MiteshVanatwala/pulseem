@@ -103,6 +103,17 @@ export const getCampaignInfo = createAsyncThunk(
         }
     });
 
+export const getCreditsByFileTotalBytes = createAsyncThunk(
+    'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
+        try {
+            const response = await instence.post(`CampaignEditor/GetCreditsByFileTotalBytes`, campaign);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
@@ -134,6 +145,9 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
                 state.campaignInfo = payload;
+            })
+            .addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
+                state.campaignInfo = payload?.Message;
             })
     },
     reducers: {
