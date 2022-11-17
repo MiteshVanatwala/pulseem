@@ -73,6 +73,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
             <ActionCallPopOver
               isCallToActionOpen={isCallToActionOpen}
               closeCallToAction={() => setIsCallToActionOpen(false)}
+              classes={classes}
             />
           </Grid>
           <Grid container>

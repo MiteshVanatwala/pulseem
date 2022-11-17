@@ -93,6 +93,7 @@ const WhatsappTemplateEditor = ({
   return (
     <>
       <textarea
+        required
         placeholder={translator("whatsapp.template.textareaPlaceholder")}
         maxLength={1024}
         id="whatsapp-template-text"

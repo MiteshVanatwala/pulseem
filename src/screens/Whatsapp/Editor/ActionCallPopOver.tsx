@@ -25,10 +25,12 @@ import {
 import uniqid from "uniqid";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { ClassesType } from "../../Classes.types";
 
 const ActionCallPopOver = ({
   isCallToActionOpen,
   closeCallToAction,
+  classes,
 }: actionProps) => {
   const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
@@ -74,15 +76,17 @@ const ActionCallPopOver = ({
     ],
     [isRTL]
   );
+
+  const initialFieldRow = {
+    id: uniqid(),
+    typeOfAction: "phonenumber",
+    fields: phoneNumberField,
+  };
+
   const [callToActionFieldRows, setCallToActionFieldRows] =
-    useState<callToActionProps>([]);
+    useState<callToActionProps>([initialFieldRow]);
 
   const addMore = () => {
-    const initialFieldRow = {
-      id: uniqid(),
-      typeOfAction: "phonenumber",
-      fields: phoneNumberField,
-    };
     setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
   };
 
@@ -151,113 +155,116 @@ const ActionCallPopOver = ({
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle id="form-dialog-title">
+        <DialogTitle
+          id="form-dialog-title"
+          className={classes.callToActionDialogHeaderTitle}
+        >
           {translator("whatsapp.callToActionTitle")}
           <IconButton
             aria-label="close"
             onClick={closeCallToAction}
-            style={{ position: "absolute", top: 0, right: 0 }}
+            className={classes.callToActionDialogClose}
           >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText
+            className={classes.callToActionDialogHeaderDescription}
+          >
             {translator("whatsapp.callToActionDialogContentText")}
           </DialogContentText>
-          <Box>
-            <Grid container direction="row" alignItems="flex-start" spacing={1}>
-              {callToActionFieldRows.map(
-                (row: callToActionRowProps, index: number) => (
-                  <Grid container spacing={3} key={"TOC" + index}>
-                    <Grid item md={3}>
-                      <Typography>
-                        {translator("whatsapp.typeOfAction")}
-                      </Typography>
-                      <TextField
-                        select
-                        required
-                        name="typeofaction"
-                        placeholder="Enter Your Type Of Action"
-                        variant="outlined"
-                        onChange={(e) => onTypeOfActionChange(e, row)}
-                        value={row.typeOfAction}
-                        fullWidth
-                      >
-                        <MenuItem value="phonenumber">Phone Number</MenuItem>
-                        <MenuItem value="website">Website</MenuItem>
-                      </TextField>
-                    </Grid>
 
-                    {row?.fields.map(
-                      (field: callToActionFieldProps, fIndex: number) =>
-                        field.fieldName !== "Country" ? (
-                          <Grid item md={3} key={"TOCF" + fIndex}>
-                            <Typography>{field.fieldName}</Typography>
-                            <TextField
-                              required={true}
-                              type={field.type}
-                              name={field.fieldName}
-                              inputProps={
-                                field.fieldName === "Phone Number"
-                                  ? {
-                                      maxlength: 20,
-                                    }
-                                  : field.fieldName === "Website URL"
-                                  ? { maxLength: 2000 }
-                                  : { maxLength: 20 }
-                              }
-                              helperText={
-                                field.fieldName === "Website URL"
-                                  ? `${field.value.length}/${2000}`
-                                  : `${field.value.length}/${20}`
-                              }
-                              placeholder={field.placeholder}
-                              variant="outlined"
-                              onChange={(e) =>
-                                onTypeOfActionFieldChange(e, row, field)
-                              }
-                              value={field.value}
-                              fullWidth
-                            />
-                          </Grid>
-                        ) : (
-                          <Grid item md={2} key={"TOCF" + fIndex}>
-                            <Typography>{field.fieldName}</Typography>
-                            <TextField
-                              select
-                              required
-                              name={field.fieldName}
-                              placeholder={field.placeholder}
-                              variant="outlined"
-                              onChange={(e) =>
-                                onTypeOfActionFieldChange(e, row, field)
-                              }
-                              value={field.value}
-                              fullWidth
-                            >
-                              <MenuItem value="+972 Israel">
-                                +972 Israel
-                              </MenuItem>
-                              <MenuItem value="+91 India">+91 India</MenuItem>
-                            </TextField>
-                          </Grid>
-                        )
-                    )}
-
-                    <Grid item md={1}>
-                      <Typography style={{ visibility: "hidden" }}>
-                        {translator("whatsapp.callToActionRemoveButton")}
-                      </Typography>
-                      <IconButton color="secondary">
-                        <DeleteOutlineIcon onClick={() => onDeleteRow(row)} />
-                      </IconButton>
-                    </Grid>
+          <Grid container className={classes.callToActionFields} spacing={1}>
+            {callToActionFieldRows.map(
+              (row: callToActionRowProps, index: number) => (
+                <Grid container spacing={3} key={"TOC" + index}>
+                  <Grid item md={3}>
+                    <Typography>
+                      {translator("whatsapp.typeOfAction")}
+                    </Typography>
+                    <TextField
+                      select
+                      required
+                      name="typeofaction"
+                      placeholder="Enter Your Type Of Action"
+                      variant="outlined"
+                      onChange={(e) => onTypeOfActionChange(e, row)}
+                      value={row.typeOfAction}
+                      fullWidth
+                    >
+                      <MenuItem value="phonenumber">Phone Number</MenuItem>
+                      <MenuItem value="website">Website</MenuItem>
+                    </TextField>
                   </Grid>
-                )
-              )}
-            </Grid>
-          </Box>
+
+                  {row?.fields.map(
+                    (field: callToActionFieldProps, fIndex: number) =>
+                      field.fieldName !== "Country" ? (
+                        <Grid item md={3} key={"TOCF" + fIndex}>
+                          <Typography>{field.fieldName}</Typography>
+                          <TextField
+                            required={true}
+                            type={field.type}
+                            name={field.fieldName}
+                            inputProps={
+                              field.fieldName === "Phone Number"
+                                ? {
+                                    maxlength: 20,
+                                  }
+                                : field.fieldName === "Website URL"
+                                ? { maxLength: 2000 }
+                                : { maxLength: 20 }
+                            }
+                            helperText={
+                              field.fieldName === "Website URL"
+                                ? `${field.value.length}/${2000}`
+                                : `${field.value.length}/${20}`
+                            }
+                            placeholder={field.placeholder}
+                            variant="outlined"
+                            onChange={(e) =>
+                              onTypeOfActionFieldChange(e, row, field)
+                            }
+                            value={field.value}
+                            fullWidth
+                          />
+                        </Grid>
+                      ) : (
+                        <Grid item md={2} key={"TOCF" + fIndex}>
+                          <Typography>{field.fieldName}</Typography>
+                          <TextField
+                            select
+                            required
+                            name={field.fieldName}
+                            placeholder={field.placeholder}
+                            variant="outlined"
+                            onChange={(e) =>
+                              onTypeOfActionFieldChange(e, row, field)
+                            }
+                            value={field.value}
+                            fullWidth
+                          >
+                            <MenuItem value="+972 Israel">+972 Israel</MenuItem>
+                            <MenuItem value="+91 India">+91 India</MenuItem>
+                          </TextField>
+                        </Grid>
+                      )
+                  )}
+
+                  <Grid item md={1}>
+                    <Typography style={{ visibility: "hidden" }}>
+                      {translator("whatsapp.callToActionRemoveButton")}
+                    </Typography>
+                    <IconButton color="secondary">
+                      <DeleteOutlineIcon onClick={() => onDeleteRow(row)} />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              )
+            )}
+          </Grid>
+
           <DialogActions>
             {callToActionFieldRows.length < 2 && (
               <Button variant="contained" color="primary" onClick={addMore}>
