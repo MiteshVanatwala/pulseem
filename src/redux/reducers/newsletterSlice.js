@@ -153,6 +153,33 @@ export const cloneArchiveCampaign = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+export const getEmailSendSettings = createAsyncThunk(
+  '/email/GetSendSettings', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.get(`/email/GetSendSettings/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const setEmailSendSettings = createAsyncThunk(
+  '/email/SetSendSettings', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.post(`/email/SetSendSettings`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getGroups = createAsyncThunk(
+  'api/email/GetGroups', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`api/email/GetGroups`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 export const newsletterSlice = createSlice({
   name: 'newsletter',

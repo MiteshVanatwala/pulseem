@@ -44,6 +44,8 @@ import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import FormSendingTime from "../../../components/Wizard/FormSendingTime";
+import SpecialModal from "./Popups/SpecialModal";
+import { getEmailSendSettings, getGroups, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -62,7 +64,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const useSnackRecipients = makeStyles((theme) => ({
-
     customcolor:
     {
         backgroundColor: "#AFE1AF",
@@ -77,7 +78,6 @@ const useSnackRecipients = makeStyles((theme) => ({
 }));
 
 const useSnackSevere = makeStyles((theme) => ({
-
     customcolor:
     {
         backgroundColor: "#F6B2B2",
@@ -90,7 +90,6 @@ const useSnackSevere = makeStyles((theme) => ({
         fontWeight: 700,
         boxShadow: '1px ​1px 10px 2px black'
     }
-
 }));
 
 
@@ -108,11 +107,13 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups } = useSelector((state) => state.sms);
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
+    const [campaignValues, setCampaignValues] = useState({});
     const [totalCampaigns, setTotalCampaigns] = useState();
     const [groupList, setGroupList] = useState([]);
     const [activeTab, setActiveTab] = useState(0);
     const [highlighted, setHighlighted] = useState(false);
     const [selectedGroups, setSelectedGroups] = useState([]);
+    // const [filterGroup, setFilterGroups] = useState([])
     const [dialogType, setDialogType] = useState({ type: null });
     const [bsDot, setbsDot] = useState(false);
     const [manualValues, setManualValues] = useState({
@@ -126,20 +127,14 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         manualClick: false,
         bsDot: false
     })
-
     const [newGroupDetails, setNewGroupDetails] = useState({
         toggleChecked: false,
         groupNameExist: false,
         groupValue: '',
     })
     const [contacts, setContacts] = React.useState([]);
-
     const [headers, setheaders] = useState(manualValues.initialheadstate);
-
     const [groupTextError, setGroupTextError] = useState(false);
-
-    const [toggleReci, settoggleReci] = useState(false);
-
     const [filterValues, setFilterValues] = useState({
         toggleReci: false,
         selectedFilterGroups: [],
@@ -150,36 +145,44 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         displayFilter: false,
         reciFilter: false,
     })
-
-    const [pulseValues, setPulseValues] = useState({
-        togglePulse: false,
-        pulseBool: false,
-        pulsePer: "recipients",
-        pulseReci: '',
-        pulseAmount: "",
-        pulseType: 2,
-        timeType: 1,
-        timeBool: false,
-        timeInterval: '',
-        toggleRandom: false,
-        boolRandom: false,
-        random: '',
-        noTrue: false,
-        minName: 'mins',
-        hourName: 'Hours',
-        snackBarPulseBoolean: false,
-        snackbarTimeBoolean: false,
-        snackbarMainPulse: false
-    })
-
+    // const [pulseValues, setPulseValues] = useState({
+    // togglePulse: false,
+    // pulseBool: false,
+    // pulsePer: "recipients",
+    // pulseReci: '',
+    // pulseAmount: "",
+    // pulseType: 2,
+    // SendingMethod: 1,
+    // timeBool: false,
+    // timeInterval: '',
+    // toggleRandom: false,
+    // boolRandom: false,
+    // random: '',
+    // noTrue: false,
+    // minName: 'mins',
+    // hourName: 'Hours',
+    // snackBarPulseBoolean: false,
+    // snackbarTimeBoolean: false,
+    // snackbarMainPulse: false
+    // })
     const [sourcePulses, setSourcePulses] = useState({});
-
     const [sendingTimeFormValues, setSendingTimeFormValues] = useState({
+        pulseAmount: "",
+        SendingMethod: 1,
+        timeInterval: '',
         sendType: "1",
+        sendDate: null,
+        sendTime: null,
         afterClick: false,
-        selectedSpecialValue: ""
+        selectedSpecialValue: "",
+        daysBeforeAfter: '',
+        DateFieldID: '0',
+        timePickerOpen: false,
+        toggleA: false,
+        toggleB: false,
+        daysBeforeAfter: "",
+        spectialDateFieldID: ""
     })
-
     const [snackbarValues, setSnackbarValues] = useState({
         snackbarTimeBoolean: false,
         snackBarPulseBoolean: false,
@@ -187,111 +190,97 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         snackbarRecipients: false,
         recipientsSnackbar: false
     })
+    const [specialSettingValidation, setspecialSettingValidation] = useState(false)
 
-    const [snackbarTimeBoolean, setSnackbarTimeBoolean] = useState(false)
-    const [snackBarPulseBoolean, setSnackBarPulseBoolean] = useState(false)
-    const [snackbarMainPulse, setSnackbarMainPulse] = useState(false)
+    // const [sendDate, setSendDate] = useState(null);
+    // const [sendTime, setSendTime] = useState(null);
+    // const [timePickerOpen, setTimePickerOpen] = useState(false);
+    // const [toggleB, settoggleB] = useState(true);
+    // const [toggleA, settoggleA] = useState(false);
+    // const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
+    // const [spectialDateFieldID, setDateFieldID] = useState("0");
 
     const getData = async () => {
         setLoader(true);
         if (params?.id) {
             const finishedCampaigns = await dispatch(getFinishedCampaigns());
             const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-            const campaignSettings = await dispatch(getCampaignSettings(params.id));
+            // const subAccountGroups = await dispatch(getGroups());
+            // const campaignSettings = await dispatch(getCampaignSettings(params.id));
+            const campaignSettings = await dispatch(getEmailSendSettings(params.id));
             await dispatch(getTestGroups());
 
+            setTotalCampaigns(finishedCampaigns.payload);
+            setGroupList(subAccountGroups.payload);
             if (campaignSettings.payload.error) {
                 logout();
             }
-            setTotalCampaigns(finishedCampaigns.payload);
-            setGroupList(subAccountGroups.payload);
-            //     if (campaignSettings.payload && campaignSettings.payload.PulseSettings) {
-            //         setTimeType(campaignSettings.payload.PulseSettings.TimeType);
-            //         setPulseType(campaignSettings.payload.PulseSettings.PulseType);
-            //         setPulseAmount(`${campaignSettings.payload.PulseSettings.PulseAmount}`)
-            //         setTimeInterval(`${campaignSettings.payload.PulseSettings.TimeInterval}`)
-            //     }
+            if (!campaignSettings?.payload?.Data) {
+                return false
+            }
+            setCampaignValues(campaignSettings.payload)
+            setSendingTimeFormValues({
+                ...sendingTimeFormValues,
+                pulseAmount: `${campaignSettings.payload.PulseAmount}`,
+                timeInterval: `${campaignSettings.payload.TimeInterval}`
+            })
+            if (campaignSettings.payload.groupList !== null) {
+                const selectedGroupsForSend = [];
+                const seGroups = campaignSettings.payload.groupList || [];
+                for (var i = 0; i < seGroups.length; i++) {
+                    const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] });
+                    if (g.length > 0) {
+                        selectedGroupsForSend.push(g[0]);
+                    }
+                }
+                setSelectedGroups(selectedGroupsForSend);
+            }
 
-            //     if (campaignSettings.payload.Groups !== null) {
-            //         const selectedGroupsForSend = [];
-            //         const seGroups = campaignSettings.payload.Groups || [];
-            //         for (var i = 0; i < seGroups.length; i++) {
-            //             const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] });
-            //             if (g.length > 0) {
-            //                 selectedGroupsForSend.push(g[0]);
-            //             }
-            //         }
-            //         setSelected(selectedGroupsForSend);
-            //     }
-            //     if (campaignSettings.payload.SendExeptional != null && campaignSettings.payload.SendExeptional.Groups.length !== 0) {
-            //         setbsDot(true);
-            //         const selectedGroups = [];
-            //         const seGroups = campaignSettings.payload.SendExeptional.Groups;
-            //         for (var i = 0; i < seGroups.length; i++) {
-            //             selectedGroups.push(subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] })[0]);
-            //         }
-            //         setFilterGroups(selectedGroups);
-            //     }
-            //     if (campaignSettings.payload.SendExeptional != null && campaignSettings.payload.SendExeptional.Campaigns.length !== 0) {
-            //         const selectedCampaigns = [];
-            //         const seCampaigns = campaignSettings.payload.SendExeptional.Campaigns;
-            //         for (var i = 0; i < seCampaigns.length; i++) {
-            //             selectedCampaigns.push(finishedCampaigns.payload.filter((c) => { return c.SMSCampaignID === seCampaigns[i] })[0]);
-            //         }
-            //         setFilterCampaigns(selectedCampaigns);
-            //     }
-            //     if (campaignSettings.payload.SendExeptional != null && campaignSettings.payload.SendExeptional.ExceptionalDays !== -1) {
-            //         setExceptionalDays(`${campaignSettings.payload.SendExeptional.ExceptionalDays}`)
-            //         settoggleReci(true);
-
-            //     }
-            //     if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseSettingsID !== -1) {
-            //         settogglePulse(true);
-            //     }
-            //     if (campaignSettings.payload.RandomSettings != null && campaignSettings.payload.RandomSettings.RandomAmount !== 0) {
-            //         setrandom(campaignSettings.payload.RandomSettings.RandomAmount);
-            //         settoggleRandom(true);
-            //     }
-            //     if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 2) {
-            //         setnoTrue(true);
-            //         setpulsePer("recipients");
-            //         setpulseReci("Recipients");
-            //     }
-            //     if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 1) {
-            //         setpulsePer("percent");
-            //         setnoTrue(false);
-            //         setpulseReci("");
-            //     }
-            //     if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 1) {
-            //         setminName("Mins");
-            //         sethourName("");
-
-            //     }
-            //     if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 2) {
-            //         setminName("");
-            //         sethourName("Hours");
-            //     }
-            //     if (campaignSettings.payload.SendTypeID) {
-            //         setSendType(`${campaignSettings.payload.SendTypeID}`);
-            //     }
-            //     if (campaignSettings.payload.FutureDateTime !== null && campaignSettings.payload.SendTypeID === 2) {
-            //         handleFromDate(moment(campaignSettings.payload.FutureDateTime));
-            //     }
-            //     if (campaignSettings.payload.SendTypeID === 3) {
-            //         setdaysBeforeAfter(campaignSettings.payload.SpecialSettings.Day);
-            //         setsendTime(moment(campaignSettings.payload.SpecialSettings.SendHour))
-            //         setDateFieldID(`${campaignSettings.payload.SpecialSettings.DateFieldID}`)
-            //         if (campaignSettings.payload.SpecialSettings.IntervalTypeID === -1) {
-            //             settoggleB(true);
-            //             settoggleA(false);
-            //             setafterClick(false);
-            //         }
-            //         else {
-            //             settoggleB(false);
-            //             settoggleA(true);
-            //             setafterClick(true);
-            //         }
-            //     }
+            if (campaignSettings.payload?.ExeptionalGroups?.length !== 0) {
+                setbsDot(true);
+                const selectedGroups = [];
+                const seGroups = campaignSettings.payload?.ExeptionalGroups;
+                for (var i = 0; i < seGroups.length; i++) {
+                    selectedGroups.push(subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] })[0]);
+                }
+                setFilterValues({ ...filterValues, selectedFilterGroups: selectedGroups })
+            }
+            if (campaignSettings.payload?.ExeptionalCampaigns?.length !== 0) {
+                const selectedCampaigns = [];
+                const seCampaigns = campaignSettings.payload.ExeptionalCampaigns;
+                for (var i = 0; i < seCampaigns.length; i++) {
+                    selectedCampaigns.push(finishedCampaigns.payload.filter((c) => { return c.SMSCampaignID === seCampaigns[i] })[0]);
+                }
+                setFilterValues({ ...filterValues, selectedFilterCampaigns: selectedCampaigns })
+            }
+            if (campaignSettings.payload.SendDate !== null && campaignSettings.payload.SendingMethod === 2) {
+                setSendingTimeFormValues({ ...sendingTimeFormValues, sendDate: moment(campaignSettings.payload.SendDate) })
+            }
+            if (campaignSettings.payload.SendingMethod === 3) {
+                setSendingTimeFormValues({
+                    ...sendingTimeFormValues,
+                    sendType: `${campaignSettings.payload.SendingMethod}`,
+                    // daysBeforeAfter: campaignSettings.payload.SpecialSettings.Day,
+                    // sendTime: moment(campaignSettings.payload.SpecialSettings.SendHour),
+                    // DateFieldID: `${campaignSettings.payload.SpecialSettings.DateFieldID}`
+                })
+                // if (campaignSettings.payload.SpecialSettings.IntervalTypeID === -1) {
+                //     setSendingTimeFormValues({
+                //         ...sendingTimeFormValues,
+                //         toggleA: false,
+                //         toggleB: true,
+                //         afterClick: false,
+                //     })
+                // }
+                // else {
+                //     setSendingTimeFormValues({
+                //         ...sendingTimeFormValues,
+                //         toggleA: true,
+                //         toggleB: false,
+                //         afterClick: true,
+                //     })
+                // }
+            }
 
             setLoader(false);
         }
@@ -299,6 +288,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     };
 
     const getDataExtra = async () => {
+        // COMMENT: After Refractor we nned to fetch extraData from  State 
         await dispatch(getAccountExtraData());
         setLoader(false);
     };
@@ -315,6 +305,49 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     const onHandleDelete = () => {
         setDialogType({ type: "delete" });
     };
+
+
+    const onSaveSettings = (isTrue = false) => {
+        // return console.log("REMOVE RETURN TO FIRE API")
+        let payload = {
+            // FromDate: null,
+            // ToDate: null,
+            // AutoSendingByUserField: null,
+            // AutoSendDelay: 0,
+            // IsOpened: true,
+            // IsOpenedClicked: false,
+            // IsNotClicked: false,
+            // IsNotOpened: false,
+            // ExeptionalCampaigns: "",
+            // ExeptionalGroups: "",
+            ...campaignValues,
+            CampaignID: params.id,
+            Status: campaignValues.Status,
+            PulseAmount: sendingTimeFormValues.pulseAmount || campaignValues.PulseAmount,
+            TimeInterval: sendingTimeFormValues.timeInterval || campaignValues.TimeInterval,
+            SendDate: sendingTimeFormValues.sendDate || campaignValues.sendDate,
+            SendingMethod: sendingTimeFormValues.SendingMethod || campaignValues.SendingMethod,
+            GroupIds: selectedGroups.join(",")
+        }
+        try {
+            const response = dispatch(setEmailSendSettings(payload))
+        }
+        catch (error) {
+            console.log("ERROR-SAVE-SEND-SETTINGS:", error)
+        }
+    }
+
+    const handleSetPulseData = (data) => {
+        const { timeInterval, pulseAmount, SendingMethod, togglePulse } = data;
+        setSendingTimeFormValues({
+            ...sendingTimeFormValues,
+            timeInterval: timeInterval ?? sendingTimeFormValues.timeInterval,
+            pulseAmount: pulseAmount ?? sendingTimeFormValues.pulseAmount,
+            SendingMethod: SendingMethod ?? sendingTimeFormValues.SendingMethod,
+            togglePulse: togglePulse ?? sendingTimeFormValues.togglePulse
+        })
+        // setPulseValues({ timeInterval: timeInterval ?? pulseValues.timeInterval, pulseAmount: pulseAmount ?? pulseValues.pulseAmount, SendingMethod: SendingMethod ?? sendingTimeFormValues.SendingMethod })
+    }
 
     const handleInputNewGroup = (e) => {
         setNewGroupDetails({ ...newGroupDetails, groupNameExist: false, groupValue: e.target.value });
@@ -515,7 +548,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     const handleFilterConfirm = () => {
         let formIsvalid = true;
         let tempData = { ...filterValues }
-        if (toggleReci) {
+        if (filterValues.toggleReci) {
             formIsvalid = validationCheck();
             if (formIsvalid) {
                 if (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
@@ -570,24 +603,24 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
 
     const onPulseValidations = () => {
         let isValid = true;
-        if (pulseValues.togglePulse) {
-            if (pulseValues.pulseAmount === "") {
-                setPulseValues({ ...pulseValues, pulseBool: true });
-                setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: true })
-            }
-            if (pulseValues.timeInterval === "") {
-                setPulseValues({ ...pulseValues, timeBool: true });
-                setSnackbarValues({ ...snackbarValues, snackbarTimeBoolean: true })
-                isValid = false;
-            }
+        // if (pulseValues.togglePulse) {
+        if (sendingTimeFormValues.pulseAmount === "" || sendingTimeFormValues.timeInterval === "") {
+            // setPulseValues({ ...pulseValues, pulseBool: true });
+            setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: true })
         }
-        if (pulseValues.toggleRandom) {
-            if (pulseValues.random === "") {
-                setPulseValues({ ...pulseValues, boolRandom: true });
-                setSnackbarValues({ ...snackbarValues, snackBarMainBoolean: true })
-                isValid = false;
-            }
-        }
+        // if (pulseValues.timeInterval === "") {
+        //     // setPulseValues({ ...pulseValues, timeBool: true });
+        //     setSnackbarValues({ ...snackbarValues, snackbarTimeBoolean: true })
+        //     isValid = false;
+        // }
+        // }
+        // if (pulseValues.toggleRandom) {
+        //     if (pulseValues.random === "") {
+        //         // setPulseValues({ ...pulseValues, boolRandom: true });
+        //         setSnackbarValues({ ...snackbarValues, snackBarMainBoolean: true })
+        //         isValid = false;
+        //     }
+        // }
         return isValid;
     }
 
@@ -598,16 +631,26 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     }
 
     const handlePulseClose = () => {
-        let tempData = { ...pulseValues, random: sourcePulses.randomAmount, togglePulse: true, toggleRandom: true, timeType: sourcePulses.timeType, pulseType: sourcePulses.pulseType, pulseAmount: sourcePulses.pulseAmount, timeInterval: sourcePulses.timeInterval }
+        let tempData = {
+            ...sendingTimeFormValues,
+            // random: sourcePulses.randomAmount, togglePulse: true, toggleRandom: true, SendingMethod: sourcePulses.SendingMethod, pulseType: sourcePulses.pulseType, 
+            pulseAmount: sourcePulses.pulseAmount || "", timeInterval: sourcePulses.timeInterval || ""
+        }
         if (sourcePulses.pulseAmount == "" || sourcePulses.timeInterval == "") {
             tempData = { ...tempData, togglePulse: false }
         }
         if (sourcePulses.randomAmount == "") {
             tempData = { ...tempData, toggleRando: false }
         }
-        setPulseValues({ ...pulseValues, ...tempData });
+        setSendingTimeFormValues({ ...sendingTimeFormValues, ...tempData });
         setDialogType(null);
     };
+
+    const handlePulseDialog = () => {
+        setSourcePulses({ ...sourcePulses, SendingMethod: sendingTimeFormValues.SendingMethod, pulseType: sendingTimeFormValues.pulseType, pulseAmount: sendingTimeFormValues.pulseAmount, timeInterval: sendingTimeFormValues.timeInterval, randomAmount: sendingTimeFormValues.random });
+        // setPulseValues({...pulseValues, SendingMethod:SendingMethod})
+        setDialogType({ type: "pulses" });
+    }
 
     const handleMainWarningPulse = () => {
 
@@ -985,9 +1028,9 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                         )}
                         color="primary"
                         style={{ margin: '8px' }}
-                    // onClick={() => {
-                    //     onSaveSettings(true);
-                    // }}
+                        onClick={() => {
+                            onSaveSettings(true);
+                        }}
                     >
                         {t('mainReport.saveSms')}
                     </Button>
@@ -1006,9 +1049,9 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                             backgroundColor:
                                 selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
                         }}
-                    // onClick={() => {
-                    //     onSaveSettings(false)
-                    // }}
+                        onClick={() => {
+                            onSaveSettings(false)
+                        }}
                     >
                         {t("mainReport.summary")}
                     </Button>
@@ -1074,8 +1117,9 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
             }),
             pulses: PulseDialog({
                 classes: classes,
-                pulseValues: pulseValues,
-                setPulseValues: setPulseValues,
+                sendingTimeFormValues: sendingTimeFormValues,
+                handleSetPulseData: handleSetPulseData,
+                // setPulseValues: setPulseValues,
                 selectedGroups: selectedGroups,
                 onClose: handlePulseClose,
                 onCancel: handlePulseClose,
@@ -1129,13 +1173,15 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                         <Grid item md={4} xs={12}>
                             <FormSendingTime
                                 classes={classes}
-                                pulseValues={pulseValues}
+                                // sendingTimeFormValues={sendingTimeFormValues}
                                 ToastMessages={ToastMessages}
                                 setToastMessage={setToastMessage}
-                                setPulseValues={setPulseValues}
+                                // handleSetPulseData={handleSetPulseData}
+                                // setPulseValues={setPulseValues}
                                 enablePulse={selectedGroups.length >= 1 && sendingTimeFormValues.sendType !== "3"}
                                 sendingTimeFormValues={sendingTimeFormValues}
                                 setSendingTimeFormValues={setSendingTimeFormValues}
+                                handlePulseDialog={handlePulseDialog}
                             />
                         </Grid>
                     </Grid>
@@ -1144,10 +1190,17 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
             </div>
             {renderDialog()}
             {/* {renderSummary()} */}
-            {/* {renderSpecialModal()} */}
+            {<SpecialModal
+                classes={classes}
+                isOpen={specialSettingValidation}
+                onClose={() => setspecialSettingValidation(false)}
+                daysBeforeAfter={sendingTimeFormValues.daysBeforeAfter}
+                spectialDateFieldID={sendingTimeFormValues.DateFieldID}
+                sendTime={sendingTimeFormValues.sendTime}
+            />}
             {/* {renderSendType2validation()} */}
             <Snackbar
-                open={snackbarTimeBoolean || snackBarPulseBoolean || snackbarMainPulse}
+                open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}
                 autoHideDuration={5000}
                 onClose={() => { handleMainWarningPulse() }}
                 anchorOrigin={{
@@ -1161,7 +1214,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                 </Alert>
             </Snackbar>
             <Snackbar
-                open={snackBarPulseBoolean}
+                open={snackbarValues.snackBarPulseBoolean}
                 autoHideDuration={3000}
                 onClose={() => setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: false })}
                 anchorOrigin={{
@@ -1175,7 +1228,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                 </Alert>
             </Snackbar>
             <Snackbar
-                open={snackbarTimeBoolean}
+                open={snackbarValues.snackbarTimeBoolean}
                 autoHideDuration={3000}
                 onClose={() => setSnackbarValues({ ...snackbarValues, snackbarTimeBoolean: false })}
                 anchorOrigin={{
@@ -1189,7 +1242,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                 </Alert>
             </Snackbar>
             <Snackbar
-                open={snackbarMainPulse}
+                open={snackbarValues.snackbarMainPulse}
                 autoHideDuration={3000}
                 onClose={() => setSnackbarValues({ ...snackbarValues, snackBarMainBoolean: false })}
                 anchorOrigin={{

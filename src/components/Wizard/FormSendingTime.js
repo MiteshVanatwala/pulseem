@@ -29,11 +29,10 @@ const FormSendingTime = ({
     classes,
     ToastMessages,
     setToastMessage = () => null,
-    pulseValues = {},
     enablePulse = false,
-    sendingTimeFormValues = {},
-    setSendingTimeFormValues = () => null
-
+    sendingTimeFormValues = null,
+    setSendingTimeFormValues = () => null,
+    handlePulseDialog = () => null
 }) => {
     const { t } = useTranslation();
     const styles = useStyles();
@@ -42,15 +41,6 @@ const FormSendingTime = ({
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
-    const [sendDate, setSendDate] = useState(null);
-    const [sendTime, setSendTime] = useState(null);
-    const [timePickerOpen, setTimePickerOpen] = useState(false);
-    const [toggleB, settoggleB] = useState(true);
-    const [toggleA, settoggleA] = useState(false);
-    const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
-    const [spectialDateFieldID, setDateFieldID] = useState("0");
-
-
 
     const handleSendType = (e) => {
         setSendingTimeFormValues({ ...sendingTimeFormValues, sendType: e.target.value })
@@ -58,11 +48,11 @@ const FormSendingTime = ({
     }
 
     const handleDatePicker = (value) => {
-        setSendDate(value)
+        setSendingTimeFormValues({ ...sendingTimeFormValues, sendDate: value })
     }
 
     const handleTimePicker = (value) => {
-        var date = moment(sendDate);
+        var date = moment(sendingTimeFormValues.sendDate);
         var time = moment(value, "HH:mm");
 
         date.set({
@@ -75,16 +65,15 @@ const FormSendingTime = ({
             setToastMessage(ToastMessages.DATE_PASS);
         }
 
-        setSendDate(date);
-        setTimePickerOpen(false);
+        setSendingTimeFormValues({ ...sendingTimeFormValues, sendDate: date, timePickerOpen: false });
     }
 
     const handleSelectChange = (e) => {
         if (e.target.value === "0") {
-            setDateFieldID("0");
+            setSendingTimeFormValues({ ...sendingTimeFormValues, spectialDateFieldID: "0" });
         }
         else {
-            setDateFieldID(e.target.value)
+            setSendingTimeFormValues({ ...sendingTimeFormValues, spectialDateFieldID: e.target.value });
             {
                 Object.keys(extraData).map((item, i) => {
                     if (e.target.value == i + 3) {
@@ -104,25 +93,22 @@ const FormSendingTime = ({
     const handleSpecialDayChange = (e) => {
         const re = /^[0-9\b]+$/;
         if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <= 999)) {
-            setdaysBeforeAfter(e.target.value);
+            setSendingTimeFormValues({ ...sendingTimeFormValues, daysBeforeAfter: e.target.value })
         }
 
     }
 
     const handlebef = () => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: false })
-        settoggleA(false);
-        settoggleB(true);
+        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: false, toggleA: false, toggleB: true })
     };
 
     const handleaf = () => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: true })
-        settoggleA(true);
-        settoggleB(false);
+        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: true, toggleA: true, toggleB: false })
     };
 
     const handleRadioTime = (value) => {
-        setSendTime(value)
+        setSendingTimeFormValues({ ...sendingTimeFormValues, sendTime: value })
+        // setSendTime(value)
     }
 
     const renderForm = () => {
@@ -172,7 +158,7 @@ const FormSendingTime = ({
                                 <DateField
                                     minDate={moment()}
                                     classes={classes}
-                                    value={sendingTimeFormValues.sendType == "2" ? sendDate : null}
+                                    value={sendingTimeFormValues.sendType == "2" ? sendingTimeFormValues.sendDate : null}
                                     onChange={handleDatePicker}
                                     placeholder={t("notifications.date")}
                                     timePickerOpen={true}
@@ -189,13 +175,13 @@ const FormSendingTime = ({
                                 <DateField
                                     minDate={moment()}
                                     classes={classes}
-                                    value={sendingTimeFormValues.sendType == "2" ? sendDate : null}
+                                    value={sendingTimeFormValues.sendType == "2" ? sendingTimeFormValues.sendDate : null}
                                     onTimeChange={handleTimePicker}
                                     placeholder={t("notifications.hour")}
                                     isTimePicker={true}
                                     ampm={false}
                                     timeActive={sendingTimeFormValues.sendType == "2" ? false : true}
-                                    timePickerOpen={timePickerOpen}
+                                    timePickerOpen={sendingTimeFormValues.timePickerOpen}
                                 />
                             </Box>
                             <FormControlLabel
@@ -227,7 +213,7 @@ const FormSendingTime = ({
                                     }}
                                     disabled={sendingTimeFormValues.sendType === "3" ? false : true}
                                     onChange={(e) => { handleSelectChange(e) }}
-                                    value={sendingTimeFormValues.sendType === "3" ? spectialDateFieldID : "0"}
+                                    value={sendingTimeFormValues.sendType === "3" ? sendingTimeFormValues.spectialDateFieldID : "0"}
                                 >
                                     <option value="0">{t("common.select")}</option>
                                     <option value="1">{t("mainReport.birthday")}</option>
@@ -256,7 +242,7 @@ const FormSendingTime = ({
                                     className={classes.inputDays}
                                     placeholder="0"
                                     disabled={sendingTimeFormValues.sendType == "3" ? false : true}
-                                    value={sendingTimeFormValues.sendType == "3" ? daysBeforeAfter : ""}
+                                    value={sendingTimeFormValues.sendType == "3" ? sendingTimeFormValues.daysBeforeAfter : ""}
                                     onChange={(e) => { handleSpecialDayChange(e) }}
                                     maxLength="3"
                                 />
@@ -269,7 +255,7 @@ const FormSendingTime = ({
                                     <div style={{ display: "flex" }}>
                                         <span
                                             className={
-                                                sendingTimeFormValues.sendType == "3" ? toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                                sendingTimeFormValues.sendType == "3" ? sendingTimeFormValues.toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                             }
                                             onClick={() => {
                                                 handlebef();
@@ -279,7 +265,7 @@ const FormSendingTime = ({
                                         </span>
                                         <span
                                             className={
-                                                sendingTimeFormValues.sendType == "3" ? toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                                                sendingTimeFormValues.sendType == "3" ? sendingTimeFormValues.toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
                                             }
                                             onClick={() => {
                                                 handleaf();
@@ -291,7 +277,7 @@ const FormSendingTime = ({
                                     </div> : <div style={{ display: "flex" }}>
                                         <span
                                             className={
-                                                sendingTimeFormValues.sendType == "3" ? toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                                                sendingTimeFormValues.sendType == "3" ? sendingTimeFormValues.toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
                                             }
                                             onClick={() => {
                                                 handlebef();
@@ -301,7 +287,7 @@ const FormSendingTime = ({
                                         </span>
                                         <span
                                             className={
-                                                sendingTimeFormValues.sendType == "3" ? toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                                sendingTimeFormValues.sendType == "3" ? sendingTimeFormValues.toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                             }
                                             onClick={() => {
                                                 handleaf();
@@ -321,7 +307,7 @@ const FormSendingTime = ({
                             >
                                 <DateField
                                     classes={classes}
-                                    value={sendingTimeFormValues.sendType == "3" ? sendTime : null}
+                                    value={sendingTimeFormValues.sendType == "3" ? sendingTimeFormValues.sendTime : null}
 
                                     onTimeChange={handleRadioTime}
                                     placeholder={t("notifications.hour")}
@@ -331,7 +317,7 @@ const FormSendingTime = ({
                                         cancel: t("common.cancel"),
                                     }}
                                     ampm={false}
-                                    timePickerOpen={timePickerOpen}
+                                    timePickerOpen={sendingTimeFormValues.timePickerOpen}
                                     timeActive={sendingTimeFormValues.sendType == "3" ? false : true}
                                     disabled={sendingTimeFormValues.sendType == "3" ? false : true}
                                     autoOk
@@ -346,7 +332,7 @@ const FormSendingTime = ({
                         <span
                             className={enablePulse ? classes.pulse : classes.pulseDisable}
                             onClick={() => {
-                                // handlePulseDialog();
+                                handlePulseDialog();
                             }}
                         >
                             <FaRegCalendarAlt style={{ fontSize: '125%' }} />
@@ -374,14 +360,14 @@ const FormSendingTime = ({
                     }}
                 >
 
-                    {pulseValues.togglePulse ? (
+                    {sendingTimeFormValues.togglePulse ? (
                         <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-                            {t("smsReport.packetSend")} - {pulseValues.pulseAmount} {pulseValues.pulsePer == "" || pulseValues.pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-                            {t("sms.every")} {pulseValues.timeInterval} {pulseValues.hourName == "" || pulseValues.minName == "mins" ? t("common.minutes") : t("common.hours")}
+                            {t("smsReport.packetSend")} - {sendingTimeFormValues.pulseAmount} {sendingTimeFormValues.pulsePer == "" || sendingTimeFormValues.pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
+                            {t("sms.every")} {sendingTimeFormValues.timeInterval} {sendingTimeFormValues.hourName == "" || sendingTimeFormValues.minName == "mins" ? t("common.minutes") : t("common.hours")}
                         </span>
                     ) : null}
-                    {pulseValues.toggleRandom ? (
-                        <span>{t("smsReport.randomSend")} - {pulseValues.random} {t("smsReport.randomRecipients")}</span>
+                    {sendingTimeFormValues.toggleRandom ? (
+                        <span>{t("smsReport.randomSend")} - {sendingTimeFormValues.random} {t("smsReport.randomRecipients")}</span>
                     ) : null}
                 </div>
             </div>

@@ -82,7 +82,6 @@ const Groups = ({ classes,
     const renderGroups = () => {
         const groupIdKey = isNotifications ? "Id" : "GroupID";
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
-        console.log("SELECTED:", selectedList)
         return list?.filter((g) => {
             return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((group) => {
