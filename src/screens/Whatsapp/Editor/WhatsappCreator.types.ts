@@ -33,6 +33,11 @@ export type callToActionRowProps = {
 
 export type callToActionProps = callToActionRowProps[];
 
+export type actionProps = {
+  isCallToActionOpen: boolean;
+  closeCallToAction: () => void;
+};
+
 export type PhoneProps = {
   classes: ClassesType;
 };

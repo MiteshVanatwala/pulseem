@@ -12,10 +12,11 @@ import { useTranslation } from "react-i18next";
 import { Box, Grid } from "@material-ui/core";
 import WhatsappTemplateEditor from "./WhatsappTemplateEditor";
 import { actionButtonProps } from "./WhatsappCreator.types";
-import { FaSkating } from "react-icons/fa";
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
-  const { windowSize } = useSelector((state: { core: coreProps }) => state.core);
+  const { windowSize } = useSelector(
+    (state: { core: coreProps }) => state.core
+  );
   const { t: translator } = useTranslation();
 
   const [templateName, setTemplateName] = useState<string>("");
@@ -41,9 +42,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
   const onButtonClick = (button: actionButtonProps) => {
     if (button.buttonTitle.includes("callToAction")) {
-      setIsCallToActionOpen(true)
+      setIsCallToActionOpen(true);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -69,18 +70,24 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
               onTemplateNameChange={(e) => onTemplateNameChange(e)}
               onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
             />
-            <ActionCallPopOver isCallToActionOpen={isCallToActionOpen} closeCallToAction={() => setIsCallToActionOpen(false)} />
+            <ActionCallPopOver
+              isCallToActionOpen={isCallToActionOpen}
+              closeCallToAction={() => setIsCallToActionOpen(false)}
+            />
           </Grid>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={5}>
-              <WhatsappTemplateEditor classes={classes} onButtonClick={(button: actionButtonProps) => onButtonClick(button)} />
+              <WhatsappTemplateEditor
+                classes={classes}
+                onButtonClick={(button: actionButtonProps) =>
+                  onButtonClick(button)
+                }
+              />
             </Grid>
 
             <Grid item xs={12} sm={12} md={12} lg={7}>
               <Grid container>
-                <Grid item xs={12} sm={12} md={12} lg={6}>
-
-                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={6}></Grid>
                 <Grid item xs={12} sm={12} md={12} lg={6}>
                   <Box style={{ maxWidth: 420, marginTop: 20 }}>
                     <Phone classes={classes} />
