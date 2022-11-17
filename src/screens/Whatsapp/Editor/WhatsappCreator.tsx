@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import DefaultScreen from "../../DefaultScreen";
 import { Title } from "../../../components/managment/Title";
 import TemplateFields from "./TemplateFields";
-import MessageEditor from "./MessageEditor";
 import Buttons from "./Buttons";
 import Phone from "./Phone";
 import { WhatsappCreatorProps, coreProps } from "./WhatsappCreator.types";
