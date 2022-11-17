@@ -46,11 +46,17 @@ const useMockAPI = () => {
     })
   }
 
+  const getTags = () => {
+    let tempTags = [...new Set(ref?.current.map(item => item?.metadata?.tags))];
+    return tempTags;
+  }
+
   return {
     handleDeleteRow,
     handleEditRow,
     getRows,
     setRow,
+    getTags
   }
 }
 

@@ -402,6 +402,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
       dispatch(getUserblocks());
+      setRow(json);
     });
   }
   const onEditBlock = (blockRequest) => {
@@ -440,7 +441,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       PulseemEditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
       // HandleAutoSave: handleAutoSave,
-      setRow,
       getRows,
       handleEditRow,
       handleDeleteRow,

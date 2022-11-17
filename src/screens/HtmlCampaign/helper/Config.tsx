@@ -17,7 +17,6 @@ export interface ConfigOptions {
     CampaignId: Number,
     PulseemEditBlock: Function,
     getRows: Function,
-    setRow: Function,
     handleDeleteRow: Function,
     handleEditRow: Function,
     // HandleAutoSave: Function,
@@ -35,7 +34,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         CampaignId,
         DeleteBlock,
         SaveCampaign,
-        setRow,
         getRows,
         handleEditRow,
         // HandleAutoSave,
@@ -47,11 +45,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
-        trackChanges: false,
+        trackChanges: true,
         autosave: 60,
         translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
-        loadingSpinnerTheme: 'dark',
+        loadingSpinnerTheme: 'light',
         saveRows: true,
         workspace: {
             type: 'mixed',
@@ -103,6 +101,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
                             uuid: uuidv4()
                         }
                         resolve(metadata);
+                    }
+                    else{
+                        reject();
                     }
                 }
             },
