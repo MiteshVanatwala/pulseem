@@ -577,5 +577,7 @@
   "adaptive": "מותאם לסלולר",
   "responsive": "רספונסיבי",
   "chooseFile": "טען קובץ",
-  "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר."
+  "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר.",
+  "filesUploaded": "קבצים עלו בהצלחה",
+  "filesNotUploaded": "קבצים נכשלו: "
 }

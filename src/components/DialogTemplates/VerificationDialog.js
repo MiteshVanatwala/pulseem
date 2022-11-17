@@ -103,6 +103,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         }
                         case "abused": {
                             setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_abused') })
+                            break;
                         }
                         default: {
                             setVerificationError({ code: t('common.ErrorOccured') })
@@ -138,6 +139,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 }
                 case "abused": {
                     setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_abused') })
+                    break;
                 }
                 default: {
                     setVerificationError({ code: t('common.ErrorOccured') })
