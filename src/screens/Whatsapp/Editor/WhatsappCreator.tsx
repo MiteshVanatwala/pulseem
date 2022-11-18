@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import DefaultScreen from "../../DefaultScreen";
 import { Title } from "../../../components/managment/Title";
 import TemplateFields from "./TemplateFields";
+import ActionCallPopOver from "./ActionCallPopOver";
 import Buttons from "./Buttons";
 import Phone from "./Phone";
 import { WhatsappCreatorProps, coreProps } from "./WhatsappCreator.types";
@@ -20,6 +21,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
   const [templateName, setTemplateName] = useState<string>("");
   const [savedTemplate, setSavedTemplate] = useState<string>("");
   const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
+  const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 
   const onTemplateNameChange = (e: BaseSyntheticEvent) => {
     console.log(e.target.value);
@@ -40,7 +42,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
   const onButtonClick = (button: actionButtonProps) => {
     if (button.buttonTitle.includes("callToAction")) {
-      alert("callto action clicked")
+      setIsCallToActionOpen(true)
     } else if (button.buttonTitle.includes("quickReplay")) {
       setIsQuickReplyOpen(true)
     }
@@ -70,6 +72,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
               onTemplateNameChange={(e) => onTemplateNameChange(e)}
               onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
             />
+            <ActionCallPopOver isCallToActionOpen={isCallToActionOpen} closeCallToAction={() => setIsCallToActionOpen(false)} />
           </Grid>
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={5}>

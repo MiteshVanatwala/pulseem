@@ -18,6 +18,21 @@ export type MessageEditorProps = {
   classes: ClassesType;
 };
 
+export type callToActionFieldProps = {
+  fieldName: string;
+  type: string;
+  placeholder: string;
+  value: string;
+};
+
+export type callToActionRowProps = {
+  id: string;
+  typeOfAction: string;
+  fields: callToActionFieldProps[];
+};
+
+export type callToActionProps = callToActionRowProps[];
+
 export type PhoneProps = {
   classes: ClassesType;
 };
@@ -47,18 +62,3 @@ export type quickReplyButtonProps = {
   id: string;
   value: string;
 };
-
-export type callToActionFieldProps= {
-  fieldName: string;
-  type: string;
-  placeholder: string;
-  value: string;
-};
-
-export type callToActionRowProps= {
-  id: string;
-  typeOfAction: boolean;
-  fields: callToActionFieldProps[]
-};
-
-export type callToActionProps= callToActionRowProps[];

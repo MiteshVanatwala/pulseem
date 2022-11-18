@@ -1,27 +1,26 @@
 const shortcutEditLeft = {
-    xs: '8%',
-    sm: '18px',
-    md: '15px',
-    lg: '22px',
-    xl: '28px'
-}
+  xs: "8%",
+  sm: "18px",
+  md: "15px",
+  lg: "22px",
+  xl: "28px",
+};
 
 const shortcutPaperHeight = {
-    xs: '',
-    sm: '100%',
-    md: '100%',
-    lg: '100%',
-    xl: 'calc(100vh - 47px)'
-}
+  xs: "",
+  sm: "100%",
+  md: "100%",
+  lg: "100%",
+  xl: "calc(100vh - 47px)",
+};
 
 const shortcutBoxWidth = {
-    xs: 'auto',
-    sm: '100%',
-    md: '100%',
-    lg: '100%',
-    xl: 'auto'
-}
-
+  xs: "auto",
+  sm: "100%",
+  md: "100%",
+  lg: "100%",
+  xl: "auto",
+};
 
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
     whatsappTemplateTitle: {
@@ -177,4 +176,31 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
         marginTop: '-8px',
         textAlign: isRTL ? 'right' : 'left'
       },
+      quickReplayButtonGridWrapper: {
+        padding: '4px 0px'
+      },
+      quickReplayButtonWrapper: {
+        border: '1px solid #bbb',
+        borderRadius: '5px',
+        outline: 'none'
+      },
+      quickReplaybuttonField:{
+        outline: 'none',
+        padding: '8px 12px 8px 4px',
+        fontSize: '16px'
+      },
+      quickReplayValidationCounter: {
+        border: '0px',
+        borderRight: isRTL ? '1px solid rgba(0, 0, 0, 0.23)' : '0px',
+        borderLeft: isRTL ? '0px' : '1px solid rgba(0, 0, 0, 0.23)',
+        backgroundColor: "#ededed",
+        cursor: 'auto',
+        "&:hover": {
+          backgroundColor: "#ededed",
+        },
+      },
+      quickReplySave: {
+        backgroundColor: "green", 
+        color: "white"
+      }
 });

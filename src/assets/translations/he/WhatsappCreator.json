@@ -1,16 +1,17 @@
 {
     "Title": "Whatsapp",
-    "NewWhatsappCampaign": " WhatsApp יצירת תבנית",
-    "header": " WhatsApp יצירת תבנית",
+    "NewWhatsappCampaign": "יצירת תבנית WhatsApp",
+    "header": "יצירת תבנית WhatsApp",
     "WAMenuItemResource": {
-        "Text": "New WhatsApp Template"
+      "Text": "New WhatsApp Template"
     },
     "PageResource1": {
-        "Title": "WhatsApp Campaign Management"
+      "Title": "WhatsApp Campaign Management"
     },
     "submit": "Submit",
     "saveSms": "Save",
     "saveAndExit": "Save and Exit",
+  
     "whatsappTemplate": "Create New WhatsApp Template",
     "toolTip1": "Create the content you want to send to your recipients and then choose how, when and to whom to send",
     "createContent": "Create Content",
@@ -19,6 +20,27 @@
     "templateDesc": "Only you will see the name",
     "selectSavedTemplate": "Select Saved Template",
     "selectSavedTemplatePlaceholder": "Select Saved Template",
+    "typeText": "Insert text here - upto 1024 characters",
+    "yourMessage": "Your Message",
+  
+    "callToActionButton": "Call To Action",
+    "callToActionSaveButton": "Save",
+    "callToActionExitButton": "Exit",
+    "callToActionAddMoreButton": "Add More",
+    "callToActionRemoveButton": "הסר",
+    "callToActionTitle": "Call to Action",
+    "callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action.",
+    "typeOfAction": "סוג פעולה",
+    "phoneButtonText": "Button Text",
+    "phoneButtonTextPlaceholder": "צור קשר",
+    "country": "מדינה",
+    "phoneNumber": "מספר טלפון",
+    "phoneNumberPlaceholder": "Your Phone Number",
+    "websiteButtonText": "Button Text",
+    "websiteButtonTextPlaceholder": "Visit Our Website",
+    "websiteURL": "כתובת האתר",
+    "websiteURLPlaceholder": "Enter Your Website URL",
+    
     "template": {
         "textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
         "callToActionTooltip": "Call To Action",
@@ -31,5 +53,15 @@
         "removalText": "Removal Text",
         "dynamicFieldTooltip": "Dynamic Field",
         "dynamicField": "Dynamic Field"
+    },
+  
+    "quickReply": {
+        "title": "תגובה מהירה",
+        "titleDescription": "Create up to 3 buttons that let customers respond to your messages with the chosen text",
+        "addMore": "הוסף כפתור",
+        "exit": "Exit",
+        "save": "Save",
+        "buttonText": "טקסט כפתור"
     }
-}
+  }
+  

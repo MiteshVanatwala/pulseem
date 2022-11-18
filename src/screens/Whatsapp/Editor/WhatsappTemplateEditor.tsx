@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { actionButtonProps, coreProps, WhatsappCreatorProps } from "./WhatsappCreator.types";
 import clsx from "clsx";
-import { Box, Button, Grid, makeStyles, Tooltip } from "@material-ui/core";
+import { Box, Button, makeStyles, Tooltip } from "@material-ui/core";
 import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
@@ -34,8 +34,10 @@ const WhatsappTemplateEditor = ({ classes, onButtonClick }: WhatsappCreatorProps
     setAlignment(isRTL ? "right" : "left");
   }, [isRTL])
   const onTemplateChange = (e: BaseSyntheticEvent) => {
-    setTemplateText(e.target.value)
-    setCharacterCount(e.target.value?.length)
+    if (e.target.value?.length <= 1024) {
+      setTemplateText(e.target.value)
+      setCharacterCount(e.target.value?.length)
+    }
   }
 
   const buttons: actionButtonProps[] = [
