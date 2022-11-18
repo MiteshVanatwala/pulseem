@@ -62,40 +62,46 @@ const QuickReply = ({
 		setQuickButtons(updatedQuickButtons);
 	};
 	return (
-		<form onSubmit={handleSubmit}>
-			<Dialog
-				open={isQuickReplyOpen}
-				onClose={closeQuickReply}
-				aria-labelledby='form-dialog-title'
-				fullWidth
-				maxWidth='md'
-				className={classes.quickReplayDialog}>
-				<DialogTitle
-					id='form-dialog-title'
-					className={classes.quickReplayDialogHeader}>
-					{translator('whatsapp.quickReply.title')}
-					<IconButton
-						aria-label='close'
-						onClick={closeQuickReply}
-						className={classes.quickReplayDialogClose}>
-						<CloseIcon />
-					</IconButton>
-				</DialogTitle>
-				<DialogContent>
-					<DialogContentText
-						className={classes.quickReplayDialogHeaderDescription}>
-						{translator('whatsapp.quickReply.titleDescription')}
-					</DialogContentText>
+		<Dialog
+			open={isQuickReplyOpen}
+			onClose={closeQuickReply}
+			aria-labelledby='form-dialog-title'
+			fullWidth
+			maxWidth='md'
+			className={classes.quickReplayDialog}>
+			<DialogTitle
+				id='form-dialog-title'
+				className={classes.quickReplayDialogHeader}>
+				{translator('whatsapp.quickReply.title')}
+				<IconButton
+					aria-label='close'
+					onClick={closeQuickReply}
+					className={classes.quickReplayDialogClose}>
+					<CloseIcon />
+				</IconButton>
+			</DialogTitle>
+			<DialogContent>
+				<DialogContentText
+					className={classes.quickReplayDialogHeaderDescription}>
+					{translator('whatsapp.quickReply.titleDescription')}
+				</DialogContentText>
+				<form onSubmit={handleSubmit}>
 					{quickButtons?.map((button) => (
-						<Grid container alignItems='center' className={classes.quickReplayButtonGridWrapper}>
+						<Grid
+							container
+							alignItems='center'
+							className={classes.quickReplayButtonGridWrapper}>
 							<Grid item key={button.id}>
-								<Typography>{translator('whatsapp.quickReply.buttonText')}</Typography>
+								<Typography>
+									{translator('whatsapp.quickReply.buttonText')}
+								</Typography>
 								<Grid container className={classes.quickReplayButtonWrapper}>
 									<TextField
 										className={classes.quickReplaybuttonField}
 										name={'quickreply'}
 										value={button?.value}
 										onChange={(e) => onButtonTextChange(e, button)}
+										required
 									/>
 									<Button
 										variant='outlined'
@@ -133,16 +139,16 @@ const QuickReply = ({
 							{translator('whatsapp.quickReply.exit')}
 						</Button>
 						<Button
-							onClick={handleSubmit}
 							variant='contained'
+							type='submit'
 							className={classes.quickReplySave}
 							disabled={quickButtons?.length === 0 ? true : false}>
 							{translator('whatsapp.quickReply.save')}
 						</Button>
 					</DialogActions>
-				</DialogContent>
-			</Dialog>
-		</form>
+				</form>
+			</DialogContent>
+		</Dialog>
 	);
 };
 

@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useState } from "react";
+import React, { BaseSyntheticEvent, useState, useMemo } from "react";
 import {
   Box,
   Button,
@@ -16,61 +16,78 @@ import {
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import {
+  actionProps,
   callToActionFieldProps,
   callToActionProps,
   callToActionRowProps,
+  coreProps,
 } from "./WhatsappCreator.types";
-import { ClassesType } from "../../Classes.types";
 import uniqid from "uniqid";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { ClassesType } from "../../Classes.types";
 
-const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
+const ActionCallPopOver = ({
+  isCallToActionOpen,
+  closeCallToAction,
+  classes,
+}: actionProps) => {
+  const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+
   const { t: translator } = useTranslation();
 
-  const websiteField: callToActionFieldProps[] = [
-    {
-      fieldName: translator("whatsapp.websiteButtonText"),
-      type: "text",
-      placeholder: translator("whatsapp.websiteButtonTextPlaceholder"),
-      value: "",
-    },
-    {
-      fieldName: translator("whatsapp.websiteURL"),
-      type: "text",
-      placeholder: translator("whatsapp.websiteURLPlaceholder"),
-      value: "",
-    },
-  ];
-  const phoneNumberField: callToActionFieldProps[] = [
-    {
-      fieldName: translator("whatsapp.phoneButtonText"),
-      type: "text",
-      placeholder: translator("whatsapp.phoneButtonTextPlaceholder"),
-      value: "",
-    },
-    {
-      fieldName: translator("whatsapp.country"),
-      type: "select",
-      placeholder: "Select Your Country Code",
-      value: "+972 Israel",
-    },
-    {
-      fieldName: translator("whatsapp.phoneNumber"),
-      type: "tel",
-      placeholder: translator("whatsapp.phoneNumberPlaceholder"),
-      value: "",
-    },
-  ];
-  const [rows, setRows] = useState<callToActionProps>([]);
-  const [open, setOpen] = useState<boolean>(false);
+  const websiteField = useMemo<callToActionFieldProps[]>(
+    () => [
+      {
+        fieldName: translator("whatsapp.websiteButtonText"),
+        type: "text",
+        placeholder: translator("whatsapp.websiteButtonTextPlaceholder"),
+        value: "",
+      },
+      {
+        fieldName: translator("whatsapp.websiteURL"),
+        type: "text",
+        placeholder: translator("whatsapp.websiteURLPlaceholder"),
+        value: "",
+      },
+    ],
+    [isRTL]
+  );
+  const phoneNumberField = useMemo<callToActionFieldProps[]>(
+    () => [
+      {
+        fieldName: translator("whatsapp.phoneButtonText"),
+        type: "text",
+        placeholder: translator("whatsapp.phoneButtonTextPlaceholder"),
+        value: "",
+      },
+      {
+        fieldName: translator("whatsapp.country"),
+        type: "select",
+        placeholder: "Select Your Country Code",
+        value: "+972 Israel",
+      },
+      {
+        fieldName: translator("whatsapp.phoneNumber"),
+        type: "tel",
+        placeholder: translator("whatsapp.phoneNumberPlaceholder"),
+        value: "",
+      },
+    ],
+    [isRTL]
+  );
+
+  const initialFieldRow = {
+    id: uniqid(),
+    typeOfAction: "phonenumber",
+    fields: phoneNumberField,
+  };
+
+  const [callToActionFieldRows, setCallToActionFieldRows] =
+    useState<callToActionProps>([initialFieldRow]);
 
   const addMore = () => {
-    const initaialRow = {
-      id: uniqid(),
-      typeOfAction: "phonenumber",
-      fields: phoneNumberField,
-    };
-    setRows([...rows, initaialRow]);
+    setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
   };
 
   const onTypeOfActionChange = (
@@ -79,22 +96,21 @@ const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
   ) => {
     console.log("onTypeOfActionChange::e::", e);
     console.log("onTypeOfActionChange::row::", row);
-    let updatedRows = rows?.map((r: callToActionRowProps) => {
-      if (row.id === r.id) {
+    let updatedRows = callToActionFieldRows?.map((r: callToActionRowProps) => {
+      if (r.id === row.id) {
         if (e.target.value === "phonenumber") {
           return {
             ...r,
             fields: phoneNumberField,
             typeOfAction: "phonenumber",
           };
-        } else {
-          return { ...r, fields: websiteField, typeOfAction: "website" };
         }
+        return { ...r, fields: websiteField, typeOfAction: "website" };
       }
       return r;
     });
     console.log("onTypeOfActionChange::updatedRows::", updatedRows);
-    setRows([...updatedRows]);
+    setCallToActionFieldRows([...updatedRows]);
   };
 
   const onTypeOfActionFieldChange = (
@@ -102,9 +118,9 @@ const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
     row: callToActionRowProps,
     field: callToActionFieldProps
   ) => {
-    let updatedRows: callToActionRowProps[] = rows?.map(
+    let updatedRows: callToActionRowProps[] = callToActionFieldRows?.map(
       (r: callToActionRowProps) => {
-        if (row.id === r.id) {
+        if (r.id === row.id) {
           const updatedFields = r.fields.map((f: callToActionFieldProps) => {
             if (field.fieldName === f.fieldName) {
               return { ...f, value: e.target.value };
@@ -116,16 +132,18 @@ const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
         return r;
       }
     );
-    setRows([...updatedRows]);
+    setCallToActionFieldRows([...updatedRows]);
   };
 
   const onDeleteRow = (row: callToActionRowProps) => {
-    let updatedRows = rows.filter((r: callToActionRowProps) => r.id !== row.id);
-    setRows([...updatedRows]);
+    let updatedRows = callToActionFieldRows.filter(
+      (r: callToActionRowProps) => r.id !== row.id
+    );
+    setCallToActionFieldRows([...updatedRows]);
   };
 
   const handleSubmit = () => {
-    console.log("Submission Values", rows);
+    console.log("Submission Values", callToActionFieldRows);
   };
 
   return (
@@ -137,23 +155,29 @@ const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle id="form-dialog-title">
+        <DialogTitle
+          id="form-dialog-title"
+          className={classes.callToActionDialogHeaderTitle}
+        >
           {translator("whatsapp.callToActionTitle")}
           <IconButton
             aria-label="close"
             onClick={closeCallToAction}
-            style={{ position: "absolute", top: 0, right: 0 }}
+            className={classes.callToActionDialogClose}
           >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText
+            className={classes.callToActionDialogHeaderDescription}
+          >
             {translator("whatsapp.callToActionDialogContentText")}
           </DialogContentText>
-          <Box>
-            <Grid container direction="row" alignItems="flex-start" spacing={1}>
-              {rows.map((row: callToActionRowProps, index: number) => (
+
+          <Grid container className={classes.callToActionFields} spacing={1}>
+            {callToActionFieldRows.map(
+              (row: callToActionRowProps, index: number) => (
                 <Grid container spacing={3} key={"TOC" + index}>
                   <Grid item md={3}>
                     <Typography>
@@ -237,25 +261,30 @@ const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
                     </IconButton>
                   </Grid>
                 </Grid>
-              ))}
-            </Grid>
-          </Box>
+              )
+            )}
+          </Grid>
+
           <DialogActions>
-            {rows.length < 2 && (
+            {callToActionFieldRows.length < 2 && (
               <Button variant="contained" color="primary" onClick={addMore}>
                 {translator("whatsapp.callToActionAddMoreButton")}
               </Button>
             )}
-            <Button onClick={closeCallToAction} variant="contained" color="secondary">
+            <Button
+              onClick={closeCallToAction}
+              variant="contained"
+              color="secondary"
+            >
               {translator("whatsapp.callToActionExitButton")}
             </Button>
             <Button
               type="submit"
               onClick={handleSubmit}
-              disabled={rows.length === 0 ? true : false}
+              disabled={callToActionFieldRows.length === 0 ? true : false}
               variant="contained"
               style={
-                rows.length > 0
+                callToActionFieldRows.length > 0
                   ? { backgroundColor: "green", color: "white" }
                   : {}
               }
@@ -269,4 +298,4 @@ const ActionCallPopOver = ({ isCallToActionOpen, closeCallToAction }: any) => {
   );
 };
 
-export default ActionCallPopOver;
+export default React.memo(ActionCallPopOver);
