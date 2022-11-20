@@ -29,8 +29,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
     const [resendDisabled, setResendDisalbed] = useState(false);
     const [resendInterval, setResendInterval] = useState(10);
-    const [smsSuccess, setSmsSuccess] = useState(false);
-    const [emailSuccess, setEmailSuccess] = useState(false);
     const [userCodeConfirmed, setUserCodeConfirmed] = useState(false);
 
 
@@ -89,9 +87,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                     email: selectedVerificationContact,
                     optinCode: verificationCode
                 })).then((response) => {
+                    setUserCodeConfirmed(false);
                     switch (response?.payload.toLowerCase()) {
                         case "ok": {
-                            setEmailSuccess(true);
                             NextSlide();
                             break;
                         }
@@ -124,10 +122,10 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 optinCode: verificationCode,
                 phoneNumber: selectedVerificationContact
             }));
+            setUserCodeConfirmed(false);
             switch (result.payload.toLowerCase()) {
                 case 'ok': {
                     NextSlide();
-                    setSmsSuccess(true);
                     break;
                 }
                 case 'notmatch': {
@@ -154,11 +152,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 }
             }
         }
-
-
-        setTimeout(() => {
-            setUserCodeConfirmed(false);
-        }, 5000);
     }
 
     const handleResendInterval = () => {
@@ -399,7 +392,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 {EMAIL_SLIDE_1()}
                 {EMAIL_SLIDE_2()}
                 {EMAIL_SLIDE_3()}
-                {emailSuccess && EMAIL_SLIDE_SUCCESS()}
+                {EMAIL_SLIDE_SUCCESS()}
             </Box>
         )
     }
@@ -585,8 +578,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 {SMS_SLIDE_1()}
                 {SMS_SLIDE_2()}
                 {SMS_SLIDE_3()}
-                {/* {(trials && trials >= 4) ? SMS_SLIDE_ERROR() : SMS_SLIDE_SUCCESS()} */}
-                {smsSuccess && SMS_SLIDE_SUCCESS()}
+                {SMS_SLIDE_SUCCESS()}
             </Box>
         )
 
