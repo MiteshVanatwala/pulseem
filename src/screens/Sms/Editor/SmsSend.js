@@ -1469,7 +1469,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
 
     const settingsSaved = await dispatch(saveSmsCampSettings(requestPayload));
-    setLoader(false);
     if (settingsSaved.payload === true) {
       if (toggle && exit !== "exit") {
         setToastMessage(ToastMessages.SUCCESS);
@@ -1485,6 +1484,7 @@ const SmsSend = ({ classes, ...props }) => {
         setsummModal(true);
       }
     }
+    setLoader(false);
   };
   const estimatedEndDate = (summary) => {
     let date = moment();
