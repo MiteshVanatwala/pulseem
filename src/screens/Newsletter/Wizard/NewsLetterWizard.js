@@ -428,10 +428,10 @@ const NewsLetterWizard = ({ classes }) => {
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
                     }
                     else {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}`)
                     }
                     initFilesAndCredits(saveInfo.CampaignID);
                 }
