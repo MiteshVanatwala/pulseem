@@ -75,7 +75,7 @@ const WhatsappTemplateEditor = ({
         isDisable: false,
       },
     ],
-    [isRTL]
+    []
   );
 
   const actionButtons = useMemo(
