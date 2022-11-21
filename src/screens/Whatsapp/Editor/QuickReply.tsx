@@ -10,7 +10,7 @@ import {
 	TextField,
 	DialogActions,
 } from '@material-ui/core';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent } from 'react';
 import uniqid from 'uniqid';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import CloseIcon from '@material-ui/icons/Close';
@@ -26,40 +26,41 @@ const QuickReply = ({
 	classes,
 	isQuickReplyOpen,
 	closeQuickReply,
+	quickReplyButtons,
+	setQuickReplyButtons,
+	updateTemplateData
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
-	const handleSubmit = () => {};
+	const handleSubmit = () => {
+		setQuickReplyButtons(quickReplyButtons);
+		updateTemplateData(quickReplyButtons);
+		closeQuickReply();
+	};
 	const MAX_BUTTON_TEXT_LENGTH = 20;
-	const initialQuickButtons = [
-		{
-			id: uniqid(),
-			value: '',
-		},
-	];
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [quickButtons, setQuickButtons] =
-		useState<quickReplyButtonProps[]>(initialQuickButtons);
 	const addMore = () => {
 		const button = {
 			id: uniqid(),
 			value: '',
 		};
-		setQuickButtons([...quickButtons, button]);
+		setQuickReplyButtons([...quickReplyButtons, button]);
 	};
 	const onButtonTextChange = (
 		e: BaseSyntheticEvent,
 		button: quickReplyButtonProps
 	) => {
 		if (e.target.value?.length <= 20) {
-			const updatedQuickButtons = quickButtons.map((b) =>
+			const updatedQuickButtons = quickReplyButtons.map((b) =>
 				b.id === button.id ? { ...b, value: e.target.value } : b
 			);
-			setQuickButtons(updatedQuickButtons);
+			setQuickReplyButtons(updatedQuickButtons);
 		}
 	};
 	const onDeleteButton = (button: quickReplyButtonProps) => {
-		const updatedQuickButtons = quickButtons.filter((b) => b.id !== button.id);
-		setQuickButtons(updatedQuickButtons);
+		const updatedQuickButtons = quickReplyButtons.filter(
+			(b) => b.id !== button.id
+		);
+		setQuickReplyButtons(updatedQuickButtons);
 	};
 	return (
 		<Dialog
@@ -86,7 +87,7 @@ const QuickReply = ({
 					{translator('whatsapp.quickReply.titleDescription')}
 				</DialogContentText>
 				<form onSubmit={handleSubmit}>
-					{quickButtons?.map((button) => (
+					{quickReplyButtons?.map((button) => (
 						<Grid
 							container
 							alignItems='center'
@@ -129,7 +130,7 @@ const QuickReply = ({
 							variant='contained'
 							color='primary'
 							onClick={addMore}
-							disabled={quickButtons?.length >= 3 ? true : false}>
+							disabled={quickReplyButtons?.length >= 3 ? true : false}>
 							{translator('whatsapp.quickReply.addMore')}
 						</Button>
 						<Button
@@ -141,8 +142,7 @@ const QuickReply = ({
 						<Button
 							variant='contained'
 							type='submit'
-							className={classes.quickReplySave}
-							disabled={quickButtons?.length === 0 ? true : false}>
+							className={classes.quickReplySave}>
 							{translator('whatsapp.quickReply.save')}
 						</Button>
 					</DialogActions>
