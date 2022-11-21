@@ -28,7 +28,7 @@ const QuickReply = ({
 	closeQuickReply,
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
-	const handleSubmit = () => {};
+	const onSubmit = () => {};
 	const MAX_BUTTON_TEXT_LENGTH = 20;
 	const initialQuickButtons = [
 		{
@@ -85,7 +85,7 @@ const QuickReply = ({
 					className={classes.quickReplayDialogHeaderDescription}>
 					{translator('whatsapp.quickReply.titleDescription')}
 				</DialogContentText>
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={onSubmit}>
 					{quickButtons?.map((button) => (
 						<Grid
 							container
