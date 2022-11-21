@@ -21,54 +21,6 @@ export const createFolder = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-//#region Images
-export const postFile = createAsyncThunk(
-    '/Gallery/PostNewFile', async (fileGallery, thunkAPI) => {
-        try {
-            const response = await instence.post(`/Gallery/PostNewFile`, fileGallery);
-            return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-
-export const uploadFile = createAsyncThunk(
-    '/gallery/UploadFile', async (fileGallery, thunkAPI) => {
-        try {
-            const response = await instence.put(`/gallery/UploadFile`, fileGallery,
-                {
-                    onUploadProgress: (progressEvent) => {
-                        const { loaded, total } = progressEvent
-                        let percent = Math.floor(loaded * 100 / total);
-                        thunkAPI.dispatch(setUploadProgress(percent));
-                    }
-                });
-            return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-//#endregion Images
-//#region Documents
-export const postFiles = createAsyncThunk(
-    '/Gallery/PostMultipleFiles', (files, thunkAPI) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const response = await instence.post(`/Gallery/PostMultipleFiles`, files,
-                    {
-                        onUploadProgress: (progressEvent) => {
-                            const { loaded, total } = progressEvent
-                            let percent = Math.floor(loaded * 100 / total);
-                            thunkAPI.dispatch(setUploadProgress(percent));
-                        }
-                    });
-                resolve(response.data)
-            } catch (error) {
-                reject(thunkAPI.rejectWithValue({ error: error.message }));
-            }
-        })
-    });
-
 export const uploadFiles = createAsyncThunk(
     '/gallery/UploadFiles', async (files, thunkAPI) => {
         try {
@@ -85,9 +37,6 @@ export const uploadFiles = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-//#endregion Documents
-
-
 export const deleteGalleryFile = createAsyncThunk(
     '/Gallery/DeleteFile', async (fileGallery, thunkAPI) => {
         try {

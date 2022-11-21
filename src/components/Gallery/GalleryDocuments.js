@@ -4,7 +4,7 @@ import { Image } from './Image'
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { deleteGalleryFile, uploadFile, uploadFiles } from '../../redux/reducers/gallerySlice';
+import { deleteGalleryFile, uploadFiles } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { Loader } from '../Loader/Loader';
 import { AllowedExentions, ImageExtensions } from '../../model/Gallery/FileExtentions';
@@ -39,61 +39,38 @@ export const GalleryDocuments = ({
             setLoader(true);
             setIsFilePicked(false);
             setFileToUpload(null);
-            // Single file
-            if (fileToUploads.length === 1) {
-                const fileToUpload = fileToUploads[0];
+            const promises = [];
+            const errorList = [];
+            const formData = new FormData();
+            formData.append("FolderName", selectedFolder);
+            formData.append("FolderType", PulseemFolderType.DOCUMENT);
+            for (var i = 0; i < fileToUploads.length; i++) {
+                const fileToUpload = fileToUploads[i];
+
                 const splitFileName = fileToUpload.name.split('.');
                 const fileExtension = splitFileName[splitFileName.length - 1];
+
                 if (!AllowedExentions.find(x => x?.toLowerCase() === fileExtension?.toLowerCase())) {
-                    onToast({ severity: 'error', color: 'error', message: t('common.notAllowedExtension'), showAnimtionCheck: false })
-                    setFileToUpload(null);
-                    setLoader(false);
-                    return;
+                    errorList.push(`${fileToUpload.name} - ${t('common.notAllowedExtension')}`);
+                    break;
                 }
 
                 if (fileToUpload.size > 10485760) {
-                    onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
-                    setFileToUpload(null);
-                    setLoader(false);
-                    return;
+                    errorList.push(`${fileToUpload.name} - ${t('common.maxImageSize')}`);
+                    break;
                 }
 
-                const formData = new FormData();
-                formData.append('File', fileToUpload);
-                new Promise(resolve => {
-                    const formData = new FormData();
-                    formData.append("file", fileToUpload);
-                    formData.append("FolderName", selectedFolder);
-                    formData.append("FolderType", PulseemFolderType.DOCUMENT);
-                    resolve(formData);
-                }).then(async (result) => {
-                    await dispatch(uploadFile(result));
-                    setLoader(false);
-                    onReInitGallery();
-                    hiddenFileInput.current.value = null;
+                const promise = new Promise(resolve => {
+                    formData.append(fileToUpload.name, fileToUpload);
+                    resolve();
                 });
+                promises.push(promise);
             }
-            // Multiple files
+            if (errorList?.length > 0) {
+                onToast({ severity: 'error', color: 'error', message: `${errorList.join(',')}`, showAnimtionCheck: false })
+                setLoader(false);
+            }
             else {
-                const promises = [];
-                const formData = new FormData();
-                formData.append("FolderName", selectedFolder);
-                formData.append("FolderType", PulseemFolderType.DOCUMENT);
-                for (var i = 0; i < fileToUploads.length; i++) {
-                    const fileToUpload = fileToUploads[i];
-
-                    if (fileToUpload.size > 10485760) {
-                        onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
-                        setFileToUpload(null);
-                        return;
-                    }
-
-                    const promise = new Promise(resolve => {
-                        formData.append(fileToUpload.name, fileToUpload);
-                        resolve();
-                    });
-                    promises.push(promise);
-                }
                 Promise.all(promises).then(() => {
                     dispatch(uploadFiles(formData)).then((response) => {
                         const uploadedFiles = response?.payload.Message?.filter((f) => { return f.Uploaded === true });

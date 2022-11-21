@@ -1,12 +1,13 @@
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { Button, Grid, Box } from '@material-ui/core'
 import { Image } from './Image'
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { postFile, postFiles, deleteGalleryFile } from '../../redux/reducers/gallerySlice';
+import { uploadFiles, deleteGalleryFile } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { Loader } from '../Loader/Loader';
+import { ImageExtensions } from '../../model/Gallery/FileExtentions';
 
 export const GalleryImages = ({
     classes,
@@ -28,97 +29,65 @@ export const GalleryImages = ({
     const [fileToUploads, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [galleryReady, setGalleryReady] = useState(false);
-    const [showLoader, setShowLoader] = useState(false);
+    const [showLoader, setLoader] = useState(false);
     const hiddenFileInput = React.useRef(null);
     const { uploadProgress } = useSelector((state) => state.gallery);
 
 
     useEffect(() => {
         if (fileToUploads != null && isFilePicked) {
-            setShowLoader(true);
+            setLoader(true);
             setIsFilePicked(false);
             setFileToUpload(null);
-            // Single file
-            if (fileToUploads.length === 1) {
-                const fileToUpload = fileToUploads[0];
-                if (fileToUpload.size > 10485760) {
-                    onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
-                    setFileToUpload(null);
-                    return;
+            const promises = [];
+            const errorList = [];
+            const formData = new FormData();
+            formData.append("FolderName", selectedFolder);
+            formData.append("FolderType", PulseemFolderType.CLIENT_IMAGES);
+            for (var i = 0; i < fileToUploads.length; i++) {
+                const fileToUpload = fileToUploads[i];
+
+                const splitFileName = fileToUpload.name.split('.');
+                const fileExtension = splitFileName[splitFileName.length - 1];
+
+                if (!ImageExtensions.find(x => x?.toLowerCase() === fileExtension?.toLowerCase())) {
+                    errorList.push(`${fileToUpload.name} - ${t('common.notAllowedExtension')}`);
+                    break;
                 }
-                new Promise(resolve => {
+
+                if (fileToUpload.size > 10485760) {
+                    errorList.push(`${fileToUpload.name} - ${t('common.maxImageSize')}`);
+                    break;
+                }
+
+                const promise = new Promise(resolve => {
+                    formData.append(fileToUpload.name, fileToUpload);
                     const reader = new FileReader();
                     reader.onload = e => {
                         var binaryData = e.target.result;
                         var base64String = window.btoa(binaryData);
                         const imgBase64 =
                             "data:" + fileToUpload.type + ";base64," + base64String;
-                        resolve(imgBase64);
+                        formData.append("Base64", imgBase64);
+                        resolve();
                     };
                     reader.readAsBinaryString(fileToUpload);
-                }).then(async (result) => {
-                    const fileModel = {
-                        FileName: fileToUpload.name,
-                        Base64: result,
-                        FolderName: selectedFolder,
-                        FolderType: PulseemFolderType.CLIENT_IMAGES
-                    }
-                    await dispatch(postFile(fileModel));
-                    onReInitGallery();
-                    setShowLoader(false);
-                    hiddenFileInput.current.value = null;
                 });
+                promises.push(promise);
             }
-            // Multiple files
+            if (errorList?.length > 0) {
+                onToast({ severity: 'error', color: 'error', message: `${errorList.join(',')}`, showAnimtionCheck: false })
+                setLoader(false);
+            }
             else {
-                const filesArray = [];
-                const promises = [];
-                for (var i = 0; i < fileToUploads.length; i++) {
-                    const fileToUpload = fileToUploads[i];
-
-                    if (fileToUpload.size > 10485760) {
-                        onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
-                        setFileToUpload(null);
-                        return;
-                    }
-                    const promise = new Promise(resolve => {
-                        const reader = new FileReader();
-                        reader.onload = e => {
-                            var binaryData = e.target.result;
-                            var base64String = window.btoa(binaryData);
-                            const imgBase64 =
-                                "data:" + fileToUpload.type + ";base64," + base64String;
-                            resolve(imgBase64);
-                        };
-                        reader.readAsBinaryString(fileToUpload);
-                    }).then(async (result) => {
-                        const fileModel = {
-                            FileName: fileToUpload.name,
-                            Base64: result,
-                            FolderName: selectedFolder,
-                            FolderType: PulseemFolderType.CLIENT_IMAGES
-                        }
-                        filesArray.push(fileModel);
-                    });
-
-                    promises.push(promise);
-                }
                 Promise.all(promises).then(() => {
-                    dispatch(postFiles(filesArray)).then((response) => {
+                    dispatch(uploadFiles(formData)).then((response) => {
                         const uploadedFiles = response?.payload.Message?.filter((f) => { return f.Uploaded === true });
-                        const failedUploadedFiles = response?.payload.Message?.filter((f) => { return f.Uploaded === false });
-
                         const successMessage = `${uploadedFiles?.length} ${t('common.filesUploaded')}`;
-                        const failedMessage = `${failedUploadedFiles?.length} ${t('common.filesNotUploaded')} (${failedUploadedFiles?.map((f) => { return f?.FileName }).join(',')})`;
-                        if (failedUploadedFiles?.length > 0) {
-                            onToast({ severity: 'error', color: 'error', message: `${failedMessage}`, showAnimtionCheck: false })
-                        }
-                        else {
-                            onToast({ severity: 'success', color: 'success', message: `${successMessage}`, showAnimtionCheck: false })
-                        }
+                        onToast({ severity: 'success', color: 'success', message: `${successMessage}`, showAnimtionCheck: false })
 
                         onReInitGallery();
-                        setShowLoader(false);
+                        setLoader(false);
                         hiddenFileInput.current.value = null;
                     });
                 })
