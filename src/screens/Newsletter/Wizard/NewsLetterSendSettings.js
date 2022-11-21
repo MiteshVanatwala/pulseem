@@ -46,6 +46,7 @@ import PulseDialog from "./Popups/PulseDialog";
 import FormSendingTime from "../../../components/Wizard/FormSendingTime";
 import SpecialModal from "./Popups/SpecialModal";
 import { getEmailSendSettings, getGroups, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
+import PreSendSummary from "./Popups/PreSendSummary";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -113,7 +114,6 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     const [activeTab, setActiveTab] = useState(0);
     const [highlighted, setHighlighted] = useState(false);
     const [selectedGroups, setSelectedGroups] = useState([]);
-    // const [filterGroup, setFilterGroups] = useState([])
     const [dialogType, setDialogType] = useState({ type: null });
     const [bsDot, setbsDot] = useState(false);
     const [manualValues, setManualValues] = useState({
@@ -145,26 +145,6 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         displayFilter: false,
         reciFilter: false,
     })
-    // const [pulseValues, setPulseValues] = useState({
-    // togglePulse: false,
-    // pulseBool: false,
-    // pulsePer: "recipients",
-    // pulseReci: '',
-    // pulseAmount: "",
-    // pulseType: 2,
-    // SendingMethod: 1,
-    // timeBool: false,
-    // timeInterval: '',
-    // toggleRandom: false,
-    // boolRandom: false,
-    // random: '',
-    // noTrue: false,
-    // minName: 'mins',
-    // hourName: 'Hours',
-    // snackBarPulseBoolean: false,
-    // snackbarTimeBoolean: false,
-    // snackbarMainPulse: false
-    // })
     const [sourcePulses, setSourcePulses] = useState({});
     const [sendingTimeFormValues, setSendingTimeFormValues] = useState({
         pulseAmount: "",
@@ -191,14 +171,6 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
         recipientsSnackbar: false
     })
     const [specialSettingValidation, setspecialSettingValidation] = useState(false)
-
-    // const [sendDate, setSendDate] = useState(null);
-    // const [sendTime, setSendTime] = useState(null);
-    // const [timePickerOpen, setTimePickerOpen] = useState(false);
-    // const [toggleB, settoggleB] = useState(true);
-    // const [toggleA, settoggleA] = useState(false);
-    // const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
-    // const [spectialDateFieldID, setDateFieldID] = useState("0");
 
     const getData = async () => {
         setLoader(true);
@@ -327,7 +299,10 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
             TimeInterval: sendingTimeFormValues.timeInterval || campaignValues.TimeInterval,
             SendDate: sendingTimeFormValues.sendDate || campaignValues.sendDate,
             SendingMethod: sendingTimeFormValues.SendingMethod || campaignValues.SendingMethod,
-            GroupIds: selectedGroups.join(",")
+            GroupIds: selectedGroups.map(grp => grp.GroupID).join(",")
+        }
+        if (isTrue) {
+            payload = { ...payload, IsSummaryRequest: true, IsBestTime: true }
         }
         try {
             const response = dispatch(setEmailSendSettings(payload))
@@ -1029,7 +1004,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                         color="primary"
                         style={{ margin: '8px' }}
                         onClick={() => {
-                            onSaveSettings(true);
+                            onSaveSettings();
                         }}
                     >
                         {t('mainReport.saveSms')}
@@ -1050,7 +1025,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                                 selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
                         }}
                         onClick={() => {
-                            onSaveSettings(false)
+                            setDialogType({ type: 'preSendSummary' })
                         }}
                     >
                         {t("mainReport.summary")}
@@ -1135,7 +1110,8 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                 onCancel: () => setDialogType(null),
             }),
             sendSuccess: SendSuccessDialog(),
-            summary: SummaryDialog({ classes: classes, count: data })
+            summary: SummaryDialog({ classes: classes, count: data }),
+            preSendSummary: PreSendSummary({ classes: classes, onConfirm: () => onSaveSettings(true) })
             // noCredit: noCreditDialog(),
         }
 

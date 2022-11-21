@@ -2360,6 +2360,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     boxShadow: "0px 3px 3px darkred",
     maxWidth: 150,
   },
+  dialogBlueButton: {
+    background: "#006996",
+    // backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+    border: "1px solid #006996",
+    borderTop: "0px solid #006996",
+    boxShadow: "0px 3px 3px #006996",
+    // maxWidth: 150,
+  },
   dialogConfirmBlueButton: {
     backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
     maxWidth: 150,
