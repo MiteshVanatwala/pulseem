@@ -50,12 +50,11 @@ const QuickReply = ({
 		e: BaseSyntheticEvent,
 		button: quickReplyButtonProps
 	) => {
-		if (e.target.value?.length <= 20) {
-			const updatedQuickButtons = quickButtons.map((b) =>
-				b.id === button.id ? { ...b, value: e.target.value } : b
-			);
-			setQuickButtons(updatedQuickButtons);
-		}
+		if (e.target.value?.length > MAX_BUTTON_TEXT_LENGTH) return;
+		const updatedQuickButtons = quickButtons.map((b) =>
+			b.id === button.id ? { ...b, value: e.target.value } : b
+		);
+		setQuickButtons(updatedQuickButtons);
 	};
 	const onDeleteButton = (button: quickReplyButtonProps) => {
 		const updatedQuickButtons = quickButtons.filter((b) => b.id !== button.id);
