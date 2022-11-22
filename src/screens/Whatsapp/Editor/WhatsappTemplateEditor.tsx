@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import {
 	actionButtonProps,
 	callToActionFieldProps,
-	callToActionProps,
-	callToActionRowProps,
 	coreProps,
 	quickReplyButtonProps,
 	WhatsappCreatorProps,

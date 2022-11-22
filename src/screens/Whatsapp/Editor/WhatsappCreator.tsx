@@ -93,12 +93,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		useState<callToActionProps>([initialFieldRow]);
 
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
-		console.log(e.target.value);
 		setTemplateName(e.target.value.toLowerCase());
 	};
 
 	const onSavedTemplateChange = (e: BaseSyntheticEvent) => {
-		console.log(e.target.value);
 		setSavedTemplate(e.target.value);
 	};
 
@@ -120,7 +118,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const onActionButtonDelete = (
 		button: quickReplyButtonProps | callToActionRowProps
 	) => {
-		if (buttonType === 'quickreply') {
+		if (buttonType === 'quickReply') {
 			const updatedQuickButtonsData = quickReplyButtons.filter(
 				(quickButton: quickReplyButtonProps) => quickButton.id !== button.id
 			);
