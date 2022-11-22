@@ -51,14 +51,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
-        workspace: {
-            type: 'mixed',
-            contentWidth: 600,
-            popup: {
-                contentWidth: 600,
-                contentWidthMobile: 300
-            }
-        },
+        // messageWidth: 600,
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
@@ -102,7 +95,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         }
                         resolve(metadata);
                     }
-                    else{
+                    else {
                         reject();
                     }
                 }

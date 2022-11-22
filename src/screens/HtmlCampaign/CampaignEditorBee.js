@@ -221,7 +221,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
         else {
           const beeTest = new BeePlugin(beeObject);
-          const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : {};
+          const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : { messageWidth: '600px' };
           beeTest.start(config, template).then((instance) => {
             editorRef.current = instance;
           });
