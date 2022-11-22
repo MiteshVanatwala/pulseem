@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, useState, useMemo } from 'react';
+import React, { BaseSyntheticEvent } from 'react';
 import {
 	Button,
 	Dialog,
@@ -25,12 +25,12 @@ const ActionCallPopOver = ({
 	isCallToActionOpen,
 	closeCallToAction,
 	classes,
-  callToActionFieldRows,
-  setCallToActionFieldRows,
-  phoneNumberField,
-  websiteField,
-  addMore,
-  updateTemplateData
+	callToActionFieldRows,
+	setCallToActionFieldRows,
+	phoneNumberField,
+	websiteField,
+	addMore,
+	updateTemplateData,
 }: actionProps) => {
 	const { t: translator } = useTranslation();
 
@@ -41,17 +41,15 @@ const ActionCallPopOver = ({
 		console.log('onTypeOfActionChange::e::', e);
 		console.log('onTypeOfActionChange::row::', row);
 		let updatedRows = callToActionFieldRows?.map((r: callToActionRowProps) => {
-			if (r.id === row.id) {
-				if (e.target.value === 'phonenumber') {
-					return {
-						...r,
-						fields: phoneNumberField,
-						typeOfAction: 'phonenumber',
-					};
-				}
-				return { ...r, fields: websiteField, typeOfAction: 'website' };
+			if (r.id !== row.id) return r;
+			if (e.target.value === 'phonenumber') {
+				return {
+					...r,
+					fields: phoneNumberField,
+					typeOfAction: 'phonenumber',
+				};
 			}
-			return r;
+			return { ...r, fields: websiteField, typeOfAction: 'website' };
 		});
 		console.log('onTypeOfActionChange::updatedRows::', updatedRows);
 		setCallToActionFieldRows([...updatedRows]);
@@ -64,16 +62,14 @@ const ActionCallPopOver = ({
 	) => {
 		let updatedRows: callToActionRowProps[] = callToActionFieldRows?.map(
 			(r: callToActionRowProps) => {
-				if (r.id === row.id) {
-					const updatedFields = r.fields.map((f: callToActionFieldProps) => {
-						if (field.fieldName === f.fieldName) {
-							return { ...f, value: e.target.value };
-						}
-						return f;
-					});
-					return { ...r, fields: updatedFields };
-				}
-				return r;
+				if (r.id !== row.id) return r;
+				const updatedFields = r.fields.map((f: callToActionFieldProps) => {
+					if (field.fieldName === f.fieldName) {
+						return { ...f, value: e.target.value };
+					}
+					return f;
+				});
+				return { ...r, fields: updatedFields };
 			}
 		);
 		setCallToActionFieldRows([...updatedRows]);

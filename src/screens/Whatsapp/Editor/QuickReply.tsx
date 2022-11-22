@@ -31,7 +31,7 @@ const QuickReply = ({
 	updateTemplateData
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
-	const handleSubmit = () => {
+	const onSubmit = () => {
 		setQuickReplyButtons(quickReplyButtons);
 		updateTemplateData(quickReplyButtons);
 		closeQuickReply();
@@ -49,12 +49,11 @@ const QuickReply = ({
 		e: BaseSyntheticEvent,
 		button: quickReplyButtonProps
 	) => {
-		if (e.target.value?.length <= 20) {
-			const updatedQuickButtons = quickReplyButtons.map((b) =>
-				b.id === button.id ? { ...b, value: e.target.value } : b
-			);
-			setQuickReplyButtons(updatedQuickButtons);
-		}
+		if (e.target.value?.length > MAX_BUTTON_TEXT_LENGTH) return;
+		const updatedQuickButtons = quickReplyButtons.map((b) =>
+			b.id === button.id ? { ...b, value: e.target.value } : b
+		);
+		setQuickReplyButtons(updatedQuickButtons);
 	};
 	const onDeleteButton = (button: quickReplyButtonProps) => {
 		const updatedQuickButtons = quickReplyButtons.filter(
@@ -86,7 +85,7 @@ const QuickReply = ({
 					className={classes.quickReplayDialogHeaderDescription}>
 					{translator('whatsapp.quickReply.titleDescription')}
 				</DialogContentText>
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={onSubmit}>
 					{quickReplyButtons?.map((button) => (
 						<Grid
 							container
