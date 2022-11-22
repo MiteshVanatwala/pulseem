@@ -582,5 +582,7 @@
   "adaptive": "Adaptive",
   "responsive": "Responsive",
   "chooseFile": "Upload File",
-  "notAllowedExtension": "This file extension is not allowed! Please try another file."
+  "notAllowedExtension": "This file extension is not allowed! Please try another file.",
+  "filesUploaded": "Files successfully uplaoded",
+  "filesNotUploaded": "Files failed: "
 }
