@@ -57,3 +57,14 @@ export type actionButtonProps = {
   buttonTitle: string;
   isDisable: boolean;
 };
+
+export type quickReplyProps = {
+  classes: ClassesType["classes"];
+  isQuickReplyOpen: boolean;
+  closeQuickReply: () => void;
+};
+
+export type quickReplyButtonProps = {
+  id: string;
+  value: string;
+};

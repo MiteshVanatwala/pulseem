@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { Box, Grid } from "@material-ui/core";
 import WhatsappTemplateEditor from "./WhatsappTemplateEditor";
 import { actionButtonProps } from "./WhatsappCreator.types";
+import QuickReply from "./QuickReply";
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
   const { windowSize } = useSelector(
@@ -21,6 +22,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
   const [templateName, setTemplateName] = useState<string>("");
   const [savedTemplate, setSavedTemplate] = useState<string>("");
+  const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
   const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 
   const onTemplateNameChange = (e: BaseSyntheticEvent) => {
@@ -42,7 +44,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
   const onButtonClick = (button: actionButtonProps) => {
     if (button.buttonTitle.includes("callToAction")) {
-      setIsCallToActionOpen(true);
+      setIsCallToActionOpen(true)
+    } else if (button.buttonTitle.includes("quickReplay")) {
+      setIsQuickReplyOpen(true)
     }
   };
 
@@ -99,6 +103,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
             </Grid>
           </Grid>
         </Grid>
+        <QuickReply classes={classes} isQuickReplyOpen={isQuickReplyOpen} closeQuickReply={() => setIsQuickReplyOpen(false)} />
       </DefaultScreen>
     </form>
   );

@@ -151,7 +151,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "OpenSansHebrew",
     marginTop: "-8px",
     textAlign: isRTL ? "right" : "left",
-    marginTop: "-8px",
   },
   callToActionDialogHeaderTitle: {
     fontSize: 14,
@@ -169,4 +168,61 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
   callToActionFields: {
     direction: isRTL ? "rtl" : "ltr",
   },
+  quickReplyDelete: {
+    alignItems: 'center',
+    color: "#ff0000",
+    cursor: "pointer",
+    paddingTop: "22px",
+    paddingLeft: isRTL ? '0px' : '10px',
+    paddingRight: isRTL ? '10px' : '0px',
+  },
+  quickReplayDialog: {
+    direction: isRTL ? 'rtl' : 'ltr'
+  },
+  quickReplayDialogClose: {
+    position: 'absolute',
+    top: 0,
+    left: isRTL ? 0 : 'unset',
+    right: isRTL ? 'unset' : 0
+  },
+  quickReplayDialogHeader: {
+    fontSize: 14,
+    fontFamily: 'OpenSansHebrew-Bold',
+    color: "#0371ad",
+    paddingBottom: '0px',
+    textAlign: isRTL ? 'right' : 'left'
+  },
+  quickReplayDialogHeaderDescription: {
+    fontSize: 12,
+    fontFamily: 'OpenSansHebrew',
+    marginTop: '-8px',
+    textAlign: isRTL ? 'right' : 'left'
+  },
+  quickReplayButtonGridWrapper: {
+    padding: '4px 0px'
+  },
+  quickReplayButtonWrapper: {
+    border: '1px solid #bbb',
+    borderRadius: '5px',
+    outline: 'none'
+  },
+  quickReplaybuttonField:{
+    outline: 'none',
+    padding: '8px 12px 8px 4px',
+    fontSize: '16px'
+  },
+  quickReplayValidationCounter: {
+    border: '0px',
+    borderRight: isRTL ? '1px solid rgba(0, 0, 0, 0.23)' : '0px',
+    borderLeft: isRTL ? '0px' : '1px solid rgba(0, 0, 0, 0.23)',
+    backgroundColor: "#ededed",
+    cursor: 'auto',
+    "&:hover": {
+      backgroundColor: "#ededed",
+    },
+  },
+  quickReplySave: {
+    backgroundColor: "green", 
+    color: "white"
+  }
 });
