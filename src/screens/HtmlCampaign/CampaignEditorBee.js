@@ -33,6 +33,7 @@ import { IoMdImages } from 'react-icons/io';
 import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
+import { getFileGallery } from '../../redux/reducers/gallerySlice';
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -74,6 +75,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [showGallery, setShowGallery] = useState(false);
 
   //#endregion State
+
   //#region Get Extra fields & Landing pages, after Data Ready
   useEffect(() => {
     if (dataReady) {
@@ -82,12 +84,24 @@ const CampaignEditor = ({ classes, ...props }) => {
           setPulseemMergeData(exData);
         })
       }
-      const initLP = () => {
+      const initSpecialLinks = () => {
         initLandingPages(previousLandingData, t).then((items) => {
-          setSpecialLinks(items);
+          dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
+            const gallery = response.payload;
+            const specialLinksFiles = items;
+
+            gallery?.Files?.forEach((file) => {
+              specialLinksFiles.push({
+                type: file.FolderName.indexOf('\\') > -1 ? file.FolderName.split('\\')[1] : file.FolderName,
+                label: file.FileName,
+                link: file.FileURL
+              })
+            });
+            setSpecialLinks(specialLinksFiles);
+          });
         });
       }
-      Promise.all([initFields(), initLP()]).then(() => {
+      Promise.all([initFields(), initSpecialLinks()]).then(() => {
         return true;
       })
     }
