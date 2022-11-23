@@ -531,6 +531,7 @@ const NewsLetterWizard = ({ classes }) => {
                                                 value={campaingnValues?.FromEmail}
                                                 onChange={(event, val) => {
                                                     setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
+                                                    setErrors({ ...errors, FromEmail: '' });
                                                 }}
 
                                                 name="FromEmail"
@@ -558,7 +559,10 @@ const NewsLetterWizard = ({ classes }) => {
                                                 }
                                                 )}
                                             </Select>
-                                            <FormHelperText>{errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}{!errors.FromEmail && <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>}</FormHelperText>
+                                            <FormHelperText>
+                                                {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
+                                                <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                                            </FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }

@@ -583,5 +583,7 @@
   "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר.",
   "uploadImage": "העלאת תמונה",
   "folder": "[ספרייה]:",
-  "main": "ראשי"
+  "main": "ראשי",
+  "filesUploaded": "קבצים עלו בהצלחה",
+  "filesNotUploaded": "קבצים נכשלו: "
 }

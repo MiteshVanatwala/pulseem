@@ -588,5 +588,7 @@
   "notAllowedExtension": "This file extension is not allowed! Please try another file.",
   "uploadImage": "Upload Image",
   "folder": "[Folder]:",
-  "main": "Main"
+  "main": "Main",
+  "filesUploaded": "Files successfully uplaoded",
+  "filesNotUploaded": "Files failed: "
 }

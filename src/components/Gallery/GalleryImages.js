@@ -1,11 +1,13 @@
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { Button, Grid, Box } from '@material-ui/core'
 import { Image } from './Image'
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { postFile, deleteGalleryFile } from '../../redux/reducers/gallerySlice';
+import { uploadFiles, deleteGalleryFile } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
+import { Loader } from '../Loader/Loader';
+import { ImageExtensions } from '../../model/Gallery/FileExtentions';
 
 export const GalleryImages = ({
     classes,
@@ -24,52 +26,79 @@ export const GalleryImages = ({
     const [images, setImages] = useState([]);
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const [fileToUpload, setFileToUpload] = useState(null);
+    const [fileToUploads, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [galleryReady, setGalleryReady] = useState(false);
-    const [isReInit, setReinit] = useState(false);
+    const [showLoader, setLoader] = useState(false);
     const hiddenFileInput = React.useRef(null);
+    const { uploadProgress } = useSelector((state) => state.gallery);
 
 
     useEffect(() => {
-        if (fileToUpload != null && isFilePicked) {
+        if (fileToUploads != null && isFilePicked) {
+            setLoader(true);
             setIsFilePicked(false);
             setFileToUpload(null);
+            const promises = [];
+            const errorList = [];
             const formData = new FormData();
-            formData.append('File', fileToUpload);
-            if (fileToUpload.size > 1048576) {
-                onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
-                setFileToUpload(null);
-                return;
-            }
-            new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    var binaryData = e.target.result;
-                    var base64String = window.btoa(binaryData);
-                    const imgBase64 =
-                        "data:" + fileToUpload.type + ";base64," + base64String;
-                    resolve(imgBase64);
-                };
-                reader.readAsBinaryString(fileToUpload);
-            }).then(async (result) => {
-                const fileModel = {
-                    FileName: fileToUpload.name,
-                    Base64: result,
-                    FolderName: selectedFolder,
-                    FolderType: PulseemFolderType.CLIENT_IMAGES
+            formData.append("FolderName", selectedFolder);
+            formData.append("FolderType", PulseemFolderType.CLIENT_IMAGES);
+            for (var i = 0; i < fileToUploads.length; i++) {
+                const fileToUpload = fileToUploads[i];
+
+                const splitFileName = fileToUpload.name.split('.');
+                const fileExtension = splitFileName[splitFileName.length - 1];
+
+                if (!ImageExtensions.find(x => x?.toLowerCase() === fileExtension?.toLowerCase())) {
+                    errorList.push(`${fileToUpload.name} - ${t('common.notAllowedExtension')}`);
+                    break;
                 }
-                await dispatch(postFile(fileModel));
-                setReinit(true);
-                onReInitGallery();
-            });
+
+                if (fileToUpload.size > 10485760) {
+                    errorList.push(`${fileToUpload.name} - ${t('common.maxImageSize')}`);
+                    break;
+                }
+
+                const promise = new Promise(resolve => {
+                    formData.append(fileToUpload.name, fileToUpload);
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        var binaryData = e.target.result;
+                        var base64String = window.btoa(binaryData);
+                        const imgBase64 =
+                            "data:" + fileToUpload.type + ";base64," + base64String;
+                        formData.append("Base64", imgBase64);
+                        resolve();
+                    };
+                    reader.readAsBinaryString(fileToUpload);
+                });
+                promises.push(promise);
+            }
+            if (errorList?.length > 0) {
+                onToast({ severity: 'error', color: 'error', message: `${errorList.join(',')}`, showAnimtionCheck: false })
+                setLoader(false);
+            }
+            else {
+                Promise.all(promises).then(() => {
+                    dispatch(uploadFiles(formData)).then((response) => {
+                        const uploadedFiles = response?.payload.Message?.filter((f) => { return f.Uploaded === true });
+                        const successMessage = `${uploadedFiles?.length} ${t('common.filesUploaded')}`;
+                        onToast({ severity: 'success', color: 'success', message: `${successMessage}`, showAnimtionCheck: false })
+
+                        onReInitGallery();
+                        setLoader(false);
+                        hiddenFileInput.current.value = null;
+                    });
+                })
+            }
         }
-    }, [fileToUpload]);
+    }, [fileToUploads]);
 
     const changeHandler = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        setFileToUpload(event.target.files[0]);
+        setFileToUpload(event.target.files);
         setIsFilePicked(true);
         return false;
     };
@@ -80,7 +109,6 @@ export const GalleryImages = ({
         file.FolderName = fileModel.FolderName.replace('main\\', '');
         file.FolderType = PulseemFolderType.CLIENT_IMAGES;
         await dispatch(deleteGalleryFile(file));
-        setReinit(true);
         onReInitGallery();
     }
     const handleUploadClick = () => {
@@ -128,6 +156,7 @@ export const GalleryImages = ({
                     onClick={handleUploadClick}
                     style={{ padding: "6px 8px", backgroundColor: 'transparent !important' }}>
                     <input type="file" name="file"
+                        multiple
                         ref={hiddenFileInput}
                         onChange={changeHandler}
                         hidden
@@ -158,6 +187,7 @@ export const GalleryImages = ({
                     )
                 })
             }
+            <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />
         </Grid>)
     }
     return <></>
