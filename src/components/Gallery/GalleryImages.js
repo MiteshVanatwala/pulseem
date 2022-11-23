@@ -67,7 +67,7 @@ export const GalleryImages = ({
                         var binaryData = e.target.result;
                         var base64String = window.btoa(binaryData);
                         const imgBase64 =
-                            "data:" + fileToUploads[i].type + ";base64," + base64String;
+                            "data:" + fileToUpload.type + ";base64," + base64String;
                         formData.append("Base64", imgBase64);
                         resolve();
                     };
