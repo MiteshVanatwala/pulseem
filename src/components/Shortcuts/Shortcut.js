@@ -23,7 +23,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const dispatch = useDispatch();
   const categories = { ...DASHBOARD_SHORTCUT };
 
-  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures.indexOf('35') > -1) {
+  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf('35') > -1) {
     categories['appBar.notifications.title'] = {
       title: 'appBar.notifications.title',
       pages: [

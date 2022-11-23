@@ -499,7 +499,7 @@ const NewslettersReport = ({ classes }) => {
             {t('mainReport.compareCampaigns')}
           </Button>
         </Grid>} */}
-        {windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'

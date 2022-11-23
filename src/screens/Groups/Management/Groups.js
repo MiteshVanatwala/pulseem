@@ -365,7 +365,7 @@ const Groups = ({ classes }) => {
                         {t("recipient.unsubscribe")}
                     </Button>
                 </Grid> */}
-                {accountFeatures && accountFeatures.includes('15') && (<Grid item xs={colSize}>
+                {accountFeatures && accountFeatures?.indexOf('15') > -1 && (<Grid item xs={colSize}>
                     <Button
                         variant="contained"
                         size="medium"
@@ -376,22 +376,23 @@ const Groups = ({ classes }) => {
                         {t("recipient.externalImport")}
                     </Button>
                 </Grid>)}
-
-                <Grid item xs={colSize}>
-                    <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonGreen
-                        )}
-                        onClick={() => setShowConfirmDialog(true)}
-                        startIcon={<ExportIcon />}
-                    >
-                        {t("campaigns.exportFile")}
-                    </Button>
-                </Grid>
-
+                {
+                    accountFeatures?.indexOf('13') === -1 &&
+                    <Grid item xs={colSize}>
+                        <Button
+                            variant="contained"
+                            size="medium"
+                            className={clsx(
+                                classes.actionButton,
+                                classes.actionButtonGreen
+                            )}
+                            onClick={() => setShowConfirmDialog(true)}
+                            startIcon={<ExportIcon />}
+                        >
+                            {t("campaigns.exportFile")}
+                        </Button>
+                    </Grid>
+                }
                 <Grid
                     item
                     xs={colSize}

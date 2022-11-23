@@ -34,7 +34,7 @@ const SmsReplies = ({ classes, ...other }) => {
     const [showLoader, setShowLoader] = useState(true);
     const [selectedClient, setSelectedClient] = useState(null);
     const { smsReplies } = useSelector(state => state.sms)
-    const { windowSize } = useSelector(state => state.core)
+    const { accountFeatures, windowSize } = useSelector(state => state.core)
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
@@ -63,7 +63,7 @@ const SmsReplies = ({ classes, ...other }) => {
                     {t('report.SMSRepliesSubTitle')}
                 </Typography>
                 <Grid container spacing={2} className={classes.linePadding} >
-                    {windowSize !== 'xs' && <Grid item>
+                    {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
                             variant='contained'
                             size='medium'
