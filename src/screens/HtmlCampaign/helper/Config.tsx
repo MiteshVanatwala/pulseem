@@ -55,18 +55,18 @@ export const BeeConfig = (Options: ConfigOptions) => {
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
-            externalContentURLs: [
-                {
-                    name: t("campaigns.savedBlocks"),
-                    value: "saved-rows",
-                    handle: 'saved-rows',
-                    isLocal: true,
-                    behaviors: {
-                        canEdit: true,
-                        canDelete: true,
-                    },
-                }
-            ]
+            // externalContentURLs: [
+            //     {
+            //         name: t("campaigns.savedBlocks"),
+            //         value: "saved-rows",
+            //         handle: 'saved-rows',
+            //         isLocal: true,
+            //         behaviors: {
+            //             canEdit: true,
+            //             canDelete: true,
+            //         },
+            //     }
+            // ]
         },
         hooks: {
             getRows: {
@@ -90,7 +90,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (results?.name) {
                         const metadata: any = {
                             name: results?.name,
-                            tags: results?.tags ?? 'saved-rows',
+                            tags: results?.tags ?? t('common.savedBlocks'),
                             uuid: uuidv4()
                         }
                         resolve(metadata);
@@ -115,7 +115,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         const results = await openModal(EditRow, args, classes);
                         if (results?.name) {
                             args.row.metadata.name = results?.name;
-                            args.row.metadata.tags = results?.tags ?? 'saved-rows';
+                            args.row.metadata.tags = results?.tags ?? t('common.savedBlocks');
 
                             const rows = await getRows(args.handle);
                             const row = rows.find((r: any) => {
@@ -123,17 +123,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
                             });
 
                             row.metadata.name = results?.name;
-                            row.metadata.tags = results?.tags ?? 'saved-rows';
+                            row.metadata.tags = results?.tags ?? t('common.savedBlocks');
 
                             const saveBlockObj = {
                                 Category: results?.name,
-                                Tags: results?.tags?.split(',') ?? 'saved-rows',
+                                Tags: results?.tags?.split(',') ?? t('common.savedBlocks'),
                                 Data: JSON.stringify(JSON.stringify(row)),
                                 uuid: args.row?.metadata?.uuid ?? uuidv4(),
                                 Json: row
                             }
                             await PulseemEditBlock(saveBlockObj);
-                            await handleEditRow(args, results?.name, results?.tags ?? 'saved-rows');
+                            await handleEditRow(args, results?.name, results?.tags ?? t('common.savedBlocks'));
                         }
                         resolve(true);
                     }
@@ -166,23 +166,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
             console.log(jsonFile);
         },
         // Auto Save here
-        onChange: (jsonFile: any) => {
-            const interval = setInterval(() => {
-                SaveCampaign({
-                    campaignId: CampaignId,
-                    JsonData: jsonFile,
-                    HtmlData: null
-                });
-                clearInterval(interval);
-            }, AUTO_SAVE_SECONDS);
-        }
-        // Auto Save here
-        // onChange: (jsonFile: any) => {
-        //     const interval = setInterval(() => {
-        //         HandleAutoSave();
-        //         clearInterval(interval);
-        //     }, AUTO_SAVE_SECONDS);
-        // }
+        // onChange: (jsonFile: any, response: any) => {
+        // console.log(response);
+        // const interval = setInterval(() => {
+        //     SaveCampaign({
+        //         campaignId: CampaignId,
+        //         JsonData: jsonFile,
+        //         HtmlData: null
+        //     });
+        //     clearInterval(interval);
+        // }, AUTO_SAVE_SECONDS);
+        //}
         //#endregion
     }
 };
