@@ -84,6 +84,7 @@ const useStyles = makeStyles({
 });
 const ClientSearchResult = ({ props, classes }) => {
   const {
+    accountFeatures,
     language,
     windowSize,
     email,
@@ -1095,20 +1096,23 @@ const ClientSearchResult = ({ props, classes }) => {
             </Button>
           </Grid>
         )}
-        <Grid item xs={windowSize === "xs" && 12}>
-          <Button
-            variant="contained"
-            size="medium"
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen
-            )}
-            onClick={() => setDialog(DialogType.EXPORT_FORMAT)}
-            startIcon={<ExportIcon />}
-          >
-            {t("campaigns.exportFile")}
-          </Button>
-        </Grid>
+        {
+          accountFeatures?.indexOf('13') === -1 && <Grid item xs={windowSize === "xs" && 12}>
+            <Button
+              variant="contained"
+              size="medium"
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonGreen
+              )}
+              onClick={() => setDialog(DialogType.EXPORT_FORMAT)}
+              startIcon={<ExportIcon />}
+            >
+              {t("campaigns.exportFile")}
+            </Button>
+          </Grid>
+        }
+
         {location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
