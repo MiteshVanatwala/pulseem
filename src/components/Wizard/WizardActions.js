@@ -12,6 +12,7 @@ import { AiOutlineFileAdd } from 'react-icons/ai'
 const WizardActions = ({
     classes,
     innerStyle,
+    additionalButtons = null,
     onSave = null,
     onExit = null,
     onBack = null,
@@ -137,6 +138,7 @@ const WizardActions = ({
                                 color="primary"
                             >{t('common.continue')}</Button>
                         }
+                        {additionalButtons}
                     </Box>
                 </Box>
             </Grid>

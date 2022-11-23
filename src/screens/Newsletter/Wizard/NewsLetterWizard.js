@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { IoMdImages } from 'react-icons/io';
-import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText } from '@material-ui/core'
+import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -401,7 +401,7 @@ const NewsLetterWizard = ({ classes }) => {
         return isError
     }
 
-    const handleSubmit = async (isContiue, isExit = false) => {
+    const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         // TODO: [PR-570] Fix this validation
         if (!handleValidations()) {
             setLoader(true);
@@ -413,7 +413,7 @@ const NewsLetterWizard = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
-                    let redirectUrl = accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
+                    let redirectUrl = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor) ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
                             redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
@@ -824,7 +824,23 @@ const NewsLetterWizard = ({ classes }) => {
                     onSave={handleSubmit}
                     onBack={() => { setConfirmExit(true) }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
-                />
+                    additionalButtons={
+                        accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 &&
+                        <Button onClick={() => handleSubmit(true, false, true)}
+                            variant='contained'
+                            size='medium'
+                            className={clsx(
+                                classes.actionButton,
+                                classes.actionButtonLightGreen,
+                                classes.backButton
+                            )}
+                            style={{ marginInlineStart: '8px' }}
+                            color="primary"
+                        >{t('master.continueToNewEditor')}</Button>
+                    }
+                >
+
+                </WizardActions>
             </Box>
             <Dialog
                 classes={classes}
