@@ -21,6 +21,8 @@ const WhatsappTemplateEditor = ({
 	buttons,
 	onButtonDelete,
 	buttonType,
+	setTemplateText,
+	templateText
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -36,7 +38,6 @@ const WhatsappTemplateEditor = ({
 	}));
 	const styles = useStyles();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [templateText, setTemplateText] = useState('');
 	const [linkCount, setlinkCount] = useState(0);
 	const [messageCount, setMessageCount] = useState(0);
 	const [characterCount, setCharacterCount] = useState(0);

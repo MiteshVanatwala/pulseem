@@ -206,6 +206,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								buttons={templateData.templateButtons}
 								onButtonDelete={(button) => onActionButtonDelete(button)}
 								buttonType={buttonType}
+								setTemplateText={(text: string) =>
+									setTemplateData({ ...templateData, templateText: text })
+								}
+								templateText={templateData.templateText}
 							/>
 						</Grid>
 

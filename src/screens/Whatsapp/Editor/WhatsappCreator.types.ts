@@ -8,6 +8,8 @@ export type WhatsappCreatorProps = {
 	onButtonDelete: (
 		button: quickReplyButtonProps | callToActionRowProps
 	) => void;
+	setTemplateText: (text: string) => void;
+	templateText: string;
 	buttonType: string;
 };
 

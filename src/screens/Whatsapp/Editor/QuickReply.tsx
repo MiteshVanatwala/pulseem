@@ -28,7 +28,7 @@ const QuickReply = ({
 	closeQuickReply,
 	quickReplyButtons,
 	setQuickReplyButtons,
-	updateTemplateData
+	updateTemplateData,
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
 	const onSubmit = () => {
