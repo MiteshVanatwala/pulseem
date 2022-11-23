@@ -413,7 +413,8 @@ const NewsLetterWizard = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
-                    let redirectUrl = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor) ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
+                    const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
+                    let redirectUrl = isBeeEditor ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
                             redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
@@ -422,7 +423,12 @@ const NewsLetterWizard = ({ classes }) => {
                             redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
                         }
                     }
-                    navigate(redirectUrl);
+                    if (!isBeeEditor) {
+                        window.location = redirectUrl;
+                    }
+                    else {
+                        navigate(redirectUrl);
+                    }
                 }
                 else if (isExit === true) {
                     navigate(`/Campaigns`);
