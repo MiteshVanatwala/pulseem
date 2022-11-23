@@ -62,17 +62,21 @@ export const GalleryImages = ({
 
                 const promise = new Promise(resolve => {
                     formData.append(fileToUpload.name, fileToUpload);
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        var binaryData = e.target.result;
-                        var base64String = window.btoa(binaryData);
-                        const imgBase64 =
-                            "data:" + fileToUpload.type + ";base64," + base64String;
-                        formData.append("Base64", imgBase64);
-                        resolve();
-                    };
-                    reader.readAsBinaryString(fileToUploads[i]);
+                    resolve();
                 });
+                // const promise = new Promise(resolve => {
+                //     formData.append(fileToUpload.name, fileToUpload);
+                //     const reader = new FileReader();
+                //     reader.onload = e => {
+                //         var binaryData = e.target.result;
+                //         var base64String = window.btoa(binaryData);
+                //         const imgBase64 =
+                //             "data:" + fileToUpload.type + ";base64," + base64String;
+                //         formData.append("Base64", imgBase64);
+                //         resolve();
+                //     };
+                //     reader.readAsBinaryString(fileToUploads[i]);
+                // });
                 promises.push(promise);
             }
             if (errorList?.length > 0) {
