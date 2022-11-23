@@ -51,22 +51,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
-        // messageWidth: 600,
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
-            // externalContentURLs: [
-            //     {
-            //         name: t("campaigns.savedBlocks"),
-            //         value: "saved-rows",
-            //         handle: 'saved-rows',
-            //         isLocal: true,
-            //         behaviors: {
-            //             canEdit: true,
-            //             canDelete: true,
-            //         },
-            //     }
-            // ]
         },
         hooks: {
             getRows: {
@@ -180,6 +167,73 @@ export const BeeConfig = (Options: ConfigOptions) => {
         //#endregion
     }
 };
+export const DefaultContent = (IsRTL: Boolean) => {
+    return {
+        titleDefaultStyles: {
+            h1: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h2: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h3: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h4: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h5: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            }
+        },
+        contentDefaults: {
+            title: {
+                blockOptions: {
+                    align: IsRTL ? 'right' : 'left'
+                }
+            },
+            text: {
+                html: IsRTL ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>" : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
+                styles: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+                },
+                blockOptions: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+
+                }
+            },
+            paragraph: {
+                styles: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+                },
+                blockOptions: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+
+                }
+            },
+            list: {
+                styles: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+                },
+                blockOptions: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+
+                }
+            }
+        }
+    }
+}
 
 export const DialogType = {
     TEST_SEND: "testSend",

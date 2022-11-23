@@ -28,7 +28,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
-import { BeeConfig, DialogType } from './helper/Config';
+import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
 import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
@@ -237,9 +237,13 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const initBeeEditor = () => {
     initSpecialLinks().then((specialLinksFiles) => {
+      const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
+      const defaultContent = DefaultContent(isRtlLang);
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinksFiles;
+      config.titleDefaultStyles = defaultContent.titleDefaultStyles;
+      config.contentDefaults = defaultContent.contentDefaults;
 
       initTags();
 
