@@ -7,6 +7,7 @@ import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
 import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md'
 import { RiImageAddLine } from 'react-icons/ri'
+import { AiOutlineFileAdd } from 'react-icons/ai'
 
 const WizardActions = ({
     classes,
@@ -16,7 +17,8 @@ const WizardActions = ({
     onBack = null,
     onDelete = null,
     onTestSend = null,
-    onShowGallery = null
+    onShowGallery = null,
+    onShowDocuments = null
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
@@ -51,6 +53,18 @@ const WizardActions = ({
                                 onClick={() => { onDelete() }}
                             >
                                 <BsTrash style={{ fontSize: "25" }} />
+                            </Button>
+                        }
+                        {onShowDocuments &&
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                onClick={() => onShowDocuments()}
+                                style={{ marginInline: 8, paddingInline: 10 }}
+                                className={clsx(classes.actionButton,
+                                    classes.actionButtonOutlinedBlue)}>
+                                <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} />
+                                {t("common.documentGallery")}
                             </Button>
                         }
                         {onShowGallery &&

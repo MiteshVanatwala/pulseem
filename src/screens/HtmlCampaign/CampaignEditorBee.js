@@ -56,7 +56,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, accountSettings } = useSelector(state => state.core)
@@ -73,35 +72,51 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { modals, openModal } = useModals()
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
   const [showGallery, setShowGallery] = useState(false);
+  const [showDocs, setShowDocuments] = useState(false);
 
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
-  useEffect(() => {
-    if (dataReady) {
-      const initFields = () => {
-        initExtraDataField(extraData, t).then((exData) => {
-          setPulseemMergeData(exData);
-        })
-      }
-      const initSpecialLinks = () => {
+  const initFields = () => {
+    initExtraDataField(extraData, t).then((exData) => {
+      setPulseemMergeData(exData);
+    })
+  }
+  const initSpecialLinks = () => {
+    return new Promise((resolve, reject) => {
+      try {
         initLandingPages(previousLandingData, t).then((items) => {
           dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
             const gallery = response.payload;
             const specialLinksFiles = items;
+            const folderExtName = t('common.folder');
 
             gallery?.Files?.forEach((file) => {
+              let folderName = file.FolderName === 'main' ? t('common.main') : file.FolderName;
+              if (file.FolderName.indexOf('\\') > -1) {
+                folderName = file.FolderName.split('\\')[1]
+              }
+
               specialLinksFiles.push({
-                type: file.FolderName.indexOf('\\') > -1 ? file.FolderName.split('\\')[1] : file.FolderName,
+                type: `${folderExtName} ${folderName}`,
                 label: file.FileName,
                 link: file.FileURL
               })
             });
-            setSpecialLinks(specialLinksFiles);
+            resolve(specialLinksFiles);
           });
         });
       }
-      Promise.all([initFields(), initSpecialLinks()]).then(() => {
+      catch (e) {
+        console.error(e);
+        reject();
+      }
+    })
+
+  }
+  useEffect(() => {
+    if (dataReady) {
+      Promise.all([initFields()]).then(() => {
         return true;
       })
     }
@@ -221,42 +236,48 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
   const initBeeEditor = () => {
-    config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
-    config.mergeTags = mergeData;
-    config.specialLinks = specialLinks;
+    initSpecialLinks().then((specialLinksFiles) => {
+      config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
+      config.mergeTags = mergeData;
+      config.specialLinks = specialLinksFiles;
 
-    initTags();
+      initTags();
 
-    switch (beeToken?.StatusCode) {
-      case 201: {
-        const beeObject = JSON.parse(beeToken.Message);
-        if (beeToken.Message === "null" || beeToken.Message === null) {
+      switch (beeToken?.StatusCode) {
+        case 201: {
+          const beeObject = JSON.parse(beeToken.Message);
+          if (beeToken.Message === "null" || beeToken.Message === null) {
+            setDialog(DialogType.MISSING_API_KEY);
+          }
+          else {
+            const beeTest = new BeePlugin(beeObject);
+            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : { messageWidth: '600px' };
+            beeTest.start(config, template).then((instance) => {
+              editorRef.current = instance;
+              if (!campaign || !campaign.HtmlData) {
+                saveDesign(false, null, false);
+              }
+            });
+          }
+          break;
+        }
+        case 401: {
           setDialog(DialogType.MISSING_API_KEY);
+          break;
         }
-        else {
-          const beeTest = new BeePlugin(beeObject);
-          const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : { messageWidth: '600px' };
-          beeTest.start(config, template).then((instance) => {
-            editorRef.current = instance;
-          });
+        case 404: {
+          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+          break;
         }
-        break;
+        case 500:
+        default: {
+          setDialog(DialogType.ERROR_OCCURED);
+          break;
+        }
       }
-      case 401: {
-        setDialog(DialogType.MISSING_API_KEY);
-        break;
-      }
-      case 404: {
-        setDialog(DialogType.CAMPAIGN_NOT_FOUND);
-        break;
-      }
-      case 500:
-      default: {
-        setDialog(DialogType.ERROR_OCCURED);
-        break;
-      }
-    }
-    setLoader(false);
+      setLoader(false);
+
+    })
   }
   useEffect(() => {
     if (beeToken) {
@@ -474,10 +495,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         content: (
           <Gallery
             classes={classes}
-            // isConfirm={isGalleryConfirmed}
-            // callbackSelectFile={handleSelectedImage}
             style={{ minWidth: 400 }}
             multiSelect={false}
+            forceReload={true}
             folderType={PulseemFolderType.CLIENT_IMAGES} />
         )
       };
@@ -490,8 +510,42 @@ const CampaignEditor = ({ classes, ...props }) => {
           showDivider={false}
           classes={classes}
           open={showGallery}
-          onClose={() => { setShowGallery(false) }}
-          onConfirm={() => { setShowGallery(false) }}
+          onClose={() => { setShowGallery(false); }}
+          onConfirm={() => { setShowGallery(false); }}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const showDocumentsModal = () => {
+    if (showDocs) {
+      let dialog = {
+        showDivider: false,
+        icon: (
+          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+        ),
+        title: t("common.documentGallery"),
+        content: (
+          <Gallery
+            classes={classes}
+            style={{ minWidth: 400 }}
+            multiSelect={false}
+            forceReload={true}
+            folderType={PulseemFolderType.DOCUMENT} />
+        )
+      };
+
+      return (
+        <Dialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          showDivider={false}
+          classes={classes}
+          open={showDocs}
+          onClose={() => { setShowDocuments(false); }}
+          onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -508,6 +562,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     >
       {renderToast()}
       {showGalleryModal()}
+      {showDocumentsModal()}
       <NoCreditsModal
         classes={classes}
         onClose={() => setDialog(null)}
@@ -547,6 +602,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         onBack={onBack}
         onDelete={onDelete}
         onShowGallery={() => { setShowGallery(true) }}
+        onShowDocuments={() => { setShowDocuments(true) }}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

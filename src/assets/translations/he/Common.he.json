@@ -581,5 +581,7 @@
   "templateName": "שם התבנית",
   "tags": "תגיות",
   "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר.",
-  "uploadImage": "העלאת תמונה"
+  "uploadImage": "העלאת תמונה",
+  "folder": "[ספרייה]:",
+  "main": "ראשי"
 }
