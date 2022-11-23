@@ -284,7 +284,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         lable: IsPayment ?
           t('landingPages.PurchaseExportTitle')
           : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0)) || accountFeatures),
+        remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         disable: accountFeatures.indexOf('13') > -1,
         onClick: async () => {
