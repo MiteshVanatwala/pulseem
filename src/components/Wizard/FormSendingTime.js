@@ -145,7 +145,7 @@ const FormSendingTime = ({
                                 color="primary"
                                 inputProps={{ "aria-label": "secondary checkbox" }}
                                 onClick={() => {
-                                    setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: true })
+                                    setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: !sendingTimeFormValues.IsBestTime })
                                 }}
                             />
                             <span><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </span>
@@ -210,7 +210,7 @@ const FormSendingTime = ({
                                 color="primary"
                                 inputProps={{ "aria-label": "secondary checkbox" }}
                                 onClick={() => {
-                                    setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: true })
+                                    setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: !sendingTimeFormValues.IsBestTime })
                                 }}
                             />
                             <span><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </span>

@@ -406,7 +406,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: 15,
   },
   mt10: {
-    marginTop: 10,
+    marginTop: '10px !important',
   },
   mt15: {
     marginTop: 15,

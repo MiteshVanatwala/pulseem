@@ -47,6 +47,8 @@ import FormSendingTime from "../../../components/Wizard/FormSendingTime";
 import SpecialModal from "./Popups/SpecialModal";
 import { getEmailSendSettings, getGroups, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
 import PreSendSummary from "./Popups/PreSendSummary";
+import SegmentationDialog from "./Popups/SegmentationDialog";
+import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -1119,6 +1121,22 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                 onClose: () => navigate("/SMSCampaigns"),
                 onCancel: () => setDialogType(null),
             }),
+            segmentation: SegmentationDialog({
+                classes: classes,
+                values: sendingTimeFormValues,
+                handleSetValues: (values) => setSendingTimeFormValues({ ...values }),
+                onClose: () => setDialogType(null),
+                onCancel: () => setDialogType(null),
+                onConfirm: () => null
+            }),
+            smsMarketing: SmsMarketingDialog({
+                classes: classes,
+                values: sendingTimeFormValues,
+                handleSetValues: (values) => setSendingTimeFormValues({ ...values }),
+                onClose: () => setDialogType(null),
+                onCancel: () => setDialogType(null),
+                onConfirm: () => null
+            }),
             sendSuccess: SendSuccessDialog(),
             summary: SummaryDialog({ classes: classes, count: data }),
             preSendSummary: PreSendSummary({ classes: classes, campaignId: params?.id, onClose: () => setDialogType(null), onConfirm: () => onSaveSettings(true) })
@@ -1172,9 +1190,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <span
                                                 className={classes.pulse}
-                                                onClick={() => {
-                                                    // handlePulseDialog();
-                                                }}
+                                                onClick={() => setDialogType({ type: 'segmentation' })}
                                             >
                                                 {t("campaigns.newsLetterEditor.sendSettings.segmentation")}
                                             </span>
@@ -1182,9 +1198,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <span
                                                 className={classes.pulse}
-                                                onClick={() => {
-                                                    // handlePulseDialog();
-                                                }}
+                                                onClick={() => setDialogType({ type: 'smsMarketing' })}
                                             >
                                                 {t("campaigns.newsLetterEditor.sendSettings.smsMarketing")}
                                             </span>

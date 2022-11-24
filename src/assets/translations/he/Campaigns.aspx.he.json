@@ -516,8 +516,13 @@
       "optimalSending": "שליחה אופטימלית",
       "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
       "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
-      "segmentation": "Segmentatiocn",
-      "smsMarketing": "SMS שיווק משלים"
+      "segmentation": "פילוחים",
+      "smsMarketing": "SMS שיווק משלים",
+      "segmCriteria": "קריטריונים לפילוח",
+      "segmCritCb1": "לקוחות שפתחו דיוור",
+      "segmCritCb2": "לקוחות שלא פתחו דיוור",
+      "segmCritCb3": "לקוחות שהקליקו על קישור",
+      "segmCritCb4": "בדיוור לקוחות שלא הקליקו על קישורים בדיוור"
     }
   },
   "newsLetterMgmt": {
