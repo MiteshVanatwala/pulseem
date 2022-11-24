@@ -9,7 +9,7 @@ export const ClientFields = [
     label: "common.last_name"
   },
   {
-    value: "CellPhone",
+    value: "Cellphone",
     label: "common.cellphone"
   },
   {
