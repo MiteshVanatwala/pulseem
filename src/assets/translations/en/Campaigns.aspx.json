@@ -520,7 +520,14 @@
       "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
       "CampaignNotFound": "Campaign not found or deleted"
     },
-    "success": "Success"
+    "success": "Success",
+    "sendSettings": {
+      "optimalSending": "Optimal Sending",
+      "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
+      "optimalSendCBTooltip": "this process may take up to 24 hours",
+      "segmentation": "Segmentation",
+      "smsMarketing": "SMS Marketing"
+    }
   },
   "newsLetterMgmt": {
     "emailVerification": {

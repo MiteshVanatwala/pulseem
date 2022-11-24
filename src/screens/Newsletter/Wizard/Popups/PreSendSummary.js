@@ -11,14 +11,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import clsx from "clsx";
 import { Stack } from "@mui/material";
 import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
+import { getSendSummary } from "../../../../redux/reducers/campaignEditorSlice";
 
 
 const PreSendSummary = ({ classes,
+    campaignId = "",
     campaignName = "",
     fromEmail = "",
     subject = "",
     summaryPayload = {},
     onConfirm = () => null,
+    onClose = () => null,
     groups = [],
     filteredGroups = null,
     filteredCampaigns = null,
@@ -34,10 +37,13 @@ const PreSendSummary = ({ classes,
     const { t } = useTranslation();
 
     const handleSmsSettings = () => {
+        onClose();
         // props.handleCallback()
     }
     useEffect(() => {
         dispatch(getAuthorizedEmails())
+        let response = dispatch(getSendSummary(campaignId))
+        console.log("SUMMARY:", response)
     }, [])
 
 

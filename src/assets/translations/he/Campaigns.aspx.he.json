@@ -511,7 +511,14 @@
       "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
       "CampaignNotFound": "קמפיין לא נמצא או נמחק"
     },
-    "success": "Success"
+    "success": "Success",
+    "sendSettings": {
+      "optimalSending": "שליחה אופטימלית",
+      "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
+      "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
+      "segmentation": "Segmentatiocn",
+      "smsMarketing": "SMS שיווק משלים"
+    }
   },
   "newsLetterMgmt": {
     "emailVerification": {

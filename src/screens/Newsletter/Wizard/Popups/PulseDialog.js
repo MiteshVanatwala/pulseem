@@ -23,7 +23,7 @@ const PulseDialog = ({
     const handleTime = (e) => {
         const re = /^[0-9\b]+$/;
         if (e.target.value === '' || re.test(e.target.value)) {
-            handleSetPulseData({ ...sendingTimeFormValues, timeInterval: e.target.value, timeBool: false });
+            handleSetPulseData({ ...sendingTimeFormValues, TimeInterval: e.target.value, timeBool: false });
         }
     };
     const handleRandom = (e) => {
@@ -62,13 +62,13 @@ const PulseDialog = ({
             let tempData = { ...sendingTimeFormValues }
             if (sendingTimeFormValues.pulseType === 1) {
                 if (Number(e.target.value) > 100) {
-                    tempData = { ...tempData, pulseAmount: "100" }
-                    // handleSetPulseData({ ...sendingTimeFormValues, pulseAmount: "100" });
+                    tempData = { ...tempData, PulseAmount: "100" }
+                    // handleSetPulseData({ ...sendingTimeFormValues, PulseAmount: "100" });
                     // setPulseAmount("100");
                 }
                 else {
-                    tempData = { ...tempData, pulseAmount: e.target.value }
-                    // handleSetPulseData({ ...sendingTimeFormValues, pulseAmount: e.target.value });
+                    tempData = { ...tempData, PulseAmount: e.target.value }
+                    // handleSetPulseData({ ...sendingTimeFormValues, PulseAmount: e.target.value });
                     // setPulseAmount(e.target.value);
                 }
             }
@@ -81,17 +81,17 @@ const PulseDialog = ({
                     //     return a + b['Recipients'];
                     // }, 0))
                     tempData = {
-                        ...tempData, pulseAmount: selectedGroups.reduce(function (a, b) {
+                        ...tempData, PulseAmount: selectedGroups.reduce(function (a, b) {
                             return a + b['Recipients'];
                         }, 0)
                     }
-                    // handleSetPulseData({ ...sendingTimeFormValues, pulseAmount: selectedGroups.reduce(function (a, b) {
+                    // handleSetPulseData({ ...sendingTimeFormValues, PulseAmount: selectedGroups.reduce(function (a, b) {
                     //     return a + b['Recipients'];
                     // }, 0) });
                 }
                 else {
-                    tempData = { ...tempData, pulseAmount: e.target.value }
-                    // handleSetPulseData({ ...sendingTimeFormValues, pulseAmount: e.target.value });
+                    tempData = { ...tempData, PulseAmount: e.target.value }
+                    // handleSetPulseData({ ...sendingTimeFormValues, PulseAmount: e.target.value });
                     // setPulseAmount(e.target.value);
                 }
             }
@@ -119,7 +119,7 @@ const PulseDialog = ({
                         color="primary"
                         inputProps={{ "aria-label": "secondary checkbox" }}
                         onClick={() => {
-                            handleSetPulseData({ ...sendingTimeFormValues, togglePulse: !sendingTimeFormValues.togglePulse, pulseAmount: '', timeInterval: '' });
+                            handleSetPulseData({ ...sendingTimeFormValues, togglePulse: !sendingTimeFormValues.togglePulse, PulseAmount: '', TimeInterval: '' });
                         }}
                     />
                     <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.packetSend")}</Typography>
@@ -147,7 +147,7 @@ const PulseDialog = ({
                                         ? sendingTimeFormValues.pulseBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
                                         : clsx(classes.pulseInsert)
                                 }
-                                value={sendingTimeFormValues.pulseAmount}
+                                value={sendingTimeFormValues.PulseAmount}
                                 onChange={handlePulseInput}
                             />
                             {/* <div className={clsx(classes.commonFieldPulse, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'ltr' : 'none' }}>
@@ -201,7 +201,7 @@ const PulseDialog = ({
                                         : clsx(classes.pulseInsert)
                                 }
                                 onChange={handleTime}
-                                value={sendingTimeFormValues.timeInterval}
+                                value={sendingTimeFormValues.TimeInterval}
                                 maxLength="3"
                             />
 

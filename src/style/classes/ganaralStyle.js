@@ -353,6 +353,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mr10: {
     marginInlineEnd: 10,
   },
+  mb0: {
+    marginBottom: '0px !important',
+  },
   mb5: {
     marginBottom: 5,
   },
@@ -367,6 +370,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb20: {
     marginBottom: 20,
+  },
+  ml20: {
+    marginInlineStart: 20,
   },
   ml25: {
     marginInlineStart: 25,
