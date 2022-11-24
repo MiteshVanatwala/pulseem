@@ -152,7 +152,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (tokenAlive) {
         dispatch(isAlive());
       }
-    }, 30000);
+    }, 300000);
     try {
       document.removeEventListener('setAlert', null);
     }
