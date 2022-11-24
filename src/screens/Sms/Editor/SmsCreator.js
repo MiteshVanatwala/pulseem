@@ -8,11 +8,9 @@ import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Picker from "emoji-picker-react";
 import Radio from "@material-ui/core/Radio";
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
-import Emoj from "../../../assets/images/smile.png";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
@@ -56,6 +54,7 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
 import { logout } from '../../../helpers/api'
+import EmojiPicker from "../../../components/Emojis/EmojiPicker";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -130,7 +129,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
-  const [showEmoji, setShowEmoji] = useState(false);
   const [checked, setChecked] = React.useState(false);
   const [editmenuClick, seteditmenuClick] = useState(false);
   const [campaignBool, setcampaignBool] = useState(false);
@@ -642,10 +640,6 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   }
 
-  const onEmojiClick = (event, emojiObject) => {
-    setShowEmoji(false);
-    onAddText(emojiObject.emoji);
-  };
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
@@ -774,9 +768,6 @@ const SmsCreator = ({ classes, ...props }) => {
       setremovalLinkDisabled(false);
     }
   }
-  const handleClickOutsideEmoji = () => {
-    setShowEmoji(false);
-  }
 
   const renderMsg = () => {
     return (
@@ -854,49 +845,14 @@ const SmsCreator = ({ classes, ...props }) => {
                     </Tooltip>
                   </>
                 )}
-                <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
-                  <Box className={classes.pickerEmoji}>
-                    {showEmoji ? (
-                      <Picker
-                        onEmojiClick={onEmojiClick}
-                        groupNames={{
-                          smileys_people: t("emoji.smiles"),
-                          animals_nature: t("emoji.nature"),
-                          food_drink: t("emoji.foodAndDrinks"),
-                          travel_places: t("emoji.places"),
-                          activities: t("emoji.activities"),
-                          objects: t("emoji.objects"),
-                          symbols: t("emoji.symbols"),
-                          recently_used: t("emoji.recently"),
-                        }}
-                        groupVisibility={{
-                          flags: false,
-                          recently_used: false
-                        }}
-                      />
-                    ) : null}
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.emoji")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <img
-                        alt="emoji picker"
-                        src={Emoj}
-                        style={{
-                          marginInlineEnd: "8px",
-                          widht: "25px",
-                          height: "25px",
-                        }}
-                        onClick={() => {
-                          setShowEmoji(!showEmoji);
-                        }}
-                      />
-                    </Tooltip>
-                  </Box>
-                </ClickAwayListener>
+
+                <EmojiPicker
+                  classes={classes}
+                  OnSelectEmoji={(emoji) => {
+                    onAddText(emoji);
+                  }}
+                  boxStyles={{ alignItems: 'center' }}
+                />
               </Box>
               <Box className={classes.baseButtons}>
                 <Tooltip
