@@ -11,6 +11,7 @@ export type WhatsappCreatorProps = {
 	setTemplateText: (text: string) => void;
 	templateText: string;
 	buttonType: string;
+	templateTextRef: any;
 };
 
 export type TemplateFieldsProps = {

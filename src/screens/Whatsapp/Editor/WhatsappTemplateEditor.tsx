@@ -22,7 +22,8 @@ const WhatsappTemplateEditor = ({
 	onButtonDelete,
 	buttonType,
 	setTemplateText,
-	templateText
+	templateText,
+	templateTextRef,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -40,7 +41,6 @@ const WhatsappTemplateEditor = ({
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [linkCount, setlinkCount] = useState(0);
 	const [messageCount, setMessageCount] = useState(0);
-	const [characterCount, setCharacterCount] = useState(0);
 	const [alignment, setAlignment] = useState<string>('right');
 
 	useEffect(() => {
@@ -49,7 +49,6 @@ const WhatsappTemplateEditor = ({
 	const onEditorChange = (e: BaseSyntheticEvent) => {
 		if (e.target.value?.length <= 1024) {
 			setTemplateText(e.target.value);
-			setCharacterCount(e.target.value?.length);
 		}
 	};
 
@@ -82,7 +81,15 @@ const WhatsappTemplateEditor = ({
 	const isDisableButton = (buttonTitle: string) => {
 		if (buttonTitle.includes('callToAction') && buttonType === 'quickReply') {
 			return true;
-		} else if (buttonTitle.includes('quickReplay') && buttonType === 'callToAction') {
+		} else if (
+			buttonTitle.includes('quickReplay') &&
+			buttonType === 'callToAction'
+		) {
+			return true;
+		} else if (
+			buttonTitle.includes('removalText') &&
+			templateText.includes('Reply “remove” to unsubscribe')
+		) {
 			return true;
 		}
 		return false;
@@ -92,6 +99,7 @@ const WhatsappTemplateEditor = ({
 		<>
 			<textarea
 				required
+				ref={templateTextRef}
 				placeholder={translator('whatsapp.template.textareaPlaceholder')}
 				maxLength={1024}
 				id='whatsapp-template-text'
@@ -141,7 +149,7 @@ const WhatsappTemplateEditor = ({
 				</span>
 
 				<span className={classes.textInfoWrapper}>
-					{characterCount}/1024
+					{templateText?.length}/1024
 					<span className={classes.textInfo}>
 						{translator('mainReport.char')}
 					</span>
