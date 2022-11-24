@@ -15,7 +15,6 @@ import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '.
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
-import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 import { makeId } from '../../../helpers/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
@@ -24,8 +23,20 @@ import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
 import { getCookie } from '../../../helpers/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import Picker from "emoji-picker-react";
+import { Tooltip, ClickAwayListener } from "@material-ui/core";
+import Emoj from "../../../assets/images/smile.png";
 
 const useStyles = makeStyles({
+    customWidth: {
+        maxWidth: 200,
+        backgroundColor: "black",
+        fontSize: "14px",
+        textAlign: 'center'
+    },
+    noMaxWidth: {
+        maxWidth: "none",
+    },
     iconbox: {
         marginBottom: 'auto',
         fontSize: 32,
@@ -56,8 +67,6 @@ const useStyles = makeStyles({
             justifyContent: 'flex-end'
         },
         '& .MuiFormHelperText-contained': {
-            // marginLeft: 0,
-            // marginRight: 0
             marginInline: 0
         }
 
@@ -151,6 +160,7 @@ const NewsLetterWizard = ({ classes }) => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
+    const [showEmoji, setShowEmoji] = useState(false);
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -224,6 +234,9 @@ const NewsLetterWizard = ({ classes }) => {
             WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
+    }
+    const handleClickOutsideEmoji = () => {
+        setShowEmoji(false);
     }
 
     const setDefaultEmailAndName = () => {
@@ -402,7 +415,6 @@ const NewsLetterWizard = ({ classes }) => {
     }
 
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
-        // TODO: [PR-570] Fix this validation
         if (!handleValidations()) {
             setLoader(true);
             dispatch(saveCampaignInfo(campaingnValues)).then((response) => {
@@ -533,7 +545,6 @@ const NewsLetterWizard = ({ classes }) => {
                                             <Select
                                                 native
                                                 displayEmpty
-                                                // value={campaingnValues?.personalDatatoSubject}
                                                 value={campaingnValues?.FromEmail}
                                                 onChange={(event, val) => {
                                                     setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
@@ -598,12 +609,51 @@ const NewsLetterWizard = ({ classes }) => {
                                                 title={campaingnValues.Subject}
                                                 helperText={errors.Subject ? errors.Subject : helperTexts.Subject}
                                             />
-                                            <Box
-                                                className={clsx(localClasses.iconbox)}
-                                            >
-                                                {/* <img src={SmileIcon} alt="smile" /> */}
-                                                <CustomEmojiPicker onSelectEmoji={(emoji) => setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })} />
-                                            </Box>
+                                            <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
+                                                <Box className={classes.pickerEmoji} style={{ alignItems: 'flex-start', marginTop: 30 }}>
+                                                    {showEmoji ? (
+                                                        <Picker
+                                                            onEmojiClick={(event, emojiObject) => {
+                                                                setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emojiObject.emoji })
+                                                            }}
+                                                            groupNames={{
+                                                                smileys_people: t("emoji.smiles"),
+                                                                animals_nature: t("emoji.nature"),
+                                                                food_drink: t("emoji.foodAndDrinks"),
+                                                                travel_places: t("emoji.places"),
+                                                                activities: t("emoji.activities"),
+                                                                objects: t("emoji.objects"),
+                                                                symbols: t("emoji.symbols"),
+                                                                recently_used: t("emoji.recently"),
+                                                            }}
+                                                            groupVisibility={{
+                                                                flags: false,
+                                                                recently_used: false
+                                                            }}
+                                                        />
+                                                    ) : null}
+                                                    <Tooltip
+                                                        disableFocusListener
+                                                        title={t("mainReport.emoji")}
+                                                        classes={{ tooltip: localClasses.customWidth }}
+                                                        placement="top-start"
+                                                        arrow
+                                                    >
+                                                        <img
+                                                            alt="emoji picker"
+                                                            src={Emoj}
+                                                            style={{
+                                                                marginInlineEnd: "8px",
+                                                                widht: 30,
+                                                                height: 30,
+                                                            }}
+                                                            onClick={() => {
+                                                                setShowEmoji(!showEmoji);
+                                                            }}
+                                                        />
+                                                    </Tooltip>
+                                                </Box>
+                                            </ClickAwayListener>
                                         </Box>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -623,7 +673,6 @@ const NewsLetterWizard = ({ classes }) => {
                                             <Select
                                                 native
                                                 displayEmpty
-                                                // value={campaingnValues?.personalDatatoSubject}
                                                 value={''}
                                                 onChange={(event) => {
                                                     setCampaingnValues(
