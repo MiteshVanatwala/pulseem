@@ -342,6 +342,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								setTemplateText={(text: string) => updateTemplateText(text)}
 								templateText={templateData.templateText}
 								templateTextRef={templateTextRef}
+								OnEditorActionButtonClick={() => alert('s')}
 							/>
 						</Grid>
 

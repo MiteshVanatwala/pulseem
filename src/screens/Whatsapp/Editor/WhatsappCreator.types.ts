@@ -12,6 +12,9 @@ export type WhatsappCreatorProps = {
 	templateText: string;
 	buttonType: string;
 	templateTextRef: any;
+	OnEditorActionButtonClick(
+		button: quickReplyButtonProps | callToActionRowProps
+	): void;
 };
 
 export type TemplateFieldsProps = {

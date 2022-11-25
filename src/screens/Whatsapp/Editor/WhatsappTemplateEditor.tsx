@@ -24,6 +24,7 @@ const WhatsappTemplateEditor = ({
 	setTemplateText,
 	templateText,
 	templateTextRef,
+	OnEditorActionButtonClick,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -48,6 +49,13 @@ const WhatsappTemplateEditor = ({
 	}, [isRTL]);
 	const onEditorChange = (e: BaseSyntheticEvent) => {
 		if (e.target.value?.length <= 1024) {
+			// TO STOP RESETTING CURSOR
+			const caret = e.target.selectionStart;
+			const element = e.target;
+			window.requestAnimationFrame(() => {
+				element.selectionStart = caret;
+				element.selectionEnd = caret;
+			});
 			setTemplateText(e.target.value);
 		}
 	};
@@ -106,7 +114,6 @@ const WhatsappTemplateEditor = ({
 				className={clsx(classes.msgArea, classes.sidebar)}
 				style={{ textAlign: alignment === 'right' ? 'right' : 'left' }}
 				onChange={onEditorChange}
-				// onSelect={handleMsgSelect}
 				value={templateText}></textarea>
 
 			<Box className={classes.whatsappActionButtonsWrapper}>
@@ -118,7 +125,7 @@ const WhatsappTemplateEditor = ({
 								onButtonDelete(button);
 							}}
 						/>
-						<Button className={classes.whatsappActionButtons}>
+						<Button className={classes.whatsappActionButtons} onClick={() => OnEditorActionButtonClick(button)}>
 							{button?.value ||
 								button?.fields?.find(
 									(field: callToActionFieldProps) =>
