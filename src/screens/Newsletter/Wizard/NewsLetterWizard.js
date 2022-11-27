@@ -852,6 +852,19 @@ const NewsLetterWizard = ({ classes }) => {
                                 color="primary"
                             >{t("common.save")}
                             </Button>
+                            {
+                                (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1 || id == null) && <Button onClick={() => handleSubmit(true, false, false)}
+                                    variant='contained'
+                                    size='medium'
+                                    className={clsx(
+                                        classes.actionButton,
+                                        classes.actionButtonLightGreen,
+                                        classes.backButton
+                                    )}
+                                    style={{ marginInlineStart: '8px' }}
+                                    color="primary"
+                                >{t('common.continue')}</Button>
+                            }
                             {((id == null && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) || (id !== null && campaingnValues.IsNewEditor === true)) ?
                                 (<Button onClick={() => handleSubmit(true, false, true)}
                                     variant='contained'
