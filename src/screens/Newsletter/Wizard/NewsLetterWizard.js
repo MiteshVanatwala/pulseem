@@ -406,7 +406,7 @@ const NewsLetterWizard = ({ classes }) => {
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
-            dispatch(saveCampaignInfo(campaingnValues)).then((response) => {
+            dispatch(saveCampaignInfo({...campaingnValues, IsNewEditor: isNewEditor})).then((response) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
