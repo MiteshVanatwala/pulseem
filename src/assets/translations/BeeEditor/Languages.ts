@@ -976,7 +976,7 @@ export const TRANSLATE_HEBREW = {
         "default-rows": "ברירת מחדל",
         "delete": "מחק",
         "duplicate": "שכפל",
-        "empty-rows": "תבניות ריקות",
+        "empty-rows": "רוקן",
         "row-alt": "תמונה",
         "row-bkg-over-txt": "טקסט על תבנית רקע",
         "row-bullet-point": "רשימה לא ממוספרת",
@@ -1218,12 +1218,12 @@ export const TRANSLATE_HEBREW = {
         "edit": "עריכת תנאי",
         "label": "הצג תנאי",
         "name": "שם",
-        "no-condition": "לא הוחל תנאי תצוגה על שורה ז",
+        "no-condition": "לא הוחל תנאי תצוגה על שורה זאת",
         "remove": "הסר תנאי",
         "select": "בחר תנאי"
     },
     "mailup-bee-common-widgets-row-display-flow-row": {
-        "label": "אל תערום במובייל"
+        "label": "שמור סדר מבנים במובייל"
     },
     "mailup-bee-common-widgets-text-align": {
         "label": "יישר"
@@ -1231,7 +1231,7 @@ export const TRANSLATE_HEBREW = {
     "mailup-bee-common-widgets-video-content": {
         "arrow": "חץ בלבד",
         "dark": "חשוך",
-        "description": "הוסף <a href=\"https://www.youtube.com\" target=\"_blank\">YouTube</a> או <a href=\"https://vimeo.com\" target=\"_blank\">Vimeo</a> URL כדי ליצור תמונת תצוגה אוטומטית. התמונה תהיה קישור לURL שסופק.",
+        "description": "Add a <a href=\"https://www.youtube.com\" target=\"_blank\">YouTube</a> or <a href=\"https://vimeo.com\" target=\"_blank\">Vimeo</a> URL to automatically generate a preview image. The image will link to the provided URL.",
         "full": "Solid",
         "icon-color": "צבע כפתור הפעל",
         "icon-preview": "תצוגת כפתור הפעל",
@@ -1254,7 +1254,7 @@ export const TRANSLATE_HEBREW = {
         "label": "רוחב"
     },
     "mailup-bee-newsletter-modules-button": {
-        "label": "<p style='font-family: inherit; font-size: 16px;'>כפתור</p>",
+        "label": "<p style='font-family: inherit; font-size: 16px;'>Button</p>",
         "name": "כפתור"
     },
     "mailup-bee-newsletter-modules-divider": {
@@ -1279,7 +1279,7 @@ export const TRANSLATE_HEBREW = {
         "name": "רשתות חברתיות"
     },
     "mailup-bee-newsletter-modules-text": {
-        "html": "<p style='font-size: 14px;'>אני בלוק טקסט מוכן לתוכן שלך.</p>",
+        "html": "<p style='font-size: 14px;'>I&apos;m a new Text block ready for your content.</p>",
         "name": "טקסט"
     },
     "mailup-bee-newsletter-modules-video": {
@@ -1480,9 +1480,9 @@ export const TRANSLATE_HEBREW = {
     },
     "mailup-common-link-type-selector": {
         "body": "גוף",
-        "email-address": "לשלוח דוא\"ל",
+        "email-address": "שלח דוא\"ל",
         "link-type": "סוג קישור",
-        "mail-to": "לשלוח דוא\"ל",
+        "mail-to": "שלח דוא\"ל ל",
         "maps": "הצג מפה",
         "subject": "נושא",
         "telephone": "בצע שיחה",
@@ -1560,7 +1560,7 @@ export const TRANSLATE_HEBREW = {
     },
     "one-column-text": {
         "mailup-bee-newsletter-modules-text": {
-            "html": "<p style=\"font-size: 18px;\" data-mce-style=\"font-size: 18px;\">מה אני?</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">אני בלוק טקסט מוכן לתוכן שלך.</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">השתמש בסרגל הכלים כדי לשנות מאפייני טקסט והכנסת <a href=\"http://www.example.com\" data-mce-href=\"http://www.example.com\">קישורים</a>.</p>"
+            "html": "<p style=\"font-size: 18px;\" data-mce-style=\"font-size: 18px;\">What about me?</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">I'm a text block ready for your content.</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">Use the toolbar to change the text properties and insert <a href=\"http://www.example.com\" data-mce-href=\"http://www.example.com\">links</a>.</p>"
         }
     },
     "row-display-condition-custom": {
@@ -1583,12 +1583,12 @@ export const TRANSLATE_HEBREW = {
     },
     "two-columns-image-text": {
         "mailup-bee-newsletter-modules-text": {
-            "html": "<p style=\"font-size: 18px;\" data-mce-style=\"font-size: 18px;\">מה אני?</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">אני בלוק טקסט מוכן לתוכן שלך.</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">השתמש בסרגל הכלים כדי לשנות מאפייני טקסט והכנסת <a href=\"http://www.example.com\" data-mce-href=\"http://www.example.com\">קישורים</a>.</p>"
+            "html": "<p style=\"font-size: 18px;\" data-mce-style=\"font-size: 18px;\">What about me?</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">I'm a text block ready for your content.</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">Use the toolbar to change the text properties and insert <a href=\"http://www.example.com\" data-mce-href=\"http://www.example.com\">links</a>.</p>"
         }
     },
     "two-columns-text": {
         "mailup-bee-newsletter-modules-text": {
-            "html": "<p style=\"font-size: 18px;\" data-mce-style=\"font-size: 18px;\">מה אני?</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">אני בלוק טקסט מוכן לתוכן שלך.</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">השתמש בסרגל הכלים כדי לשנות מאפייני טקסט והכנסת <a href=\"http://www.example.com\" data-mce-href=\"http://www.example.com\">קישורים</a>.</p>"
+            "html": "<p style=\"font-size: 18px;\" data-mce-style=\"font-size: 18px;\">What about me?</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">I'm a text block ready for your content.</p><br /><p style=\"font-size: 14px;\" data-mce-style=\"font-size: 14px;\">Use the toolbar to change the text properties and insert <a href=\"http://www.example.com\" data-mce-href=\"http://www.example.com\">links</a>.</p>"
         }
     },
     "widget-groups": {
@@ -1653,8 +1653,8 @@ export const TRANSLATE_HEBREW = {
         "landmarks": "נקודות ציון",
         "oak": "אלון",
         "objects": "אובייקטים",
-        "offset-x": "Offset X",
-        "offset-y": "Offset Y",
+        "offset-x": "ציר X",
+        "offset-y": "ציר Y",
         "open": "פתח",
         "outline": "מתאר",
         "outline-width": "רוחב מתאר",
@@ -1734,7 +1734,7 @@ export const TRANSLATE_HEBREW = {
     },
     "mailup-bee-common-widgets-font-style": {
         "label": "גודל גופן",
-        "italic": "נטוי",
+        "italic": "Italic",
         "bold": "מודגש"
     },
     "mailup-bee-common-widgets-font-size": {
@@ -1794,7 +1794,7 @@ export const TRANSLATE_HEBREW = {
         "background-color": "צבע רקע"
     },
     "mailup-bee-common-widgets-layout": {
-        "label": "תווית",
+        "label": "מערך",
         "horizontal": "אופקי",
         "vertical": "אנכי"
     },
@@ -1810,14 +1810,14 @@ export const TRANSLATE_HEBREW = {
     },
     "mailup-bee-common-widgets-id": {
         "toggle": "חסום מזהה",
-        "id": "מספר מזהה",
+        "id": "ID",
         "description": "המזהה יכול לשמש כאסמכתא פנימית בתוכן. הגדרת מזהה למודול הופכת אותו לבחירה באפשרויות הקישור. כאשר אינו נוצר אוטומטית, הקפד להשתמש במזהים ייחודיים."
     },
     "mailup-common-menu-organizer": {
         "text": "טקסט"
     },
     "mailup-bee-common-widgets-row-display-reverse-stack": {
-        "label": "הפוך סדר ערמה במובייל"
+        "label": "הפוך סדר מבנים במובייל"
     },
     "mailup-bee-newsletter-modules-carousel": {
         "name": "קרוסלה"

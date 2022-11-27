@@ -115,14 +115,15 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
 
   }
-  const onUnload = (e) => {
-    console.log(e);
-    return false;
-  };
+  // const beforeUnloadListener = (event) => {
+  //   event.preventDefault();
+  //   saveDesign(false, null, false);
+  //   return event.returnValue = "Are you sure you want to exit?";
+  // };
   useEffect(() => {
     if (dataReady) {
       Promise.all([initFields(), siteTrackingLogic()]).then(() => {
-        window.addEventListener("beforeunload", onUnload);
+        //window.addEventListener("beforeunload", beforeUnloadListener, { capture: true });
         return true;
       })
     }
