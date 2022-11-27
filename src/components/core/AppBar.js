@@ -145,7 +145,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
   ]
 
   const item = {
-    title: languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title || '',
+    title: (languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title) || '',
     options: languages
   }
 
@@ -170,7 +170,8 @@ const LanguageSelector = ({ windowSize, classes }) => {
 }
 
 
-export const TopAppBar = ({ classes, currentPage = '' }) => {
+export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
+  console.log('showAppBar', showAppBar);
   let cookieFeature = getCookie("accountFeatures");
   const cookieIsClal = getCookie("isClal");
 
@@ -384,7 +385,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   </SvgIcon>
   return (
     <Box style={{ flexGrow: 1 }}>
-      <AppBar position='static' className={classes.appBar} ref={topNavRef}>
+      <AppBar position='static' className={classes.appBar} ref={topNavRef} style={{ display: showAppBar === true ? null : 'none' }}>
         <Toolbar variant='dense'>
           <Box
             component='a'

@@ -601,6 +601,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   return (
     <DefaultScreen
+      showAppBar={false}
       currentPage='campaignEditor'
       classes={classes}
       customPadding={true}

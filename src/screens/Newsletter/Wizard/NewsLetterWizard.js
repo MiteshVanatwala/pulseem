@@ -926,7 +926,7 @@ const NewsLetterWizard = ({ classes }) => {
             </Dialog>
             {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
             <Loader isOpen={showLoader} />
-        </DefaultScreen >
+        </DefaultScreen>
     )
 }
 
