@@ -790,6 +790,81 @@ const NewsLetterWizard = ({ classes }) => {
         }
     }
 
+    const renderButtons = () => {
+        const wizardButtons = [];
+        if (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
+            wizardButtons.push(<>
+                <Button
+                    onClick={() =>
+                        handleSubmit()}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightBlue,
+                        classes.backButton
+                    )}
+                    style={{ margin: '8px' }}
+                    startIcon={<BiSave />}
+                    color="primary"
+                >{t("common.save")}
+                </Button><Button onClick={() => handleSubmit(true, false, false)}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton
+                    )}
+                    style={{ marginInlineStart: '8px' }}
+                    color="primary"
+                >{t('common.continue')}</Button>
+            </>);
+        }
+        else {
+            if (id !== null && campaingnValues.IsNewEditor === true) {
+                wizardButtons.push(<Button onClick={() => handleSubmit(true, false, true)}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton
+                    )}
+                    style={{ marginInlineStart: '8px' }}
+                    color="primary"
+                >{t('master.continueToNewEditor')}</Button>)
+            }
+            else {
+                wizardButtons.push(<>
+                    <Button onClick={() => handleSubmit(true, false, false)}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonLightGreen,
+                            classes.backButton
+                        )}
+                        style={{ marginInlineStart: '8px' }}
+                        color="primary"
+                    >{t('common.saveAndContinue')}</Button>
+                    {(id === null || id === undefined) && <Button onClick={() => handleSubmit(true, false, true)}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonLightGreen,
+                            classes.backButton
+                        )}
+                        style={{ marginInlineStart: '8px' }}
+                        color="primary"
+                    >{t('master.continueToNewEditor')}</Button>}
+                </>)
+            }
+        }
+        return wizardButtons.map((b) => b);
+    }
+
     return (
         <DefaultScreen
             currentPage="Campaingn Settings"
@@ -835,63 +910,7 @@ const NewsLetterWizard = ({ classes }) => {
                     // onSave={handleSubmit}
                     onBack={() => { setConfirmExit(true) }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
-                    additionalButtons={
-                        <>
-                            <Button
-                                onClick={() =>
-                                    handleSubmit()}
-                                variant='contained'
-                                size='medium'
-                                className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightBlue,
-                                    classes.backButton
-                                )}
-                                style={{ margin: '8px' }}
-                                startIcon={<BiSave />}
-                                color="primary"
-                            >{t("common.save")}
-                            </Button>
-                            {
-                                (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1 || id == null) && <Button onClick={() => handleSubmit(true, false, false)}
-                                    variant='contained'
-                                    size='medium'
-                                    className={clsx(
-                                        classes.actionButton,
-                                        classes.actionButtonLightGreen,
-                                        classes.backButton
-                                    )}
-                                    style={{ marginInlineStart: '8px' }}
-                                    color="primary"
-                                >{t('common.continue')}</Button>
-                            }
-                            {((id == null && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) || (id !== null && campaingnValues.IsNewEditor === true)) ?
-                                (<Button onClick={() => handleSubmit(true, false, true)}
-                                    variant='contained'
-                                    size='medium'
-                                    className={clsx(
-                                        classes.actionButton,
-                                        classes.actionButtonLightGreen,
-                                        classes.backButton
-                                    )}
-                                    style={{ marginInlineStart: '8px' }}
-                                    color="primary"
-                                >{t('master.continueToNewEditor')}</Button>)
-                                :
-                                (<Button onClick={() => handleSubmit(true, false, true)}
-                                    variant='contained'
-                                    size='medium'
-                                    className={clsx(
-                                        classes.actionButton,
-                                        classes.actionButtonLightGreen,
-                                        classes.backButton
-                                    )}
-                                    style={{ marginInlineStart: '8px' }}
-                                    color="primary"
-                                >{t('common.continue')}</Button>)
-                            }
-                        </>
-                    }
+                    additionalButtons={renderButtons()}
                 >
 
                 </WizardActions>
@@ -939,7 +958,7 @@ const NewsLetterWizard = ({ classes }) => {
             </Dialog>
             {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
             <Loader isOpen={showLoader} />
-        </DefaultScreen>
+        </DefaultScreen >
     )
 }
 

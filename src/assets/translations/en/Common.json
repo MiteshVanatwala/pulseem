@@ -590,5 +590,6 @@
   "folder": "[Folder]:",
   "main": "Main",
   "filesUploaded": "Files successfully uplaoded",
-  "filesNotUploaded": "Files failed: "
+  "filesNotUploaded": "Files failed: ",
+  "saveAndContinue": "Save and Continue"
 }
