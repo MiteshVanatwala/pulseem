@@ -115,9 +115,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
 
   }
+  const onUnload = (e) => {
+    console.log(e);
+    return false;
+  };
   useEffect(() => {
     if (dataReady) {
       Promise.all([initFields(), siteTrackingLogic()]).then(() => {
+        window.addEventListener("beforeunload", onUnload);
         return true;
       })
     }
