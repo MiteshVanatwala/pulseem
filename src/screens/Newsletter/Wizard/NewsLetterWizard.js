@@ -835,7 +835,7 @@ const NewsLetterWizard = ({ classes }) => {
                     onBack={() => { setConfirmExit(true) }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={
-                        accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 &&
+                        (id == null && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) || (id !== null && campaingnValues.IsNewEditor === true)  &&
                         <Button onClick={() => handleSubmit(true, false, true)}
                             variant='contained'
                             size='medium'
