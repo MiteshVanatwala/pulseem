@@ -587,9 +587,9 @@ export const TRANSLATE_ENGLISH = {
     },
     "mailup-common-text-editor-provider": {
         "external-item-title": "More",
-        "merge-tags-button-text": "Merge tags",
+        "merge-tags-button-text": "Personal Fields",
         "merge-tags-modal-close-button": "Close",
-        "merge-tags-modal-title": "Insert merge tags",
+        "merge-tags-modal-title": "Insert personal field",
         "special-link-default-text": "Special links",
         "special-link-title": "Special links"
     },
@@ -1540,7 +1540,7 @@ export const TRANSLATE_HEBREW = {
     },
     "mailup-common-text-editor-provider": {
         "external-item-title": "עוד",
-        "merge-tags-button-text": "מיזוג תגיות",
+        "merge-tags-button-text": "שדות אישיים",
         "merge-tags-modal-close-button": "סגור",
         "merge-tags-modal-title": "הוסף תגיות ממוזגות",
         "special-link-default-text": "קישורים מיוחדים",

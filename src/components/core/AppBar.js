@@ -171,7 +171,6 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 
 export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
-  console.log('showAppBar', showAppBar);
   let cookieFeature = getCookie("accountFeatures");
   const cookieIsClal = getCookie("isClal");
 
