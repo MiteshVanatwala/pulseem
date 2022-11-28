@@ -1,5 +1,5 @@
 import { ClassesType } from '../../Classes.types';
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, RefObject } from 'react';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -11,7 +11,7 @@ export type WhatsappCreatorProps = {
 	setTemplateText: (text: string) => void;
 	templateText: string;
 	buttonType: string;
-	templateTextRef: any;
+	templateTextRef: RefObject<HTMLTextAreaElement>;
 	OnEditorActionButtonClick(
 		button: quickReplyButtonProps | callToActionRowProps
 	): void;
@@ -48,7 +48,7 @@ export type actionProps = {
 	isCallToActionOpen: boolean;
 	closeCallToAction: () => void;
 	classes: ClassesType['classes'];
-	callToActionFieldRows: any;
+	callToActionFieldRows: callToActionProps;
 	setCallToActionFieldRows: (data: callToActionProps) => void;
 	phoneNumberField: callToActionFieldProps[];
 	websiteField: callToActionFieldProps[];
@@ -83,9 +83,16 @@ export type quickReplyProps = {
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 };
 
+export type quickReplyButtonsFieldProps = {
+	fieldName: string;
+	type: string;
+	placeholder: string;
+	value: string;
+};
+
 export type quickReplyButtonProps = {
 	id: string;
-	value: string;
+	fields: quickReplyButtonsFieldProps[];
 };
 
 export type templateDataProps = {

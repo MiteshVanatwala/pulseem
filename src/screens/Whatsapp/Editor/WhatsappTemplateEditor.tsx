@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 import {
 	actionButtonProps,
 	callToActionFieldProps,
+	callToActionRowProps,
 	coreProps,
 	quickReplyButtonProps,
+	quickReplyButtonsFieldProps,
 	WhatsappCreatorProps,
 } from './WhatsappCreator.types';
 import clsx from 'clsx';
@@ -117,23 +119,28 @@ const WhatsappTemplateEditor = ({
 				value={templateText}></textarea>
 
 			<Box className={classes.whatsappActionButtonsWrapper}>
-				{buttons.map((button: quickReplyButtonProps | any) => (
-					<Box key={button.id} className={classes.whatsappActionButtonsBox}>
-						<DeleteOutlinedIcon
-							style={{ color: 'red', cursor: 'pointer' }}
-							onClick={() => {
-								onButtonDelete(button);
-							}}
-						/>
-						<Button className={classes.whatsappActionButtons} onClick={() => OnEditorActionButtonClick(button)}>
-							{button?.value ||
-								button?.fields?.find(
-									(field: callToActionFieldProps) =>
-										field.fieldName === 'Button Text'
-								).value}
-						</Button>
-					</Box>
-				))}
+				{buttons.map((button: quickReplyButtonProps | callToActionRowProps) =>
+					button.fields.map(
+						(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
+							field.fieldName === translator('whatsapp.websiteButtonText') && (
+								<Box
+									key={button.id}
+									className={classes.whatsappActionButtonsBox}>
+									<DeleteOutlinedIcon
+										style={{ color: 'red', cursor: 'pointer' }}
+										onClick={() => {
+											onButtonDelete(button);
+										}}
+									/>
+									<Button
+										className={classes.whatsappActionButtons}
+										onClick={() => OnEditorActionButtonClick(button)}>
+										{field.value}
+									</Button>
+								</Box>
+							)
+					)
+				)}
 			</Box>
 
 			<Box className={classes.smallInfoDiv}>

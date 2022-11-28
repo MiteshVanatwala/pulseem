@@ -1,10 +1,4 @@
-import React, {
-	BaseSyntheticEvent,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
+import React, { BaseSyntheticEvent, useMemo, useRef, useState } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
@@ -36,7 +30,14 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
-			value: '',
+			fields: [
+				{
+					fieldName: translator('whatsapp.websiteButtonText'),
+					type: 'text',
+					placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+					value: '',
+				},
+			],
 		},
 	];
 	const [templateName, setTemplateName] = useState<string>('');
@@ -161,7 +162,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const getLastDynamicFieldValue = (text: string) => {
 		var str = text;
-		var indices: any = [];
+		var indices: string[] = [];
 		var dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
 		var dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 		for (var i = 0; i < str.length; i++) {
