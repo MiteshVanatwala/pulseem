@@ -585,5 +585,6 @@
   "folder": "[ספרייה]:",
   "main": "ראשי",
   "filesUploaded": "קבצים עלו בהצלחה",
-  "filesNotUploaded": "קבצים נכשלו: "
+  "filesNotUploaded": "קבצים נכשלו: ",
+  "saveAndContinue": "שמור והמשך"
 }

@@ -115,6 +115,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
 
   }
+
   useEffect(() => {
     if (dataReady) {
       Promise.all([initFields(), siteTrackingLogic()]).then(() => {
@@ -595,6 +596,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   return (
     <DefaultScreen
+      showAppBar={false}
       currentPage='campaignEditor'
       classes={classes}
       customPadding={true}

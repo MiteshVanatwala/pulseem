@@ -61,7 +61,7 @@ const EmojiPicker = ({
             ) : null}
             <Tooltip
                 disableFocusListener
-                title={t("mainReport.emoji")}
+                title={`${t("mainReport.emoji")}`}
                 classes={{ tooltip: localClasses.customWidth }}
                 placement="top-start"
                 arrow
