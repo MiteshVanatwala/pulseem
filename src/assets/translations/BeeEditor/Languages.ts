@@ -1600,7 +1600,7 @@ export const TRANSLATE_HEBREW = {
         "merge-content-selector": "בחר את התוכן לשימוש",
         "module-options": "אפשרויות מודול",
         "page-options": "אפשרויות כלליות",
-        "spacing-options": "אפשרויות חסימה",
+        "spacing-options": "אפשרויות בלוק",
         "text-options": "אפשרויות טקסט",
         "configure-form-elements": "רכיבי טופס",
         "labels-options": "אפשרויות תוויות",
