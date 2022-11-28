@@ -17,7 +17,6 @@ export interface ConfigOptions {
     CampaignId: Number,
     PulseemEditBlock: Function,
     getRows: Function,
-    setRow: Function,
     handleDeleteRow: Function,
     handleEditRow: Function,
     // HandleAutoSave: Function,
@@ -35,7 +34,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
         CampaignId,
         DeleteBlock,
         SaveCampaign,
-        setRow,
         getRows,
         handleEditRow,
         // HandleAutoSave,
@@ -51,31 +49,11 @@ export const BeeConfig = (Options: ConfigOptions) => {
         autosave: 60,
         translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
-        loadingSpinnerTheme: 'dark',
+        loadingSpinnerTheme: 'light',
         saveRows: true,
-        workspace: {
-            type: 'mixed',
-            contentWidth: 600,
-            popup: {
-                contentWidth: 600,
-                contentWidthMobile: 300
-            }
-        },
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
-            externalContentURLs: [
-                {
-                    name: t("campaigns.savedBlocks"),
-                    value: "saved-rows",
-                    handle: 'saved-rows',
-                    isLocal: true,
-                    behaviors: {
-                        canEdit: true,
-                        canDelete: true,
-                    },
-                }
-            ]
         },
         hooks: {
             getRows: {
@@ -99,10 +77,13 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (results?.name) {
                         const metadata: any = {
                             name: results?.name,
-                            tags: results?.tags ?? 'saved-rows',
+                            tags: results?.tags ?? t('common.savedBlocks'),
                             uuid: uuidv4()
                         }
                         resolve(metadata);
+                    }
+                    else {
+                        reject();
                     }
                 }
             },
@@ -121,7 +102,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         const results = await openModal(EditRow, args, classes);
                         if (results?.name) {
                             args.row.metadata.name = results?.name;
-                            args.row.metadata.tags = results?.tags ?? 'saved-rows';
+                            args.row.metadata.tags = results?.tags ?? t('common.savedBlocks');
 
                             const rows = await getRows(args.handle);
                             const row = rows.find((r: any) => {
@@ -129,17 +110,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
                             });
 
                             row.metadata.name = results?.name;
-                            row.metadata.tags = results?.tags ?? 'saved-rows';
+                            row.metadata.tags = results?.tags ?? t('common.savedBlocks');
 
                             const saveBlockObj = {
                                 Category: results?.name,
-                                Tags: results?.tags?.split(',') ?? 'saved-rows',
+                                Tags: results?.tags?.split(',') ?? t('common.savedBlocks'),
                                 Data: JSON.stringify(JSON.stringify(row)),
                                 uuid: args.row?.metadata?.uuid ?? uuidv4(),
                                 Json: row
                             }
                             await PulseemEditBlock(saveBlockObj);
-                            await handleEditRow(args, results?.name, results?.tags ?? 'saved-rows');
+                            await handleEditRow(args, results?.name, results?.tags ?? t('common.savedBlocks'));
                         }
                         resolve(true);
                     }
@@ -172,26 +153,87 @@ export const BeeConfig = (Options: ConfigOptions) => {
             console.log(jsonFile);
         },
         // Auto Save here
-        onChange: (jsonFile: any) => {
-            const interval = setInterval(() => {
-                SaveCampaign({
-                    campaignId: CampaignId,
-                    JsonData: jsonFile,
-                    HtmlData: null
-                });
-                clearInterval(interval);
-            }, AUTO_SAVE_SECONDS);
-        }
-        // Auto Save here
-        // onChange: (jsonFile: any) => {
-        //     const interval = setInterval(() => {
-        //         HandleAutoSave();
-        //         clearInterval(interval);
-        //     }, AUTO_SAVE_SECONDS);
-        // }
+        // onChange: (jsonFile: any, response: any) => {
+        // console.log(response);
+        // const interval = setInterval(() => {
+        //     SaveCampaign({
+        //         campaignId: CampaignId,
+        //         JsonData: jsonFile,
+        //         HtmlData: null
+        //     });
+        //     clearInterval(interval);
+        // }, AUTO_SAVE_SECONDS);
+        //}
         //#endregion
     }
 };
+export const DefaultContent = (IsRTL: Boolean) => {
+    return {
+        titleDefaultStyles: {
+            h1: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h2: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h3: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h4: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            },
+            h5: {
+                'direction': IsRTL ? 'rtl' : 'ltr',
+                'text-align': IsRTL ? 'right' : 'left'
+            }
+        },
+        contentDefaults: {
+            title: {
+                blockOptions: {
+                    align: IsRTL ? 'right' : 'left'
+                }
+            },
+            text: {
+                html: IsRTL ? "<p style='font-size: 14px;text-align: right; direction: rtl;'>אני בלוק טקסט מוכן לתוכן שלך.</p>" : "<p style='font-size: 14px;text-align:left; direction: ltr;'>I&apos;m a new Text block ready for your content.</p>",
+                styles: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+                },
+                blockOptions: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+
+                }
+            },
+            paragraph: {
+                styles: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+                },
+                blockOptions: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+
+                }
+            },
+            list: {
+                styles: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+                },
+                blockOptions: {
+                    textAlign: IsRTL ? 'right' : 'left',
+                    direction: IsRTL ? 'rtl' : 'ltr'
+
+                }
+            }
+        }
+    }
+}
 
 export const DialogType = {
     TEST_SEND: "testSend",

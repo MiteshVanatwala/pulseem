@@ -21,21 +21,10 @@ export const createFolder = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-
-export const postFile = createAsyncThunk(
-    '/Gallery/PostNewFile', async (fileGallery, thunkAPI) => {
+export const uploadFiles = createAsyncThunk(
+    '/gallery/UploadFiles', async (files, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.post(`/Gallery/PostNewFile`, fileGallery);
-            return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-
-export const uploadFile = createAsyncThunk(
-    '/gallery/UploadFile', async (fileGallery, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.put(`/gallery/UploadFile`, fileGallery,
+            const response = await instence.put(`/gallery/UploadFiles`, files,
                 {
                     onUploadProgress: (progressEvent) => {
                         const { loaded, total } = progressEvent
@@ -48,9 +37,6 @@ export const uploadFile = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-
-
-
 export const deleteGalleryFile = createAsyncThunk(
     '/Gallery/DeleteFile', async (fileGallery, thunkAPI) => {
         try {

@@ -352,7 +352,14 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        onClick: () => {
+          if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+            navigate(`/Campaigns/editor/${CampaignID}?fromreact=true`)
+          }
+          else {
+            window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+          }
+        },
         rootClass: classes.paddingIcon,
       },
       {

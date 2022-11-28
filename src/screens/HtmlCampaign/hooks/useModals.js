@@ -17,7 +17,7 @@ const useModals = () => {
     return new Promise((resolve, reject) => {
       const close = () => {
         setClose()
-        reject('')
+        resolve({})
       }
       const save = (results) => {
         setClose()

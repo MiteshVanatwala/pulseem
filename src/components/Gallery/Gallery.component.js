@@ -23,7 +23,14 @@ import Toast from '../Toast/Toast.component';
 import { GalleryImages } from './GalleryImages'
 import { GalleryDocuments } from './GalleryDocuments'
 
-const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemFolderType.CLIENT_IMAGES, multiSelect = false, selected = [] }) => {
+const Gallery = ({
+    classes,
+    isConfirm,
+    callbackSelectFile,
+    folderType = PulseemFolderType.CLIENT_IMAGES,
+    multiSelect = false,
+    selected = [],
+    forceReload = false }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [folders, setFolders] = useState(null);
@@ -53,7 +60,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
     moment.locale(language);
 
     const initGallery = async (forceInit) => {
-        if (!gallery || forceInit) {
+        if (!gallery || forceInit || forceReload) {
             await dispatch(getFileGallery(folderType));
         }
     }

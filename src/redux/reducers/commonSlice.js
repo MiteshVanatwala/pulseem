@@ -100,7 +100,8 @@ export const commonSlice = createSlice({
   initialState: {
     Folders: [],
     verifiedEmails: [],
-    verifiedNumbers: []
+    verifiedNumbers: [],
+    tokenAlive: true
   },
   extraReducers: builder => {
     builder
@@ -115,6 +116,9 @@ export const commonSlice = createSlice({
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
         setCookie('accountSettings', payload);
       })
+    builder.addCase(isAlive.fulfilled, (state, { payload }) => {
+      state.tokenAlive = payload;
+    })
   }
 })
 

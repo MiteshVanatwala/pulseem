@@ -12,6 +12,7 @@ import {
     getAuthorizeNumbers, sendVerificationCode, verifyCode
 } from '../../redux/reducers/smsSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, variant = 'email', ...props }) => {
@@ -28,6 +29,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
     const [resendDisabled, setResendDisalbed] = useState(false);
     const [resendInterval, setResendInterval] = useState(10);
+    const [userCodeConfirmed, setUserCodeConfirmed] = useState(false);
 
 
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
@@ -77,6 +79,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     }
 
     const handleVerifyCode = async () => {
+        setUserCodeConfirmed(true);
 
         if (variant === 'email') {
             dispatch(verifyEmailCode(
@@ -84,6 +87,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                     email: selectedVerificationContact,
                     optinCode: verificationCode
                 })).then((response) => {
+                    setUserCodeConfirmed(false);
                     switch (response?.payload.toLowerCase()) {
                         case "ok": {
                             NextSlide();
@@ -101,6 +105,10 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                             setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts') })
                             break;
                         }
+                        case "abused": {
+                            setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.email_error_abused') })
+                            break;
+                        }
                         default: {
                             setVerificationError({ code: t('common.ErrorOccured') })
                             break;
@@ -114,6 +122,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 optinCode: verificationCode,
                 phoneNumber: selectedVerificationContact
             }));
+            setUserCodeConfirmed(false);
             switch (result.payload.toLowerCase()) {
                 case 'ok': {
                     NextSlide();
@@ -127,6 +136,14 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 case 'expired': {
                     localStorage.setItem('verificationTrial', trials + 1)
                     setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
+                    break;
+                }
+                case "toomuch": {
+                    setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts') })
+                    break;
+                }
+                case "abused": {
+                    setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.sms_error_abused') })
                     break;
                 }
                 default: {
@@ -175,7 +192,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     }
 
     const EMAIL_MODULE = () => {
-        let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
+        //let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
 
         const EMAIL_SLIDE_1 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
@@ -315,52 +332,47 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                             />
                         </Box>
                         <Box mt={2}>
-                            <Button className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth)}
+                            <Button
+                                className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth, userCodeConfirmed ? classes.disabled : null)}
                                 onClick={() => {
-                                    if (trials === 4) {
-                                        return NextSlide();
-                                    }
                                     if (verificationCode) {
                                         handleVerifyCode();
                                     }
                                     else {
-                                        localStorage.setItem('verificationTrial', trials + 1)
+                                        setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2') })
+                                    }
+                                }}
+                            >
+                                {userCodeConfirmed ? <CircularProgress size={31} style={{ color: '#FFF' }} /> : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
+                            </Button>
+                            {/* <Button className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth)}
+                                onClick={() => {
+                                    // if (trials === 4) {
+                                    //     return NextSlide();
+                                    // }
+                                    if (verificationCode) {
+                                        handleVerifyCode();
+                                    }
+                                    else {
+                                        // localStorage.setItem('verificationTrial', trials + 1)
                                         setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2') })
                                     }
                                 }}
                             >
                                 {t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
-                            </Button>
+                            </Button> */}
                             <Typography className='error' variant="body1">{verificationError?.code}</Typography>
 
                             {/* // <Button onClick={() => setEmailStatus(!emailStatus)}>Change Status</Button> */}
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && <span>{resendInterval}</span>}</Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>
             </Box>
         )
-
-        const EMAIL_SLIDE_ERROR = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
-                <Box className='cFlexSlide'>
-                    <Box mt={4}>
-                        <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.title')}</Typography>
-                        <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.desc')}</Typography>
-                    </Box>
-
-                    <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.contactSupport')}</Typography>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.phone')}: 035240290</Typography>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.email')}: support@pulseem.com</Typography>
-                    </Box>
-                </Box>
-            </Box>
-        )
-
         const EMAIL_SLIDE_SUCCESS = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide'>
@@ -380,14 +392,12 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 {EMAIL_SLIDE_1()}
                 {EMAIL_SLIDE_2()}
                 {EMAIL_SLIDE_3()}
-                {(trials && trials >= 4) ? EMAIL_SLIDE_ERROR() : EMAIL_SLIDE_SUCCESS()}
+                {EMAIL_SLIDE_SUCCESS()}
             </Box>
         )
     }
 
     const SMS_MODULE = () => {
-        let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
-
         const SMS_SLIDE_1 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
@@ -472,7 +482,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('sms.enterNumberText')}
                                 error={!!verificationError?.Number}
-                            // helperText={verificationError?.email}
                             />
                         </Box>
                         <Box mt={2}>
@@ -528,55 +537,29 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                             />
                         </Box>
                         <Box mt={2}>
-                            <Button className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth)}
+                            <Button
+                                className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth, userCodeConfirmed ? classes.disabled : null)}
                                 onClick={() => {
-
-
-                                    if (trials === 4) {
-                                        return NextSlide();
-                                    }
-
                                     if (verificationCode) {
                                         handleVerifyCode();
                                     }
                                     else {
-                                        localStorage.setItem('verificationTrial', trials + 1)
                                         setVerificationError({ code: t('sms.verificationCodeError') })
                                     }
                                 }}
                             >
-                                {t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
+                                {userCodeConfirmed ? <CircularProgress size={31} style={{ color: '#FFF' }} /> : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
                             </Button>
                             <Typography className='error' variant="body1">{verificationError?.code}</Typography>
-
-                            {/* // <Button onClick={() => setEmailStatus(!emailStatus)}>Change Status</Button> */}
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={classes.link} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span></Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>
             </Box>
         )
-
-        const SMS_SLIDE_ERROR = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
-                <Box className='cFlexSlide'>
-                    <Box mt={4}>
-                        <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.title')}</Typography>
-                        <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.desc')}</Typography>
-                    </Box>
-
-                    <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.contactSupport')}</Typography>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.phone')}: 035240290</Typography>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.email')}: support@pulseem.com</Typography>
-                    </Box>
-                </Box>
-            </Box>
-        )
-
         const SMS_SLIDE_SUCCESS = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide'>
@@ -590,15 +573,12 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                 </Box>
             </Box >
         )
-
-
-
         return (
             <Box className={clsx(classes.carouselContainer, classes.sidebar)} style={{ height: `${SLIDE_HEIGHTS[verificationStep]}rem`, transition: 'height .5s' }}>
                 {SMS_SLIDE_1()}
                 {SMS_SLIDE_2()}
                 {SMS_SLIDE_3()}
-                {(trials && trials >= 4) ? SMS_SLIDE_ERROR() : SMS_SLIDE_SUCCESS()}
+                {SMS_SLIDE_SUCCESS()}
             </Box>
         )
 
@@ -608,8 +588,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
         title: '',
         icon: (
             <div className={classes.dialogIconContent} >
-                {variant == 'sms' && '\uE11B'}
-                {variant == 'email' && <MdOutlineMarkEmailRead />}
+                {variant === 'sms' && '\uE11B'}
+                {variant === 'email' && <MdOutlineMarkEmailRead />}
             </div>
         ),
         content: (<>

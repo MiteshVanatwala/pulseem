@@ -28,11 +28,12 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
-import { BeeConfig, DialogType } from './helper/Config';
+import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
 import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
+import { getFileGallery } from '../../redux/reducers/gallerySlice';
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -55,7 +56,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, accountSettings } = useSelector(state => state.core)
@@ -72,22 +72,53 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { modals, openModal } = useModals()
   const { setRow, getRows, handleDeleteRow, handleEditRow } = useMockAPI();
   const [showGallery, setShowGallery] = useState(false);
+  const [showDocs, setShowDocuments] = useState(false);
+  const [isSiteTracking, setIsSiteTracking] = useState(false);
 
   //#endregion State
+
   //#region Get Extra fields & Landing pages, after Data Ready
-  useEffect(() => {
-    if (dataReady) {
-      const initFields = () => {
-        initExtraDataField(extraData, t).then((exData) => {
-          setPulseemMergeData(exData);
-        })
-      }
-      const initLP = () => {
+  const initFields = () => {
+    initExtraDataField(extraData, t).then((exData) => {
+      setPulseemMergeData(exData);
+    })
+  }
+  const initSpecialLinks = () => {
+    return new Promise((resolve, reject) => {
+      try {
         initLandingPages(previousLandingData, t).then((items) => {
-          setSpecialLinks(items);
+          dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
+            const gallery = response.payload;
+            const specialLinksFiles = items;
+            const folderExtName = t('common.folder');
+
+            gallery?.Files?.forEach((file) => {
+              let folderName = file.FolderName === 'main' ? t('common.main') : file.FolderName;
+              if (file.FolderName.indexOf('\\') > -1) {
+                folderName = file.FolderName.split('\\')[1]
+              }
+
+              specialLinksFiles.push({
+                type: `${folderExtName} ${folderName}`,
+                label: file.FileName,
+                link: file.FileURL
+              })
+            });
+            resolve(specialLinksFiles);
+          });
         });
       }
-      Promise.all([initFields(), initLP()]).then(() => {
+      catch (e) {
+        console.error(e);
+        reject();
+      }
+    })
+
+  }
+
+  useEffect(() => {
+    if (dataReady) {
+      Promise.all([initFields(), siteTrackingLogic()]).then(() => {
         return true;
       })
     }
@@ -116,14 +147,13 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }, [language, userBlocks]);
 
-
   //#region Check session token -> tokenAlive
   useEffect(() => {
     setInterval(() => {
       if (tokenAlive) {
         dispatch(isAlive());
       }
-    }, 30000);
+    }, 300000);
     try {
       document.removeEventListener('setAlert', null);
     }
@@ -184,6 +214,17 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     initBeeToken();
   }
+  const siteTrackingLogic = () => {
+    if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
+      const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+      if (campaign.HtmlData.indexOf(domainName) > -1) {
+        setIsSiteTracking(true);
+      }
+      else {
+        setIsSiteTracking(false);
+      }
+    }
+  }
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks.map(item => item.tags))];
@@ -207,42 +248,52 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
   const initBeeEditor = () => {
-    config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
-    config.mergeTags = mergeData;
-    config.specialLinks = specialLinks;
+    initSpecialLinks().then((specialLinksFiles) => {
+      const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
+      const defaultContent = DefaultContent(isRtlLang);
+      config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
+      config.mergeTags = mergeData;
+      config.specialLinks = specialLinksFiles;
+      config.titleDefaultStyles = defaultContent.titleDefaultStyles;
+      config.contentDefaults = defaultContent.contentDefaults;
 
-    initTags();
+      initTags();
 
-    switch (beeToken?.StatusCode) {
-      case 201: {
-        const beeObject = JSON.parse(beeToken.Message);
-        if (beeToken.Message === "null" || beeToken.Message === null) {
+      switch (beeToken?.StatusCode) {
+        case 201: {
+          const beeObject = JSON.parse(beeToken.Message);
+          if (beeToken.Message === "null" || beeToken.Message === null) {
+            setDialog(DialogType.MISSING_API_KEY);
+          }
+          else {
+            const beeTest = new BeePlugin(beeObject);
+            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : { messageWidth: '600px' };
+            beeTest.start(config, template).then((instance) => {
+              editorRef.current = instance;
+              if (!campaign || !campaign.HtmlData) {
+                saveDesign(false, null, false);
+              }
+            });
+          }
+          break;
+        }
+        case 401: {
           setDialog(DialogType.MISSING_API_KEY);
+          break;
         }
-        else {
-          const beeTest = new BeePlugin(beeObject);
-          const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : {};
-          beeTest.start(config, template).then((instance) => {
-            editorRef.current = instance;
-          });
+        case 404: {
+          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+          break;
         }
-        break;
+        case 500:
+        default: {
+          setDialog(DialogType.ERROR_OCCURED);
+          break;
+        }
       }
-      case 401: {
-        setDialog(DialogType.MISSING_API_KEY);
-        break;
-      }
-      case 404: {
-        setDialog(DialogType.CAMPAIGN_NOT_FOUND);
-        break;
-      }
-      case 500:
-      default: {
-        setDialog(DialogType.ERROR_OCCURED);
-        break;
-      }
-    }
-    setLoader(false);
+      setLoader(false);
+
+    })
   }
   useEffect(() => {
     if (beeToken) {
@@ -261,15 +312,38 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+
   //#endregion Init Bee Token & Configuration
   //#region Pulseem Methods (Save, Delete, Exit, Back, Test Send)
+  const doaminWithClientRef = (str) => {
+    let finalStr = str;
+    const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
+    const originalLink = startIndex.split(/[\s\n]+/);
+    let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
+    let newUrl = originUrl.trim();
+    if (newUrl.indexOf('ClientIDEnc') == -1) {
+      newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+      finalStr = finalStr.replace(originUrl, newUrl);
+    }
+    return finalStr;
+  }
   const onSave = async (args) => {
     try {
+      setLoader(true);
+      let finalHtml = args.HtmlData;
+      let finalJson = args.JsonData;
+
+      if (isSiteTracking === true) {
+        if (!args.HtmlData.indexOf('ref') > -1) {
+          finalHtml = doaminWithClientRef(args.HtmlData);
+          finalJson = doaminWithClientRef(args.JsonData);
+        }
+      }
       const response = await dispatch(saveCampaign({
         Name: campaign.Name,
         campaignId: args.campaignId,
-        JsonData: args.JsonData,
-        HTML: args.HtmlData
+        JsonData: finalJson,
+        HTML: finalHtml
       }));
 
       if (response.payload === true) {
@@ -283,9 +357,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       else {
         console.log(response);
       }
-
     } catch (e) {
       console.error(e);
+    }
+    finally {
+      setLoader(false);
     }
   }
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
@@ -402,6 +478,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(() => {
       setLoader(false);
       dispatch(getUserblocks());
+      setRow(json);
     });
   }
   const onEditBlock = (blockRequest) => {
@@ -440,7 +517,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       PulseemEditBlock: onEditBlock,
       DeleteBlock: handleDeleteBlock,
       // HandleAutoSave: handleAutoSave,
-      setRow,
       getRows,
       handleEditRow,
       handleDeleteRow,
@@ -460,10 +536,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         content: (
           <Gallery
             classes={classes}
-            // isConfirm={isGalleryConfirmed}
-            // callbackSelectFile={handleSelectedImage}
             style={{ minWidth: 400 }}
             multiSelect={false}
+            forceReload={true}
             folderType={PulseemFolderType.CLIENT_IMAGES} />
         )
       };
@@ -476,8 +551,42 @@ const CampaignEditor = ({ classes, ...props }) => {
           showDivider={false}
           classes={classes}
           open={showGallery}
-          onClose={() => { setShowGallery(false) }}
-          onConfirm={() => { setShowGallery(false) }}
+          onClose={() => { setShowGallery(false); }}
+          onConfirm={() => { setShowGallery(false); }}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const showDocumentsModal = () => {
+    if (showDocs) {
+      let dialog = {
+        showDivider: false,
+        icon: (
+          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+        ),
+        title: t("common.documentGallery"),
+        content: (
+          <Gallery
+            classes={classes}
+            style={{ minWidth: 400 }}
+            multiSelect={false}
+            forceReload={true}
+            folderType={PulseemFolderType.DOCUMENT} />
+        )
+      };
+
+      return (
+        <Dialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          showDivider={false}
+          classes={classes}
+          open={showDocs}
+          onClose={() => { setShowDocuments(false); }}
+          onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -487,6 +596,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   return (
     <DefaultScreen
+      showAppBar={false}
       currentPage='campaignEditor'
       classes={classes}
       customPadding={true}
@@ -494,6 +604,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     >
       {renderToast()}
       {showGalleryModal()}
+      {showDocumentsModal()}
       <NoCreditsModal
         classes={classes}
         onClose={() => setDialog(null)}
@@ -533,6 +644,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         onBack={onBack}
         onDelete={onDelete}
         onShowGallery={() => { setShowGallery(true) }}
+        onShowDocuments={() => { setShowDocuments(true) }}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
