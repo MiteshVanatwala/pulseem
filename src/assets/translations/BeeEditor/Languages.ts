@@ -976,7 +976,7 @@ export const TRANSLATE_HEBREW = {
         "default-rows": "ברירת מחדל",
         "delete": "מחק",
         "duplicate": "שכפל",
-        "empty-rows": "רוקן",
+        "empty-rows": "תבניות ריקות",
         "row-alt": "תמונה",
         "row-bkg-over-txt": "טקסט על תבנית רקע",
         "row-bullet-point": "רשימה לא ממוספרת",
@@ -1433,7 +1433,7 @@ export const TRANSLATE_HEBREW = {
         "page-font": "גופן ברירת מחדל"
     },
     "mailup-common-href": {
-        "link-file": "קובץ קישור",
+        "link-file": "קישור לקובץ",
         "link-sms": "טלפון",
         "link-telephone": "טלפון",
         "link-url": "כתובת אתר",
