@@ -1,70 +1,90 @@
-import { ClassesType } from "../../Classes.types";
-import { BaseSyntheticEvent } from "react";
+import { ClassesType } from '../../Classes.types';
+import { BaseSyntheticEvent } from 'react';
 
 export type WhatsappCreatorProps = {
-  classes: ClassesType[];
-  onButtonClick(button: actionButtonProps): void;
+	classes: ClassesType[];
+	onButtonClick(button: actionButtonProps): void;
+	buttons: templateDataProps['templateButtons'];
+	onButtonDelete: (
+		button: quickReplyButtonProps | callToActionRowProps
+	) => void;
+	setTemplateText: (text: string) => void;
+	templateText: string;
+	buttonType: string;
 };
 
 export type TemplateFieldsProps = {
-  classes: ClassesType[];
-  templateName: string;
-  savedTemplate: string;
-  onTemplateNameChange: (e: BaseSyntheticEvent) => void;
-  onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	classes: ClassesType[];
+	templateName: string;
+	savedTemplate: string;
+	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
+	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
 };
 
 export type MessageEditorProps = {
-  classes: ClassesType;
+	classes: ClassesType;
 };
 
 export type callToActionFieldProps = {
-  fieldName: string;
-  type: string;
-  placeholder: string;
-  value: string;
+	fieldName: string;
+	type: string;
+	placeholder: string;
+	value: string;
 };
 
 export type callToActionRowProps = {
-  id: string;
-  typeOfAction: string;
-  fields: callToActionFieldProps[];
+	id: string;
+	typeOfAction: string;
+	fields: callToActionFieldProps[];
 };
 
 export type callToActionProps = callToActionRowProps[];
 
 export type actionProps = {
-  isCallToActionOpen: boolean;
-  closeCallToAction: () => void;
-  classes: ClassesType["classes"];
+	isCallToActionOpen: boolean;
+	closeCallToAction: () => void;
+	classes: ClassesType['classes'];
+	callToActionFieldRows: any;
+	setCallToActionFieldRows: (data: callToActionProps) => void;
+	phoneNumberField: callToActionFieldProps[];
+	websiteField: callToActionFieldProps[];
+	addMore: () => void;
+	updateTemplateData: (data: callToActionProps) => void;
 };
 
 export type PhoneProps = {
-  classes: ClassesType;
+	classes: ClassesType;
 };
 
 export type ButtonsProps = {
-  classes: ClassesType;
+	classes: ClassesType;
 };
 
 export type coreProps = {
-  windowSize: string;
-  isRTL: boolean;
+	windowSize: string;
+	isRTL: boolean;
 };
 
 export type actionButtonProps = {
-  tooltipTitle: string;
-  buttonTitle: string;
-  isDisable: boolean;
+	tooltipTitle: string;
+	buttonTitle: string;
 };
 
 export type quickReplyProps = {
-  classes: ClassesType["classes"];
-  isQuickReplyOpen: boolean;
-  closeQuickReply: () => void;
+	classes: ClassesType['classes'];
+	isQuickReplyOpen: boolean;
+	closeQuickReply: () => void;
+	quickReplyButtons: quickReplyButtonProps[];
+	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
+	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 };
 
 export type quickReplyButtonProps = {
-  id: string;
-  value: string;
+	id: string;
+	value: string;
+};
+
+export type templateDataProps = {
+	templateText: string;
+	templateButtons: quickReplyButtonProps[] | callToActionProps;
 };

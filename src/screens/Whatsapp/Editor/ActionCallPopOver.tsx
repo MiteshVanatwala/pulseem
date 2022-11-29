@@ -1,6 +1,5 @@
-import React, { BaseSyntheticEvent, useState, useMemo } from 'react';
+import React, { BaseSyntheticEvent } from 'react';
 import {
-	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -18,77 +17,22 @@ import CloseIcon from '@material-ui/icons/Close';
 import {
 	actionProps,
 	callToActionFieldProps,
-	callToActionProps,
 	callToActionRowProps,
-	coreProps,
 } from './WhatsappCreator.types';
-import uniqid from 'uniqid';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-import { ClassesType } from '../../Classes.types';
 
 const ActionCallPopOver = ({
 	isCallToActionOpen,
 	closeCallToAction,
 	classes,
+	callToActionFieldRows,
+	setCallToActionFieldRows,
+	phoneNumberField,
+	websiteField,
+	addMore,
+	updateTemplateData,
 }: actionProps) => {
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-
 	const { t: translator } = useTranslation();
-
-	const websiteField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.websiteButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.websiteURL'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteURLPlaceholder'),
-				value: '',
-			},
-		],
-		[isRTL]
-	);
-	const phoneNumberField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.phoneButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.country'),
-				type: 'select',
-				placeholder: 'Select Your Country Code',
-				value: '+972 Israel',
-			},
-			{
-				fieldName: translator('whatsapp.phoneNumber'),
-				type: 'tel',
-				placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-				value: '',
-			},
-		],
-		[isRTL]
-	);
-
-	const initialFieldRow = {
-		id: uniqid(),
-		typeOfAction: 'phonenumber',
-		fields: phoneNumberField,
-	};
-
-	const [callToActionFieldRows, setCallToActionFieldRows] =
-		useState<callToActionProps>([initialFieldRow]);
-
-	const addMore = () => {
-		setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
-	};
 
 	const onTypeOfActionChange = (
 		e: BaseSyntheticEvent,
@@ -138,35 +82,37 @@ const ActionCallPopOver = ({
 		setCallToActionFieldRows([...updatedRows]);
 	};
 
-	const onSubmit = () => {
-		console.log('Submission Values', callToActionFieldRows);
+	const onSubmit = (e: BaseSyntheticEvent) => {
+		e.preventDefault();
+		setCallToActionFieldRows(callToActionFieldRows);
+		updateTemplateData(callToActionFieldRows);
+		closeCallToAction();
 	};
 
 	return (
-		<form onSubmit={onSubmit}>
-			<Dialog
-				open={isCallToActionOpen}
-				onClose={closeCallToAction}
-				aria-labelledby='form-dialog-title'
-				fullWidth
-				maxWidth='md'>
-				<DialogTitle
-					id='form-dialog-title'
-					className={classes.callToActionDialogHeaderTitle}>
-					{translator('whatsapp.callToActionTitle')}
-					<IconButton
-						aria-label='close'
-						onClick={closeCallToAction}
-						className={classes.callToActionDialogClose}>
-						<CloseIcon />
-					</IconButton>
-				</DialogTitle>
-				<DialogContent>
-					<DialogContentText
-						className={classes.callToActionDialogHeaderDescription}>
-						{translator('whatsapp.callToActionDialogContentText')}
-					</DialogContentText>
-
+		<Dialog
+			open={isCallToActionOpen}
+			onClose={closeCallToAction}
+			aria-labelledby='form-dialog-title'
+			fullWidth
+			maxWidth='md'>
+			<DialogTitle
+				id='form-dialog-title'
+				className={classes.callToActionDialogHeaderTitle}>
+				{translator('whatsapp.callToActionTitle')}
+				<IconButton
+					aria-label='close'
+					onClick={closeCallToAction}
+					className={classes.callToActionDialogClose}>
+					<CloseIcon />
+				</IconButton>
+			</DialogTitle>
+			<DialogContent>
+				<DialogContentText
+					className={classes.callToActionDialogHeaderDescription}>
+					{translator('whatsapp.callToActionDialogContentText')}
+				</DialogContentText>
+				<form onSubmit={onSubmit}>
 					<Grid container className={classes.callToActionFields} spacing={1}>
 						{callToActionFieldRows.map(
 							(row: callToActionRowProps, index: number) => (
@@ -279,9 +225,9 @@ const ActionCallPopOver = ({
 							{translator('whatsapp.callToActionSaveButton')}
 						</Button>
 					</DialogActions>
-				</DialogContent>
-			</Dialog>
-		</form>
+				</form>
+			</DialogContent>
+		</Dialog>
 	);
 };
 
