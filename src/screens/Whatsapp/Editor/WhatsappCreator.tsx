@@ -113,10 +113,166 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setSavedTemplate(e.target.value);
 	};
 
+	const getValueByFieldName = (
+		button: quickReplyButtonProps,
+		fieldName: string
+	) => {
+		return button.fields.find((field: quickReplyButtonsFieldProps) => {
+			return field.fieldName === fieldName;
+		})?.value;
+	};
+
+	const getQuickReplyActions = () => {
+		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
+			return {
+				id: button.id,
+				title: getValueByFieldName(
+					button,
+					translator('whatsapp.websiteButtonText')
+				),
+			};
+		});
+	};
+
+	const getActionPhoneNumber = (button: quickReplyButtonProps) => {
+		const phoneNumber = getValueByFieldName(
+			button,
+			translator('whatsapp.phoneNumber')
+		);
+		const countryCode = getValueByFieldName(
+			button,
+			translator('whatsapp.country')
+		);
+		return countryCode && phoneNumber ? countryCode + phoneNumber : phoneNumber;
+	};
+
+	const getCallTOActionActions = () => {
+		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
+			return {
+				type: button.typeOfAction === 'phonenumber' ? 'PHONE_NUMBER' : 'URL',
+				title: getValueByFieldName(
+					button,
+					translator('whatsapp.websiteButtonText')
+				),
+				[button.typeOfAction === 'phonenumber' ? 'phone' : 'url']:
+					button.typeOfAction === 'phonenumber'
+						? getActionPhoneNumber(button)
+						: getValueByFieldName(button, translator('whatsapp.websiteURL')),
+			};
+		});
+	};
+
+	const getRequestJSON = () => {
+		const requestJSON = {
+			text: {
+				phonenumber: '',
+				templateName: templateName,
+				variables: {
+					'1': 'name',
+				},
+				language: isRTL ? 'he' : 'en',
+				types: {
+					text: {
+						body: templateData.templateText,
+					},
+				},
+			},
+			textMedia: {
+				phonenumber: '',
+				templateName: templateName,
+				variables: {
+					'1': 'account',
+				},
+				language: isRTL ? 'he' : 'en',
+				types: {
+					media: {
+						body: templateData.templateText,
+						media_type: 'image',
+						media: ['http://clipart-library.com/data_images/320465.png'],
+					},
+				},
+			},
+			quickReply: {
+				phonenumber: '',
+				templateName: templateName,
+				variables: {
+					'1': 'Name',
+				},
+				language: isRTL ? 'he' : 'en',
+				types: {
+					text: {
+						body: templateData.templateText,
+					},
+					'quick-reply': {
+						body: templateData.templateText,
+						actions: getQuickReplyActions(),
+					},
+				},
+			},
+			callToAction: {
+				phonenumber: '',
+				templateName: templateName,
+				variables: {
+					'1': 'flight_number',
+					'2': 'arrival_city',
+					'3': 'departure_time',
+					'4': 'gate_number',
+					'5': 'url_suffix',
+				},
+				language: isRTL ? 'he' : 'en',
+				types: {
+					'call-to-action': {
+						body: templateData.templateText,
+						actions: getCallTOActionActions(),
+					},
+				},
+			},
+			textMediaAndButton: {
+				phonenumber: '',
+				templateName: templateName,
+				variables: {
+					'1': 'coupon_code',
+				},
+				language: isRTL ? 'he' : 'en',
+				types: {
+					card: {
+						title: templateData.templateText,
+						subtitle: 'To unsubscribe, reply Stop',
+						actions:
+							buttonType === 'quickReply'
+								? getQuickReplyActions()
+								: getCallTOActionActions(),
+					},
+					text: {
+						body: templateData.templateText,
+					},
+				},
+			},
+		};
+		let media = true;
+		const templateText = templateData.templateText;
+		if (templateText?.length > 0 && buttonType.length > 0 && media) {
+			console.log('getRequestJSON::TYPE => textMediaAndButton');
+			return requestJSON.textMediaAndButton;
+		} else if (templateText?.length > 0 && buttonType === 'quickReply') {
+			console.log('getRequestJSON::TYPE => quickReply');
+			return requestJSON.quickReply;
+		} else if (templateText?.length > 0 && buttonType === 'callToAction') {
+			console.log('getRequestJSON::TYPE => callToAction');
+			return requestJSON.callToAction;
+		} else if (templateText?.length > 0 && media) {
+			console.log('getRequestJSON::TYPE => textMedia');
+			return requestJSON.textMedia;
+		} else {
+			console.log('getRequestJSON::TYPE => text');
+			return templateText;
+		}
+	};
+
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log('Form Submitted with these - ', templateName, savedTemplate);
-		console.log('Form Submitted with these - requestJSON', requestJSON);
+
+		console.log('getRequestJSON::', getRequestJSON());
 	};
 
 	const addDynamicField = (
@@ -292,137 +448,20 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
-	const getQuickReplyActions = () => {
-		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
-			return {
-				id: button.id,
-				title: button.fields.find((field: quickReplyButtonsFieldProps) => {
-					return field.fieldName === translator('whatsapp.websiteButtonText');
-				})?.value,
-			};
-		});
-	};
-
-	const getCallTOActionActions = () => {
-		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
-			return {
-				type: button.typeOfAction === 'phonenumber' ? 'PHONE_NUMBER' : 'URL',
-				title: button.fields.find((field: quickReplyButtonsFieldProps) => {
-					return field.fieldName === translator('whatsapp.websiteButtonText');
-				})?.value,
-				[button.typeOfAction === 'phonenumber' ? 'phone' : 'url']:
-					button.typeOfAction === 'phonenumber'
-						? button.fields.find((field: quickReplyButtonsFieldProps) => {
-								return field.fieldName === translator('whatsapp.phoneNumber');
-						  })?.value
-						: button.fields.find((field: quickReplyButtonsFieldProps) => {
-								return field.fieldName === translator('whatsapp.websiteURL');
-						  })?.value,
-			};
-		});
-	};
-
-	const requestJSON = {
-		text: {
-			phonenumber: '',
-			templateName: templateName,
-			variables: {
-				'1': 'name',
-			},
-			language: isRTL ? 'he' : 'en',
-			types: {
-				text: {
-					body: templateData.templateText,
-				},
-			},
-		},
-		textMedia: {
-			phonenumber: '',
-			templateName: templateName,
-			variables: {
-				'1': 'account',
-			},
-			language: isRTL ? 'he' : 'en',
-			types: {
-				media: {
-					body: templateData.templateText,
-					media_type: 'image',
-					media: ['http://clipart-library.com/data_images/320465.png'],
-				},
-			},
-		},
-		quickReply: {
-			phonenumber: '',
-			templateName: templateName,
-			variables: {
-				'1': 'Name',
-			},
-			language: isRTL ? 'he' : 'en',
-			types: {
-				text: {
-					body: templateData.templateText,
-				},
-				'quick-reply': {
-					body: templateData.templateText,
-					actions: getQuickReplyActions(),
-				},
-			},
-		},
-		callToAction: {
-			phonenumber: '',
-			templateName: templateName,
-			variables: {
-				'1': 'flight_number',
-				'2': 'arrival_city',
-				'3': 'departure_time',
-				'4': 'gate_number',
-				'5': 'url_suffix',
-			},
-			language: isRTL ? 'he' : 'en',
-			types: {
-				'call-to-action': {
-					body: templateData.templateText,
-					actions: getCallTOActionActions(),
-				},
-			},
-		},
-		textMediaAndButton: {
-			phonenumber: '',
-			templateName: templateName,
-			variables: {
-				'1': 'coupon_code',
-			},
-			language: isRTL ? 'he' : 'en',
-			types: {
-				card: {
-					title: templateData.templateText,
-					subtitle: 'To unsubscribe, reply Stop',
-					actions:
-						buttonType === 'quickReply'
-							? getQuickReplyActions()
-							: getCallTOActionActions(),
-				},
-				text: {
-					body: templateData.templateText,
-				},
-			},
-		},
-	};
-
 	return (
-		<form onSubmit={handleSubmit}>
-			<DefaultScreen
-				subPage={'create'}
-				currentPage='whatsapp'
-				classes={classes}
-				customPadding={true}>
-				<Title
-					Text={translator('whatsapp.header')}
-					Classes={classes.whatsappTemplateTitle}
-					ContainerStyle={{}}
-					Element={null}
-				/>
-				<br />
+		<DefaultScreen
+			subPage={'create'}
+			currentPage='whatsapp'
+			classes={classes}
+			customPadding={true}>
+			<Title
+				Text={translator('whatsapp.header')}
+				Classes={classes.whatsappTemplateTitle}
+				ContainerStyle={{}}
+				Element={null}
+			/>
+			<br />
+			<form onSubmit={handleSubmit}>
 				<Grid container>
 					<Grid item xs={12} md={5} sm={12}>
 						<TemplateFields
@@ -431,21 +470,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							savedTemplate={savedTemplate}
 							onTemplateNameChange={(e) => onTemplateNameChange(e)}
 							onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
-						/>
-						<ActionCallPopOver
-							isCallToActionOpen={isCallToActionOpen}
-							closeCallToAction={() => setIsCallToActionOpen(false)}
-							classes={classes}
-							callToActionFieldRows={callToActionFieldRows}
-							setCallToActionFieldRows={(data) =>
-								setCallToActionFieldRows(data)
-							}
-							phoneNumberField={phoneNumberField}
-							websiteField={websiteField}
-							addMore={() => addMore()}
-							updateTemplateData={(data: callToActionProps) =>
-								updateTemplateButton(data, 'callToAction')
-							}
 						/>
 					</Grid>
 					<Grid container>
@@ -461,7 +485,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								setTemplateText={(text: string) => updateTemplateText(text)}
 								templateText={templateData.templateText}
 								templateTextRef={templateTextRef}
-								OnEditorActionButtonClick={() => alert('s')}
+								OnEditorActionButtonClick={() =>
+									buttonType === 'quickReply'
+										? setIsQuickReplyOpen(true)
+										: setIsCallToActionOpen(true)
+								}
 							/>
 						</Grid>
 
@@ -478,20 +506,33 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						</Grid>
 					</Grid>
 				</Grid>
-				<QuickReply
-					classes={classes}
-					isQuickReplyOpen={isQuickReplyOpen}
-					closeQuickReply={() => setIsQuickReplyOpen(false)}
-					quickReplyButtons={quickReplyButtons}
-					setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
-						setQuickReplyButtons(data)
-					}
-					updateTemplateData={(data: quickReplyButtonProps[]) =>
-						updateTemplateButton(data, 'quickReply')
-					}
-				/>
-			</DefaultScreen>
-		</form>
+			</form>
+			<QuickReply
+				classes={classes}
+				isQuickReplyOpen={isQuickReplyOpen}
+				closeQuickReply={() => setIsQuickReplyOpen(false)}
+				quickReplyButtons={quickReplyButtons}
+				setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
+					setQuickReplyButtons(data)
+				}
+				updateTemplateData={(data: quickReplyButtonProps[]) =>
+					updateTemplateButton(data, 'quickReply')
+				}
+			/>
+			<ActionCallPopOver
+				isCallToActionOpen={isCallToActionOpen}
+				closeCallToAction={() => setIsCallToActionOpen(false)}
+				classes={classes}
+				callToActionFieldRows={callToActionFieldRows}
+				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
+				phoneNumberField={phoneNumberField}
+				websiteField={websiteField}
+				addMore={() => addMore()}
+				updateTemplateData={(data: callToActionProps) =>
+					updateTemplateButton(data, 'callToAction')
+				}
+			/>
+		</DefaultScreen>
 	);
 };
 

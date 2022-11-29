@@ -32,7 +32,8 @@ const QuickReply = ({
 	updateTemplateData,
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
-	const onSubmit = () => {
+	const onSubmit = (e: BaseSyntheticEvent) => {
+		e.preventDefault();
 		setQuickReplyButtons(quickReplyButtons);
 		updateTemplateData(quickReplyButtons);
 		closeQuickReply();
@@ -109,36 +110,40 @@ const QuickReply = ({
 						<Grid
 							container
 							alignItems='center'
-							className={classes.quickReplayButtonGridWrapper}>
-							<Grid item key={button.id}>
+							className={classes.quickReplayButtonGridWrapper}
+							key={button.id}>
+							<Grid item>
 								<Typography>
 									{translator('whatsapp.quickReply.buttonText')}
 								</Typography>
 								<Grid container className={classes.quickReplayButtonWrapper}>
-									{button?.fields?.map((field: quickReplyButtonsFieldProps) => (
-										<>
-											<TextField
-												className={classes.quickReplaybuttonField}
-												name={'quickreply'}
-												value={field?.value}
-												onChange={(e) => onButtonTextChange(e, button, field)}
-												required
-											/>
-											<Button
-												variant='outlined'
-												className={classes.quickReplayValidationCounter}>
-												{isRTL ? (
-													<>
-														{MAX_BUTTON_TEXT_LENGTH}/{field?.value?.length}
-													</>
-												) : (
-													<>
-														{field?.value?.length}/{MAX_BUTTON_TEXT_LENGTH}
-													</>
-												)}
-											</Button>
-										</>
-									))}
+									{button?.fields?.map(
+										(field: quickReplyButtonsFieldProps, index: number) => (
+											<div key={index}>
+												<TextField
+													className={classes.quickReplaybuttonField}
+													name={'quickreply'}
+													value={field?.value}
+													onChange={(e) => onButtonTextChange(e, button, field)}
+													required
+													key={index}
+												/>
+												<Button
+													variant='outlined'
+													className={classes.quickReplayValidationCounter}>
+													{isRTL ? (
+														<>
+															{MAX_BUTTON_TEXT_LENGTH}/{field?.value?.length}
+														</>
+													) : (
+														<>
+															{field?.value?.length}/{MAX_BUTTON_TEXT_LENGTH}
+														</>
+													)}
+												</Button>
+											</div>
+										)
+									)}
 								</Grid>
 							</Grid>
 							<DeleteOutlinedIcon
