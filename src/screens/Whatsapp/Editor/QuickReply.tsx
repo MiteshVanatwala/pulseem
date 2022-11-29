@@ -42,6 +42,7 @@ const QuickReply = ({
 	const addMore = () => {
 		const button = {
 			id: uniqid(),
+			typeOfAction: '',
 			fields: [
 				{
 					fieldName: translator('whatsapp.websiteButtonText'),

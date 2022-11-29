@@ -12,6 +12,7 @@ import {
 	callToActionRowProps,
 	coreProps,
 	quickReplyButtonProps,
+	quickReplyButtonsFieldProps,
 	templateDataProps,
 	WhatsappCreatorProps,
 } from './WhatsappCreator.types';
@@ -30,6 +31,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
+			typeOfAction: '',
 			fields: [
 				{
 					fieldName: translator('whatsapp.websiteButtonText'),
@@ -113,9 +115,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		setTemplateName('');
-		setSavedTemplate('');
 		console.log('Form Submitted with these - ', templateName, savedTemplate);
+		console.log('Form Submitted with these - requestJSON', requestJSON);
 	};
 
 	const addDynamicField = (
@@ -289,6 +290,123 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			...templateData,
 			templateText: reOrderDynamicFieldValue(text),
 		});
+	};
+
+	const getQuickReplyActions = () => {
+		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
+			return {
+				id: button.id,
+				title: button.fields.find((field: quickReplyButtonsFieldProps) => {
+					return field.fieldName === translator('whatsapp.websiteButtonText');
+				})?.value,
+			};
+		});
+	};
+
+	const getCallTOActionActions = () => {
+		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
+			return {
+				type: button.typeOfAction === 'phonenumber' ? 'PHONE_NUMBER' : 'URL',
+				title: button.fields.find((field: quickReplyButtonsFieldProps) => {
+					return field.fieldName === translator('whatsapp.websiteButtonText');
+				})?.value,
+				[button.typeOfAction === 'phonenumber' ? 'phone' : 'url']:
+					button.typeOfAction === 'phonenumber'
+						? button.fields.find((field: quickReplyButtonsFieldProps) => {
+								return field.fieldName === translator('whatsapp.phoneNumber');
+						  })?.value
+						: button.fields.find((field: quickReplyButtonsFieldProps) => {
+								return field.fieldName === translator('whatsapp.websiteURL');
+						  })?.value,
+			};
+		});
+	};
+
+	const requestJSON = {
+		text: {
+			phonenumber: '',
+			templateName: templateName,
+			variables: {
+				'1': 'name',
+			},
+			language: isRTL ? 'he' : 'en',
+			types: {
+				text: {
+					body: templateData.templateText,
+				},
+			},
+		},
+		textMedia: {
+			phonenumber: '',
+			templateName: templateName,
+			variables: {
+				'1': 'account',
+			},
+			language: isRTL ? 'he' : 'en',
+			types: {
+				media: {
+					body: templateData.templateText,
+					media_type: 'image',
+					media: ['http://clipart-library.com/data_images/320465.png'],
+				},
+			},
+		},
+		quickReply: {
+			phonenumber: '',
+			templateName: templateName,
+			variables: {
+				'1': 'Name',
+			},
+			language: isRTL ? 'he' : 'en',
+			types: {
+				text: {
+					body: templateData.templateText,
+				},
+				'quick-reply': {
+					body: templateData.templateText,
+					actions: getQuickReplyActions(),
+				},
+			},
+		},
+		callToAction: {
+			phonenumber: '',
+			templateName: templateName,
+			variables: {
+				'1': 'flight_number',
+				'2': 'arrival_city',
+				'3': 'departure_time',
+				'4': 'gate_number',
+				'5': 'url_suffix',
+			},
+			language: isRTL ? 'he' : 'en',
+			types: {
+				'call-to-action': {
+					body: templateData.templateText,
+					actions: getCallTOActionActions(),
+				},
+			},
+		},
+		textMediaAndButton: {
+			phonenumber: '',
+			templateName: templateName,
+			variables: {
+				'1': 'coupon_code',
+			},
+			language: isRTL ? 'he' : 'en',
+			types: {
+				card: {
+					title: templateData.templateText,
+					subtitle: 'To unsubscribe, reply Stop',
+					actions:
+						buttonType === 'quickReply'
+							? getQuickReplyActions()
+							: getCallTOActionActions(),
+				},
+				text: {
+					body: templateData.templateText,
+				},
+			},
+		},
 	};
 
 	return (

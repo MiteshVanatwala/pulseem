@@ -82,7 +82,8 @@ const ActionCallPopOver = ({
 		setCallToActionFieldRows([...updatedRows]);
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = (e: BaseSyntheticEvent) => {
+		e.preventDefault();
 		setCallToActionFieldRows(callToActionFieldRows);
 		updateTemplateData(callToActionFieldRows);
 		closeCallToAction();

@@ -92,6 +92,7 @@ export type quickReplyButtonsFieldProps = {
 
 export type quickReplyButtonProps = {
 	id: string;
+	typeOfAction: string;
 	fields: quickReplyButtonsFieldProps[];
 };
 
