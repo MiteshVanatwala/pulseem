@@ -77,7 +77,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                     if (results?.name) {
                         const metadata: any = {
                             name: results?.name,
-                            tags: results?.tags ?? t('common.savedBlocks'),
+                            tags: results?.tags ?? t('campaigns.savedBlocks'),
                             uuid: uuidv4()
                         }
                         resolve(metadata);
@@ -102,7 +102,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
                         const results = await openModal(EditRow, args, classes);
                         if (results?.name) {
                             args.row.metadata.name = results?.name;
-                            args.row.metadata.tags = results?.tags ?? t('common.savedBlocks');
+                            args.row.metadata.tags = results?.tags ?? t('campaigns.savedBlocks');
 
                             const rows = await getRows(args.handle);
                             const row = rows.find((r: any) => {
@@ -110,17 +110,17 @@ export const BeeConfig = (Options: ConfigOptions) => {
                             });
 
                             row.metadata.name = results?.name;
-                            row.metadata.tags = results?.tags ?? t('common.savedBlocks');
+                            row.metadata.tags = results?.tags ?? t('campaigns.savedBlocks');
 
                             const saveBlockObj = {
                                 Category: results?.name,
-                                Tags: results?.tags?.split(',') ?? t('common.savedBlocks'),
+                                Tags: results?.tags?.split(',') ?? t('campaigns.savedBlocks'),
                                 Data: JSON.stringify(JSON.stringify(row)),
                                 uuid: args.row?.metadata?.uuid ?? uuidv4(),
                                 Json: row
                             }
                             await PulseemEditBlock(saveBlockObj);
-                            await handleEditRow(args, results?.name, results?.tags ?? t('common.savedBlocks'));
+                            await handleEditRow(args, results?.name, results?.tags ?? t('campaigns.savedBlocks'));
                         }
                         resolve(true);
                     }
