@@ -82,7 +82,8 @@ const ActionCallPopOver = ({
 		setCallToActionFieldRows([...updatedRows]);
 	};
 
-	const handleSubmit = () => {
+	const onSubmit = (e: BaseSyntheticEvent) => {
+		e.preventDefault();
 		setCallToActionFieldRows(callToActionFieldRows);
 		updateTemplateData(callToActionFieldRows);
 		closeCallToAction();
@@ -111,7 +112,7 @@ const ActionCallPopOver = ({
 					className={classes.callToActionDialogHeaderDescription}>
 					{translator('whatsapp.callToActionDialogContentText')}
 				</DialogContentText>
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={onSubmit}>
 					<Grid container className={classes.callToActionFields} spacing={1}>
 						{callToActionFieldRows.map(
 							(row: callToActionRowProps, index: number) => (
