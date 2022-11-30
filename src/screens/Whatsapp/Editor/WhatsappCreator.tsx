@@ -27,6 +27,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
+	//This regex will test dynamic field having two digits in side (i.e. {{10}});
+	const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
+	//This regex will test dynamic field having one digits in side (i.e. {{1}});
+	const dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
@@ -150,10 +154,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getDynamicFieldIndex = (text: string) => {
-		var indices = [];
-		var dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
-		var dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
-		for (var i = 0; i < text.length; i++) {
+		let indices = [];
+		for (let i = 0; i < text.length; i++) {
 			if (
 				dynamicFieldL5.test(text.slice(i, i + 5)) ||
 				dynamicFieldL6.test(text.slice(i, i + 6))
@@ -165,11 +167,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getLastDynamicFieldValue = (text: string) => {
-		var str = text;
-		var indices: string[] = [];
-		var dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
-		var dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
-		for (var i = 0; i < str.length; i++) {
+		let str = text;
+		let indices: string[] = [];
+		for (let i = 0; i < str.length; i++) {
 			if (dynamicFieldL5.test(str.slice(i, i + 5))) {
 				indices.push(str.slice(i, i + 5).replace(/[{}]/g, ''));
 			} else if (dynamicFieldL6.test(str.slice(i, i + 6))) {
@@ -185,8 +185,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const reOrderDynamicFieldValue = (text: string) => {
 		const d = getDynamicFieldIndex(text);
-		var dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
-		var dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 		let updatedText = '';
 		let lastDynamicFieldLength = 0;
 		if (d?.length <= 0) return text;

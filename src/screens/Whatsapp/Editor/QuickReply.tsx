@@ -55,27 +55,27 @@ const QuickReply = ({
 	};
 	const onButtonTextChange = (
 		e: BaseSyntheticEvent,
-		button: quickReplyButtonProps,
-		field: quickReplyButtonsFieldProps
+		changedButton: quickReplyButtonProps,
+		changedField: quickReplyButtonsFieldProps
 	) => {
 		if (e.target.value?.length > MAX_BUTTON_TEXT_LENGTH) return;
-		const updatedQuickButtons = quickReplyButtons.map((b) =>
-			b.id === button.id
+		const updatedQuickButtons = quickReplyButtons.map((button) =>
+			button.id === changedButton.id
 				? {
-						...b,
-						fields: b.fields.map((f: quickReplyButtonsFieldProps) =>
-							f.fieldName === field.fieldName
-								? { ...f, value: e.target.value }
-								: f
+						...button,
+						fields: button.fields.map((field: quickReplyButtonsFieldProps) =>
+							field.fieldName === changedField.fieldName
+								? { ...field, value: e.target.value }
+								: field
 						),
 				  }
-				: b
+				: button
 		);
 		setQuickReplyButtons(updatedQuickButtons);
 	};
-	const onDeleteButton = (button: quickReplyButtonProps) => {
+	const onDeleteButton = (changedButton: quickReplyButtonProps) => {
 		const updatedQuickButtons = quickReplyButtons.filter(
-			(b) => b.id !== button.id
+			(button) => button.id !== changedButton.id
 		);
 		setQuickReplyButtons(updatedQuickButtons);
 	};
