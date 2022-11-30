@@ -641,7 +641,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         innerStyle={{ paddingInline: 15 }}
         classes={classes}
         onExit={onExit}
-        onTestSend={handleOpenTestSend}
+        onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
         onSave={saveDesign}
         onBack={onBack}
         onDelete={onDelete}
