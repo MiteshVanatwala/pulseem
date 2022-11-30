@@ -31,6 +31,7 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import { Title } from '../../../components/managment/Title';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../../helpers/Functions/cookies';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
@@ -236,7 +237,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             variant='contained'
             size='medium'
             onClick={() => {
-              navigate('/Campaigns/Create');
+              navigate('/react/Campaigns/Create');
             }}
             className={clsx(
               classes.actionButton,
@@ -351,7 +352,14 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: row.IsNewEditor && accountFeatures.includes('41') ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        onClick: () => {
+          if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+            navigate(`/Campaigns/editor/${CampaignID}?fromreact=true`)
+          }
+          else {
+            window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+          }
+        },
         rootClass: classes.paddingIcon,
       },
       {

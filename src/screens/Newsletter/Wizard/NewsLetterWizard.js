@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { IoMdImages } from 'react-icons/io';
-import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText } from '@material-ui/core'
+import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,13 +15,16 @@ import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '.
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
-import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 import { RandomID } from '../../../helpers/Functions/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
+import { getCookie } from '../../../helpers/Functions/cookies';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import EmojiPicker from '../../../components/Emojis/EmojiPicker';
+import { BiSave } from 'react-icons/bi'
 
 const useStyles = makeStyles({
     iconbox: {
@@ -54,8 +57,6 @@ const useStyles = makeStyles({
             justifyContent: 'flex-end'
         },
         '& .MuiFormHelperText-contained': {
-            // marginLeft: 0,
-            // marginRight: 0
             marginInline: 0
         }
 
@@ -149,6 +150,7 @@ const NewsLetterWizard = ({ classes }) => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
+    const [showEmoji, setShowEmoji] = useState(false);
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -201,6 +203,7 @@ const NewsLetterWizard = ({ classes }) => {
     const [verPopupOpen, setVerPopupOpen] = useState(false)
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
+    const accountFeatures = getCookie("accountFeatures")
 
     //#region default values
     useEffect(() => {
@@ -221,6 +224,9 @@ const NewsLetterWizard = ({ classes }) => {
             WebViewLocation: campaingnValues.WebViewLocation && campaingnValues.WebViewLocation !== 0,
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
+    }
+    const handleClickOutsideEmoji = () => {
+        setShowEmoji(false);
     }
 
     const setDefaultEmailAndName = () => {
@@ -385,7 +391,7 @@ const NewsLetterWizard = ({ classes }) => {
         Object.keys(tempError).forEach((key) => {
             if (key === 'FromEmail' && data[key] === '-1') {
                 tempError[key] = ErrorTexts[key];
-                isError = !data[key]
+                isError = true
             }
             else {
                 if (!data[key] || !data[key].trim()) {
@@ -398,11 +404,10 @@ const NewsLetterWizard = ({ classes }) => {
         return isError
     }
 
-    const handleSubmit = async (isContiue, isExit = false) => {
-        // TODO: [PR-570] Fix this validation
+    const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
-            dispatch(saveCampaignInfo(campaingnValues)).then((response) => {
+            dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then((response) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
@@ -410,28 +415,32 @@ const NewsLetterWizard = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
+                    const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
+                    let redirectUrl = isBeeEditor ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
-                            window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`
+                            redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
                         }
                         else {
-                            window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`
+                            redirectUrl += `?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
                         }
                     }
-                    else {
-                        window.location = `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`
+                    if (!isBeeEditor) {
+                        window.location = redirectUrl;
                     }
-                    //window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                    else {
+                        navigate(redirectUrl);
+                    }
                 }
                 else if (isExit === true) {
                     navigate(`/Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
                     }
                     else {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}`)
                     }
                     initFilesAndCredits(saveInfo.CampaignID);
                 }
@@ -441,7 +450,7 @@ const NewsLetterWizard = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        window.location = '/react/Campaigns'
+        navigate('/Campaigns');
     }
     const renderToast = () => {
         if (toastMessage) {
@@ -526,10 +535,10 @@ const NewsLetterWizard = ({ classes }) => {
                                             <Select
                                                 native
                                                 displayEmpty
-                                                // value={campaingnValues?.personalDatatoSubject}
                                                 value={campaingnValues?.FromEmail}
                                                 onChange={(event, val) => {
                                                     setCampaingnValues({ ...campaingnValues, FromEmail: event.target.value });
+                                                    setErrors({ ...errors, FromEmail: '' });
                                                 }}
 
                                                 name="FromEmail"
@@ -557,7 +566,10 @@ const NewsLetterWizard = ({ classes }) => {
                                                 }
                                                 )}
                                             </Select>
-                                            <FormHelperText>{errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}{!errors.FromEmail && <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>}</FormHelperText>
+                                            <FormHelperText>
+                                                {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
+                                                <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                                            </FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -587,12 +599,13 @@ const NewsLetterWizard = ({ classes }) => {
                                                 title={campaingnValues.Subject}
                                                 helperText={errors.Subject ? errors.Subject : helperTexts.Subject}
                                             />
-                                            <Box
-                                                className={clsx(localClasses.iconbox)}
-                                            >
-                                                {/* <img src={SmileIcon} alt="smile" /> */}
-                                                <CustomEmojiPicker onSelectEmoji={(emoji) => setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })} />
-                                            </Box>
+                                            <EmojiPicker
+                                                classes={classes}
+                                                boxStyles={{ marginTop: 30 }}
+                                                OnSelectEmoji={(emoji) => {
+                                                    setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
+                                                }}
+                                            />
                                         </Box>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -612,7 +625,6 @@ const NewsLetterWizard = ({ classes }) => {
                                             <Select
                                                 native
                                                 displayEmpty
-                                                // value={campaingnValues?.personalDatatoSubject}
                                                 value={''}
                                                 onChange={(event) => {
                                                     setCampaingnValues(
@@ -777,6 +789,81 @@ const NewsLetterWizard = ({ classes }) => {
         }
     }
 
+    const renderButtons = () => {
+        const wizardButtons = [];
+        if (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
+            wizardButtons.push(<>
+                <Button
+                    onClick={() =>
+                        handleSubmit()}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightBlue,
+                        classes.backButton
+                    )}
+                    style={{ margin: '8px' }}
+                    startIcon={<BiSave />}
+                    color="primary"
+                >{t("common.save")}
+                </Button><Button onClick={() => handleSubmit(true, false, false)}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton
+                    )}
+                    style={{ marginInlineStart: '8px' }}
+                    color="primary"
+                >{t('common.continue')}</Button>
+            </>);
+        }
+        else {
+            if (id !== null && campaingnValues.IsNewEditor === true) {
+                wizardButtons.push(<Button onClick={() => handleSubmit(true, false, true)}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton
+                    )}
+                    style={{ marginInlineStart: '8px' }}
+                    color="primary"
+                >{t('master.continueToNewEditor')}</Button>)
+            }
+            else {
+                wizardButtons.push(<>
+                    <Button onClick={() => handleSubmit(true, false, false)}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonLightGreen,
+                            classes.backButton
+                        )}
+                        style={{ marginInlineStart: '8px' }}
+                        color="primary"
+                    >{t('common.saveAndContinue')}</Button>
+                    {(id === null || id === undefined) && <Button onClick={() => handleSubmit(true, false, true)}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonLightGreen,
+                            classes.backButton
+                        )}
+                        style={{ marginInlineStart: '8px' }}
+                        color="primary"
+                    >{t('master.continueToNewEditor')}</Button>}
+                </>)
+            }
+        }
+        return wizardButtons.map((b) => b);
+    }
+
     return (
         <DefaultScreen
             currentPage="Campaingn Settings"
@@ -819,10 +906,13 @@ const NewsLetterWizard = ({ classes }) => {
             <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
                 <WizardActions
                     classes={classes}
-                    onSave={handleSubmit}
+                    // onSave={handleSubmit}
                     onBack={() => { setConfirmExit(true) }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
-                />
+                    additionalButtons={renderButtons()}
+                >
+
+                </WizardActions>
             </Box>
             <Dialog
                 classes={classes}

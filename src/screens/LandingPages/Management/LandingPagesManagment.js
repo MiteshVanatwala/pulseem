@@ -30,7 +30,7 @@ import { Title } from '../../../components/managment/Title';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
-  const { windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { windowSize, rowsPerPage, accountFeatures } = useSelector(state => state.core)
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
@@ -274,6 +274,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
+        disable: accountFeatures.indexOf('13') > -1,
         onClick: async () => {
           if (IsPayment) {
             dispatch(downloadReport(row))

@@ -26,7 +26,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
-  const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+  const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const [searchData, setSearchData] = useState({});
@@ -332,7 +332,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                   classes.actionButtonLightBlue)}>
                 {t('master.campaignsArchive')}
               </Button>}
-              {windowSize !== 'xs' && <CustomTooltip
+              {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <CustomTooltip
                 style={{ fontSize: 14 }}
                 text={t('report.ExportLimitation')}
                 icon={<Button

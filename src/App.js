@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
-//import CampaignEditor from './screens/HtmlCampaign/CampaignEditor';
+import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
@@ -135,15 +135,15 @@ const renderRoutes = (classes, redirect) => {
         path="/react/Campaigns/Create/:id"
         element={<NewsLetterWizard classes={classes} />}
       />
-      {/* <Route
+      <Route
         exact
         path="/Campaigns/editor"
-        render={props => <CampaignEditor {...props} classes={classes} />}
+        element={<CampaignEditorBee classes={classes} />}
       />
       <Route
         path="/Campaigns/editor/:id"
-        render={props => <CampaignEditor {...props} classes={classes} />}
-      /> */}
+        element={<CampaignEditorBee classes={classes} />}
+      />
       <Route
         exact
         path="/Campaigns/Archive"

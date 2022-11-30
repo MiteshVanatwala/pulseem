@@ -2535,7 +2535,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 440
   },
   containerFullHeight: {
-    minHeight: 'calc(100vh - 120px)'
+    minHeight: 'calc(100vh - 120px)',
+    height: 'calc(100vh - 120px)'
   },
   pb15: {
     paddingBottom: 15
@@ -2553,5 +2554,5 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   buttonMinWidth: {
     minWidth: 167
-  },
+  }
 });
