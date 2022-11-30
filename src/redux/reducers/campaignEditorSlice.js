@@ -27,12 +27,7 @@ export const saveCampaign = createAsyncThunk(
 export const saveUserBlock = createAsyncThunk(
     '/CampaignEditor/SaveUserBlock/', async (block, thunkAPI) => {
         try {
-            const jsonData = {
-                Category: block.category,
-                Data: JSON.stringify(block.data),
-                Tags: block.tags
-            }
-            const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, jsonData);
+            const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, block);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
