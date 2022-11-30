@@ -3,34 +3,25 @@ import { Tooltip } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
-import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import PropTypes from "prop-types";
-import { DateField, Dialog } from "../../../components/managment/index";
-import Toast from '../../../components/Toast/Toast.component';
+import { Dialog } from "../../../components/managment/index";
 import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';
-import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
-import { useHistory, useNavigate, useParams } from "react-router";
-import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
-import Gif from "../../../assets/images/managment/check-circle.gif";
+import { useNavigate, useParams } from "react-router";
+import { BsTrash } from "react-icons/bs";
 import * as XLSX from 'xlsx';
 import Title from '../../../components/Wizard/Title'
-import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
+import { Button, Grid } from "@material-ui/core";
 import {
-    sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
-    getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
+    getAccountExtraData, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
 } from "../../../redux/reducers/smsSlice";
 import { combinedGroup } from "../../../redux/reducers/groupSlice";
-// import Summary from "./smsSummary";
 import clsx from "clsx";
-// import OTP from './OTP';
-import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/api'
 import { Stack } from "@mui/material";
 import RenderToast from "../../../components/core/RenderToast";
@@ -45,7 +36,7 @@ import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import FormSendingTime from "../../../components/Wizard/FormSendingTime";
 import SpecialModal from "./Popups/SpecialModal";
-import { getEmailSendSettings, getGroups, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
+import { getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
 import PreSendSummary from "./Popups/PreSendSummary";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
@@ -96,7 +87,7 @@ const useSnackSevere = makeStyles((theme) => ({
 }));
 
 
-const NewsLetterSendSettings = ({ classes, ...props }) => {
+const NewsletterSendSettings = ({ classes, ...props }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const styles = useStyles();
@@ -107,7 +98,7 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
-    const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups } = useSelector((state) => state.sms);
+    const { ToastMessages, testGroups } = useSelector((state) => state.sms);
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({});
@@ -1312,4 +1303,4 @@ const NewsLetterSendSettings = ({ classes, ...props }) => {
     )
 }
 
-export default NewsLetterSendSettings
+export default NewsletterSendSettings
