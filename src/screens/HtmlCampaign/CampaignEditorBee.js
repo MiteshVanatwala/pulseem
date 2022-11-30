@@ -227,7 +227,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   //#region Init Bee Token & Configuration
   const initTags = () => {
-    let tempTags = [...new Set(userBlocks.map(item => item.tags))];
+    let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];

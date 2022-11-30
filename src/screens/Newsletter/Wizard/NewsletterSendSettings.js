@@ -271,7 +271,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }, [dispatch]);
 
     const handlePreviousPage = () => {
-        navigate(`/react/newsletter/edit/${params.id}`)
+        navigate(`/react/campaigns/editor/${params.id}`)
     }
 
     const onHandleDelete = () => {
