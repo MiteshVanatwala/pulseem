@@ -40,6 +40,7 @@ import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
+import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -137,12 +138,17 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path="/Campaigns/editor"
+        path="/react/Campaigns/editor"
         element={<CampaignEditorBee classes={classes} />}
       />
       <Route
-        path="/Campaigns/editor/:id"
+        path="/react/Campaigns/editor/:id"
         element={<CampaignEditorBee classes={classes} />}
+      />
+      <Route
+        exact
+        path="/react/Campaigns/SendSettings/:id"
+        element={<NewsletterSendSettings classes={classes} />}
       />
       <Route
         exact

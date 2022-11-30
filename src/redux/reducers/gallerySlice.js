@@ -24,7 +24,7 @@ export const createFolder = createAsyncThunk(
 export const uploadFiles = createAsyncThunk(
     '/gallery/UploadFiles', async (files, thunkAPI) => {
         try {
-            const response = await instence.put(`/gallery/UploadFiles`, files,
+            const response = await PulseemReactInstance.put(`/gallery/UploadFiles`, files,
                 {
                     onUploadProgress: (progressEvent) => {
                         const { loaded, total } = progressEvent

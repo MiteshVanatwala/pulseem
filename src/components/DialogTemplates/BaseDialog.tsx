@@ -60,19 +60,6 @@ export const BaseDialog = ({
     onClose?.();
   };
 
-  // const RenderExitButton = () =>
-  //   exitButton ?? (
-  //     <Stack
-  //       onClick={onExit}
-  //       className={clsx(classes.dialogExitButton, {
-  //         [classes.dialogExitButtonRTL]: isRTL,
-  //         [classes.dialogExitButtonLTR]: !isRTL,
-  //       })}
-  //     >
-  //       x
-  //     </Stack>
-  //   );
-
   const RenderExitButton = () => {
     return <Box
       onClick={onExit}

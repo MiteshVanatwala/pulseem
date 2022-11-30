@@ -358,6 +358,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mr10: {
     marginInlineEnd: 10,
   },
+  mb0: {
+    marginBottom: '0px !important',
+  },
   mb5: {
     marginBottom: 5,
   },
@@ -372,6 +375,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb20: {
     marginBottom: 20,
+  },
+  ml20: {
+    marginInlineStart: 20,
   },
   ml25: {
     marginInlineStart: 25,
@@ -405,7 +411,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: 15,
   },
   mt10: {
-    marginTop: 10,
+    marginTop: '10px !important',
   },
   mt15: {
     marginTop: 15,
@@ -2362,6 +2368,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTop: "0px solid darkred",
     boxShadow: "0px 3px 3px darkred",
     maxWidth: 150,
+  },
+  dialogBlueButton: {
+    background: "#006996",
+    // backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+    border: "1px solid #006996",
+    borderTop: "0px solid #006996",
+    boxShadow: "0px 3px 3px #006996",
+    // maxWidth: 150,
   },
   dialogConfirmBlueButton: {
     backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",

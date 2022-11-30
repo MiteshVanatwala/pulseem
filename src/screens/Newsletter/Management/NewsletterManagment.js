@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box, Tooltip, Checkbox, FormControl, FormGroup, FormControlLabel
 } from '@material-ui/core'
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -55,6 +55,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
   const navigate = useNavigate();
+  const [duplicateOptions, setDuplicateOptions] = useState([])
 
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
@@ -334,7 +335,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        href: `/react/Campaigns/SendSettings/${CampaignID}`
+        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -354,7 +356,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         onClick: () => {
           if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
-            navigate(`/Campaigns/editor/${CampaignID}?fromreact=true`)
+            navigate(`/react/Campaigns/editor/${CampaignID}?fromreact=true`)
           }
           else {
             window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
@@ -649,7 +651,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
     } else {
       setRestoreArray([...restoreArray, CampaignID])
     }
+  }
 
+  const handleDuplicateOptions = (option) => {
+    let tempArray = [...duplicateOptions]
+    if (tempArray.indexOf(option) > -1) {
+      tempArray = tempArray.filter((opt) => opt !== option)
+    }
+    else {
+      tempArray = [...tempArray, option]
+    }
+    setDuplicateOptions(tempArray)
   }
 
   const handleClose = () => {
@@ -755,14 +767,77 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('campaigns.dialogDuplicateContent')}
-      </Typography>
+      <>
+        <Typography align='center' className={classes.mb5}>{t("campaigns.newsLetterEditor.sendSettings.insertCampaginName")}</Typography>
+        <FormControl>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('Groups')}
+                  checked={duplicateOptions.indexOf('Groups') > -1}
+                />
+              }
+              label={t("common.Groups")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('filters')}
+                  checked={duplicateOptions.indexOf('filters') > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.filters")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('sendingTime')}
+                  checked={duplicateOptions.indexOf('sendingTime') > -1}
+                />
+              }
+              label={t("sms.sendingTime")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('smsComplementary')}
+                  checked={duplicateOptions.indexOf('smsComplementary') > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.smsComplementary")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('pulseSending')}
+                  checked={duplicateOptions.indexOf('pulseSending') > -1}
+                />
+              }
+              label={t("smsReport.pulseSending")}
+            />
+          </FormGroup>
+        </FormControl>
+      </>
+      // <Typography style={{ fontSize: 18 }}>
+      //   {t('campaigns.dialogDuplicateContent')}
+      // </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
       setPage(1)
+      //BUG:Duplicate option smust be included 
       await dispatch(duplicteCampaign(data))
       getData()
     }

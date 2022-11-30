@@ -101,7 +101,6 @@ export const getCampaignInfo = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-
 export const getCreditsByFileTotalBytes = createAsyncThunk(
     'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
         try {

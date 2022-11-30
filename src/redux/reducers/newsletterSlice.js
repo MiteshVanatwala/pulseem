@@ -153,6 +153,43 @@ export const cloneArchiveCampaign = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+export const getEmailSendSettings = createAsyncThunk(
+  '/email/GetSendSettings', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`/email/GetSendSettings/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const setEmailSendSettings = createAsyncThunk(
+  '/email/SetSendSettings', async (payload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`/email/SetSendSettings`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getGroups = createAsyncThunk(
+  'api/email/GetGroups', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`api/email/GetGroups`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const getSendSummary = createAsyncThunk(
+  'email/GetSendSummary', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`email/GetSendSummary/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const newsletterSlice = createSlice({
   name: 'newsletter',
@@ -165,6 +202,7 @@ export const newsletterSlice = createSlice({
     directNewsletterReport: {},
     directNewsletterReportError: '',
     newsletterArchiveData: [],
+    newsletterSendSummary: [],
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
       INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
@@ -208,16 +246,15 @@ export const newsletterSlice = createSlice({
       state.directNewsletterReport = payload;
     })
     builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
-      //state.archiveDirectNewsletterReportError = action.error.message
       state.directNewsletterReportError = action.error.message
     })
-
-
+    builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
+      state.newsletterSendSummary = payload
+    })
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })
     builder.addCase(duplicteCampaign.fulfilled, () => { console.log('api duplicteCampaign success') })
     builder.addCase(downloadNewsletterReport.fulfilled, () => { console.log('api downloadNewsletterReport success') })
-
     builder.addCase(restoreCampaigns.rejected, (_, action) => { console.log('Error - api restoreCampaigns: ' + action.error) })
     builder.addCase(deleteCampaign.rejected, (_, action) => { console.log('Error - deleteCampaign: ' + action.error) })
     builder.addCase(duplicteCampaign.rejected, (_, action) => { console.log('Error - duplicteCampaign: ' + action.error) })

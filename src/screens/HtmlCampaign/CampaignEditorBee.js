@@ -217,7 +217,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const siteTrackingLogic = () => {
     if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
       const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-      if (campaign.HtmlData.indexOf(domainName) > -1) {
+      if (campaign?.HtmlData?.indexOf(domainName) > -1) {
         setIsSiteTracking(true);
       }
       else {
@@ -348,7 +348,8 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
-          window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
         }
         else if (saveRef.current?.showAnimation) {
           setToastMessage(ToastMessages.CAMPAIGN_SAVED);
