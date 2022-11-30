@@ -56,8 +56,11 @@ export type actionProps = {
 	updateTemplateData: (data: callToActionProps) => void;
 };
 
-export type PhoneProps = {
-	classes: ClassesType;
+export type whatsappMobilePreviewProps = {
+	classes: ClassesType['classes'];
+	campaignNumber: string;
+	templateData: templateDataProps;
+	buttonType: string;
 };
 
 export type ButtonsProps = {

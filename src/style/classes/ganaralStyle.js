@@ -1927,6 +1927,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneDiv: {
     position: "relative",
+    maxHeight: '340px',
+    overflowY: 'clip',
     "@media screen and (max-width: 960px)": {
       marginTop: 0,
     },

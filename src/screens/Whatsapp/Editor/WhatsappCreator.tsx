@@ -5,7 +5,6 @@ import { Title } from '../../../components/managment/Title';
 import TemplateFields from './TemplateFields';
 import ActionCallPopOver from './ActionCallPopOver';
 import Buttons from './Buttons';
-import Phone from './Phone';
 import {
 	callToActionFieldProps,
 	callToActionProps,
@@ -23,6 +22,7 @@ import WhatsappTemplateEditor from './WhatsappTemplateEditor';
 import { actionButtonProps } from './WhatsappCreator.types';
 import QuickReply from './QuickReply';
 import { useSelector } from 'react-redux';
+import WhatsappMobilePreview from './WhatsappMobilePreview';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -508,8 +508,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							<Grid container>
 								<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
 								<Grid item xs={12} sm={12} md={12} lg={6}>
-									<Box style={{ maxWidth: 420, marginTop: 20 }}>
-										<Phone classes={classes} />
+									<Box>
+										<WhatsappMobilePreview
+											classes={classes}
+											campaignNumber='1'
+											templateData={templateData}
+											buttonType={buttonType}
+										/>
 									</Box>
 								</Grid>
 							</Grid>
