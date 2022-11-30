@@ -10,7 +10,7 @@ import {
 	TextField,
 	DialogActions,
 } from '@material-ui/core';
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, useEffect } from 'react';
 import uniqid from 'uniqid';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import CloseIcon from '@material-ui/icons/Close';
@@ -30,6 +30,7 @@ const QuickReply = ({
 	quickReplyButtons,
 	setQuickReplyButtons,
 	updateTemplateData,
+	templateButtons,
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
 	const onSubmit = (e: BaseSyntheticEvent) => {
@@ -40,19 +41,19 @@ const QuickReply = ({
 	};
 	const MAX_BUTTON_TEXT_LENGTH = 20;
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const button = {
+		id: uniqid(),
+		typeOfAction: '',
+		fields: [
+			{
+				fieldName: translator('whatsapp.websiteButtonText'),
+				type: 'text',
+				placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+				value: '',
+			},
+		],
+	};
 	const addMore = () => {
-		const button = {
-			id: uniqid(),
-			typeOfAction: '',
-			fields: [
-				{
-					fieldName: translator('whatsapp.websiteButtonText'),
-					type: 'text',
-					placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-					value: '',
-				},
-			],
-		};
 		setQuickReplyButtons([...quickReplyButtons, button]);
 	};
 	const onButtonTextChange = (
@@ -81,6 +82,15 @@ const QuickReply = ({
 		);
 		setQuickReplyButtons(updatedQuickButtons);
 	};
+
+	useEffect(() => {
+		if (templateButtons?.length <= 0) {
+			setQuickReplyButtons([button]);
+		} else {
+			setQuickReplyButtons(templateButtons);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isQuickReplyOpen]);
 	return (
 		<Dialog
 			open={isQuickReplyOpen}

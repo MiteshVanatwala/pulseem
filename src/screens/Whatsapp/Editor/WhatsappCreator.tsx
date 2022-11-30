@@ -55,6 +55,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
 
+	enum ActionButtons {
+		QuickReply = 'quickReply',
+	}
+
 	const websiteField = useMemo<callToActionFieldProps[]>(
 		() => [
 			{
@@ -143,7 +147,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			button,
 			translator('whatsapp.country')
 		);
-		return countryCode && phoneNumber ? countryCode + phoneNumber : phoneNumber;
+		return countryCode && phoneNumber
+			? '+' + countryCode?.replace(/\D/g, '') + phoneNumber
+			: phoneNumber;
 	};
 
 	const getCallTOActionActions = () => {
@@ -399,33 +405,38 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
+	const updateTemplateDataOnDeleteAction = (
+		data: quickReplyButtonProps[] | callToActionProps,
+		button: quickReplyButtonProps | callToActionRowProps
+	) => {
+		const updatedButtonsData = data?.filter(
+			(d: quickReplyButtonProps | quickReplyButtonProps) => d.id !== button.id
+		);
+		setTemplateData({
+			...templateData,
+			templateButtons: updatedButtonsData,
+		});
+		if (updatedButtonsData?.length <= 0) {
+			setButtonType('');
+		}
+		return updatedButtonsData;
+	};
+
 	const onActionButtonDelete = (
 		button: quickReplyButtonProps | callToActionRowProps
 	) => {
-		if (buttonType === 'quickReply') {
-			const updatedQuickButtonsData = quickReplyButtons.filter(
-				(quickButton: quickReplyButtonProps) => quickButton.id !== button.id
+		if (buttonType === ActionButtons.QuickReply) {
+			const updatedData = updateTemplateDataOnDeleteAction(
+				quickReplyButtons,
+				button
 			);
-			setTemplateData({
-				...templateData,
-				templateButtons: updatedQuickButtonsData,
-			});
-			setQuickReplyButtons([...updatedQuickButtonsData]);
-			if (updatedQuickButtonsData?.length <= 0) {
-				setButtonType('');
-			}
+			setQuickReplyButtons([...updatedData]);
 		} else {
-			const updatedCallToActionFieldRows = callToActionFieldRows.filter(
-				(fieldRow: callToActionRowProps) => fieldRow.id !== button.id
+			const updatedData = updateTemplateDataOnDeleteAction(
+				callToActionFieldRows,
+				button
 			);
-			setTemplateData({
-				...templateData,
-				templateButtons: updatedCallToActionFieldRows,
-			});
-			setCallToActionFieldRows([...updatedCallToActionFieldRows]);
-			if (updatedCallToActionFieldRows?.length <= 0) {
-				setButtonType('');
-			}
+			setCallToActionFieldRows([...updatedData]);
 		}
 	};
 
@@ -518,6 +529,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				updateTemplateData={(data: quickReplyButtonProps[]) =>
 					updateTemplateButton(data, 'quickReply')
 				}
+				templateButtons={templateData.templateButtons}
 			/>
 			<ActionCallPopOver
 				isCallToActionOpen={isCallToActionOpen}

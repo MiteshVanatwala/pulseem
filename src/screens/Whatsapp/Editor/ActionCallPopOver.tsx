@@ -38,8 +38,6 @@ const ActionCallPopOver = ({
 		e: BaseSyntheticEvent,
 		row: callToActionRowProps
 	) => {
-		console.log('onTypeOfActionChange::e::', e);
-		console.log('onTypeOfActionChange::row::', row);
 		let updatedRows = callToActionFieldRows?.map((r: callToActionRowProps) => {
 			if (r.id !== row.id) return r;
 			if (e.target.value === 'phonenumber') {
@@ -51,7 +49,6 @@ const ActionCallPopOver = ({
 			}
 			return { ...r, fields: websiteField, typeOfAction: 'website' };
 		});
-		console.log('onTypeOfActionChange::updatedRows::', updatedRows);
 		setCallToActionFieldRows([...updatedRows]);
 	};
 
@@ -82,7 +79,7 @@ const ActionCallPopOver = ({
 		setCallToActionFieldRows([...updatedRows]);
 	};
 
-	const handleSubmit = (e: BaseSyntheticEvent) => {
+	const onSubmit = (e: BaseSyntheticEvent) => {
 		e.preventDefault();
 		setCallToActionFieldRows(callToActionFieldRows);
 		updateTemplateData(callToActionFieldRows);
@@ -112,7 +109,7 @@ const ActionCallPopOver = ({
 					className={classes.callToActionDialogHeaderDescription}>
 					{translator('whatsapp.callToActionDialogContentText')}
 				</DialogContentText>
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={onSubmit}>
 					<Grid container className={classes.callToActionFields} spacing={1}>
 						{callToActionFieldRows.map(
 							(row: callToActionRowProps, index: number) => (
@@ -147,7 +144,7 @@ const ActionCallPopOver = ({
 														inputProps={
 															field.fieldName === 'Phone Number'
 																? {
-																		maxlength: 20,
+																		maxLength: 20,
 																  }
 																: field.fieldName === 'Website URL'
 																? { maxLength: 2000 }
@@ -192,8 +189,8 @@ const ActionCallPopOver = ({
 										<Typography style={{ visibility: 'hidden' }}>
 											{translator('whatsapp.callToActionRemoveButton')}
 										</Typography>
-										<IconButton color='secondary'>
-											<DeleteOutlineIcon onClick={() => onDeleteRow(row)} />
+										<IconButton color='secondary' onClick={() => onDeleteRow(row)}>
+											<DeleteOutlineIcon />
 										</IconButton>
 									</Grid>
 								</Grid>

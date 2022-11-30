@@ -81,6 +81,7 @@ export type quickReplyProps = {
 	quickReplyButtons: quickReplyButtonProps[];
 	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
+	templateButtons: templateDataProps['templateButtons'];
 };
 
 export type quickReplyButtonsFieldProps = {
