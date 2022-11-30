@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Grid, Button, TextField, Box, Tooltip, Checkbox, FormControl, FormGroup, FormControlLabel
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles';
 import {
@@ -57,6 +57,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const accountFeatures = getCookie("accountFeatures")
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const navigate = useNavigate();
+  const [duplicateOptions, setDuplicateOptions] = useState([])
 
   moment.locale(language)
 
@@ -659,7 +660,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
     } else {
       setRestoreArray([...restoreArray, CampaignID])
     }
+  }
 
+  const handleDuplicateOptions = (option) => {
+    let tempArray = [...duplicateOptions]
+    if (tempArray.indexOf(option) > -1) {
+      tempArray = tempArray.filter((opt) => opt !== option)
+    }
+    else {
+      tempArray = [...tempArray, option]
+    }
+    setDuplicateOptions(tempArray)
   }
 
   const handleClose = () => {
@@ -765,14 +776,77 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('campaigns.dialogDuplicateContent')}
-      </Typography>
+      <>
+        <Typography align='center' className={classes.mb5}>{t("campaigns.newsLetterEditor.sendSettings.insertCampaginName")}</Typography>
+        <FormControl>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('Groups')}
+                  checked={duplicateOptions.indexOf('Groups') > -1}
+                />
+              }
+              label={t("common.Groups")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('filters')}
+                  checked={duplicateOptions.indexOf('filters') > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.filters")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('sendingTime')}
+                  checked={duplicateOptions.indexOf('sendingTime') > -1}
+                />
+              }
+              label={t("sms.sendingTime")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('smsComplementary')}
+                  checked={duplicateOptions.indexOf('smsComplementary') > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.smsComplementary")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions('pulseSending')}
+                  checked={duplicateOptions.indexOf('pulseSending') > -1}
+                />
+              }
+              label={t("smsReport.pulseSending")}
+            />
+          </FormGroup>
+        </FormControl>
+      </>
+      // <Typography style={{ fontSize: 18 }}>
+      //   {t('campaigns.dialogDuplicateContent')}
+      // </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
       setPage(1)
+      //BUG:Duplicate option smust be included 
       await dispatch(duplicteCampaign(data))
       getData()
     }
