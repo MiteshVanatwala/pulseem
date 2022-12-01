@@ -231,20 +231,29 @@ const CampaignEditor = ({ classes, ...props }) => {
     var tags = [].concat.apply([], tempTags);
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
+      let tempRows = [];
       tags?.forEach((tag, idx) => {
         if (tag && tag !== undefined && tag !== null) {
-          config.rowsConfiguration.externalContentURLs.push({
-            name: tag,
+          const tagObj = {
+            name: tag.trim(),
             value: tag.replace(' ', ''),
             handle: tag.replace(' ', ''),
-            isLocal: false,
+            isLocal: true,
             behaviors: {
               canEdit: true,
               canDelete: true,
             },
-          });
+          };
+          tempRows.push(tagObj);
         }
       });
+      tempRows = tempRows.filter((value, index) => {
+        const _value = JSON.stringify(value);
+        return index === tempRows.findIndex(obj => {
+          return JSON.stringify(obj) === _value;
+        });
+      });
+      config.rowsConfiguration.externalContentURLs = tempRows;
     }
   }
   const initBeeEditor = () => {
@@ -476,17 +485,17 @@ const CampaignEditor = ({ classes, ...props }) => {
       Tags: block?.metadata?.tags?.split(','),
       uuid: block?.metadata?.uuid
     };
-    dispatch(saveUserBlock(blockRequest)).then(() => {
+    dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getUserblocks());
-      setRow(json);
+      await setRow(json);
     });
   }
   const onEditBlock = (blockRequest) => {
     setLoader(true);
-    dispatch(saveUserBlock(blockRequest)).then(() => {
+    dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      setRow(JSON.stringify(blockRequest?.Json));
+      await setRow(JSON.stringify(blockRequest?.Json));
     });
   }
   const handleDeleteBlock = (e, row_id) => {
