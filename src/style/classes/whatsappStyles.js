@@ -377,8 +377,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.sent': {
 			background: '#e1ffc7',
-			borderRadius: isRTL ? '0px 5px 5px 5px' : '5px 0px 5px 5px',
-			float: isRTL ? 'left' : 'right',
+			borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
+			float: isRTL ? 'right' : 'left',
 			'&:after': {
 				borderWidth: '0px 0 10px 10px',
 				borderColor: 'transparent transparent transparent #e1ffc7',
@@ -389,6 +389,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				margin: '0px',
 				fontFamily: 'Assistant',
 			},
+		},
+		'&.quick-reply-button': {
+			backgroundColor: '#b7b7b7',
+			color: '#1c82b2',
 		},
 		'&. pushMessage': {
 			background: '#fff',
@@ -414,12 +418,17 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			display: 'flex',
 			flexDirection: 'row',
 			textDecoration: 'none',
-			color: 'gray',
+			color: '#1c82b2',
 			alignItems: 'self-end',
+			background: '#b7b7b7',
+			borderRadius: '4px',
+			padding: '2px 5px',
+			marginTop: '3px',
+			justifyContent: 'center',
 		},
 	},
 	callToActionButton: {
-		color: '#767676',
+		color: '#1c82b2',
 		cursor: 'pointer',
 	},
 	callToActionButtonText: {
@@ -431,7 +440,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		cursor: 'pointer',
 	},
 	quickReplyButtonText: {
-		color: '#767676',
+		color: '#1c82b2',
 	},
 	/* Marvel Device */
 

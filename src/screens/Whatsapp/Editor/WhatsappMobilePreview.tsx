@@ -203,7 +203,7 @@ const WhatsappMobilePreview = ({
 																		| callToActionRowProps
 																) => (
 																	<div
-																		className={`${classes.whatsappMobileMessage} sent`}
+																		className={`${classes.whatsappMobileMessage} sent quick-reply-button`}
 																		style={{
 																			margin: '2px 0px 0px 0px',
 																			borderRadius: '5px',
