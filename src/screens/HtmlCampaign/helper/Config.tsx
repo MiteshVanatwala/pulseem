@@ -3,7 +3,7 @@ import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translation
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
-const AUTO_SAVE_SECONDS = 60000; // 1 minute
+//const AUTO_SAVE_SECONDS = 60000; // 1 minute
 
 export interface ConfigOptions {
     classes: any,

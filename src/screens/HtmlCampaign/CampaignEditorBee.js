@@ -227,7 +227,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   //#region Init Bee Token & Configuration
   const initTags = () => {
-    let tempTags = [...new Set(userBlocks.map(item => item.tags))];
+    let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
     var tags = [].concat.apply([], tempTags);
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
@@ -237,7 +237,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             name: tag,
             value: tag.replace(' ', ''),
             handle: tag.replace(' ', ''),
-            isLocal: true,
+            isLocal: false,
             behaviors: {
               canEdit: true,
               canDelete: true,
@@ -302,6 +302,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [beeToken]);
 
   const initOptions = async () => {
+    initTags();
     if (!accountSettings || accountSettings.SubAccountSettings) {
       await dispatch(getCommonFeatures());
     }
@@ -321,7 +322,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const originalLink = startIndex.split(/[\s\n]+/);
     let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
     let newUrl = originUrl.trim();
-    if (newUrl.indexOf('ClientIDEnc') == -1) {
+    if (newUrl.indexOf('ClientIDEnc') === -1) {
       newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
       finalStr = finalStr.replace(originUrl, newUrl);
     }
