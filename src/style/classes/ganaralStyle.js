@@ -762,7 +762,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
   },
   buttonHead: {
-    fontSize: "20px",
+    fontSize: "17px",
     marginBottom: "10px",
     // "@media screen and (max-width: 414px)": {
     //   fontSize: 16

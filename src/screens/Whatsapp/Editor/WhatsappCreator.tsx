@@ -387,7 +387,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle.includes('dynamicField')) {
 			const selectionEnd = templateTextRef.current?.selectionEnd;
 			const textLength = templateTextRef.current?.textLength;
-			reOrderDynamicFieldValue(addDynamicField(selectionEnd, textLength));
 			setTemplateData({
 				...templateData,
 				templateText: reOrderDynamicFieldValue(
@@ -474,7 +473,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			<br />
 			<form onSubmit={handleSubmit}>
 				<Grid container>
-					<Grid item xs={12} md={5} sm={12}>
+					<Grid item xs={12} md={9} sm={12}>
 						<TemplateFields
 							classes={classes}
 							templateName={templateName}
@@ -483,7 +482,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
 						/>
 					</Grid>
-					<Grid container>
+					<Grid container style={{ paddingTop: '14px' }}>
 						<Grid item xs={12} sm={12} md={12} lg={5}>
 							<WhatsappTemplateEditor
 								classes={classes}

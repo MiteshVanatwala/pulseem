@@ -119,7 +119,7 @@ const WhatsappMobilePreview = ({
 														<div
 															className={`${classes.whatsappMobileMessage} sent`}
 															id='conversation-text-preview'>
-															{templateText}
+															<pre>{templateText}</pre>
 															{buttonType === 'callToAction' &&
 																templateButtons?.length > 0 && (
 																	<div
