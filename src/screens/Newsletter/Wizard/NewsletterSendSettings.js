@@ -18,7 +18,7 @@ import * as XLSX from 'xlsx';
 import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Button, Grid } from "@material-ui/core";
 import {
-    getAccountExtraData, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
+    getAccountExtraData, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
 import { combinedGroup } from "../../../redux/reducers/groupSlice";
 import clsx from "clsx";
@@ -36,10 +36,11 @@ import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import FormSendingTime from "../../../components/Wizard/FormSendingTime";
 import SpecialModal from "./Popups/SpecialModal";
-import { getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
+import { getGroups, getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
 import PreSendSummary from "./Popups/PreSendSummary";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -98,7 +99,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
-    const { ToastMessages, testGroups } = useSelector((state) => state.sms);
+    const { ToastMessages, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
+    const { newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({});
@@ -168,69 +170,59 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     })
     const [specialSettingValidation, setspecialSettingValidation] = useState(false)
 
-    const getData = async () => {
-        setLoader(true);
-        if (params?.id) {
-            const finishedCampaigns = await dispatch(getFinishedCampaigns());
-            const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-            // const subAccountGroups = await dispatch(getGroups());
-            // const campaignSettings = await dispatch(getCampaignSettings(params.id));
-            const tempSettings = await dispatch(getEmailSendSettings(params.id));
-            const campaignSettings = tempSettings.payload;
-            await dispatch(getTestGroups());
+    const [dataIsReady, setDataIsReady] = useState(false);
 
+    const initOnReady = () => {
+        if (newsletterSettings.error) {
+            logout();
+        }
 
-            if (campaignSettings.error) {
-                logout();
-            }
-            // if (!campaignSettings?.Data) {
-            //     return false
-            // }
+        try {
             let tempSendingTimeFormValues = { ...sendingTimeFormValues }
-            let tempCampaignValues = { ...campaignSettings }
+            let tempCampaignValues = { ...newsletterSettings }
             let tempSelectedGroupsForSend = []
             let tempFilterValues = { ...filterValues }
 
-
-            if (campaignSettings?.Data?.GroupList !== null) {
-                const seGroups = campaignSettings?.Data?.GroupList || [];
-                tempSelectedGroupsForSend = subAccountGroups.payload.filter((c) => seGroups.indexOf(c.GroupID) > -1);
+            if (newsletterSettings?.GroupList !== null) {
+                const seGroups = newsletterSettings?.GroupList || [];
+                tempSelectedGroupsForSend = groupData.Groups.filter((c) => seGroups.indexOf(c.GroupID) > -1);
             }
 
-            if (campaignSettings?.Data?.PulseAmount && campaignSettings?.Data?.TimeInterval) {
-                tempSendingTimeFormValues = { ...tempSendingTimeFormValues, togglePulse: true, PulseAmount: campaignSettings?.Data?.PulseAmount, TimeInterval: campaignSettings?.Data?.TimeInterval }
+            if (newsletterSettings?.PulseAmount && newsletterSettings?.TimeInterval) {
+                tempSendingTimeFormValues = { ...tempSendingTimeFormValues, togglePulse: true, PulseAmount: newsletterSettings?.PulseAmount, TimeInterval: newsletterSettings?.Data?.TimeInterval }
             }
 
-            if (campaignSettings?.Data?.ExeptionalGroups?.length !== 0) {
+            if (newsletterSettings?.ExeptionalGroups && newsletterSettings?.ExeptionalGroups?.length !== 0) {
                 setbsDot(true);
                 const selectedGroups = [];
-                const seGroups = campaignSettings?.Data?.ExeptionalGroups || [];
+                const seGroups = newsletterSettings?.ExeptionalGroups || [];
                 for (var i = 0; i < seGroups.length; i++) {
-                    selectedGroups.push(subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] })[0]);
+                    selectedGroups.push(groupData.Groups.filter((c) => { return c.GroupID === seGroups[i] })[0]);
                 }
                 tempFilterValues = { ...tempFilterValues, selectedFilterGroups: selectedGroups }
             }
-            if (campaignSettings?.Data?.ExeptionalCampaigns?.length !== 0) {
+            if (newsletterSettings?.ExeptionalCampaigns && newsletterSettings?.ExeptionalCampaigns?.length !== 0) {
                 const selectedCampaigns = [];
-                const seCampaigns = campaignSettings?.Data?.ExeptionalCampaigns || [];
+                const seCampaigns = newsletterSettings?.ExeptionalCampaigns || [];
                 for (var i = 0; i < seCampaigns.length; i++) {
-                    selectedCampaigns.push(finishedCampaigns.payload.filter((c) => { return c.SMSCampaignID === seCampaigns[i] })[0]);
+                    selectedCampaigns.push(finishedCampaigns?.filter((c) => { return c.SMSCampaignID === seCampaigns[i] })[0]);
                 }
                 tempFilterValues = { ...tempFilterValues, selectedFilterCampaigns: selectedCampaigns }
             }
-            if (campaignSettings?.Data?.SendDate !== null && campaignSettings?.Data?.SendingMethod === 2) {
-                tempSendingTimeFormValues = { ...tempSendingTimeFormValues, sendDate: moment(campaignSettings?.Data?.SendDate) }
+            if (newsletterSettings?.SendDate !== null && newsletterSettings?.SendingMethod === 2) {
+                tempSendingTimeFormValues = { ...tempSendingTimeFormValues, sendDate: moment(newsletterSettings?.SendDate) }
             }
-            if (campaignSettings?.Data?.SendingMethod === 3) {
+            // TODO
+            if (newsletterSettings?.SendingMethod === 3) {
                 // tempSendingTimeFormValues = {
                 //     ...tempSendingTimeFormValues,
-                //     SendingMethod: `${campaignSettings?.Data?.SendingMethod}`,
-                //     SendingMethod: `${campaignSettings?.Data?.SendingMethod}`,
-                //     // daysBeforeAfter: campaignSettings?.Data.SpecialSettings.Day,
-                //     // sendTime: moment(campaignSettings?.Data.SpecialSettings.SendHour),
-                //     // DateFieldID: `${campaignSettings?.Data.SpecialSettings.DateFieldID}`
+                //     SendingMethod: `${newsletterSettings?.SendingMethod}`,
+                //     SendingMethod: `${newsletterSettings?.SendingMethod}`,
+                //     // daysBeforeAfter: newsletterSettings?.SpecialSettings.Day,
+                //     // sendTime: moment(newsletterSettings?.SpecialSettings.SendHour),
+                //     // DateFieldID: `${newsletterSettings?.SpecialSettings.DateFieldID}`
                 // }
-                // if (campaignSettings?.Data.SpecialSettings.IntervalTypeID === -1) {
+                // if (newsletterSettings.SpecialSettings.IntervalTypeID === -1) {
                 //     setSendingTimeFormValues({
                 //         ...sendingTimeFormValues,
                 //         toggleA: false,
@@ -248,15 +240,40 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 // }
             }
 
-            setLoader(false);
             setCampaignValues(tempCampaignValues)
-            setTotalCampaigns(finishedCampaigns.payload);
-            setGroupList(subAccountGroups.payload);
+            setTotalCampaigns(finishedCampaigns?.length ?? 0);
+            // setGroupList(subAccountGroups.payload);
             setSelectedGroups(tempSelectedGroupsForSend);
             setFilterValues(tempFilterValues)
-            setSendingTimeFormValues({ ...sendingTimeFormValues, ...tempSendingTimeFormValues, SendingMethod: `${campaignSettings?.Data?.SendingMethod}`, IsBestTime: campaignSettings?.Data?.IsBestTime })
+            setSendingTimeFormValues({ ...sendingTimeFormValues, ...tempSendingTimeFormValues, SendingMethod: `${newsletterSettings?.SendingMethod}`, IsBestTime: newsletterSettings?.IsBestTime })
+        } catch (e) {
+            dispatch(sendToTeamChannel({
+                MethodName: 'onReady',
+                ComponentName: 'NewsletterSendSettings.js',
+                Message: e
+            }));
         }
-        setLoader(false);
+        finally {
+            setLoader(false);
+        }
+
+    }
+
+    useEffect(() => {
+        if (dataIsReady === true) {
+            initOnReady();
+        }
+    }, [dataIsReady])
+
+    const getData = async () => {
+        setLoader(true);
+        if (params?.id) {
+            await dispatch(getFinishedCampaigns());
+            await dispatch(getGroups());
+            await dispatch(getEmailSendSettings(params.id));
+            await dispatch(getTestGroups());
+            setDataIsReady(true);
+        }
     };
 
     const getDataExtra = async () => {
@@ -635,7 +652,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const createNewGroup = async () => {
-        const nameExist = groupList.filter((g) => { return g?.GroupName === newGroupDetails.groupValue });
+        const nameExist = groupData.filter((g) => { return g?.GroupName === newGroupDetails.groupValue });
         if (nameExist.length > 0) {
             setNewGroupDetails({ ...newGroupDetails, groupNameExist: true });
             return;
@@ -647,17 +664,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
 
         let payload = {
-            SubAccountID: 1,
+            SubAccountID: -1,
             GroupName: newGroupDetails.groupValue,
             GroupIds: temp,
         };
-        let r = await dispatch(combinedGroup(payload));
-        let tempres = [];
-        for (let i = 0; i < groupList.length; i++) {
-            tempres.push(groupList[i]);
-        }
-        tempres.push(r.payload);
-        setGroupList(tempres);
+        await dispatch(combinedGroup(payload));
         setNewGroupDetails({ toggleChecked: false, groupNameExist: false, groupValue: '' });
         setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
     };
@@ -668,6 +679,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         filteredGroups.length === selectedGroups.length ? setSelectedGroups([...selectedGroups, group]) : setSelectedGroups([...filteredGroups])
     }
 
+    //TODO
     const callbackShowTestGroup = (showTestGroups) => {
         if (!showTestGroups && testGroups.length > 0) {
             setGroupList(testGroups.concat(groupList));
@@ -796,159 +808,160 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         </Stack>
     ) : <></>
 
-    const Tab1 = {
-        tabName: t("mainReport.groups"),
-        body: <Groups
-            classes={classes}
-            list={groupList || []}
-            selectedList={selectedGroups}
-            callbackSelectedGroups={(g) => callbackSelectedGroups(g)}
-            callbackUpdateGroups={(groups) => setSelectedGroups(groups)}
-            callbackSelectAll={() => setSelectedGroups(groupList.length === selectedGroups.length ? [] : groupList)}
-            callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
-            callbackShowTestGroup={callbackShowTestGroup}
-            isSms={true}
-            bsDot={bsDot}
-            uniqueKey={'groups_1'}
-            innerHeight={325}
-        />,
-        footer: (
-            <Stack direction="column">
-                <Stack direction="row" justifyContent="space-between">
-                    <Stack
-                        className={classes.createGroupContainer}
-                        direction="row"
-                    >
-                        <Checkbox
-                            disabled={selectedGroups.length >= 2 ? false : true}
-                            checked={newGroupDetails.toggleChecked}
-                            color="primary"
-                            inputProps={{ "aria-label": "secondary checkbox" }}
-                            onClick={() => {
-                                setNewGroupDetails({ ...newGroupDetails, toggleChecked: !newGroupDetails.toggleChecked });
+    const renderBody = () => {
+        const Tab1 = {
+            tabName: t("mainReport.groups"),
+            body: <Groups
+                classes={classes}
+                list={groupData?.Groups || []}
+                selectedList={selectedGroups}
+                callbackSelectedGroups={(g) => callbackSelectedGroups(g)}
+                callbackUpdateGroups={(groups) => setSelectedGroups(groups)}
+                callbackSelectAll={() => setSelectedGroups(groupData?.Groups?.length === selectedGroups.length ? [] : groupData?.Groups)}
+                callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
+                callbackShowTestGroup={callbackShowTestGroup}
+                isSms={true}
+                bsDot={bsDot}
+                uniqueKey={'groups_1'}
+                innerHeight={325}
+            />,
+            footer: (
+                <Stack direction="column">
+                    <Stack direction="row" justifyContent="space-between">
+                        <Stack
+                            className={classes.createGroupContainer}
+                            direction="row"
+                        >
+                            <Checkbox
+                                disabled={selectedGroups.length >= 2 ? false : true}
+                                checked={newGroupDetails.toggleChecked}
+                                color="primary"
+                                inputProps={{ "aria-label": "secondary checkbox" }}
+                                onClick={() => {
+                                    setNewGroupDetails({ ...newGroupDetails, toggleChecked: !newGroupDetails.toggleChecked });
+                                }}
+                            />
+                            <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
+                            <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
+                            <Tooltip
+                                disableFocusListener
+                                title={t("mainReport.tooltipCreateGroup")}
+                                classes={{ tooltip: styles.customWidth }}
+                                style={{ marginInlineStart: "5px" }}
+                            >
+                                <span className={classes.bodyInfo}>i</span>
+                            </Tooltip>
+                        </Stack>
+
+                        <Stack
+                            style={{
+                                display: "flex",
+                                marginTop: "10px",
                             }}
-                        />
-                        <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
-                        <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
-                        <Tooltip
-                            disableFocusListener
-                            title={t("mainReport.tooltipCreateGroup")}
-                            classes={{ tooltip: styles.customWidth }}
-                            style={{ marginInlineStart: "5px" }}
+                            direction="row"
                         >
-                            <span className={classes.bodyInfo}>i</span>
-                        </Tooltip>
+                            <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
+                                return a + b['Recipients'];
+                            }, 0).toLocaleString()}</span>
+                            <Tooltip
+                                placement={'bottom'}
+                                disableFocusListener
+                                title={t("smsReport.finalReciTip")}
+                                classes={{ tooltip: styles.customWidth }}
+                                style={{ marginInlineStart: "5px" }}
+                            >
+                                <span className={classes.bodyInfo}>i</span>
+                            </Tooltip>
+                        </Stack>
                     </Stack>
 
-                    <Stack
-                        style={{
-                            display: "flex",
-                            marginTop: "10px",
-                        }}
-                        direction="row"
-                    >
-                        <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
-                            return a + b['Recipients'];
-                        }, 0).toLocaleString()}</span>
-                        <Tooltip
-                            placement={'bottom'}
-                            disableFocusListener
-                            title={t("smsReport.finalReciTip")}
-                            classes={{ tooltip: styles.customWidth }}
-                            style={{ marginInlineStart: "5px" }}
-                        >
-                            <span className={classes.bodyInfo}>i</span>
-                        </Tooltip>
-                    </Stack>
+                    {NewGroupForm()}
                 </Stack>
+            ),
+        }
 
-                {NewGroupForm()}
-            </Stack>
-        ),
-    }
-
-    const Tab2 = {
-        tabName: t("mainReport.manual"),
-        body: (
-            <Stack
-                className={
-                    highlighted
-                        ? clsx(classes.greenManual)
-                        : clsx(classes.areaManual)
-                }
-            >
-                <textarea
-                    placeholder={t("sms.dragXlOrCsv")}
-                    spellCheck="false"
-                    autoComplete="off"
-
+        const Tab2 = {
+            tabName: t("mainReport.manual"),
+            body: (
+                <Stack
                     className={
-                        highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
+                        highlighted
+                            ? clsx(classes.greenManual)
+                            : clsx(classes.areaManual)
                     }
-                    value={manualValues.areaData}
-                    onDragEnter={() => {
-                        setHighlighted(true);
-                    }}
-                    onChange={handleAreaChange}
-                    onDragLeave={() => {
-                        setHighlighted(false);
-                    }}
-                    onDragOver={(e) => {
-                        e.preventDefault();
-                    }}
-                    onPaste={handleAreaChange}
-                    onDrop={(e) => {
-                        e.preventDefault();
-                        setHighlighted(false);
-                        handleFiles(e)
-                    }}
-                />
-            </Stack>
-        ),
-        footer: (
-            <>
-                {NewGroupForm()}
-                <div className={classes.manualChild} style={{ justifyContent: manualValues.areaData === "" ? "flex-end" : "space-between" }}>
-                    {manualValues.areaData !== "" ? (
-                        <div>
-                            <span
-                                className={classes.addManualDiv}
-                                onClick={() => {
-                                    handlePasted();
-                                }}
-                            >
-                                {t("sms.editFields")}
-                            </span>
-                            <span
-                                className={classes.clearDiv}
-                                onClick={() => {
-                                    setManualValues({ ...manualValues, areaData: "", typedData: [], totalRecords: 0 })
-                                    // setareaData("");
-                                    setContacts([]);
-                                    // settypedData([]);
-                                    // settotalRecords(0)
-                                }}
-                            >
-                                {t("sms.clearList")}
-                            </span>
-                            <span
-                                className={classes.addManualDiv}
-                                onClick={() => {
-                                    setDialogType({ type: "quickMnualUpload" })
-                                }}
-                            >
-                                {t("campaigns.newsLetterSendSettings.quickMSend")}
-                            </span>
-                        </div>
-                    ) : null}
-                    <span>{t("sms.totalRecords")}:  {manualValues.totalRecords}</span>
-                </div>
-            </>
-        ),
-        tooltip: t("smsReport.manualTip")
-    }
+                >
+                    <textarea
+                        placeholder={t("sms.dragXlOrCsv")}
+                        spellCheck="false"
+                        autoComplete="off"
 
-    const renderBody = () => (<>{TabComp([Tab1, Tab2])}</>)
+                        className={
+                            highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
+                        }
+                        value={manualValues.areaData}
+                        onDragEnter={() => {
+                            setHighlighted(true);
+                        }}
+                        onChange={handleAreaChange}
+                        onDragLeave={() => {
+                            setHighlighted(false);
+                        }}
+                        onDragOver={(e) => {
+                            e.preventDefault();
+                        }}
+                        onPaste={handleAreaChange}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            setHighlighted(false);
+                            handleFiles(e)
+                        }}
+                    />
+                </Stack>
+            ),
+            footer: (
+                <>
+                    {NewGroupForm()}
+                    <div className={classes.manualChild} style={{ justifyContent: manualValues.areaData === "" ? "flex-end" : "space-between" }}>
+                        {manualValues.areaData !== "" ? (
+                            <div>
+                                <span
+                                    className={classes.addManualDiv}
+                                    onClick={() => {
+                                        handlePasted();
+                                    }}
+                                >
+                                    {t("sms.editFields")}
+                                </span>
+                                <span
+                                    className={classes.clearDiv}
+                                    onClick={() => {
+                                        setManualValues({ ...manualValues, areaData: "", typedData: [], totalRecords: 0 })
+                                        // setareaData("");
+                                        setContacts([]);
+                                        // settypedData([]);
+                                        // settotalRecords(0)
+                                    }}
+                                >
+                                    {t("sms.clearList")}
+                                </span>
+                                <span
+                                    className={classes.addManualDiv}
+                                    onClick={() => {
+                                        setDialogType({ type: "quickMnualUpload" })
+                                    }}
+                                >
+                                    {t("campaigns.newsLetterSendSettings.quickMSend")}
+                                </span>
+                            </div>
+                        ) : null}
+                        <span>{t("sms.totalRecords")}:  {manualValues.totalRecords}</span>
+                    </div>
+                </>
+            ),
+            tooltip: t("smsReport.manualTip")
+        }
+        return <>{TabComp([Tab1, Tab2])}</>
+    }
 
     const WizardButtons = () => {
         return (
@@ -1046,7 +1059,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 {
                     classes: classes,
                     styles: styles,
-                    groupList: groupList,
+                    groupList: groupData,
                     manualValues: manualValues,
                     setManualValues: setManualValues,
                     newGroupDetails: newGroupDetails,
@@ -1083,7 +1096,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 handleReciInput: handleReciInput,
                 filterValues: filterValues,
                 setFilterValues: setFilterValues,
-                groupList: groupList,
+                groupList: groupData,
                 callbackUpdateGroupFilterd: callbackUpdateGroupFilterd,
                 callbackFilteredGroups: callbackFilteredGroups,
                 renderHtml: renderHtml,

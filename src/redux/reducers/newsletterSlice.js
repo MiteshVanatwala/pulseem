@@ -172,9 +172,9 @@ export const setEmailSendSettings = createAsyncThunk(
     }
   })
 export const getGroups = createAsyncThunk(
-  'api/email/GetGroups', async (_, thunkAPI) => {
+  '/email/GetGroups', async (_, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`api/email/GetGroups`);
+      const response = await PulseemReactInstance.get(`/email/GetGroups`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -203,6 +203,8 @@ export const newsletterSlice = createSlice({
     directNewsletterReportError: '',
     newsletterArchiveData: [],
     newsletterSendSummary: [],
+    newsletterSettings: [],
+    groupData: [],
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
       INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
@@ -248,8 +250,14 @@ export const newsletterSlice = createSlice({
     builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
       state.directNewsletterReportError = action.error.message
     })
+    builder.addCase(getEmailSendSettings.fulfilled, (state, { payload }) => {
+      state.newsletterSettings = payload?.Data;
+    })
     builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
       state.newsletterSendSummary = payload
+    })
+    builder.addCase(getGroups.fulfilled, (state, { payload }) => {
+      state.groupData = payload?.Data
     })
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })

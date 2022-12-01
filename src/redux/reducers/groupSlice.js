@@ -195,6 +195,9 @@ export const groupSlice = createSlice({
         builder.addCase(getGroups.fulfilled, (state, { payload }) => {
             state.groupData = payload;
         })
+        builder.addCase(combinedGroup.fulfilled, (state, action) => {
+            state.groupData.push(action.payload);
+        })
         builder.addCase(createGroup.rejected, (state, { error }) => {
             state.error = error.message;
         })
