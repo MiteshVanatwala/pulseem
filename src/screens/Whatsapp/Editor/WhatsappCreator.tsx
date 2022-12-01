@@ -262,27 +262,21 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let media = true;
 		const templateText = templateData.templateText;
 		if (templateText?.length > 0 && buttonType.length > 0 && media) {
-			console.log('getRequestJSON::TYPE => textMediaAndButton');
 			return requestJSON.textMediaAndButton;
 		} else if (templateText?.length > 0 && buttonType === 'quickReply') {
-			console.log('getRequestJSON::TYPE => quickReply');
 			return requestJSON.quickReply;
 		} else if (templateText?.length > 0 && buttonType === 'callToAction') {
-			console.log('getRequestJSON::TYPE => callToAction');
 			return requestJSON.callToAction;
 		} else if (templateText?.length > 0 && media) {
-			console.log('getRequestJSON::TYPE => textMedia');
 			return requestJSON.textMedia;
 		} else {
-			console.log('getRequestJSON::TYPE => text');
 			return templateText;
 		}
 	};
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-
-		console.log('getRequestJSON::', getRequestJSON());
+		getRequestJSON();
 	};
 
 	const addDynamicField = (
