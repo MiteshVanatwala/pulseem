@@ -52,6 +52,7 @@ const TemplateFields = ({
 	};
 
 	const onFileDeselect = (e: BaseSyntheticEvent) => {
+    e.preventDefault()
 		setFileName('');
 	};
 
