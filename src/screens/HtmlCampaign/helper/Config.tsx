@@ -58,7 +58,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    const rows = await getRows(args.handle);
+                    const rows = await getRows(args?.handle);
                     resolve(rows);
                 }
             }
