@@ -23,10 +23,14 @@ import { actionButtonProps } from './WhatsappCreator.types';
 import QuickReply from './QuickReply';
 import { useSelector } from 'react-redux';
 import WhatsappMobilePreview from './WhatsappMobilePreview';
+import WhatsappTips from './whatsappTips';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const { isRTL, windowSize } = useSelector(
+		(state: { core: coreProps }) => state.core
+	);
+
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
 	const initialQuickReplyButtons = [
 		{
@@ -473,16 +477,17 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			<br />
 			<form onSubmit={handleSubmit}>
 				<Grid container>
-					<Grid item xs={12} md={9} sm={12}>
-						<TemplateFields
-							classes={classes}
-							templateName={templateName}
-							savedTemplate={savedTemplate}
-							onTemplateNameChange={(e) => onTemplateNameChange(e)}
-							onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
-						/>
-					</Grid>
-					<Grid container style={{ paddingTop: '14px' }}>
+					<TemplateFields
+						classes={classes}
+						templateName={templateName}
+						savedTemplate={savedTemplate}
+						onTemplateNameChange={(e) => onTemplateNameChange(e)}
+						onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
+					/>
+					<Grid
+						container
+						spacing={windowSize === 'xs' ? 0 : 2}
+						style={{ paddingTop: '14px' }}>
 						<Grid item xs={12} sm={12} md={12} lg={5}>
 							<WhatsappTemplateEditor
 								classes={classes}
@@ -504,8 +509,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						</Grid>
 
 						<Grid item xs={12} sm={12} md={12} lg={7}>
-							<Grid container>
-								<Grid item xs={12} sm={12} md={12} lg={6}></Grid>
+							<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
+								<Grid item xs={12} sm={12} md={12} lg={6}>
+									<WhatsappTips classes={classes} />
+								</Grid>
 								<Grid item xs={12} sm={12} md={12} lg={6}>
 									<Box>
 										<WhatsappMobilePreview
@@ -517,8 +524,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									</Box>
 								</Grid>
 							</Grid>
-							<Buttons classes={classes} />
 						</Grid>
+						<Buttons classes={classes} />
 					</Grid>
 				</Grid>
 			</form>

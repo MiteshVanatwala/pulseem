@@ -32,6 +32,20 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginTop: 20,
 		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
 	},
+	whatsappSmallInfoDiv: {
+		display: 'flex',
+		width: '100%',
+		boxSizing: 'border-box',
+		position: 'relative',
+		top: '-4px',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		color: '#1c82b2',
+		fontSize: '12px',
+		padding: '14px 10px',
+		border: '1px solid #ced4da',
+		borderTop: 'none',
+	},
 	whatsappFuncDiv: {
 		width: '100%',
 		height: '60px',
@@ -60,15 +74,24 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			paddingInlineEnd: '8px',
 		},
 	},
+	WhatsappTextareaWrapper: {
+		border: '1px solid #ced4da',
+		height: '240px',
+		borderBottom: '0px',
+		borderTopLeftRadius: '0.25rem',
+		borderTopRightRadius: '0.25rem',
+		'& textarea': {
+			border: 'none',
+			height: 'auto',
+		},
+	},
 	whatsappActionButtonsWrapper: {
 		top: '-4px',
 		position: 'relative',
-		borderRight: '1px solid #ced4da',
-		borderLeft: '1px solid #ced4da',
 	},
 	whatsappActionButtonsBox: {
 		display: 'flex',
-		justifyContent: 'flex-end',
+		justifyContent: 'flex-start',
 		alignItems: 'center',
 		padding: '4px 8px',
 	},
@@ -99,6 +122,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginInlineStart: 1,
 		marginInlineEnd: 1,
 		padding: '3px',
+		fontSize: '12px',
 		'&$disabled': {
 			cursor: 'not-allowed !important',
 		},
@@ -353,7 +377,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.sent': {
 			background: '#e1ffc7',
-			borderRadius: '5px 0px 5px 5px',
+			borderRadius: isRTL ? '0px 5px 5px 5px' : '5px 0px 5px 5px',
 			float: isRTL ? 'left' : 'right',
 			'&:after': {
 				borderWidth: '0px 0 10px 10px',
@@ -386,20 +410,28 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		margin: '4px -8px 0px -8px',
 		textAlign: 'center',
 		padding: '4px 8px 0px 8px',
+		'& a': {
+			display: 'flex',
+			flexDirection: 'row',
+			textDecoration: 'none',
+			color: 'gray',
+			alignItems: 'self-end',
+		},
 	},
 	callToActionButton: {
-		color: '#009de2',
+		color: '#767676',
 		cursor: 'pointer',
 	},
 	callToActionButtonText: {
-		paddingLeft: '8px',
+		paddingLeft: isRTL ? '0' : '8px',
+		paddingRight: isRTL ? '8px' : '0',
 	},
 	quickReplyButtonWrapper: {
 		textAlign: 'center',
 		cursor: 'pointer',
 	},
 	quickReplyButtonText: {
-		color: '#009de2',
+		color: '#767676',
 	},
 	/* Marvel Device */
 
@@ -671,5 +703,20 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		outline: '0',
 		padding: '6px 0px 7px 0px',
 		width: '100%',
+	},
+	whatsappTipsWrapper: {
+		border: '1px solid #ced4da',
+		borderRadius: '4px',
+		padding: '8px',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+		height: 'calc(100% - 16px)',
+		'& .title': {
+			fontFamily: 'OpenSansHebrew-Bold',
+		},
+		'& p': {
+			margin: '9px 0px',
+			lineHeight: '15px',
+		},
 	},
 });

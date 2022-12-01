@@ -104,3 +104,7 @@ export type templateDataProps = {
 	templateText: string;
 	templateButtons: quickReplyButtonProps[] | callToActionProps;
 };
+
+export type WhatsappTipsProps = {
+	classes: ClassesType['classes'];
+};

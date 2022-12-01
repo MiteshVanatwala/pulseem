@@ -70,91 +70,110 @@ const TemplateFields = ({
 
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
-			<Grid item xs={12} md={3} sm={12} className={classes.buttonForm}>
-				<Typography className={classes.buttonHead}>
-					{translator('whatsapp.templateName')}
-				</Typography>
+			<Grid item xs={12} sm={12} md={12} lg={5}>
+				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
+					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
+						<Typography className={classes.buttonHead}>
+							{translator('whatsapp.templateName')}
+						</Typography>
 
-				<TextField
-					required
-					id='templateName'
-					type='text'
-					placeholder={translator('whatsapp.templateNamePlaceholder')}
-					className={
-						isCampaign
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
-					onChange={onTemplateNameChange}
-					value={templateName}
-				/>
+						<TextField
+							required
+							id='templateName'
+							type='text'
+							placeholder={translator('whatsapp.templateNamePlaceholder')}
+							className={
+								isCampaign
+									? clsx(classes.buttonField, classes.error)
+									: clsx(classes.buttonField, classes.success)
+							}
+							onChange={onTemplateNameChange}
+							value={templateName}
+						/>
 
-				<Typography className={classes.buttonContent}>
-					{translator('whatsapp.templateDesc')}
-				</Typography>
+						<Typography className={classes.buttonContent}>
+							{translator('whatsapp.templateDesc')}
+						</Typography>
+					</Grid>
+
+					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
+						<Typography className={classes.buttonHead}>
+							{translator('whatsapp.selectSavedTemplate')}
+						</Typography>
+
+						<TextField
+							required
+							select
+							id='selectSavedTemplate'
+							type='text'
+							placeholder={translator(
+								'whatsapp.selectSavedTemplatePlaceholder'
+							)}
+							className={
+								isCampaign
+									? clsx(classes.buttonField, classes.error)
+									: clsx(classes.buttonField, classes.success)
+							}
+							onChange={onSavedTemplateChange}
+							value={savedTemplate}>
+							{names.map((name) => (
+								<MenuItem key={name} value={name}>
+									{name}
+								</MenuItem>
+							))}
+						</TextField>
+					</Grid>
+				</Grid>
 			</Grid>
 
-			<Grid item xs={12} md={3} sm={12} className={classes.buttonForm}>
-				<Typography className={classes.buttonHead}>
-					{translator('whatsapp.selectSavedTemplate')}
-				</Typography>
+			<Grid item xs={12} sm={12} md={12} lg={5}>
+				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
+					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
+						<Typography className={classes.buttonHead}>
+							Upload File-PNG,JPG,PDF,MP4
+						</Typography>
+						<label
+							className={classes.customFileUpload}
+							style={{
+								padding:
+									fileName?.length > 0
+										? '14px 15px 12px 7px'
+										: '17px 15px 15px 7px',
+							}}>
+							<input
+								required
+								type='file'
+								className={classes.formFieldInput}
+								accept='image/png, image/jpeg, application/pdf, video/mp4'
+								onChange={(e) => onFileUploadChange(e)}
+							/>
+							{fileName ? (
+								<div style={{ marginRight: 'auto' }}>
+									<Button
+										variant='contained'
+										color='primary'
+										size='small'
+										style={{
+											borderRadius: '22px',
+											padding: '0px 10px 0px 10px',
+										}}
+										onClick={(e) => onFileDeselect(e)}>
+										{fileName.substring(0, 10) + '...'}&emsp;
+										<i className='zmdi zmdi-close'></i>
+									</Button>
+								</div>
+							) : (
+								<i className='zmdi zmdi-upload'></i>
+							)}
+						</label>
 
-				<TextField
-					required
-					select
-					id='selectSavedTemplate'
-					type='text'
-					placeholder={translator('whatsapp.selectSavedTemplatePlaceholder')}
-					className={
-						isCampaign
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
-					onChange={onSavedTemplateChange}
-					value={savedTemplate}>
-					{names.map((name) => (
-						<MenuItem key={name} value={name}>
-							{name}
-						</MenuItem>
-					))}
-				</TextField>
-			</Grid>
-
-			<Grid item xs={12} md={3} sm={12} className={classes.buttonForm}>
-				<Typography className={classes.buttonHead}>
-					Upload File-PNG,JPG,PDF,MP4
-				</Typography>
-				<label className={classes.customFileUpload}>
-					<input
-						required
-						type='file'
-						className={classes.formFieldInput}
-						accept='image/png, image/jpeg, application/pdf, video/mp4'
-						onChange={(e) => onFileUploadChange(e)}
-					/>
-					{fileName ? (
-						<div style={{ marginRight: 'auto' }}>
-							<Button
-								variant='contained'
-								color='primary'
-								size='small'
-								style={{
-									borderRadius: '22px',
-									padding: '0px 10px 0px 10px',
-								}}
-								onClick={(e) => onFileDeselect(e)}>
-								{fileName.substring(0, 10) + '...'}&emsp;
-								<i className='zmdi zmdi-close'></i>
-							</Button>
-						</div>
-					) : (
-						<i className='zmdi zmdi-upload'></i>
-					)}
-				</label>
-
-				<Typography className={classes.buttonContent}>
-					{fileName ? `Total Size ${fileSize}` : 'Only one file - up to 16 MB'}
-				</Typography>
+						<Typography className={classes.buttonContent}>
+							{fileName
+								? `Total Size ${fileSize}`
+								: 'Only one file - up to 16 MB'}
+						</Typography>
+					</Grid>
+				</Grid>
 			</Grid>
 		</Grid>
 	);

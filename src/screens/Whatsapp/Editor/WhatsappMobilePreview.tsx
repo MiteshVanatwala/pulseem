@@ -26,7 +26,7 @@ const WhatsappMobilePreview = ({
 	const [quickReplyWidth, setQuickReplyWidth] = useState<string>('');
 
 	const getQuickReplyWidth = () => {
-		const templateTextElement: any = document.getElementById(
+		const templateTextElement: HTMLElement | null = document.getElementById(
 			'conversation-text-preview'
 		);
 		return templateTextElement?.clientWidth
@@ -152,47 +152,37 @@ const WhatsappMobilePreview = ({
 																						<a
 																							href={`tel:${getValueByFieldName(
 																								button,
-																								translator(
-																									'whatsapp.phoneNumber'
-																								)
+																								'Phone Number'
 																							)}`}>
 																							<i
-																								className={`${classes.callToActionButton} zmdi zmdi-phone`}>
-																								<span
-																									className={
-																										classes.callToActionButtonText
-																									}>
-																									{getValueByFieldName(
-																										button,
-																										translator(
-																											'whatsapp.websiteButtonText'
-																										)
-																									)}
-																								</span>
-																							</i>
+																								className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
+																							<span
+																								className={
+																									classes.callToActionButtonText
+																								}>
+																								{getValueByFieldName(
+																									button,
+																									'Button Text'
+																								)}
+																							</span>
 																						</a>
 																					) : (
 																						<a
 																							href={getValueByFieldName(
 																								button,
-																								translator(
-																									'whatsapp.websiteURL'
-																								)
+																								'Website URL'
 																							)}>
 																							<i
-																								className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}>
-																								<span
-																									className={
-																										classes.callToActionButtonText
-																									}>
-																									{getValueByFieldName(
-																										button,
-																										translator(
-																											'whatsapp.websiteButtonText'
-																										)
-																									)}
-																								</span>
-																							</i>
+																								className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
+																							<span
+																								className={
+																									classes.callToActionButtonText
+																								}>
+																								{getValueByFieldName(
+																									button,
+																									'Button Text'
+																								)}
+																							</span>
 																						</a>
 																					)}
 																				</Grid>
@@ -205,9 +195,7 @@ const WhatsappMobilePreview = ({
 												)}
 												{buttonType === 'quickReply' && (
 													<>
-														<div
-															
-															className={classes.quickReplyButtonWrapper}>
+														<div className={classes.quickReplyButtonWrapper}>
 															{templateButtons?.map(
 																(
 																	button:
@@ -223,9 +211,7 @@ const WhatsappMobilePreview = ({
 																			width:
 																				getValueByFieldName(
 																					button,
-																					translator(
-																						'whatsapp.websiteButtonText'
-																					)
+																					'Button Text'
 																				)?.length <= templateText?.length
 																					? quickReplyWidth
 																					: '',
@@ -234,7 +220,7 @@ const WhatsappMobilePreview = ({
 																			className={classes.quickReplyButtonText}>
 																			{getValueByFieldName(
 																				button,
-																				translator('whatsapp.websiteButtonText')
+																				'Button Text'
 																			)}
 																		</span>
 																	</div>
@@ -243,18 +229,6 @@ const WhatsappMobilePreview = ({
 														</div>
 													</>
 												)}
-
-												{/* <div className={` pushMessage`}>
-													<Button
-														variant='contained'
-														color='default'
-														style={{ width: '100%' }}>
-														<label
-															style={{ fontWeight: 'bold', color: '#0e95b0' }}>
-															Hi There
-														</label>
-													</Button>
-												</div> */}
 											</div>
 											<form
 												className={classes.whatsappMobileConversationCompose}>
