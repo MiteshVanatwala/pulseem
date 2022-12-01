@@ -267,7 +267,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           else {
             const beeTest = new BeePlugin(beeObject);
-            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : { messageWidth: '600px' };
+            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               if (!campaign || !campaign.HtmlData) {
@@ -292,7 +292,6 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
       setLoader(false);
-
     })
   }
   useEffect(() => {
