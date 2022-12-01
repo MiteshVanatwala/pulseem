@@ -347,7 +347,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			margin: isRTL ? '0 8px 0 0' : '0 0 0 8px',
 			overflow: 'hidden',
 			whiteSpace: 'nowrap',
-			width: '110px',
+			width: 'auto',
 		},
 		'& .status': {
 			display: 'block',
