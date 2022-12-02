@@ -34,6 +34,7 @@ import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
+import queryString from 'query-string';
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -276,7 +277,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           else {
             const beeTest = new BeePlugin(beeObject);
-            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : { messageWidth: '600px' };
+            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               if (!campaign || !campaign.HtmlData) {
@@ -301,7 +302,6 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
       setLoader(false);
-
     })
   }
   useEffect(() => {
@@ -358,7 +358,13 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
+          const qs = queryString.parse(window.location.search);
+          if (qs?.FromAutomation) {
+            window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${qs?.FromAutomation}&CampaignID=${args.campaignId}&NodeToEdit=${qs?.NodeToEdit ?? 'N1'}`;
+            return false;
+          }
           window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          return false;
         }
         else if (saveRef.current?.showAnimation) {
           setToastMessage(ToastMessages.CAMPAIGN_SAVED);

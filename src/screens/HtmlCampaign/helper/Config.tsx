@@ -58,7 +58,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
-                    const rows = await getRows(args.handle);
+                    const rows = await getRows(args?.handle);
                     resolve(rows);
                 }
             }
@@ -231,6 +231,84 @@ export const DefaultContent = (IsRTL: Boolean) => {
 
                 }
             }
+        },
+        defaultTemplate: {
+            "page": {
+                "title": "Template Base",
+                "description": "Test template for BEE",
+                "template": {
+                    "name": "template-base",
+                    "type": "basic",
+                    "version": "0.0.1"
+                },
+                "body": {
+                    "type": "mailup-bee-page-proprerties",
+                    "container": {
+                        "style": {
+                            "background-color": "#FFFFFF"
+                        }
+                    },
+                    "content": {
+                        "style": {
+                            "font-family": "Arial, 'Helvetica Neue', Helvetica, sans-serif",
+                            "color": "#000000"
+                        },
+                        "computedStyle": {
+                            "linkColor": "#0068A5",
+                            "messageBackgroundColor": "transparent",
+                            "messageWidth": "600px"
+                        }
+                    },
+                    "webFonts": []
+                },
+                "rows": [
+                    {
+                        "type": "one-column-empty",
+                        "container": {
+                            "style": {
+                                "background-color": "transparent",
+                                "background-image": "none",
+                                "background-repeat": "no-repeat",
+                                "background-position": "top left"
+                            }
+                        },
+                        "content": {
+                            "style": {
+                                "background-color": "transparent",
+                                "color": "#000000",
+                                "width": "600px",
+                                "background-image": "none",
+                                "background-repeat": "no-repeat",
+                                "background-position": "top left"
+                            },
+                            "computedStyle": {
+                                "rowColStackOnMobile": true,
+                                "rowReverseColStackOnMobile": false
+                            }
+                        },
+                        "columns": [
+                            {
+                                "grid-columns": 12,
+                                "modules": [],
+                                "style": {
+                                    "background-color": "transparent",
+                                    "padding-top": "5px",
+                                    "padding-right": "0px",
+                                    "padding-bottom": "5px",
+                                    "padding-left": "0px",
+                                    "border-top": "0px solid transparent",
+                                    "border-right": "0px solid transparent",
+                                    "border-bottom": "0px solid transparent",
+                                    "border-left": "0px solid transparent"
+                                },
+                                "uuid": uuidv4()
+                            }
+                        ],
+                        "uuid": uuidv4()
+                    }
+                ]
+            },
+            "comments": {}
         }
     }
 }

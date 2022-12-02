@@ -29,6 +29,7 @@ const useMockAPI = () => {
   })
 
   const setRow = async (row) => {
+    ref.current = [...rows, JSON.parse(row)];
     setRows(prevRows => [...prevRows, JSON.parse(row)])
     return new Promise((resolve) => resolve);
   }
@@ -48,6 +49,7 @@ const useMockAPI = () => {
         });
       });
     }
+
     return new Promise((resolve) => {
       resolve(items)
     })
