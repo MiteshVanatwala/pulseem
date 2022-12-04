@@ -29,7 +29,9 @@ const useMockAPI = () => {
   })
 
   const setRow = async (row) => {
+    ref.current = [...rows, JSON.parse(row)];
     setRows(prevRows => [...prevRows, JSON.parse(row)])
+    return new Promise((resolve) => resolve);
   }
 
   const getRows = async (handle) => {
@@ -40,7 +42,14 @@ const useMockAPI = () => {
           return tag.trim() === handle
         });
       });
+      items = items.filter((value, index) => {
+        const _value = JSON.stringify(value);
+        return index === items.findIndex(obj => {
+          return JSON.stringify(obj) === _value;
+        });
+      });
     }
+
     return new Promise((resolve) => {
       resolve(items)
     })

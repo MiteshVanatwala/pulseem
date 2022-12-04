@@ -21,7 +21,7 @@ const EditRow = ({ onClose, save, args, classes }) => {
     setText(event?.target?.value)
   }, [])
   const handleTagChange = React.useCallback((event) => {
-    setTags(event?.target?.value)
+    setTags(event?.target?.value.replace(', ', ',').replace(' ', '-'))
   }, [])
 
   return (
