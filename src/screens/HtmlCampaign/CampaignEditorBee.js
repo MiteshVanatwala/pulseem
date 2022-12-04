@@ -75,6 +75,9 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [showGallery, setShowGallery] = useState(false);
   const [showDocs, setShowDocuments] = useState(false);
   const [isSiteTracking, setIsSiteTracking] = useState(false);
+  const queryParams = new URLSearchParams(window.location.search)
+  const isFromAutomation = queryParams.get("FromAutomation");
+  const NodeToEdit = queryParams.get("NodeToEdit");
 
   //#endregion State
 
@@ -358,11 +361,6 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
-          const qs = queryString.parse(window.location.search);
-          if (qs?.FromAutomation) {
-            window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${qs?.FromAutomation}&CampaignID=${args.campaignId}&NodeToEdit=${qs?.NodeToEdit ?? 'N1'}`;
-            return false;
-          }
           window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           return false;
         }
@@ -610,6 +608,39 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  const renderButtons = () => {
+    const wizardButtons = [];
+    if (!isFromAutomation) {
+      wizardButtons.push(<Button onClick={saveDesign}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonLightGreen,
+          classes.backButton
+        )}
+        style={{ marginInlineStart: '8px' }}
+        color="primary"
+      >{t('common.continue')}</Button>)
+    }
+    else {
+      wizardButtons.push(<Button onClick={() => {
+        window.location = window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+      }}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonLightGreen,
+          classes.backButton
+        )}
+        style={{ marginInlineStart: '8px' }}
+        color="primary"
+      >{t('common.backToAutomation')}</Button>)
+    }
+
+    return wizardButtons.map((b) => b);
+  }
   return (
     <DefaultScreen
       showAppBar={false}
@@ -654,13 +685,13 @@ const CampaignEditor = ({ classes, ...props }) => {
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
         classes={classes}
-        onExit={onExit}
+        onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
-        onSave={saveDesign}
         onBack={onBack}
         onDelete={onDelete}
         onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
+        additionalButtons={renderButtons()}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
