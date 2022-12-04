@@ -420,7 +420,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     setDialog(DialogType.GENERIC);
   }
   const onBack = () => {
-    saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
+    if (isFromAutomation) {
+      saveDesign(true, `/react/Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+    }
+    else {
+      saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
+    }
   }
   const onTestSendSubmit = async (sendRequest) => {
     setLoader(true);
