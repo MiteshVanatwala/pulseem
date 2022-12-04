@@ -530,7 +530,7 @@ const ClientSearchResult = ({ props, classes }) => {
     },
     '8': {
       title: t("common.SendDate"),
-      sortKey: 'Date',
+      // sortKey: 'SentDate',
       component: {
         mobile: ({ SentDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
