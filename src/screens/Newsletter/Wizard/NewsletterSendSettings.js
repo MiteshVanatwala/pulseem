@@ -173,7 +173,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [dataIsReady, setDataIsReady] = useState(false);
 
     const initOnReady = () => {
-        if (newsletterSettings.error) {
+        if (newsletterSettings?.error) {
             logout();
         }
 
@@ -245,7 +245,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             // setGroupList(subAccountGroups.payload);
             setSelectedGroups(tempSelectedGroupsForSend);
             setFilterValues(tempFilterValues)
-            setSendingTimeFormValues({ ...sendingTimeFormValues, ...tempSendingTimeFormValues, SendingMethod: `${newsletterSettings?.SendingMethod}`, IsBestTime: newsletterSettings?.IsBestTime })
+            setSendingTimeFormValues({ ...sendingTimeFormValues, ...tempSendingTimeFormValues, SendingMethod: `${newsletterSettings?.SendingMethod ?? 1}`, IsBestTime: newsletterSettings?.IsBestTime })
         } catch (e) {
             dispatch(sendToTeamChannel({
                 MethodName: 'onReady',
@@ -309,8 +309,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             // IsNotClicked: false,
             // IsNotOpened: false,
             ...campaignValues,
-            ExeptionalCampaigns: "",
-            ExeptionalGroups: "",
+            ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.join(','),
+            ExeptionalGroups: filterValues?.selectedFilterGroups?.join(','),
             CampaignID: params.id,
             Status: campaignValues.Status,
             PulseAmount: sendingTimeFormValues.PulseAmount || campaignValues.PulseAmount,
