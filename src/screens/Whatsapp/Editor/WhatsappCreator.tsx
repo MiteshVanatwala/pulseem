@@ -188,30 +188,22 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let updatedText = '';
 		let lastDynamicFieldLength = 0;
 		if (d?.length <= 0) return text;
-		for (var i = 0; i < d?.length; i++) {
+		for (let i = 0; i < d?.length; i++) {
 			if (dynamicFieldL5.test(text.slice(d[i], d[i] + 5))) {
 				lastDynamicFieldLength = 5;
 				if (updatedText?.length <= 0) {
-					updatedText = text.slice(0, d[i]) + '{{' + Number(i + 1) + '}}';
+					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
 				} else {
-					updatedText =
-						updatedText +
-						text.slice(d[i - 1] + 5, d[i]) +
-						'{{' +
-						Number(i + 1) +
-						'}}';
+					updatedText = `${updatedText}
+						${text.slice(d[i - 1] + 5, d[i])}{{${Number(i + 1)}}}`;
 				}
 			} else if (dynamicFieldL6.test(text.slice(d[i], d[i] + 6))) {
 				lastDynamicFieldLength = 6;
 				if (updatedText?.length <= 0) {
-					updatedText = text.slice(0, d[i]) + '{{' + Number(i + 1) + '}}';
+					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
 				} else {
-					updatedText =
-						updatedText +
-						text.slice(d[i - 1] + 6, d[i]) +
-						'{{' +
-						Number(i + 1) +
-						'}}';
+					updatedText = `${updatedText}
+						${text.slice(d[i - 1] + 6, d[i])}{{${Number(i + 1)}}}`;
 				}
 			}
 		}
