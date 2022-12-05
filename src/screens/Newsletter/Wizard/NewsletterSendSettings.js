@@ -145,8 +145,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         PulseAmount: "",
         SendingMethod: 0,
         TimeInterval: '',
-        sendType: "1",
-        sendDate: null,
+        SendType: "1",
+        SendDate: null,
         sendTime: null,
         afterClick: false,
         selectedSpecialValue: "",
@@ -173,45 +173,25 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [dataIsReady, setDataIsReady] = useState(false);
 
     const initOnReady = () => {
-        if (newsletterSettings.error) {
+        if (newsletterSettings?.error) {
             logout();
         }
 
         try {
-            let tempSendingTimeFormValues = { ...sendingTimeFormValues }
-            let tempCampaignValues = { ...newsletterSettings }
-            let tempSelectedGroupsForSend = []
-            let tempFilterValues = { ...filterValues }
+            const { GroupList = [], PulseAmount = null, TimeInterval = null, SendDate = null, ExeptionalGroups = [], SendingMethod = null, ExeptionalCampaigns = [], IsBestTime = false } = newsletterSettings;
+            const { Groups } = groupData;
 
-            if (newsletterSettings?.GroupList !== null) {
-                const seGroups = newsletterSettings?.GroupList || [];
-                tempSelectedGroupsForSend = groupData.Groups.filter((c) => seGroups.indexOf(c.GroupID) > -1);
-            }
+            ExeptionalGroups?.length > 0 && setbsDot(true);
 
-            if (newsletterSettings?.PulseAmount && newsletterSettings?.TimeInterval) {
-                tempSendingTimeFormValues = { ...tempSendingTimeFormValues, togglePulse: true, PulseAmount: newsletterSettings?.PulseAmount, TimeInterval: newsletterSettings?.Data?.TimeInterval }
-            }
-
-            if (newsletterSettings?.ExeptionalGroups && newsletterSettings?.ExeptionalGroups?.length !== 0) {
-                setbsDot(true);
-                const selectedGroups = [];
-                const seGroups = newsletterSettings?.ExeptionalGroups || [];
-                for (var i = 0; i < seGroups.length; i++) {
-                    selectedGroups.push(groupData.Groups.filter((c) => { return c.GroupID === seGroups[i] })[0]);
-                }
-                tempFilterValues = { ...tempFilterValues, selectedFilterGroups: selectedGroups }
-            }
-            if (newsletterSettings?.ExeptionalCampaigns && newsletterSettings?.ExeptionalCampaigns?.length !== 0) {
-                const selectedCampaigns = [];
-                const seCampaigns = newsletterSettings?.ExeptionalCampaigns || [];
-                for (var i = 0; i < seCampaigns.length; i++) {
-                    selectedCampaigns.push(finishedCampaigns?.filter((c) => { return c.SMSCampaignID === seCampaigns[i] })[0]);
-                }
-                tempFilterValues = { ...tempFilterValues, selectedFilterCampaigns: selectedCampaigns }
-            }
-            if (newsletterSettings?.SendDate !== null && newsletterSettings?.SendingMethod === 2) {
-                tempSendingTimeFormValues = { ...tempSendingTimeFormValues, sendDate: moment(newsletterSettings?.SendDate) }
-            }
+            setSendingTimeFormValues({ ...sendingTimeFormValues, PulseAmount: PulseAmount, SendingMethod: SendingMethod, TimeInterval: TimeInterval, SendDate: SendDate ? moment(SendDate) : SendDate, IsBestTime: IsBestTime })
+            setCampaignValues({ ...newsletterSettings })
+            setTotalCampaigns(finishedCampaigns?.length ?? 0);
+            GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
+            setFilterValues({
+                ...filterValues,
+                selectedFilterGroups: ExeptionalGroups ? groupData.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
+                selectedFilterCampaigns: ExeptionalCampaigns ? finishedCampaigns?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
+            })
             // TODO
             if (newsletterSettings?.SendingMethod === 3) {
                 // tempSendingTimeFormValues = {
@@ -240,12 +220,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 // }
             }
 
-            setCampaignValues(tempCampaignValues)
-            setTotalCampaigns(finishedCampaigns?.length ?? 0);
-            // setGroupList(subAccountGroups.payload);
-            setSelectedGroups(tempSelectedGroupsForSend);
-            setFilterValues(tempFilterValues)
-            setSendingTimeFormValues({ ...sendingTimeFormValues, ...tempSendingTimeFormValues, SendingMethod: `${newsletterSettings?.SendingMethod}`, IsBestTime: newsletterSettings?.IsBestTime })
         } catch (e) {
             dispatch(sendToTeamChannel({
                 MethodName: 'onReady',
@@ -263,7 +237,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         if (dataIsReady === true) {
             initOnReady();
         }
-    }, [dataIsReady])
+    }, [dataIsReady, newsletterSettings, groupData])
 
     const getData = async () => {
         setLoader(true);
@@ -295,7 +269,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setDialogType({ type: "delete" });
     };
 
-
     const onSaveSettings = async (isTrue = false) => {
         // return console.log("REMOVE RETURN TO FIRE API")
         setLoader(true)
@@ -315,7 +288,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             Status: campaignValues.Status,
             PulseAmount: sendingTimeFormValues.PulseAmount || campaignValues.PulseAmount,
             TimeInterval: sendingTimeFormValues.TimeInterval || campaignValues.TimeInterval,
-            SendDate: sendingTimeFormValues.sendDate || campaignValues.sendDate,
+            SendDate: sendingTimeFormValues.SendDate || campaignValues.SendDate,
             SendingMethod: sendingTimeFormValues.SendingMethod || campaignValues.SendingMethod,
             GroupIds: selectedGroups.map(grp => grp.GroupID).join(","),
             ExceptionalDays: 0,
@@ -323,7 +296,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             IsSummaryRequest: isTrue
         }
         try {
-            const response = await dispatch(setEmailSendSettings(payload))
+            await dispatch(setEmailSendSettings(payload))
         }
         catch (error) {
             console.log("ERROR-SAVE-SEND-SETTINGS:", error)
@@ -598,24 +571,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const onPulseValidations = () => {
         let isValid = true;
-        // if (pulseValues.togglePulse) {
         if (sendingTimeFormValues.PulseAmount === "" || sendingTimeFormValues.TimeInterval === "") {
-            // setPulseValues({ ...pulseValues, pulseBool: true });
             setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: true })
         }
-        // if (pulseValues.TimeInterval === "") {
-        //     // setPulseValues({ ...pulseValues, timeBool: true });
-        //     setSnackbarValues({ ...snackbarValues, snackbarTimeBoolean: true })
-        //     isValid = false;
-        // }
-        // }
-        // if (pulseValues.toggleRandom) {
-        //     if (pulseValues.random === "") {
-        //         // setPulseValues({ ...pulseValues, boolRandom: true });
-        //         setSnackbarValues({ ...snackbarValues, snackBarMainBoolean: true })
-        //         isValid = false;
-        //     }
-        // }
         return isValid;
     }
 
@@ -628,7 +586,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handlePulseClose = () => {
         let tempData = {
             ...sendingTimeFormValues,
-            // random: sourcePulses.randomAmount, togglePulse: true, toggleRandom: true, SendingMethod: sourcePulses.SendingMethod, pulseType: sourcePulses.pulseType, 
             PulseAmount: sourcePulses.PulseAmount || "", TimeInterval: sourcePulses.TimeInterval || ""
         }
         if (sourcePulses.PulseAmount == "" || sourcePulses.TimeInterval == "") {
@@ -643,7 +600,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const handlePulseDialog = () => {
         setSourcePulses({ ...sourcePulses, SendingMethod: sendingTimeFormValues.SendingMethod, pulseType: sendingTimeFormValues.pulseType, PulseAmount: sendingTimeFormValues.PulseAmount, TimeInterval: sendingTimeFormValues.TimeInterval, randomAmount: sendingTimeFormValues.random });
-        // setPulseValues({...pulseValues, SendingMethod:SendingMethod})
         setDialogType({ type: "pulses" });
     }
 

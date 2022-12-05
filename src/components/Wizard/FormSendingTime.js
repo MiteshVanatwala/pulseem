@@ -47,11 +47,11 @@ const FormSendingTime = ({
     }
 
     const handleDatePicker = (value) => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, sendDate: value })
+        setSendingTimeFormValues({ ...sendingTimeFormValues, SendDate: value })
     }
 
     const handleTimePicker = (value) => {
-        var date = moment(sendingTimeFormValues.sendDate);
+        var date = moment(sendingTimeFormValues.SendDate);
         var time = moment(value, "HH:mm");
 
         date.set({
@@ -64,7 +64,7 @@ const FormSendingTime = ({
             setToastMessage(ToastMessages.DATE_PASS);
         }
 
-        setSendingTimeFormValues({ ...sendingTimeFormValues, sendDate: date, timePickerOpen: false });
+        setSendingTimeFormValues({ ...sendingTimeFormValues, SendDate: date, timePickerOpen: false });
     }
 
     const handleSelectChange = (e) => {
@@ -74,13 +74,13 @@ const FormSendingTime = ({
         }
         if (e.target.value !== "0") {
             Object.keys(extraData).map((item, i) => {
-                if (e.target.value == i + 3) {
+                if (e.target.value === i + 3) {
                     temp.selectedSpecialValue = item;
                 }
-                else if (e.target.value == 1) {
+                else if (e.target.value === 1) {
                     temp.selectedSpecialValue = "Birthday";
                 }
-                else if (e.target.value == 2) {
+                else if (e.target.value === 2) {
                     temp.selectedSpecialValue = "Creation day";
                 }
             })
@@ -170,35 +170,35 @@ const FormSendingTime = ({
                         <Box
                             className={classes.dateBox}
                             style={{
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` == "2" ? "auto" : "none",
+                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "2" ? "auto" : "none",
                             }}
                         >
                             <DateField
                                 minDate={moment()}
                                 classes={classes}
-                                value={`${sendingTimeFormValues.SendingMethod}` == "2" ? sendingTimeFormValues.sendDate : null}
+                                value={`${sendingTimeFormValues.SendingMethod}` === "2" ? sendingTimeFormValues.SendDate : null}
                                 onChange={handleDatePicker}
                                 placeholder={t("notifications.date")}
                                 timePickerOpen={true}
-                                dateActive={`${sendingTimeFormValues.SendingMethod}` == "2" ? false : true}
+                                dateActive={`${sendingTimeFormValues.SendingMethod}` === "2" ? false : true}
                             />
                         </Box>
                         <Box
                             className={classes.dateBox}
                             style={{
                                 marginTop: 10,
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` == "2" ? "auto" : "none",
+                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "2" ? "auto" : "none",
                             }}
                         >
                             <DateField
                                 minDate={moment()}
                                 classes={classes}
-                                value={`${sendingTimeFormValues.SendingMethod}` == "2" ? sendingTimeFormValues.sendDate : null}
+                                value={`${sendingTimeFormValues.SendingMethod}` === "2" ? sendingTimeFormValues.SendDate : null}
                                 onTimeChange={handleTimePicker}
                                 placeholder={t("notifications.hour")}
                                 isTimePicker={true}
                                 ampm={false}
-                                timeActive={`${sendingTimeFormValues.SendingMethod}` == "2" ? false : true}
+                                timeActive={`${sendingTimeFormValues.SendingMethod}` === "2" ? false : true}
                                 timePickerOpen={sendingTimeFormValues.timePickerOpen}
                             />
                         </Box>
@@ -236,7 +236,7 @@ const FormSendingTime = ({
                             className={classes.dateBox}
                             style={{
                                 marginTop: 10,
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` == "3" ? "auto" : "none",
+                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "3" ? "auto" : "none",
                             }}
                         >
                             <select
@@ -280,8 +280,8 @@ const FormSendingTime = ({
                                 type="text"
                                 className={classes.inputDays}
                                 placeholder="0"
-                                disabled={`${sendingTimeFormValues.SendingMethod}` == "3" ? false : true}
-                                value={`${sendingTimeFormValues.SendingMethod}` == "3" ? sendingTimeFormValues.daysBeforeAfter : ""}
+                                disabled={`${sendingTimeFormValues.SendingMethod}` === "3" ? false : true}
+                                value={`${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.daysBeforeAfter : ""}
                                 onChange={(e) => { handleSpecialDayChange(e) }}
                                 maxLength="3"
                             />
@@ -294,7 +294,7 @@ const FormSendingTime = ({
                                 <div style={{ display: "flex" }}>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` == "3" ? sendingTimeFormValues.toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                         }
                                         onClick={() => {
                                             handlebef();
@@ -304,7 +304,7 @@ const FormSendingTime = ({
                                     </span>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` == "3" ? sendingTimeFormValues.toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
                                         }
                                         onClick={() => {
                                             handleaf();
@@ -316,7 +316,7 @@ const FormSendingTime = ({
                                 </div> : <div style={{ display: "flex" }}>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` == "3" ? sendingTimeFormValues.toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
                                         }
                                         onClick={() => {
                                             handlebef();
@@ -326,7 +326,7 @@ const FormSendingTime = ({
                                     </span>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` == "3" ? sendingTimeFormValues.toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                         }
                                         onClick={() => {
                                             handleaf();
@@ -340,13 +340,13 @@ const FormSendingTime = ({
                             className={classes.dateBox}
                             style={{
                                 marginTop: 10,
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` == "3" ? "auto" : "none",
+                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "3" ? "auto" : "none",
                                 marginBottom: '1rem'
                             }}
                         >
                             <DateField
                                 classes={classes}
-                                value={`${sendingTimeFormValues.SendingMethod}` == "3" ? sendingTimeFormValues.sendTime : null}
+                                value={`${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.sendTime : null}
 
                                 onTimeChange={handleRadioTime}
                                 placeholder={t("notifications.hour")}
@@ -357,8 +357,8 @@ const FormSendingTime = ({
                                 }}
                                 ampm={false}
                                 timePickerOpen={sendingTimeFormValues.timePickerOpen}
-                                timeActive={`${sendingTimeFormValues.SendingMethod}` == "3" ? false : true}
-                                disabled={`${sendingTimeFormValues.SendingMethod}` == "3" ? false : true}
+                                timeActive={`${sendingTimeFormValues.SendingMethod}` === "3" ? false : true}
+                                disabled={`${sendingTimeFormValues.SendingMethod}` === "3" ? false : true}
                                 autoOk
                             />
                         </Box>
@@ -400,8 +400,8 @@ const FormSendingTime = ({
 
                     {sendingTimeFormValues.togglePulse ? (
                         <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-                            {t("smsReport.packetSend")} - {sendingTimeFormValues.PulseAmount} {sendingTimeFormValues.pulsePer == "" || sendingTimeFormValues.pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-                            {t("sms.every")} {sendingTimeFormValues.TimeInterval} {sendingTimeFormValues.hourName == "" || sendingTimeFormValues.minName == "mins" ? t("common.minutes") : t("common.hours")}
+                            {t("smsReport.packetSend")} - {sendingTimeFormValues.PulseAmount} {sendingTimeFormValues.pulsePer === "" || sendingTimeFormValues.pulsePer === "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
+                            {t("sms.every")} {sendingTimeFormValues.TimeInterval} {sendingTimeFormValues.hourName === "" || sendingTimeFormValues.minName === "mins" ? t("common.minutes") : t("common.hours")}
                         </span>
                     ) : null}
                     {sendingTimeFormValues.toggleRandom ? (
