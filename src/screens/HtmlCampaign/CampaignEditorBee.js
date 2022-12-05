@@ -646,20 +646,36 @@ const CampaignEditor = ({ classes, ...props }) => {
       </>)
     }
     else {
-      wizardButtons.push(<Button onClick={() => {
-        saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);
-        //  window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
-      }}
-        variant='contained'
-        size='medium'
-        className={clsx(
-          classes.actionButton,
-          classes.actionButtonLightGreen,
-          classes.backButton
-        )}
-        style={{ marginInlineStart: '8px' }}
-        color="primary"
-      >{t('common.backToAutomation')}</Button>)
+      wizardButtons.push(<>
+        <Button
+          onClick={() =>
+            saveDesign(false, null, true)}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          style={{ margin: '8px' }}
+          startIcon={<BiSave />}
+          color="primary"
+        >{t("common.save")}
+        </Button>
+        <Button onClick={() => {
+          saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);
+        }}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton
+          )}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+        >{t('common.backToAutomation')}</Button>
+      </>)
     }
 
     return wizardButtons.map((b) => b);
