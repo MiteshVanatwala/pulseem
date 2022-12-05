@@ -647,7 +647,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     else {
       wizardButtons.push(<Button onClick={() => {
-        window.location = window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+        saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);
+        //  window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
       }}
         variant='contained'
         size='medium'
