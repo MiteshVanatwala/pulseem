@@ -34,7 +34,7 @@ import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
-import queryString from 'query-string';
+import { BiSave } from 'react-icons/bi'
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -616,17 +616,34 @@ const CampaignEditor = ({ classes, ...props }) => {
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
-      wizardButtons.push(<Button onClick={saveDesign}
-        variant='contained'
-        size='medium'
-        className={clsx(
-          classes.actionButton,
-          classes.actionButtonLightGreen,
-          classes.backButton
-        )}
-        style={{ marginInlineStart: '8px' }}
-        color="primary"
-      >{t('common.continue')}</Button>)
+      wizardButtons.push(<>
+        <Button
+          onClick={() =>
+            saveDesign(false, null, true)}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          style={{ margin: '8px' }}
+          startIcon={<BiSave />}
+          color="primary"
+        >{t("common.save")}
+        </Button>
+        <Button onClick={saveDesign}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton
+          )}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+        >{t('common.continue')}</Button>
+      </>)
     }
     else {
       wizardButtons.push(<Button onClick={() => {
