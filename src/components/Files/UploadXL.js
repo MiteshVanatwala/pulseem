@@ -41,7 +41,8 @@ const UploadXL = ({
     uploadToGroups = [],
     setToastMessage,
     settings = null,
-    tooltipText = "smsReport.manualTotalTooltip"
+    tooltipText = "smsReport.manualTotalTooltip",
+    onlyMapping = false
 }) => {
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
@@ -426,6 +427,7 @@ const UploadXL = ({
 
     const handleDataManual = async () => {
         if (manualUploadValidationscheck()) {
+            let uploadAsFile = false;
             setLoader(true);
             let r = null;
             let requestPayload = [];
@@ -476,12 +478,20 @@ const UploadXL = ({
                 return x !== undefined;
             });
 
-            if (fileToUpload !== null && dataToUpload.length >= 5000) {
+            uploadAsFile = fileToUpload !== null && dataToUpload.length >= 5000;
+            if (uploadAsFile) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
                 formData.append("mapping", JSON.stringify(mapping));
-                r = await dispatch(addRecipients(formData))
+
+                if (onlyMapping === true) {
+                    onDone(formData, uploadAsFile);
+                }
+                else {
+                    r = await dispatch(addRecipients(formData));
+                    onDone(r);
+                }
             }
             else {
                 const finalPayload = {
@@ -489,11 +499,16 @@ const UploadXL = ({
                     GroupIds: uploadToGroups,
                     Mapping: mapping
                 }
-                r = await dispatch(addRecipient(finalPayload))
+                if (onlyMapping === true) {
+                    onDone(finalPayload, uploadAsFile);
+                }
+                else {
+                    r = await dispatch(addRecipient(finalPayload));
+                    onDone(r);
+                }
             }
 
             setFileToUpload(null);
-            onDone(r);
             setTimeout(() => {
                 setLoader(false);
             }, 1000);

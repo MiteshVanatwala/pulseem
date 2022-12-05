@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Tooltip } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
@@ -20,7 +20,7 @@ import { Button, Grid } from "@material-ui/core";
 import {
     getAccountExtraData, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
-import { combinedGroup } from "../../../redux/reducers/groupSlice";
+import { combinedGroup, addRecipient, addRecipients } from "../../../redux/reducers/groupSlice";
 import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { Stack } from "@mui/material";
@@ -41,6 +41,8 @@ import PreSendSummary from "./Popups/PreSendSummary";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import UploadXL from '../../../components/Files/UploadXL'
+import { UploadSettings } from "../../../helpers/Constants";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -107,7 +109,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [totalCampaigns, setTotalCampaigns] = useState();
     const [groupList, setGroupList] = useState([]);
     const [activeTab, setActiveTab] = useState(0);
-    const [highlighted, setHighlighted] = useState(false);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
     const [bsDot, setbsDot] = useState(false);
@@ -347,187 +348,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleInputNewGroup = (e) => {
         setNewGroupDetails({ ...newGroupDetails, groupNameExist: false, groupValue: e.target.value });
     }
-
-    const handleAreaChange = (e) => {
-        setManualValues({ ...manualValues, totalRecords: e.target.value.split("\n").filter((r) => { return r !== "" }).length, areaData: e.target.value, dropClick: false })
-    };
-
-    const handleFiles = (e) => {
-        e.preventDefault();
-        setManualValues({ ...manualValues, areaData: e.target.value, areaClick: false, dropClick: true })
-        const file = e.dataTransfer.files[0];
-        const reader = new FileReader();
-        var p = new Promise((resolve, reject) => {
-            try {
-                if (file.name.toLowerCase().indexOf("xls") > -1) {
-                    setLoader(true);
-
-                    reader.onload = function (e) {
-                        var data = new Uint8Array(e.target.result);
-                        setTimeout(() => {
-                            var workbook = XLSX.read(data, { type: "array" });
-                            var csv = XLSX.utils.sheet_to_csv(
-                                workbook.Sheets[workbook.SheetNames[0]]
-                                , { header: 1 });
-
-                            let temp = csv;
-                            let a = temp.split("\n");
-                            let b = [];
-                            for (let i = 0; i < a.length; i++) {
-                                b.push(a[i].split(","));
-                            }
-                            b.pop();
-                            let dummyArr = [];
-                            for (let i = 0; i < b[0].length; i++) {
-                                dummyArr.push(t("sms.adjustTitle"));
-                            }
-                            setManualValues({ ...manualValues, totalRecords: b.length, typedData: b, areaData: e.target.value, areaData: b, initialheadstate: dummyArr })
-                            setheaders(dummyArr)
-                            setLoader(false);
-                            if (dummyArr !== 0) {
-                                setDialogType({ type: "manualUpload" });
-                            }
-
-                        }, 0);
-                    };
-                    reader.readAsArrayBuffer(file, "utf-8")
-                }
-
-                else if (file.name.toLowerCase().indexOf("csv") > -1) {
-
-                    const maxLinesPerFile = 1000000;
-                    setLoader(true);
-                    reader.onload = function () {
-                        var config = {
-                            delimiter: "", // auto-detect
-                            newline: "", // auto-detect
-                            quoteChar: "",
-                            escapeChar: "",
-                            header: false,
-                            trimHeader: false,
-                            dynamicTyping: true,
-                            preview: 0,
-                            encoding: "utf-8",
-                            worker: true,
-                            comments: false,
-                            step: undefined,
-                            complete: undefined,
-                            error: undefined,
-                            download: false,
-                            skipEmptyLines: true,
-                            chunk: function (c) {
-                                var final = c["data"]
-                                    .filter(function (el) {
-                                        return (
-                                            typeof el != "object" ||
-                                            Array.isArray(el) ||
-                                            Object.keys(el).length > 0
-                                        );
-                                    })
-                                    .map((finalResult) => {
-                                        const fr = [...finalResult];
-                                        let fixedItem = [];
-                                        fr.forEach((item) => {
-                                            if (
-                                                item &&
-                                                String(item).startsWith("5") &&
-                                                String(item).length == 9
-                                            ) {
-                                                item = "0" + item;
-                                            }
-                                            if (item && String(item).indexOf("9.72") > -1) {
-                                                item = parseFloat(item);
-                                            }
-                                            fixedItem.push(String(item).trim());
-                                        });
-                                        return fixedItem;
-                                    });
-                                var conf = {
-                                    quotes: false,
-                                    quoteChar: '"',
-                                    escapeChar: '"',
-                                    delimiter: ",",
-                                    newline: "\r\n",
-                                    skipEmptyLines: true,
-                                    columns: null,
-                                    worker: true,
-                                };
-                                const csvResults = Papa.unparse(final, conf);
-                                resolve(csvResults)
-                            },
-                            fastMode: true,
-                            beforeFirstChunk: undefined,
-                            withCredentials: undefined,
-                        };
-                        const lines = reader.result.split("\n");
-
-
-                        Papa.parse(reader.result, {
-                            config,
-                            complete: results => {
-                                setContacts(results.data)
-                                setManualValues({ ...manualValues, totalRecords: results.data.length })
-                                // settotalRecords(results.data.length)
-
-                                const resultCsv = results.data;
-                                setDialogType({ type: "manualUpload" });
-                                let ddc = [];
-                                for (let i in resultCsv[0]) {
-                                    ddc.push(t("sms.adjustTitle"))
-                                }
-                                setheaders(ddc);
-                            },
-
-                        });
-                        setManualValues({ ...manualValues, areaData: reader.result.substring(0, 1500) })
-                        setLoader(false);
-                    };
-                    reader.readAsText(file, "ISO-8859-8");
-                }
-                else {
-                    return false;
-                }
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
-    }
-    const handlePasted = () => {
-        let temp = manualValues.areaData;
-        let a = temp.split("\n").filter(empty => empty);
-        let b = [];
-        let cols = 0;
-        if (temp.indexOf("\t") > -1) {
-            for (let i = 0; i < a.length; i++) {
-                let splitted = a[i].split("\t");
-                b.push(splitted);
-                if (splitted.length > cols) {
-                    cols = splitted.length;
-                }
-            }
-        }
-        else {
-            const records = a.filter((r) => { return r !== "" });
-            for (let i = 0; i < records.length; i++) {
-                let splitted = a[i].split(",");
-                b.push(splitted);
-                if (splitted.length > cols) {
-                    cols = splitted.length;
-                }
-            }
-        }
-
-        let dummyArr = [];
-        for (let i = 0; i < cols; i++) {
-            dummyArr.push(t("sms.adjustTitle"));
-        }
-        setManualValues({ ...manualValues, initialheadstate: dummyArr, typedData: b })
-        setheaders(dummyArr)
-        //COMMENT: UNUSED editT
-        setDialogType({ type: "manualUpload" });
-    };
-
     const handleConfirmC = () => {
         for (let i = 0; i < filterValues.selectArray.length; i++) {
             filterValues.selectArray[i].isdisabled = false;
@@ -808,6 +628,30 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         </Stack>
     ) : <></>
 
+    const handleUploadRecipients = async (res, uploadAsFile) => {
+        let r = null;
+        // HERE YOU NEED TO CREATE A GROUP AND HANDLE THE RESPONSE BEFOR CONTINUE
+        // groupSlice.createGroup({ GroupName: "", IsTestGroup: false})
+        if (uploadAsFile === true) {
+            r = await dispatch(addRecipients(res));
+        }
+        else {
+            r = await dispatch(addRecipient(res));
+        }
+        handleAddClientsResponse(r);
+    }
+
+    const handleAddClientsResponse = (res) => {
+        switch (res?.StatusCode) {
+            case 200:
+                break;
+            case 201:
+                break;
+            default:
+                break
+        }
+    }
+
     const renderBody = () => {
         const Tab1 = {
             tabName: t("mainReport.groups"),
@@ -884,80 +728,60 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             tabName: t("mainReport.manual"),
             body: (
                 <Stack
-                    className={
-                        highlighted
-                            ? clsx(classes.greenManual)
-                            : clsx(classes.areaManual)
-                    }
                 >
-                    <textarea
-                        placeholder={t("sms.dragXlOrCsv")}
-                        spellCheck="false"
-                        autoComplete="off"
-
-                        className={
-                            highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
-                        }
-                        value={manualValues.areaData}
-                        onDragEnter={() => {
-                            setHighlighted(true);
+                    <UploadXL
+                        classes={classes}
+                        onDone={(res, uploadedAsFile) => {
+                            handleUploadRecipients(res, uploadedAsFile);
                         }}
-                        onChange={handleAreaChange}
-                        onDragLeave={() => {
-                            setHighlighted(false);
-                        }}
-                        onDragOver={(e) => {
-                            e.preventDefault();
-                        }}
-                        onPaste={handleAreaChange}
-                        onDrop={(e) => {
-                            e.preventDefault();
-                            setHighlighted(false);
-                            handleFiles(e)
-                        }}
+                        settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
+                        // uploadToGroups={selectedGroups}
+                        setToastMessage={setToastMessage}
+                        placeHolder={"recipient.addRecTextareaPlaceholder"}
+                        tooltipText='recipient.bulkRecUpldTooltipText'
                     />
                 </Stack>
             ),
-            footer: (
-                <>
-                    {NewGroupForm()}
-                    <div className={classes.manualChild} style={{ justifyContent: manualValues.areaData === "" ? "flex-end" : "space-between" }}>
-                        {manualValues.areaData !== "" ? (
-                            <div>
-                                <span
-                                    className={classes.addManualDiv}
-                                    onClick={() => {
-                                        handlePasted();
-                                    }}
-                                >
-                                    {t("sms.editFields")}
-                                </span>
-                                <span
-                                    className={classes.clearDiv}
-                                    onClick={() => {
-                                        setManualValues({ ...manualValues, areaData: "", typedData: [], totalRecords: 0 })
-                                        // setareaData("");
-                                        setContacts([]);
-                                        // settypedData([]);
-                                        // settotalRecords(0)
-                                    }}
-                                >
-                                    {t("sms.clearList")}
-                                </span>
-                                <span
-                                    className={classes.addManualDiv}
-                                    onClick={() => {
-                                        setDialogType({ type: "quickMnualUpload" })
-                                    }}
-                                >
-                                    {t("campaigns.newsLetterSendSettings.quickMSend")}
-                                </span>
-                            </div>
-                        ) : null}
-                        <span>{t("sms.totalRecords")}:  {manualValues.totalRecords}</span>
-                    </div>
-                </>
-            ),
+            // footer: (
+            //     <>
+            //         {NewGroupForm()}
+            //         <div className={classes.manualChild} style={{ justifyContent: manualValues.areaData === "" ? "flex-end" : "space-between" }}>
+            //             {manualValues.areaData !== "" ? (
+            //                 <div>
+            //                     <span
+            //                         className={classes.addManualDiv}
+            //                         onClick={() => {
+            //                             handlePasted();
+            //                         }}
+            //                     >
+            //                         {t("sms.editFields")}
+            //                     </span>
+            //                     <span
+            //                         className={classes.clearDiv}
+            //                         onClick={() => {
+            //                             setManualValues({ ...manualValues, areaData: "", typedData: [], totalRecords: 0 })
+            //                             // setareaData("");
+            //                             setContacts([]);
+            //                             // settypedData([]);
+            //                             // settotalRecords(0)
+            //                         }}
+            //                     >
+            //                         {t("sms.clearList")}
+            //                     </span>
+            //                     <span
+            //                         className={classes.addManualDiv}
+            //                         onClick={() => {
+            //                             setDialogType({ type: "quickMnualUpload" })
+            //                         }}
+            //                     >
+            //                         {t("campaigns.newsLetterSendSettings.quickMSend")}
+            //                     </span>
+            //                 </div>
+            //             ) : null}
+            //             <span>{t("sms.totalRecords")}:  {manualValues.totalRecords}</span>
+            //         </div>
+            //     </>
+            // ),
             tooltip: t("smsReport.manualTip")
         }
         return <>{TabComp([Tab1, Tab2])}</>
