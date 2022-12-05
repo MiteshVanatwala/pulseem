@@ -388,6 +388,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			'& pre': {
 				margin: '0px',
 				fontFamily: 'Assistant',
+				whiteSpace: 'pre-line',
 			},
 		},
 		'&.quick-reply-button': {
