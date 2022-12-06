@@ -9,7 +9,14 @@ import clsx from 'clsx';
 
 
 
-const SegmentationDialog = ({ classes, onClose = () => null, onCancel = () => null, onConfirm = () => null, values, handleSetValues = () => null }) => {
+const SegmentationDialog = ({
+    classes,
+    campaign,
+    onClose = () => null,
+    onCancel = () => null,
+    onConfirm = () => null,
+    handleSetValues = () => null
+}) => {
     const { t } = useTranslation();
     const [selected, setSelected] = useState('0')
 
@@ -28,55 +35,26 @@ const SegmentationDialog = ({ classes, onClose = () => null, onCancel = () => nu
         ),
         content: (
             <Stack direction='column' spacing={2}>
-                <Typography className={classes.bold}>
-                    {t('common.Campaign')}
-                </Typography>
-                <Select
-                    value={selected}
-                    onChange={handleChange}
-                    displayEmpty
-                    inputProps={{
-                        'aria-label': 'Without label',
-                        className: classes.p10,
-                        style: { maxWidth: '70%' }
-                    }}
-                    variant='outlined'
-                    className={classes.mt10}
-                >
-                    <MenuItem
-                        key={'0'}
-                        value={'0'}
-                    >
-                        {t('common.All')} ({t('common.Default')})
-                    </MenuItem>
-                    {[{ Number: '1' }, { Number: '2' }, { Number: '3' }, { Number: '4' }, { Number: '5' },].map((obj) => (
-                        <MenuItem
-                            key={obj.Number}
-                            value={obj.Number}
-                        >
-                            {obj.Number}
-                        </MenuItem>
-                    ))}
-                </Select>
                 <Stack direction='row' spacing={3}>
-                    <DateField
-                        minDate={moment()}
-                        classes={classes}
-                        value={values.FromDate}
-                        onChange={(value) => handleSetValues({ ...values, FromDate: value })}
-                        placeholder={t("common.FromDate")}
-                        timePickerOpen={true}
-                    // dateActive={`${sendingTimeFormValues.SendingMethod}` == "2" ? false : true}
-                    />
-                    <DateField
-                        minDate={moment()}
-                        classes={classes}
-                        value={values.ToDate}
-                        onChange={(value) => handleSetValues({ ...values, ToDate: value })}
-                        placeholder={t("common.ToDate")}
-                        timePickerOpen={true}
-                    // dateActive={`${sendingTimeFormValues.SendingMethod}` == "2" ? false : true}
-                    />
+                    <Box style={{margin: 8}}>
+                        <DateField
+                            // minDate={moment()}
+                            classes={classes}
+                            value={campaign.FromDate}
+                            onChange={(value) => handleSetValues({ ...campaign, FromDate: value })}
+                            placeholder={t("common.FromDate")}
+                            timePickerOpen={true}
+                        />
+                    </Box>
+                    <Box style={{margin: 8}}>
+                        <DateField
+                            classes={classes}
+                            value={campaign.ToDate}
+                            onChange={(value) => handleSetValues({ ...campaign, ToDate: value })}
+                            placeholder={t("common.ToDate")}
+                            timePickerOpen={true}
+                        />
+                    </Box>
                 </Stack>
                 <Divider />
                 <Typography className={clsx(classes.f20, classes.bold)}>
@@ -85,13 +63,11 @@ const SegmentationDialog = ({ classes, onClose = () => null, onCancel = () => nu
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        // disabled={`${sendingTimeFormValues.SendingMethod}` !== "1"}
-                        // checked={`${sendingTimeFormValues.SendingMethod}` === "1" && sendingTimeFormValues.IsBestTime}
+                        disabled={campaign.IsNotOpened}
+                        checked={campaign.IsOpened}
+                        onChange={(e) => handleSetValues({ ...campaign, IsOpened: e.target.checked })}
                         color="primary"
                         inputProps={{ "aria-label": "secondary checkbox" }}
-                    // onClick={() => {
-                    //     setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: true })
-                    // }}
                     />
                     <Typography>
                         {t('campaigns.newsLetterEditor.sendSettings.segmCritCb1')}
@@ -100,13 +76,11 @@ const SegmentationDialog = ({ classes, onClose = () => null, onCancel = () => nu
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        // disabled={`${sendingTimeFormValues.SendingMethod}` !== "1"}
-                        // checked={`${sendingTimeFormValues.SendingMethod}` === "1" && sendingTimeFormValues.IsBestTime}
+                        disabled={campaign.IsOpened}
+                        checked={campaign.IsNotOpened}
+                        onChange={(e) => handleSetValues({ ...campaign, IsNotOpened: e.target.checked })}
                         color="primary"
                         inputProps={{ "aria-label": "secondary checkbox" }}
-                    // onClick={() => {
-                    //     setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: true })
-                    // }}
                     />
                     <Typography>
                         {t('campaigns.newsLetterEditor.sendSettings.segmCritCb2')}
@@ -115,13 +89,11 @@ const SegmentationDialog = ({ classes, onClose = () => null, onCancel = () => nu
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        // disabled={`${sendingTimeFormValues.SendingMethod}` !== "1"}
-                        // checked={`${sendingTimeFormValues.SendingMethod}` === "1" && sendingTimeFormValues.IsBestTime}
+                        disabled={campaign.IsNotClicked}
+                        checked={campaign.IsOpenedClicked}
+                        onChange={(e) => handleSetValues({ ...campaign, IsOpenedClicked: e.target.checked })}
                         color="primary"
                         inputProps={{ "aria-label": "secondary checkbox" }}
-                    // onClick={() => {
-                    //     setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: true })
-                    // }}
                     />
                     <Typography>
                         {t('campaigns.newsLetterEditor.sendSettings.segmCritCb3')}
@@ -130,13 +102,11 @@ const SegmentationDialog = ({ classes, onClose = () => null, onCancel = () => nu
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        // disabled={`${sendingTimeFormValues.SendingMethod}` !== "1"}
-                        // checked={`${sendingTimeFormValues.SendingMethod}` === "1" && sendingTimeFormValues.IsBestTime}
+                        disabled={campaign.IsOpenedClicked}
+                        checked={campaign.IsNotClicked}
+                        onChange={(e) => handleSetValues({ ...campaign, IsNotClicked: e.target.checked })}
                         color="primary"
                         inputProps={{ "aria-label": "secondary checkbox" }}
-                    // onClick={() => {
-                    //     setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: true })
-                    // }}
                     />
                     <Typography>
                         {t('campaigns.newsLetterEditor.sendSettings.segmCritCb4')}

@@ -9,12 +9,10 @@ import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import { Dialog } from "../../../components/managment/index";
 import { Loader } from '../../../components/Loader/Loader';
-import Papa from 'papaparse';
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
 import { useNavigate, useParams } from "react-router";
 import { BsTrash } from "react-icons/bs";
-import * as XLSX from 'xlsx';
 import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Button, Grid } from "@material-ui/core";
 import {
@@ -34,7 +32,7 @@ import SummaryDialog from "./Popups/SummaryDialog";
 import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
-import FormSendingTime from "../../../components/Wizard/FormSendingTime";
+import SendingMethod from "../../../components/Wizard/SendingMethod";
 import SpecialModal from "./Popups/SpecialModal";
 import { getGroups, getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
 import PreSendSummary from "./Popups/PreSendSummary";
@@ -184,7 +182,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
             ExeptionalGroups?.length > 0 && setbsDot(true);
 
-            setSendingTimeFormValues({ ...sendingTimeFormValues, PulseAmount: PulseAmount, SendingMethod: SendingMethod, TimeInterval: TimeInterval, SendDate: SendDate ? moment(SendDate) : SendDate, IsBestTime: IsBestTime })
             setCampaignValues({ ...newsletterSettings })
             setTotalCampaigns(finishedCampaigns?.length ?? 0);
             GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
@@ -270,18 +267,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setDialogType({ type: "delete" });
     };
 
-    const onSaveSettings = async (isTrue = false) => {
+    const onSaveSettings = async (showSummary = false) => {
         // return console.log("REMOVE RETURN TO FIRE API")
         setLoader(true)
         let payload = {
-            // FromDate: null,
-            // ToDate: null,
-            // AutoSendingByUserField: null,
-            // AutoSendDelay: 0,
-            // IsOpened: true,
-            // IsOpenedClicked: false,
-            // IsNotClicked: false,
-            // IsNotOpened: false,
             ...campaignValues,
             ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.join(','),
             ExeptionalGroups: filterValues?.selectedFilterGroups?.join(','),
@@ -294,7 +283,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupIds: selectedGroups.map(grp => grp.GroupID).join(","),
             ExceptionalDays: 0,
             IsBestTime: sendingTimeFormValues.IsBestTime,
-            IsSummaryRequest: isTrue
+            IsSummaryRequest: showSummary
         }
         try {
             await dispatch(setEmailSendSettings(payload))
@@ -307,13 +296,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const handleSetPulseData = (data) => {
-        const { TimeInterval, PulseAmount, SendingMethod, togglePulse } = data;
+        const { TimeInterval, PulseAmount, SendingMethod } = data;
         setSendingTimeFormValues({
             ...sendingTimeFormValues,
             TimeInterval: TimeInterval ?? sendingTimeFormValues.TimeInterval,
             PulseAmount: PulseAmount ?? sendingTimeFormValues.PulseAmount,
-            SendingMethod: SendingMethod ?? sendingTimeFormValues.SendingMethod,
-            togglePulse: togglePulse ?? sendingTimeFormValues.togglePulse
+            SendingMethod: SendingMethod ?? sendingTimeFormValues.SendingMethod
         })
         // setPulseValues({ TimeInterval: TimeInterval ?? pulseValues.TimeInterval, PulseAmount: PulseAmount ?? pulseValues.PulseAmount, SendingMethod: SendingMethod ?? sendingTimeFormValues.SendingMethod })
     }
@@ -389,16 +377,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     };
 
-    const onPulseValidations = () => {
-        let isValid = true;
-        if (sendingTimeFormValues.PulseAmount === "" || sendingTimeFormValues.TimeInterval === "") {
+    const handlePulseConfirm = (pulseSettings, pulseEnabled) => {
+        if (pulseEnabled && (pulseSettings.PulseAmount === "" || pulseSettings.TimeInterval === "")) {
             setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: true })
         }
-        return isValid;
-    }
-
-    const handlePulseConfirm = () => {
-        if (onPulseValidations()) {
+        else {
+            setCampaignValues({ ...campaignValues, ...pulseSettings })
             setDialogType(null);
         }
     }
@@ -906,9 +890,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }),
             pulses: PulseDialog({
                 classes: classes,
-                sendingTimeFormValues: sendingTimeFormValues,
-                handleSetPulseData: handleSetPulseData,
-                // setPulseValues: setPulseValues,
+                campaign: campaignValues,
                 selectedGroups: selectedGroups,
                 onClose: handlePulseClose,
                 onCancel: handlePulseClose,
@@ -925,19 +907,19 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }),
             segmentation: SegmentationDialog({
                 classes: classes,
-                values: sendingTimeFormValues,
-                handleSetValues: (values) => setSendingTimeFormValues({ ...values }),
+                campaign: campaignValues,
+                handleSetValues: (values) => setCampaignValues({ ...values }),
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
-                onConfirm: () => null
+                onConfirm: () => setDialogType(null)
             }),
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
-                values: sendingTimeFormValues,
-                handleSetValues: (values) => setSendingTimeFormValues({ ...values }),
+                campaign: campaignValues,
+                handleSetValues: (values) => setCampaignValues({ ...values }),
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
-                onConfirm: () => null
+                onConfirm: () => setDialogType(null)
             }),
             sendSuccess: SendSuccessDialog(),
             summary: SummaryDialog({ classes: classes, count: data }),
@@ -962,7 +944,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     return (
-        <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
+        <DefaultScreen
+            currentPage="newsletter"
+            subPage={"newsletterSendSettings"}
+            classes={classes}
+            customPadding={true}>
             <RenderToast toastMessage={toastMessage} time={4000} />
             <div>
                 <div>
@@ -976,16 +962,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             {renderBody()}
                         </Grid>
                         <Grid item md={5} xs={12}>
-                            <FormSendingTime
+                            <SendingMethod
                                 classes={classes}
-                                // sendingTimeFormValues={sendingTimeFormValues}
                                 ToastMessages={ToastMessages}
                                 setToastMessage={setToastMessage}
-                                // handleSetPulseData={handleSetPulseData}
-                                // setPulseValues={setPulseValues}
-                                enablePulse={selectedGroups.length >= 1 && sendingTimeFormValues.SendingMethod !== "3"}
-                                sendingTimeFormValues={sendingTimeFormValues}
-                                setSendingTimeFormValues={setSendingTimeFormValues}
+                                enablePulse={selectedGroups?.length > 0 && campaignValues.SendingMethod !== 3}
+                                campaign={campaignValues}
+                                onUpdateCampaign={(data) => setCampaignValues({ ...campaignValues, data })}
                                 handlePulseDialog={handlePulseDialog}
                                 extraButtons={
                                     <>
@@ -1000,7 +983,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <span
                                                 className={classes.pulse}
-                                                onClick={() => setDialogType({ type: 'smsMarketing' })}
+                                                onClick={() => {
+                                                    setDialogType({ type: 'smsMarketing' })
+                                                }}
                                             >
                                                 {t("campaigns.newsLetterEditor.sendSettings.smsMarketing")}
                                             </span>

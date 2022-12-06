@@ -24,14 +24,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const FormSendingTime = ({
+const SendingMethod = ({
     extraButtons = null,
     classes,
     ToastMessages,
     setToastMessage = () => null,
     enablePulse = false,
-    sendingTimeFormValues = null,
-    setSendingTimeFormValues = () => null,
+    campaign = null,
+    onUpdateCampaign = () => null,
     handlePulseDialog = () => null
 }) => {
     const { t } = useTranslation();
@@ -43,15 +43,15 @@ const FormSendingTime = ({
     );
 
     const handleSendType = (e) => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, sendType: e.target.value, SendingMethod: e.target.value, IsBestTime: false })
+        onUpdateCampaign({ ...campaign, SendingMethod: e.target.value, IsBestTime: false })
     }
 
     const handleDatePicker = (value) => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, SendDate: value })
+        onUpdateCampaign({ ...campaign, SendDate: value })
     }
 
     const handleTimePicker = (value) => {
-        var date = moment(sendingTimeFormValues.SendDate);
+        var date = moment(campaign.SendDate);
         var time = moment(value, "HH:mm");
 
         date.set({
@@ -64,7 +64,7 @@ const FormSendingTime = ({
             setToastMessage(ToastMessages.DATE_PASS);
         }
 
-        setSendingTimeFormValues({ ...sendingTimeFormValues, SendDate: date, timePickerOpen: false });
+        onUpdateCampaign({ ...campaign, SendDate: date, timePickerOpen: false });
     }
 
     const handleSelectChange = (e) => {
@@ -85,27 +85,27 @@ const FormSendingTime = ({
                 }
             })
         }
-        setSendingTimeFormValues({ ...sendingTimeFormValues, ...temp });
+        onUpdateCampaign({ ...campaign, ...temp });
     }
 
     const handleSpecialDayChange = (e) => {
         const re = /^[0-9\b]+$/;
         if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <= 999)) {
-            setSendingTimeFormValues({ ...sendingTimeFormValues, daysBeforeAfter: e.target.value })
+            onUpdateCampaign({ ...campaign, daysBeforeAfter: e.target.value })
         }
 
     }
 
     const handlebef = () => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: false, toggleA: false, toggleB: true })
+        onUpdateCampaign({ ...campaign, afterClick: false, toggleA: false, toggleB: true })
     };
 
     const handleaf = () => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, afterClick: true, toggleA: true, toggleB: false })
+        onUpdateCampaign({ ...campaign, afterClick: true, toggleA: true, toggleB: false })
     };
 
     const handleRadioTime = (value) => {
-        setSendingTimeFormValues({ ...sendingTimeFormValues, sendTime: value })
+        onUpdateCampaign({ ...campaign, sendTime: value })
     }
 
     const renderForm = () => {
@@ -123,11 +123,11 @@ const FormSendingTime = ({
                         aria-label="gender"
                         name="SendingMethod"
                         onChange={handleSendType}
-                        value={`${sendingTimeFormValues.SendingMethod}`}
+                        value={`${campaign.SendingMethod}`}
                     >
                         <FormControlLabel
                             value="1"
-                            control={<Radio color="primary" className={`${sendingTimeFormValues.SendingMethod}` !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                            control={<Radio color="primary" className={`${campaign.SendingMethod}` !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                             label={
                                 <span className={classes.radioText}>
                                     {t("notifications.immediateSend")}
@@ -140,12 +140,12 @@ const FormSendingTime = ({
                         <Stack direction='row' alignItems='center'>
                             <Checkbox
                                 className={classes.ml20}
-                                disabled={`${sendingTimeFormValues.SendingMethod}` !== "1"}
-                                checked={`${sendingTimeFormValues.SendingMethod}` === "1" && sendingTimeFormValues.IsBestTime}
+                                disabled={`${campaign.SendingMethod}` !== "1"}
+                                checked={`${campaign.SendingMethod}` === "1" && campaign.IsBestTime}
                                 color="primary"
                                 inputProps={{ "aria-label": "secondary checkbox" }}
                                 onClick={() => {
-                                    setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: !sendingTimeFormValues.IsBestTime })
+                                    onUpdateCampaign({ ...campaign, IsBestTime: !campaign.IsBestTime })
                                 }}
                             />
                             <span><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </span>
@@ -160,7 +160,7 @@ const FormSendingTime = ({
                         </Stack>
                         <FormControlLabel
                             value="2"
-                            control={<Radio color="primary" className={`${sendingTimeFormValues.SendingMethod}` !== "2" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                            control={<Radio color="primary" className={`${campaign.SendingMethod}` !== "2" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                             label={
                                 <span className={classes.radioText}>
                                     {t("notifications.futureSend")}
@@ -170,47 +170,47 @@ const FormSendingTime = ({
                         <Box
                             className={classes.dateBox}
                             style={{
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "2" ? "auto" : "none",
+                                pointerEvents: `${campaign.SendingMethod}` === "2" ? "auto" : "none",
                             }}
                         >
                             <DateField
                                 minDate={moment()}
                                 classes={classes}
-                                value={`${sendingTimeFormValues.SendingMethod}` === "2" ? sendingTimeFormValues.SendDate : null}
+                                value={`${campaign.SendingMethod}` === "2" ? campaign.SendDate : null}
                                 onChange={handleDatePicker}
                                 placeholder={t("notifications.date")}
                                 timePickerOpen={true}
-                                dateActive={`${sendingTimeFormValues.SendingMethod}` === "2" ? false : true}
+                                dateActive={`${campaign.SendingMethod}` === "2" ? false : true}
                             />
                         </Box>
                         <Box
                             className={classes.dateBox}
                             style={{
                                 marginTop: 10,
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "2" ? "auto" : "none",
+                                pointerEvents: `${campaign.SendingMethod}` === "2" ? "auto" : "none",
                             }}
                         >
                             <DateField
                                 minDate={moment()}
                                 classes={classes}
-                                value={`${sendingTimeFormValues.SendingMethod}` === "2" ? sendingTimeFormValues.SendDate : null}
+                                value={`${campaign.SendingMethod}` === "2" ? campaign.SendDate : null}
                                 onTimeChange={handleTimePicker}
                                 placeholder={t("notifications.hour")}
                                 isTimePicker={true}
                                 ampm={false}
-                                timeActive={`${sendingTimeFormValues.SendingMethod}` === "2" ? false : true}
-                                timePickerOpen={sendingTimeFormValues.timePickerOpen}
+                                timeActive={`${campaign.SendingMethod}` === "2" ? false : true}
+                                timePickerOpen={campaign.timePickerOpen}
                             />
                         </Box>
                         <Stack direction='row' alignItems='center'>
                             <Checkbox
                                 className={classes.ml20}
-                                disabled={`${sendingTimeFormValues.SendingMethod}` !== "2"}
-                                checked={`${sendingTimeFormValues.SendingMethod}` === "2" && sendingTimeFormValues.IsBestTime}
+                                disabled={`${campaign.SendingMethod}` !== "2"}
+                                checked={`${campaign.SendingMethod}` === "2" && campaign.IsBestTime}
                                 color="primary"
                                 inputProps={{ "aria-label": "secondary checkbox" }}
                                 onClick={() => {
-                                    setSendingTimeFormValues({ ...sendingTimeFormValues, IsBestTime: !sendingTimeFormValues.IsBestTime })
+                                    onUpdateCampaign({ ...campaign, IsBestTime: !campaign.IsBestTime })
                                 }}
                             />
                             <span><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </span>
@@ -225,7 +225,7 @@ const FormSendingTime = ({
                         </Stack>
                         <FormControlLabel
                             value="3"
-                            control={<Radio color="primary" className={`${sendingTimeFormValues.SendingMethod}` !== "3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                            control={<Radio color="primary" className={`${campaign.SendingMethod}` !== "3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                             label={
                                 <span className={classes.radioText}>
                                     {t("mainReport.specialDate")}
@@ -236,7 +236,7 @@ const FormSendingTime = ({
                             className={classes.dateBox}
                             style={{
                                 marginTop: 10,
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "3" ? "auto" : "none",
+                                pointerEvents: `${campaign.SendingMethod}` === "3" ? "auto" : "none",
                             }}
                         >
                             <select
@@ -250,9 +250,9 @@ const FormSendingTime = ({
                                     outline: "none",
                                     marginBottom: "10px",
                                 }}
-                                disabled={`${sendingTimeFormValues.SendingMethod}` === "3" ? false : true}
+                                disabled={`${campaign.SendingMethod}` === "3" ? false : true}
                                 onChange={(e) => { handleSelectChange(e) }}
-                                value={`${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.spectialDateFieldID : "0"}
+                                value={`${campaign.SendingMethod}` === "3" ? campaign.spectialDateFieldID : "0"}
                             >
                                 <option value="0">{t("common.select")}</option>
                                 <option value="1">{t("mainReport.birthday")}</option>
@@ -273,15 +273,15 @@ const FormSendingTime = ({
                                 display: "flex",
                                 alignItems: "center",
                                 width: "370px",
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "3" ? "auto" : "none",
+                                pointerEvents: `${campaign.SendingMethod}` === "3" ? "auto" : "none",
                             }}
                         >
                             <input
                                 type="text"
                                 className={classes.inputDays}
                                 placeholder="0"
-                                disabled={`${sendingTimeFormValues.SendingMethod}` === "3" ? false : true}
-                                value={`${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.daysBeforeAfter : ""}
+                                disabled={`${campaign.SendingMethod}` === "3" ? false : true}
+                                value={`${campaign.SendingMethod}` === "3" ? campaign.daysBeforeAfter : ""}
                                 onChange={(e) => { handleSpecialDayChange(e) }}
                                 maxLength="3"
                             />
@@ -294,7 +294,7 @@ const FormSendingTime = ({
                                 <div style={{ display: "flex" }}>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            `${campaign.SendingMethod}` === "3" ? campaign.toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                         }
                                         onClick={() => {
                                             handlebef();
@@ -304,7 +304,7 @@ const FormSendingTime = ({
                                     </span>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            `${campaign.SendingMethod}` === "3" ? campaign.toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
                                         }
                                         onClick={() => {
                                             handleaf();
@@ -316,7 +316,7 @@ const FormSendingTime = ({
                                 </div> : <div style={{ display: "flex" }}>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                                            `${campaign.SendingMethod}` === "3" ? campaign.toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
                                         }
                                         onClick={() => {
                                             handlebef();
@@ -326,7 +326,7 @@ const FormSendingTime = ({
                                     </span>
                                     <span
                                         className={
-                                            `${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                            `${campaign.SendingMethod}` === "3" ? campaign.toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                         }
                                         onClick={() => {
                                             handleaf();
@@ -340,13 +340,13 @@ const FormSendingTime = ({
                             className={classes.dateBox}
                             style={{
                                 marginTop: 10,
-                                pointerEvents: `${sendingTimeFormValues.SendingMethod}` === "3" ? "auto" : "none",
+                                pointerEvents: `${campaign.SendingMethod}` === "3" ? "auto" : "none",
                                 marginBottom: '1rem'
                             }}
                         >
                             <DateField
                                 classes={classes}
-                                value={`${sendingTimeFormValues.SendingMethod}` === "3" ? sendingTimeFormValues.sendTime : null}
+                                value={`${campaign.SendingMethod}` === "3" ? campaign.sendTime : null}
 
                                 onTimeChange={handleRadioTime}
                                 placeholder={t("notifications.hour")}
@@ -356,9 +356,9 @@ const FormSendingTime = ({
                                     cancel: t("common.cancel"),
                                 }}
                                 ampm={false}
-                                timePickerOpen={sendingTimeFormValues.timePickerOpen}
-                                timeActive={`${sendingTimeFormValues.SendingMethod}` === "3" ? false : true}
-                                disabled={`${sendingTimeFormValues.SendingMethod}` === "3" ? false : true}
+                                timePickerOpen={campaign.timePickerOpen}
+                                timeActive={`${campaign.SendingMethod}` === "3" ? false : true}
+                                disabled={`${campaign.SendingMethod}` === "3" ? false : true}
                                 autoOk
                             />
                         </Box>
@@ -398,14 +398,11 @@ const FormSendingTime = ({
                     }}
                 >
 
-                    {sendingTimeFormValues.togglePulse ? (
+                    {campaign?.PulseAmount && campaign?.PulseAmount > 0 ? (
                         <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-                            {t("smsReport.packetSend")} - {sendingTimeFormValues.PulseAmount} {sendingTimeFormValues.pulsePer === "" || sendingTimeFormValues.pulsePer === "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-                            {t("sms.every")} {sendingTimeFormValues.TimeInterval} {sendingTimeFormValues.hourName === "" || sendingTimeFormValues.minName === "mins" ? t("common.minutes") : t("common.hours")}
+                            {t("smsReport.packetSend")} - {campaign.PulseAmount} {t("sms.recipients")} {" "} 
+                            {t("sms.every")} {campaign.TimeInterval} {t("common.hours")}
                         </span>
-                    ) : null}
-                    {sendingTimeFormValues.toggleRandom ? (
-                        <span>{t("smsReport.randomSend")} - {sendingTimeFormValues.random} {t("smsReport.randomRecipients")}</span>
                     ) : null}
                 </div>
             </div>
@@ -415,4 +412,4 @@ const FormSendingTime = ({
     return renderForm()
 }
 
-export default FormSendingTime
+export default SendingMethod
