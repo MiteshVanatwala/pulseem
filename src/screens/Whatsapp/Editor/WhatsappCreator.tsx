@@ -32,6 +32,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	);
 
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
+	//This regex will test dynamic field having two digits in side (i.e. {{10}});
+	const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
+	//This regex will test dynamic field having one digits in side (i.e. {{1}});
+	const dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
@@ -307,10 +311,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getDynamicFieldIndex = (text: string) => {
-		var indices = [];
-		var dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
-		var dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
-		for (var i = 0; i < text.length; i++) {
+		let indices = [];
+		for (let i = 0; i < text.length; i++) {
 			if (
 				dynamicFieldL5.test(text.slice(i, i + 5)) ||
 				dynamicFieldL6.test(text.slice(i, i + 6))
@@ -322,11 +324,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getLastDynamicFieldValue = (text: string) => {
-		var str = text;
-		var indices: string[] = [];
-		var dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
-		var dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
-		for (var i = 0; i < str.length; i++) {
+		let str = text;
+		let indices: string[] = [];
+		for (let i = 0; i < str.length; i++) {
 			if (dynamicFieldL5.test(str.slice(i, i + 5))) {
 				indices.push(str.slice(i, i + 5).replace(/[{}]/g, ''));
 			} else if (dynamicFieldL6.test(str.slice(i, i + 6))) {
@@ -337,40 +337,34 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getLastDynamicFieldByValue = (value: string) => {
-		return '{{' + (Number(value) + 1).toString() + '}}';
+		return `{{${(Number(value) + 1).toString()}}}`;
 	};
 
 	const reOrderDynamicFieldValue = (text: string) => {
 		const d = getDynamicFieldIndex(text);
-		var dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
-		var dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 		let updatedText = '';
 		let lastDynamicFieldLength = 0;
 		if (d?.length <= 0) return text;
-		for (var i = 0; i < d?.length; i++) {
+		for (let i = 0; i < d?.length; i++) {
 			if (dynamicFieldL5.test(text.slice(d[i], d[i] + 5))) {
 				lastDynamicFieldLength = 5;
 				if (updatedText?.length <= 0) {
-					updatedText = text.slice(0, d[i]) + '{{' + Number(i + 1) + '}}';
+					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
 				} else {
-					updatedText =
-						updatedText +
-						text.slice(d[i - 1] + 5, d[i]) +
-						'{{' +
-						Number(i + 1) +
-						'}}';
+					updatedText = `${updatedText}${text.slice(
+						d[i - 1] + 5,
+						d[i]
+					)}{{${Number(i + 1)}}}`;
 				}
 			} else if (dynamicFieldL6.test(text.slice(d[i], d[i] + 6))) {
 				lastDynamicFieldLength = 6;
 				if (updatedText?.length <= 0) {
-					updatedText = text.slice(0, d[i]) + '{{' + Number(i + 1) + '}}';
+					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
 				} else {
-					updatedText =
-						updatedText +
-						text.slice(d[i - 1] + 6, d[i]) +
-						'{{' +
-						Number(i + 1) +
-						'}}';
+					updatedText = `${updatedText}${text.slice(
+						d[i - 1] + 6,
+						d[i]
+					)}{{${Number(i + 1)}}}`;
 				}
 			}
 		}
