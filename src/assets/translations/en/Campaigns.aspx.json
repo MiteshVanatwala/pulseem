@@ -529,12 +529,30 @@
       "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
       "optimalSendCBTooltip": "this process may take up to 24 hours",
       "segmentation": "Segmentation",
-      "smsMarketing": "SMS Marketing",
       "segmCriteria": "Segmentation Criteria",
       "segmCritCb1": "Recipients That Opened The Email",
       "segmCritCb2": "Recipients That Not Opened The Email",
       "segmCritCb3": "Recipients That Clicked On Links",
-      "segmCritCb4": "Recipients That Not Clicked On Links"
+      "segmCritCb4": "Recipients That Not Clicked On Links",
+      "insertCampaginName": "Which send settings would you want to duplicate from 'Insert Campagin Name'?",
+      "filters": "Filters",
+      "segmentations": "Segmentations",
+      "smsMarketing": {
+        "title": "SMS Marketing",
+        "sendTo": "Send To",
+        "everyone": "Everyone",
+        "opened": "Opened",
+        "unOpened": "Unopened",
+        "clicked": "Clicked",
+        "invalid": "Invalid",
+        "fromNumber": "From Number",
+        "sendingDate": "Sending Date",
+        "sendingTime": "Sending Time",
+        "smsMarketingSubTitle": "Send SMS to recipients in selected criteria that received email campaign for complete overall marketing.",
+        "addLinkToCampaign": "Add link to this Email campaign",
+        "addLinkToUpdate": "Add link to update contact"
+      },
+      "smsComplementary": "Complementary SMS Marketing"
     }
   },
   "newsLetterMgmt": {

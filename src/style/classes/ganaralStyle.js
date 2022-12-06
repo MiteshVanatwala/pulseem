@@ -2537,6 +2537,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         borderRadius: 4,
         paddingLeft: 10,
         paddingRight: 10,
+        minHeight: 25,
+        display: 'flex',
+        alignItems: 'center'
       },
       '& svg': {
         left: isRTL ? 10 : 'auto',
