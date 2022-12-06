@@ -17,6 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import {
 	coreProps,
 	quickReplyButtonProps,
+	quickReplyButtonsFieldProps,
 	quickReplyProps,
 } from './WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
@@ -41,23 +42,40 @@ const QuickReply = ({
 	const addMore = () => {
 		const button = {
 			id: uniqid(),
-			value: '',
+			fields: [
+				{
+					fieldName: translator('whatsapp.websiteButtonText'),
+					type: 'text',
+					placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+					value: '',
+				},
+			],
 		};
 		setQuickReplyButtons([...quickReplyButtons, button]);
 	};
 	const onButtonTextChange = (
 		e: BaseSyntheticEvent,
-		button: quickReplyButtonProps
+		changedButton: quickReplyButtonProps,
+		changedField: quickReplyButtonsFieldProps
 	) => {
 		if (e.target.value?.length > MAX_BUTTON_TEXT_LENGTH) return;
-		const updatedQuickButtons = quickReplyButtons.map((b) =>
-			b.id === button.id ? { ...b, value: e.target.value } : b
+		const updatedQuickButtons = quickReplyButtons.map((button) =>
+			button.id === changedButton.id
+				? {
+						...button,
+						fields: button.fields.map((field: quickReplyButtonsFieldProps) =>
+							field.fieldName === changedField.fieldName
+								? { ...field, value: e.target.value }
+								: field
+						),
+				  }
+				: button
 		);
 		setQuickReplyButtons(updatedQuickButtons);
 	};
-	const onDeleteButton = (button: quickReplyButtonProps) => {
+	const onDeleteButton = (changedButton: quickReplyButtonProps) => {
 		const updatedQuickButtons = quickReplyButtons.filter(
-			(b) => b.id !== button.id
+			(button) => button.id !== changedButton.id
 		);
 		setQuickReplyButtons(updatedQuickButtons);
 	};
@@ -96,26 +114,30 @@ const QuickReply = ({
 									{translator('whatsapp.quickReply.buttonText')}
 								</Typography>
 								<Grid container className={classes.quickReplayButtonWrapper}>
-									<TextField
-										className={classes.quickReplaybuttonField}
-										name={'quickreply'}
-										value={button?.value}
-										onChange={(e) => onButtonTextChange(e, button)}
-										required
-									/>
-									<Button
-										variant='outlined'
-										className={classes.quickReplayValidationCounter}>
-										{isRTL ? (
-											<>
-												{MAX_BUTTON_TEXT_LENGTH}/{button?.value?.length}
-											</>
-										) : (
-											<>
-												{button?.value?.length}/{MAX_BUTTON_TEXT_LENGTH}
-											</>
-										)}
-									</Button>
+									{button?.fields?.map((field: quickReplyButtonsFieldProps) => (
+										<>
+											<TextField
+												className={classes.quickReplaybuttonField}
+												name={'quickreply'}
+												value={field?.value}
+												onChange={(e) => onButtonTextChange(e, button, field)}
+												required
+											/>
+											<Button
+												variant='outlined'
+												className={classes.quickReplayValidationCounter}>
+												{isRTL ? (
+													<>
+														{MAX_BUTTON_TEXT_LENGTH}/{field?.value?.length}
+													</>
+												) : (
+													<>
+														{field?.value?.length}/{MAX_BUTTON_TEXT_LENGTH}
+													</>
+												)}
+											</Button>
+										</>
+									))}
 								</Grid>
 							</Grid>
 							<DeleteOutlinedIcon

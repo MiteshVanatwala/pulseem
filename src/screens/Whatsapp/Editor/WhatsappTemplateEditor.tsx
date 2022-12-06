@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 import {
 	actionButtonProps,
 	callToActionFieldProps,
+	callToActionRowProps,
 	coreProps,
 	quickReplyButtonProps,
+	quickReplyButtonsFieldProps,
 	WhatsappCreatorProps,
 } from './WhatsappCreator.types';
 import clsx from 'clsx';
@@ -22,7 +24,9 @@ const WhatsappTemplateEditor = ({
 	onButtonDelete,
 	buttonType,
 	setTemplateText,
-	templateText
+	templateText,
+	templateTextRef,
+	OnEditorActionButtonClick,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -40,7 +44,6 @@ const WhatsappTemplateEditor = ({
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [linkCount, setlinkCount] = useState(0);
 	const [messageCount, setMessageCount] = useState(0);
-	const [characterCount, setCharacterCount] = useState(0);
 	const [alignment, setAlignment] = useState<string>('right');
 
 	useEffect(() => {
@@ -48,8 +51,14 @@ const WhatsappTemplateEditor = ({
 	}, [isRTL]);
 	const onEditorChange = (e: BaseSyntheticEvent) => {
 		if (e.target.value?.length <= 1024) {
+			// TO STOP RESETTING CURSOR
+			const caret = e.target.selectionStart;
+			const element = e.target;
+			window.requestAnimationFrame(() => {
+				element.selectionStart = caret;
+				element.selectionEnd = caret;
+			});
 			setTemplateText(e.target.value);
-			setCharacterCount(e.target.value?.length);
 		}
 	};
 
@@ -82,7 +91,15 @@ const WhatsappTemplateEditor = ({
 	const isDisableButton = (buttonTitle: string) => {
 		if (buttonTitle.includes('callToAction') && buttonType === 'quickReply') {
 			return true;
-		} else if (buttonTitle.includes('quickReplay') && buttonType === 'callToAction') {
+		} else if (
+			buttonTitle.includes('quickReplay') &&
+			buttonType === 'callToAction'
+		) {
+			return true;
+		} else if (
+			buttonTitle.includes('removalText') &&
+			templateText.includes('Reply “remove” to unsubscribe')
+		) {
 			return true;
 		}
 		return false;
@@ -92,33 +109,38 @@ const WhatsappTemplateEditor = ({
 		<>
 			<textarea
 				required
+				ref={templateTextRef}
 				placeholder={translator('whatsapp.template.textareaPlaceholder')}
 				maxLength={1024}
 				id='whatsapp-template-text'
 				className={clsx(classes.msgArea, classes.sidebar)}
 				style={{ textAlign: alignment === 'right' ? 'right' : 'left' }}
 				onChange={onEditorChange}
-				// onSelect={handleMsgSelect}
 				value={templateText}></textarea>
 
 			<Box className={classes.whatsappActionButtonsWrapper}>
-				{buttons.map((button: quickReplyButtonProps | any) => (
-					<Box key={button.id} className={classes.whatsappActionButtonsBox}>
-						<DeleteOutlinedIcon
-							style={{ color: 'red', cursor: 'pointer' }}
-							onClick={() => {
-								onButtonDelete(button);
-							}}
-						/>
-						<Button className={classes.whatsappActionButtons}>
-							{button?.value ||
-								button?.fields?.find(
-									(field: callToActionFieldProps) =>
-										field.fieldName === 'Button Text'
-								).value}
-						</Button>
-					</Box>
-				))}
+				{buttons.map((button: quickReplyButtonProps | callToActionRowProps) =>
+					button.fields.map(
+						(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
+							field.fieldName === translator('whatsapp.websiteButtonText') && (
+								<Box
+									key={button.id}
+									className={classes.whatsappActionButtonsBox}>
+									<DeleteOutlinedIcon
+										style={{ color: 'red', cursor: 'pointer' }}
+										onClick={() => {
+											onButtonDelete(button);
+										}}
+									/>
+									<Button
+										className={classes.whatsappActionButtons}
+										onClick={() => OnEditorActionButtonClick(button)}>
+										{field.value}
+									</Button>
+								</Box>
+							)
+					)
+				)}
 			</Box>
 
 			<Box className={classes.smallInfoDiv}>
@@ -141,7 +163,7 @@ const WhatsappTemplateEditor = ({
 				</span>
 
 				<span className={classes.textInfoWrapper}>
-					{characterCount}/1024
+					{templateText?.length}/1024
 					<span className={classes.textInfo}>
 						{translator('mainReport.char')}
 					</span>

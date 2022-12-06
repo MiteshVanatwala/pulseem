@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, useMemo, useState } from 'react';
+import React, { BaseSyntheticEvent, useMemo, useRef, useState } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
@@ -10,6 +10,7 @@ import {
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
+	coreProps,
 	quickReplyButtonProps,
 	templateDataProps,
 	WhatsappCreatorProps,
@@ -20,13 +21,27 @@ import { Box, Grid } from '@material-ui/core';
 import WhatsappTemplateEditor from './WhatsappTemplateEditor';
 import { actionButtonProps } from './WhatsappCreator.types';
 import QuickReply from './QuickReply';
+import { useSelector } from 'react-redux';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const templateTextRef = useRef<HTMLTextAreaElement>(null);
+	//This regex will test dynamic field having two digits in side (i.e. {{10}});
+	const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
+	//This regex will test dynamic field having one digits in side (i.e. {{1}});
+	const dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
-			value: '',
+			fields: [
+				{
+					fieldName: translator('whatsapp.websiteButtonText'),
+					type: 'text',
+					placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+					value: '',
+				},
+			],
 		},
 	];
 	const [templateName, setTemplateName] = useState<string>('');
@@ -111,11 +126,117 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		console.log('Form Submitted with these - ', templateName, savedTemplate);
 	};
 
+	const addDynamicField = (
+		selectionEnd: number | undefined,
+		textLength: number | undefined
+	) => {
+		let updatedTemplateText = templateData.templateText;
+		if (
+			(selectionEnd === 0 && textLength === 0) ||
+			selectionEnd === textLength
+		) {
+			updatedTemplateText =
+				updatedTemplateText +
+				getLastDynamicFieldByValue(
+					getLastDynamicFieldValue(updatedTemplateText)
+				);
+		} else {
+			updatedTemplateText = [
+				updatedTemplateText.slice(0, selectionEnd),
+				getLastDynamicFieldByValue(
+					getLastDynamicFieldValue(updatedTemplateText.slice(0, selectionEnd))
+				),
+				updatedTemplateText.slice(selectionEnd),
+			].join('');
+		}
+
+		return updatedTemplateText;
+	};
+
+	const getDynamicFieldIndex = (text: string) => {
+		let indices = [];
+		for (let i = 0; i < text.length; i++) {
+			if (
+				dynamicFieldL5.test(text.slice(i, i + 5)) ||
+				dynamicFieldL6.test(text.slice(i, i + 6))
+			) {
+				indices.push(i);
+			}
+		}
+		return indices;
+	};
+
+	const getLastDynamicFieldValue = (text: string) => {
+		let str = text;
+		let indices: string[] = [];
+		for (let i = 0; i < str.length; i++) {
+			if (dynamicFieldL5.test(str.slice(i, i + 5))) {
+				indices.push(str.slice(i, i + 5).replace(/[{}]/g, ''));
+			} else if (dynamicFieldL6.test(str.slice(i, i + 6))) {
+				indices.push(str.slice(i, i + 6).replace(/[{}]/g, ''));
+			}
+		}
+		return indices?.length > 0 ? indices[indices?.length - 1] : '0';
+	};
+
+	const getLastDynamicFieldByValue = (value: string) => {
+		return `{{${(Number(value) + 1).toString()}}}`;
+	};
+
+	const reOrderDynamicFieldValue = (text: string) => {
+		const d = getDynamicFieldIndex(text);
+		let updatedText = '';
+		let lastDynamicFieldLength = 0;
+		if (d?.length <= 0) return text;
+		for (let i = 0; i < d?.length; i++) {
+			if (dynamicFieldL5.test(text.slice(d[i], d[i] + 5))) {
+				lastDynamicFieldLength = 5;
+				if (updatedText?.length <= 0) {
+					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
+				} else {
+					updatedText = `${updatedText}${text.slice(
+						d[i - 1] + 5,
+						d[i]
+					)}{{${Number(i + 1)}}}`;
+				}
+			} else if (dynamicFieldL6.test(text.slice(d[i], d[i] + 6))) {
+				lastDynamicFieldLength = 6;
+				if (updatedText?.length <= 0) {
+					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
+				} else {
+					updatedText = `${updatedText}${text.slice(
+						d[i - 1] + 6,
+						d[i]
+					)}{{${Number(i + 1)}}}`;
+				}
+			}
+		}
+		return updatedText + text.slice(d[d?.length - 1] + lastDynamicFieldLength);
+	};
+
 	const onButtonClick = (button: actionButtonProps) => {
 		if (button.buttonTitle.includes('callToAction')) {
 			setIsCallToActionOpen(true);
 		} else if (button.buttonTitle.includes('quickReplay')) {
 			setIsQuickReplyOpen(true);
+		} else if (button.buttonTitle.includes('dynamicField')) {
+			const selectionEnd = templateTextRef.current?.selectionEnd;
+			const textLength = templateTextRef.current?.textLength;
+			reOrderDynamicFieldValue(addDynamicField(selectionEnd, textLength));
+			setTemplateData({
+				...templateData,
+				templateText: reOrderDynamicFieldValue(
+					addDynamicField(selectionEnd, textLength)
+				),
+			});
+			templateTextRef.current?.focus();
+		} else if (button.buttonTitle.includes('removalText')) {
+			setTemplateData({
+				...templateData,
+				templateText: `${templateData.templateText} ${
+					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
+				}`,
+			});
 		}
 	};
 
@@ -158,7 +279,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const updateTemplateData = (
+	const updateTemplateButton = (
 		buttons: quickReplyButtonProps[] | callToActionProps,
 		buttonsType: string
 	) => {
@@ -168,6 +289,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const addMore = () => {
 		setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
+	};
+
+	const updateTemplateText = (text: string) => {
+		setTemplateData({
+			...templateData,
+			templateText: reOrderDynamicFieldValue(text),
+		});
 	};
 
 	return (
@@ -205,7 +333,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							websiteField={websiteField}
 							addMore={() => addMore()}
 							updateTemplateData={(data: callToActionProps) =>
-								updateTemplateData(data, 'callToAction')
+								updateTemplateButton(data, 'callToAction')
 							}
 						/>
 					</Grid>
@@ -219,10 +347,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								buttons={templateData.templateButtons}
 								onButtonDelete={(button) => onActionButtonDelete(button)}
 								buttonType={buttonType}
-								setTemplateText={(text: string) =>
-									setTemplateData({ ...templateData, templateText: text })
-								}
+								setTemplateText={(text: string) => updateTemplateText(text)}
 								templateText={templateData.templateText}
+								templateTextRef={templateTextRef}
+								OnEditorActionButtonClick={() => alert('s')}
 							/>
 						</Grid>
 
@@ -248,7 +376,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						setQuickReplyButtons(data)
 					}
 					updateTemplateData={(data: quickReplyButtonProps[]) =>
-						updateTemplateData(data, 'quickReply')
+						updateTemplateButton(data, 'quickReply')
 					}
 				/>
 			</DefaultScreen>
