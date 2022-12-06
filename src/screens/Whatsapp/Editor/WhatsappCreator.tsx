@@ -180,7 +180,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getLastDynamicFieldByValue = (value: string) => {
-		return '{{' + (Number(value) + 1).toString() + '}}';
+		return `{{${(Number(value) + 1).toString()}}}`;
 	};
 
 	const reOrderDynamicFieldValue = (text: string) => {
@@ -194,16 +194,20 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				if (updatedText?.length <= 0) {
 					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
 				} else {
-					updatedText = `${updatedText}
-						${text.slice(d[i - 1] + 5, d[i])}{{${Number(i + 1)}}}`;
+					updatedText = `${updatedText}${text.slice(
+						d[i - 1] + 5,
+						d[i]
+					)}{{${Number(i + 1)}}}`;
 				}
 			} else if (dynamicFieldL6.test(text.slice(d[i], d[i] + 6))) {
 				lastDynamicFieldLength = 6;
 				if (updatedText?.length <= 0) {
 					updatedText = `${text.slice(0, d[i])}{{${Number(i + 1)}}}`;
 				} else {
-					updatedText = `${updatedText}
-						${text.slice(d[i - 1] + 6, d[i])}{{${Number(i + 1)}}}`;
+					updatedText = `${updatedText}${text.slice(
+						d[i - 1] + 6,
+						d[i]
+					)}{{${Number(i + 1)}}}`;
 				}
 			}
 		}
