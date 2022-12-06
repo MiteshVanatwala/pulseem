@@ -919,7 +919,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 handleSetValues: (values) => setCampaignValues({ ...values }),
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
-                onConfirm: () => setDialogType(null)
+                onConfirm: () => null
             }),
             sendSuccess: SendSuccessDialog(),
             summary: SummaryDialog({ classes: classes, count: data }),
