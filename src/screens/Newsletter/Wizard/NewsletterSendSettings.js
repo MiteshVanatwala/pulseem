@@ -918,7 +918,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 handleSetValues: (values) => setCampaignValues({ ...values }),
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
-                onConfirm: () => null
+                onConfirm: () => setDialogType(null)
             }),
             sendSuccess: SendSuccessDialog(),
             summary: SummaryDialog({ classes: classes, count: data }),
