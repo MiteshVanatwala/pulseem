@@ -41,6 +41,7 @@ import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import UploadXL from '../../../components/Files/UploadXL'
 import { UploadSettings } from "../../../helpers/Constants";
+import { AiOutlineExclamationCircle } from 'react-icons/ai'
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -103,7 +104,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
-    const [campaignValues, setCampaignValues] = useState({});
+    const [campaignValues, setCampaignValues] = useState({
+        SendingMethod: 1
+    });
     const [totalCampaigns, setTotalCampaigns] = useState();
     const [groupList, setGroupList] = useState([]);
     const [activeTab, setActiveTab] = useState(0);
@@ -170,6 +173,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [specialSettingValidation, setspecialSettingValidation] = useState(false)
 
     const [dataIsReady, setDataIsReady] = useState(false);
+
+    const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0)
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -832,6 +837,98 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         );
     }
 
+    const MergedSegmentationDialog = () => {
+        let segDialog = SegmentationDialog({
+            classes: classes,
+            campaign: campaignValues,
+            handleSetValues: (values) => setCampaignValues({ ...values }),
+            onClose: () => setDialogType(null),
+            onCancel: () => setDialogType(null),
+            onConfirm: () => setDialogType(null)
+        })
+        let filterDialog = FilterRecipientsDialog({
+            classes: classes,
+            onClose: () => setDialogType(null),
+            onConfirm: () => handleFilterConfirm(),
+            totalCampaigns: totalCampaigns,
+            callbackFiltertedCampaigns: (campaign) => callbackFiltertedCampaigns(campaign),
+            callbackUpdateCampaignFilter: (group) => callbackUpdateGroupFilterd(group),
+            callbackShowTestGroup: (showTestGroup) => callbackShowTestGroup(showTestGroup),
+            handleReciInput: handleReciInput,
+            filterValues: filterValues,
+            setFilterValues: setFilterValues,
+            groupList: groupData,
+            callbackUpdateGroupFilterd: callbackUpdateGroupFilterd,
+            callbackFilteredGroups: callbackFilteredGroups,
+            renderHtml: renderHtml,
+        })
+
+        let TabBody = (tabs = []) => (
+            <Stack
+                direction="column"
+                justifyContent="flex-start"
+                className={classes.wizardFlex}
+            >
+                <Stack className={classes.tabDiv} direction="row"
+                >
+                    {tabs.map((tab, i) => (
+                        <Stack key={`tabTitle${i}`}
+                            justifyContent="center"
+                            direction="row"
+                            className={
+                                clsx(classes.tab1, mergedSegmentationDialog === i ? classes.activeTab : '')
+                            }
+                            onClick={() => setMergedSegmentationDialog(i)}
+                        >
+                            {tab && <><span
+                                style={{ cursor: "pointer" }}
+                                className={clsx(classes.bold, classes.f16)}
+                            >
+                                {tab.title || ''}
+                            </span>
+                            </>
+                            }
+                        </Stack>
+                    ))}
+                </Stack>
+                <Stack justifyContent="center" className={classes.mt20}>
+                    {tabs[mergedSegmentationDialog]?.content || <p>Empty Tab</p>}
+                </Stack>
+            </Stack>
+        )
+
+
+        let dialogObj = {
+            title: "",
+            showDivider: false,
+            disableBackdropClick: true,
+            icon: (
+                <AiOutlineExclamationCircle
+                    style={{ fontSize: 30, color: "#fff" }}
+                />
+            ),
+            content: TabBody([segDialog, filterDialog]),
+            showDefaultButtons: true,
+            confirmText: t("common.Ok"),
+            cancelText: t("common.Cancel"),
+            onClose: () => {
+                mergedSegmentationDialog === 1 && segDialog.onClose()
+                mergedSegmentationDialog === 2 && filterDialog.onClose()
+            },
+            onCancel: () => {
+                mergedSegmentationDialog === 1 && segDialog.onCancel()
+                mergedSegmentationDialog === 2 && filterDialog.onCancel()
+            },
+            onConfirm: () => {
+                mergedSegmentationDialog === 1 && segDialog.onConfirm()
+                mergedSegmentationDialog === 2 && filterDialog.onConfirm()
+            }
+        }
+        // let SegTabs =
+
+        return dialogObj
+    }
+
     const renderDialog = () => {
         const { type, data } = dialogType || {}
 
@@ -905,14 +1002,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose: () => navigate("/SMSCampaigns"),
                 onCancel: () => setDialogType(null),
             }),
-            segmentation: SegmentationDialog({
-                classes: classes,
-                campaign: campaignValues,
-                handleSetValues: (values) => setCampaignValues({ ...values }),
-                onClose: () => setDialogType(null),
-                onCancel: () => setDialogType(null),
-                onConfirm: () => setDialogType(null)
-            }),
+            segmentation: MergedSegmentationDialog(),
+            // segmentation: SegmentationDialog({
+            //     classes: classes,
+            //     campaign: campaignValues,
+            //     handleSetValues: (values) => setCampaignValues({ ...values }),
+            //     onClose: () => setDialogType(null),
+            //     onCancel: () => setDialogType(null),
+            //     onConfirm: () => setDialogType(null)
+            // }),
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
                 handleSetValues: (values) => setCampaignValues({ ...values }),

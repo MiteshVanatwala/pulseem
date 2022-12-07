@@ -2574,5 +2574,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   buttonMinWidth: {
     minWidth: 167
+  },
+  noShadowAccordion: {
+    boxShadow: "none",
+    "&.MuiAccordion-root": {
+      "&:before": {
+        height: 0
+      }
+    }
   }
 });

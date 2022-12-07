@@ -552,6 +552,8 @@
         "addLinkToCampaign": "Add link to this Email campaign",
         "addLinkToUpdate": "Add link to update contact"
       },
+      "send": "Send",
+      "doNotSend": "Do not send",
       "smsComplementary": "Complementary SMS Marketing"
     }
   },

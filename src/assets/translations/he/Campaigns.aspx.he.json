@@ -542,7 +542,9 @@
         "smsMarketingSubTitle": "הפצת הודעת SMS ללקוחות בקרטריון הנבחר שקבלו קמפיין דיוור אלקטרוני להשלמת שיווק כולל",
         "addLinkToCampaign": "הוסף קישור לקמפיין אימייל זה",
         "addLinkToUpdate": "הוסף קישור לעדכון מידע"
-      }
+      },
+      "send": "שלח",
+      "doNotSend": "אל תשלחו"
     }
   },
   "newsLetterMgmt": {
