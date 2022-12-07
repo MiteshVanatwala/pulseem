@@ -121,6 +121,7 @@ const SendingMethod = ({
                     <Accordion expanded={campaign.SendingMethod === 1}
                         onClick={() => handleSendType(1)}
                         style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
+                        className={classes.noShadowAccordion}
                     >
                         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse}
                             expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 1} className={`${campaign.SendingMethod}` !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}>
@@ -157,6 +158,7 @@ const SendingMethod = ({
                     </Accordion>
                     <Accordion expanded={campaign.SendingMethod === 2}
                         onClick={() => handleSendType(2)}
+                        className={classes.noShadowAccordion}
                     >
                         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse}
                             expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 2} className={campaign.SendingMethod !== 2 ? classes.radioButtonDisabled : classes.radioButtonActive} />}>
@@ -225,6 +227,7 @@ const SendingMethod = ({
                     </Accordion>
                     <Accordion expanded={campaign.SendingMethod === 3}
                         onClick={() => handleSendType(3)}
+                        className={classes.noShadowAccordion}
                     >
                         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse}
                             expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 3} className={campaign.SendingMethod !== 3 ? classes.radioButtonDisabled : classes.radioButtonActive} />}>

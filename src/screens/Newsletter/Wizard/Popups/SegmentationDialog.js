@@ -25,7 +25,7 @@ const SegmentationDialog = ({
     }
 
     return {
-        title: t("campaigns.newsLetterEditor.sendSettings.segmentation"),
+        title: t("campaigns.newsLetterEditor.sendSettings.send"),
         showDivider: true,
         disableBackdropClick: true,
         icon: (
@@ -36,7 +36,7 @@ const SegmentationDialog = ({
         content: (
             <Stack direction='column' spacing={2}>
                 <Stack direction='row' spacing={3}>
-                    <Box style={{margin: 8}}>
+                    <Box style={{ margin: 8 }}>
                         <DateField
                             // minDate={moment()}
                             classes={classes}
@@ -46,7 +46,7 @@ const SegmentationDialog = ({
                             timePickerOpen={true}
                         />
                     </Box>
-                    <Box style={{margin: 8}}>
+                    <Box style={{ margin: 8 }}>
                         <DateField
                             classes={classes}
                             value={campaign.ToDate}

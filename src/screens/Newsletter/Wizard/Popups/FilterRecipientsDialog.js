@@ -13,7 +13,7 @@ const FilterRecipientsDialog = ({ classes: classes, onClose = () => null, onConf
     );
 
     return {
-        title: t('mainReport.recipientFilter'),
+        title: t('campaigns.newsLetterEditor.sendSettings.doNotSend'),
         showDivider: true,
         icon: (
             <FaFilter style={{ fontSize: 30, color: "#fff" }} />
