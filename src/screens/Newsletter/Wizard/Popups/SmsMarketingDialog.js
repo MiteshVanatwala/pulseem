@@ -9,6 +9,9 @@ import { DateField } from '../../../../components/managment';
 import moment from 'moment';
 import Editorbox from '../../../../components/Wizard/Editorbox';
 import { getSmsMarketing, setSmsMarketing } from '../../../../redux/reducers/smsSlice'
+import VerificationDialog from '../../../../components/DialogTemplates/VerificationDialog';
+import { Loader } from '../../../../components/Loader/Loader';
+import { getAuthorizeNumbers } from '../../../../redux/reducers/commonSlice'
 
 const SmsMarketingDialog = ({
     classes,
@@ -18,18 +21,25 @@ const SmsMarketingDialog = ({
 }, ...props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const [values, setValues] = useState({
+    const { isRTL } = useSelector(state => state.core);
+    const { verifiedNumbers } = useSelector(state => state.common);
+    const { newsletterSettings } = useSelector(state => state.newsletter);
+
+    const [smsModel, setSmsModel] = useState({
+        Type: 0,
+        SendSmsTo: -1,
+        FromNumber: "",
         SendDate: null,
         SendTime: null,
-        FromNumber: "",
-        SendSmsTo: -1
     })
     const [linkToUpdate, setLinkToUpdate] = useState(null);
     const [linkToCampaign, setLinkToCampaign] = useState(null);
     const [linkToUpdateEnabled, setLinkToUpdateEnabled] = useState(true);
     const [linkToCampaignEnabled, setLinkToCampaignEnabled] = useState(true);
-    const { newsletterSettings } = useSelector(state => state.newsletter);
-    const { isRTL } = useSelector(state => state.core);
+    const [newSmsVerification, setNewSmsVerification] = useState(false);
+    const [showLoader, setLoader] = useState(false);
+    const [numberVerified, setNumberVerified] = useState(true);
+
     const sendToOptions = [
         {
             text: t("common.select"),
@@ -59,7 +69,19 @@ const SmsMarketingDialog = ({
 
     useEffect(() => {
         const initSmsMarketing = async () => {
-            const response = dispatch(getSmsMarketing(newsletterSettings?.CampaignID));
+            await dispatch(getAuthorizeNumbers());
+            const response = await dispatch(getSmsMarketing(newsletterSettings?.CampaignID));
+            if (response?.payload?.StatusCode === 201 && response?.payload?.Data) {
+                const sendDate = response?.payload?.Data?.SendDate;
+                const sendTime = moment(sendDate);
+                const restData = response?.payload.Data;
+                handleFromNumber(restData?.FromNumber);
+                setSmsModel({
+                    SendDate: sendDate,
+                    SendTime: moment(sendTime),
+                    ...restData
+                });
+            }
         }
 
         if (newsletterSettings && newsletterSettings?.CampaignID) {
@@ -73,10 +95,85 @@ const SmsMarketingDialog = ({
     const onAddLinkToUpdate = () => {
         setLinkToCampaign(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${newsletterSettings.CampaignID}&Culture=he-IL`);
     }
+    const handleFromNumber = (value) => {
+        setSmsModel({ ...smsModel, FromNumber: value });
+        if (value.length > 8) {
+            const isVerified = verifiedNumbers.find((number) => {
+                return number?.Number === value;
+            });
+            setNumberVerified(isVerified);
+        }
+    }
 
-    const handleUpdate = (smsModel) => {
-        setLinkToUpdateEnabled(smsModel?.Text?.indexOf(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${newsletterSettings.CampaignID}&Culture=he-IL`) === -1)
-        setLinkToCampaignEnabled(smsModel?.Text?.indexOf(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`) === -1)
+    const handleUpdate = (model) => {
+        setLinkToUpdateEnabled(model?.Text?.indexOf(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${newsletterSettings.CampaignID}&Culture=he-IL`) === -1)
+        setLinkToCampaignEnabled(model?.Text?.indexOf(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`) === -1)
+        setSmsModel({
+            ...smsModel,
+            Text: model?.Text,
+            IsLinksStatistics: model?.IsLinksStatistics,
+            Credits: model?.Credits,
+            CreditsPerSms: model?.CreditsPerSms
+        });
+    }
+
+    const handleConfirm = async () => {
+        setLoader(true);
+        const date = moment(smsModel.SendDate).format("DD-MM-YYYY");
+        const hour = moment(smsModel.SendTime).format("HH:mm:ss");
+        const finalSendDate = moment(date + ' ' + hour).format('YYYY-MM-DD HH:mm');
+        setSmsModel({ ...smsModel, SendDate: finalSendDate });
+
+        if (handleValidation()) {
+            const totalMarketing = { ...newsletterSettings };
+            const smsCampaignPayload = {
+                CreditsPerSms: smsModel.CreditsPerSms,
+                FromNumber: smsModel.FromNumber,
+                SendSmsTo: smsModel.SendSmsTo,
+                SendDate: finalSendDate,
+                EmailCampaignID: totalMarketing?.CampaignID,
+                GroupIds: totalMarketing?.GroupList,
+                Text: smsModel.Text,
+                Type: 0,
+                ...smsModel?.model
+            }
+            console.log(smsCampaignPayload);
+
+            const r = await dispatch(setSmsMarketing(smsCampaignPayload));
+            handleTotalMarketingResponse(r.payload);
+            setLoader(false);
+            //onConfirm();
+        }
+    }
+
+    const handleTotalMarketingResponse = (response) => {
+        switch (response?.StatusCode) {
+            case 201: {
+                alert('success');
+                break;
+            }
+            default: {
+                alert(response?.Message);
+            }
+        }
+    }
+
+    const handleValidation = () => {
+        const errors = [];
+        if (!smsModel.FromNumber || smsModel.FromNumber === '') {
+            errors.push('Invalid from number');
+        }
+        if (smsModel.Text === '') {
+            errors.push('Text is required');
+        }
+        if (!smsModel.SendDate) {
+            errors.push('Date and time are required');
+        }
+        if (!numberVerified) {
+            errors.push('Please verified from number');
+        }
+
+        return errors.length === 0;
     }
 
     return {
@@ -104,8 +201,8 @@ const SmsMarketingDialog = ({
                             className={classes.select}
                             labelId="sendToSelect"
                             id="sendToSelect"
-                            value={values.SendTo}
-                            onChange={(e) => setValues({ ...values, SendSmsTo: e.target.value })}
+                            value={smsModel.SendSmsTo}
+                            onChange={(e) => setSmsModel({ ...smsModel, SendSmsTo: e.target.value })}
                         >
                             {
                                 sendToOptions.map((obj, idx) => <MenuItem
@@ -124,7 +221,7 @@ const SmsMarketingDialog = ({
                             className: classes.NoPaddingtextField,
                             // helperText: "Some important text",
                             onChange: (e) => {
-                                setValues({ ...values, FromNumber: e.target.value })
+                                handleFromNumber(e.target.value);
                             },
                             onKeyPress: (e) => {
                                 if (!e.key.match(/^[0-9]*$/)) {
@@ -134,7 +231,7 @@ const SmsMarketingDialog = ({
                                 }
                             }
                             ,
-                            value: values.FromNumber
+                            value: smsModel.FromNumber
                         }}
                         labelProps={{
                             label: t('campaigns.newsLetterEditor.sendSettings.smsMarketing.fromNumber')
@@ -143,6 +240,7 @@ const SmsMarketingDialog = ({
                             direction: 'column'
                         }}
                     />
+                    {!numberVerified && <strong className={classes.link} onClick={() => setNewSmsVerification(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>}
                 </Grid>
                 <Grid item sm={12} md={6}>
                     <Typography>
@@ -151,8 +249,11 @@ const SmsMarketingDialog = ({
                     <DateField
                         minDate={moment()}
                         classes={classes}
-                        value={values.SendDate}
-                        onChange={(value) => setValues({ ...values, SendDate: value })}
+                        value={smsModel.SendDate}
+                        onChange={(value) => {
+                            console.log(value);
+                            setSmsModel({ ...smsModel, SendDate: value })
+                        }}
                         placeholder={t("notifications.date")}
                         timePickerOpen={true}
                     />
@@ -164,8 +265,10 @@ const SmsMarketingDialog = ({
                     <DateField
                         minDate={moment()}
                         classes={classes}
-                        value={values.SendTime}
-                        onTimeChange={(value) => setValues({ ...values, SendTime: value })}
+                        value={smsModel.SendTime}
+                        onTimeChange={(value) => {
+                            setSmsModel({ ...smsModel, SendTime: value })
+                        }}
                         placeholder={t("notifications.hour")}
                         isTimePicker={true}
                         ampm={false}
@@ -207,20 +310,22 @@ const SmsMarketingDialog = ({
                 <Grid item md={12}>
                     <Editorbox classes={classes}
                         variant="column"
-                        values={values}
+                        values={smsModel}
                         onUpdate={handleUpdate}
-                        onFromNumberInit={(fromNumber) => setValues({ ...values, FromNumber: fromNumber })}
+                        onFromNumberInit={(fromNumber) => setSmsModel({ ...smsModel, FromNumber: fromNumber })}
                         linkToCampaign={linkToCampaign}
                         linkToUpdate={linkToUpdate} />
                 </Grid>
+                {newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
+                <Loader isOpen={showLoader} />
             </Grid>
         ),
         showDefaultButtons: true,
-        confirmText: t("common.Yes"),
+        confirmText: t("common.save"),
         cancelText: t("common.Cancel"),
         onClose: onClose,
         onCancel: onCancel,
-        onConfirm: onConfirm
+        onConfirm: handleConfirm
     }
 }
 
