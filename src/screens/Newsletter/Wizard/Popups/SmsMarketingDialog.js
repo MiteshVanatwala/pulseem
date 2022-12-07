@@ -1,13 +1,14 @@
 import { Button, Select, FormControl, Grid, Typography, MenuItem } from '@material-ui/core'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import LabeledTextField from '../../../../components/core/LabeledTextField';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { DateField } from '../../../../components/managment';
 import moment from 'moment';
 import Editorbox from '../../../../components/Wizard/Editorbox';
+import { getSmsMarketing, setSmsMarketing } from '../../../../redux/reducers/smsSlice'
 
 const SmsMarketingDialog = ({
     classes,
@@ -15,12 +16,13 @@ const SmsMarketingDialog = ({
     onCancel = () => null,
     onConfirm = () => null
 }, ...props) => {
+    const dispatch = useDispatch();
     const { t } = useTranslation();
     const [values, setValues] = useState({
         SendDate: null,
         SendTime: null,
         FromNumber: "",
-        SendTo: -1
+        SendSmsTo: -1
     })
     const [linkToUpdate, setLinkToUpdate] = useState(null);
     const [linkToCampaign, setLinkToCampaign] = useState(null);
@@ -35,25 +37,35 @@ const SmsMarketingDialog = ({
         },
         {
             text: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.everyone"),
-            value: 1
+            value: 0
         },
         {
             text: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.opened"),
-            value: 2
-        },
-        {
-            text: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.invalid"),
             value: 3
         },
         {
+            text: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.invalid"),
+            value: 2
+        },
+        {
             text: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.unOpened"),
-            value: 4
+            value: 1
         },
         {
             text: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.clicked"),
-            value: 5
+            value: 4
         }
     ];
+
+    useEffect(() => {
+        const initSmsMarketing = async () => {
+            const response = dispatch(getSmsMarketing(newsletterSettings?.CampaignID));
+        }
+
+        if (newsletterSettings && newsletterSettings?.CampaignID) {
+            initSmsMarketing();
+        }
+    }, [newsletterSettings]);
 
     const onAddLinkToCampaign = () => {
         setLinkToUpdate(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`);
@@ -93,7 +105,7 @@ const SmsMarketingDialog = ({
                             labelId="sendToSelect"
                             id="sendToSelect"
                             value={values.SendTo}
-                            onChange={(e) => setValues({ ...values, SendTo: e.target.value })}
+                            onChange={(e) => setValues({ ...values, SendSmsTo: e.target.value })}
                         >
                             {
                                 sendToOptions.map((obj, idx) => <MenuItem
@@ -205,7 +217,7 @@ const SmsMarketingDialog = ({
         ),
         showDefaultButtons: true,
         confirmText: t("common.Yes"),
-        cancelText: '',
+        cancelText: t("common.Cancel"),
         onClose: onClose,
         onCancel: onCancel,
         onConfirm: onConfirm
