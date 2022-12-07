@@ -968,7 +968,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 setToastMessage={setToastMessage}
                                 enablePulse={selectedGroups?.length > 0 && campaignValues.SendingMethod !== 3}
                                 campaign={campaignValues}
-                                onUpdateCampaign={(data) => setCampaignValues({ ...campaignValues, data })}
+                                onUpdateCampaign={(data) => setCampaignValues({ ...campaignValues, ...data })}
                                 handlePulseDialog={handlePulseDialog}
                                 extraButtons={
                                     <>
