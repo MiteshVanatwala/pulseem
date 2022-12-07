@@ -57,6 +57,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		templateText: '',
 		templateButtons: [],
 	});
+	const [fileData, setFileData] = useState<File>();
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
@@ -263,15 +264,14 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				},
 			},
 		};
-		let media = true;
 		const templateText = templateData.templateText;
-		if (templateText?.length > 0 && buttonType.length > 0 && media) {
+		if (templateText?.length > 0 && buttonType.length > 0 && fileData?.name) {
 			return requestJSON.textMediaAndButton;
 		} else if (templateText?.length > 0 && buttonType === 'quickReply') {
 			return requestJSON.quickReply;
 		} else if (templateText?.length > 0 && buttonType === 'callToAction') {
 			return requestJSON.callToAction;
-		} else if (templateText?.length > 0 && media) {
+		} else if (templateText?.length > 0 && fileData?.name) {
 			return requestJSON.textMedia;
 		} else {
 			return templateText;
@@ -469,8 +469,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						classes={classes}
 						templateName={templateName}
 						savedTemplate={savedTemplate}
+						fileData={fileData}
 						onTemplateNameChange={(e) => onTemplateNameChange(e)}
 						onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
+						setFileData={(fileData) => setFileData(fileData)}
 					/>
 					<Grid
 						container

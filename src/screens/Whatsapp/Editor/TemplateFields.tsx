@@ -18,6 +18,8 @@ const TemplateFields = ({
 	savedTemplate,
 	onTemplateNameChange,
 	onSavedTemplateChange,
+	fileData,
+	setFileData,
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -34,16 +36,14 @@ const TemplateFields = ({
 		while (n >= 1024 && ++l) {
 			n = n / 1024;
 		}
-
 		return n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l];
 	}
 
-	const [fileName, setFileName] = useState<string>('');
 	const [fileSize, setFileSize] = useState<string>('');
 	const onFileUploadChange = (e: BaseSyntheticEvent) => {
 		if (e.target.files?.length > 0) {
 			if (e.target.files[0].size < 16777216) {
-				setFileName(e.target.files[0].name);
+				setFileData(e.target.files[0]);
 				setFileSize(niceBytes(e.target.files[0].size));
 			} else {
 				alert('File size should be less than 16MB');
@@ -52,8 +52,8 @@ const TemplateFields = ({
 	};
 
 	const onFileDeselect = (e: BaseSyntheticEvent) => {
-    e.preventDefault()
-		setFileName('');
+		e.preventDefault();
+		setFileData(undefined);
 	};
 
 	const names = [
@@ -136,10 +136,9 @@ const TemplateFields = ({
 						<label
 							className={classes.customFileUpload}
 							style={{
-								padding:
-									fileName?.length > 0
-										? '14px 15px 12px 7px'
-										: '17px 15px 15px 7px',
+								padding: fileData?.name
+									? '14px 15px 12px 7px'
+									: '17px 15px 15px 7px',
 							}}>
 							<input
 								required
@@ -148,7 +147,7 @@ const TemplateFields = ({
 								accept='image/png, image/jpeg, application/pdf, video/mp4'
 								onChange={(e) => onFileUploadChange(e)}
 							/>
-							{fileName ? (
+							{fileData?.name ? (
 								<div style={{ marginRight: 'auto' }}>
 									<Button
 										variant='contained'
@@ -159,7 +158,7 @@ const TemplateFields = ({
 											padding: '0px 10px 0px 10px',
 										}}
 										onClick={(e) => onFileDeselect(e)}>
-										{fileName.substring(0, 10) + '...'}&emsp;
+										{fileData?.name?.substring(0, 10) + '...'}&emsp;
 										<i className='zmdi zmdi-close'></i>
 									</Button>
 								</div>
@@ -169,7 +168,7 @@ const TemplateFields = ({
 						</label>
 
 						<Typography className={classes.buttonContent}>
-							{fileName
+							{fileData?.name
 								? `Total Size ${fileSize}`
 								: 'Only one file - up to 16 MB'}
 						</Typography>

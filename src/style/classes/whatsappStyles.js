@@ -368,7 +368,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		margin: '8px 0',
 		maxWidth: '85%',
 		wordWrap: 'break-word',
-		'&:after': {
+		'&::after': {
 			position: 'absolute',
 			content: '',
 			width: '0',
@@ -379,11 +379,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			background: '#e1ffc7',
 			borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
 			float: isRTL ? 'right' : 'left',
-			'&:after': {
-				borderWidth: '0px 0 10px 10px',
+			'&::after': {
+				borderWidth: '0px 10px 10px 0px',
 				borderColor: 'transparent transparent transparent #e1ffc7',
 				top: '0',
-				right: '-10px',
+				left: '-10px',
 			},
 			'& pre': {
 				margin: '0px',

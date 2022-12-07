@@ -23,6 +23,8 @@ export type TemplateFieldsProps = {
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	fileData: File | undefined;
+	setFileData: (fileData: File | undefined) => void;
 };
 
 export type MessageEditorProps = {
