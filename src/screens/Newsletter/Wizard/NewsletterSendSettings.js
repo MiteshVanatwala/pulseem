@@ -33,7 +33,6 @@ import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
-import SpecialModal from "./Popups/SpecialModal";
 import { getGroups, getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
 import PreSendSummary from "./Popups/PreSendSummary";
 import SegmentationDialog from "./Popups/SegmentationDialog";
@@ -158,7 +157,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         toggleA: false,
         toggleB: false,
         togglePulse: false,
-        daysBeforeAfter: "",
         spectialDateFieldID: "",
         IsBestTime: false,
         IsSummaryRequest: false
@@ -170,7 +168,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         snackbarRecipients: false,
         recipientsSnackbar: false
     })
-    const [specialSettingValidation, setspecialSettingValidation] = useState(false)
 
     const [dataIsReady, setDataIsReady] = useState(false);
 
@@ -613,6 +610,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 callbackSelectAll={() => setSelectedGroups(groupData?.Groups?.length === selectedGroups.length ? [] : groupData?.Groups)}
                 callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
                 callbackShowTestGroup={callbackShowTestGroup}
+                showFilter={false}
                 isSms={true}
                 bsDot={bsDot}
                 uniqueKey={'groups_1'}
@@ -931,7 +929,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const renderDialog = () => {
         const { type, data } = dialogType || {}
-
+        
         const dialogContent = {
             manualUpload: ManualUploadDialog(
                 {
@@ -1003,14 +1001,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel: () => setDialogType(null),
             }),
             segmentation: MergedSegmentationDialog(),
-            // segmentation: SegmentationDialog({
-            //     classes: classes,
-            //     campaign: campaignValues,
-            //     handleSetValues: (values) => setCampaignValues({ ...values }),
-            //     onClose: () => setDialogType(null),
-            //     onCancel: () => setDialogType(null),
-            //     onConfirm: () => setDialogType(null)
-            // }),
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
                 handleSetValues: (values) => setCampaignValues({ ...values }),
@@ -1097,14 +1087,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             </div>
             {renderDialog()}
             {/* {renderSummary()} */}
-            {<SpecialModal
-                classes={classes}
-                isOpen={specialSettingValidation}
-                onClose={() => setspecialSettingValidation(false)}
-                daysBeforeAfter={sendingTimeFormValues.daysBeforeAfter}
-                spectialDateFieldID={sendingTimeFormValues.DateFieldID}
-                sendTime={sendingTimeFormValues.sendTime}
-            />}
             {/* {renderSendType2validation()} */}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}

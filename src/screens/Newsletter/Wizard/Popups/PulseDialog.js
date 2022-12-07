@@ -104,13 +104,11 @@ const PulseDialog = ({
                     spacing={2}
                 >
                     <Stack>
-                        <span
-                        // className={classes.noOfReci}
-                        >
+                        <Box style={{ paddingBlock: 10 }}>
                             {t("smsReport.noOfReciPulse")}
-                        </span>
-                        <div
-                            className={classes.inputFieldDiv}
+                        </Box>
+                        <Box
+                            className={classes.flexAlignCetner}
                         >
                             <input
                                 type="text"
@@ -124,14 +122,16 @@ const PulseDialog = ({
                                 value={pulseSettigns.PulseAmount}
                                 onChange={handlePulseInput}
                             />
-                        </div>
+                            <Box style={{ paddingInlineStart: 10 }}>
+                                {parseInt(pulseSettigns.PulseAmount) === 1 ? t("common.Recipient") : t("common.Recipients")}
+                            </Box>
+                        </Box>
                     </Stack>
                     <Stack>
-                        <span>
+                        <Box style={{ paddingBlock: 10 }}>
                             {t("smsReport.timeSend")}
-                        </span>
-                        <Box
-                            className={classes.inputFieldDiv}
+                        </Box>
+                        <Box className={classes.flexAlignCetner}
                         >
                             <input
                                 type="text"
@@ -146,6 +146,10 @@ const PulseDialog = ({
                                 value={pulseSettigns.TimeInterval}
                                 maxLength="3"
                             />
+                            <Box style={{ paddingInlineStart: 10 }}>
+                                {parseInt(pulseSettigns.TimeInterval) === 1 ? t("sms.hour") : t("sms.hours")}
+                            </Box>
+
                         </Box>
                     </Stack>
                 </Stack>

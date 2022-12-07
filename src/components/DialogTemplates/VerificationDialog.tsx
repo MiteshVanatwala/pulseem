@@ -24,7 +24,7 @@ import {
   verifyCode,
 } from "../../redux/reducers/smsSlice";
 
-import useCore from "../../helpers/hooks/Core";
+import useCore from "../../helpers/Hooks/Core";
 import { Stack } from "@mui/material";
 import { BaseDialog } from "./BaseDialog";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
