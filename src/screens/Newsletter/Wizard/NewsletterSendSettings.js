@@ -142,7 +142,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [sourcePulses, setSourcePulses] = useState({});
     const [sendingTimeFormValues, setSendingTimeFormValues] = useState({
         PulseAmount: "",
-        SendingMethod: 0,
+        SendingMethod: 1,
         TimeInterval: '',
         SendType: "1",
         SendDate: null,
@@ -915,11 +915,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }),
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
-                campaign: campaignValues,
                 handleSetValues: (values) => setCampaignValues({ ...values }),
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
-                onConfirm: () => null
+                onConfirm: () => setDialogType(null)
             }),
             sendSuccess: SendSuccessDialog(),
             summary: SummaryDialog({ classes: classes, count: data }),
@@ -987,7 +986,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     setDialogType({ type: 'smsMarketing' })
                                                 }}
                                             >
-                                                {t("campaigns.newsLetterEditor.sendSettings.smsMarketing")}
+                                                {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
                                             </span>
                                         </Stack>
                                     </>

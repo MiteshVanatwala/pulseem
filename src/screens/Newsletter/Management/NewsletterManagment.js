@@ -813,7 +813,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                   checked={duplicateOptions.indexOf('smsComplementary') > -1}
                 />
               }
-              label={t("campaigns.newsLetterEditor.sendSettings.smsComplementary")}
+              label={t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
             />
             <FormControlLabel
               control={

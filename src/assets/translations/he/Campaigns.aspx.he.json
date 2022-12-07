@@ -520,12 +520,29 @@
       "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
       "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
       "segmentation": "פילוחים",
-      "smsMarketing": "SMS שיווק משלים",
       "segmCriteria": "קריטריונים לפילוח",
       "segmCritCb1": "לקוחות שפתחו דיוור",
       "segmCritCb2": "לקוחות שלא פתחו דיוור",
       "segmCritCb3": "לקוחות שהקליקו על קישור",
-      "segmCritCb4": "בדיוור לקוחות שלא הקליקו על קישורים בדיוור"
+      "segmCritCb4": "בדיוור לקוחות שלא הקליקו על קישורים בדיוור",
+      "insertCampaginName": "Which send settings would you want to duplicate from 'Insert Campagin Name'?",
+      "filters": "סינון",
+      "segmentations": "פילוחים",
+      "smsMarketing": {
+        "title": "SMS שיווק משלים",
+        "sendTo": "שלח ל-",
+        "everyone": "כולם",
+        "opened": "פתחו",
+        "unOpened": "לא פתחו",
+        "clicked": "הקליקו",
+        "invalid": "נכשלו",
+        "fromNumber": "מאת",
+        "sendingDate": "תאריך שליחה",
+        "sendingTime": "זמן שליחה",
+        "smsMarketingSubTitle": "הפצת הודעת SMS ללקוחות בקרטריון הנבחר שקבלו קמפיין דיוור אלקטרוני להשלמת שיווק כולל",
+        "addLinkToCampaign": "הוסף קישור לקמפיין אימייל זה",
+        "addLinkToUpdate": "הוסף קישור לעדכון מידע"
+      }
     }
   },
   "newsLetterMgmt": {
