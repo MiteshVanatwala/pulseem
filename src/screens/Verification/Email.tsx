@@ -16,7 +16,7 @@ import {
 } from "../../redux/reducers/commonSlice";
 import { getAuthorizedEmails } from "../../redux/reducers/commonSlice";
 import { MdOutlineMarkEmailRead } from "react-icons/md";
-import useCore from "../../helpers/hooks/Core";
+import useCore from "../../helpers/Hooks/Core";
 import { Stack } from "@mui/material";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import {

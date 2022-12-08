@@ -385,6 +385,25 @@ export const getSmsReplies = createAsyncThunk(
     }
   });
 
+export const getSmsMarketing = createAsyncThunk(
+  'smsCampaign/GetSmsMarketing', async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`smsCampaign/GetSmsMarketing/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const setSmsMarketing = createAsyncThunk(
+  'smsCampaign/SetSmsMarketing', async (payload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`smsCampaign/SetSmsMarketing/`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const smsSlice = createSlice({
   name: 'newsletter',
   initialState: {
