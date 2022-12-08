@@ -969,7 +969,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
                 selectedGroups: selectedGroups,
-                handleSetValues: (values) => setCampaignValues({ ...values }),
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
                 onConfirm: () => setDialogType(null)

@@ -18,8 +18,8 @@ const SmsMarketingDialog = ({
     selectedGroups = [],
     onClose = () => null,
     onCancel = () => null,
-    onConfirm = () => null,
-}, ...props) => {
+    onConfirm = () => null
+}) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
@@ -142,7 +142,7 @@ const SmsMarketingDialog = ({
             const r = await dispatch(setSmsMarketing(smsCampaignPayload));
             handleTotalMarketingResponse(r.payload);
             setLoader(false);
-            //onConfirm();
+            onConfirm();
         }
         setLoader(false);
     }
