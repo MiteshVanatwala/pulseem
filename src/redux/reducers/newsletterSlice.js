@@ -212,7 +212,12 @@ export const newsletterSlice = createSlice({
       NULL_FILE: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.fileCanNotNull', showAnimtionCheck: false },
       GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
       INVALID_CAMPAIGN_ID: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invalidCampaignId', showAnimtionCheck: false },
-      CAMPAIGN_NOT_FOUND: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.CampaignNotFound', showAnimtionCheck: false }
+      CAMPAIGN_NOT_FOUND: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.CampaignNotFound', showAnimtionCheck: false },
+      CAMPAIGN_SETTINGS_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
+      GROUP_CREATED_SUCCESS: { severity: 'success', color: 'success', message: "sms.groupSaved", showAnimtionCheck: true },
+      SEND_DATE_MISSING: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.missingSendingDate", showAnimtionCheck: false },
+      CAMPAIGN_ALREADY_SENT: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.campaignAlreadySent", showAnimtionCheck: false },
+      
     }
     //archiveDirectNewsletterReport: []
   },

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { Typography, Button, TextField, Box, Divider, Avatar } from '@material-ui/core'
-import { Dialog } from '../../components/managment/index'
+import { Dialog } from '../managment/index'
 import 'moment/locale/he'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';

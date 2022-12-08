@@ -521,7 +521,9 @@
       "fromEmail": "Please fill in an email address",
       "campaignSubject": "Please fill in a campaign subject",
       "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
-      "CampaignNotFound": "Campaign not found or deleted"
+      "CampaignNotFound": "Campaign not found or deleted",
+      "missingSendingDate": "Campaign was not saved! Missing Sending Date",
+      "campaignAlreadySent": "The current campaign already sent"
     },
     "success": "Success",
     "sendSettings": {

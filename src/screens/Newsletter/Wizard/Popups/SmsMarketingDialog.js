@@ -15,9 +15,10 @@ import { getAuthorizeNumbers } from '../../../../redux/reducers/commonSlice'
 
 const SmsMarketingDialog = ({
     classes,
+    selectedGroups = [],
     onClose = () => null,
     onCancel = () => null,
-    onConfirm = () => null
+    onConfirm = () => null,
 }, ...props) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -132,24 +133,36 @@ const SmsMarketingDialog = ({
                 SendSmsTo: smsModel.SendSmsTo,
                 SendDate: finalSendDate,
                 EmailCampaignID: totalMarketing?.CampaignID,
-                GroupIds: totalMarketing?.GroupList,
+                GroupIds: selectedGroups.map((g) => g.GroupID),
                 Text: smsModel.Text,
                 Type: 0,
                 ...smsModel?.model
             }
-            console.log(smsCampaignPayload);
 
             const r = await dispatch(setSmsMarketing(smsCampaignPayload));
             handleTotalMarketingResponse(r.payload);
             setLoader(false);
             //onConfirm();
         }
+        setLoader(false);
     }
 
     const handleTotalMarketingResponse = (response) => {
         switch (response?.StatusCode) {
+            case 200: {
+                //TODO: Pending
+                break;
+            }
             case 201: {
                 alert('success');
+                break;
+            }
+            case 401: {
+                //Invalid api key
+                break;
+            }
+            case 200:
+            case 500: {
                 break;
             }
             default: {

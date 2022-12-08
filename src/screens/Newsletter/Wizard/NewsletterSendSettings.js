@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
-import moment from "moment";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import { Dialog } from "../../../components/managment/index";
@@ -41,6 +40,7 @@ import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import UploadXL from '../../../components/Files/UploadXL'
 import { UploadSettings } from "../../../helpers/Constants";
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
+import { FaRegCalendarAlt } from "react-icons/fa";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -99,8 +99,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
-    const { ToastMessages, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
-    const { newsletterSettings, groupData } = useSelector(state => state.newsletter);
+    const { testGroups, finishedCampaigns } = useSelector((state) => state.sms);
+    const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({
@@ -142,25 +142,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         reciFilter: false,
     })
     const [sourcePulses, setSourcePulses] = useState({});
-    const [sendingTimeFormValues, setSendingTimeFormValues] = useState({
-        PulseAmount: "",
-        SendingMethod: 1,
-        TimeInterval: '',
-        SendType: "1",
-        SendDate: null,
-        sendTime: null,
-        afterClick: false,
-        selectedSpecialValue: "",
-        daysBeforeAfter: '',
-        DateFieldID: '0',
-        timePickerOpen: false,
-        toggleA: false,
-        toggleB: false,
-        togglePulse: false,
-        spectialDateFieldID: "",
-        IsBestTime: false,
-        IsSummaryRequest: false
-    })
     const [snackbarValues, setSnackbarValues] = useState({
         snackbarTimeBoolean: false,
         snackBarPulseBoolean: false,
@@ -192,33 +173,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 selectedFilterGroups: ExeptionalGroups ? groupData.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
                 selectedFilterCampaigns: ExeptionalCampaigns ? finishedCampaigns?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
             })
-            // TODO
-            if (newsletterSettings?.SendingMethod === 3) {
-                // tempSendingTimeFormValues = {
-                //     ...tempSendingTimeFormValues,
-                //     SendingMethod: `${newsletterSettings?.SendingMethod}`,
-                //     SendingMethod: `${newsletterSettings?.SendingMethod}`,
-                //     // daysBeforeAfter: newsletterSettings?.SpecialSettings.Day,
-                //     // sendTime: moment(newsletterSettings?.SpecialSettings.SendHour),
-                //     // DateFieldID: `${newsletterSettings?.SpecialSettings.DateFieldID}`
-                // }
-                // if (newsletterSettings.SpecialSettings.IntervalTypeID === -1) {
-                //     setSendingTimeFormValues({
-                //         ...sendingTimeFormValues,
-                //         toggleA: false,
-                //         toggleB: true,
-                //         afterClick: false,
-                //     })
-                // }
-                // else {
-                //     setSendingTimeFormValues({
-                //         ...sendingTimeFormValues,
-                //         toggleA: true,
-                //         toggleB: false,
-                //         afterClick: true,
-                //     })
-                // }
-            }
 
         } catch (e) {
             dispatch(sendToTeamChannel({
@@ -270,44 +224,57 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     };
 
     const onSaveSettings = async (showSummary = false) => {
-        // return console.log("REMOVE RETURN TO FIRE API")
         setLoader(true)
+        let response = null;
         let payload = {
             ...campaignValues,
             ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.join(','),
             ExeptionalGroups: filterValues?.selectedFilterGroups?.join(','),
             CampaignID: params.id,
             Status: campaignValues.Status,
-            PulseAmount: sendingTimeFormValues.PulseAmount || campaignValues.PulseAmount,
-            TimeInterval: sendingTimeFormValues.TimeInterval || campaignValues.TimeInterval,
-            SendDate: sendingTimeFormValues.SendDate || campaignValues.SendDate,
-            SendingMethod: sendingTimeFormValues.SendingMethod || campaignValues.SendingMethod,
+            PulseAmount: campaignValues.SendingMethod === 3 ? null : campaignValues.PulseAmount,
+            TimeInterval: campaignValues.SendingMethod === 3 ? null : campaignValues.TimeInterval,
+            SendDate: campaignValues.SendDate,
+            SendingMethod: campaignValues.SendingMethod,
             GroupIds: selectedGroups.map(grp => grp.GroupID).join(","),
             ExceptionalDays: 0,
-            IsBestTime: sendingTimeFormValues.IsBestTime,
+            IsBestTime: campaignValues.IsBestTime,
             IsSummaryRequest: showSummary
         }
         try {
-            await dispatch(setEmailSendSettings(payload))
+            response = await dispatch(setEmailSendSettings(payload))
+            setLoader(false)
         }
         catch (error) {
             console.log("ERROR-SAVE-SEND-SETTINGS:", error)
-        } finally {
-            setLoader(false)
+        }
+        finally {
+            handleSaveResponse(response.payload);
         }
     }
-
-    const handleSetPulseData = (data) => {
-        const { TimeInterval, PulseAmount, SendingMethod } = data;
-        setSendingTimeFormValues({
-            ...sendingTimeFormValues,
-            TimeInterval: TimeInterval ?? sendingTimeFormValues.TimeInterval,
-            PulseAmount: PulseAmount ?? sendingTimeFormValues.PulseAmount,
-            SendingMethod: SendingMethod ?? sendingTimeFormValues.SendingMethod
-        })
-        // setPulseValues({ TimeInterval: TimeInterval ?? pulseValues.TimeInterval, PulseAmount: PulseAmount ?? pulseValues.PulseAmount, SendingMethod: SendingMethod ?? sendingTimeFormValues.SendingMethod })
+    const handleSaveResponse = (response) => {
+        switch (response?.StatusCode) {
+            case 201: {
+                setToastMessage(ToastMessages.CAMPAIGN_SETTINGS_SAVED);
+                break;
+            }
+            case 401: {
+                setToastMessage(ToastMessages.INVALID_API_MISSING_KEY);
+                break;
+            }
+            case 405: {
+                setToastMessage(ToastMessages.SEND_DATE_MISSING);
+                break;
+            }
+            case 409: {
+                setToastMessage(ToastMessages.CAMPAIGN_ALREADY_SENT);
+                break;
+            }
+            case 500: {
+                setToastMessage(ToastMessages.GENERAL_ERROR);
+            }
+        }
     }
-
     const handleInputNewGroup = (e) => {
         setNewGroupDetails({ ...newGroupDetails, groupNameExist: false, groupValue: e.target.value });
     }
@@ -391,21 +358,18 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const handlePulseClose = () => {
         let tempData = {
-            ...sendingTimeFormValues,
+            ...campaignValues,
             PulseAmount: sourcePulses.PulseAmount || "", TimeInterval: sourcePulses.TimeInterval || ""
         }
         if (sourcePulses.PulseAmount == "" || sourcePulses.TimeInterval == "") {
             tempData = { ...tempData, togglePulse: false }
         }
-        if (sourcePulses.randomAmount == "") {
-            tempData = { ...tempData, toggleRando: false }
-        }
-        setSendingTimeFormValues({ ...sendingTimeFormValues, ...tempData });
+        setCampaignValues({ ...campaignValues, ...tempData });
         setDialogType(null);
     };
 
     const handlePulseDialog = () => {
-        setSourcePulses({ ...sourcePulses, SendingMethod: sendingTimeFormValues.SendingMethod, pulseType: sendingTimeFormValues.pulseType, PulseAmount: sendingTimeFormValues.PulseAmount, TimeInterval: sendingTimeFormValues.TimeInterval, randomAmount: sendingTimeFormValues.random });
+        setSourcePulses({ ...sourcePulses, SendingMethod: campaignValues.SendingMethod, PulseAmount: campaignValues.PulseAmount, TimeInterval: campaignValues.TimeInterval });
         setDialogType({ type: "pulses" });
     }
 
@@ -929,7 +893,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const renderDialog = () => {
         const { type, data } = dialogType || {}
-        
+
         const dialogContent = {
             manualUpload: ManualUploadDialog(
                 {
@@ -1003,6 +967,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             segmentation: MergedSegmentationDialog(),
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
+                selectedGroups: selectedGroups,
                 handleSetValues: (values) => setCampaignValues({ ...values }),
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
@@ -1053,29 +1018,49 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 classes={classes}
                                 ToastMessages={ToastMessages}
                                 setToastMessage={setToastMessage}
-                                enablePulse={selectedGroups?.length > 0 && campaignValues.SendingMethod !== 3}
                                 campaign={campaignValues}
                                 onUpdateCampaign={(data) => setCampaignValues({ ...campaignValues, ...data })}
-                                handlePulseDialog={handlePulseDialog}
                                 extraButtons={
                                     <>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <span
-                                                className={classes.pulse}
+                                            <Button
+                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3}
+                                                onClick={() => {
+                                                    handlePulseDialog();
+                                                }}
+                                            >
+                                                <FaRegCalendarAlt style={{ paddingInline: 5 }} />
+                                                {t("mainReport.pulseSend")}
+                                            </Button>
+                                            <Tooltip
+                                                disableFocusListener
+                                                style={{ marginInlineStart: 10 }}
+                                                title={t("smsReport.pulseSendTip")}
+                                                classes={{ tooltip: styles.customWidth }}
+                                            >
+                                                <span className={classes.bodyInfo}>i</span>
+                                            </Tooltip>
+                                        </Stack>
+                                        <Stack direction="row" justifyContent="center" alignItems="center">
+                                            <Button
+                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0}
                                                 onClick={() => setDialogType({ type: 'segmentation' })}
                                             >
                                                 {t("campaigns.newsLetterEditor.sendSettings.segmentation")}
-                                            </span>
+                                            </Button>
                                         </Stack>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <span
-                                                className={classes.pulse}
+                                            <Button
+                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0}
                                                 onClick={() => {
                                                     setDialogType({ type: 'smsMarketing' })
                                                 }}
                                             >
                                                 {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
-                                            </span>
+                                            </Button>
                                         </Stack>
                                     </>
                                 }

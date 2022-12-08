@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography } from "@material-ui/core";
+import { Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Button, Radio, FormHelperText, Divider } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import moment from "moment";
-import { FaRegCalendarAlt } from "react-icons/fa";
 import { DateField } from "../managment/index";
-import { Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider } from "@material-ui/core";
 import clsx from "clsx";
 import { Stack } from "@mui/material";
 
@@ -28,11 +25,9 @@ const SendingMethod = ({
     extraButtons = null,
     classes,
     ToastMessages,
-    setToastMessage = () => null,
-    enablePulse = false,
     campaign = null,
-    onUpdateCampaign = () => null,
-    handlePulseDialog = () => null
+    setToastMessage = () => null,
+    onUpdateCampaign = () => null
 }) => {
     const { t } = useTranslation();
     const styles = useStyles();
@@ -371,24 +366,26 @@ const SendingMethod = ({
                 </div>
                 <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
                 <Stack className={classes.pulseDiv} spacing={2} direction="row">
-                    <Stack direction="row" justifyContent="center" alignItems="center">
-                        <span
-                            className={enablePulse ? classes.pulse : classes.pulseDisable}
+                    {/* <Stack direction="row" justifyContent="center" alignItems="center">
+                        <Button
+                            className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                            disabled={!enablePulse}
                             onClick={() => {
                                 handlePulseDialog();
                             }}
                         >
-                            <FaRegCalendarAlt style={{ fontSize: '125%' }} />
+                            <FaRegCalendarAlt style={{ paddingInline: 5 }} />
                             {t("mainReport.pulseSend")}
-                        </span>
+                        </Button>
                         <Tooltip
                             disableFocusListener
+                            style={{ marginInlineStart: 10 }}
                             title={t("smsReport.pulseSendTip")}
                             classes={{ tooltip: styles.customWidth }}
                         >
                             <span className={classes.bodyInfo}>i</span>
                         </Tooltip>
-                    </Stack>
+                    </Stack> */}
                     {extraButtons}
 
                 </Stack>
@@ -403,7 +400,7 @@ const SendingMethod = ({
                     }}
                 >
 
-                    {campaign?.PulseAmount && campaign?.PulseAmount > 0 ? (
+                    {campaign?.PulseAmount && campaign?.PulseAmount > 0 && campaign.SendingMethod !== 3 ? (
                         <span style={{ marginBottom: "5px", marginTop: "5px" }}>
                             {t("smsReport.packetSend")} - {campaign.PulseAmount} {t("sms.recipients")} {" "}
                             {t("sms.every")} {campaign.TimeInterval} {t("common.hours")}

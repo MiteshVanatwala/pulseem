@@ -512,7 +512,9 @@
       "fromEmail": "נא מלא כתובת מייל לשליחה",
       "campaignSubject": "נא לרשום נושא קומפיין",
       "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
-      "CampaignNotFound": "קמפיין לא נמצא או נמחק"
+      "CampaignNotFound": "קמפיין לא נמצא או נמחק",
+      "missingSendingDate": "הקמפיין לא נשמר! תאריך שליחה חסר",
+      "campaignAlreadySent": "קמפיין זה כבר נשלח"
     },
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
