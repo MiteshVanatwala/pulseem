@@ -329,7 +329,15 @@ const SmsMarketingDialog = ({
                         linkToCampaign={linkToCampaign}
                         linkToUpdate={linkToUpdate} />
                 </Grid>
-                {newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
+                {newSmsVerification && <VerificationDialog
+                    classes={classes}
+                    isOpen={newSmsVerification}
+                    variant='sms' onClose={() => setNewSmsVerification(false)}
+                    Option={{
+                        Step: 1,
+                        Value: smsModel.FromNumber
+                    }}
+                />}
                 <Loader isOpen={showLoader} />
             </Grid>
         ),

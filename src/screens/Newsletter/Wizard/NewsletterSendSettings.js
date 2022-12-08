@@ -800,7 +800,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const MergedSegmentationDialog = () => {
-        console.log("TOTAL CAMPAIGNS: ", totalCampaigns)
         let segDialog = SegmentationDialog({
             classes: classes,
             campaign: campaignValues,

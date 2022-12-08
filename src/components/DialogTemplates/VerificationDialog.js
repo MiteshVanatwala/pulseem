@@ -15,15 +15,21 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
-const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, variant = 'email', ...props }) => {
+const VerificationDialog = ({
+    classes,
+    isOpen = false,
+    onClose = () => null,
+    variant = 'email',
+    Option = null,
+    ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     const { username } = useSelector(state => state.user)
     const { verifiedEmails, verifiedNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
-    const [verificationStep, setVerificationStep] = useState(0)
+    const [verificationStep, setVerificationStep] = useState(Option?.Step ?? 0)
     const [verificationError, setVerificationError] = useState(null)
-    const [selectedVerificationContact, setSelectedVerificationContact] = useState('')
+    const [selectedVerificationContact, setSelectedVerificationContact] = useState(Option?.Value ?? "")
     const [codeResend, setCodeResend] = useState(false)
     const [verificationCode, setVerificationCode] = useState('')
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
