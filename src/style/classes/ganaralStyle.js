@@ -1674,6 +1674,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   activeTab: {
     borderBottom: "4px solid #168ee3",
     color: "#007bff !important",
+    paddingBottom: '6px !important'
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",

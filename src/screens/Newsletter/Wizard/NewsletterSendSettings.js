@@ -800,6 +800,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const MergedSegmentationDialog = () => {
+        console.log("TOTAL CAMPAIGNS: ", totalCampaigns)
         let segDialog = SegmentationDialog({
             classes: classes,
             campaign: campaignValues,
@@ -812,14 +813,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             classes: classes,
             onClose: () => setDialogType(null),
             onConfirm: () => handleFilterConfirm(),
-            totalCampaigns: totalCampaigns,
+            totalCampaigns: finishedCampaigns,
             callbackFiltertedCampaigns: (campaign) => callbackFiltertedCampaigns(campaign),
             callbackUpdateCampaignFilter: (group) => callbackUpdateGroupFilterd(group),
             callbackShowTestGroup: (showTestGroup) => callbackShowTestGroup(showTestGroup),
             handleReciInput: handleReciInput,
             filterValues: filterValues,
             setFilterValues: setFilterValues,
-            groupList: groupData,
+            groupList: groupData.Groups,
             callbackUpdateGroupFilterd: callbackUpdateGroupFilterd,
             callbackFilteredGroups: callbackFilteredGroups,
             renderHtml: renderHtml,
