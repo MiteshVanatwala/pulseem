@@ -1034,7 +1034,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Button>
                                             <Tooltip
                                                 disableFocusListener
-                                                style={{ marginInlineStart: 10 }}
+                                                style={{ marginInlineEnd: isRTL ? 15 : 0, marginInlineStart: 10 }}
                                                 title={t("smsReport.pulseSendTip")}
                                                 classes={{ tooltip: styles.customWidth }}
                                             >

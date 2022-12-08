@@ -32,6 +32,7 @@ import { Title } from '../../../components/managment/Title';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
@@ -758,17 +759,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
   })
 
-  const getDuplicateDialog = (data = '') => ({
+  const getDuplicateDialog = (data, campaignName) => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <>
-        <Typography align='center' className={classes.mb5}>{t("campaigns.newsLetterEditor.sendSettings.insertCampaginName")}</Typography>
+        <Typography align='center' className={classes.mb5}>{t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `"${campaignName}"`)}</Typography>
         <FormControl>
           <FormGroup>
             <FormControlLabel
@@ -776,8 +772,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 <Checkbox
                   color="primary"
                   inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions('Groups')}
-                  checked={duplicateOptions.indexOf('Groups') > -1}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Groups)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Groups) > -1}
                 />
               }
               label={t("common.Groups")}
@@ -787,8 +783,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 <Checkbox
                   color="primary"
                   inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions('filters')}
-                  checked={duplicateOptions.indexOf('filters') > -1}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Filters)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Filters) > -1}
                 />
               }
               label={t("campaigns.newsLetterEditor.sendSettings.filters")}
@@ -798,8 +794,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 <Checkbox
                   color="primary"
                   inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions('sendingTime')}
-                  checked={duplicateOptions.indexOf('sendingTime') > -1}
+                  onClick={() => handleDuplicateOptions(CloneOptions.SendDate)}
+                  checked={duplicateOptions.indexOf(CloneOptions.SendDate) > -1}
                 />
               }
               label={t("sms.sendingTime")}
@@ -809,8 +805,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 <Checkbox
                   color="primary"
                   inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions('smsComplementary')}
-                  checked={duplicateOptions.indexOf('smsComplementary') > -1}
+                  onClick={() => handleDuplicateOptions(CloneOptions.SmsMarketing)}
+                  checked={duplicateOptions.indexOf(CloneOptions.SmsMarketing) > -1}
                 />
               }
               label={t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
@@ -820,8 +816,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
                 <Checkbox
                   color="primary"
                   inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions('pulseSending')}
-                  checked={duplicateOptions.indexOf('pulseSending') > -1}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}
                 />
               }
               label={t("smsReport.pulseSending")}
@@ -838,19 +834,21 @@ const NewsletterManagnentScreen = ({ classes }) => {
       handleClose()
       setPage(1)
       //BUG:Duplicate option smust be included 
-      await dispatch(duplicteCampaign(data))
+      console.log(data.CampaignID);
+      await dispatch(duplicteCampaign({ CampaignID: data.CampaignID, CloneOptions: duplicateOptions }))
       getData()
     }
   })
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}
+    const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(data) });
 
     const dialogContent = {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
+      duplicate: getDuplicateDialog(campaign, campaign?.Name),
     }
 
     const currentDialog = dialogContent[type] || {}

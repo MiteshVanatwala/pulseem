@@ -719,7 +719,11 @@ const Editorbox = ({
                                     {t("mainReport.add")}
                                 </Typography>
                                 {editmenuClick ? (
-                                    <Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
+                                    <Box className={classes.dropDiv} style={{
+                                        top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-120px" : "-170px") : null,
+                                        right: isRTL ? 'auto' : 0,
+                                        left: isRTL ? 0 : 'auto',
+                                    }}>
 
                                         <Typography
                                             className={classes.dropCon}
