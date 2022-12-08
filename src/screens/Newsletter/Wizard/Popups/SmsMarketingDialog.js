@@ -18,7 +18,8 @@ const SmsMarketingDialog = ({
     selectedGroups = [],
     onClose = () => null,
     onCancel = () => null,
-    onConfirm = () => null
+    onConfirm = () => null,
+    onUpdate = () => null
 }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
@@ -82,6 +83,7 @@ const SmsMarketingDialog = ({
                     SendTime: moment(sendTime),
                     ...restData
                 });
+                onUpdate(restData);
             }
         }
 
