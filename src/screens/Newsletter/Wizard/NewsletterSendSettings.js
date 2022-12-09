@@ -41,6 +41,7 @@ import UploadXL from '../../../components/Files/UploadXL'
 import { UploadSettings } from "../../../helpers/Constants";
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { FaRegCalendarAlt } from "react-icons/fa";
+import Badge from '@material-ui/core/Badge';
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -111,7 +112,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
-    const [bsDot, setbsDot] = useState(false);
     const [manualValues, setManualValues] = useState({
         totalRecords: 0,
         areaData: '',
@@ -150,7 +150,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         recipientsSnackbar: false
     })
 
-    const [dataIsReady, setDataIsReady] = useState(false);
+    const [segmantIndication, setSegmantIndication] = useState(false);
+    const [pulseIndication, setPulseIndication] = useState(false);
+    const [smsMarketingIndication, setSmsMarketingIndication] = useState(false);
 
     const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0)
 
@@ -161,11 +163,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
 
         try {
-            const { GroupList = [], PulseAmount = null, TimeInterval = null, SendDate = null, ExeptionalGroups = [], SendingMethod = null, ExeptionalCampaigns = [], IsBestTime = false } = newsletterSettings;
+            if (!newsletterSettings)
+                return;
+
+            const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [] } = newsletterSettings;
             const { Groups } = groupData;
 
-            ExeptionalGroups?.length > 0 && setbsDot(true);
-
+            setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
+            setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
             setTotalCampaigns(finishedCampaigns?.length ?? 0);
             GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
@@ -189,10 +194,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     useEffect(() => {
-        if (dataIsReady === true) {
+        if (newsletterSettings) {
             initOnReady();
         }
-    }, [dataIsReady, newsletterSettings, groupData])
+    }, [newsletterSettings])
 
     const getData = async () => {
         setLoader(true);
@@ -201,7 +206,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             await dispatch(getGroups());
             await dispatch(getEmailSendSettings(params.id));
             await dispatch(getTestGroups());
-            setDataIsReady(true);
         }
     };
 
@@ -271,7 +275,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.CAMPAIGN_ALREADY_SENT);
                 break;
             }
-            case 500: {
+            case 500:
+            default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR);
             }
         }
@@ -298,13 +303,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             formIsvalid = validationCheck();
             if (formIsvalid) {
                 if (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
-                    setbsDot(true);
+                    setSegmantIndication(true)
                     tempData = { ...tempData, displayFilter: true, reciFilter: false }
                     setSnackbarValues({ ...snackbarValues, snackbarRecipients: true })
 
                 }
                 else {
-                    setbsDot(false);
+                    setSegmantIndication(false)
                     tempData = { ...tempData, displayFilter: false, reciFilter: false }
                 }
             }
@@ -313,11 +318,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             if (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
                 tempData = { ...tempData, reciFilter: false }
                 setSnackbarValues({ ...snackbarValues, snackbarRecipients: true })
-                setbsDot(true);
+                setSegmantIndication(true)
             }
             else {
                 tempData = { ...tempData, reciFilter: false }
-                setbsDot(false);
+                setSegmantIndication(false)
             }
         }
         if (formIsvalid) {
@@ -350,9 +355,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handlePulseConfirm = (pulseSettings, pulseEnabled) => {
         if (pulseEnabled && (pulseSettings.PulseAmount === "" || pulseSettings.TimeInterval === "")) {
             setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: true })
+            setPulseIndication(false)
         }
         else {
             setCampaignValues({ ...campaignValues, ...pulseSettings })
+            setPulseIndication(pulseEnabled);
             setDialogType(null);
         }
     }
@@ -362,8 +369,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             ...campaignValues,
             PulseAmount: sourcePulses.PulseAmount || "", TimeInterval: sourcePulses.TimeInterval || ""
         }
-        if (sourcePulses.PulseAmount == "" || sourcePulses.TimeInterval == "") {
+        if (sourcePulses.PulseAmount === "" || sourcePulses.TimeInterval === "") {
             tempData = { ...tempData, togglePulse: false }
+        }
+        if (sourcePulses.PulseAmount === '' && sourcePulses.TimeInterval === '') {
+            setPulseIndication(false);
+        }
+        else {
+            setPulseIndication(true);
         }
         setCampaignValues({ ...campaignValues, ...tempData });
         setDialogType(null);
@@ -681,46 +694,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     />
                 </Stack>
             ),
-            // footer: (
-            //     <>
-            //         {NewGroupForm()}
-            //         <div className={classes.manualChild} style={{ justifyContent: manualValues.areaData === "" ? "flex-end" : "space-between" }}>
-            //             {manualValues.areaData !== "" ? (
-            //                 <div>
-            //                     <span
-            //                         className={classes.addManualDiv}
-            //                         onClick={() => {
-            //                             handlePasted();
-            //                         }}
-            //                     >
-            //                         {t("sms.editFields")}
-            //                     </span>
-            //                     <span
-            //                         className={classes.clearDiv}
-            //                         onClick={() => {
-            //                             setManualValues({ ...manualValues, areaData: "", typedData: [], totalRecords: 0 })
-            //                             // setareaData("");
-            //                             setContacts([]);
-            //                             // settypedData([]);
-            //                             // settotalRecords(0)
-            //                         }}
-            //                     >
-            //                         {t("sms.clearList")}
-            //                     </span>
-            //                     <span
-            //                         className={classes.addManualDiv}
-            //                         onClick={() => {
-            //                             setDialogType({ type: "quickMnualUpload" })
-            //                         }}
-            //                     >
-            //                         {t("campaigns.newsLetterSendSettings.quickMSend")}
-            //                     </span>
-            //                 </div>
-            //             ) : null}
-            //             <span>{t("sms.totalRecords")}:  {manualValues.totalRecords}</span>
-            //         </div>
-            //     </>
-            // ),
             tooltip: t("smsReport.manualTip")
         }
         return <>{TabComp([Tab1, Tab2])}</>
@@ -965,6 +938,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
                 selectedGroups: selectedGroups,
+                onUpdate: (res) => {
+                    if (res && res?.SMSCampaignID > 0) {
+                        setSmsMarketingIndication(true)
+                    }
+                },
                 onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
                 onConfirm: () => setDialogType(null)
@@ -1019,19 +997,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 extraButtons:
                                     <>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Button
-                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3}
-                                                onClick={() => {
-                                                    handlePulseDialog();
-                                                }}
-                                            >
-                                                <FaRegCalendarAlt style={{ paddingInline: 5 }} />
-                                                {t("mainReport.pulseSend")}
-                                            </Button>
+                                            <Badge variant="dot" color="primary" invisible={!pulseIndication}>
+                                                <Button
+                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                    disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3}
+                                                    onClick={() => {
+                                                        handlePulseDialog();
+                                                    }}
+                                                >
+                                                    <FaRegCalendarAlt style={{ paddingInline: 5 }} />
+                                                    {t("mainReport.pulseSend")}
+                                                </Button>
+                                            </Badge>
                                             <Tooltip
                                                 disableFocusListener
-                                                style={{ marginInlineStart: 10 }}
+                                                style={{ marginInlineEnd: isRTL ? 15 : 0, marginInlineStart: 10 }}
                                                 title={t("smsReport.pulseSendTip")}
                                                 classes={{ tooltip: styles.customWidth }}
                                             >
@@ -1048,15 +1028,17 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Button>
                                         </Stack>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Button
-                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0}
-                                                onClick={() => {
-                                                    setDialogType({ type: 'smsMarketing' })
-                                                }}
-                                            >
-                                                {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
-                                            </Button>
+                                            <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
+                                                <Button
+                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                    disabled={!selectedGroups || selectedGroups?.length === 0}
+                                                    onClick={() => {
+                                                        setDialogType({ type: 'smsMarketing' })
+                                                    }}
+                                                >
+                                                    {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
+                                                </Button>
+                                            </Badge>
                                         </Stack>
                                     </>
 

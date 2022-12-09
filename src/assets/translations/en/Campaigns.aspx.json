@@ -536,7 +536,7 @@
       "segmCritCb2": "Recipients That Not Opened The Email",
       "segmCritCb3": "Recipients That Clicked On Links",
       "segmCritCb4": "Recipients That Not Clicked On Links",
-      "insertCampaginName": "Which send settings would you want to duplicate from 'Insert Campagin Name'?",
+      "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
       "filters": "Filters",
       "segmentations": "Segmentations",
       "smsMarketing": {
