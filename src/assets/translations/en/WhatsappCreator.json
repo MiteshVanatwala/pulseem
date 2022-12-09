@@ -1,66 +1,78 @@
 {
-  "Title": "Whatsapp",
-  "NewWhatsappCampaign": "Create WhatsApp Template",
-  "header": "Create WhatsApp Template",
-  "WAMenuItemResource": {
-    "Text": "New WhatsApp Template"
-  },
-  "PageResource1": {
-    "Title": "WhatsApp Campaign Management"
-  },
-  "submit": "Submit",
-  "saveSms": "Save",
-  "saveAndExit": "Save and Exit",
+	"Title": "Whatsapp",
+	"NewWhatsappCampaign": "Create WhatsApp Template",
+	"header": "Create WhatsApp Template",
+	"WAMenuItemResource": {
+		"Text": "New WhatsApp Template"
+	},
+	"PageResource1": {
+		"Title": "WhatsApp Campaign Management"
+	},
+	"submit": "Submit",
+	"saveSms": "Save",
+	"saveAndExit": "Save and Exit",
 
-  "whatsappTemplate": "Create New WhatsApp Template",
-  "toolTip1": "Create the content you want to send to your recipients and then choose how, when and to whom to send",
-  "createContent": "Create Content",
-  "templateName": "Template Name",
-  "templateNamePlaceholder": "Template Name",
-  "templateDesc": "Only you will see the name",
-  "selectSavedTemplate": "Select Saved Template",
-  "selectSavedTemplatePlaceholder": "Select Saved Template",
-  "typeText": "Insert text here - upto 1024 characters",
-  "yourMessage": "Your Message",
+	"whatsappTemplate": "Create New WhatsApp Template",
+	"toolTip1": "Create the content you want to send to your recipients and then choose how, when and to whom to send",
+	"createContent": "Create Content",
+	"templateName": "Template Name",
+	"templateNamePlaceholder": "Template Name",
+	"templateDesc": "Only you will see the name",
+	"selectSavedTemplate": "Select Saved Template",
+	"selectSavedTemplatePlaceholder": "Select Saved Template",
+	"typeText": "Insert text here - upto 1024 characters",
+	"yourMessage": "Your Message",
 
-  "callToActionButton": "Call To Action",
-  "callToActionSaveButton": "Save",
-  "callToActionExitButton": "Exit",
-  "callToActionAddMoreButton": "Add More",
-  "callToActionRemoveButton": "Remove",
-  "callToActionTitle": "Call to Action",
-  "callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action.",
-  "typeOfAction": "Type of Action",
-  "phoneButtonText": "Button Text",
-  "phoneButtonTextPlaceholder": "Call Us",
-  "country": "Country",
-  "phoneNumber": "Phone Number",
-  "phoneNumberPlaceholder": "Your Phone Number",
-  "websiteButtonText": "Button Text",
-  "websiteButtonTextPlaceholder": "Visit Our Website",
-  "websiteURL": "Website URL",
-  "websiteURLPlaceholder": "Enter Your Website URL",
-  
-  "template": {
-    "textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
-    "callToActionTooltip": "Call To Action",
-    "callToAction": "Call To Action",
-    "quickReplayTooltip": "Quick Replay",
-    "quickReplay": "Quick Replay",
-    "removalLinkTooltip": "Removal Link",
-    "removalLink": "Removal Link",
-    "removalTextTooltip": "Removal Text",
-    "removalText": "Removal Text",
-    "dynamicFieldTooltip": "Dynamic Field",
-    "dynamicField": "Dynamic Field"
-  },
+	"callToActionButton": "Call To Action",
+	"callToActionSaveButton": "Save",
+	"callToActionExitButton": "Exit",
+	"callToActionAddMoreButton": "Add More",
+	"callToActionRemoveButton": "Remove",
+	"callToActionTitle": "Call to Action",
+	"callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action.",
+	"typeOfAction": "Type of Action",
+	"phoneButtonText": "",
+	"phoneButtonTextPlaceholder": "Call Us",
+	"country": "Country",
+	"phoneNumber": "Phone Number",
+	"phoneNumberPlaceholder": "Your Phone Number",
+	"websiteButtonText": "Button Text",
+	"websiteButtonTextPlaceholder": "Visit Our Website",
+	"websiteURL": "Website URL",
+	"websiteURLPlaceholder": "Enter Your Website URL",
 
-  "quickReply": {
-      "title": "Quick Reply",
-      "titleDescription": "Create up to 3 buttons that let customers respond to your messages with the chosen text",
-      "addMore": "Add More",
-      "exit": "Exit",
-      "save": "Save",
-      "buttonText": "Button Text"
-  }
+	"template": {
+		"textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
+		"callToActionTooltip": "Call To Action",
+		"callToAction": "Call To Action",
+		"quickReplayTooltip": "Quick Replay",
+		"quickReplay": "Quick Replay",
+		"removalLinkTooltip": "Removal Link",
+		"removalLink": "Removal Link",
+		"removalTextTooltip": "Removal Text",
+		"removalText": "Removal Text",
+		"dynamicFieldTooltip": "Dynamic Field",
+		"dynamicField": "Dynamic Field"
+	},
+
+	"quickReply": {
+		"title": "Quick Reply",
+		"titleDescription": "Create up to 3 buttons that let customers respond to your messages with the chosen text",
+		"addMore": "Add More",
+		"exit": "Exit",
+		"save": "Save",
+		"buttonText": "Button Text"
+	},
+
+	"alertModal": {
+		"okButtonText": "Ok",
+		"confirmButtonText": "Confirm",
+		"calcelButtonText": "Cancel",
+		"yesButtonText": "Yes",
+    "submitButtonText": "Submit",
+		"DeleteText": "Delete Campaign",
+		"DeleteTitle": "Are you sure?",
+    "ConfirmText": "Submit Campaign",
+		"ConfirmTitle": "Are you sure you want to submit your template?"
+	}
 }

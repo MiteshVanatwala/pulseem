@@ -62,5 +62,17 @@
 		"exit": "וצא",
 		"save": "שמור",
 		"buttonText": "טקסט כפתור"
+	},
+
+	"alertModal": {
+		"okButtonText": "בסדר",
+		"confirmButtonText": "לְאַשֵׁר",
+		"calcelButtonText": "לְבַטֵל",
+		"yesButtonText": "כן",
+		"submitButtonText": "שלח",
+		"DeleteText": "מחק מסע פרסום",
+		"DeleteTitle": "האם אתה בטוח?",
+		"ConfirmText": "שלח מסע פרסום",
+		"ConfirmTitle": "האם אתה בטוח שברצונך לשלוח את התבנית שלך?"
 	}
 }

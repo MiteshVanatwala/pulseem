@@ -24,6 +24,7 @@ import QuickReply from './QuickReply';
 import { useSelector } from 'react-redux';
 import WhatsappMobilePreview from './WhatsappMobilePreview';
 import WhatsappTips from './whatsappTips';
+import AlertModal from './AlertModal';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -63,6 +64,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
+	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] = useState(false);
 
 	enum ActionButtons {
 		QuickReply = 'quickReply',
@@ -278,8 +281,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
+		setIsSubmitCampaignOpen(true);
 		getRequestJSON();
 	};
 
@@ -450,6 +454,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
+	const onFormButtonClick = (buttonName: string) => {
+		if (buttonName === 'delete') {
+			setIsDeleteCampaignOpen(true);
+		}
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -463,7 +473,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				Element={null}
 			/>
 			<br />
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={onSubmit}>
 				<Grid container>
 					<TemplateFields
 						classes={classes}
@@ -515,7 +525,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								</Grid>
 							</Grid>
 						</Grid>
-						<Buttons classes={classes} />
+						<Buttons
+							classes={classes}
+							onFormButtonClick={(buttonName) => onFormButtonClick(buttonName)}
+						/>
 					</Grid>
 				</Grid>
 			</form>
@@ -545,6 +558,30 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					updateTemplateButton(data, 'callToAction')
 				}
 			/>
+			<AlertModal
+				classes={classes}
+				isOpen={isDeleteCampaignOpen}
+				onClose={() => setIsDeleteCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.DeleteText')}
+				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+				type='delete'
+			/>
+			<AlertModal
+				classes={classes}
+				isOpen={isSubmitCampaignOpen}
+				onClose={() => setIsSubmitCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.ConfirmText')}
+				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
+				type='submit'>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						campaignNumber='1'
+						templateData={templateData}
+						buttonType={buttonType}
+					/>
+				</Box>
+			</AlertModal>
 		</DefaultScreen>
 	);
 };
