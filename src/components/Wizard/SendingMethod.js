@@ -6,6 +6,7 @@ import moment from "moment";
 import { DateField } from "../managment/index";
 import clsx from "clsx";
 import { Stack } from "@mui/material";
+import { useEffect } from "react";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -37,16 +38,20 @@ const SendingMethod = ({
         (state) => state.core
     );
 
+    useEffect(() => {
+        console.log("CAMPAIGN:", campaign)
+    }, [campaign])
+
     const handleSendType = (sendingMethod) => {
-        onUpdateCampaign({ ...campaign, SendingMethod: sendingMethod, IsBestTime: false })
+        onUpdateCampaign({ SendingMethod: sendingMethod, IsBestTime: false })
     }
 
     const handleDatePicker = (value) => {
-        onUpdateCampaign({ ...campaign, SendDate: value })
+        onUpdateCampaign({ SendDate: value })
     }
 
     const handleTimePicker = (value) => {
-        var date = moment(campaign.SendDate);
+        var date = campaign.SendDate ? moment(campaign.SendDate) : moment();
         var time = moment(value, "HH:mm");
 
         date.set({
@@ -59,7 +64,7 @@ const SendingMethod = ({
             setToastMessage(ToastMessages.DATE_PASS);
         }
 
-        onUpdateCampaign({ ...campaign, SendDate: date, timePickerOpen: false });
+        onUpdateCampaign({ SendDate: date, timePickerOpen: false });
     }
 
     const handleSelectChange = (e) => {
@@ -80,28 +85,28 @@ const SendingMethod = ({
                 }
             })
         }
-        onUpdateCampaign({ ...campaign, ...temp });
+        onUpdateCampaign({ ...temp });
     }
 
     const handleSpecialDayChange = (e) => {
         const re = /^[0-9\b]+$/;
         if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <= 999)) {
-            onUpdateCampaign({ ...campaign, daysBeforeAfter: e.target.value })
+            onUpdateCampaign({ DaysBeforeAfter: e.target.value })
         }
 
     }
 
     const handlebef = () => {
-        onUpdateCampaign({ ...campaign, afterClick: false, toggleA: false, toggleB: true })
+        onUpdateCampaign({ afterClick: false, ToggleA: false, ToggleB: true })
     };
 
     const handleaf = () => {
-        onUpdateCampaign({ ...campaign, afterClick: true, toggleA: true, toggleB: false })
+        onUpdateCampaign({ afterClick: true, ToggleA: true, ToggleB: false })
     };
 
-    const handleRadioTime = (value) => {
-        onUpdateCampaign({ ...campaign, sendTime: value })
-    }
+    // const handleRadioTime = (value) => {
+    //     onUpdateCampaign({ ...campaign, SendDate: value })
+    // }
 
     const renderForm = () => {
         return (
@@ -119,7 +124,7 @@ const SendingMethod = ({
                         className={classes.noShadowAccordion}
                     >
                         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse}
-                            expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 1} className={`${campaign.SendingMethod}` !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}>
+                            expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 1} className={campaign.SendingMethod !== 1 ? classes.radioButtonDisabled : classes.radioButtonActive} />}>
                             <Typography>{t("notifications.immediateSend")}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
@@ -130,8 +135,8 @@ const SendingMethod = ({
                                 <Stack direction='row' alignItems='center'>
                                     <Checkbox
                                         className={classes.ml20}
-                                        disabled={`${campaign.SendingMethod}` !== "1"}
-                                        checked={`${campaign.SendingMethod}` === "1" && campaign.IsBestTime}
+                                        disabled={campaign.SendingMethod !== 1}
+                                        checked={campaign.SendingMethod === 1 && campaign.IsBestTime}
                                         color="primary"
                                         inputProps={{ "aria-label": "secondary checkbox" }}
                                         onClick={() => {
@@ -164,43 +169,43 @@ const SendingMethod = ({
                                 <Box
                                     className={classes.dateBox}
                                     style={{
-                                        pointerEvents: `${campaign.SendingMethod}` === "2" ? "auto" : "none",
+                                        pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
                                     }}
                                 >
                                     <DateField
                                         minDate={moment()}
                                         classes={classes}
-                                        value={`${campaign.SendingMethod}` === "2" ? campaign.SendDate : null}
+                                        value={campaign.SendingMethod === 2 ? campaign.SendDate : null}
                                         onChange={handleDatePicker}
                                         placeholder={t("notifications.date")}
                                         timePickerOpen={true}
-                                        dateActive={`${campaign.SendingMethod}` === "2" ? false : true}
+                                        dateActive={campaign.SendingMethod === 2 ? false : true}
                                     />
                                 </Box>
                                 <Box
                                     className={classes.dateBox}
                                     style={{
                                         marginTop: 10,
-                                        pointerEvents: `${campaign.SendingMethod}` === "2" ? "auto" : "none",
+                                        pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
                                     }}
                                 >
                                     <DateField
                                         minDate={moment()}
                                         classes={classes}
-                                        value={`${campaign.SendingMethod}` === "2" ? campaign.SendDate : null}
+                                        value={campaign.SendingMethod === 2 ? campaign.SendDate : null}
                                         onTimeChange={handleTimePicker}
                                         placeholder={t("notifications.hour")}
                                         isTimePicker={true}
                                         ampm={false}
-                                        timeActive={`${campaign.SendingMethod}` === "2" ? false : true}
+                                        timeActive={campaign.SendingMethod === 2 ? false : true}
                                         timePickerOpen={campaign.timePickerOpen}
                                     />
                                 </Box>
                                 <Stack direction='row' alignItems='center'>
                                     <Checkbox
                                         className={classes.ml20}
-                                        disabled={`${campaign.SendingMethod}` !== "2"}
-                                        checked={`${campaign.SendingMethod}` === "2" && campaign.IsBestTime}
+                                        disabled={campaign.SendingMethod !== 2}
+                                        checked={campaign.SendingMethod === 2 && campaign.IsBestTime}
                                         color="primary"
                                         inputProps={{ "aria-label": "secondary checkbox" }}
                                         onClick={() => {
@@ -234,7 +239,7 @@ const SendingMethod = ({
                                     className={classes.dateBox}
                                     style={{
                                         marginTop: 10,
-                                        pointerEvents: `${campaign.SendingMethod}` === "3" ? "auto" : "none",
+                                        pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
                                     }}
                                 >
                                     <select
@@ -248,9 +253,9 @@ const SendingMethod = ({
                                             outline: "none",
                                             marginBottom: "10px",
                                         }}
-                                        disabled={`${campaign.SendingMethod}` === "3" ? false : true}
+                                        disabled={campaign.SendingMethod === 3 ? false : true}
                                         onChange={(e) => { handleSelectChange(e) }}
-                                        value={`${campaign.SendingMethod}` === "3" ? campaign.spectialDateFieldID : "0"}
+                                        value={campaign.SendingMethod === 3 ? campaign.spectialDateFieldID : "0"}
                                     >
                                         <option value="0">{t("common.select")}</option>
                                         <option value="1">{t("mainReport.birthday")}</option>
@@ -271,15 +276,15 @@ const SendingMethod = ({
                                         display: "flex",
                                         alignItems: "center",
                                         width: "370px",
-                                        pointerEvents: `${campaign.SendingMethod}` === "3" ? "auto" : "none",
+                                        pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
                                     }}
                                 >
                                     <input
                                         type="text"
                                         className={classes.inputDays}
                                         placeholder="0"
-                                        disabled={`${campaign.SendingMethod}` === "3" ? false : true}
-                                        value={`${campaign.SendingMethod}` === "3" ? campaign.daysBeforeAfter : ""}
+                                        disabled={campaign.SendingMethod === 3 ? false : true}
+                                        value={campaign.SendingMethod === 3 ? campaign.DaysBeforeAfter : ""}
                                         onChange={(e) => { handleSpecialDayChange(e) }}
                                         maxLength="3"
                                     />
@@ -292,7 +297,7 @@ const SendingMethod = ({
                                         <div style={{ display: "flex" }}>
                                             <span
                                                 className={
-                                                    `${campaign.SendingMethod}` === "3" ? campaign.toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                                 }
                                                 onClick={() => {
                                                     handlebef();
@@ -302,7 +307,7 @@ const SendingMethod = ({
                                             </span>
                                             <span
                                                 className={
-                                                    `${campaign.SendingMethod}` === "3" ? campaign.toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleA ? classes.beforeActive : classes.before : classes.disabledBefore
                                                 }
                                                 onClick={() => {
                                                     handleaf();
@@ -314,7 +319,7 @@ const SendingMethod = ({
                                         </div> : <div style={{ display: "flex" }}>
                                             <span
                                                 className={
-                                                    `${campaign.SendingMethod}` === "3" ? campaign.toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleB ? classes.beforeActive : classes.before : classes.disabledBefore
                                                 }
                                                 onClick={() => {
                                                     handlebef();
@@ -324,7 +329,7 @@ const SendingMethod = ({
                                             </span>
                                             <span
                                                 className={
-                                                    `${campaign.SendingMethod}` === "3" ? campaign.toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                                                 }
                                                 onClick={() => {
                                                     handleaf();
@@ -338,15 +343,14 @@ const SendingMethod = ({
                                     className={classes.dateBox}
                                     style={{
                                         marginTop: 10,
-                                        pointerEvents: `${campaign.SendingMethod}` === "3" ? "auto" : "none",
+                                        pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
                                         marginBottom: '1rem'
                                     }}
                                 >
                                     <DateField
                                         classes={classes}
-                                        value={`${campaign.SendingMethod}` === "3" ? campaign.sendTime : null}
-
-                                        onTimeChange={handleRadioTime}
+                                        value={campaign.SendingMethod === 3 ? campaign.SendDate : null}
+                                        onTimeChange={(value) => handleTimePicker(value)}
                                         placeholder={t("notifications.hour")}
                                         isTimePicker={true}
                                         buttons={{
@@ -355,8 +359,8 @@ const SendingMethod = ({
                                         }}
                                         ampm={false}
                                         timePickerOpen={campaign.timePickerOpen}
-                                        timeActive={`${campaign.SendingMethod}` === "3" ? false : true}
-                                        disabled={`${campaign.SendingMethod}` === "3" ? false : true}
+                                        timeActive={campaign.SendingMethod === 3 ? false : true}
+                                        disabled={campaign.SendingMethod === 3 ? false : true}
                                         autoOk
                                     />
                                 </Box>

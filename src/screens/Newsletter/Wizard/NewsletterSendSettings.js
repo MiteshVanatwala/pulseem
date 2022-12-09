@@ -156,6 +156,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0)
 
+
     const initOnReady = () => {
         if (newsletterSettings?.error) {
             logout();
@@ -419,15 +420,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     //TODO
-    const callbackShowTestGroup = (showTestGroups) => {
-        if (!showTestGroups && testGroups.length > 0) {
-            setGroupList(testGroups.concat(groupList));
-        }
-        else {
-            const g = groupList?.filter((group) => { return group?.IsTestGroup !== true });
-            setGroupList(g);
-        }
-    }
 
     const callbackUpdateGroupFilterd = (groups) => {
         setFilterValues({ ...filterValues, selectedFilterGroups: groups })
@@ -549,49 +541,70 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         let r = null;
         try {
             const response = await dispatch(createGroup({ GroupName: groupName, IsTestGroup: false }));
-            if (response?.payload?.Message) {
-                if (uploadAsFile === true) {
-                    r = await dispatch(addRecipients({ ...res, GroupIds: [response.payload.Message] }));
+            handleCreateGroupResponses(response, async () => {
+                if (response?.payload?.Message) {
+                    if (uploadAsFile === true) {
+                        r = await dispatch(addRecipients({ ...res, GroupIds: [response.payload.Message] }));
+                    }
+                    else {
+                        r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
+                    }
+                    handleAddClientsResponse(r);
                 }
-                else {
-                    r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
-                }
-                handleAddClientsResponse(r);
-            }
+            })
+
         }
         catch (error) {
             console.error('ADD Clients Error: ', error)
         }
     }
 
-    const handleAddClientsResponse = (res) => {
-        switch (res?.StatusCode) {
+    const handleCreateGroupResponses = (res, successCallback) => {
+        switch (res?.payload?.StatusCode) {
             case 200:
                 break;
             case 201:
+                successCallback?.()
                 break;
             default:
+                setToastMessage(ToastMessages.GENERAL_ERROR);
                 break
+        }
+    }
+    const handleAddClientsResponse = (res) => {
+        switch (res?.StatusCode) {
+            case 201: {
+                setToastMessage(ToastMessages.SUCEESS);
+                break;
+            }
+            case 401: {
+                setToastMessage(ToastMessages.INVALID_API_MISSING_KEY);
+                break;
+            }
+            case 500: {
+                setToastMessage(ToastMessages.GENERAL_ERROR);
+            }
         }
     }
 
     const renderBody = () => {
         const Tab1 = {
             tabName: t("mainReport.groups"),
-            body: <Groups
-                classes={classes}
-                list={groupData?.Groups || []}
-                selectedList={selectedGroups}
-                callbackSelectedGroups={(g) => callbackSelectedGroups(g)}
-                callbackUpdateGroups={(groups) => setSelectedGroups(groups)}
-                callbackSelectAll={() => setSelectedGroups(groupData?.Groups?.length === selectedGroups.length ? [] : groupData?.Groups)}
-                callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
-                callbackShowTestGroup={callbackShowTestGroup}
-                showFilter={false}
-                isSms={true}
-                uniqueKey={'groups_1'}
-                innerHeight={325}
-            />,
+            body:
+                <Groups
+                    classes={classes}
+                    list={groupData.Groups ? [...groupData.Groups] : []}
+                    selectedList={selectedGroups}
+                    callbackSelectedGroups={(g) => callbackSelectedGroups(g)}
+                    callbackUpdateGroups={(groups) => setSelectedGroups(groups)}
+                    callbackSelectAll={() => setSelectedGroups(groupData?.Groups?.length === selectedGroups.length ? [] : groupData?.Groups)}
+                    callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
+                    showFilter={false}
+                    isSms={true}
+                    bsDot={bsDot}
+                    uniqueKey={'groups_1'}
+                    innerHeight={325}
+                />,
             footer: (
                 <Stack direction="column">
                     <Stack direction="row" justifyContent="space-between">
@@ -654,6 +667,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 >
                     <UploadXL
                         classes={classes}
+                        areaStyle={{
+                            height: 389
+                        }}
                         onDone={(groupName, res, uploadedAsFile) => {
                             handleUploadRecipients(groupName, res, uploadedAsFile);
                         }}
@@ -787,7 +803,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             totalCampaigns: finishedCampaigns,
             callbackFiltertedCampaigns: (campaign) => callbackFiltertedCampaigns(campaign),
             callbackUpdateCampaignFilter: (group) => callbackUpdateGroupFilterd(group),
-            callbackShowTestGroup: (showTestGroup) => callbackShowTestGroup(showTestGroup),
             handleReciInput: handleReciInput,
             filterValues: filterValues,
             setFilterValues: setFilterValues,
@@ -802,6 +817,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 direction="column"
                 justifyContent="flex-start"
                 className={classes.wizardFlex}
+                style={{
+                    height: '65vh',
+                    width: '60vh'
+                }}
             >
                 <Stack className={classes.tabDiv} direction="row"
                 >
@@ -845,17 +864,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             showDefaultButtons: true,
             confirmText: t("common.Ok"),
             cancelText: t("common.Cancel"),
-            onClose: () => {
-                mergedSegmentationDialog === 1 && segDialog.onClose()
-                mergedSegmentationDialog === 2 && filterDialog.onClose()
-            },
-            onCancel: () => {
-                mergedSegmentationDialog === 1 && segDialog.onCancel()
-                mergedSegmentationDialog === 2 && filterDialog.onCancel()
-            },
+            onClose: () => setDialogType(null),
+            onCancel: () => setDialogType(null),
             onConfirm: () => {
-                mergedSegmentationDialog === 1 && segDialog.onConfirm()
-                mergedSegmentationDialog === 2 && filterDialog.onConfirm()
+                mergedSegmentationDialog === 0 && setDialogType(null)
+                mergedSegmentationDialog === 1 && handleFilterConfirm()
             }
         }
         // let SegTabs =
@@ -898,22 +911,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel: () => setDialogType(null),
                 onConfirm: () => handleConfirmC()
             }),
-            filterRecipients: FilterRecipientsDialog({
-                classes: classes,
-                onClose: () => setDialogType(null),
-                onConfirm: () => handleFilterConfirm(),
-                totalCampaigns: totalCampaigns,
-                callbackFiltertedCampaigns: (campaign) => callbackFiltertedCampaigns(campaign),
-                callbackUpdateCampaignFilter: (group) => callbackUpdateGroupFilterd(group),
-                callbackShowTestGroup: (showTestGroup) => callbackShowTestGroup(showTestGroup),
-                handleReciInput: handleReciInput,
-                filterValues: filterValues,
-                setFilterValues: setFilterValues,
-                groupList: groupData,
-                callbackUpdateGroupFilterd: callbackUpdateGroupFilterd,
-                callbackFilteredGroups: callbackFilteredGroups,
-                renderHtml: renderHtml,
-            }),
+            filterRecipients: MergedSegmentationDialog(),
             caution: CautionDialog({
                 classes: classes,
                 onClose: () => setDialogType({ type: "manualUpload" }),
@@ -936,7 +934,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose: () => navigate("/SMSCampaigns"),
                 onCancel: () => setDialogType(null),
             }),
-            segmentation: MergedSegmentationDialog(),
+            // segmentation: MergedSegmentationDialog(),
             smsMarketing: SmsMarketingDialog({
                 classes: classes,
                 selectedGroups: selectedGroups,
@@ -990,13 +988,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             {renderBody()}
                         </Grid>
                         <Grid item md={5} xs={12}>
-                            <SendingMethod
-                                classes={classes}
-                                ToastMessages={ToastMessages}
-                                setToastMessage={setToastMessage}
-                                campaign={campaignValues}
-                                onUpdateCampaign={(data) => setCampaignValues({ ...campaignValues, ...data })}
-                                extraButtons={
+                            {SendingMethod({
+                                classes: classes,
+                                ToastMessages: ToastMessages,
+                                setToastMessage: setToastMessage,
+                                campaign: campaignValues,
+                                onUpdateCampaign: (data) => setCampaignValues({ ...campaignValues, ...data }),
+                                extraButtons:
                                     <>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!pulseIndication}>
@@ -1021,15 +1019,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Tooltip>
                                         </Stack>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Badge variant="dot" color="primary" invisible={!segmantIndication}>
-                                                <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                    disabled={!selectedGroups || selectedGroups?.length === 0}
-                                                    onClick={() => setDialogType({ type: 'segmentation' })}
-                                                >
-                                                    {t("campaigns.newsLetterEditor.sendSettings.segmentation")}
-                                                </Button>
-                                            </Badge>
+                                            <Button
+                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0}
+                                                onClick={() => setDialogType({ type: 'filterRecipients' })}
+                                            >
+                                                {t('mainReport.recipientFilter')}
+                                            </Button>
                                         </Stack>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
@@ -1045,8 +1041,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Badge>
                                         </Stack>
                                     </>
-                                }
-                            />
+
+                            })}
                         </Grid>
                     </Grid>
                 </div>

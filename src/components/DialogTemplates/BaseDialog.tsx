@@ -15,7 +15,7 @@ import { useSelector } from "react-redux";
 import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
-import useCore from "../../helpers/Hooks/Core";
+import useCore from "../../helpers/hooks/Core";
 import { ManagmentIcon } from "../managment/index";
 import { CloseIcon } from "../../assets/images/managment/index";
 
