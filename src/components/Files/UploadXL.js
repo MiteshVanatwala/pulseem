@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
 
 const UploadXL = ({
     classes,
+    areaStyle,
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
     uploadToGroups = [],
@@ -783,6 +784,7 @@ const UploadXL = ({
                     highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
                 )
                 }
+                style={{ ...areaStyle }}
                 value={areaData}
                 onDragEnter={() => {
                     setHighlighted(true);

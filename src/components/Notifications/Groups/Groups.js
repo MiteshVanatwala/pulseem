@@ -47,7 +47,7 @@ const Groups = ({ classes,
     const [showTestGroups, setShowTestGroups] = useState(false);
 
     const handleShowTestGroup = () => {
-        callbackShowTestGroup(showTestGroups);
+        callbackShowTestGroup(!showTestGroups);
         setShowTestGroups(!showTestGroups);
     }
     const handleSearch = (event) => {
@@ -76,7 +76,7 @@ const Groups = ({ classes,
         const groupIdKey = isNotifications ? "Id" : "GroupID";
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
         return list && list.length > 0 ? list?.filter((g) => {
-            return g.GroupName.trim().toLowerCase().indexOf(groupNameSearch?.trim().toLowerCase()) > -1;
+            return (g.GroupName.trim().toLowerCase().indexOf(groupNameSearch?.trim().toLowerCase()) > -1) && (!!showTestGroups ? g.IsTestGroup : g);
         }).map((group) => {
             const isExist = selectedList?.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
             return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
@@ -189,23 +189,28 @@ const Groups = ({ classes,
     }
 
     const sortBy = (sortBy, direction) => {
+        console.log("NORMAL:", list)
         if (list) {
             if (sortBy === "Group Name") {
-                direction === 'asc'
-                    ? list.sort((a, b) =>
+                if (direction === 'asc') {
+                    list.sort((a, b) =>
                         a.GroupName.toUpperCase() < b.GroupName.toUpperCase()
                             ? -1
                             : Number(
                                 a.GroupName.toUpperCase() > b.GroupName.toUpperCase()
                             )
                     )
-                    : list.sort((a, b) =>
+                }
+                else {
+                    list.sort((a, b) =>
                         b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
                             ? -1
                             : Number(
                                 b.GroupName.toUpperCase() > a.GroupName.toUpperCase()
                             )
-                    );
+                    )
+                    console.log("SORTED: ", list)
+                };
             } else if (sortBy === "Update Date" && list[0] && list[0].UpdateDate) {
                 direction === 'asc'
                     ? list.sort((a, b) =>
@@ -248,6 +253,7 @@ const Groups = ({ classes,
                 }
             }
         }
+        console.log("Sorted:", list)
     }
 
     return (

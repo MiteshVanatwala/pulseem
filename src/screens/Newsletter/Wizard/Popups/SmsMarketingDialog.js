@@ -1,4 +1,4 @@
-import { Button, Select, FormControl, Grid, Typography, MenuItem } from '@material-ui/core'
+import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText } from '@material-ui/core'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
@@ -40,6 +40,7 @@ const SmsMarketingDialog = ({
     const [newSmsVerification, setNewSmsVerification] = useState(false);
     const [showLoader, setLoader] = useState(false);
     const [numberVerified, setNumberVerified] = useState(true);
+    const [errors, setErrors] = useState({});
 
     const sendToOptions = [
         {
@@ -118,7 +119,10 @@ const SmsMarketingDialog = ({
         });
     }
 
+
+
     const handleConfirm = async () => {
+
         setLoader(true);
         const date = moment(smsModel.SendDate).format("DD-MM-YYYY");
         const hour = moment(smsModel.SendTime).format("HH:mm:ss");
@@ -172,21 +176,27 @@ const SmsMarketingDialog = ({
     }
 
     const handleValidation = () => {
-        const errors = [];
-        if (!smsModel.FromNumber || smsModel.FromNumber === '') {
-            errors.push('Invalid from number');
+        const tempErrors = { ...errors };
+        if (!smsModel.FromNumber) {
+            tempErrors.FromNumber = 'From Number is required';
         }
-        if (smsModel.Text === '') {
-            errors.push('Text is required');
+        if (!smsModel.Text) {
+            tempErrors.Text = 'Text is required';
         }
         if (!smsModel.SendDate) {
-            errors.push('Date and time are required');
+            tempErrors.SendDate = 'Date is required';
+        }
+        if (!smsModel.SendTime) {
+            tempErrors.SendTime = 'Time is required';
         }
         if (!numberVerified) {
-            errors.push('Please verified from number');
+            tempErrors.numberVerified = 'Please verified from number';
         }
-
-        return errors.length === 0;
+        if (!tempErrors.SendSmsTo) {
+            tempErrors.SendSmsTo = 'Send to is required ';
+        }
+        setErrors({ ...tempErrors })
+        return Object.values(tempErrors).length === 0;
     }
 
     return {
@@ -205,7 +215,7 @@ const SmsMarketingDialog = ({
                     <Typography>
                         {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.sendTo')}
                     </Typography>
-                    <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }}>
+                    <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }} error={!!errors.SendSmsTo}>
                         <Select
                             style={{
                                 height: 40
@@ -226,13 +236,15 @@ const SmsMarketingDialog = ({
                                 )
                             }
                         </Select>
+                        {errors.SendSmsTo && <FormHelperText>{errors.SendSmsTo}</FormHelperText>}
                     </FormControl >
                 </Grid>
                 <Grid item sm={12} md={6}>
                     <LabeledTextField
                         textFieldProps={{
                             className: classes.NoPaddingtextField,
-                            // helperText: "Some important text",
+                            helperText: !!errors.FromNumber && errors.FromNumber,
+                            error: !!errors.FromNumber,
                             onChange: (e) => {
                                 handleFromNumber(e.target.value);
                             },
@@ -269,6 +281,8 @@ const SmsMarketingDialog = ({
                         }}
                         placeholder={t("notifications.date")}
                         timePickerOpen={true}
+                        error={!!errors.SendDate}
+                        helperText={!!errors.SendDate && errors.SendDate}
                     />
                 </Grid>
                 <Grid item sm={12} md={6}>
@@ -285,6 +299,8 @@ const SmsMarketingDialog = ({
                         placeholder={t("notifications.hour")}
                         isTimePicker={true}
                         ampm={false}
+                        error={!!errors.SendTime}
+                        helperText={!!errors.SendTime && errors.SendTime}
                     />
                 </Grid>
                 <Grid item md={12}>
@@ -328,6 +344,7 @@ const SmsMarketingDialog = ({
                         onFromNumberInit={(fromNumber) => setSmsModel({ ...smsModel, FromNumber: fromNumber })}
                         linkToCampaign={linkToCampaign}
                         linkToUpdate={linkToUpdate} />
+                    {errors.Text && <p className={classes.errorText}>{errors.Text}</p>}
                 </Grid>
                 {newSmsVerification && <VerificationDialog
                     classes={classes}
