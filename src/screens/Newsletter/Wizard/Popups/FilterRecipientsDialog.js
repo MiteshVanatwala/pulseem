@@ -1,4 +1,4 @@
-import { Box, Checkbox } from '@material-ui/core';
+import { Box, Checkbox, Typography } from '@material-ui/core';
 import React from 'react'
 import { useTranslation } from 'react-i18next';
 import { FaFilter } from 'react-icons/fa';
@@ -29,7 +29,7 @@ const FilterRecipientsDialog = ({ classes: classes, onClose = () => null, onConf
                         inputProps={{ "aria-label": "secondary checkbox" }}
                         onClick={() => setFilterValues({ ...filterValues, toggleReci: !filterValues.toggleReci, exceptionalDays: '' })}
                     />
-                    <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font13}>
+                    <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font14}>
                         {t("smsReport.filterInputText")}
                     </span>
                     <div style={{ marginRight: isRTL ? 'auto' : null, marginLeft: !isRTL ? 'auto' : null }}>
@@ -48,7 +48,9 @@ const FilterRecipientsDialog = ({ classes: classes, onClose = () => null, onConf
                     </div>
                 </div>
                 <div>
-                    <span className={classes.font13}> {t("smsReport.inputTextFilter")}:</span>
+                    <Box className={classes.mb10}>
+                        <Typography className={clsx(classes.font14, classes.bold)}> {t("smsReport.inputTextFilter")}: </Typography>
+                    </Box>
                     <div>
                         <div
                             className={clsx(classes.sidebar)}
@@ -74,7 +76,9 @@ const FilterRecipientsDialog = ({ classes: classes, onClose = () => null, onConf
                     </div>
                 </div>
                 <div className={classes.camapignsDiv}>
-                    <span className={classes.font13}>{t("smsReport.campaignInfo")}:</span>
+                    <Box className={classes.mb10}>
+                        <Typography className={clsx(classes.font14, classes.bold)}>{t("smsReport.campaignInfo")}:</Typography>
+                    </Box>
                     <div>
                         <div className={clsx(classes.sidebar)}>
                             <Groups

@@ -6,7 +6,7 @@ import moment from "moment";
 import { DateField } from "../managment/index";
 import clsx from "clsx";
 import { Stack } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -33,6 +33,7 @@ const SendingMethod = ({
     const { t } = useTranslation();
     const styles = useStyles();
     const { extraData } = useSelector((state) => state.sms);
+    const [date, setDate] = useState(moment(campaign?.SendDate))
 
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
@@ -47,24 +48,21 @@ const SendingMethod = ({
     }
 
     const handleDatePicker = (value) => {
-        onUpdateCampaign({ SendDate: value })
+        setDate(moment(value))
     }
 
-    const handleTimePicker = (value) => {
-        var date = campaign.SendDate ? moment(campaign.SendDate) : moment();
-        var time = moment(value, "HH:mm");
-
-        date.set({
-            hour: time.get("hour"),
-            minute: time.get("minute"),
-        });
-
-        if (date < moment()) {
-            date = moment();
-            setToastMessage(ToastMessages.DATE_PASS);
+    useEffect(() => {
+        if (date) {
+            onUpdateCampaign({ SendDate: date });
         }
+    }, [date]);
 
-        onUpdateCampaign({ SendDate: date, timePickerOpen: false });
+
+    const handleTimePicker = (value) => {
+        const finalDate = moment(value, "YYYY-MM-DD HH:mm:ss");
+        finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
+        const newVal = finalDate.format();
+        setDate(newVal);
     }
 
     const handleSelectChange = (e) => {
@@ -143,7 +141,7 @@ const SendingMethod = ({
                                             onUpdateCampaign({ ...campaign, IsBestTime: !campaign.IsBestTime })
                                         }}
                                     />
-                                    <span><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </span>
+                                    <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
                                     <Tooltip
                                         disableFocusListener
                                         title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
@@ -212,7 +210,7 @@ const SendingMethod = ({
                                             onUpdateCampaign({ ...campaign, IsBestTime: !campaign.IsBestTime })
                                         }}
                                     />
-                                    <span><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </span>
+                                     <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
                                     <Tooltip
                                         disableFocusListener
                                         title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}

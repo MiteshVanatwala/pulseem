@@ -100,7 +100,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
-    const { testGroups, finishedCampaigns } = useSelector((state) => state.sms);
+    const { finishedCampaigns, extraData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
@@ -153,7 +153,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [segmantIndication, setSegmantIndication] = useState(false);
     const [pulseIndication, setPulseIndication] = useState(false);
     const [smsMarketingIndication, setSmsMarketingIndication] = useState(false);
-
     const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0)
 
 
@@ -187,10 +186,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 Message: e
             }));
         }
-        finally {
-            setLoader(false);
-        }
-
     }
 
     useEffect(() => {
@@ -202,22 +197,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const getData = async () => {
         setLoader(true);
         if (params?.id) {
-            await dispatch(getFinishedCampaigns());
-            await dispatch(getGroups());
+            if (!finishedCampaigns || finishedCampaigns.length === 0)
+                await dispatch(getFinishedCampaigns());
+            if (!groupData || groupData.length === 0)
+                await dispatch(getGroups());
             await dispatch(getEmailSendSettings(params.id));
-            await dispatch(getTestGroups());
+            if (!testGroups || testGroups.length === 0)
+                await dispatch(getTestGroups());
+            if (!extraData || extraData.length === 0)
+                await dispatch(getAccountExtraData());
         }
-    };
-
-    const getDataExtra = async () => {
-        // COMMENT: After Refractor we nned to fetch extraData from  State 
-        await dispatch(getAccountExtraData());
         setLoader(false);
     };
 
     useEffect(() => {
         getData();
-        getDataExtra();
     }, [dispatch]);
 
     const handlePreviousPage = () => {
@@ -581,6 +575,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.INVALID_API_MISSING_KEY);
                 break;
             }
+            default:
+            case 200:
             case 500: {
                 setToastMessage(ToastMessages.GENERAL_ERROR);
             }
@@ -601,7 +597,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
                     showFilter={false}
                     isSms={true}
-                    bsDot={bsDot}
                     uniqueKey={'groups_1'}
                     innerHeight={325}
                 />,
@@ -819,7 +814,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 className={classes.wizardFlex}
                 style={{
                     height: '65vh',
-                    width: '60vh'
+                    width: '70vh'
                 }}
             >
                 <Stack className={classes.tabDiv} direction="row"
@@ -988,13 +983,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             {renderBody()}
                         </Grid>
                         <Grid item md={5} xs={12}>
-                            {SendingMethod({
-                                classes: classes,
-                                ToastMessages: ToastMessages,
-                                setToastMessage: setToastMessage,
-                                campaign: campaignValues,
-                                onUpdateCampaign: (data) => setCampaignValues({ ...campaignValues, ...data }),
-                                extraButtons:
+                            <SendingMethod
+                                classes={classes}
+                                ToastMessages={ToastMessages}
+                                setToastMessage={setToastMessage}
+                                campaign={{ ...campaignValues }}
+                                onUpdateCampaign={(data) => setCampaignValues({ ...campaignValues, ...data })}
+                                extraButtons={
                                     <>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!pulseIndication}>
@@ -1019,13 +1014,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Tooltip>
                                         </Stack>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Button
-                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0}
-                                                onClick={() => setDialogType({ type: 'filterRecipients' })}
-                                            >
-                                                {t('mainReport.recipientFilter')}
-                                            </Button>
+                                            <Badge variant="dot" color="primary" invisible={!segmantIndication}>
+                                                <Button
+                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                    disabled={!selectedGroups || selectedGroups?.length === 0}
+                                                    onClick={() => setDialogType({ type: 'filterRecipients' })}
+                                                >
+                                                    {t('mainReport.recipientFilter')}
+                                                </Button>
+                                            </Badge>
                                         </Stack>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
                                             <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
@@ -1041,8 +1038,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Badge>
                                         </Stack>
                                     </>
-
-                            })}
+                                } />
                         </Grid>
                     </Grid>
                 </div>
