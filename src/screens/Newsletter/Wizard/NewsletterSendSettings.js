@@ -13,9 +13,9 @@ import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useNavigate, useParams } from "react-router";
 import { BsTrash } from "react-icons/bs";
 import WizardTitle from '../../../components/Wizard/WizardTitle'
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid, Box } from "@material-ui/core";
 import {
-    getAccountExtraData, getFinishedCampaigns, getTestGroups, getSmsMarketing
+    getAccountExtraData, getPreviousCampaignData, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
 import { combinedGroup, addRecipient, addRecipients, createGroup } from "../../../redux/reducers/groupSlice";
 import { getAuthorizeNumbers } from '../../../redux/reducers/commonSlice'
@@ -102,7 +102,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
-    const { finishedCampaigns, extraData, testGroups } = useSelector((state) => state.sms);
+    const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
@@ -183,12 +183,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
-            setTotalCampaigns(finishedCampaigns?.length ?? 0);
+            setTotalCampaigns(previousCampaignData?.length ?? 0);
             GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
             setFilterValues({
                 ...filterValues,
                 selectedFilterGroups: ExeptionalGroups ? groupData?.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
-                selectedFilterCampaigns: ExeptionalCampaigns ? finishedCampaigns?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
+                selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
 
@@ -213,8 +213,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             try {
                 await dispatch(getEmailSendSettings(params.id));
 
-                if (!finishedCampaigns || finishedCampaigns.length === 0)
-                    await dispatch(getFinishedCampaigns());
+                if (!previousCampaignData || previousCampaignData.length === 0)
+                    await dispatch(getPreviousCampaignData());
                 if (!groupData || groupData?.length === 0)
                     await dispatch(getGroups());
                 if (!testGroups || testGroups.length === 0)
@@ -249,8 +249,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         let response = null;
         let payload = {
             ...campaignValues,
-            ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.join(','),
-            ExeptionalGroups: filterValues?.selectedFilterGroups?.join(','),
+            ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.map(x => x.CampaignID)?.join(','),
+            ExeptionalGroups: filterValues?.selectedFilterGroups?.map(x => x.GroupID)?.join(','),
             CampaignID: params.id,
             Status: campaignValues.Status,
             PulseAmount: campaignValues.SendingMethod === 3 ? null : campaignValues.PulseAmount,
@@ -648,7 +648,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             classes: classes,
             onClose: () => setDialogType(null),
             onConfirm: () => handleFilterConfirm(),
-            totalCampaigns: finishedCampaigns,
+            totalCampaigns: previousCampaignData,
             callbackFiltertedCampaigns: (campaign) => callbackFiltertedCampaigns(campaign),
             callbackUpdateCampaignFilter: (group) => callbackUpdateGroupFilterd(group),
             handleReciInput: handleReciInput,
@@ -862,236 +862,234 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             classes={classes}
             customPadding={true}>
             <RenderToast toastMessage={toastMessage} time={4000} />
-            <div>
-                <div>
-                    <WizardTitle title={t("campaigns.newsLetterSendSettings.title")}
-                        classes={classes}
-                    />
-                    <Grid container style={{ marginBottom: "40px" }} spacing={5}>
-                        <Grid item md={7} xs={12}>
-                            <Stack className={classes.infoDiv} direction="row" style={{ height: 50 }}>
-                                <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
-                                <Tooltip
-                                    disableFocusListener
-                                    title={t("smsReport.whomtoSendTip")}
-                                    classes={{ tooltip: styles.customWidth }}
-                                >
-                                    <span className={classes.bodyInfo}>i</span>
-                                </Tooltip>
-                            </Stack>
-                            <Stack
-                                direction="column"
-                                justifyContent="flex-start"
-                                className={classes.wizardFlex}
+            <Box>
+                <WizardTitle title={t("campaigns.newsLetterSendSettings.title")}
+                    classes={classes}
+                />
+                <Grid container style={{ marginBottom: "40px" }} spacing={5}>
+                    <Grid item md={7} xs={12}>
+                        <Stack className={classes.infoDiv} direction="row" style={{ height: 50 }}>
+                            <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+                            <Tooltip
+                                disableFocusListener
+                                title={t("smsReport.whomtoSendTip")}
+                                classes={{ tooltip: styles.customWidth }}
                             >
-                                <Stack className={classes.tabDiv} direction="row" justifyContent="space-around">
-                                    <Stack key={`tabTitle0`}
-                                        justifyContent="center"
-                                        direction="row"
-                                        className={
-                                            clsx(classes.tab1, activeTab === 0 ? classes.activeTab : '', classes.w50)
-                                        }
-                                        onClick={() => setActiveTab(0)}
+                                <span className={classes.bodyInfo}>i</span>
+                            </Tooltip>
+                        </Stack>
+                        <Stack
+                            direction="column"
+                            justifyContent="flex-start"
+                            className={classes.wizardFlex}
+                        >
+                            <Stack className={classes.tabDiv} direction="row" justifyContent="space-around">
+                                <Stack key={`tabTitle0`}
+                                    justifyContent="center"
+                                    direction="row"
+                                    className={
+                                        clsx(classes.tab1, activeTab === 0 ? classes.activeTab : '', classes.w50)
+                                    }
+                                    onClick={() => setActiveTab(0)}
+                                >
+                                    <span
+                                        style={{ cursor: "pointer" }}
                                     >
+                                        {t("mainReport.groups")}
+                                    </span>
+                                </Stack>
+                                <Stack key={`tabTitle1`}
+                                    justifyContent="center"
+                                    direction="row"
+                                    className={
+                                        clsx(classes.tab1, activeTab === 1 ? classes.activeTab : '', classes.w50)
+                                    }
+                                    onClick={() => setActiveTab(1)}
+                                >
+                                    <>
                                         <span
                                             style={{ cursor: "pointer" }}
                                         >
-                                            {t("mainReport.groups")}
+                                            {t("mainReport.manual")}
                                         </span>
-                                    </Stack>
-                                    <Stack key={`tabTitle1`}
-                                        justifyContent="center"
-                                        direction="row"
-                                        className={
-                                            clsx(classes.tab1, activeTab === 1 ? classes.activeTab : '', classes.w50)
-                                        }
-                                        onClick={() => setActiveTab(1)}
-                                    >
-                                        <>
-                                            <span
-                                                style={{ cursor: "pointer" }}
-                                            >
-                                                {t("mainReport.manual")}
-                                            </span>
-                                            <Tooltip
-                                                disableFocusListener
-                                                title={t("smsReport.manualTip")}
-                                                classes={{ tooltip: styles.customWidth }}
-                                            >
-                                                <span className={clsx(classes.bodyInfo, classes.ml5)}>i</span>
-                                            </Tooltip>
-                                        </>
-                                    </Stack>
+                                        <Tooltip
+                                            disableFocusListener
+                                            title={t("smsReport.manualTip")}
+                                            classes={{ tooltip: styles.customWidth }}
+                                        >
+                                            <span className={clsx(classes.bodyInfo, classes.ml5)}>i</span>
+                                        </Tooltip>
+                                    </>
                                 </Stack>
                             </Stack>
-                            {groupData?.Groups && <Stack justifyContent="center" >
-                                {activeTab === 0 &&
-                                    <Groups
-                                        classes={classes}
-                                        list={showTestGroups ? [...testGroups, ...groupData?.Groups] : [...groupData?.Groups]}
-                                        selectedList={selectedGroups}
-                                        callbackSelectedGroups={callbackSelectedGroups}
-                                        callbackUpdateGroups={callbackUpdateGroups}
-                                        callbackSelectAll={callbackSelectAll}
-                                        //callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
-                                        callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
-                                        showFilter={false}
-                                        isSms={true}
-                                        uniqueKey={'groups_2'}
-                                        innerHeight={240}
-                                    />
-                                }
-                                {activeTab === 1 && <Stack
-                                >
-                                    <UploadXL
-                                        classes={classes}
-                                        areaStyle={{
-                                            height: 304
-                                        }}
-                                        onDone={(groupName, res, uploadedAsFile) => {
-                                            handleUploadRecipients(groupName, res, uploadedAsFile);
-                                        }}
-                                        settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
-                                        // uploadToGroups={selectedGroups}
-                                        setToastMessage={setToastMessage}
-                                        placeHolder={"recipient.addRecTextareaPlaceholder"}
-                                        tooltipText='recipient.bulkRecUpldTooltipText'
-                                        onlyMapping={true}
-                                        extraButtons={
-                                            <>
-                                                <Button
-                                                    key={"extraButton"}
-                                                    className={classes.addManualDiv}
-                                                    onClick={() => {
-                                                        setDialogType({ type: "quickMnualUpload" })
-                                                    }}
-                                                >
-                                                    {t("campaigns.newsLetterSendSettings.quickMSend")}
-                                                </Button>
-                                            </>
-                                        }
-                                    />
-                                </Stack>}
-                                {activeTab === 0 && <Stack className={classes.groupsFooter}>
-                                    <Stack direction="column">
-                                        <Stack direction="row" justifyContent="space-between">
-                                            <Stack
-                                                className={classes.createGroupContainer}
-                                                direction="row"
-                                            >
-                                                <Checkbox
-                                                    disabled={selectedGroups.length >= 2 ? false : true}
-                                                    checked={newGroupDetails.toggleChecked}
-                                                    color="primary"
-                                                    inputProps={{ "aria-label": "secondary checkbox" }}
-                                                    onClick={() => {
-                                                        setNewGroupDetails({ ...newGroupDetails, toggleChecked: !newGroupDetails.toggleChecked });
-                                                    }}
-                                                />
-                                                <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
-                                                <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
-                                                <Tooltip
-                                                    disableFocusListener
-                                                    title={t("mainReport.tooltipCreateGroup")}
-                                                    classes={{ tooltip: styles.customWidth }}
-                                                    style={{ marginInlineStart: "5px" }}
-                                                >
-                                                    <span className={classes.bodyInfo}>i</span>
-                                                </Tooltip>
-                                            </Stack>
-
-                                            <Stack
-                                                style={{
-                                                    display: "flex",
-                                                    marginTop: "10px",
+                        </Stack>
+                        {groupData?.Groups && <Stack justifyContent="center" >
+                            {activeTab === 0 &&
+                                <Groups
+                                    classes={classes}
+                                    list={showTestGroups ? [...testGroups, ...groupData?.Groups] : [...groupData?.Groups]}
+                                    selectedList={selectedGroups}
+                                    callbackSelectedGroups={callbackSelectedGroups}
+                                    callbackUpdateGroups={callbackUpdateGroups}
+                                    callbackSelectAll={callbackSelectAll}
+                                    //callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
+                                    callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+                                    showFilter={false}
+                                    isSms={true}
+                                    uniqueKey={'groups_2'}
+                                    innerHeight={240}
+                                />
+                            }
+                            {activeTab === 1 && <Stack
+                            >
+                                <UploadXL
+                                    classes={classes}
+                                    areaStyle={{
+                                        height: 304
+                                    }}
+                                    onDone={(groupName, res, uploadedAsFile) => {
+                                        handleUploadRecipients(groupName, res, uploadedAsFile);
+                                    }}
+                                    settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
+                                    // uploadToGroups={selectedGroups}
+                                    setToastMessage={setToastMessage}
+                                    placeHolder={"recipient.addRecTextareaPlaceholder"}
+                                    tooltipText='recipient.bulkRecUpldTooltipText'
+                                    onlyMapping={true}
+                                    extraButtons={
+                                        <>
+                                            <Button
+                                                key={"extraButton"}
+                                                className={classes.addManualDiv}
+                                                onClick={() => {
+                                                    setDialogType({ type: "quickMnualUpload" })
                                                 }}
-                                                direction="row"
                                             >
-                                                <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
-                                                    return a + b['Recipients'];
-                                                }, 0).toLocaleString()}</span>
-                                                <Tooltip
-                                                    placement={'bottom'}
-                                                    disableFocusListener
-                                                    title={t("smsReport.finalReciTip")}
-                                                    classes={{ tooltip: styles.customWidth }}
-                                                    style={{ marginInlineStart: "5px" }}
-                                                >
-                                                    <span className={classes.bodyInfo}>i</span>
-                                                </Tooltip>
-                                            </Stack>
-                                        </Stack>
-
-                                        {NewGroupForm()}
-                                    </Stack>
-                                </Stack>
-                                }
+                                                {t("campaigns.newsLetterSendSettings.quickMSend")}
+                                            </Button>
+                                        </>
+                                    }
+                                />
                             </Stack>}
-                        </Grid>
-                        <Grid item md={5} xs={12}>
-                            <SendingMethod
-                                classes={classes}
-                                ToastMessages={ToastMessages}
-                                setToastMessage={setToastMessage}
-                                campaign={{ ...campaignValues }}
-                                onUpdateCampaign={(data) => {
-                                    setCampaignValues({ ...campaignValues, ...data })
-                                }}
-                                extraButtons={
-                                    <>
-                                        <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Badge variant="dot" color="primary" invisible={!pulseIndication}>
-                                                <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                    disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3}
-                                                    onClick={() => {
-                                                        handlePulseDialog();
-                                                    }}
-                                                >
-                                                    <FaRegCalendarAlt style={{ paddingInline: 5 }} />
-                                                    {t("mainReport.pulseSend")}
-                                                </Button>
-                                            </Badge>
+                            {activeTab === 0 && <Stack className={classes.groupsFooter}>
+                                <Stack direction="column">
+                                    <Stack direction="row" justifyContent="space-between">
+                                        <Stack
+                                            className={classes.createGroupContainer}
+                                            direction="row"
+                                        >
+                                            <Checkbox
+                                                disabled={selectedGroups.length >= 2 ? false : true}
+                                                checked={newGroupDetails.toggleChecked}
+                                                color="primary"
+                                                inputProps={{ "aria-label": "secondary checkbox" }}
+                                                onClick={() => {
+                                                    setNewGroupDetails({ ...newGroupDetails, toggleChecked: !newGroupDetails.toggleChecked });
+                                                }}
+                                            />
+                                            <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
+                                            <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
                                             <Tooltip
                                                 disableFocusListener
-                                                style={{ marginInlineEnd: isRTL ? 15 : 0, marginInlineStart: 10 }}
-                                                title={t("smsReport.pulseSendTip")}
+                                                title={t("mainReport.tooltipCreateGroup")}
                                                 classes={{ tooltip: styles.customWidth }}
+                                                style={{ marginInlineStart: "5px" }}
                                             >
                                                 <span className={classes.bodyInfo}>i</span>
                                             </Tooltip>
                                         </Stack>
-                                        <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Badge variant="dot" color="primary" invisible={!segmantIndication}>
-                                                <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                    disabled={!selectedGroups || selectedGroups?.length === 0}
-                                                    onClick={() => setDialogType({ type: 'filterRecipients' })}
-                                                >
-                                                    {t('mainReport.recipientFilter')}
-                                                </Button>
-                                            </Badge>
+
+                                        <Stack
+                                            style={{
+                                                display: "flex",
+                                                marginTop: "10px",
+                                            }}
+                                            direction="row"
+                                        >
+                                            <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
+                                                return a + b['Recipients'];
+                                            }, 0).toLocaleString()}</span>
+                                            <Tooltip
+                                                placement={'bottom'}
+                                                disableFocusListener
+                                                title={t("smsReport.finalReciTip")}
+                                                classes={{ tooltip: styles.customWidth }}
+                                                style={{ marginInlineStart: "5px" }}
+                                            >
+                                                <span className={classes.bodyInfo}>i</span>
+                                            </Tooltip>
                                         </Stack>
-                                        <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
-                                                <Button
-                                                    className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                    disabled={!selectedGroups || selectedGroups?.length === 0}
-                                                    onClick={() => {
-                                                        handleSmsMarketing();
-                                                    }}
-                                                >
-                                                    {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
-                                                </Button>
-                                            </Badge>
-                                        </Stack>
-                                    </>
-                                } />
-                        </Grid>
+                                    </Stack>
+
+                                    {NewGroupForm()}
+                                </Stack>
+                            </Stack>
+                            }
+                        </Stack>}
                     </Grid>
-                </div>
-                <WizardButtons />
-            </div>
+                    <Grid item md={5} xs={12}>
+                        <SendingMethod
+                            classes={classes}
+                            ToastMessages={ToastMessages}
+                            setToastMessage={setToastMessage}
+                            campaign={{ ...campaignValues }}
+                            onUpdateCampaign={(data) => {
+                                setCampaignValues({ ...campaignValues, ...data })
+                            }}
+                            extraButtons={
+                                <>
+                                    <Stack direction="row" justifyContent="center" alignItems="center">
+                                        <Badge variant="dot" color="primary" invisible={!pulseIndication}>
+                                            <Button
+                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3}
+                                                onClick={() => {
+                                                    handlePulseDialog();
+                                                }}
+                                            >
+                                                <FaRegCalendarAlt style={{ paddingInline: 5 }} />
+                                                {t("mainReport.pulseSend")}
+                                            </Button>
+                                        </Badge>
+                                        <Tooltip
+                                            disableFocusListener
+                                            style={{ marginInlineEnd: isRTL ? 15 : 0, marginInlineStart: 10 }}
+                                            title={t("smsReport.pulseSendTip")}
+                                            classes={{ tooltip: styles.customWidth }}
+                                        >
+                                            <span className={classes.bodyInfo}>i</span>
+                                        </Tooltip>
+                                    </Stack>
+                                    <Stack direction="row" justifyContent="center" alignItems="center">
+                                        <Badge variant="dot" color="primary" invisible={!segmantIndication}>
+                                            <Button
+                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0}
+                                                onClick={() => setDialogType({ type: 'filterRecipients' })}
+                                            >
+                                                {t('mainReport.recipientFilter')}
+                                            </Button>
+                                        </Badge>
+                                    </Stack>
+                                    <Stack direction="row" justifyContent="center" alignItems="center">
+                                        <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
+                                            <Button
+                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0}
+                                                onClick={() => {
+                                                    handleSmsMarketing();
+                                                }}
+                                            >
+                                                {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
+                                            </Button>
+                                        </Badge>
+                                    </Stack>
+                                </>
+                            } />
+                    </Grid>
+                </Grid>
+            </Box>
+            <WizardButtons />
             {renderDialog()}
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
                 classes={classes}
@@ -1195,7 +1193,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     {t("sms.filtersSave")}
                 </Alert>
             </Snackbar>
-            {/* {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />} */}
             <Loader isOpen={showLoader} />
         </DefaultScreen >
     )

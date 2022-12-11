@@ -1,12 +1,11 @@
 import { Box, Checkbox, Typography } from '@material-ui/core';
-import React from 'react'
 import { useTranslation } from 'react-i18next';
 import { FaFilter } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import Groups from '../../../../components/Groups/GroupsHandler/Groups';
 import clsx from 'clsx';
 
-const FilterRecipientsDialog = ({ classes: classes, onClose = () => null, onConfirm = () => null, groupList = [], totalCampaigns = [], callbackFilteredGroups = () => null, callbackUpdateGroupFilterd = () => null, callbackFiltertedCampaigns = () => null, callbackUpdateCampaignFilter = () => null, callbackShowTestGroup = () => null, handleReciInput = () => null, filterValues, setFilterValues = () => null }) => {
+const FilterRecipientsDialog = ({ classes, onClose = () => null, onConfirm = () => null, groupList = [], totalCampaigns = [], callbackFilteredGroups = () => null, callbackUpdateGroupFilterd = () => null, callbackFiltertedCampaigns = () => null, callbackUpdateCampaignFilter = () => null, callbackShowTestGroup = () => null, handleReciInput = () => null, filterValues, setFilterValues = () => null }) => {
     const { t } = useTranslation()
     const { windowSize, isRTL } = useSelector(
         (state) => state.core

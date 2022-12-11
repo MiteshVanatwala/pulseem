@@ -396,8 +396,8 @@ const SendingMethod = ({
 
                 {campaign?.PulseAmount && campaign?.PulseAmount > 0 && campaign.SendingMethod !== 3 ? (
                     <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-                        {t("smsReport.packetSend")} - {campaign.PulseAmount} {t("sms.recipients")} {" "}
-                        {t("sms.every")} {campaign.TimeInterval} {t("common.hours")}
+                        {t("smsReport.packetSend")} - {campaign.PulseAmount} {parseInt(campaign.PulseAmount) === 1 ? t("common.Recipient") : t("common.Recipients")} {" "}
+                        {t("sms.every")} {campaign.TimeInterval} {parseInt(campaign.TimeInterval) === 1 ? t("sms.hour") : t("sms.hours")}
                     </span>
                 ) : null}
             </div>
