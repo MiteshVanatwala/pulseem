@@ -9,7 +9,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import { Dialog } from "../../../components/managment/index";
 import { Loader } from '../../../components/Loader/Loader';
 import Checkbox from "@material-ui/core/Checkbox";
-import Groups from "../../../components/Notifications/Groups/Groups";
+import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useNavigate, useParams } from "react-router";
 import { BsTrash } from "react-icons/bs";
 import WizardTitle from '../../../components/Wizard/WizardTitle'
@@ -153,8 +153,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [segmantIndication, setSegmantIndication] = useState(false);
     const [pulseIndication, setPulseIndication] = useState(false);
     const [smsMarketingIndication, setSmsMarketingIndication] = useState(false);
-    const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0)
-
+    const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0);
+    const [showTestGroups, setShowTestGroups] = useState(false);
+    const [allGroupsSelected, setAllGroupsSelected] = useState(false);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -162,7 +163,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
 
         try {
-            if (!newsletterSettings)
+            if (newsletterSettings.length === 0)
                 return;
 
             const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [] } = newsletterSettings;
@@ -175,7 +176,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
             setFilterValues({
                 ...filterValues,
-                selectedFilterGroups: ExeptionalGroups ? groupData.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
+                selectedFilterGroups: ExeptionalGroups ? groupData?.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
                 selectedFilterCampaigns: ExeptionalCampaigns ? finishedCampaigns?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
             })
 
@@ -199,7 +200,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         if (params?.id) {
             if (!finishedCampaigns || finishedCampaigns.length === 0)
                 await dispatch(getFinishedCampaigns());
-            if (!groupData || groupData.length === 0)
+            if (!groupData || groupData?.length === 0)
                 await dispatch(getGroups());
             await dispatch(getEmailSendSettings(params.id));
             if (!testGroups || testGroups.length === 0)
@@ -386,7 +387,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const createNewGroup = async (groupName) => {
-        const nameExist = groupData.Groups.filter((g) => { return g?.GroupName === groupName });
+        const nameExist = groupData?.Groups.filter((g) => { return g?.GroupName === groupName });
         if (nameExist.length > 0) {
             setNewGroupDetails({ ...newGroupDetails, groupNameExist: true });
             return;
@@ -430,10 +431,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setFilterValues({ ...filterValues, selectedFilterGroups: [...filterValues.selectedFilterGroups, group] })
         }
     }
-    const callbackUpdateCampaignFilter = (campaigns) => {
-        setFilterValues({ ...filterValues, selectedFilterCampaigns: campaigns })
-        // setFilterCampaigns(campaigns)
-    }
     const callbackFiltertedCampaigns = (campaign) => {
         const found = filterValues.selectedFilterCampaigns
             .map((c) => {
@@ -455,60 +452,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <label dangerouslySetInnerHTML={createMarkup()}></label>
         );
     }
-
-    const TabComp = (tabs = []) => (
-        <Stack
-            direction="column"
-            justifyContent="flex-start"
-            className={classes.wizardFlex}
-        >
-            <Stack className={classes.infoDiv} direction="row">
-                <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
-                <Tooltip
-                    disableFocusListener
-                    title={t("smsReport.whomtoSendTip")}
-                    classes={{ tooltip: styles.customWidth }}
-                >
-                    <span className={classes.bodyInfo}>i</span>
-                </Tooltip>
-            </Stack>
-            <Stack className={classes.tabDiv} direction="row" justifyContent="space-around">
-                {tabs.map((tab, i) => (
-                    <Stack key={`tabTitle${i}`}
-                        justifyContent="center"
-                        direction="row"
-                        className={
-                            clsx(classes.tab1, activeTab === i ? classes.activeTab : '', classes.w50)
-                        }
-                        onClick={() => setActiveTab(i)}
-                    >
-                        {tab && <><span
-                            style={{ cursor: "pointer" }}
-                        >
-                            {tab.tabName || ''}
-                        </span>
-                            {tab.tooltip && <Tooltip
-                                disableFocusListener
-                                title={tab.tooltip}
-                                classes={{ tooltip: styles.customWidth }}
-                            >
-                                <span className={clsx(classes.bodyInfo, classes.ml5)}>i</span>
-                            </Tooltip>}
-                        </>
-                        }
-                    </Stack>
-                ))}
-            </Stack>
-            <Stack justifyContent="center" >
-                {tabs[activeTab]?.body || <p>Empty Tab</p>}
-            </Stack>
-
-            <Stack className={classes.groupsFooter}>
-                {tabs[activeTab]?.footer}
-            </Stack>
-        </Stack>
-    )
-
     const NewGroupForm = () => newGroupDetails.toggleChecked ? (
         <Stack direction="row">
             <input
@@ -581,117 +524,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.GENERAL_ERROR);
             }
         }
-    }
-
-    const renderBody = () => {
-        const Tab1 = {
-            tabName: t("mainReport.groups"),
-            body:
-                <Groups
-                    classes={classes}
-                    list={groupData.Groups ? [...groupData.Groups] : []}
-                    selectedList={selectedGroups}
-                    callbackSelectedGroups={(g) => callbackSelectedGroups(g)}
-                    callbackUpdateGroups={(groups) => setSelectedGroups(groups)}
-                    callbackSelectAll={() => setSelectedGroups(groupData?.Groups?.length === selectedGroups.length ? [] : groupData?.Groups)}
-                    callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
-                    showFilter={false}
-                    isSms={true}
-                    uniqueKey={'groups_1'}
-                    innerHeight={325}
-                />,
-            footer: (
-                <Stack direction="column">
-                    <Stack direction="row" justifyContent="space-between">
-                        <Stack
-                            className={classes.createGroupContainer}
-                            direction="row"
-                        >
-                            <Checkbox
-                                disabled={selectedGroups.length >= 2 ? false : true}
-                                checked={newGroupDetails.toggleChecked}
-                                color="primary"
-                                inputProps={{ "aria-label": "secondary checkbox" }}
-                                onClick={() => {
-                                    setNewGroupDetails({ ...newGroupDetails, toggleChecked: !newGroupDetails.toggleChecked });
-                                }}
-                            />
-                            <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
-                            <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
-                            <Tooltip
-                                disableFocusListener
-                                title={t("mainReport.tooltipCreateGroup")}
-                                classes={{ tooltip: styles.customWidth }}
-                                style={{ marginInlineStart: "5px" }}
-                            >
-                                <span className={classes.bodyInfo}>i</span>
-                            </Tooltip>
-                        </Stack>
-
-                        <Stack
-                            style={{
-                                display: "flex",
-                                marginTop: "10px",
-                            }}
-                            direction="row"
-                        >
-                            <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
-                                return a + b['Recipients'];
-                            }, 0).toLocaleString()}</span>
-                            <Tooltip
-                                placement={'bottom'}
-                                disableFocusListener
-                                title={t("smsReport.finalReciTip")}
-                                classes={{ tooltip: styles.customWidth }}
-                                style={{ marginInlineStart: "5px" }}
-                            >
-                                <span className={classes.bodyInfo}>i</span>
-                            </Tooltip>
-                        </Stack>
-                    </Stack>
-
-                    {NewGroupForm()}
-                </Stack>
-            ),
-        }
-
-        const Tab2 = {
-            tabName: t("mainReport.manual"),
-            body: (
-                <Stack
-                >
-                    <UploadXL
-                        classes={classes}
-                        areaStyle={{
-                            height: 389
-                        }}
-                        onDone={(groupName, res, uploadedAsFile) => {
-                            handleUploadRecipients(groupName, res, uploadedAsFile);
-                        }}
-                        settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
-                        // uploadToGroups={selectedGroups}
-                        setToastMessage={setToastMessage}
-                        placeHolder={"recipient.addRecTextareaPlaceholder"}
-                        tooltipText='recipient.bulkRecUpldTooltipText'
-                        onlyMapping={true}
-                        extraButtons={
-                            <>
-                                <Button
-                                    className={classes.addManualDiv}
-                                    onClick={() => {
-                                        setDialogType({ type: "quickMnualUpload" })
-                                    }}
-                                >
-                                    {t("campaigns.newsLetterSendSettings.quickMSend")}
-                                </Button>
-                            </>
-                        }
-                    />
-                </Stack>
-            ),
-            tooltip: t("smsReport.manualTip")
-        }
-        return <>{TabComp([Tab1, Tab2])}</>
     }
 
     const WizardButtons = () => {
@@ -801,7 +633,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             handleReciInput: handleReciInput,
             filterValues: filterValues,
             setFilterValues: setFilterValues,
-            groupList: groupData.Groups,
+            groupList: groupData?.Groups,
             callbackUpdateGroupFilterd: callbackUpdateGroupFilterd,
             callbackFilteredGroups: callbackFilteredGroups,
             renderHtml: renderHtml,
@@ -879,7 +711,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 {
                     classes: classes,
                     styles: styles,
-                    groupList: groupData,
+                    groupList: groupData?.Groups,
                     manualValues: manualValues,
                     setManualValues: setManualValues,
                     newGroupDetails: newGroupDetails,
@@ -964,6 +796,23 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         return <></>
     }
 
+    const callbackUpdateGroups = (groups) => {
+        setSelectedGroups(groups);
+    }
+    const callbackSelectAll = () => {
+        if (!allGroupsSelected) {
+            if (showTestGroups) {
+                setSelectedGroups([...testGroups, ...groupData?.Groups]);
+            }
+            else {
+                setSelectedGroups([...groupData?.Groups]);
+            }
+        } else {
+            setSelectedGroups([]);
+        }
+        setAllGroupsSelected(!allGroupsSelected);
+    }
+
     return (
         <DefaultScreen
             currentPage="newsletter"
@@ -980,7 +829,164 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     />
                     <Grid container style={{ marginBottom: "40px" }} spacing={5}>
                         <Grid item md={7} xs={12}>
-                            {renderBody()}
+                            <Stack className={classes.infoDiv} direction="row">
+                                <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+                                <Tooltip
+                                    disableFocusListener
+                                    title={t("smsReport.whomtoSendTip")}
+                                    classes={{ tooltip: styles.customWidth }}
+                                >
+                                    <span className={classes.bodyInfo}>i</span>
+                                </Tooltip>
+                            </Stack>
+                            <Stack
+                                direction="column"
+                                justifyContent="flex-start"
+                                className={classes.wizardFlex}
+                            >
+                                <Stack className={classes.tabDiv} direction="row" justifyContent="space-around">
+                                    <Stack key={`tabTitle0`}
+                                        justifyContent="center"
+                                        direction="row"
+                                        className={
+                                            clsx(classes.tab1, activeTab === 0 ? classes.activeTab : '', classes.w50)
+                                        }
+                                        onClick={() => setActiveTab(0)}
+                                    >
+                                        <span
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            {t("mainReport.groups")}
+                                        </span>
+                                    </Stack>
+                                    <Stack key={`tabTitle1`}
+                                        justifyContent="center"
+                                        direction="row"
+                                        className={
+                                            clsx(classes.tab1, activeTab === 1 ? classes.activeTab : '', classes.w50)
+                                        }
+                                        onClick={() => setActiveTab(1)}
+                                    >
+                                        <>
+                                            <span
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                {t("mainReport.manual")}
+                                            </span>
+                                            <Tooltip
+                                                disableFocusListener
+                                                title={t("smsReport.manualTip")}
+                                                classes={{ tooltip: styles.customWidth }}
+                                            >
+                                                <span className={clsx(classes.bodyInfo, classes.ml5)}>i</span>
+                                            </Tooltip>
+                                        </>
+                                    </Stack>
+                                </Stack>
+                            </Stack>
+                            {groupData?.Groups && <Stack justifyContent="center" >
+                                {activeTab === 0 &&
+                                    <Groups
+                                        classes={classes}
+                                        list={showTestGroups ? [...testGroups, ...groupData?.Groups] : [...groupData?.Groups]}
+                                        selectedList={selectedGroups}
+                                        callbackSelectedGroups={callbackSelectedGroups}
+                                        callbackUpdateGroups={callbackUpdateGroups}
+                                        callbackSelectAll={callbackSelectAll}
+                                        //callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
+                                        callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+                                        showFilter={false}
+                                        isSms={true}
+                                        uniqueKey={'groups_2'}
+                                        innerHeight={325}
+                                    />
+                                }
+                                {activeTab === 1 && <Stack
+                                >
+                                    <UploadXL
+                                        classes={classes}
+                                        areaStyle={{
+                                            height: 389
+                                        }}
+                                        onDone={(groupName, res, uploadedAsFile) => {
+                                            handleUploadRecipients(groupName, res, uploadedAsFile);
+                                        }}
+                                        settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
+                                        // uploadToGroups={selectedGroups}
+                                        setToastMessage={setToastMessage}
+                                        placeHolder={"recipient.addRecTextareaPlaceholder"}
+                                        tooltipText='recipient.bulkRecUpldTooltipText'
+                                        onlyMapping={true}
+                                        extraButtons={
+                                            <>
+                                                <Button
+                                                    key={"extraButton"}
+                                                    className={classes.addManualDiv}
+                                                    onClick={() => {
+                                                        setDialogType({ type: "quickMnualUpload" })
+                                                    }}
+                                                >
+                                                    {t("campaigns.newsLetterSendSettings.quickMSend")}
+                                                </Button>
+                                            </>
+                                        }
+                                    />
+                                </Stack>}
+                                {activeTab === 0 && <Stack className={classes.groupsFooter}>
+                                    <Stack direction="column">
+                                        <Stack direction="row" justifyContent="space-between">
+                                            <Stack
+                                                className={classes.createGroupContainer}
+                                                direction="row"
+                                            >
+                                                <Checkbox
+                                                    disabled={selectedGroups.length >= 2 ? false : true}
+                                                    checked={newGroupDetails.toggleChecked}
+                                                    color="primary"
+                                                    inputProps={{ "aria-label": "secondary checkbox" }}
+                                                    onClick={() => {
+                                                        setNewGroupDetails({ ...newGroupDetails, toggleChecked: !newGroupDetails.toggleChecked });
+                                                    }}
+                                                />
+                                                <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
+                                                <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
+                                                <Tooltip
+                                                    disableFocusListener
+                                                    title={t("mainReport.tooltipCreateGroup")}
+                                                    classes={{ tooltip: styles.customWidth }}
+                                                    style={{ marginInlineStart: "5px" }}
+                                                >
+                                                    <span className={classes.bodyInfo}>i</span>
+                                                </Tooltip>
+                                            </Stack>
+
+                                            <Stack
+                                                style={{
+                                                    display: "flex",
+                                                    marginTop: "10px",
+                                                }}
+                                                direction="row"
+                                            >
+                                                <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
+                                                    return a + b['Recipients'];
+                                                }, 0).toLocaleString()}</span>
+                                                <Tooltip
+                                                    placement={'bottom'}
+                                                    disableFocusListener
+                                                    title={t("smsReport.finalReciTip")}
+                                                    classes={{ tooltip: styles.customWidth }}
+                                                    style={{ marginInlineStart: "5px" }}
+                                                >
+                                                    <span className={classes.bodyInfo}>i</span>
+                                                </Tooltip>
+                                            </Stack>
+                                        </Stack>
+
+                                        {NewGroupForm()}
+                                    </Stack>
+                                </Stack>
+                                }
+                            </Stack>}
                         </Grid>
                         <Grid item md={5} xs={12}>
                             <SendingMethod
@@ -1133,7 +1139,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             </Snackbar>
             {/* {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />} */}
             <Loader isOpen={showLoader} />
-        </DefaultScreen>
+        </DefaultScreen >
     )
 }
 

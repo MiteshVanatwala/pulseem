@@ -204,7 +204,7 @@ export const newsletterSlice = createSlice({
     newsletterArchiveData: [],
     newsletterSendSummary: [],
     newsletterSettings: [],
-    groupData: [],
+    groupData: null,
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
       INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },

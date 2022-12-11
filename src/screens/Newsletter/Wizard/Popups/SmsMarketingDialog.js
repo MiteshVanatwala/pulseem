@@ -194,7 +194,7 @@ const SmsMarketingDialog = ({
         if (!numberVerified) {
             tempErrors.numberVerified = 'Please verified from number';
         }
-        if (!tempErrors.SendSmsTo) {
+        if (!smsModel.SendSmsTo) {
             tempErrors.SendSmsTo = 'Send to is required ';
         }
         setErrors({ ...tempErrors })

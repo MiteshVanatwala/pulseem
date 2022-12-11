@@ -13,7 +13,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';
 import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
-import Groups from "../../../components/Notifications/Groups/Groups";
+import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";

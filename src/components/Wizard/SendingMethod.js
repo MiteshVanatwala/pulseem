@@ -39,10 +39,6 @@ const SendingMethod = ({
         (state) => state.core
     );
 
-    useEffect(() => {
-        console.log("CAMPAIGN:", campaign)
-    }, [campaign])
-
     const handleSendType = (sendingMethod) => {
         onUpdateCampaign({ SendingMethod: sendingMethod, IsBestTime: false })
     }
@@ -368,26 +364,6 @@ const SendingMethod = ({
                 </div>
                 <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
                 <Stack className={classes.pulseDiv} spacing={2} direction="row">
-                    {/* <Stack direction="row" justifyContent="center" alignItems="center">
-                        <Button
-                            className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                            disabled={!enablePulse}
-                            onClick={() => {
-                                handlePulseDialog();
-                            }}
-                        >
-                            <FaRegCalendarAlt style={{ paddingInline: 5 }} />
-                            {t("mainReport.pulseSend")}
-                        </Button>
-                        <Tooltip
-                            disableFocusListener
-                            style={{ marginInlineStart: 10 }}
-                            title={t("smsReport.pulseSendTip")}
-                            classes={{ tooltip: styles.customWidth }}
-                        >
-                            <span className={classes.bodyInfo}>i</span>
-                        </Tooltip>
-                    </Stack> */}
                     {extraButtons}
 
                 </Stack>
