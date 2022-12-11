@@ -105,7 +105,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [showLoader, setLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({
-        SendingMethod: 1
+        SendingMethod: 1,
+        CampaignID: params.id
     });
     const [totalCampaigns, setTotalCampaigns] = useState();
     const [groupList, setGroupList] = useState([]);
@@ -156,6 +157,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [mergedSegmentationDialog, setMergedSegmentationDialog] = useState(0);
     const [showTestGroups, setShowTestGroups] = useState(false);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+    const [dataReady, setDataReady] = useState(false);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -178,7 +180,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 ...filterValues,
                 selectedFilterGroups: ExeptionalGroups ? groupData?.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
                 selectedFilterCampaigns: ExeptionalCampaigns ? finishedCampaigns?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
-            })
+            });
+            setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
 
         } catch (e) {
             dispatch(sendToTeamChannel({
@@ -190,29 +193,38 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     useEffect(() => {
-        if (newsletterSettings) {
+        if (dataReady && newsletterSettings) {
             initOnReady();
         }
-    }, [newsletterSettings])
+    }, [dataReady, newsletterSettings])
 
-    const getData = async () => {
+    const getData = () => {
         setLoader(true);
-        if (params?.id) {
-            if (!finishedCampaigns || finishedCampaigns.length === 0)
-                await dispatch(getFinishedCampaigns());
-            if (!groupData || groupData?.length === 0)
-                await dispatch(getGroups());
-            await dispatch(getEmailSendSettings(params.id));
-            if (!testGroups || testGroups.length === 0)
-                await dispatch(getTestGroups());
-            if (!extraData || extraData.length === 0)
-                await dispatch(getAccountExtraData());
-        }
-        setLoader(false);
+        return new Promise(async (resolve, reject) => {
+            try {
+                await dispatch(getEmailSendSettings(params.id));
+
+                if (!finishedCampaigns || finishedCampaigns.length === 0)
+                    await dispatch(getFinishedCampaigns());
+                if (!groupData || groupData?.length === 0)
+                    await dispatch(getGroups());
+                if (!testGroups || testGroups.length === 0)
+                    await dispatch(getTestGroups());
+                if (!extraData || extraData.length === 0)
+                    await dispatch(getAccountExtraData());
+                resolve();
+            } catch (error) {
+                reject(error)
+            }
+        })
+
     };
 
     useEffect(() => {
-        getData();
+        getData().then(() => {
+            setLoader(false);
+            setDataReady(true);
+        })
     }, [dispatch]);
 
     const handlePreviousPage = () => {
@@ -761,19 +773,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose: () => navigate("/SMSCampaigns"),
                 onCancel: () => setDialogType(null),
             }),
-            // segmentation: MergedSegmentationDialog(),
-            smsMarketing: SmsMarketingDialog({
-                classes: classes,
-                selectedGroups: selectedGroups,
-                onUpdate: (res) => {
-                    if (res && res?.SMSCampaignID > 0) {
-                        setSmsMarketingIndication(true)
-                    }
-                },
-                onClose: () => setDialogType(null),
-                onCancel: () => setDialogType(null),
-                onConfirm: () => setDialogType(null)
-            }),
             sendSuccess: SendSuccessDialog(),
             summary: SummaryDialog({ classes: classes, count: data }),
             preSendSummary: PreSendSummary({ classes: classes, campaignId: params?.id, onClose: () => setDialogType(null), onConfirm: () => onSaveSettings(true) })
@@ -1051,6 +1050,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 <WizardButtons />
             </div>
             {renderDialog()}
+            {dataReady && <SmsMarketingDialog
+                classes={classes}
+                selectedGroups={selectedGroups}
+                newsletterSettings={campaignValues}
+                setDialogType={() => setDialogType(null)}
+                isOpen={dialogType?.type === 'smsMarketing'}
+                onUpdate={(res) => {
+                    if (res && res?.SMSCampaignID > 0) {
+                        setSmsMarketingIndication(true)
+                    }
+                }}
+                onClose={() => setDialogType(null)}
+                onCancel={() => setDialogType(null)}
+                onConfirm={() => setDialogType(null)}
+            />}
             {/* {renderSummary()} */}
             {/* {renderSendType2validation()} */}
             <Snackbar

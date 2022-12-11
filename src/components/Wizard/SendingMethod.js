@@ -1,4 +1,4 @@
-import { Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Button, Radio, FormHelperText, Divider } from "@material-ui/core";
+import { Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -25,9 +25,7 @@ const useStyles = makeStyles((theme) => ({
 const SendingMethod = ({
     extraButtons = null,
     classes,
-    ToastMessages,
     campaign = null,
-    setToastMessage = () => null,
     onUpdateCampaign = () => null
 }) => {
     const { t } = useTranslation();

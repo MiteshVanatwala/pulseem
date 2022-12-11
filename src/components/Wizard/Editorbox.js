@@ -300,7 +300,7 @@ const Editorbox = ({
             setremovalMessageButtonDisabled(true);
         }
         setLoader(false);
-        onFromNumberInit(fromNumber);
+        onFromNumberInit(smsModel.FromNumber ?? fromNumber);
     }
 
     const getAutomationReturnUrl = (campaignId) => {

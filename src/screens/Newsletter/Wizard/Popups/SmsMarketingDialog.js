@@ -1,5 +1,5 @@
 import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText } from '@material-ui/core'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import LabeledTextField from '../../../../components/core/LabeledTextField';
@@ -12,10 +12,14 @@ import { getSmsMarketing, setSmsMarketing } from '../../../../redux/reducers/sms
 import VerificationDialog from '../../../../components/DialogTemplates/VerificationDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import { getAuthorizeNumbers } from '../../../../redux/reducers/commonSlice'
+import { Dialog } from "../../../../components/managment/index";
 
 const SmsMarketingDialog = ({
     classes,
     selectedGroups = [],
+    newsletterSettings = null,
+    isOpen = false,
+    setDialogType = () => null,
     onClose = () => null,
     onCancel = () => null,
     onConfirm = () => null,
@@ -25,7 +29,6 @@ const SmsMarketingDialog = ({
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
     const { verifiedNumbers } = useSelector(state => state.common);
-    const { newsletterSettings } = useSelector(state => state.newsletter);
 
     const [smsModel, setSmsModel] = useState({
         Type: 0,
@@ -78,7 +81,7 @@ const SmsMarketingDialog = ({
                 const sendDate = response?.payload?.Data?.SendDate;
                 const sendTime = moment(sendDate);
                 const restData = response?.payload.Data;
-                handleFromNumber(restData?.FromNumber);
+                handleFromNumber(response?.payload?.Data.FromNumber ?? restData?.FromNumber);
                 setSmsModel({
                     SendDate: sendDate,
                     SendTime: moment(sendTime),
@@ -126,10 +129,11 @@ const SmsMarketingDialog = ({
     const handleConfirm = async () => {
 
         setLoader(true);
-        const date = moment(smsModel.SendDate).format("DD-MM-YYYY");
-        const hour = moment(smsModel.SendTime).format("HH:mm:ss");
-        const finalSendDate = moment(date + ' ' + hour).format('YYYY-MM-DD HH:mm');
-        setSmsModel({ ...smsModel, SendDate: finalSendDate });
+        const finalDate = moment(smsModel.SendDate, "YYYY-MM-DD HH:mm:ss");
+        finalDate.set({ h: moment(smsModel.SendTime).format("HH"), m: moment(smsModel.SendTime).format("mm") });
+        const newVal = finalDate.format();
+
+        setSmsModel({ ...smsModel, SendDate: finalDate });
 
         if (handleValidation()) {
             const totalMarketing = { ...newsletterSettings };
@@ -137,7 +141,7 @@ const SmsMarketingDialog = ({
                 CreditsPerSms: smsModel.CreditsPerSms,
                 FromNumber: smsModel.FromNumber,
                 SendSmsTo: smsModel.SendSmsTo,
-                SendDate: finalSendDate,
+                SendDate: newVal,
                 EmailCampaignID: totalMarketing?.CampaignID,
                 GroupIds: selectedGroups.map((g) => g.GroupID),
                 Text: smsModel.Text,
@@ -155,10 +159,6 @@ const SmsMarketingDialog = ({
 
     const handleTotalMarketingResponse = (response) => {
         switch (response?.StatusCode) {
-            case 200: {
-                //TODO: Pending
-                break;
-            }
             case 201: {
                 alert('success');
                 break;
@@ -178,7 +178,7 @@ const SmsMarketingDialog = ({
     }
 
     const handleValidation = () => {
-        const tempErrors = { ...errors };
+        const tempErrors = {};
         if (!smsModel.FromNumber) {
             tempErrors.FromNumber = 'From Number is required';
         }
@@ -194,14 +194,14 @@ const SmsMarketingDialog = ({
         if (!numberVerified) {
             tempErrors.numberVerified = 'Please verified from number';
         }
-        if (!smsModel.SendSmsTo) {
+        if (smsModel.SendSmsTo === -1) {
             tempErrors.SendSmsTo = 'Send to is required ';
         }
         setErrors({ ...tempErrors })
         return Object.values(tempErrors).length === 0;
     }
 
-    return {
+    const currentDialog = {
         title: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title"),
         description: 'This is the description',
         showDivider: true,
@@ -367,6 +367,14 @@ const SmsMarketingDialog = ({
         onCancel: onCancel,
         onConfirm: handleConfirm
     }
+
+    return <Dialog
+        classes={classes}
+        open={isOpen}
+        onClose={() => { setDialogType(null) }}
+        {...currentDialog}>
+        {currentDialog.content}
+    </Dialog>
 }
 
-export default SmsMarketingDialog
+export default React.memo(SmsMarketingDialog)
