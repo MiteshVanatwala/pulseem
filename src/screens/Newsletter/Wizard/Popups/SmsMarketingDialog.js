@@ -19,6 +19,7 @@ const SmsMarketingDialog = ({
     selectedGroups = [],
     newsletterSettings = null,
     isOpen = false,
+    smsMarketingModel = null,
     setDialogType = () => null,
     onClose = () => null,
     onCancel = () => null,
@@ -30,13 +31,7 @@ const SmsMarketingDialog = ({
     const { isRTL } = useSelector(state => state.core);
     const { verifiedNumbers } = useSelector(state => state.common);
 
-    const [smsModel, setSmsModel] = useState({
-        Type: 0,
-        SendSmsTo: -1,
-        FromNumber: "",
-        SendDate: null,
-        SendTime: null,
-    })
+    const [smsModel, setSmsModel] = useState(smsMarketingModel)
     const [linkToUpdate, setLinkToUpdate] = useState(null);
     const [linkToCampaign, setLinkToCampaign] = useState(null);
     const [linkToUpdateEnabled, setLinkToUpdateEnabled] = useState(true);
@@ -72,29 +67,6 @@ const SmsMarketingDialog = ({
             value: 4
         }
     ];
-
-    useEffect(() => {
-        const initSmsMarketing = async () => {
-            await dispatch(getAuthorizeNumbers());
-            const response = await dispatch(getSmsMarketing(newsletterSettings?.CampaignID));
-            if (response?.payload?.StatusCode === 201 && response?.payload?.Data) {
-                const sendDate = response?.payload?.Data?.SendDate;
-                const sendTime = moment(sendDate);
-                const restData = response?.payload.Data;
-                handleFromNumber(response?.payload?.Data.FromNumber ?? restData?.FromNumber);
-                setSmsModel({
-                    SendDate: sendDate,
-                    SendTime: moment(sendTime),
-                    ...restData
-                });
-                onUpdate(restData);
-            }
-        }
-
-        if (newsletterSettings && newsletterSettings?.CampaignID) {
-            initSmsMarketing();
-        }
-    }, [newsletterSettings]);
 
     const onAddLinkToCampaign = () => {
         setLinkToUpdate(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`);
@@ -341,7 +313,7 @@ const SmsMarketingDialog = ({
                 <Grid item md={12}>
                     <Editorbox classes={classes}
                         variant="column"
-                        values={smsModel}
+                        values={{ ...smsModel }}
                         onUpdate={handleUpdate}
                         onFromNumberInit={(fromNumber) => setSmsModel({ ...smsModel, FromNumber: fromNumber })}
                         linkToCampaign={linkToCampaign}
@@ -368,6 +340,7 @@ const SmsMarketingDialog = ({
         onConfirm: handleConfirm
     }
 
+    console.log(smsModel);
     return <Dialog
         classes={classes}
         open={isOpen}
@@ -377,4 +350,4 @@ const SmsMarketingDialog = ({
     </Dialog>
 }
 
-export default React.memo(SmsMarketingDialog)
+export default SmsMarketingDialog

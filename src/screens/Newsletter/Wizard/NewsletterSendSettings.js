@@ -15,9 +15,10 @@ import { BsTrash } from "react-icons/bs";
 import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Button, Grid } from "@material-ui/core";
 import {
-    getAccountExtraData, getFinishedCampaigns, getTestGroups
+    getAccountExtraData, getFinishedCampaigns, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
 import { combinedGroup, addRecipient, addRecipients, createGroup } from "../../../redux/reducers/groupSlice";
+import { getAuthorizeNumbers } from '../../../redux/reducers/commonSlice'
 import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { Stack } from "@mui/material";
@@ -42,6 +43,7 @@ import { UploadSettings } from "../../../helpers/Constants";
 import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Badge from '@material-ui/core/Badge';
+import moment from 'moment';
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -158,6 +160,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [showTestGroups, setShowTestGroups] = useState(false);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
     const [dataReady, setDataReady] = useState(false);
+    const [smsMarketingModel, setSmsMarketingModel] = useState({
+        Type: 0,
+        SendSmsTo: -1,
+        FromNumber: "",
+        SendDate: null,
+        SendTime: null,
+    });
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -811,6 +820,40 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         setAllGroupsSelected(!allGroupsSelected);
     }
+    const handleSmsMarketing = () => {
+        const initSmsMarketing = async () => {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await dispatch(getAuthorizeNumbers());
+                    const response = await dispatch(getSmsMarketing(newsletterSettings?.CampaignID));
+                    if (response?.payload?.StatusCode === 201 && response?.payload?.Data) {
+                        const sendDate = response?.payload?.Data?.SendDate;
+                        const sendTime = moment(sendDate);
+                        const restData = response?.payload.Data;
+                        setSmsMarketingModel({
+                            SendDate: sendDate,
+                            SendTime: moment(sendTime),
+                            ...restData
+                        });
+                        setSegmantIndication(true)
+                    }
+                    else {
+                        setSegmantIndication(false)
+                    }
+                    resolve();
+                } catch (error) {
+                    reject();
+                }
+            })
+
+        }
+
+        if (newsletterSettings && newsletterSettings?.CampaignID) {
+            initSmsMarketing().then(() => {
+                setDialogType({ type: 'smsMarketing' })
+            });
+        }
+    }
 
     return (
         <DefaultScreen
@@ -821,14 +864,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <RenderToast toastMessage={toastMessage} time={4000} />
             <div>
                 <div>
-                    <WizardTitle title={t("campaigns.createNewsLetterHeader")}
+                    <WizardTitle title={t("campaigns.newsLetterSendSettings.title")}
                         classes={classes}
-                        // stepNumber={2}
-                        subTitle={t("campaigns.newsLetterSendSettings.title")}
                     />
                     <Grid container style={{ marginBottom: "40px" }} spacing={5}>
                         <Grid item md={7} xs={12}>
-                            <Stack className={classes.infoDiv} direction="row">
+                            <Stack className={classes.infoDiv} direction="row" style={{ height: 50 }}>
                                 <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
                                 <Tooltip
                                     disableFocusListener
@@ -897,7 +938,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         showFilter={false}
                                         isSms={true}
                                         uniqueKey={'groups_2'}
-                                        innerHeight={325}
+                                        innerHeight={240}
                                     />
                                 }
                                 {activeTab === 1 && <Stack
@@ -905,7 +946,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                     <UploadXL
                                         classes={classes}
                                         areaStyle={{
-                                            height: 389
+                                            height: 304
                                         }}
                                         onDone={(groupName, res, uploadedAsFile) => {
                                             handleUploadRecipients(groupName, res, uploadedAsFile);
@@ -993,7 +1034,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 ToastMessages={ToastMessages}
                                 setToastMessage={setToastMessage}
                                 campaign={{ ...campaignValues }}
-                                onUpdateCampaign={(data) => setCampaignValues({ ...campaignValues, ...data })}
+                                onUpdateCampaign={(data) => {
+                                    setCampaignValues({ ...campaignValues, ...data })
+                                }}
                                 extraButtons={
                                     <>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
@@ -1035,7 +1078,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
                                                     disabled={!selectedGroups || selectedGroups?.length === 0}
                                                     onClick={() => {
-                                                        setDialogType({ type: 'smsMarketing' })
+                                                        handleSmsMarketing();
                                                     }}
                                                 >
                                                     {t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
@@ -1050,12 +1093,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 <WizardButtons />
             </div>
             {renderDialog()}
-            {dataReady && <SmsMarketingDialog
+            {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
                 classes={classes}
                 selectedGroups={selectedGroups}
                 newsletterSettings={campaignValues}
                 setDialogType={() => setDialogType(null)}
                 isOpen={dialogType?.type === 'smsMarketing'}
+                smsMarketingModel={{ ...smsMarketingModel }}
                 onUpdate={(res) => {
                     if (res && res?.SMSCampaignID > 0) {
                         setSmsMarketingIndication(true)
