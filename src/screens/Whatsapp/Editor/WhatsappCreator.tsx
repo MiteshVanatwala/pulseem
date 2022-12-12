@@ -11,7 +11,6 @@ import {
 	callToActionRowProps,
 	coreProps,
 	quickReplyButtonProps,
-	quickReplyButtonsFieldProps,
 	templateDataProps,
 	WhatsappCreatorProps,
 } from './WhatsappCreator.types';
@@ -265,7 +264,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			return requestJSON.callToAction;
 		} else if (templateText?.length > 0 && fileData?.name) {
 			return requestJSON.textMedia;
-		} else {
+		} else if (templateText?.length > 0) {
 			return templateText;
 		}
 	};

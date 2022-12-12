@@ -38,14 +38,14 @@ const WhatsappMobilePreview = ({
 		setQuickReplyWidth(getQuickReplyWidth());
 	}, [templateText]);
 
-	const updateTime = () => {
+	const setUpdateTime = () => {
 		let time = new Date()
 			.toLocaleTimeString('en-US')
 			.replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, '$1$3');
 		setMobileTime(time);
 	};
 
-	setInterval(updateTime, 1000);
+	setInterval(setUpdateTime, 1000);
 
 	const getValueByFieldName = (
 		button: quickReplyButtonProps | callToActionRowProps,
