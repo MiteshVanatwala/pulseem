@@ -24,6 +24,7 @@ import QuickReply from './QuickReply';
 import { useSelector } from 'react-redux';
 import WhatsappMobilePreview from './WhatsappMobilePreview';
 import WhatsappTips from './whatsappTips';
+import { getValueByFieldName } from '../../../helpers/Utils/common';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -124,15 +125,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const onSavedTemplateChange = (e: BaseSyntheticEvent) => {
 		setSavedTemplate(e.target.value);
-	};
-
-	const getValueByFieldName = (
-		button: quickReplyButtonProps,
-		fieldName: string
-	) => {
-		return button.fields.find((field: quickReplyButtonsFieldProps) => {
-			return field.fieldName === fieldName;
-		})?.value;
 	};
 
 	const getQuickReplyActions = () => {
