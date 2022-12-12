@@ -31,7 +31,7 @@
 	"callToActionTitle": "Call to Action",
 	"callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action.",
 	"typeOfAction": "Type of Action",
-	"phoneButtonText": "",
+	"phoneButtonText": "Button Text",
 	"phoneButtonTextPlaceholder": "Call Us",
 	"country": "Country",
 	"phoneNumber": "Phone Number",
