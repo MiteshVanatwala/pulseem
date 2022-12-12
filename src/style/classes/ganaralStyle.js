@@ -2236,14 +2236,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 30,
     fontFamily: 'Assistant',
     textAlign: "center",
-    color: "#000",
+    color: "rgba(0, 0, 0, 0.7)",
     fontWeight: "700",
     position: "absolute",
-    top: 0,
+    top: '0.2rem',
     cursor: "pointer"
   },
   dialogExitButtonRTL: {
-    left: "0.5rem",
+    left: "1.2rem",
   },
   dialogExitButtonLTR: {
     right: "0.5rem",
@@ -2582,6 +2582,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       "&:before": {
         height: 0
       }
+    }
+  },
+  filterHeight: {
+    height: '65vh'
+  },
+  root: {
+    '.Mui-expanded': {
+      margin: '0 !important'
     }
   }
 });

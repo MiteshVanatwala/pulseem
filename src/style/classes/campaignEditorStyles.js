@@ -15,5 +15,9 @@ export const getCampaignEditorStyle = (windowSize, isRTL) => ({
       color: '#fff',
       fontSize: 16
     }
-  }
+  },
+  accordionHelpText: {
+    margin: 0,
+    fontSize: 16
+  },
 });

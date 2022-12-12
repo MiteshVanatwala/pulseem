@@ -664,11 +664,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <Stack
                 direction="column"
                 justifyContent="flex-start"
-                className={classes.wizardFlex}
-                style={{
-                    height: '65vh',
-                    width: '70vh'
-                }}
+                className={clsx(classes.filterHeight, classes.wizardFlex)}
             >
                 <Stack className={classes.tabDiv} direction="row"
                 >
@@ -937,7 +933,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                     showFilter={false}
                                     isSms={true}
                                     uniqueKey={'groups_2'}
-                                    innerHeight={240}
+                                    innerHeight={325}
                                 />
                             }
                             {activeTab === 1 && <Stack
@@ -945,13 +941,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 <UploadXL
                                     classes={classes}
                                     areaStyle={{
-                                        height: 304
+                                        height: 395
                                     }}
                                     onDone={(groupName, res, uploadedAsFile) => {
                                         handleUploadRecipients(groupName, res, uploadedAsFile);
                                     }}
                                     settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
-                                    // uploadToGroups={selectedGroups}
                                     setToastMessage={setToastMessage}
                                     placeHolder={"recipient.addRecTextareaPlaceholder"}
                                     tooltipText='recipient.bulkRecUpldTooltipText'
@@ -959,8 +954,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                     extraButtons={
                                         <>
                                             <Button
+                                                style={{ marginInlineStart: 'auto', marginInlineEnd: 10 }}
+                                                size='medium'
+                                                color="primary"
+                                                variant='contained'
                                                 key={"extraButton"}
-                                                className={classes.addManualDiv}
+                                                className={clsx(
+                                                    classes.actionButton,
+                                                    classes.actionButtonLightGreen,
+                                                    classes.backButton
+                                                )}
                                                 onClick={() => {
                                                     setDialogType({ type: "quickMnualUpload" })
                                                 }}
@@ -1027,7 +1030,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             }
                         </Stack>}
                     </Grid>
-                    <Grid item md={5} xs={12}>
+                    <Grid item xs={12} md={1}></Grid>
+                    <Grid item md={4} xs={12}>
                         <SendingMethod
                             classes={classes}
                             ToastMessages={ToastMessages}

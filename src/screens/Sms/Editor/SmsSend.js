@@ -7,7 +7,7 @@ import moment from "moment";
 import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { DateField, Dialog } from "../../../components/managment/index";
+import { DateField } from "../../../components/managment/index";
 import Toast from '../../../components/Toast/Toast.component';
 import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';

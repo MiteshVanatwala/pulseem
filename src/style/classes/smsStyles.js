@@ -954,6 +954,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         },
     },
     groupsFooter: {
+        marginTop: 12,
         display: "flex",
         justifyContent: "space-between",
         flexDirection: flexDirection[windowSize]

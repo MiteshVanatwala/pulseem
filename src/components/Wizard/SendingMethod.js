@@ -1,4 +1,4 @@
-import { Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider } from "@material-ui/core";
+import { FormControl, FormControlLabel, Box, Accordion, AccordionDetails, AccordionSummary, Checkbox, Tooltip, Typography, Radio, FormHelperText, Divider } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
     noMaxWidth: {
         maxWidth: "none",
-    },
+    }
 }));
 
 
@@ -129,254 +129,296 @@ const SendingMethod = ({
                 >
                     {t("notifications.whenToSend")}
                 </h2>
-                <Accordion expanded={campaign.SendingMethod === 1}
-                    onChange={() => handleSendType(1)}
-                    className={classes.noShadowAccordion}
-                >
-                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse}
-                        expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 1} className={campaign.SendingMethod !== 1 ? classes.radioButtonDisabled : classes.radioButtonActive} />}>
-                        <Typography>{t("notifications.immediateSend")}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Stack direction='column'>
-                            <FormHelperText className={clsx(classes.helpText, classes.mb0)}>
-                                {t("notifications.immediateDescription")}
-                            </FormHelperText>
-                            <Stack direction='row' alignItems='center'>
-                                <Checkbox
-                                    className={classes.ml20}
-                                    disabled={campaign.SendingMethod !== 1}
-                                    checked={campaign.SendingMethod === 1 && isBestTime === true}
+                <FormControl component="fieldset">
+                    <Accordion expanded={campaign.SendingMethod === 1}
+                        onChange={() => handleSendType(1)}
+                        className={classes.noShadowAccordion}
+                    >
+                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse} >
+                            <FormControlLabel
+                                value="1"
+                                control={<Radio
                                     color="primary"
-                                    inputProps={{ "aria-label": "secondary checkbox" }}
-                                    onClick={() => {
-                                        setIsBestTime(!isBestTime);
-                                    }}
-                                />
-                                <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
-                                <Tooltip
-                                    disableFocusListener
-                                    title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
-                                    // classes={{ tooltip: styles.customWidth }}
-                                    style={{ marginInlineStart: "5px" }}
-                                >
-                                    <span className={classes.bodyInfo}>i</span>
-                                </Tooltip>
+                                    style={{ paddingInlineStart: 0, paddingTop: 0 }}
+                                    className={campaign.SendingMethod !== 1 ? classes.radioButtonDisabled : classes.radioButtonActive}
+                                    checked={campaign.SendingMethod === 1} />}
+                                label={
+                                    <>
+                                        <span className={classes.radioText} style={{ marginTop: 20 }}>
+                                            {t("notifications.immediateSend")}
+                                        </span>
+                                        <FormHelperText className={classes.accordionHelpText}>
+                                            {t("notifications.immediateDescription")}
+                                        </FormHelperText>
+                                    </>
+                                }
+                                onChange={() => handleSendType(1)}
+                            />
+
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Stack direction='column'>
+                                <Stack direction='row' alignItems='center'>
+                                    <Checkbox
+                                        className={classes.ml20}
+                                        disabled={campaign.SendingMethod !== 1}
+                                        checked={campaign.SendingMethod === 1 && isBestTime === true}
+                                        color="primary"
+                                        inputProps={{ "aria-label": "secondary checkbox" }}
+                                        onClick={() => {
+                                            setIsBestTime(!isBestTime);
+                                        }}
+                                    />
+                                    <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
+                                    <Tooltip
+                                        disableFocusListener
+                                        title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
+                                        style={{ marginInlineStart: "5px" }}
+                                    >
+                                        <span className={classes.bodyInfo}>i</span>
+                                    </Tooltip>
+                                </Stack>
                             </Stack>
-                        </Stack>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion expanded={campaign.SendingMethod === 2}
-                    onChange={() => handleSendType(2)}
-                    className={classes.noShadowAccordion}
-                >
-                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse}
-                        expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 2} className={campaign.SendingMethod !== 2 ? classes.radioButtonDisabled : classes.radioButtonActive} />}>
-                        <Typography>{t("notifications.futureSend")}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Stack direction='column'>
-                            <Box
-                                className={classes.dateBox}
-                                style={{
-                                    pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
-                                }}
-                            >
-                                <DateField
-                                    minDate={moment()}
-                                    classes={classes}
-                                    value={campaign.SendingMethod === 2 ? campaign.SendDate : null}
-                                    onChange={handleDatePicker}
-                                    placeholder={t("notifications.date")}
-                                    timePickerOpen={true}
-                                    dateActive={campaign.SendingMethod === 2 ? false : true}
-                                />
-                            </Box>
-                            <Box
-                                className={classes.dateBox}
-                                style={{
-                                    marginTop: 10,
-                                    pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
-                                }}
-                            >
-                                <DateField
-                                    minDate={moment()}
-                                    classes={classes}
-                                    value={campaign.SendingMethod === 2 ? campaign.SendDate : null}
-                                    onTimeChange={handleTimePicker}
-                                    placeholder={t("notifications.hour")}
-                                    isTimePicker={true}
-                                    ampm={false}
-                                    timeActive={campaign.SendingMethod === 2 ? false : true}
-                                    timePickerOpen={campaign.timePickerOpen}
-                                />
-                            </Box>
-                            <Stack direction='row' alignItems='center'>
-                                <Checkbox
-                                    className={classes.ml20}
-                                    disabled={campaign.SendingMethod !== 2}
-                                    checked={campaign.SendingMethod === 2 && isBestTimeFuture === true}
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion expanded={campaign.SendingMethod === 2}
+                        onChange={() => handleSendType(2)}
+                        className={classes.noShadowAccordion}
+                    >
+                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse} >
+                            <FormControlLabel
+                                value="1"
+                                control={<Radio
                                     color="primary"
-                                    inputProps={{ "aria-label": "secondary checkbox" }}
-                                    onClick={() => {
-                                        setIsBestTimeFuture(!isBestTimeFuture);
-                                    }}
-                                />
-                                <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
-                                <Tooltip
-                                    disableFocusListener
-                                    title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
-                                    // classes={{ tooltip: styles.customWidth }}
-                                    style={{ marginInlineStart: "5px" }}
-                                >
-                                    <span className={classes.bodyInfo}>i</span>
-                                </Tooltip>
-                            </Stack>
-                        </Stack>
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion expanded={campaign.SendingMethod === 3}
-                    onChange={() => handleSendType(3)}
-                    className={classes.noShadowAccordion}
-                >
-                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse}
-                        expandIcon={<Radio color="primary" name="cSendingMethod" checked={campaign.SendingMethod === 3} className={campaign.SendingMethod !== 3 ? classes.radioButtonDisabled : classes.radioButtonActive} />}>
-                        <Typography>{t("mainReport.specialDate")}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <Stack direction='column'>
-                            <Box
-                                className={classes.dateBox}
-                                style={{
-                                    marginTop: 10,
-                                    pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
-                                }}
-                            >
-                                <select
-                                    placeholder={t("common.select")}
+                                    style={{ paddingInlineStart: 0, paddingTop: 0 }}
+                                    className={campaign.SendingMethod !== 2 ? classes.radioButtonDisabled : classes.radioButtonActive}
+                                    checked={campaign.SendingMethod === 2} />}
+                                label={
+                                    <span className={classes.radioText} style={{ marginTop: 20 }}>
+                                        {t("notifications.futureSend")}
+                                    </span>
+                                }
+                                onChange={() => handleSendType(2)}
+                            />
+
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Stack direction='column'>
+                                <Box
+                                    className={classes.dateBox}
                                     style={{
-                                        border: "1px solid #818181",
-                                        backgroundColor: "white",
-                                        padding: "10px",
-                                        borderRadius: "4px",
-                                        width: 300,
-                                        outline: "none",
-                                        marginBottom: "10px",
+                                        pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
                                     }}
-                                    disabled={campaign.SendingMethod === 3 ? false : true}
-                                    onChange={(e) => { handleSelectChange(e) }}
-                                    value={campaign.SendingMethod === 3 ? campaign.spectialDateFieldID : "0"}
                                 >
-                                    <option value="0">{t("common.select")}</option>
-                                    <option value="1">{t("mainReport.birthday")}</option>
-                                    <option value="2">{t("mainReport.creationDay")}</option>
-                                    {extraData && Object.keys(extraData).map((item, i) => {
-                                        if (extraData[item]) {
-                                            return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
-                                        }
-                                        return <></>
-                                    })}
-                                </select>
-                            </Box>
-
-                            <Box
-                                className={classes.dateBox}
-                                style={{
-                                    marginTop: 10,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    width: "370px",
-                                    pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
-                                }}
-                            >
-                                <input
-                                    type="text"
-                                    className={classes.inputDays}
-                                    placeholder="0"
-                                    disabled={campaign.SendingMethod === 3 ? false : true}
-                                    value={campaign.SendingMethod === 3 ? campaign.DaysBeforeAfter : ""}
-                                    onChange={(e) => { handleSpecialDayChange(e) }}
-                                    maxLength="3"
-                                />
-
-                                <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
-                                    {t("mainReport.days")}
-                                </span>
-
-                                {isRTL ?
-                                    <div style={{ display: "flex" }}>
-                                        <span
-                                            className={
-                                                campaign.SendingMethod === 3 ? campaign.ToggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-                                            }
-                                            onClick={() => {
-                                                handlebef();
-                                            }}
-                                        >
-                                            {t("mainReport.before")}
-                                        </span>
-                                        <span
-                                            className={
-                                                campaign.SendingMethod === 3 ? campaign.ToggleA ? classes.beforeActive : classes.before : classes.disabledBefore
-                                            }
-                                            onClick={() => {
-                                                handleaf();
-                                            }}
-                                        >
-                                            {t("mainReport.after")}
-                                        </span>
-
-                                    </div> : <div style={{ display: "flex" }}>
-                                        <span
-                                            className={
-                                                campaign.SendingMethod === 3 ? campaign.ToggleB ? classes.beforeActive : classes.before : classes.disabledBefore
-                                            }
-                                            onClick={() => {
-                                                handlebef();
-                                            }}
-                                        >
-                                            {t("mainReport.before")}
-                                        </span>
-                                        <span
-                                            className={
-                                                campaign.SendingMethod === 3 ? campaign.ToggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-                                            }
-                                            onClick={() => {
-                                                handleaf();
-                                            }}
-                                        >
-                                            {t("mainReport.after")}
-                                        </span>
-                                    </div>}
-                            </Box>
-                            <Box
-                                className={classes.dateBox}
-                                style={{
-                                    marginTop: 10,
-                                    pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
-                                    marginBottom: '1rem'
-                                }}
-                            >
-                                <DateField
-                                    classes={classes}
-                                    value={campaign.SendingMethod === 3 ? campaign.SendDate : null}
-                                    onTimeChange={(value) => handleTimePicker(value)}
-                                    placeholder={t("notifications.hour")}
-                                    isTimePicker={true}
-                                    buttons={{
-                                        ok: t("common.confirm"),
-                                        cancel: t("common.cancel"),
+                                    <DateField
+                                        minDate={moment()}
+                                        classes={classes}
+                                        value={campaign.SendingMethod === 2 ? campaign.SendDate : null}
+                                        onChange={handleDatePicker}
+                                        placeholder={t("notifications.date")}
+                                        timePickerOpen={true}
+                                        dateActive={campaign.SendingMethod === 2 ? false : true}
+                                    />
+                                </Box>
+                                <Box
+                                    className={classes.dateBox}
+                                    style={{
+                                        marginTop: 10,
+                                        pointerEvents: campaign.SendingMethod === 2 ? "auto" : "none",
                                     }}
-                                    ampm={false}
-                                    timePickerOpen={campaign.timePickerOpen}
-                                    timeActive={campaign.SendingMethod === 3 ? false : true}
-                                    disabled={campaign.SendingMethod === 3 ? false : true}
-                                    autoOk
-                                />
-                            </Box>
-                        </Stack>
-                    </AccordionDetails>
-                </Accordion>
+                                >
+                                    <DateField
+                                        minDate={moment()}
+                                        classes={classes}
+                                        value={campaign.SendingMethod === 2 ? campaign.SendDate : null}
+                                        onTimeChange={handleTimePicker}
+                                        placeholder={t("notifications.hour")}
+                                        isTimePicker={true}
+                                        ampm={false}
+                                        timeActive={campaign.SendingMethod === 2 ? false : true}
+                                        timePickerOpen={campaign.timePickerOpen}
+                                    />
+                                </Box>
+                                <Stack direction='row' alignItems='center'>
+                                    <Checkbox
+                                        className={classes.ml20}
+                                        disabled={campaign.SendingMethod !== 2}
+                                        checked={campaign.SendingMethod === 2 && isBestTimeFuture === true}
+                                        color="primary"
+                                        inputProps={{ "aria-label": "secondary checkbox" }}
+                                        onClick={() => {
+                                            setIsBestTimeFuture(!isBestTimeFuture);
+                                        }}
+                                    />
+                                    <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
+                                    <Tooltip
+                                        disableFocusListener
+                                        title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
+                                        // classes={{ tooltip: styles.customWidth }}
+                                        style={{ marginInlineStart: "5px" }}
+                                    >
+                                        <span className={classes.bodyInfo}>i</span>
+                                    </Tooltip>
+                                </Stack>
+                            </Stack>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion expanded={campaign.SendingMethod === 3}
+                        onChange={() => handleSendType(3)}
+                        className={classes.noShadowAccordion}
+                    >
+                        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" className={classes.rowReverse} >
+                            <FormControlLabel
+                                value="1"
+                                control={<Radio
+                                    color="primary"
+                                    style={{ paddingInlineStart: 0, paddingTop: 0 }}
+                                    className={campaign.SendingMethod !== 3 ? classes.radioButtonDisabled : classes.radioButtonActive}
+                                    checked={campaign.SendingMethod === 3} />}
+                                label={
+                                    <span className={classes.radioText} style={{ marginTop: 20 }}>
+                                        {t("mainReport.specialDate")}
+                                    </span>
+                                }
+                                onChange={() => handleSendType(3)}
+                            />
+
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Stack direction='column'>
+                                <Box
+                                    className={classes.dateBox}
+                                    style={{
+                                        marginTop: 10,
+                                        pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
+                                    }}
+                                >
+                                    <select
+                                        placeholder={t("common.select")}
+                                        style={{
+                                            border: "1px solid #818181",
+                                            backgroundColor: "white",
+                                            padding: "10px",
+                                            borderRadius: "4px",
+                                            width: 300,
+                                            outline: "none",
+                                            marginBottom: "10px",
+                                        }}
+                                        disabled={campaign.SendingMethod === 3 ? false : true}
+                                        onChange={(e) => { handleSelectChange(e) }}
+                                        value={campaign.SendingMethod === 3 ? campaign.spectialDateFieldID : "0"}
+                                    >
+                                        <option value="0">{t("common.select")}</option>
+                                        <option value="1">{t("mainReport.birthday")}</option>
+                                        <option value="2">{t("mainReport.creationDay")}</option>
+                                        {extraData && Object.keys(extraData).map((item, i) => {
+                                            if (extraData[item]) {
+                                                return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                                            }
+                                            return <></>
+                                        })}
+                                    </select>
+                                </Box>
+
+                                <Box
+                                    className={classes.dateBox}
+                                    style={{
+                                        marginTop: 10,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        width: "370px",
+                                        pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
+                                    }}
+                                >
+                                    <input
+                                        type="text"
+                                        className={classes.inputDays}
+                                        placeholder="0"
+                                        disabled={campaign.SendingMethod === 3 ? false : true}
+                                        value={campaign.SendingMethod === 3 ? campaign.DaysBeforeAfter : ""}
+                                        onChange={(e) => { handleSpecialDayChange(e) }}
+                                        maxLength="3"
+                                    />
+
+                                    <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
+                                        {t("mainReport.days")}
+                                    </span>
+
+                                    {isRTL ?
+                                        <div style={{ display: "flex" }}>
+                                            <span
+                                                className={
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                                }
+                                                onClick={() => {
+                                                    handlebef();
+                                                }}
+                                            >
+                                                {t("mainReport.before")}
+                                            </span>
+                                            <span
+                                                className={
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                                                }
+                                                onClick={() => {
+                                                    handleaf();
+                                                }}
+                                            >
+                                                {t("mainReport.after")}
+                                            </span>
+
+                                        </div> : <div style={{ display: "flex" }}>
+                                            <span
+                                                className={
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                                                }
+                                                onClick={() => {
+                                                    handlebef();
+                                                }}
+                                            >
+                                                {t("mainReport.before")}
+                                            </span>
+                                            <span
+                                                className={
+                                                    campaign.SendingMethod === 3 ? campaign.ToggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                                                }
+                                                onClick={() => {
+                                                    handleaf();
+                                                }}
+                                            >
+                                                {t("mainReport.after")}
+                                            </span>
+                                        </div>}
+                                </Box>
+                                <Box
+                                    className={classes.dateBox}
+                                    style={{
+                                        marginTop: 10,
+                                        pointerEvents: campaign.SendingMethod === 3 ? "auto" : "none",
+                                        marginBottom: '1rem'
+                                    }}
+                                >
+                                    <DateField
+                                        classes={classes}
+                                        value={campaign.SendingMethod === 3 ? campaign.SendDate : null}
+                                        onTimeChange={(value) => handleTimePicker(value)}
+                                        placeholder={t("notifications.hour")}
+                                        isTimePicker={true}
+                                        buttons={{
+                                            ok: t("common.confirm"),
+                                            cancel: t("common.cancel"),
+                                        }}
+                                        ampm={false}
+                                        timePickerOpen={campaign.timePickerOpen}
+                                        timeActive={campaign.SendingMethod === 3 ? false : true}
+                                        disabled={campaign.SendingMethod === 3 ? false : true}
+                                        autoOk
+                                    />
+                                </Box>
+                            </Stack>
+                        </AccordionDetails>
+                    </Accordion>
+                </FormControl>
             </div>
             <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
             <Stack className={classes.pulseDiv} spacing={2} direction="row">
