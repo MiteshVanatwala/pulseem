@@ -233,9 +233,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle.includes('removalText')) {
 			setTemplateData({
 				...templateData,
-				templateText: `${templateData.templateText} ${
-					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
-				}`,
+				templateText: `${templateData.templateText} ${isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
+					}`,
 			});
 		}
 	};
@@ -304,6 +303,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				subPage={'create'}
 				currentPage='whatsapp'
 				classes={classes}
+				containerClass={null}
 				customPadding={true}>
 				<Title
 					Text={translator('whatsapp.header')}
