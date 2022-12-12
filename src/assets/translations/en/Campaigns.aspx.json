@@ -521,16 +521,50 @@
       "fromEmail": "Please fill in an email address",
       "campaignSubject": "Please fill in a campaign subject",
       "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
-      "CampaignNotFound": "Campaign not found or deleted"
+      "CampaignNotFound": "Campaign not found or deleted",
+      "missingSendingDate": "Campaign was not saved! Missing Sending Date",
+      "campaignAlreadySent": "The current campaign already sent"
     },
-    "success": "Campaign successfully saved"
+    "success": "Success",
+    "sendSettings": {
+      "optimalSending": "Optimal Sending",
+      "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
+      "optimalSendCBTooltip": "this process may take up to 24 hours",
+      "segmentation": "Segmentation",
+      "segmCriteria": "Segmentation Criteria",
+      "segmCritCb1": "Recipients That Opened The Email",
+      "segmCritCb2": "Recipients That Not Opened The Email",
+      "segmCritCb3": "Recipients That Clicked On Links",
+      "segmCritCb4": "Recipients That Not Clicked On Links",
+      "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
+      "filters": "Filters",
+      "segmentations": "Segmentations",
+      "smsMarketing": {
+        "title": "SMS Marketing",
+        "sendTo": "Send To",
+        "everyone": "Everyone",
+        "opened": "Opened",
+        "unOpened": "Unopened",
+        "clicked": "Clicked",
+        "invalid": "Invalid",
+        "fromNumber": "From Number",
+        "sendingDate": "Sending Date",
+        "sendingTime": "Sending Time",
+        "smsMarketingSubTitle": "Send SMS to recipients in selected criteria that received email campaign for complete overall marketing.",
+        "addLinkToCampaign": "Add link to this Email campaign",
+        "addLinkToUpdate": "Add link to update contact"
+      },
+      "send": "Send",
+      "doNotSend": "Do not send",
+      "smsComplementary": "Complementary SMS Marketing"
+    }
   },
   "newsLetterMgmt": {
     "emailVerification": {
       "emailVerificationBtnText": "Email Verification",
       "popupTitle": "Verification of email to send",
       "popupDesc1": "To ensure the security of your account, we need to verify this email address belongs to you.",
-      "popupDesc2": "This is 2 one-time process for each email you send from.",
+      "popupDesc2": "This is a one-time process for each email you send from.",
       "firstSlide": {
         "verifiedEmails": "Verified emails",
         "verifyEmailAddr": "Verify Email Address",
@@ -559,7 +593,10 @@
         "resend": "Resend",
         "resendSuccess": "Code Sent",
         "placeholder": "Enter code",
-        "btnText": "Verify"
+        "btnText": "Verify",
+        "email_error_abused": "Due to too many verification attempts this email was blocked for verification, please address customer support.",
+        "sms_error_abused": "Due to too many verification attempts this number was blocked for verification, please address customer support.",
+        "error_tooMuchAttempts": "Too many verification attempts, please click resend and verify with the new code"
       },
       "errorSlide": {
         "title": "Too many attempts",
@@ -595,5 +632,7 @@
   "leftToRight": "Left to right",
   "summaryTotal": "Total cost",
   "totalSize": "Total size",
-  "kb": "KB"
+  "kb": "KB",
+  "saveBlock": "Save Block",
+  "savedBlocks": "Saved blocks"
 }

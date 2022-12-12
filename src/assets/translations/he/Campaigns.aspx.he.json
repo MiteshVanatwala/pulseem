@@ -512,9 +512,42 @@
       "fromEmail": "נא מלא כתובת מייל לשליחה",
       "campaignSubject": "נא לרשום נושא קומפיין",
       "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
-      "CampaignNotFound": "קמפיין לא נמצא או נמחק"
+      "CampaignNotFound": "קמפיין לא נמצא או נמחק",
+      "missingSendingDate": "הקמפיין לא נשמר! תאריך שליחה חסר",
+      "campaignAlreadySent": "קמפיין זה כבר נשלח"
     },
-    "success": "הקמפיין נשמר בהצלחה"
+    "success": "הקמפיין נשמר בהצלחה",
+    "sendSettings": {
+      "optimalSending": "שליחה אופטימלית",
+      "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
+      "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
+      "segmentation": "פילוחים",
+      "segmCriteria": "קריטריונים לפילוח",
+      "segmCritCb1": "לקוחות שפתחו דיוור",
+      "segmCritCb2": "לקוחות שלא פתחו דיוור",
+      "segmCritCb3": "לקוחות שהקליקו על קישור",
+      "segmCritCb4": "בדיוור לקוחות שלא הקליקו על קישורים בדיוור",
+      "insertCampaginName": "אילו הגדרות שליחה לשכפל מקמפיין ##campaignName##?",
+      "filters": "סינון",
+      "segmentations": "פילוחים",
+      "smsMarketing": {
+        "title": "SMS שיווק משלים",
+        "sendTo": "שלח ל-",
+        "everyone": "כולם",
+        "opened": "פתחו",
+        "unOpened": "לא פתחו",
+        "clicked": "הקליקו",
+        "invalid": "נכשלו",
+        "fromNumber": "מאת",
+        "sendingDate": "תאריך שליחה",
+        "sendingTime": "זמן שליחה",
+        "smsMarketingSubTitle": "הפצת הודעת SMS ללקוחות בקרטריון הנבחר שקבלו קמפיין דיוור אלקטרוני להשלמת שיווק כולל",
+        "addLinkToCampaign": "הוסף קישור לקמפיין אימייל זה",
+        "addLinkToUpdate": "הוסף קישור לעדכון מידע"
+      },
+      "send": "שלח",
+      "doNotSend": "לא לשלוח"
+    }
   },
   "newsLetterMgmt": {
     "emailVerification": {
@@ -551,7 +584,10 @@
         "resend": "שליחה חוזרת",
         "resendSuccess": "קוד נשלח",
         "placeholder": "הזינו אותו כאן",
-        "btnText": "אישור"
+        "btnText": "אישור",
+        "email_error_abused": "עקב ניסיונות אימות מרובים מייל זה נחסם לאימות, לתמיכה אנא פנה לשירות הלקוחות",
+        "sms_error_abused": "עקב ניסיונות אימות מרובים מספר זה נחסם לאימות, לתמיכה אנא פנה לשירות הלקוחות",
+        "error_tooMuchAttempts": "יותר מדי נסיונות אימות, אנא שלח מחדש ואמת עם הקוד החדש"
       },
       "errorSlide": {
         "title": "יותר מדי נסיונות",
@@ -587,5 +623,7 @@
   "leftToRight": "שמאל לימין",
   "summaryTotal": "סה\"כ עלות",
   "totalSize": "סה\"כ נפח",
-  "kb": "KB"
+  "kb": "KB",
+  "saveBlock": "שמור תבנית",
+  "savedBlocks": "תבניות שמורות"
 }

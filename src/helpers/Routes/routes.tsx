@@ -187,6 +187,12 @@ export const getRoutes = (
           href: "/react/Campaigns/Archive",
           isShow: true,
         },
+        {
+          key: "newsletterSendSettings",
+          title: t("campaigns.newsLetterSendSettings.title"),
+          href: "/react/Campaigns/SendSettings",
+          isShow: false
+        }
       ],
     },
     {

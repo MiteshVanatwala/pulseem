@@ -12,7 +12,7 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { useParams } from 'react-router-dom';
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, Link } from '@material-ui/core'
 import { getNotificationById, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../../redux/reducers/notificationSlice';
-import Groups from '../../../components/Notifications/Groups/Groups';
+import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { DateField } from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';

@@ -412,7 +412,7 @@ const SmsReport = ({ classes }) => {
     const dataLength = smsReport.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'

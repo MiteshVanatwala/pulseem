@@ -1,6 +1,5 @@
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createStore } from 'redux'
 
 
 export const getCampaignById = createAsyncThunk(
@@ -28,12 +27,7 @@ export const saveCampaign = createAsyncThunk(
 export const saveUserBlock = createAsyncThunk(
     '/CampaignEditor/SaveUserBlock/', async (block, thunkAPI) => {
         try {
-            const jsonData = {
-                Category: block.category,
-                Data: JSON.stringify(block.data),
-                Tags: block.tags
-            }
-            const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, jsonData);
+            const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, block);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -102,7 +96,6 @@ export const getCampaignInfo = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-
 export const getCreditsByFileTotalBytes = createAsyncThunk(
     'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
         try {
@@ -113,10 +106,20 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
         }
     });
 
+export const getBeeToken = createAsyncThunk(
+    '/CampaignEditor/GetBeeToken/', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeToken`);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
 
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
+        beeToken: null,
         campaign: null,
         userBlocks: null,
         ToastMessages: {
@@ -133,12 +136,12 @@ export const campaignEditorSlice = createSlice({
                 state.campaign = payload
             })
             .addCase(getUserblocks.fulfilled, (state, { payload }) => {
-                const blocks = payload.map((b) => {
+                const blocks = payload?.map((b) => {
                     return {
-                        id: b.ID,
+                        uuid: b.uuid,
                         category: b.Category,
                         data: JSON.parse(b.Data),
-                        Tags: b.TagsAsString.split(',')
+                        tags: b?.TagsAsString?.split(',')
                     }
                 });
                 state.userBlocks = blocks
@@ -149,22 +152,11 @@ export const campaignEditorSlice = createSlice({
             .addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
                 state.campaignInfo = payload?.Message;
             })
-    },
-    reducers: {
-        save: async (_, action) => {
-            const res = await saveUserBlock(action.payload);
-            return res;
-        },
-        update: async (_, action) => {
-            await updateUserBlock(action.payload);
-        },
-        remove: async (_, action) => {
-            await deleteUserBlock(action.payload);
-        }
-    },
+            .addCase(getBeeToken.fulfilled, (state, { payload }) => {
+                state.beeToken = payload;
+            })
+
+    }
 })
 
-
-export const { save, update, remove } = campaignEditorSlice.actions
-export const store = createStore(campaignEditorSlice.reducer);
 export default campaignEditorSlice.reducer

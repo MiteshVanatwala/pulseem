@@ -2,6 +2,7 @@
   "ActionCompleted": "פעולה בוצעה",
   "AddPersonalization": "הוסף פרסונליזציה",
   "All": "הכל",
+  "Default": "ברירת מחדל",
   "Clicked": "הקליקו",
   "Copyrights": "##Year## © כל הזכויות שמורות לפולסים בע\"מ",
   "DateFormat": "dd/mm/yy",
@@ -578,5 +579,14 @@
   "adaptive": "מותאם לסלולר",
   "responsive": "רספונסיבי",
   "chooseFile": "טען קובץ",
-  "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר."
+  "createOrEdit": "צור או ערוך תבנית",
+  "templateName": "שם התבנית",
+  "tags": "תגיות",
+  "notAllowedExtension": "סיומת זו אינה נתמכת להעלאה! אנא נסו קובץ אחר.",
+  "uploadImage": "העלאת תמונה",
+  "folder": "[ספרייה]:",
+  "main": "ראשי",
+  "filesUploaded": "קבצים עלו בהצלחה",
+  "filesNotUploaded": "קבצים נכשלו: ",
+  "saveAndContinue": "שמור והמשך"
 }

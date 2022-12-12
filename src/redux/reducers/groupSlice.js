@@ -127,6 +127,16 @@ export const getExternalClientsByGroups = createAsyncThunk(
         }
     });
 
+export const combinedGroup = createAsyncThunk(
+    'group/CreateCombinedGroup', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`group/CreateCombinedGroup`, data);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 export const groupSlice = createSlice({
     name: 'group',
@@ -184,6 +194,9 @@ export const groupSlice = createSlice({
         })
         builder.addCase(getGroups.fulfilled, (state, { payload }) => {
             state.groupData = payload;
+        })
+        builder.addCase(combinedGroup.fulfilled, (state, action) => {
+            state.groupData.push(action.payload);
         })
         builder.addCase(createGroup.rejected, (state, { error }) => {
             state.error = error.message;

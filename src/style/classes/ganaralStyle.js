@@ -358,6 +358,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mr10: {
     marginInlineEnd: 10,
   },
+  mb0: {
+    marginBottom: '0px !important',
+  },
   mb5: {
     marginBottom: 5,
   },
@@ -372,6 +375,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb20: {
     marginBottom: 20,
+  },
+  ml20: {
+    marginInlineStart: 20,
   },
   ml25: {
     marginInlineStart: 25,
@@ -405,7 +411,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: 15,
   },
   mt10: {
-    marginTop: 10,
+    marginTop: '10px !important',
   },
   mt15: {
     marginTop: 15,
@@ -647,6 +653,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font30: {
     fontSize: 30,
+  },
+  w50: {
+    width: '50%'
   },
   w100: {
     width: '100%'
@@ -1665,6 +1674,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   activeTab: {
     borderBottom: "4px solid #168ee3",
     color: "#007bff !important",
+    paddingBottom: '6px !important'
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
@@ -2226,14 +2236,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 30,
     fontFamily: 'Assistant',
     textAlign: "center",
-    color: "#000",
+    color: "rgba(0, 0, 0, 0.7)",
     fontWeight: "700",
     position: "absolute",
-    top: 0,
+    top: '0.2rem',
     cursor: "pointer"
   },
   dialogExitButtonRTL: {
-    left: "0.5rem",
+    left: "1.2rem",
   },
   dialogExitButtonLTR: {
     right: "0.5rem",
@@ -2362,6 +2372,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTop: "0px solid darkred",
     boxShadow: "0px 3px 3px darkred",
     maxWidth: 150,
+  },
+  dialogBlueButton: {
+    background: "#006996",
+    // backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+    border: "1px solid #006996",
+    borderTop: "0px solid #006996",
+    boxShadow: "0px 3px 3px #006996",
+    // maxWidth: 150,
   },
   dialogConfirmBlueButton: {
     backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
@@ -2520,6 +2538,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         borderRadius: 4,
         paddingLeft: 10,
         paddingRight: 10,
+        minHeight: 25,
+        display: 'flex',
+        alignItems: 'center'
       },
       '& svg': {
         left: isRTL ? 10 : 'auto',
@@ -2535,7 +2556,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 440
   },
   containerFullHeight: {
-    minHeight: 'calc(100vh - 120px)'
+    minHeight: 'calc(100vh - 120px)',
+    height: 'calc(100vh - 120px)'
   },
   pb15: {
     paddingBottom: 15
@@ -2554,4 +2576,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonMinWidth: {
     minWidth: 167
   },
+  noShadowAccordion: {
+    boxShadow: "none",
+    "&.MuiAccordion-root": {
+      "&:before": {
+        height: 0
+      }
+    }
+  },
+  filterHeight: {
+    height: '65vh'
+  },
+  root: {
+    '.Mui-expanded': {
+      margin: '0 !important'
+    }
+  }
 });

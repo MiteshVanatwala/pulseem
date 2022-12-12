@@ -25,7 +25,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const categories = { ...DASHBOARD_SHORTCUT };
   const Redirect = useRedirect();
 
-  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures.indexOf('35') > -1) {
+  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf('35') > -1) {
     categories['appBar.notifications.title'] = {
       title: 'appBar.notifications.title',
       pages: [

@@ -75,10 +75,10 @@ const Groups = ({ classes,
     const renderGroups = () => {
         const groupIdKey = isNotifications ? "Id" : "GroupID";
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
-        return list.filter((g) => {
-            return g?.GroupName?.toLowerCase().includes(groupNameSearch?.toLowerCase()) || '';
+        return list && list.length > 0 ? list?.filter((g) => {
+            return g.GroupName.trim().toLowerCase().indexOf(groupNameSearch?.trim().toLowerCase()) > -1;
         }).map((group) => {
-            const isExist = selectedList.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
+            const isExist = selectedList?.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
             return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
                 onMouseEnter={() => setIsHover(group[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
@@ -102,11 +102,11 @@ const Groups = ({ classes,
                     {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
-        })
+        }) : ''
     }
 
     const renderCampaigns = () => {
-        return list?.filter((c) => {
+        return list && list.length > 0 ? list?.filter((c) => {
             return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((campaign) => {
             const isExist = selectedList.map((c) => { return c.SMSCampaignID }).includes(campaign.SMSCampaignID);
@@ -129,7 +129,7 @@ const Groups = ({ classes,
                     primary={campaign.Name}
                 />
             </ListItem>)
-        })
+        }) : ''
     }
 
     const renderSelectAll = () => {

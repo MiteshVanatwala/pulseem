@@ -2,6 +2,7 @@
   "ActionCompleted": "Action Completed",
   "AddPersonalization": "Add Personalization",
   "All": "All",
+  "Default": "Default",
   "Clicked": "Clicked",
   "Copyrights": "##Year## © All Rights Reserved by Pulseem LTD",
   "DateFormat": "mm/dd/yy",
@@ -583,5 +584,14 @@
   "adaptive": "Adaptive",
   "responsive": "Responsive",
   "chooseFile": "Upload File",
-  "notAllowedExtension": "This file extension is not allowed! Please try another file."
+  "createOrEdit": "Create or Edit block",
+  "templateName": "Template name",
+  "tags": "Tags",
+  "notAllowedExtension": "This file extension is not allowed! Please try another file.",
+  "uploadImage": "Upload Image",
+  "folder": "[Folder]:",
+  "main": "Main",
+  "filesUploaded": "Files successfully uplaoded",
+  "filesNotUploaded": "Files failed: ",
+  "saveAndContinue": "Save and Continue"
 }

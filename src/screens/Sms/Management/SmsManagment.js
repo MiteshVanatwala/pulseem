@@ -14,7 +14,7 @@ import {
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getSmsData, restoreSms, deleteSms, duplicteSms, getAuthorizeNumbers, sendVerificationCode, verifyCode, getSmsByID
+  getSmsData, restoreSms, deleteSms, duplicteSms, sendVerificationCode, verifyCode, getSmsByID
 } from '../../../redux/reducers/smsSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -218,13 +218,6 @@ const SmsManagnentScreen = ({ classes }) => {
   }
 
   const renderManagmentLine = () => {
-    const handleVerificationDialog = async () => {
-      const numbers = await dispatch(getAuthorizeNumbers());
-      setDialogType({
-        type: 'verify',
-        data: numbers.payload
-      })
-    }
     return (
       <Grid container spacing={2} className={classes.linePadding} >
         <Grid item xs={windowSize === 'xs' && 12}>
@@ -1051,7 +1044,7 @@ const SmsManagnentScreen = ({ classes }) => {
       currentPage='sms'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
+      <Title Text={t('sms.PageResource1.Title')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

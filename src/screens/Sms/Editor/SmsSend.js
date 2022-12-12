@@ -7,13 +7,13 @@ import moment from "moment";
 import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { DateField, Dialog } from "../../../components/managment/index";
+import { DateField } from "../../../components/managment/index";
 import Toast from '../../../components/Toast/Toast.component';
 import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';
 import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
-import Groups from "../../../components/Notifications/Groups/Groups";
+import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
@@ -2477,7 +2477,7 @@ const SmsSend = ({ classes, ...props }) => {
       content: (
         <Box>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="Success" />
+            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="" />
             <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}

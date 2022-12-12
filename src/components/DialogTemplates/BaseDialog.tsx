@@ -7,7 +7,7 @@ import {
   Dialog,
   Paper,
   Divider,
-  Box
+  Box,
 } from "@material-ui/core";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
@@ -15,9 +15,9 @@ import { useSelector } from "react-redux";
 import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
-import useCore from "../../helpers/Hooks/Core"
-import { ManagmentIcon } from '../managment/index'
-import { CloseIcon } from '../../assets/images/managment/index'
+import useCore from "../../helpers/hooks/Core";
+import { ManagmentIcon } from "../managment/index";
+import { CloseIcon } from "../../assets/images/managment/index";
 
 export const BaseDialog = ({
   childrenPadding = true,
@@ -26,9 +26,9 @@ export const BaseDialog = ({
   icon = <AlertIcon />,
   children,
   showDivider = false,
-  onClose = () => { },
-  onCancel = () => { },
-  onConfirm = () => { },
+  onClose = () => {},
+  onCancel = () => {},
+  onConfirm = () => {},
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -60,32 +60,13 @@ export const BaseDialog = ({
     onClose?.();
   };
 
-  // const RenderExitButton = () =>
-  //   exitButton ?? (
-  //     <Stack
-  //       onClick={onExit}
-  //       className={clsx(classes.dialogExitButton, {
-  //         [classes.dialogExitButtonRTL]: isRTL,
-  //         [classes.dialogExitButtonLTR]: !isRTL,
-  //       })}
-  //     >
-  //       x
-  //     </Stack>
-  //   );
-
   const RenderExitButton = () => {
-    return <Box
-      onClick={onExit}
-      className={clsx(
-        classes.solidDialogExitButton
-      )}>
-      <ManagmentIcon
-        classes={classes}
-        icon={CloseIcon}
-        uIcon={null}
-      />
-    </Box>
-  }
+    return (
+      <Box onClick={onExit} className={clsx(classes.solidDialogExitButton)}>
+        <ManagmentIcon classes={classes} icon={CloseIcon} uIcon={null} />
+      </Box>
+    );
+  };
 
   const RenderTitleDefault = () => (
     <>
@@ -154,8 +135,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-              ? "calc(65vh)"
-              : "calc(45vh)",
+            ? "calc(65vh)"
+            : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}
