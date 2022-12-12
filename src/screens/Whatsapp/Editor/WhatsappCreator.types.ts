@@ -23,6 +23,8 @@ export type TemplateFieldsProps = {
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	fileData: File | undefined;
+	setFileData: (fileData: File | undefined) => void;
 };
 
 export type MessageEditorProps = {
@@ -56,8 +58,11 @@ export type actionProps = {
 	updateTemplateData: (data: callToActionProps) => void;
 };
 
-export type PhoneProps = {
-	classes: ClassesType;
+export type whatsappMobilePreviewProps = {
+	classes: ClassesType['classes'];
+	campaignNumber: string;
+	templateData: templateDataProps;
+	buttonType: string;
 };
 
 export type ButtonsProps = {
@@ -81,6 +86,7 @@ export type quickReplyProps = {
 	quickReplyButtons: quickReplyButtonProps[];
 	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
+	templateButtons: templateDataProps['templateButtons'];
 };
 
 export type quickReplyButtonsFieldProps = {
@@ -92,10 +98,15 @@ export type quickReplyButtonsFieldProps = {
 
 export type quickReplyButtonProps = {
 	id: string;
+	typeOfAction: string;
 	fields: quickReplyButtonsFieldProps[];
 };
 
 export type templateDataProps = {
 	templateText: string;
 	templateButtons: quickReplyButtonProps[] | callToActionProps;
+};
+
+export type WhatsappTipsProps = {
+	classes: ClassesType['classes'];
 };

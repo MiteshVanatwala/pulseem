@@ -45,10 +45,31 @@ const WhatsappTemplateEditor = ({
 	const [linkCount, setlinkCount] = useState(0);
 	const [messageCount, setMessageCount] = useState(0);
 	const [alignment, setAlignment] = useState<string>('right');
+	const [textAreaHeight, setTextAreaHeight] = useState<string>('auto');
+
+	useEffect(() => {
+		const textAreaElement: HTMLElement | null = document.getElementById(
+			'conversation-text-preview'
+		);
+		const buttonsWrapperElement: HTMLElement | null =
+			document.getElementById('buttons-wrapper');
+		const textAreaHeight = textAreaElement?.scrollHeight || 0;
+		const buttonWrapperHeight = buttonsWrapperElement?.scrollHeight || 0;
+		const avaliableHeight = 240 - (textAreaHeight + buttonWrapperHeight);
+		console.log('avaliableHeight::', avaliableHeight);
+		if (textAreaHeight) {
+			if (avaliableHeight >= 25) {
+				setTextAreaHeight(25 + textAreaHeight + 'px');
+			} else {
+				setTextAreaHeight(230 - buttonWrapperHeight + 'px');
+			}
+		}
+	}, [templateText, buttons]);
 
 	useEffect(() => {
 		setAlignment(isRTL ? 'right' : 'left');
 	}, [isRTL]);
+
 	const onEditorChange = (e: BaseSyntheticEvent) => {
 		if (e.target.value?.length <= 1024) {
 			// TO STOP RESETTING CURSOR
@@ -107,43 +128,49 @@ const WhatsappTemplateEditor = ({
 
 	return (
 		<>
-			<textarea
-				required
-				ref={templateTextRef}
-				placeholder={translator('whatsapp.template.textareaPlaceholder')}
-				maxLength={1024}
-				id='whatsapp-template-text'
-				className={clsx(classes.msgArea, classes.sidebar)}
-				style={{ textAlign: alignment === 'right' ? 'right' : 'left' }}
-				onChange={onEditorChange}
-				value={templateText}></textarea>
+			<div className={classes.WhatsappTextareaWrapper}>
+				<textarea
+					required
+					ref={templateTextRef}
+					placeholder={translator('whatsapp.template.textareaPlaceholder')}
+					maxLength={1024}
+					id='whatsapp-template-text'
+					className={clsx(classes.msgArea, classes.sidebar)}
+					style={{
+						textAlign: alignment === 'right' ? 'right' : 'left',
+						height: textAreaHeight,
+					}}
+					onChange={onEditorChange}
+					value={templateText}></textarea>
 
-			<Box className={classes.whatsappActionButtonsWrapper}>
-				{buttons.map((button: quickReplyButtonProps | callToActionRowProps) =>
-					button.fields.map(
-						(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
-							field.fieldName === translator('whatsapp.websiteButtonText') && (
-								<Box
-									key={button.id}
-									className={classes.whatsappActionButtonsBox}>
-									<DeleteOutlinedIcon
-										style={{ color: 'red', cursor: 'pointer' }}
-										onClick={() => {
-											onButtonDelete(button);
-										}}
-									/>
-									<Button
-										className={classes.whatsappActionButtons}
-										onClick={() => OnEditorActionButtonClick(button)}>
-										{field.value}
-									</Button>
-								</Box>
-							)
-					)
-				)}
-			</Box>
-
-			<Box className={classes.smallInfoDiv}>
+				<Box
+					className={classes.whatsappActionButtonsWrapper}
+					id='buttons-wrapper'>
+					{buttons.map((button: quickReplyButtonProps | callToActionRowProps) =>
+						button.fields.map(
+							(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
+								field.fieldName === 'Button Text' && (
+									<Box
+										key={button.id}
+										className={classes.whatsappActionButtonsBox}>
+										<Button
+											className={classes.whatsappActionButtons}
+											onClick={() => OnEditorActionButtonClick(button)}>
+											{field.value}
+										</Button>
+										<DeleteOutlinedIcon
+											style={{ color: 'red', cursor: 'pointer' }}
+											onClick={() => {
+												onButtonDelete(button);
+											}}
+										/>
+									</Box>
+								)
+						)
+					)}
+				</Box>
+			</div>
+			<Box className={classes.whatsappSmallInfoDiv}>
 				<span className={classes.textInfoWrapper}>
 					{linkCount}
 					<span className={classes.textInfo}>
