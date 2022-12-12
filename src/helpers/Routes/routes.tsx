@@ -232,6 +232,23 @@ export const getRoutes = (
       ],
     },
     {
+      key: "whatsapp",
+      title: "Whatsapp",
+      pageTitle: t("whatsapp.Title"),
+      iconUnicode: "\ue181",
+      href: "/react/WhatsappCampaigns",
+      isShow: true,
+      icon: <img alt="Sms" src={SmsIcon} />,
+      options: [
+        {
+          key: "create",
+          title: t("whatsapp.NewWhatsappCampaign"),
+          href: "/react/Whatsapp/create",
+          isShow: true,
+        }
+      ],
+    },
+    {
       key: "mms",
       title: "MMS",
       pageTitle: t("mms.logPageHeaderResource1.Text"),

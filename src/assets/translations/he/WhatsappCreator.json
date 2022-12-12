@@ -1,0 +1,66 @@
+{
+	"Title": "Whatsapp",
+	"NewWhatsappCampaign": "יצירת תבנית WhatsApp",
+	"header": "יצירת תבנית WhatsApp",
+	"WAMenuItemResource": {
+		"Text": "תבנית WhatsApp חדשה"
+	},
+	"PageResource1": {
+		"Title": "ניהול קמפיינים בוואטסאפ"
+	},
+	"submit": "שלח",
+	"saveSms": "שמור",
+	"saveAndExit": "שמור וצא",
+
+	"whatsappTemplate": "צור תבנית WhatsApp חדשה",
+	"toolTip1": "צור את התוכן שברצונך לשלוח לנמענים שלך ולאחר מכן בחר כיצד, מתי ולמי לשלוח",
+	"createContent": "צור תוכן",
+	"templateName": "שם התבנית",
+	"templateNamePlaceholder": "שם התבנית",
+	"templateDesc": "רק אתה תראה את השם",
+	"selectSavedTemplate": "בחר תבנית שמורה",
+	"selectSavedTemplatePlaceholder": "בחר תבנית שמורה",
+	"typeText": "הוסף טקסט כאן - עד 1024 תווים",
+	"yourMessage": "ההודעה שלך",
+
+	"callToActionButton": "קריאה לפעולה",
+	"callToActionSaveButton": "שמור",
+	"callToActionExitButton": "וצא",
+	"callToActionAddMoreButton": "הוסף עוד",
+	"callToActionRemoveButton": "הסר",
+	"callToActionTitle": "קריאה לפעולה",
+	"callToActionDialogContentText": "צור עד 2 לחצנים שיאפשרו ללקוחות להגיב להודעות שלך או לנקוט בפעולה.",
+	"typeOfAction": "סוג פעולה",
+	"phoneButtonText": "טקסט לחצן",
+	"phoneButtonTextPlaceholder": "צור קשר",
+	"country": "מדינה",
+	"phoneNumber": "מספר טלפון",
+	"phoneNumberPlaceholder": "מספר הטלפון שלך",
+	"websiteButtonText": "טקסט לחצן",
+	"websiteButtonTextPlaceholder": "בקר באתר שלנו",
+	"websiteURL": "כתובת האתר",
+	"websiteURLPlaceholder": "הזן את כתובת האתר שלך",
+
+	"template": {
+		"textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
+		"callToActionTooltip": "קריאה לפעולה",
+		"callToAction": "קריאה לפעולה",
+		"quickReplayTooltip": "שידור חוזר מהיר",
+		"quickReplay": "שידור חוזר מהיר",
+		"removalLinkTooltip": "קישור להסרה",
+		"removalLink": "קישור להסרה",
+		"removalTextTooltip": "טקסט הסרה",
+		"removalText": "טקסט הסרה",
+		"dynamicFieldTooltip": "שדה דינמי",
+		"dynamicField": "שדה דינמי"
+	},
+
+	"quickReply": {
+		"title": "תגובה מהירה",
+		"titleDescription": "צור עד 3 לחצנים המאפשרים ללקוחות להגיב להודעות שלך עם הטקסט הנבחר",
+		"addMore": "הוסף כפתור",
+		"exit": "וצא",
+		"save": "שמור",
+		"buttonText": "טקסט כפתור"
+	}
+}
