@@ -89,7 +89,7 @@ const QuickReply = ({
 		} else {
 			setQuickReplyButtons(templateButtons);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isQuickReplyOpen]);
 	return (
 		<Dialog
@@ -102,7 +102,7 @@ const QuickReply = ({
 			<DialogTitle
 				id='form-dialog-title'
 				className={classes.quickReplayDialogHeader}>
-				{translator('whatsapp.quickReply.title')}
+				<>{translator('whatsapp.quickReply.title')}</>
 				<IconButton
 					aria-label='close'
 					onClick={closeQuickReply}
@@ -113,7 +113,7 @@ const QuickReply = ({
 			<DialogContent>
 				<DialogContentText
 					className={classes.quickReplayDialogHeaderDescription}>
-					{translator('whatsapp.quickReply.titleDescription')}
+					<>{translator('whatsapp.quickReply.titleDescription')}</>
 				</DialogContentText>
 				<form onSubmit={onSubmit}>
 					{quickReplyButtons?.map((button) => (
@@ -124,7 +124,7 @@ const QuickReply = ({
 							key={button.id}>
 							<Grid item>
 								<Typography>
-									{translator('whatsapp.quickReply.buttonText')}
+									<>{translator('whatsapp.quickReply.buttonText')}</>
 								</Typography>
 								<Grid container className={classes.quickReplayButtonWrapper}>
 									{button?.fields?.map(
@@ -168,19 +168,19 @@ const QuickReply = ({
 							color='primary'
 							onClick={addMore}
 							disabled={quickReplyButtons?.length >= 3 ? true : false}>
-							{translator('whatsapp.quickReply.addMore')}
+							<>{translator('whatsapp.quickReply.addMore')}</>
 						</Button>
 						<Button
 							onClick={closeQuickReply}
 							variant='contained'
 							color='secondary'>
-							{translator('whatsapp.quickReply.exit')}
+							<>{translator('whatsapp.quickReply.exit')}</>
 						</Button>
 						<Button
 							variant='contained'
 							type='submit'
 							className={classes.quickReplySave}>
-							{translator('whatsapp.quickReply.save')}
+							<>{translator('whatsapp.quickReply.save')}</>
 						</Button>
 					</DialogActions>
 				</form>

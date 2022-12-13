@@ -174,25 +174,29 @@ const WhatsappTemplateEditor = ({
 				<span className={classes.textInfoWrapper}>
 					{linkCount}
 					<span className={classes.textInfo}>
-						{linkCount === 1
-							? translator('mainReport.link')
-							: translator('mainReport.links')}
+						<>
+							{linkCount === 1
+								? translator('mainReport.link')
+								: translator('mainReport.links')}
+						</>
 					</span>
 				</span>
 
 				<span className={classes.textInfoWrapper}>
 					{messageCount}
 					<span className={classes.textInfo}>
-						{messageCount === 1
-							? translator('sms.message')
-							: translator('sms.messages')}
+						<>
+							{messageCount === 1
+								? translator('sms.message')
+								: translator('sms.messages')}
+						</>
 					</span>
 				</span>
 
 				<span className={classes.textInfoWrapper}>
 					{templateText?.length}/1024
 					<span className={classes.textInfo}>
-						{translator('mainReport.char')}
+						<>{translator('mainReport.char')}</>
 					</span>
 				</span>
 			</Box>
@@ -202,7 +206,7 @@ const WhatsappTemplateEditor = ({
 					<>
 						<Tooltip
 							disableFocusListener
-							title={translator('mainReport.aligntoRight')}
+							title={<>{translator('mainReport.aligntoRight')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>
@@ -223,7 +227,7 @@ const WhatsappTemplateEditor = ({
 						</Tooltip>
 						<Tooltip
 							disableFocusListener
-							title={translator('mainReport.alignToLeft')}
+							title={<>{translator('mainReport.alignToLeft')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>
@@ -249,7 +253,7 @@ const WhatsappTemplateEditor = ({
 					{actionButtons.map((button) => (
 						<Tooltip
 							disableFocusListener
-							title={translator(button.tooltipTitle)}
+							title={<>{translator(button.tooltipTitle)}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top'
 							arrow
@@ -263,7 +267,7 @@ const WhatsappTemplateEditor = ({
 											: null
 									)}
 									onClick={() => onButtonClick(button)}>
-									{translator(button.buttonTitle)}
+									<>{translator(button.buttonTitle)}</>
 								</Button>
 							)}
 						</Tooltip>
