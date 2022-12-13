@@ -24,7 +24,6 @@ import {
     deleteSms,
     smsSaveGroup,
     getSmsByID,
-    smsQuick,
     getCampaignSumm,
     getCreditsforSMS,
     getTestGroups,
@@ -36,12 +35,11 @@ import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import IconButton from "@material-ui/core/IconButton";
-import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile, AiOutlineAlignLeft } from "react-icons/ai";
+import { Button, Grid, Box } from "@material-ui/core";
+import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import { logout } from '../../helpers/Api/PulseemReactAPI'
 import { Loader } from "../Loader/Loader";
 
 const useStyles = makeStyles((theme) => ({
@@ -112,11 +110,12 @@ const Editorbox = ({
         (state) => state.core
     );
     const {
+        extraData,
+        testGroups,
+        ToastMessages,
+        commonSettings,
         previousLandingData,
         previousCampaignData,
-        commonSettings,
-        testGroups,
-        ToastMessages
     } = useSelector((state) => state.sms);
     const location = useLocation();
     const [dialogType, setDialogType] = useState(null)
@@ -255,20 +254,37 @@ const Editorbox = ({
     const initDispatch = async () => {
         setLoader(true);
         setCampaignId(props && params?.id ? params?.id : -1);
-        await dispatch(getPreviousLandingData());
-        await dispatch(getTestGroups());
-        await dispatch(getPreviousCampaignData());
-        let resp = await dispatch(getAccountExtraData());
-        let arr = Object.keys(resp.payload)
-        let additionalExtraData = arr.map(function (key) {
-            return { [key]: resp.payload[key] };
-        })
+        if (previousLandingData?.length === 0) {
+            await dispatch(getPreviousLandingData());
+        }
+        if (testGroups?.length === 0) {
+            await dispatch(getTestGroups());
+        }
+        if (previousCampaignData?.length === 0) {
+            await dispatch(getPreviousCampaignData());
+        }
+
+        let arrTemp = [];
+        let additionalExtraData = [];
+
+        if (!Object.keys(extraData)) {
+            let resp = await dispatch(getAccountExtraData());
+            arrTemp = Object.keys(resp.payload)
+            additionalExtraData = arrTemp.map(function (key) {
+                return { [key]: resp.payload[key] };
+            })
+        }
+        else {
+            arrTemp = Object.keys(extraData);
+            additionalExtraData = arrTemp.map(function (key) {
+                return { [key]: extraData[key] };
+            })
+        }
 
         for (let i = 0; i < additionalExtraData.length; i++) {
             defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
         }
         setextraAccountDATA(defaultAccountExtraData)
-        await dispatch(getGroupsBySubAccountId());
         if (qs && qs.FromAutomation && qs.FromAutomation > 0) {
             setIsFromAutomation(true);
         }
@@ -281,9 +297,16 @@ const Editorbox = ({
     }, [dispatch]);
 
     const initFromNumber = async () => {
-        // const smsCampaign = await getSavedData();
-        const commonFeatures = await dispatch(getCommonFeatures());
-        let fromNumber = commonFeatures.payload.DefaultCellNumber;
+        let fromNumber = '';
+        if (commonSettings?.DefaultCellNumber) {
+            fromNumber = commonSettings.DefaultCellNumber;
+        }
+        else {
+            const commonFeatures = await dispatch(getCommonFeatures());
+            fromNumber = commonFeatures.payload.DefaultCellNumber;
+        }
+
+        setstoredValue(fromNumber);
 
         const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
@@ -294,7 +317,6 @@ const Editorbox = ({
         setcampaignNumber(fromNumber);
         setStaticNumber(virtualNumber.payload.Number);
         setremovalNumber(virtualNumber.payload.RemovalKey);
-        setstoredValue(commonFeatures.payload.DefaultCellNumber);
         if (fromNumber !== virtualNumber.payload.Number) {
             setrestoreBool(false);
             setremovalMessageButtonDisabled(true);

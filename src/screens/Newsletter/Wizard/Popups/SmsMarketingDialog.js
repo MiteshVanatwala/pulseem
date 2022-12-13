@@ -81,7 +81,6 @@ const SmsMarketingDialog = ({
             setNumberVerified(isVerified);
         }
     }
-
     const handleUpdate = (model) => {
         setLinkToUpdateEnabled(model?.Text?.indexOf(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${newsletterSettings.CampaignID}&Culture=he-IL`) === -1)
         setLinkToCampaignEnabled(model?.Text?.indexOf(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`) === -1)
@@ -93,11 +92,7 @@ const SmsMarketingDialog = ({
             CreditsPerSms: model?.CreditsPerSms
         });
     }
-
-
-
     const handleConfirm = async () => {
-
         setLoader(true);
         const finalDate = moment(smsModel.SendDate, "YYYY-MM-DD HH:mm:ss");
         finalDate.set({ h: moment(smsModel.SendTime).format("HH"), m: moment(smsModel.SendTime).format("mm") });
@@ -126,7 +121,6 @@ const SmsMarketingDialog = ({
         }
         setLoader(false);
     }
-
     const handleTotalMarketingResponse = (response) => {
         switch (response?.StatusCode) {
             case 201: {
@@ -146,7 +140,6 @@ const SmsMarketingDialog = ({
             }
         }
     }
-
     const handleValidation = () => {
         const tempErrors = {};
         if (!smsModel.FromNumber) {
@@ -333,7 +326,6 @@ const SmsMarketingDialog = ({
         onConfirm: handleConfirm
     }
 
-    console.log(smsModel);
     return <BaseDialog
         classes={classes}
         open={isOpen}
