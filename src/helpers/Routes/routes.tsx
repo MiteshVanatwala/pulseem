@@ -239,7 +239,13 @@ export const getRoutes = (
         title: t("whatsapp.NewWhatsappCampaign"),
         href: "/react/Whatsapp/create",
         isShow: true,
-      }
+      },
+      {
+        key: "send",
+        title: "Send Whatsapp Campaign",
+        href: "/react/Whatsapp/send",
+        isShow: true,
+      },
     ],
   },
   {
@@ -333,7 +339,7 @@ export const getRoutes = (
         title: t("master.manageNotifications"),
         href: "/react/Notifications",
         isShow: true,
-      }
+      },
     ],
   },
   {

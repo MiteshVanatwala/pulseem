@@ -60,6 +60,7 @@ import ClientSearchResult from "./screens/ClientSearch/ClientSearchResult";
 import NotificationSend from "./screens/Notifications/Editor/NotificationSend";
 import WhatsappCreator from "./screens/Whatsapp/Editor/WhatsappCreator";
 import PageNotFound from "./screens/404";
+import WhatsappCampaign from "./screens/Whatsapp/Campaign/WhatsappCampain";
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -219,6 +220,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`/react/Whatsapp/create`}
         element={<WhatsappCreator classes={classes} />}
+      />
+
+      <Route
+        path={`/react/Whatsapp/send`}
+        element={<WhatsappCampaign classes={classes} />}
       />
 
       {/* MMS */}
