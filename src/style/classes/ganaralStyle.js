@@ -798,7 +798,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
   },
   buttonHead: {
-    fontSize: "20px",
+    fontSize: "17px",
     marginBottom: "10px",
     // "@media screen and (max-width: 414px)": {
     //   fontSize: 16
@@ -1998,6 +1998,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneDiv: {
     position: "relative",
+    maxHeight: '340px',
+    overflowY: 'clip',
     "@media screen and (max-width: 960px)": {
       marginTop: 0,
     },

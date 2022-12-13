@@ -43,7 +43,9 @@ const Buttons = ({ classes }: ButtonsProps["classes"]) => {
         color="primary"
         style={{ margin: "8px" }}
       >
-        {translator("whatsapp.saveSms")}
+        <>
+          {translator("whatsapp.saveSms")}
+        </>
       </Button>
       <Button
         type="submit"
@@ -57,9 +59,11 @@ const Buttons = ({ classes }: ButtonsProps["classes"]) => {
         color="primary"
         style={{ margin: "8px" }}
       >
-        {!isFromAutomation
-          ? translator("whatsapp.submit")
-          : translator("whatsapp.saveAndExit")}
+        <>
+          {!isFromAutomation
+            ? translator("whatsapp.submit")
+            : translator("whatsapp.saveAndExit")}
+        </>
       </Button>
     </div>
   );
