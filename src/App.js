@@ -136,11 +136,11 @@ const renderRoutes = (classes, history) => {
       <Route
         exact
         path="/Campaigns/Create"
-        element={<NewsLetterWizard classes={classes} />}
+        element={<SystemMessage classes={classes} />}
       />
       <Route
         path="/Campaigns/Create/:id"
-        element={<NewsLetterWizard classes={classes} />}
+        element={<SystemMessage classes={classes} />}
       />
       <Route
         exact
