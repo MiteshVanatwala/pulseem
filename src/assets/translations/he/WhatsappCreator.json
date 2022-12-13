@@ -43,10 +43,10 @@
 
 	"template": {
 		"textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
-		"callToActionTooltip": "קריאה לפעולה",
-		"callToAction": "קריאה לפעולה",
-		"quickReplayTooltip": "שידור חוזר מהיר",
-		"quickReplay": "שידור חוזר מהיר",
+		"callToActionTooltip": "כפתור פעולה",
+		"callToAction": "כפתור פעולה",
+		"quickReplayTooltip": "תגובה מהירה",
+		"quickReplay": "תגובה מהירה",
 		"removalLinkTooltip": "קישור להסרה",
 		"removalLink": "קישור להסרה",
 		"removalTextTooltip": "טקסט הסרה",

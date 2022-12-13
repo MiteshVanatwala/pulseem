@@ -1,4 +1,10 @@
-import React, { BaseSyntheticEvent, useMemo, useRef, useState } from 'react';
+import React, {
+	BaseSyntheticEvent,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
@@ -20,18 +26,46 @@ import { Box, Grid } from '@material-ui/core';
 import WhatsappTemplateEditor from './WhatsappTemplateEditor';
 import { actionButtonProps } from './WhatsappCreator.types';
 import QuickReply from './QuickReply';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import WhatsappMobilePreview from './WhatsappMobilePreview';
 import WhatsappTips from './whatsappTips';
 import AlertModal from './AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
+import {
+	getSavedTemplates,
+	submitTemplates,
+} from '../../../redux/reducers/whatsappSlice';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
+	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 
+	useEffect(() => {
+		async function fetchMyAPI() {
+			let savedTemplate = await dispatch(
+				getSavedTemplates({ templateStatus: 3 })
+			);
+			let submitTemplate = await dispatch(
+				submitTemplates({
+					friendlytemplatename: ' Text Template 1',
+					templateName: 'temptext1',
+					language: 'en',
+					variables: { '1': 'name' },
+					types: {
+						text: {
+							body: 'Hi, {{1}}. Thanks for contacting Owl Air Support.\n How can I help?',
+						},
+					},
+				})
+			);
+			console.log('savedTemplate::', savedTemplate);
+			console.log('submitTemplate::', submitTemplate);
+		}
+		fetchMyAPI();
+	}, []);
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
 	//This regex will test dynamic field having two digits in side (i.e. {{10}});
 	const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');

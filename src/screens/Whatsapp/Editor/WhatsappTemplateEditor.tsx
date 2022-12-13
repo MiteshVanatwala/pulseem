@@ -92,10 +92,10 @@ const WhatsappTemplateEditor = ({
 				tooltipTitle: 'whatsapp.template.quickReplayTooltip',
 				buttonTitle: 'whatsapp.template.quickReplay',
 			},
-			{
-				tooltipTitle: 'whatsapp.template.removalLinkTooltip',
-				buttonTitle: 'whatsapp.template.removalLink',
-			},
+			// {
+			// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
+			// 	buttonTitle: 'whatsapp.template.removalLink',
+			// },
 			{
 				tooltipTitle: 'whatsapp.template.removalTextTooltip',
 				buttonTitle: 'whatsapp.template.removalText',
