@@ -20,6 +20,7 @@ const TemplateFields = ({
 	onSavedTemplateChange,
 	fileData,
 	setFileData,
+	savedTemplateList
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -116,9 +117,9 @@ const TemplateFields = ({
 							}
 							onChange={onSavedTemplateChange}
 							value={savedTemplate}>
-							{names.map((name) => (
-								<MenuItem key={name} value={name}>
-									{name}
+							{savedTemplateList.map((template) => (
+								<MenuItem key={template.TemplateId} value={template.TemplateId}>
+									{template.TemplateName}
 								</MenuItem>
 							))}
 						</TextField>

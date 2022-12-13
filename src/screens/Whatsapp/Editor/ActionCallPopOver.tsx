@@ -387,8 +387,8 @@ const ActionCallPopOver = ({
 														}
 														helperText={
 															field.fieldName === 'Website URL'
-																? `${field.value.length}/${2000}`
-																: `${field.value.length}/${20}`
+																? `${field.value?.length}/${2000}`
+																: `${field.value?.length}/${20}`
 														}
 														placeholder={field.placeholder}
 														variant='outlined'
@@ -439,7 +439,7 @@ const ActionCallPopOver = ({
 					</Grid>
 
 					<DialogActions>
-						{callToActionFieldRows.length < 2 && (
+						{callToActionFieldRows?.length < 2 && (
 							<Button variant='contained' color='primary' onClick={addMore}>
 								<>{translator('whatsapp.callToActionAddMoreButton')}</>
 							</Button>
@@ -452,10 +452,10 @@ const ActionCallPopOver = ({
 						</Button>
 						<Button
 							type='submit'
-							disabled={callToActionFieldRows.length === 0 ? true : false}
+							disabled={callToActionFieldRows?.length === 0 ? true : false}
 							variant='contained'
 							style={
-								callToActionFieldRows.length > 0
+								callToActionFieldRows?.length > 0
 									? { backgroundColor: 'green', color: 'white' }
 									: {}
 							}>

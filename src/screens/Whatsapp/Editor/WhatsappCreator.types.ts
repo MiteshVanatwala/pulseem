@@ -25,6 +25,7 @@ export type TemplateFieldsProps = {
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
 	fileData: File | undefined;
 	setFileData: (fileData: File | undefined) => void;
+	savedTemplateList: savedTemplateListProps[];
 };
 
 export type MessageEditorProps = {
@@ -121,4 +122,14 @@ export type AlertModalProps = {
 	subtitle: string;
 	type: 'confirm' | 'delete' | 'alert' | 'submit';
 	children?: React.ReactNode;
+};
+
+export type savedTemplateListProps = {
+	CreatedDate: string;
+	Data: any;
+	RejectionReason: string;
+	Status: string;
+	StatusUpdatedDate: string;
+	TemplateId: string;
+	TemplateName: string;
 };

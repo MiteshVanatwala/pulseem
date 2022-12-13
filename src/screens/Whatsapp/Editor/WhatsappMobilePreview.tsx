@@ -146,7 +146,7 @@ const WhatsappMobilePreview = ({
 																					| quickReplyButtonProps
 																					| callToActionRowProps
 																			) => (
-																				<Grid item>
+																				<Grid item key={button.id}>
 																					{button.typeOfAction ===
 																					'phonenumber' ? (
 																						<a
@@ -203,6 +203,7 @@ const WhatsappMobilePreview = ({
 																		| callToActionRowProps
 																) => (
 																	<div
+																		key={button.id}
 																		className={`${classes.whatsappMobileMessage} sent quick-reply-button`}
 																		style={{
 																			margin: '2px 0px 0px 0px',

@@ -30,7 +30,7 @@ export const getSavedTemplates = createAsyncThunk(
 				data
 			);
 
-			return JSON.parse(response.data);
+			return response.data;
 		} catch (error) {
 			const err = error as errorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
@@ -40,14 +40,14 @@ export const getSavedTemplates = createAsyncThunk(
 
 export const submitTemplates = createAsyncThunk(
 	'whatsAppCampaign/SubmitWhatsAppTemplate',
-	async (data: submitTemplatesDataProps, thunkAPI) => {
+	async (data: any, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SubmitWhatsAppTemplate`,
 				data
 			);
 
-			return JSON.parse(response.data);
+			return response.data;
 		} catch (error) {
 			const err = error as errorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
