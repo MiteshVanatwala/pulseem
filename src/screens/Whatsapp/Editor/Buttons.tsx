@@ -42,7 +42,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 				color='primary'
 				style={{ margin: '8px' }}
 				onClick={() => onFormButtonClick('save')}>
-				{translator('whatsapp.saveSms')}
+				<>{translator('whatsapp.saveSms')}</>
 			</Button>
 			<Button
 				type='submit'
@@ -56,9 +56,11 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 				color='primary'
 				style={{ margin: '8px' }}
 				onClick={() => onFormButtonClick('submit')}>
-				{!isFromAutomation
-					? translator('whatsapp.submit')
-					: translator('whatsapp.saveAndExit')}
+				<>
+					{!isFromAutomation
+						? translator('whatsapp.submit')
+						: translator('whatsapp.saveAndExit')}
+				</>
 			</Button>
 		</div>
 	);

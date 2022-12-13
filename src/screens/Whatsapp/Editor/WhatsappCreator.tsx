@@ -11,7 +11,6 @@ import {
 	callToActionRowProps,
 	coreProps,
 	quickReplyButtonProps,
-	quickReplyButtonsFieldProps,
 	templateDataProps,
 	WhatsappCreatorProps,
 } from './WhatsappCreator.types';
@@ -25,6 +24,7 @@ import { useSelector } from 'react-redux';
 import WhatsappMobilePreview from './WhatsappMobilePreview';
 import WhatsappTips from './whatsappTips';
 import AlertModal from './AlertModal';
+import { getValueByFieldName } from '../../../helpers/Utils/common';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -127,15 +127,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const onSavedTemplateChange = (e: BaseSyntheticEvent) => {
 		setSavedTemplate(e.target.value);
-	};
-
-	const getValueByFieldName = (
-		button: quickReplyButtonProps,
-		fieldName: string
-	) => {
-		return button.fields.find((field: quickReplyButtonsFieldProps) => {
-			return field.fieldName === fieldName;
-		})?.value;
 	};
 
 	const getQuickReplyActions = () => {
@@ -276,7 +267,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			return requestJSON.callToAction;
 		} else if (templateText?.length > 0 && fileData?.name) {
 			return requestJSON.textMedia;
-		} else {
+		} else if (templateText?.length > 0) {
 			return templateText;
 		}
 	};

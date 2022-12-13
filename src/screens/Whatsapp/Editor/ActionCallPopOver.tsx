@@ -329,18 +329,20 @@ const ActionCallPopOver = ({
 			<DialogTitle
 				id='form-dialog-title'
 				className={classes.callToActionDialogHeaderTitle}>
-				{translator('whatsapp.callToActionTitle')}
-				<IconButton
-					aria-label='close'
-					onClick={closeCallToAction}
-					className={classes.callToActionDialogClose}>
-					<CloseIcon />
-				</IconButton>
+				<>
+					{translator('whatsapp.callToActionTitle')}
+					<IconButton
+						aria-label='close'
+						onClick={closeCallToAction}
+						className={classes.callToActionDialogClose}>
+						<CloseIcon />
+					</IconButton>
+				</>
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText
 					className={classes.callToActionDialogHeaderDescription}>
-					{translator('whatsapp.callToActionDialogContentText')}
+					<>{translator('whatsapp.callToActionDialogContentText')}</>
 				</DialogContentText>
 				<form onSubmit={onSubmit}>
 					<Grid container className={classes.callToActionFields} spacing={1}>
@@ -349,7 +351,7 @@ const ActionCallPopOver = ({
 								<Grid container spacing={3} key={'TOC' + index}>
 									<Grid item md={3}>
 										<Typography>
-											{translator('whatsapp.typeOfAction')}
+											<>{translator('whatsapp.typeOfAction')}</>
 										</Typography>
 										<TextField
 											select
@@ -423,7 +425,7 @@ const ActionCallPopOver = ({
 
 									<Grid item md={1}>
 										<Typography style={{ visibility: 'hidden' }}>
-											{translator('whatsapp.callToActionRemoveButton')}
+											<>{translator('whatsapp.callToActionRemoveButton')}</>
 										</Typography>
 										<IconButton
 											color='secondary'
@@ -439,14 +441,14 @@ const ActionCallPopOver = ({
 					<DialogActions>
 						{callToActionFieldRows.length < 2 && (
 							<Button variant='contained' color='primary' onClick={addMore}>
-								{translator('whatsapp.callToActionAddMoreButton')}
+								<>{translator('whatsapp.callToActionAddMoreButton')}</>
 							</Button>
 						)}
 						<Button
 							onClick={closeCallToAction}
 							variant='contained'
 							color='secondary'>
-							{translator('whatsapp.callToActionExitButton')}
+							<>{translator('whatsapp.callToActionExitButton')}</>
 						</Button>
 						<Button
 							type='submit'
@@ -457,7 +459,7 @@ const ActionCallPopOver = ({
 									? { backgroundColor: 'green', color: 'white' }
 									: {}
 							}>
-							{translator('whatsapp.callToActionSaveButton')}
+							<>{translator('whatsapp.callToActionSaveButton')}</>
 						</Button>
 					</DialogActions>
 				</form>
