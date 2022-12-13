@@ -1,18 +1,16 @@
 import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText } from '@material-ui/core'
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
-import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import LabeledTextField from '../../../../components/core/LabeledTextField';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { DateField } from '../../../../components/managment';
 import moment from 'moment';
 import Editorbox from '../../../../components/Wizard/Editorbox';
-import { getSmsMarketing, setSmsMarketing } from '../../../../redux/reducers/smsSlice'
+import { setSmsMarketing } from '../../../../redux/reducers/smsSlice'
 import VerificationDialog from '../../../../components/DialogTemplates/VerificationDialog';
 import { Loader } from '../../../../components/Loader/Loader';
-import { getAuthorizeNumbers } from '../../../../redux/reducers/commonSlice'
-import { Dialog } from "../../../../components/managment/index";
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 const SmsMarketingDialog = ({
     classes,
@@ -83,7 +81,6 @@ const SmsMarketingDialog = ({
             setNumberVerified(isVerified);
         }
     }
-
     const handleUpdate = (model) => {
         setLinkToUpdateEnabled(model?.Text?.indexOf(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${newsletterSettings.CampaignID}&Culture=he-IL`) === -1)
         setLinkToCampaignEnabled(model?.Text?.indexOf(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`) === -1)
@@ -95,11 +92,7 @@ const SmsMarketingDialog = ({
             CreditsPerSms: model?.CreditsPerSms
         });
     }
-
-
-
     const handleConfirm = async () => {
-
         setLoader(true);
         const finalDate = moment(smsModel.SendDate, "YYYY-MM-DD HH:mm:ss");
         finalDate.set({ h: moment(smsModel.SendTime).format("HH"), m: moment(smsModel.SendTime).format("mm") });
@@ -128,7 +121,6 @@ const SmsMarketingDialog = ({
         }
         setLoader(false);
     }
-
     const handleTotalMarketingResponse = (response) => {
         switch (response?.StatusCode) {
             case 201: {
@@ -148,7 +140,6 @@ const SmsMarketingDialog = ({
             }
         }
     }
-
     const handleValidation = () => {
         const tempErrors = {};
         if (!smsModel.FromNumber) {
@@ -178,11 +169,6 @@ const SmsMarketingDialog = ({
         description: 'This is the description',
         showDivider: true,
         disableBackdropClick: true,
-        icon: (
-            <AiOutlineExclamationCircle
-                style={{ fontSize: 30, color: "#fff" }}
-            />
-        ),
         content: (
             <Grid container spacing={2}>
                 <Grid item sm={12} md={6}>
@@ -340,14 +326,13 @@ const SmsMarketingDialog = ({
         onConfirm: handleConfirm
     }
 
-    console.log(smsModel);
-    return <Dialog
+    return <BaseDialog
         classes={classes}
         open={isOpen}
         onClose={() => { setDialogType(null) }}
         {...currentDialog}>
         {currentDialog.content}
-    </Dialog>
+    </BaseDialog>
 }
 
 export default SmsMarketingDialog

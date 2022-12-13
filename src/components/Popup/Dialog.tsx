@@ -10,7 +10,6 @@ import {
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { AlertIcon } from "../icons/index";
 
 export class Props {
   exit: boolean = false;
@@ -20,7 +19,6 @@ export class Props {
 export class Options extends Props {
   Classes: any;
   Children: any;
-  icon: string = "";
   Title: string = "";
   Style: any = null;
   Open: boolean = false;
@@ -133,19 +131,6 @@ export const Dialog = (options: Options) => {
       )
     );
   };
-  const renderIcon = () => {
-    const alertIcon = <AlertIcon />;
-    return (
-      <Box
-        className={clsx(options.Classes.dialogIconContainer, {
-          [options.Classes.dialogIconContainerRTL]: isRTL,
-          [options.Classes.dialogIconContainerLTR]: !isRTL,
-        })}
-      >
-        {options.icon || alertIcon}
-      </Box>
-    );
-  };
   const renderChildren = () => {
     return (
       <Box
@@ -154,8 +139,8 @@ export const Dialog = (options: Options) => {
           maxHeight: options.maxHeight
             ? options.maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-            ? "calc(65vh)"
-            : "calc(45vh)",
+              ? "calc(65vh)"
+              : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? "330px" : "0px",
         }}
@@ -203,7 +188,6 @@ export const Dialog = (options: Options) => {
       >
         {renderExitButton()}
         {renderContent()}
-        {renderIcon()}
       </Paper>
     </BaseDialog>
   );

@@ -158,8 +158,9 @@ const renderRoutes = (classes, redirect) => {
         element={<NewsletterSendSettings classes={classes} />}
       />
       <Route
-        path={`/Editor/CampaignInfo`}
-        element={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
+        exact
+        path="/react/Campaigns/Archive"
+        element={<ArchiveManagement classes={classes} />}
       />
       <Route
         path={`/CampaignsByResults`}

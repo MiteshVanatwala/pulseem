@@ -222,10 +222,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const redirctToArchive = () => {
-    window.location = '/react/Campaigns/Archive'
-  }
-
   const handleVerificationDialog = () => {
 
     setVerificationDialog(true)
@@ -271,7 +267,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={redirctToArchive}
+            onClick={() => { navigate('/react/Campaigns/Archive') }}
           >
             {t('master.redirectToArchive')}
           </Button>

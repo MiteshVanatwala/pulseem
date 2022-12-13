@@ -6,12 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { Dialog } from "../../../components/managment/index";
 import { Loader } from '../../../components/Loader/Loader';
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useNavigate, useParams } from "react-router";
-import { BsTrash } from "react-icons/bs";
+import { BiSave } from 'react-icons/bi'
 import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Button, Grid, Box } from "@material-ui/core";
 import {
@@ -40,10 +39,11 @@ import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import UploadXL from '../../../components/Files/UploadXL'
 import { UploadSettings } from "../../../helpers/Constants";
-import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Badge from '@material-ui/core/Badge';
 import moment from 'moment';
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import WizardActions from "../../../components/Wizard/WizardActions";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -547,91 +547,45 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
 
-    const WizardButtons = () => {
+    const renderButtons = () => {
         return (
-            <div className={classes.creatorButtons}>
-                <div className={classes.rightMostContainer}>
-                    <Button
-                        variant='contained'
-                        size='medium'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightBlue,
-                            classes.backButton,
-                            isRTL && windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginLeftAuto : windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginRightAuto : null
-                        )}
-                        color="primary"
-                        style={{ margin: '8px' }}
-                        onClick={() => { handlePreviousPage() }}
-                    >
-                        <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
-                        {t("smsReport.back")}
-                    </Button>
-                    <Button
-                        variant='contained'
-                        size='medium'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonRed
-                        )}
-                        style={{ margin: '8px', padding: '9px 0' }}
-                        onClick={onHandleDelete}
-                    >
-                        <BsTrash style={{ fontSize: "25" }} />
-                    </Button>
-                    <Button
-                        variant='contained'
-                        size='medium'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightBlue,
-                            classes.backButton
-                        )}
-                        color="primary"
-                        style={{ margin: '8px' }}
-                        onClick={() => { setDialogType({ type: "exit" }) }}
-                    >
-                        {t('mainReport.exitSms')}
-                    </Button>
-                    <Button
-                        variant='contained'
-                        size='medium'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightBlue,
-                            classes.backButton
-                        )}
-                        color="primary"
-                        style={{ margin: '8px' }}
-                        onClick={() => {
-                            onSaveSettings();
-                        }}
-                    >
-                        {t('mainReport.saveSms')}
-                    </Button>
-                    <Button
-                        variant='contained'
-                        size='medium'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen,
-                            classes.backButton
-                        )}
-                        color="primary"
-                        style={{
-                            margin: '8px',
-                            pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
-                            backgroundColor:
-                                selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
-                        }}
-                        onClick={() => {
-                            setDialogType({ type: 'preSendSummary' })
-                        }}
-                    >
-                        {t("mainReport.summary")}
-                    </Button>
-                </div>
-            </div>
+            <>
+                <Button
+                    onClick={onSaveSettings}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightBlue,
+                        classes.backButton
+                    )}
+                    style={{ margin: '8px' }}
+                    startIcon={<BiSave />}
+                    color="primary"
+                >{t("common.save")}
+                </Button>
+                <Button
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton
+                    )}
+                    color="primary"
+                    style={{
+                        margin: '8px',
+                        pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
+                        backgroundColor:
+                            selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
+                    }}
+                    onClick={() => {
+                        setDialogType({ type: 'preSendSummary' })
+                    }}
+                >
+                    {t("mainReport.summary")}
+                </Button>
+            </>
         );
     }
 
@@ -699,11 +653,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             title: "",
             showDivider: false,
             disableBackdropClick: true,
-            icon: (
-                <AiOutlineExclamationCircle
-                    style={{ fontSize: 30, color: "#fff" }}
-                />
-            ),
             content: TabBody([segDialog, filterDialog]),
             showDefaultButtons: true,
             confirmText: t("common.Ok"),
@@ -788,18 +737,17 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         if (type) {
             return (
-                dialogType && <Dialog
+                dialogType && <BaseDialog
                     classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
-                </Dialog>
+                </BaseDialog>
             )
         }
         return <></>
     }
-
     const callbackUpdateGroups = (groups) => {
         setSelectedGroups(groups);
     }
@@ -1093,7 +1041,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     </Grid>
                 </Grid>
             </Box>
-            <WizardButtons />
+            <WizardActions
+                classes={classes}
+                onBack={handlePreviousPage}
+                onDelete={onHandleDelete}
+                onExit={() => { setDialogType({ type: "exit" }) }}
+                additionalButtons={renderButtons()}
+            />
             {renderDialog()}
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
                 classes={classes}
@@ -1111,8 +1065,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => setDialogType(null)}
             />}
-            {/* {renderSummary()} */}
-            {/* {renderSendType2validation()} */}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}
                 autoHideDuration={5000}

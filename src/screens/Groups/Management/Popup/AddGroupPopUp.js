@@ -20,10 +20,7 @@ import {
     getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
-
-import { Dialog } from "../../../../components/managment/Dialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const AddGroupPopUp = ({
