@@ -31,7 +31,7 @@ import {
     getCommonFeatures,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
-import { Dialog } from "../managment/index";
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
@@ -1007,9 +1007,6 @@ const Editorbox = ({
         return {
             title: t('mainReport.selectLanding'),
             showDivider: true,
-            icon: (
-                <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
-            ),
             content: (
                 <Box className={clsx(classes.dialogBox, classes.dialogCustomSize)}>
                     <Paper component="form" className={btnStyle.root}>
@@ -1424,13 +1421,13 @@ const Editorbox = ({
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <Dialog
+            dialogType && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onClose={handleClose}
                 {...currentDialog}>
                 {currentDialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
 

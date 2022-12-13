@@ -101,7 +101,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "& .MuiPaper-root": {
       borderRadius: 25,
       overflowX: "hidden",
-      boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
+      // boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
       backgroundColor: '#fff'
     },
     "& .MuiDialog-scrollPaper": {
@@ -2246,13 +2246,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     left: "1.2rem",
   },
   dialogExitButtonLTR: {
-    right: "0.5rem",
+    right: "1rem",
   },
   solidDialog: {
     display: "flex",
     flexDirection: "column",
     margin: "1rem",
     padding: "1rem",
+    paddingTop: 0,
     minWidth: dialogWidth[windowSize],
     backgroundColor: '#fff',
     '& .title': {

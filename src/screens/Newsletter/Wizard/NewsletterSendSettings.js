@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { Dialog } from "../../../components/managment/index";
 import { Loader } from '../../../components/Loader/Loader';
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Groups/GroupsHandler/Groups";
@@ -44,6 +43,7 @@ import { AiOutlineExclamationCircle } from 'react-icons/ai'
 import { FaRegCalendarAlt } from "react-icons/fa";
 import Badge from '@material-ui/core/Badge';
 import moment from 'moment';
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -699,11 +699,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             title: "",
             showDivider: false,
             disableBackdropClick: true,
-            icon: (
-                <AiOutlineExclamationCircle
-                    style={{ fontSize: 30, color: "#fff" }}
-                />
-            ),
             content: TabBody([segDialog, filterDialog]),
             showDefaultButtons: true,
             confirmText: t("common.Ok"),
@@ -788,13 +783,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         if (type) {
             return (
-                dialogType && <Dialog
+                dialogType && <BaseDialog
                     classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
-                </Dialog>
+                </BaseDialog>
             )
         }
         return <></>

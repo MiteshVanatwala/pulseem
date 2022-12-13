@@ -152,7 +152,7 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path="/Campaigns/Archive"
+        path="/react/Campaigns/Archive"
         element={<ArchiveManagement classes={classes} />}
       />
       <Route
