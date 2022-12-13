@@ -485,6 +485,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
+	const onDeleteCampaign = () => {};
+
+	const onSubmitCampaign = () => {};
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -590,6 +594,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				title={translator('whatsapp.alertModal.DeleteText')}
 				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
 				type='delete'
+				onConfirmOrYes={() => onDeleteCampaign()}
 			/>
 			<AlertModal
 				classes={classes}
@@ -597,6 +602,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				onClose={() => setIsSubmitCampaignOpen(false)}
 				title={translator('whatsapp.alertModal.ConfirmText')}
 				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
+				onConfirmOrYes={() => onSubmitCampaign()}
 				type='submit'>
 				<Box className={classes.alertModalContentMobile}>
 					<WhatsappMobilePreview

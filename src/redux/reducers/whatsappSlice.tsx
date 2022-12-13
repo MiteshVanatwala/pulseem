@@ -1,9 +1,29 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
+type errorProps = {
+	message: string;
+};
+
+type getSavedTemplatesDataProps = {
+	templateStatus: number;
+};
+
+type submitTemplatesDataProps = {
+	friendlytemplatename: string;
+	templateName: string;
+	language: string;
+	variables: { [key: string]: string };
+	types: {
+		text: {
+			body: string;
+		};
+	};
+};
+
 export const getSavedTemplates = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
-	async (data: any, thunkAPI) => {
+	async (data: getSavedTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/GetWhatsAppTemplate`,
@@ -11,15 +31,16 @@ export const getSavedTemplates = createAsyncThunk(
 			);
 
 			return JSON.parse(response.data);
-		} catch (error: any) {
-			return thunkAPI.rejectWithValue({ error: error.message });
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
 );
 
 export const submitTemplates = createAsyncThunk(
 	'whatsAppCampaign/SubmitWhatsAppTemplate',
-	async (data: any, thunkAPI) => {
+	async (data: submitTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SubmitWhatsAppTemplate`,
@@ -27,8 +48,9 @@ export const submitTemplates = createAsyncThunk(
 			);
 
 			return JSON.parse(response.data);
-		} catch (error: any) {
-			return thunkAPI.rejectWithValue({ error: error.message });
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
 );

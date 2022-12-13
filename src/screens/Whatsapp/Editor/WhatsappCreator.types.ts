@@ -116,6 +116,7 @@ export type AlertModalProps = {
 	classes: ClassesType['classes'];
 	isOpen: boolean;
 	onClose: () => void;
+	onConfirmOrYes: () => void;
 	title: string;
 	subtitle: string;
 	type: 'confirm' | 'delete' | 'alert' | 'submit';
