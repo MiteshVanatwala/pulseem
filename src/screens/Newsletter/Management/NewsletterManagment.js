@@ -26,8 +26,8 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { Title } from '../../../components/managment/Title';
+import EmailVerification from '../../Verification/EmailVerification';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -50,7 +50,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
-  const [verificationDialog, setVerificationDialog] = useState(false)
+
 
   const getData = async () => {
     await dispatch(getNewslatterData())
@@ -267,9 +267,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={() => setVerificationDialog(true)}
+            // onClick={() => setVerificationDialog(true)}
+            onClick={() => setDialogType({ type: 'verifyEmail' })}
           >
-            {t('Open Verification')}
+            {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
@@ -749,7 +750,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
+      // verifyEmail: GetEmailVerificationDialog({ onClose: () => setDialogType(null) }),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -775,12 +777,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-
-      <VerificationDialog
-        isOpen={verificationDialog}
-        onClose={() => setVerificationDialog(false)}
-        onCancel={() => setVerificationDialog(false)}
-      />
+      <EmailVerification isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
