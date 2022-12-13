@@ -38,6 +38,7 @@ import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
+import SystemMessage from './screens/SystemFailure/SystemMessage';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -408,6 +409,11 @@ const renderRoutes = (classes, history) => {
         exact
         path={`/SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
+      />
+      <Route
+        exact
+        path={`/SystemMessage`}
+        element={<SystemMessage classes={classes} />}
       />
     </Routes>
   )

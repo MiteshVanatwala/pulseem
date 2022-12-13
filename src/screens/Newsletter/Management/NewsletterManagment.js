@@ -248,7 +248,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
             variant='contained'
             size='medium'
             onClick={() => {
-              navigate('/Campaigns/Create');
+              navigate(`/SystemMessage`)
+              //navigate('/Campaigns/Create');
             }}
             className={clsx(
               classes.actionButton,
@@ -345,7 +346,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        // href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        href: `/react/SystemMessage`
       },
       {
         key: 'preview',
@@ -364,12 +366,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
         onClick: () => {
-          if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
-            navigate(`/Campaigns/editor/${CampaignID}?fromreact=true`)
-          }
-          else {
-            window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
-          }
+          navigate(`/SystemMessage`)
+          // if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+          //   navigate(`/Campaigns/editor/${CampaignID}?fromreact=true`)
+          // }
+          // else {
+          //   window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
+          // }
         },
         rootClass: classes.paddingIcon,
       },
