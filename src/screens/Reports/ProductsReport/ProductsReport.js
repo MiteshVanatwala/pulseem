@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
+import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,11 +16,11 @@ import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { GetProductReports, GetExporPRData } from '../../../redux/reducers/reportSlice';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
-import { CSVLink } from 'react-csv'
+// import { CSVLink } from 'react-csv'
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
-import { preferredOrder } from '../../../helpers/exportHelper';
-import { exportFile } from '../../../helpers/exportFromJson';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -52,9 +52,9 @@ const ProductsReport = ({ classes }) => {
     const [showLoader, setLoader] = useState(true);
     const [dialogType, setDialogType] = useState(null);
 
-    const [csvData, setCsvData] = useState('')
+    // const [csvData, setCsvData] = useState('')
 
-    const csvLinkRef = useRef(null)
+    // const csvLinkRef = useRef(null)
 
     moment.locale(language)
 
@@ -141,16 +141,30 @@ const ProductsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
-        setDialogType(null);
         setLoader(true);
-        let orderList = preferredOrder(exportPRData, Object.keys(exportColumnHeader));
-        exportFile({
-            data: orderList,
-            fileName: 'productsReport',
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
-        setLoader(false);
+        const exportOption = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: false,
+            Order: Object.keys(exportColumnHeader)
+        };
+
+        try {
+            const result = await HandleExportData(exportPRData, exportOption);
+
+            ExportFile({
+                data: result,
+                fileName: 'productsReport',
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        finally {
+            setLoader(false);
+        }
     }
 
     const handleRowsPerPageSearching = (val) => {
@@ -281,13 +295,13 @@ const ProductsReport = ({ classes }) => {
                     >
                         {t('campaigns.exportFile')}
                     </Button>
-                    <CSVLink
+                    {/* <CSVLink
                         data={csvData}
                         filename='report.csv'
                         className='hidden'
                         ref={csvLinkRef}
                         target='_blank'
-                    />
+                    /> */}
                 </Grid>}
                 <Grid item className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
