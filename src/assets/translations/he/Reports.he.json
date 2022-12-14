@@ -101,7 +101,8 @@
     "price": "מחיר",
     "purchased": "נמענים שרכשו",
     "abandoned": "נמענים שנטשו",
-    "revenueFrmProd": "סך ההכנסות מהמוצר"
+    "revenueFrmProd": "סך ההכנסות מהמוצר",
+    "productId": "מוצר מספר"
   },
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
   "Reactivate": "Reactivate / בטל הסרה",

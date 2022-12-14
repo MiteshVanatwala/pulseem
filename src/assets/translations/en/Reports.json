@@ -101,7 +101,8 @@
     "price": "Price",
     "purchased": "Purchased",
     "abandoned": "Abandoned",
-    "revenueFrmProd": "Revenue From Product"
+    "revenueFrmProd": "Revenue From Product",
+    "productId": "Product Id"
   },
   "ArchiveDirectSendReport": "DirectSend Report Archive",
   "Reactivate": "Reactivate / Cancel removal",
