@@ -64,6 +64,7 @@ export type whatsappMobilePreviewProps = {
 	campaignNumber: string;
 	templateData: templateDataProps;
 	buttonType: string;
+	fileData: string;
 };
 
 export type ButtonsProps = {

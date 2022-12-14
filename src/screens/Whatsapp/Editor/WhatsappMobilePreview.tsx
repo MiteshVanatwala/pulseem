@@ -16,6 +16,7 @@ const WhatsappMobilePreview = ({
 	campaignNumber,
 	templateData,
 	buttonType,
+	fileData,
 }: whatsappMobilePreviewProps) => {
 	const { templateText, templateButtons } = templateData;
 	const { t: translator } = useTranslation();
@@ -36,7 +37,7 @@ const WhatsappMobilePreview = ({
 
 	useEffect(() => {
 		setQuickReplyWidth(getQuickReplyWidth());
-	}, [templateText]);
+	}, [templateText, fileData, templateButtons]);
 
 	const setUpdateTime = () => {
 		let time = new Date()
@@ -97,7 +98,9 @@ const WhatsappMobilePreview = ({
 											</div>
 											<div className='name'>
 												<span>{campaignNumber}</span>
-												<span className='status'>online</span>
+												<span className='status'>
+													<>{translator('whatsapp.online')}</>
+												</span>
 											</div>
 											<div className='actions more'>
 												<i className='zmdi zmdi-more-vert'></i>
@@ -119,7 +122,20 @@ const WhatsappMobilePreview = ({
 														<div
 															className={`${classes.whatsappMobileMessage} sent`}
 															id='conversation-text-preview'>
-															<pre>{templateText}</pre>
+															{templateText?.length > 0 && (
+																<div
+																	className={
+																		classes.whatsappMobileMessageTextAndImage
+																	}>
+																	{fileData?.length > 0 && (
+																		<img
+																			src={fileData}
+																			alt='uploaded-file-preview'
+																		/>
+																	)}
+																	<pre>{templateText}</pre>
+																</div>
+															)}
 															{buttonType === 'callToAction' &&
 																templateButtons?.length > 0 && (
 																	<div
@@ -134,11 +150,11 @@ const WhatsappMobilePreview = ({
 																			margin:
 																				templateText?.length <= 0
 																					? '0px -8px 0px -8px'
-																					: '4px -8px 0px -8px',
+																					: '4px 0px 0px 0px',
 																			padding:
 																				templateText?.length <= 0
 																					? '0px 8px 0px 8px'
-																					: '4px 8px 0px 8px',
+																					: '0px 0px 0px 0px',
 																		}}>
 																		{templateButtons?.map(
 																			(
@@ -149,7 +165,9 @@ const WhatsappMobilePreview = ({
 																				<Grid item key={button.id}>
 																					{button.typeOfAction ===
 																					'phonenumber' ? (
+																						// eslint-disable-next-line react/jsx-no-target-blank
 																						<a
+																							target='_blank'
 																							href={`tel:${getValueByFieldName(
 																								button,
 																								'Phone Number'

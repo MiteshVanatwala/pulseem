@@ -13,6 +13,11 @@
 	"saveAndExit": "Save and Exit",
 	"submitted": "Template submitted successfully",
 	"error": "Something went wrong",
+	"online": "online",
+	"uploadFileTitle": "Upload File-PNG,JPG,PDF,MP4",
+	"uploading": "Uploading...",
+	"totalSize": "Total Size",
+	"fileDescription": "Only one file - up to 16 MB",
 
 	"whatsappTemplate": "Create New WhatsApp Template",
 	"toolTip1": "Create the content you want to send to your recipients and then choose how, when and to whom to send",
@@ -42,6 +47,7 @@
 	"websiteButtonText": "Button Text",
 	"websiteButtonTextPlaceholder": "Visit Our Website",
 	"websiteURL": "Website URL",
+	"website": "Website",
 	"websiteURLPlaceholder": "Enter Your Website URL",
 
 	"template": {
@@ -76,6 +82,8 @@
 		"DeleteText": "Delete Campaign",
 		"DeleteTitle": "Are you sure?",
 		"ConfirmText": "Submit Campaign",
-		"ConfirmTitle": "Are you sure you want to submit your template?"
+		"ConfirmTitle": "Are you sure you want to submit your template?",
+		"fileSizeAlert": "File size should be less than 16MB",
+		"alert": "Alert"
 	}
 }

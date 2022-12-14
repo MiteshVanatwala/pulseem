@@ -362,8 +362,12 @@ const ActionCallPopOver = ({
 											onChange={(e) => onTypeOfActionChange(e, row)}
 											value={row.typeOfAction}
 											fullWidth>
-											<MenuItem value='phonenumber'>Phone Number</MenuItem>
-											<MenuItem value='website'>Website</MenuItem>
+											<MenuItem value='phonenumber'>
+												<>{translator('whatsapp.phoneNumber')}</>
+											</MenuItem>
+											<MenuItem value='website'>
+												<>{translator('whatsapp.website')}</>
+											</MenuItem>
 										</TextField>
 									</Grid>
 

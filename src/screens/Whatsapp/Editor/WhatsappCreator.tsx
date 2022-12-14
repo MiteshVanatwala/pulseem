@@ -171,6 +171,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			templateText: '',
 			templateButtons: [],
 		});
+		setFileData('');
 		setQuickReplyButtons(initialQuickReplyButtons);
 		setCallToActionFieldRows([initialFieldRow]);
 	};
@@ -192,7 +193,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const uploadFile = async (file: File | undefined) => {
 		if (file) {
-			setFileData('Uploading...');
+			setFileData(translator('whatsapp.alertModal.DeleteText'));
 			const myFormData = new FormData();
 			myFormData.append('file', file);
 			const uploadedFile: any = await dispatch(uploadMedia(myFormData));
@@ -714,6 +715,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		if (submitTemplate?.payload?.Status === 'Success') {
 			setIsSubmitCampaignOpen(false);
 			setToastMessage(ToastMessages.SUCCESS);
+			resetFields();
 		} else if (submitTemplate?.payload?.Status === 'Error') {
 			if (submitTemplate?.payload?.Message?.length > 0) {
 				setToastMessage({
@@ -789,6 +791,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 											campaignNumber='1'
 											templateData={templateData}
 											buttonType={buttonType}
+											fileData={fileData}
 										/>
 									</Box>
 								</Grid>
@@ -850,6 +853,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						campaignNumber='1'
 						templateData={templateData}
 						buttonType={buttonType}
+						fileData={fileData}
 					/>
 				</Box>
 			</AlertModal>
