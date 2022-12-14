@@ -92,6 +92,17 @@
       "activeNoResponse": "responses active - no responses"
     }
   },
+  "ProductsReport": {
+    "title": "Products Report",
+    "products": "Products",
+    "photo": "Photo",
+    "prodName": "Product name",
+    "category": "Category",
+    "price": "Price",
+    "purchased": "Purchased",
+    "abandoned": "Abandoned",
+    "revenueFrmProd": "Revenue From Product"
+  },
   "ArchiveDirectSendReport": "DirectSend Report Archive",
   "Reactivate": "Reactivate / Cancel removal",
   "ExportLimitation": "Exported docs cannot contain more than 600K results",
