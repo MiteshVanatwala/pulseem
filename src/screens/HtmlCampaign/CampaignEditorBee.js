@@ -29,6 +29,7 @@ import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
+import { BiSave } from 'react-icons/bi'
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -70,6 +71,9 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [showGallery, setShowGallery] = useState(false);
   const [showDocs, setShowDocuments] = useState(false);
   const [isSiteTracking, setIsSiteTracking] = useState(false);
+  const queryParams = new URLSearchParams(window.location.search)
+  const isFromAutomation = queryParams.get("FromAutomation");
+  const NodeToEdit = queryParams.get("NodeToEdit");
 
   //#endregion State
 
@@ -219,14 +223,14 @@ const CampaignEditor = ({ classes, ...props }) => {
   //#region Init Bee Token & Configuration
   const initTags = () => {
     let tempTags = [...new Set(userBlocks?.map(item => item.tags))];
-
     var tags = [].concat.apply([], tempTags);
     if (tags && tags?.length > 0) {
       config.rowsConfiguration.externalContentURLs = [];
+      let tempRows = [];
       tags?.forEach((tag, idx) => {
         if (tag && tag !== undefined && tag !== null) {
-          config.rowsConfiguration.externalContentURLs.push({
-            name: tag,
+          const tagObj = {
+            name: tag.trim(),
             value: tag.replace(' ', ''),
             handle: tag.replace(' ', ''),
             isLocal: true,
@@ -234,9 +238,17 @@ const CampaignEditor = ({ classes, ...props }) => {
               canEdit: true,
               canDelete: true,
             },
-          });
+          };
+          tempRows.push(tagObj);
         }
       });
+      tempRows = tempRows.filter((value, index) => {
+        const _value = JSON.stringify(value);
+        return index === tempRows.findIndex(obj => {
+          return JSON.stringify(obj) === _value;
+        });
+      });
+      config.rowsConfiguration.externalContentURLs = tempRows;
     }
   }
   const initBeeEditor = () => {
@@ -259,7 +271,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           else {
             const beeTest = new BeePlugin(beeObject);
-            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : { messageWidth: '600px' };
+            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               if (!campaign || !campaign.HtmlData) {
@@ -284,7 +296,6 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       }
       setLoader(false);
-
     })
   }
   useEffect(() => {
@@ -294,6 +305,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [beeToken]);
 
   const initOptions = async () => {
+    initTags();
     if (!accountSettings || accountSettings.SubAccountSettings) {
       await dispatch(getCommonFeatures());
     }
@@ -313,7 +325,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const originalLink = startIndex.split(/[\s\n]+/);
     let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
     let newUrl = originUrl.trim();
-    if (newUrl.indexOf('ClientIDEnc') == -1) {
+    if (newUrl.indexOf('ClientIDEnc') === -1) {
       newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
       finalStr = finalStr.replace(originUrl, newUrl);
     }
@@ -397,7 +409,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     setDialog(DialogType.GENERIC);
   }
   const onBack = () => {
-    saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
+    if (isFromAutomation) {
+      saveDesign(true, `/react/Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+    }
+    else {
+      saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
+    }
   }
   const onTestSendSubmit = async (sendRequest) => {
     setLoader(true);
@@ -466,17 +483,17 @@ const CampaignEditor = ({ classes, ...props }) => {
       Tags: block?.metadata?.tags?.split(','),
       uuid: block?.metadata?.uuid
     };
-    dispatch(saveUserBlock(blockRequest)).then(() => {
+    dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getUserblocks());
-      setRow(json);
+      await setRow(json);
     });
   }
   const onEditBlock = (blockRequest) => {
     setLoader(true);
-    dispatch(saveUserBlock(blockRequest)).then(() => {
+    dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
-      setRow(JSON.stringify(blockRequest?.Json));
+      await setRow(JSON.stringify(blockRequest?.Json));
     });
   }
   const handleDeleteBlock = (e, row_id) => {
@@ -579,6 +596,73 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  const renderButtons = () => {
+    const wizardButtons = [];
+    if (!isFromAutomation) {
+      wizardButtons.push(<>
+        <Button
+          onClick={() =>
+            saveDesign(false, null, true)}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          style={{ margin: '8px' }}
+          startIcon={<BiSave />}
+          color="primary"
+        >{t("common.save")}
+        </Button>
+        <Button onClick={saveDesign}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton
+          )}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+        >{t('common.continue')}</Button>
+      </>)
+    }
+    else {
+      wizardButtons.push(<>
+        <Button
+          onClick={() =>
+            saveDesign(false, null, true)}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          style={{ margin: '8px' }}
+          startIcon={<BiSave />}
+          color="primary"
+        >{t("common.save")}
+        </Button>
+        <Button onClick={() => {
+          saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);
+        }}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton
+          )}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+        >{t('common.backToAutomation')}</Button>
+      </>)
+    }
+
+    return wizardButtons.map((b) => b);
+  }
   return (
     <DefaultScreen
       showAppBar={false}
@@ -623,13 +707,13 @@ const CampaignEditor = ({ classes, ...props }) => {
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
         classes={classes}
-        onExit={onExit}
+        onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
-        onSave={saveDesign}
         onBack={onBack}
         onDelete={onDelete}
         onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
+        additionalButtons={renderButtons()}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

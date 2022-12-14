@@ -1830,7 +1830,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: 'auto',
     marginBottom: 15,
     marginInlineStart: 'auto',
-    lineHeight: windowSize === 'xs' ? 1 : null,
-
+    lineHeight: windowSize === 'xs' ? 1 : null
+  },
+  imgFluid: {
+    maxWidth: '100%',
+    height: '100%'
   }
 });

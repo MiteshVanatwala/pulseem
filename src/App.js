@@ -42,6 +42,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from "./screens/Whatsapp/Editor/WhatsappCreator";
 import PageNotFound from './screens/404';
 import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
+import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -298,12 +299,21 @@ const renderRoutes = (classes, redirect) => {
         element={<MmsReport classes={classes} />}
       />
       <Route
+        exact
+        path={`/Reports/ProductReport`}
+        element={<ProductsReport classes={classes} />}
+      />
+      <Route
         path={`/AbTestsReport`}
         element={transferUrl("/Pulseem/AbTestsReport.aspx")}
       />
       <Route
         path={`/AccountReport`}
         element={transferUrl("/Pulseem/AccountReport.aspx")}
+      />
+      <Route
+        path={`/Reports/ProductsReport`}
+        element={<ProductsReport classes={classes} />}
       />
       {/* <Route
         path={`/CampaignComparison`}
