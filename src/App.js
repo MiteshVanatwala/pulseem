@@ -288,6 +288,11 @@ const renderRoutes = (classes, history) => {
         element={<MmsReport classes={classes} />}
       />
       <Route
+        exact
+        path={`/Reports/ProductReport`}
+        element={<ProductsReport classes={classes} />}
+      />
+      <Route
         path={`/AbTestsReport`}
         element={transferUrl('/Pulseem/AbTestsReport.aspx')}
       />

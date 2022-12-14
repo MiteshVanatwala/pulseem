@@ -269,7 +269,7 @@ const ProductsReport = ({ classes }) => {
             ProductId,
             ImageURL,
             ProductName,
-            Category,
+            CategoryName,
             Price,
             Purchased,
             Abandoned,
@@ -296,7 +296,7 @@ const ProductsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    <Typography>{Category}</Typography>
+                    <Typography>{CategoryName}</Typography>
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
