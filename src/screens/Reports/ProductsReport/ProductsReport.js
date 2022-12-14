@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
@@ -14,8 +14,13 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import DataTable from '../../../components/Table/DataTable';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { GetProductReports } from '../../../redux/reducers/reportSlice';
+import { GetProductReports, GetExporPRData } from '../../../redux/reducers/reportSlice';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
+import { CSVLink } from 'react-csv'
+import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { preferredOrder } from '../../../helpers/exportHelper';
+import { exportFile } from '../../../helpers/exportFromJson';
+import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -30,7 +35,7 @@ const DEFAULT_FILTER = {
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
     const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
-    const { productsReportDetails, productCategories } = useSelector(state => state.report)
+    const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
 
     const { t } = useTranslation()
     const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
@@ -45,6 +50,11 @@ const ProductsReport = ({ classes }) => {
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const [showLoader, setLoader] = useState(true);
+    const [dialogType, setDialogType] = useState(null);
+
+    const [csvData, setCsvData] = useState('')
+
+    const csvLinkRef = useRef(null)
 
     moment.locale(language)
 
@@ -106,6 +116,29 @@ const ProductsReport = ({ classes }) => {
         }
     })
 
+    const exportColumnHeader = {
+        "ProductId": t('report.ProductsReport.productId'),
+        "ProductName": t('report.ProductsReport.prodName'),
+        "CategoryName": t('report.ProductsReport.category'),
+        "Price": t('report.ProductsReport.price'),
+        "Purchased": t('report.ProductsReport.purchased'),
+        "Abandoned": t('report.ProductsReport.abandoned'),
+        "TotalRevenue": t('report.ProductsReport.revenueFrmProd'),
+        "ImageURL": t('report.ProductsReport.photo')
+    }
+
+    const handleDownloadCsv = async (formatType) => {
+        setDialogType(null);
+        setLoader(true);
+        let orderList = preferredOrder(exportPRData, Object.keys(exportColumnHeader));
+        exportFile({
+            data: orderList,
+            fileName: 'productsReport',
+            exportType: formatType,
+            fields: exportColumnHeader
+        });
+        setLoader(false);
+    }
 
     const handleRowsPerPageSearching = (val) => {
         dispatch(setRowsPerPage(val))
@@ -226,17 +259,22 @@ const ProductsReport = ({ classes }) => {
                             classes.actionButtonGreen,
                         )}
                         onClick={() => {
-                            setFilterValues({ ...filterValues, IsExport: true })
                             setTimeout(() => {
-                                setIsSearching(true)
-                                setFilterValues({ ...filterValues, IsExport: false })
+                                dispatch(GetExporPRData({ ...filterValues, IsExport: true }))
+                                setDialogType('exportFormat')
                             }, 200);
                         }}
                         startIcon={<ExportIcon />}
                     >
-
                         {t('campaigns.exportFile')}
                     </Button>
+                    <CSVLink
+                        data={csvData}
+                        filename='report.csv'
+                        className='hidden'
+                        ref={csvLinkRef}
+                        target='_blank'
+                    />
                 </Grid>}
                 <Grid item className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
@@ -377,6 +415,18 @@ const ProductsReport = ({ classes }) => {
                 rowsPerPageOptions={[6, 10, 20, 50]}
                 page={page}
                 onPageChange={handlePageChange}
+            />
+
+            <ConfirmRadioDialog
+                classes={classes}
+                isOpen={dialogType === 'exportFormat'}
+                title={t('campaigns.exportFile')}
+                radioTitle={t('common.SelectFormat')}
+                onConfirm={(e) => handleDownloadCsv(e)}
+                onCancel={() => setDialogType(null)}
+                cookieName={'exportFormat'}
+                defaultValue="xls"
+                options={ExportFileTypes}
             />
 
             <Loader isOpen={showLoader} showBackdrop={true} />
