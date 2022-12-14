@@ -23,6 +23,15 @@ const shortcutBoxWidth = {
 };
 
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
+  whatsappCampaignTitle: {
+    fontSize: windowSize === "xs" ? "25px" : "30px",
+    color: "#333333",
+    paddingBlock: "0.5rem",
+    fontFamily: "Assistant",
+    fontWeight: "bold",
+    marginTop: 0,
+    whiteSpace: windowSize === "xs" ? "break-spaces" : null,
+  },
   whatsappTemplateTitle: {
     fontSize: windowSize === "xs" ? "25px" : "36px",
     color: "#333333",

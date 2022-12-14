@@ -8,3 +8,8 @@ export type coreProps = {
 export type WhatsappCampaignProps = {
   classes: ClassesType[];
 };
+
+export type dynamicButtonProps = {
+  tooltipTitle: string;
+  buttonTitle: string;
+};

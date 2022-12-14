@@ -26,6 +26,7 @@ import CampaignFields from "./CampaignFields";
 import clsx from "clsx";
 import WhatsappMobilePreview from "../Editor/WhatsappMobilePreview";
 import { templateDataProps } from "../Editor/WhatsappCreator.types";
+import DynamicModal from "./DynamicModal";
 
 const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
   const { t: translator } = useTranslation();
@@ -53,18 +54,23 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
       customPadding={true}
     >
       <b>
-        <p style={{ textAlign: "right", color: "#DC3D1B" }}>
+        <div style={{ textAlign: "right", color: "#DC3D1B" }}>
           {translator("whatsappCampaign.note")}
           <br />
-          Check your limit <Link>here</Link>
-        </p>
+          <span style={{ marginRight: 300 }}>
+            Check your limit <Link>here</Link>
+          </span>
+        </div>
       </b>
+
       <Title
         Text={translator("whatsappCampaign.header")}
-        Classes={classes.whatsappTemplateTitle}
+        Classes={classes.whatsappCampaignTitle}
         ContainerStyle={{}}
         Element={null}
       />
+
+      <DynamicModal classes={classes} />
       <br />
       <form onSubmit={handleSubmit}>
         <Grid container>
@@ -125,7 +131,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 
             <Grid item xs={12} sm={12} md={12} lg={7}>
               <Grid container spacing={windowSize === "xs" ? 0 : 2}>
-                <Grid item xs={12} sm={12} md={12} lg={6}>
+                <Grid item xs={12} sm={12} md={12} lg={3}>
                   {/* <WhatsappTips classes={classes} /> */}
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={6}>
@@ -232,6 +238,13 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
                 </Grid>
               </Grid>
             </Grid>
+            {/* </Grid> */}
+            {/* </Grid> */}
+            {/* <Grid
+            container
+            spacing={windowSize === "xs" ? 0 : 2}
+            style={{ paddingTop: "14px" }}
+          > */}
             {/* <Buttons classes={classes} /> */}
           </Grid>
         </Grid>
