@@ -19,6 +19,7 @@ import {
 	quickReplyButtonProps,
 	savedTemplateListProps,
 	templateDataProps,
+	toastProps,
 	WhatsappCreatorProps,
 } from './WhatsappCreator.types';
 import { ClassesType } from '../../Classes.types';
@@ -35,13 +36,19 @@ import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
 	getSavedTemplates,
 	submitTemplates,
+	uploadMedia,
 } from '../../../redux/reducers/whatsappSlice';
+import Toast from '../../../components/Toast/Toast.component';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
+	);
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
 	);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
@@ -76,6 +83,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			],
 		},
 	];
+	const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>({
+		severity: '',
+		color: '',
+		message: '',
+		showAnimtionCheck: false,
+	});
 	const [templateName, setTemplateName] = useState<string>('');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
@@ -83,7 +96,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		templateText: '',
 		templateButtons: [],
 	});
-	const [fileData, setFileData] = useState<File>();
+	const [fileData, setFileData] = useState<string>('');
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
@@ -148,6 +161,51 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
 		setTemplateName(e.target.value.toLowerCase());
+	};
+
+	const resetFields = () => {
+		setTemplateName('');
+		setSavedTemplate('');
+		setButtonType('');
+		setTemplateData({
+			templateText: '',
+			templateButtons: [],
+		});
+		setQuickReplyButtons(initialQuickReplyButtons);
+		setCallToActionFieldRows([initialFieldRow]);
+	};
+
+	const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				setToastMessage({
+					severity: '',
+					color: '',
+					message: '',
+					showAnimtionCheck: false,
+				});
+			}, 4000);
+			return <Toast data={toastMessage} onClose={undefined} />;
+		}
+		return null;
+	};
+
+	const uploadFile = async (file: File | undefined) => {
+		if (file) {
+			setFileData('Uploading...');
+			const myFormData = new FormData();
+			myFormData.append('file', file);
+			const uploadedFile: any = await dispatch(uploadMedia(myFormData));
+			console.log(uploadedFile);
+			if (uploadedFile.payload?.Data?.length > 0) {
+				// let urlSplit = uploadedFile.payload?.Data?.split('/');
+				setFileData(uploadedFile.payload?.Data);
+			} else {
+				setFileData('');
+			}
+		} else {
+			setFileData('');
+		}
 	};
 
 	const setButtonsData = (buttonType: string, data: any) => {
@@ -224,43 +282,64 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const onSavedTemplateChange = (e: BaseSyntheticEvent) => {
-		setSavedTemplate(e.target.value);
+	const onSavedTemplateChange = (TemplateId: string) => {
+		setSavedTemplate(TemplateId);
 		const savedTemplateData = savedTemplateList?.find(
-			(template) => template.TemplateId === e.target.value
+			(template) => template.TemplateId === TemplateId
 		);
 		let updatedTemplateData = {
 			templateText: '',
 			templateButtons: [],
 		};
 		let updatedButtonType = '';
-		if ('quick-reply' in savedTemplateData?.Data?.types) {
-			updatedButtonType = 'quickReply';
-			const buttonData = setButtonsData(
-				'quickReply',
-				savedTemplateData?.Data?.types['quick-reply']?.actions
-			);
-			updatedTemplateData.templateText =
-				savedTemplateData?.Data?.types['quick-reply']?.body;
-			updatedTemplateData.templateButtons = buttonData;
-		} else if ('card' in savedTemplateData?.Data?.types) {
-			updatedTemplateData.templateText =
-				savedTemplateData?.Data?.types['card']?.title;
-			if (savedTemplateData?.Data?.types['card']?.actions?.length > 0) {
+		let updatedFileData = '';
+		if (savedTemplateData?.Data) {
+			if ('quick-reply' in savedTemplateData?.Data?.types) {
+				updatedButtonType = 'quickReply';
+				const buttonData = setButtonsData(
+					'quickReply',
+					savedTemplateData?.Data?.types['quick-reply']?.actions
+				);
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['quick-reply']?.body;
+				updatedTemplateData.templateButtons = buttonData;
+			}
+			if ('call-to-action' in savedTemplateData?.Data?.types) {
 				updatedButtonType = 'callToAction';
 				const buttonData = setButtonsData(
 					'callToAction',
-					savedTemplateData?.Data?.types['card']?.actions
+					savedTemplateData?.Data?.types['call-to-action']?.actions
 				);
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['call-to-action']?.body;
 				updatedTemplateData.templateButtons = buttonData;
+			} else if ('card' in savedTemplateData?.Data?.types) {
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['card']?.title;
+				if (savedTemplateData?.Data?.types['card']?.actions?.length > 0) {
+					updatedButtonType = 'callToAction';
+					const buttonData = setButtonsData(
+						'callToAction',
+						savedTemplateData?.Data?.types['card']?.actions
+					);
+					updatedTemplateData.templateButtons = buttonData;
+				}
+				if (savedTemplateData?.Data?.types['card']?.media?.length > 0) {
+					updatedFileData = savedTemplateData?.Data?.types['card']?.media[0];
+				}
+			} else if ('media' in savedTemplateData?.Data?.types) {
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['media']?.body;
+				if (savedTemplateData?.Data?.types['media']?.media?.length > 0) {
+					updatedFileData = savedTemplateData?.Data?.types['media']?.media[0];
+				}
+			} else if ('text' in savedTemplateData?.Data?.types) {
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['text']?.body;
 			}
-		} else if ('media' in savedTemplateData?.Data?.types) {
-			updatedTemplateData.templateText =
-				savedTemplateData?.Data?.types['media']?.body;
-		} else if ('text' in savedTemplateData?.Data?.types) {
-			updatedTemplateData.templateText =
-				savedTemplateData?.Data?.types['text']?.body;
 		}
+		setFileData(updatedFileData);
+		// setTemplateName(savedTemplateData?.TemplateName || '');
 		setButtonType(updatedButtonType);
 		setTemplateData(updatedTemplateData);
 		if (updatedButtonType === 'quickReply') {
@@ -313,14 +392,40 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
+	const getFriendlyTemplateName = () => {
+		return templateName?.replace(/ /g, '_')?.replace(/[^a-z0-9_]/gi, '');
+	};
+
+	const getJSONVariables = () => {
+		const dynamicFields = getDynamicFields(templateData.templateText);
+		if (dynamicFields?.length > 0) {
+			let variables: any = {};
+			for (let i = 0; i < dynamicFields.length; i++) {
+				variables[dynamicFields[i].replace(/[{}]/g, '')] = 'freetext';
+			}
+			return variables;
+		}
+		return {};
+	};
+
+	const getSubtitle = () => {
+		if (templateData.templateText?.includes('Reply “remove” to unsubscribe')) {
+			return 'Reply “remove” to unsubscribe';
+		}
+		if (templateData.templateText?.includes('להסרה השב “הסר')) {
+			return 'להסרה השב “הסר';
+		}
+		return '';
+	};
+
 	const getRequestJSON = () => {
+		const generatedTemplatename = getFriendlyTemplateName();
+		const variables = getJSONVariables();
 		const requestJSON = {
 			text: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'name',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
 				types: {
 					text: {
@@ -329,31 +434,24 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				},
 			},
 			textMedia: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'account',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
 				types: {
 					media: {
 						body: templateData.templateText,
 						media_type: 'image',
-						media: ['http://clipart-library.com/data_images/320465.png'],
+						media: [fileData],
 					},
 				},
 			},
 			quickReply: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'Name',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
 				types: {
-					text: {
-						body: templateData.templateText,
-					},
 					'quick-reply': {
 						body: templateData.templateText,
 						actions: getQuickReplyActions(),
@@ -361,15 +459,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				},
 			},
 			callToAction: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'flight_number',
-					'2': 'arrival_city',
-					'3': 'departure_time',
-					'4': 'gate_number',
-					'5': 'url_suffix',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
 				types: {
 					'call-to-action': {
@@ -379,35 +471,37 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				},
 			},
 			textMediaAndButton: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'coupon_code',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
 				types: {
 					card: {
-						title: templateData.templateText,
-						subtitle: 'To unsubscribe, reply Stop',
+						title: templateData.templateText
+							?.replace(/Reply “remove” to unsubscribe/g, '')
+							.replace(/להסרה השב “הסר”/g, ''),
+						subtitle: getSubtitle(),
+						media: [fileData],
 						actions:
 							buttonType === 'quickReply'
 								? getQuickReplyActions()
 								: getCallTOActionActions(),
 					},
-					text: {
-						body: templateData.templateText,
-					},
 				},
 			},
 		};
 		const templateText = templateData.templateText;
-		if (templateText?.length > 0 && buttonType.length > 0 && fileData?.name) {
+		if (
+			templateText?.length > 0 &&
+			buttonType.length > 0 &&
+			fileData?.length > 0
+		) {
 			return requestJSON.textMediaAndButton;
 		} else if (templateText?.length > 0 && buttonType === 'quickReply') {
 			return requestJSON.quickReply;
 		} else if (templateText?.length > 0 && buttonType === 'callToAction') {
 			return requestJSON.callToAction;
-		} else if (templateText?.length > 0 && fileData?.name) {
+		} else if (templateText?.length > 0 && fileData?.length > 0) {
 			return requestJSON.textMedia;
 		} else if (templateText?.length > 0) {
 			return templateText;
@@ -454,6 +548,19 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				dynamicFieldL6.test(text.slice(i, i + 6))
 			) {
 				indices.push(i);
+			}
+		}
+		return indices;
+	};
+
+	const getDynamicFields = (text: string) => {
+		let indices = [];
+		for (let i = 0; i < text.length; i++) {
+			if (dynamicFieldL5.test(text.slice(i, i + 5))) {
+				indices.push(text.slice(i, i + 5));
+			}
+			if (dynamicFieldL6.test(text.slice(i, i + 6))) {
+				indices.push(text.slice(i, i + 6));
 			}
 		}
 		return indices;
@@ -596,11 +703,28 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const onDeleteCampaign = () => {};
+	const onDeleteCampaign = () => {
+		resetFields();
+		setIsDeleteCampaignOpen(false);
+	};
 
 	const onSubmitCampaign = async () => {
-		let submitTemplate = await dispatch(submitTemplates(getRequestJSON()));
-		console.log('submitTemplate::', submitTemplate);
+		let submitTemplate: any = await dispatch(submitTemplates(getRequestJSON()));
+		console.log(submitTemplate);
+		if (submitTemplate?.payload?.Status === 'Success') {
+			setIsSubmitCampaignOpen(false);
+			setToastMessage(ToastMessages.SUCCESS);
+		} else if (submitTemplate?.payload?.Status === 'Error') {
+			if (submitTemplate?.payload?.Message?.length > 0) {
+				setToastMessage({
+					...ToastMessages.ERROR,
+					message: submitTemplate?.payload?.Message,
+				});
+			} else {
+				setToastMessage(ToastMessages.ERROR);
+			}
+			setIsSubmitCampaignOpen(false);
+		}
 	};
 
 	return (
@@ -609,6 +733,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}>
+			{renderToast()}
 			<Title
 				Text={translator('whatsapp.header')}
 				Classes={classes.whatsappTemplateTitle}
@@ -624,8 +749,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						savedTemplate={savedTemplate}
 						fileData={fileData}
 						onTemplateNameChange={(e) => onTemplateNameChange(e)}
-						onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
-						setFileData={(fileData) => setFileData(fileData)}
+						onSavedTemplateChange={(e) => onSavedTemplateChange(e.target.value)}
+						setFileData={(fileData) => uploadFile(fileData)}
 						savedTemplateList={savedTemplateList}
 					/>
 					<Grid

@@ -11,6 +11,8 @@
 	"submit": "שלח",
 	"saveSms": "שמור",
 	"saveAndExit": "שמור וצא",
+	"submitted": "התבנית נשלחה בהצלחה",
+	"error": "משהו השתבש",
 
 	"whatsappTemplate": "צור תבנית WhatsApp חדשה",
 	"toolTip1": "צור את התוכן שברצונך לשלוח לנמענים שלך ולאחר מכן בחר כיצד, מתי ולמי לשלוח",
@@ -22,6 +24,7 @@
 	"selectSavedTemplatePlaceholder": "בחר תבנית שמורה",
 	"typeText": "הוסף טקסט כאן - עד 1024 תווים",
 	"yourMessage": "ההודעה שלך",
+	"noTemplateAaliable": "אין תבנית זמינה",
 
 	"callToActionButton": "קריאה לפעולה",
 	"callToActionSaveButton": "שמור",

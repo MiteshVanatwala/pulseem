@@ -88,7 +88,8 @@ const AlertModal = ({
 								<Button
 									className='confirm-button'
 									color='secondary'
-									variant='contained'>
+									variant='contained'
+									onClick={onConfirmOrYes}>
 									{translator('whatsapp.alertModal.submitButtonText')}
 								</Button>
 								<Button

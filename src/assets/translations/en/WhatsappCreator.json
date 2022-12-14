@@ -11,6 +11,8 @@
 	"submit": "Submit",
 	"saveSms": "Save",
 	"saveAndExit": "Save and Exit",
+	"submitted": "Template submitted successfully",
+	"error": "Something went wrong",
 
 	"whatsappTemplate": "Create New WhatsApp Template",
 	"toolTip1": "Create the content you want to send to your recipients and then choose how, when and to whom to send",
@@ -22,6 +24,7 @@
 	"selectSavedTemplatePlaceholder": "Select Saved Template",
 	"typeText": "Insert text here - upto 1024 characters",
 	"yourMessage": "Your Message",
+	"noTemplateAaliable": "No Template avaliable",
 
 	"callToActionButton": "Call To Action",
 	"callToActionSaveButton": "Save",
@@ -69,10 +72,10 @@
 		"confirmButtonText": "Confirm",
 		"calcelButtonText": "Cancel",
 		"yesButtonText": "Yes",
-    "submitButtonText": "Submit",
+		"submitButtonText": "Submit",
 		"DeleteText": "Delete Campaign",
 		"DeleteTitle": "Are you sure?",
-    "ConfirmText": "Submit Campaign",
+		"ConfirmText": "Submit Campaign",
 		"ConfirmTitle": "Are you sure you want to submit your template?"
 	}
 }

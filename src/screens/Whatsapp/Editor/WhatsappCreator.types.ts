@@ -23,7 +23,7 @@ export type TemplateFieldsProps = {
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
-	fileData: File | undefined;
+	fileData: string;
 	setFileData: (fileData: File | undefined) => void;
 	savedTemplateList: savedTemplateListProps[];
 };
@@ -133,3 +133,16 @@ export type savedTemplateListProps = {
 	TemplateId: string;
 	TemplateName: string;
 };
+
+export type toastProps = {
+	SUCCESS: toastKeyProps;
+	ERROR: toastKeyProps;
+	QUICK_SEND_SUCCESSS: toastKeyProps;
+};
+
+export interface toastKeyProps {
+	severity: string;
+	color: string;
+	message: string;
+	showAnimtionCheck: boolean;
+}

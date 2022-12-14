@@ -20,7 +20,7 @@ const TemplateFields = ({
 	onSavedTemplateChange,
 	fileData,
 	setFileData,
-	savedTemplateList
+	savedTemplateList,
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -117,11 +117,19 @@ const TemplateFields = ({
 							}
 							onChange={onSavedTemplateChange}
 							value={savedTemplate}>
-							{savedTemplateList.map((template) => (
-								<MenuItem key={template.TemplateId} value={template.TemplateId}>
-									{template.TemplateName}
+							{savedTemplateList?.length > 0 ? (
+								savedTemplateList.map((template) => (
+									<MenuItem
+										key={template.TemplateId}
+										value={template.TemplateId}>
+										{template.TemplateName}
+									</MenuItem>
+								))
+							) : (
+								<MenuItem key={'no-data-template'} disabled>
+									<>{translator('whatsapp.noTemplateAaliable')}</>
 								</MenuItem>
-							))}
+							)}
 						</TextField>
 					</Grid>
 				</Grid>
@@ -136,9 +144,10 @@ const TemplateFields = ({
 						<label
 							className={classes.customFileUpload}
 							style={{
-								padding: fileData?.name
-									? '14px 15px 12px 7px'
-									: '17px 15px 15px 7px',
+								padding:
+									fileData?.length > 0
+										? '14px 15px 12px 7px'
+										: '17px 15px 15px 7px',
 							}}>
 							<input
 								type='file'
@@ -146,7 +155,7 @@ const TemplateFields = ({
 								accept='image/png, image/jpeg, application/pdf, video/mp4'
 								onChange={(e) => onFileUploadChange(e)}
 							/>
-							{fileData?.name ? (
+							{fileData?.length > 0 ? (
 								<div style={{ marginRight: 'auto' }}>
 									<Button
 										variant='contained'
@@ -157,7 +166,7 @@ const TemplateFields = ({
 											padding: '0px 10px 0px 10px',
 										}}
 										onClick={(e) => onFileDeselect(e)}>
-										{fileData?.name?.substring(0, 10) + '...'}&emsp;
+										{fileData?.substring(0, 10) + '...'}&emsp;
 										<i className='zmdi zmdi-close'></i>
 									</Button>
 								</div>
@@ -167,7 +176,7 @@ const TemplateFields = ({
 						</label>
 
 						<Typography className={classes.buttonContent}>
-							{fileData?.name
+							{fileData?.length > 0
 								? `Total Size ${fileSize}`
 								: 'Only one file - up to 16 MB'}
 						</Typography>
