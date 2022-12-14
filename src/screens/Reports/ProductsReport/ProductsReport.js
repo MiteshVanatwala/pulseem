@@ -22,7 +22,9 @@ const DEFAULT_FILTER = {
     PageSize: 6,
     ProductName: '',
     CategoryID: [],
-    IsExport: false
+    IsExport: false,
+    OrderBY: 0,
+    OrderByParameter: "ProductName"
 }
 
 const ProductsReport = ({ classes }) => {
@@ -35,10 +37,6 @@ const ProductsReport = ({ classes }) => {
     const [isSearching, setIsSearching] = useState(true);
     const [filter, setFilter] = useState(false);
     const [page, setPage] = useState(1)
-    const [sort, setSort] = useState({
-        key: '',
-        type: 'asc'
-    })
 
     const dispatch = useDispatch()
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
@@ -50,14 +48,32 @@ const ProductsReport = ({ classes }) => {
 
     moment.locale(language)
 
+    const GetSortIcon = (key) => {
+
+        const handleClickSort = (order) => {
+            setFilterValues({ ...filterValues, OrderByParameter: key, OrderBY: order })
+            setTimeout(() => {
+                setIsSearching(true)
+            }, 200);
+        }
+
+
+        if (filterValues?.OrderBY === 0 && filterValues?.OrderByParameter === key) {
+            return <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => handleClickSort(1)} />
+        }
+        else {
+            return <FaSortAmountDown style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => handleClickSort(0)} />
+        }
+    }
+
     const TABLE_HEAD = [
         { label: t('report.ProductsReport.photo'), classes: cell50wStyle, className: classes.flex1, align: 'center' },
         { label: t('report.ProductsReport.prodName'), classes: cell50wStyle, className: classes.flex2, align: 'center' },
         { label: t('report.ProductsReport.category'), classes: cell50wStyle, className: classes.flex1, align: 'center' },
-        { label: t('report.ProductsReport.price'), icon: sort.key === 'price' && sort.type === 'asc' ? <FaSortAmountDown style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'price', type: 'desc' })} /> : <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'price', type: 'asc' })} />, classes: cell50wStyle, className: classes.flex1, align: 'center' },
-        { label: t('report.ProductsReport.purchased'), icon: sort.key === 'purchased' && sort.type === 'asc' ? <FaSortAmountDown style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'purchased', type: 'desc' })} /> : <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'purchased', type: 'asc' })} />, classes: cell50wStyle, className: classes.flex1, align: 'center' },
-        { label: t('report.ProductsReport.abandoned'), icon: sort.key === 'abandoned' && sort.type === 'asc' ? <FaSortAmountDown style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'abandoned', type: 'desc' })} /> : <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'abandoned', type: 'asc' })} />, classes: cell50wStyle, className: classes.flex1, align: 'center' },
-        { label: t('report.ProductsReport.revenueFrmProd'), icon: sort.key === 'revenueFrmProd' && sort.type === 'asc' ? <FaSortAmountDown style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'revenueFrmProd', type: 'desc' })} /> : <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => setSort({ key: 'revenueFrmProd', type: 'asc' })} />, classes: cell50wStyle, className: classes.flex2, align: 'center' },
+        { label: t('report.ProductsReport.price'), icon: GetSortIcon('Price'), classes: cell50wStyle, className: classes.flex1, align: 'center' },
+        { label: t('report.ProductsReport.purchased'), icon: GetSortIcon('Purchased'), classes: cell50wStyle, className: classes.flex1, align: 'center' },
+        { label: t('report.ProductsReport.abandoned'), icon: GetSortIcon('Abandoned'), classes: cell50wStyle, className: classes.flex1, align: 'center' },
+        { label: t('report.ProductsReport.revenueFrmProd'), icon: GetSortIcon('TotalRevenue'), classes: cell50wStyle, className: classes.flex2, align: 'center' },
     ]
 
     useEffect(() => {
