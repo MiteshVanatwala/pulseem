@@ -38,6 +38,7 @@ import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
+import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -285,6 +286,11 @@ const renderRoutes = (classes, history) => {
       <Route
         path={`/Reports/MmsMainReport`}
         element={<MmsReport classes={classes} />}
+      />
+      <Route
+        exact
+        path={`/Reports/ProductReport`}
+        element={<ProductsReport classes={classes} />}
       />
       <Route
         path={`/AbTestsReport`}
