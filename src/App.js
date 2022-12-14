@@ -300,7 +300,7 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path={`/react/Reports/ProductReport`}
+        path={`/react/reports/ProductsReport`}
         element={<ProductsReport classes={classes} />}
       />
       <Route

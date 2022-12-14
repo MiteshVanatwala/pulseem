@@ -403,7 +403,7 @@ export const getRoutes = (
           href: "/Pulseem/RemovedStats.aspx?fromreact=true",
           isShow: true,
         },
-        { key: 'productsReport', title: t('report.ProductsReport.title'), href: '/react/Reports/ProductsReport', isShow: true },
+        { key: 'productsReport', title: t('report.ProductsReport.title'), href: '/react/reports/ProductsReport', isShow: true },
         //{title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
         //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
         //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
