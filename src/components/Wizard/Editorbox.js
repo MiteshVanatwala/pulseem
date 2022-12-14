@@ -283,9 +283,6 @@ const Editorbox = ({
         setLoader(false);
         onFromNumberInit(smsModel.FromNumber ?? fromNumber);
     }
-    const toggleKeep = () => {
-        setIsLinksStatistics(!isLinksStatistics);
-    };
     const linkCalculation = () => {
         const text = document.getElementById("yourMessage").value;
         let t = text.toLowerCase();
@@ -438,47 +435,9 @@ const Editorbox = ({
             setremovalLinkDisabled(false);
         }
     }
-    const renderSwitch = () => (
-        <Grid item="true" xs={12} md={12} sm={12}>
-            <Box className={classes.switchDiv}>
-                <FormGroup>
-                    <Switch
-                        className={
-                            isRTL
-                                ? clsx(classes.reactSwitchHe, "react-switch")
-                                : clsx(classes.reactSwitch, "react-switch")
-                        }
-                        checked={isLinksStatistics}
-                        onChange={toggleKeep}
-                        onColor="#28a745"
-                        checkedIcon={false}
-                        uncheckedIcon={false}
-                        handleDiameter={30}
-                        height={20}
-                        width={48}
-                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                        id="material-switch"
-                    />
-                </FormGroup>
-                <Box className={classes.radio}>
-                    <Typography style={{ fontSize: "18px" }}>
-                        {t("mainReport.keepTrack")}
-                    </Typography>
-                    <Typography
-
-                        className={clsx(classes.descSwitch, classes.w100)}
-                    >
-                        {t("mainReport.keepDesc")}
-                    </Typography>
-                </Box>
-            </Box>
-        </Grid>
-    )
     const renderMsg = () => {
         return (
             <Grid container>
-                {variant === "column" && renderSwitch()}
                 <Grid item="true" xs={12} md={variant === "column" ? 12 : 8} className={classes.boxDiv} style={{ marginTop: 20 }}>
                     <textarea
                         placeholder={t("mainReport.typeText")}
@@ -668,7 +627,6 @@ const Editorbox = ({
                         </Box>
                     </Box>
                 </Grid>
-                {variant === "row" && renderSwitch()}
             </Grid>
         );
     }
@@ -680,34 +638,6 @@ const Editorbox = ({
             }
             else {
                 setIsSiteTracking(false);
-            }
-        }
-    }
-    const validationCheckpoint = async (callbackFunc) => {
-        if (validationCheck()) {
-            if (isSiteTracking === true) {
-                if (!smsModel.Text.includes('ref') && isLinksStatistics) {
-                    let text = smsModel.Text;
-                    const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
-                    const originalLink = startIndex.split(' ') || startIndex.split('\n');
-                    let originUrl = originalLink[0];
-                    let newUrl = originUrl.trim();
-                    newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-                    text = smsModel.Text.replace(originUrl, newUrl);
-                    setSmsModel((currentState) => {
-                        currentState.Text = text;
-                        return currentState;
-                    });
-                }
-                if (!isLinksStatistics) {
-                    setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
-                }
-                else {
-                    callbackFunc();
-                }
-            }
-            else {
-                callbackFunc();
             }
         }
     }

@@ -166,6 +166,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         FromNumber: "",
         SendDate: null,
         SendTime: null,
+        IsLinksStatistics: true
     });
 
     const initOnReady = () => {
@@ -777,6 +778,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         setSmsMarketingModel({
                             SendDate: sendDate,
                             SendTime: moment(sendTime),
+                            IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData
                         });
                         setSegmantIndication(true)
@@ -1056,11 +1058,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setDialogType={() => setDialogType(null)}
                 isOpen={dialogType?.type === 'smsMarketing'}
                 smsMarketingModel={{ ...smsMarketingModel }}
-                onUpdate={(res) => {
-                    if (res && res?.SMSCampaignID > 0) {
-                        setSmsMarketingIndication(true)
-                    }
-                }}
                 onClose={() => setDialogType(null)}
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => setDialogType(null)}
