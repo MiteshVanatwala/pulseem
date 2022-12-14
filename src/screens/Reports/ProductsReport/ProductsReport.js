@@ -90,19 +90,32 @@ const ProductsReport = ({ classes }) => {
     const getHrefs = (id) => ({
         Purchased: {
             title: t('report.ProductsReport.purchased'),
-            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, ProductId: id, PageType: '' } }),
+            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                    ProductId: id,
+                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
+                    ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
+                }
+            }),
 
 
         },
         Abandoned: {
             title: t('report.ProductsReport.abandoned'),
-            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, ProductId: id, PageType: '' } }),
+            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                    ProductId: id,
+                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
+                    ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
+                }
+            }),
 
 
         },
         TotalRevenue: {
-            title: 'report.ProductsReport.revenueFrmProd',
-            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, ProductId: id, PageType: '' } }),
+            title: 'report.ProductsReport.revenueFrmProd'
         }
     })
 

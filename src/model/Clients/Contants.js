@@ -66,10 +66,9 @@ const CLIENT_CONSTANTS = {
         FromDate: null,
         ToDate: null,
     },
-    PRODUCT_REPORT_TYP: {
-        PURCHASED: 0,
-        ABANDONED: 1,
-        REVENUE: 2
+    PRODUCT_REPORT_TYPE: {
+        PURCHASED: 1,
+        ABANDONED: 2
     },
     SMS_STATUSES: {
         noStatus: {
