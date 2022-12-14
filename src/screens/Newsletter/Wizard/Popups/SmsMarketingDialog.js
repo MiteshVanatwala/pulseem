@@ -142,6 +142,12 @@ const SmsMarketingDialog = ({
     }
     const handleValidation = () => {
         const tempErrors = {};
+
+        if (!numberVerified) {
+            setNewSmsVerification(true);
+            return false;
+        }
+
         if (!smsModel.FromNumber) {
             tempErrors.FromNumber = 'From Number is required';
         }
@@ -166,7 +172,6 @@ const SmsMarketingDialog = ({
 
     const currentDialog = {
         title: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title"),
-        description: 'This is the description',
         showDivider: true,
         disableBackdropClick: true,
         content: (
@@ -309,7 +314,8 @@ const SmsMarketingDialog = ({
                 {newSmsVerification && <VerificationDialog
                     classes={classes}
                     isOpen={newSmsVerification}
-                    variant='sms' onClose={() => setNewSmsVerification(false)}
+                    variant='sms'
+                    onClose={() => setNewSmsVerification(false)}
                     Option={{
                         Step: 1,
                         Value: smsModel.FromNumber
