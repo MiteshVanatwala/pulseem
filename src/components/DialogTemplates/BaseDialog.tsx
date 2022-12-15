@@ -12,7 +12,6 @@ import {
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
@@ -23,7 +22,6 @@ export const BaseDialog = ({
   childrenPadding = true,
   open = true,
   title = "",
-  icon = <AlertIcon />,
   children,
   showDivider = false,
   onClose = () => {},

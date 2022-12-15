@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Tooltip, Typography, ClickAwayListener } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,43 +6,31 @@ import { makeStyles } from "@material-ui/core/styles";
 import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import FormGroup from "@material-ui/core/FormGroup";
-import Picker from "emoji-picker-react";
 import Toast from '../Toast/Toast.component';
-import Emoj from "../../assets/images/smile.png";
 import Waze from "../../assets/images/waze.png";
-import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
-import queryString from 'query-string';
 import { FaExclamationCircle } from 'react-icons/fa'
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
     getPreviousCampaignData,
     getPreviousLandingData,
     getAccountExtraData,
-    getGroupsBySubAccountId,
-    smsSave,
-    deleteSms,
-    smsSaveGroup,
-    getSmsByID,
-    smsQuick,
-    getCampaignSumm,
     getCreditsforSMS,
     getTestGroups,
     getCommonFeatures,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
-import { Dialog } from "../managment/index";
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import IconButton from "@material-ui/core/IconButton";
-import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile, AiOutlineAlignLeft } from "react-icons/ai";
+import { Button, Grid, Box } from "@material-ui/core";
+import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
 import Switch from "react-switch";
-import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import { logout } from '../../helpers/Api/PulseemReactAPI'
 import { Loader } from "../Loader/Loader";
+import EmojiPicker from "../Emojis/EmojiPicker";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -88,7 +76,6 @@ const defaultAccountExtraData = [
     { "Zip": "common.zip" }
 ];
 
-
 const Editorbox = ({
     classes,
     variant = 'row',
@@ -102,26 +89,19 @@ const Editorbox = ({
     document.title = t("sms.pageTitle");
     const styles = useStyles();
     const btnStyle = useStyleNew();
-    const inputProps = {
-        maxLength: "13"
-    }
-
-    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { windowSize, isRTL, accountFeatures } = useSelector(
         (state) => state.core
     );
     const {
+        extraData,
+        testGroups,
+        commonSettings,
         previousLandingData,
         previousCampaignData,
-        commonSettings,
-        testGroups,
-        ToastMessages
     } = useSelector((state) => state.sms);
-    const location = useLocation();
     const [dialogType, setDialogType] = useState(null)
     const [alignment, setAlignment] = useState('right');
-    const [showEmoji, setShowEmoji] = useState(false);
     const [editmenuClick, seteditmenuClick] = useState(false);
     const [campaignBool, setcampaignBool] = useState(false);
     const [restoreBool, setrestoreBool] = useState(true);
@@ -130,34 +110,20 @@ const Editorbox = ({
     const [linkCount, setlinkCount] = useState(0);
     const [messageCount, setmessageCount] = useState(0);
     const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
-    const [radioBtn, setradioBtn] = useState("top");
     const [landingSearch, setlandingSearch] = useState("");
     const [CampaignSearch, setCampaignSearch] = useState("");
     const [removalLinkDisabled, setremovalLinkDisabled] = useState(false);
-    const [waize, setwaize] = useState(false);
-    const [smsCampaignId, setCampaignId] = useState("");
-    const [ContactSearch, setContactSearch] = useState("");
-    const [phone, setphone] = useState("");
-    const [alertToggle, setalertToggle] = useState(false);
-    const [selectedGroup, setselectedGroup] = useState([]);
-    const [StaticNumber, setStaticNumber] = useState("");
-    const [hidden, sethidden] = useState(false);
     const [splittedMsg, setsplittedMsg] = useState([])
     const [SplittedLinks, setSplittedLinks] = useState(null);
     const [Searched, setSearched] = useState("");
-    const [modalOpen, setmodalOpen] = useState(false);
     const [toastMessage, setToastMessage] = useState(null);
     const [removalNumber, setremovalNumber] = useState(null);
     const [storedValue, setstoredValue] = useState("");
-    const [summary, setsummary] = useState(false);
     const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
-    const [total, settotal] = useState(0);
     const [showLoader, setLoader] = useState(true);
     const [selectValue, setselectValue] = useState("Personilization");
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
     const [isLinksStatistics, setIsLinksStatistics] = useState(true);
-    const [isFromAutomation, setIsFromAutomation] = useState(false);
-    const [otpOpen, setOTPOpen] = useState(null);
     const [isSiteTracking, setIsSiteTracking] = useState(false);
     const [isPageLoaded, setIsPageLoaded] = useState(false);
     const [showRemovalLink, setShowRemovalLink] = useState(false);
@@ -220,8 +186,6 @@ const Editorbox = ({
 
     const params = useParams()
 
-    const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
-
     const renderHtml = (html) => {
         function createMarkup() {
             return { __html: html };
@@ -254,36 +218,55 @@ const Editorbox = ({
     };
     const initDispatch = async () => {
         setLoader(true);
-        setCampaignId(props && params?.id ? params?.id : -1);
-        await dispatch(getPreviousLandingData());
-        await dispatch(getTestGroups());
-        await dispatch(getPreviousCampaignData());
-        let resp = await dispatch(getAccountExtraData());
-        let arr = Object.keys(resp.payload)
-        let additionalExtraData = arr.map(function (key) {
-            return { [key]: resp.payload[key] };
-        })
+        if (previousLandingData?.length === 0) {
+            await dispatch(getPreviousLandingData());
+        }
+        if (testGroups?.length === 0) {
+            await dispatch(getTestGroups());
+        }
+        if (previousCampaignData?.length === 0) {
+            await dispatch(getPreviousCampaignData());
+        }
+
+        let arrTemp = [];
+        let additionalExtraData = [];
+
+        if (!Object.keys(extraData)) {
+            let resp = await dispatch(getAccountExtraData());
+            arrTemp = Object.keys(resp.payload)
+            additionalExtraData = arrTemp.map(function (key) {
+                return { [key]: resp.payload[key] };
+            })
+        }
+        else {
+            arrTemp = Object.keys(extraData);
+            additionalExtraData = arrTemp.map(function (key) {
+                return { [key]: extraData[key] };
+            })
+        }
 
         for (let i = 0; i < additionalExtraData.length; i++) {
             defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
         }
         setextraAccountDATA(defaultAccountExtraData)
-        await dispatch(getGroupsBySubAccountId());
-        if (qs && qs.FromAutomation && qs.FromAutomation > 0) {
-            setIsFromAutomation(true);
-        }
         await initFromNumber();
         setIsPageLoaded(true);
     }
-
     useEffect(() => {
         initDispatch();
     }, [dispatch]);
 
     const initFromNumber = async () => {
-        // const smsCampaign = await getSavedData();
-        const commonFeatures = await dispatch(getCommonFeatures());
-        let fromNumber = commonFeatures.payload.DefaultCellNumber;
+        let fromNumber = '';
+        if (commonSettings?.DefaultCellNumber) {
+            fromNumber = commonSettings.DefaultCellNumber;
+        }
+        else {
+            const commonFeatures = await dispatch(getCommonFeatures());
+            fromNumber = commonFeatures.payload.DefaultCellNumber;
+        }
+
+        setstoredValue(fromNumber);
 
         const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
@@ -292,9 +275,7 @@ const Editorbox = ({
         }
 
         setcampaignNumber(fromNumber);
-        setStaticNumber(virtualNumber.payload.Number);
         setremovalNumber(virtualNumber.payload.RemovalKey);
-        setstoredValue(commonFeatures.payload.DefaultCellNumber);
         if (fromNumber !== virtualNumber.payload.Number) {
             setrestoreBool(false);
             setremovalMessageButtonDisabled(true);
@@ -302,15 +283,6 @@ const Editorbox = ({
         setLoader(false);
         onFromNumberInit(smsModel.FromNumber ?? fromNumber);
     }
-
-    const getAutomationReturnUrl = (campaignId) => {
-        const nodeToEdit = qs.NodeToEdit ?? null;
-        return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
-    }
-    const toggleKeep = () => {
-        setIsLinksStatistics(!isLinksStatistics);
-    };
-
     const linkCalculation = () => {
         const text = document.getElementById("yourMessage").value;
         let t = text.toLowerCase();
@@ -353,7 +325,6 @@ const Editorbox = ({
             setmessageCount(0);
         }
     }
-
     const getcredits = (count) => {
         dispatch(getCreditsforSMS(count)).then((res) => {
             let credits = res.payload.split("#");
@@ -380,23 +351,7 @@ const Editorbox = ({
             setDialogType({ type: "valiateError" })
         }
         return isValid;
-    };
-    const handleRestore = async () => {
-        setrestoreBool(true);
-        setcampaignNumber(StaticNumber);
-        setLoader(true);
-        let r = await dispatch(getCommonFeatures());
-        setLoader(false);
-        // setcampaignNumber(r.payload.DefaultCellNumber)
-        setLoader(true);
-        let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
-        setLoader(false);
-        setcampaignNumber(response.payload.Number);
-        setStaticNumber(response.payload.Number);
-        setremovalNumber(response.payload.RemovalKey);
-        setremovalMessageButtonDisabled(false);
     }
-
     const onAddText = (text) => {
         text = text.trim();
         let afterUpdateCharCount =
@@ -434,20 +389,13 @@ const Editorbox = ({
             focusOnMessage();
         }
     }
-
-    const onEmojiClick = (event, emojiObject) => {
-        setShowEmoji(false);
-        onAddText(emojiObject.emoji);
-    };
-
     const onMsgChange = async (e) => {
         handleSmsModelChange("Text", e.target.value);
 
         if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
             handleMsgSelect();
         }
-    };
-
+    }
     const onRemovalLink = async () => {
         onAddText("##SmsUnsubscribeURL##");
         let total = splittedMsg;
@@ -459,20 +407,18 @@ const Editorbox = ({
             setremovalLinkDisabled(true);
         }
         setremovalLinkDisabled(true);
-    };
-
+    }
     const onRemovalMsg = async () => {
         let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
         onAddText(removelReplyText);
         let total = splittedMsg;
         total.push(removelReplyText)
         setremovalMessageButtonDisabled(true);
-    };
-
+    }
     const handleSelectChange = async (e) => {
         setselectValue(e.target.value);
         onAddText("##" + e.target.value + "##");
-    };
+    }
     const handleMsgSelect = () => {
         let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
         if (smsModel.Text.includes(removelReplyText)) {
@@ -489,52 +435,9 @@ const Editorbox = ({
             setremovalLinkDisabled(false);
         }
     }
-    const handleClickOutsideEmoji = () => {
-        setShowEmoji(false);
-    }
-
-    const renderSwitch = () => (
-        <Grid item="true" xs={12} md={12} sm={12}>
-            <Box className={classes.switchDiv}>
-                <FormGroup>
-                    <Switch
-                        className={
-                            isRTL
-                                ? clsx(classes.reactSwitchHe, "react-switch")
-                                : clsx(classes.reactSwitch, "react-switch")
-                        }
-                        checked={isLinksStatistics}
-                        onChange={toggleKeep}
-                        onColor="#28a745"
-                        checkedIcon={false}
-                        uncheckedIcon={false}
-                        handleDiameter={30}
-                        height={20}
-                        width={48}
-                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                        id="material-switch"
-                    />
-                </FormGroup>
-                <Box className={classes.radio}>
-                    <Typography style={{ fontSize: "18px" }}>
-                        {t("mainReport.keepTrack")}
-                    </Typography>
-                    <Typography
-
-                        className={clsx(classes.descSwitch, classes.w100)}
-                    >
-                        {t("mainReport.keepDesc")}
-                    </Typography>
-                </Box>
-            </Box>
-        </Grid>
-    )
-
     const renderMsg = () => {
         return (
             <Grid container>
-                {variant === "column" && renderSwitch()}
                 <Grid item="true" xs={12} md={variant === "column" ? 12 : 8} className={classes.boxDiv} style={{ marginTop: 20 }}>
                     <textarea
                         placeholder={t("mainReport.typeText")}
@@ -604,49 +507,13 @@ const Editorbox = ({
                                     </Tooltip>
                                 </>
                             )}
-                            <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
-                                <Box className={classes.pickerEmoji}>
-                                    {showEmoji ? (
-                                        <Picker
-                                            onEmojiClick={onEmojiClick}
-                                            groupNames={{
-                                                smileys_people: t("emoji.smiles"),
-                                                animals_nature: t("emoji.nature"),
-                                                food_drink: t("emoji.foodAndDrinks"),
-                                                travel_places: t("emoji.places"),
-                                                activities: t("emoji.activities"),
-                                                objects: t("emoji.objects"),
-                                                symbols: t("emoji.symbols"),
-                                                recently_used: t("emoji.recently"),
-                                            }}
-                                            groupVisibility={{
-                                                flags: false,
-                                                recently_used: false
-                                            }}
-                                        />
-                                    ) : null}
-                                    <Tooltip
-                                        disableFocusListener
-                                        title={t("mainReport.emoji")}
-                                        classes={{ tooltip: styles.customWidth }}
-                                        placement="top-start"
-                                        arrow
-                                    >
-                                        <img
-                                            alt="emoji picker"
-                                            src={Emoj}
-                                            style={{
-                                                marginInlineEnd: "8px",
-                                                widht: "25px",
-                                                height: "25px",
-                                            }}
-                                            onClick={() => {
-                                                setShowEmoji(!showEmoji);
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </Box>
-                            </ClickAwayListener>
+                            <EmojiPicker
+                                classes={classes}
+                                OnSelectEmoji={(emoji) => {
+                                    onAddText(emoji);
+                                }}
+                                boxStyles={{ alignItems: 'center' }}
+                            />
                         </Box>
                         <Box className={classes.baseButtons}>
                             <Tooltip
@@ -760,25 +627,9 @@ const Editorbox = ({
                         </Box>
                     </Box>
                 </Grid>
-                {variant === "row" && renderSwitch()}
             </Grid>
         );
-    };
-
-    const onRadiochange = (e) => {
-        setradioBtn(e.target.value);
-        if (e.target.value === "bottom") {
-            setDialogType({ type: "groups" })
-        }
-    };
-
-    const handleNumberChange = (e) => {
-        const re = /^[0-9\b]+$/;
-        if (e.target.value === '' || re.test(e.target.value)) {
-            setphone(e.target.value);
-        }
-    };
-
+    }
     const siteTrackingLogic = () => {
         if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
             const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
@@ -790,65 +641,9 @@ const Editorbox = ({
             }
         }
     }
-
-    const validationCheckpoint = async (callbackFunc) => {
-        if (validationCheck()) {
-            if (isSiteTracking === true) {
-                if (!smsModel.Text.includes('ref') && isLinksStatistics) {
-                    let text = smsModel.Text;
-                    const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
-                    const originalLink = startIndex.split(' ') || startIndex.split('\n');
-                    let originUrl = originalLink[0];
-                    let newUrl = originUrl.trim();
-                    newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-                    text = smsModel.Text.replace(originUrl, newUrl);
-                    setSmsModel((currentState) => {
-                        currentState.Text = text;
-                        return currentState;
-                    });
-                }
-                if (!isLinksStatistics) {
-                    setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
-                }
-                else {
-                    callbackFunc();
-                }
-            }
-            else {
-                callbackFunc();
-            }
-        }
-    }
-
-    const onSave = async (isSave, returnToAutomation = false) => {
-        linkCalculation();
-        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: false, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
-        setLoader(true);
-        let r = await dispatch(smsSave(payloadToPush));
-        const campaignId = r.payload.Message;
-        setCampaignId(campaignId);
-        setLoader(false);
-        if (r.payload.Status === 2) {
-            if (isSave) {
-                setToastMessage(ToastMessages.SUCCESS);
-                setTimeout(() => {
-                    navigate(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
-                    setToastMessage(null);
-                }, 1500);
-            } else if (returnToAutomation) {
-                window.location = getAutomationReturnUrl(campaignId);
-            } else {
-                navigate(`/sms/send/${campaignId}`);
-            }
-        }
-        else if (r.payload.Status === 3) {
-            setOTPOpen(true);
-        }
-    };
-
     const handleClose = () => {
         setDialogType(null);
-    };
+    }
     const handleAddLink = async (id, linkType) => {
         let text = "";
         let campaign = {};
@@ -871,124 +666,26 @@ const Editorbox = ({
         setDialogType(null);
         setCampaignSearch('');
         setlandingSearch('');
-    };
-
-    const handleSelect = (id) => {
-        let tempArr = [];
-        const isExist = selectedGroup.filter((g) => { return g.GroupID === id }).length > 0;
-        if (isExist) {
-            tempArr = selectedGroup.filter((g) => { return g.GroupID !== id });
-            setselectedGroup(tempArr);
-        }
-        else {
-            const newItem = testGroups.filter((g) => { return g.GroupID === id })[0];
-            setselectedGroup([...selectedGroup, newItem]);
-        }
-    };
-
-    const handleDelete = async () => {
-        if (props && params?.id) {
-            let response = await dispatch(getSmsByID(params?.id))
-            if (response) {
-                dispatch(deleteSms(response.payload.SMSCampaignID));
-                handleClose();
-                navigate("/SMSCampaigns");
-            }
-        }
-        else {
-            dispatch(deleteSms(-1));
-            handleClose();
-            navigate("/SMSCampaigns");
-        }
-    };
-
-    const handleGroupClose = async () => {
-        if (selectedGroup.length > 0) {
-            const groupIds = selectedGroup.map((g) => { return g.GroupID });
-            settotal(selectedGroup.length);
-            const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
-            let r = await dispatch(smsSave(payloadToPush));
-            setCampaignId(r.payload.Message);
-            if (r.payload.Status === 2) {
-                let payload2 = {
-                    IsTestGroups: true,
-                    SMSCampaignID: r.payload.Message,
-                    TestGroupsIds: groupIds,
-                };
-                handleSmsModelChange("SMSCampaignID", r.payload.Message);
-                let r2 = await dispatch(smsSaveGroup(payload2));
-                await dispatch(getCampaignSumm(r.payload.Message));
-                setsummary(true);
-                setDialogType(null);
-            }
-            else if (r.payload.Status === 3) {
-                setOTPOpen(true);
-            }
-            else {
-                setDialogType(null);
-            }
-        }
-        sethidden(true);
-    };
-
+    }
     const handlecaution = () => {
-        setalertToggle(false);
-        setmodalOpen(false);
         setremovalNumber(null);
         setDialogType(null);
-    };
+    }
     const handleAlertoff = () => {
         setcampaignNumber(storedValue);
-        setalertToggle(false);
         setDialogType(null);
-    };
-    const handleExit = async (saveBeforeExit) => {
-        if (saveBeforeExit) {
-            const payloadToPush = { ...smsModel, SmsCampaignID: smsCampaignId, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
-            let saveResponse = await dispatch(smsSave(payloadToPush));
-            if (saveResponse) {
-                if (saveResponse.payload.Status === 3) {
-                    setOTPOpen(true);
-                    return;
-                }
-                else if (saveResponse.payload.Status === 2) {
-                    setDialogType(null);
-                    navigate("/SMSCampaigns");
-
-                }
-                else {
-                    setDialogType(null);
-                    setToastMessage(ToastMessages.ERROR);
-                }
-            }
-            else {
-                setDialogType(null);
-                setToastMessage(ToastMessages.ERROR);
-            }
-        }
-        else if (saveBeforeExit === false) {
-            navigate("/SMSCampaigns");
-            setDialogType(null);
-        }
-    };
-    const handleSummary = () => {
-        setsummary(false);
     }
-
     const focusOnMessage = () => {
         const textArea = document.getElementById("yourMessage");
         setTimeout(() => {
             textArea.focus();
         }, 500)
     }
-
     const onLocation = async () => {
         onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
         setlinkCount(linkCount + 1);
-        setwaize(false);
         setDialogType(null);
-    };
-
+    }
     const renderToast = () => {
         if (toastMessage) {
 
@@ -1007,9 +704,6 @@ const Editorbox = ({
         return {
             title: t('mainReport.selectLanding'),
             showDivider: true,
-            icon: (
-                <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
-            ),
             content: (
                 <Box className={clsx(classes.dialogBox, classes.dialogCustomSize)}>
                     <Paper component="form" className={btnStyle.root}>
@@ -1164,30 +858,6 @@ const Editorbox = ({
             onConfirm: () => { onLocation() }
         }
     }
-    // const deleteDialog = () => {
-    //     return {
-    //         title: t('mainReport.deleteSms'),
-    //         showDivider: true,
-    //         disableBackdropClick: true,
-    //         icon: (
-    //             <AiOutlineExclamationCircle
-    //                 style={{ fontSize: 30, color: "#fff" }}
-    //             />
-    //         ),
-    //         content: (
-    //             <Box>
-    //                 <div className={classes.bodyTextDialog}>
-    //                     <Typography>
-    //                         {t("mainReport.confirmSure")}
-    //                     </Typography>
-    //                 </div>
-    //             </Box>
-    //         ),
-    //         showDefaultButtons: true,
-    //         onClose: () => { setDialogType(null) },
-    //         onConfirm: () => { handleDelete() }
-    //     }
-    // }
     const validationDialog = () => {
         return {
             title: t('mainReport.fieldInvalid'),
@@ -1230,107 +900,6 @@ const Editorbox = ({
             onConfirm: () => { setDialogType(null) }
         }
     }
-    const groupDialog = () => {
-        return {
-            title: t('mainReport.selectGroups'),
-            showDivider: true,
-            icon: (
-                <HiOutlineUserGroup
-                    style={{ fontSize: 30, color: "#fff" }}
-                />
-            ),
-            content: (
-                <Box className={clsx(classes.dialogBox, classes.dialogCustomSize)}>
-                    <Paper component="form" className={btnStyle.root}>
-                        <IconButton
-                            type="submit"
-                            className={btnStyle.iconButton}
-                            aria-label="search"
-                        >
-                            <SearchIcon />
-                        </IconButton>
-                        <InputBase
-                            className={btnStyle.input}
-                            placeholder={t("mainReport.searchSms")}
-                            inputProps={{ "aria-label": "Search" }}
-                            onChange={(e) => {
-                                setContactSearch(e.target.value);
-                            }}
-                            value={ContactSearch}
-                        />
-                    </Paper>
-                    <Box style={{ marginTop: 20 }}>
-                        {testGroups
-                            .filter((val) => {
-                                if (ContactSearch == "") {
-                                    return val;
-                                } else if (
-                                    val.GroupName.toLowerCase().includes(
-                                        ContactSearch.toLowerCase()
-                                    )
-                                ) {
-                                    return val;
-                                }
-                            })
-                            .map((item, idx) => {
-                                const itemChecked = selectedGroup.filter((g) => { return g.GroupID === item.GroupID }).length > 0
-                                return (
-                                    <div key={idx} className={classes.searchCon} onClick={() => {
-                                        handleSelect(item.GroupID);
-                                    }}>
-                                        <span
-                                            style={{ marginInlineEnd: windowSize !== "xs" ? "25px" : "10px" }}
-                                            className={
-                                                itemChecked ? classes.greenDoc : classes.blueDoc
-                                            }
-                                        >
-                                            {itemChecked ? (
-                                                <FaCheck className={clsx(classes.green)} />
-                                            ) : (
-                                                <HiOutlineUserGroup />
-                                            )}
-                                        </span>
-                                        <div
-                                            className={classes.selectGroupDiv}
-                                        >
-                                            <span className={classes.ellipsisText}>{item.GroupName}</span>
-                                            <span style={{ whiteSpace: 'nowrap' }}>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                    </Box>
-                </Box>
-            ),
-            showDefaultButtons: true,
-            onCancel: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
-            onClose: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
-            onConfirm: () => { validationCheckpoint(() => handleGroupClose()) }
-        }
-    }
-    const exitDialog = () => {
-        return {
-            title: t('mainReport.handleExitTitle'),
-            showDivider: true,
-            disableBackdropClick: true,
-            icon: (
-                <AiOutlineExclamationCircle
-                    style={{ fontSize: 30, color: "#fff" }}
-                />
-            ),
-            content: (
-                <Box>
-                    <Typography className={classes.f18}>{t("mainReport.leaveCampaign")}</Typography>
-                </Box>
-            ),
-            showDefaultButtons: true,
-            confirmText: t("common.Yes"),
-            cancelText: t("common.No"),
-            onClose: () => { validationCheckpoint(() => handleExit(false)) },
-            onCancel: () => { setDialogType(null) },
-            onConfirm: () => { validationCheckpoint(() => handleExit(true)); }
-        }
-    }
     const alertDialog = () => {
         return {
             title: t('mainReport.pleaseNote'),
@@ -1348,39 +917,6 @@ const Editorbox = ({
             showDefaultButtons: true,
             onClose: () => { handleAlertoff() },
             onConfirm: () => { handlecaution() }
-        }
-    }
-    const noCreditDialog = () => {
-        return {
-            showDivider: false,
-            icon: (
-                <AiOutlineExclamationCircle
-                    style={{ fontSize: 30, color: "#fff" }}
-                />
-            ),
-            content: (
-                <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-                    <FaExclamationCircle style={{ fontSize: 100 }} />
-                    <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
-                    <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-                    <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
-                    <Box style={{ marginTop: 25 }}>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            onClick={() => setDialogType(null)}
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton
-                            )}>
-                            {t("common.Ok")}
-                        </Button>
-                    </Box>
-                </Box>
-            ),
-            showDefaultButtons: false,
-            onClose: () => { setDialogType(null) },
-            onConfirm: () => { setDialogType(null) }
         }
     }
     const siteTrackingLinkDialog = (data) => {
@@ -1413,26 +949,23 @@ const Editorbox = ({
             latestLP: lpDialog(),
             latestCampaigns: campaignsDialog(),
             waze: wazeDialog(),
-            // deleteSms: deleteDialog(),
             valiateError: validationDialog(),
-            groups: groupDialog(),
-            exit: exitDialog(),
             alert: alertDialog(),
-            noCredit: noCreditDialog(),
             linkStatisticAlert: siteTrackingLinkDialog(data)
         }
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <Dialog
+            dialogType && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onClose={handleClose}
                 {...currentDialog}>
                 {currentDialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
+    //#endregion Dialogs
 
     return (
         <>

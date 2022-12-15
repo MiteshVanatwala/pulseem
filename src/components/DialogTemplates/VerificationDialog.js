@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { Typography, Button, TextField, Box, Divider, Avatar } from '@material-ui/core'
-import { Dialog } from '../managment/index'
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import 'moment/locale/he'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonSlice';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
-import { MdOutlineMarkEmailRead } from 'react-icons/md';
 import {
     getAuthorizeNumbers, sendVerificationCode, verifyCode
 } from '../../redux/reducers/smsSlice'
@@ -592,12 +591,6 @@ const VerificationDialog = ({
 
     const Popup = (data = '') => ({
         title: '',
-        icon: (
-            <div className={classes.dialogIconContent} >
-                {variant === 'sms' && '\uE11B'}
-                {variant === 'email' && <MdOutlineMarkEmailRead />}
-            </div>
-        ),
         content: (<>
             {variant === 'email' && EMAIL_MODULE()}
             {variant === 'sms' && SMS_MODULE()}
@@ -636,7 +629,7 @@ const VerificationDialog = ({
     })
 
     return (
-        <Dialog
+        <BaseDialog
             classes={classes}
             contentStyle={classes.maxWidth900}
             open={isOpen}
@@ -644,7 +637,7 @@ const VerificationDialog = ({
             renderButtons={Popup().renderButtons || null}
             {...Popup()}>
             {Popup().content}
-        </Dialog>
+        </BaseDialog>
     )
 }
 

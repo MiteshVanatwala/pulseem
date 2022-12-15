@@ -30,7 +30,7 @@ import { setRowsPerPage } from "../../redux/reducers/coreSlice";
 import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
-import { Dialog } from '../../components/managment/index';
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import {
   AddClientsToGroup,
   deleteFromGroups,
@@ -57,7 +57,6 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
-import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { ConvertClientStatus, SourceType } from '../../helpers/UI/TableText';
 const useStyles = makeStyles({
   groupName: {
@@ -960,7 +959,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
           <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
             if (location?.state && location?.state.PageProperty) {
-              navigate(`/${location?.state.PageProperty.PageName}`, {
+              navigate(`/react/${location?.state.PageProperty.PageName}`, {
                 state: {
                   from: 'clientsearchresult'
                 }
@@ -1511,7 +1510,7 @@ const ClientSearchResult = ({ props, classes }) => {
       },
     };
     return (
-      <Dialog
+      <BaseDialog
         classes={classes}
         open={
           dialog === DialogType.CONFIRM_INVALID ||
@@ -1521,9 +1520,6 @@ const ClientSearchResult = ({ props, classes }) => {
         }
         // title={t("group.delete")}
         title={DialogObject[dialog]?.title || ''}
-        icon={<Box className={classes.dialogAlertIcon}>
-          !
-        </Box>}
         showDivider={true}
         onClose={DialogObject[dialog]?.onClose || ''}
         onCancel={DialogObject[dialog]?.onClose || ''}
@@ -1536,7 +1532,7 @@ const ClientSearchResult = ({ props, classes }) => {
             {DialogObject[dialog]?.bodyText || ''}
           </Typography>
         </Box>
-      </Dialog>
+      </BaseDialog>
     )
   }
   const renderTableBody = () => {

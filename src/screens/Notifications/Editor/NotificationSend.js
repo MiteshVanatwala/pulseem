@@ -484,7 +484,7 @@ const NotificationSend = ({ classes }) => {
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => insertNotificationForSend()}
+                            onClick={insertNotificationForSend}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton

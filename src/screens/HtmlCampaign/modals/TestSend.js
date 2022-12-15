@@ -1,16 +1,12 @@
-import React, { useEffect, useState, createRef, useRef } from "react";
+import { useState, useRef } from "react";
 import clsx from "clsx";
-import { Typography, Button, TextField, Box } from "@material-ui/core";
+import { TextField, Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Loader } from '../../../components/Loader/Loader';
-import { RiSendPlaneFill } from 'react-icons/ri'
 import PulseemRadio from '../../../components/Controlls/PulseemRadio'
 import "moment/locale/he";
-import { Dialog } from "../../../components/managment/Dialog";
-import GroupTags from "../../../components/Groups/GroupTags";
-import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSelector } from "react-redux";
 import Toast from '../../../components/Toast/Toast.component';
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 const TestSend = ({
     classes,
@@ -25,7 +21,6 @@ const TestSend = ({
     const [toastMessage, setToastMessage] = useState(null);
     const [selectedGroups, setTestGroups] = useState([]);
     const { isRTL } = useSelector(state => state.core);
-    const { testGroups } = useSelector(state => state.sms);
     const { ToastMessages } = useSelector(state => state.campaignEditor);
     const emailRef = useRef(null);
 
@@ -124,27 +119,24 @@ const TestSend = ({
 
     const renderToast = () => {
         if (toastMessage) {
-          setTimeout(() => {
-            setToastMessage(null);
-          }, 4000);
-          return (
-            <Toast data={toastMessage} />
-          );
+            setTimeout(() => {
+                setToastMessage(null);
+            }, 4000);
+            return (
+                <Toast data={toastMessage} />
+            );
         }
         return null;
-      }
+    }
     return !isOpen ? (<></>) :
         (
             <>
                 {renderToast()}
-                <Dialog
+                <BaseDialog
                     classes={classes}
                     customContainerStyle={classes.dialogZindex}
                     open={isOpen}
                     title={t('mainReport.testSend')}
-                    icon={<div className={classes.dialogIconContent}>
-                        <RiSendPlaneFill />
-                    </div>}
                     showDivider={true}
                     onClose={onClose}
                     onCancel={onClose}
@@ -164,7 +156,7 @@ const TestSend = ({
                             radioOptions={radios}
                         />
                     </Box>
-                </Dialog>
+                </BaseDialog>
             </>
         );
 }

@@ -11,7 +11,7 @@ import CustomTooltip from '../Tooltip/CustomTooltip';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { Dialog } from '../Popup/Dialog';
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
@@ -87,7 +87,7 @@ const BulkStatus = ({ classes }) => {
       }
 
       return (
-        <Dialog {...options}></Dialog>
+        <BaseDialog {...options} />
       );
     }
   }
