@@ -162,7 +162,7 @@ const SendSummary = ({ classes,
                                     overflow: 'scroll'
 
                                 }}>
-                                    {RenderHtml(newsletterSettings.HtmlPreview)}
+                                    {RenderHtml(`<iframe src=${newsletterSettings.PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 300px" />`)}
                                 </Stack>
                             </Stack>
                         </Box>

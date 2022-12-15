@@ -1,8 +1,8 @@
-export const RenderHtml = (html: any, style: any) => {
+export const RenderHtml = (html: any) => {
     function createMarkup() {
         return { __html: html };
     }
     return (
-        <label style={{...style}} dangerouslySetInnerHTML={createMarkup()}></label>
+        <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
 }
