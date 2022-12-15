@@ -24,11 +24,11 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 const DEFAULT_FILTER = {
     PageIndex: 1,
     PageSize: 6,
-    ProductName: '',
+    ProductName: null,
     CategoryID: [],
     IsExport: false,
     OrderBY: 0,
-    OrderByParameter: "ProductName"
+    OrderByParameter: null
 }
 
 const ProductsReport = ({ classes }) => {
@@ -82,11 +82,14 @@ const ProductsReport = ({ classes }) => {
     ]
 
     useEffect(() => {
-        if (isSearching) {
+        const initProducts = async () => {
             setLoader(true);
-            dispatch(GetProductReports({ ...filterValues, PageSize: rowsPerPage }));
+            await dispatch(GetProductReports({ ...filterValues, PageSize: rowsPerPage }));
             setIsSearching(false)
             setLoader(false)
+        }
+        if (isSearching) {
+            initProducts();
         }
     }, [isSearching]);
 
@@ -202,7 +205,7 @@ const ProductsReport = ({ classes }) => {
                                     <MenuItem key={`op${obj.CategoryId}`} value={obj.CategoryId}
                                         style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                                     >
-                                        <Checkbox checked={filterValues.CategoryID.indexOf(obj.CategoryId) > -1} />
+                                        <Checkbox size="small" color="primary" checked={filterValues.CategoryID.indexOf(obj.CategoryId) > -1} />
                                         <ListItemText primary={t(obj.CategoryName)} />
                                     </MenuItem>
                                 )
