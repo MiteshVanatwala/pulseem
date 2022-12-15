@@ -22,9 +22,9 @@ import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { Stack } from "@mui/material";
 import RenderToast from "../../../components/core/RenderToast";
-import ManualUploadDialog from "./Popups/ManualUploadDialog";
+// import ManualUploadDialog from "./Popups/ManualUploadDialog";
 import QuickManualUploadDialog from "./Popups/QuickManualUploadDialog";
-import CautionDialog from "./Popups/CautionDialog";
+// import CautionDialog from "./Popups/CautionDialog";
 import DeleteDialog from "./Popups/DeleteDialog";
 import SendSuccessDialog from "./Popups/SendSuccessDialog";
 import SummaryDialog from "./Popups/SummaryDialog";
@@ -99,9 +99,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const params = useParams();
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
-    const { windowSize, isRTL } = useSelector(
-        (state) => state.core
-    );
+    const { isRTL } = useSelector((state) => state.core);
     const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
@@ -128,9 +126,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         groupNameExist: false,
         groupValue: '',
     })
-    const [contacts, setContacts] = React.useState([]);
-    const [headers, setheaders] = useState(manualValues.initialheadstate);
-    const [groupTextError, setGroupTextError] = useState(false);
+
     const [filterValues, setFilterValues] = useState({
         toggleReci: false,
         selectedFilterGroups: [],
@@ -304,7 +300,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         setManualValues({ ...manualValues, totalRecords: 0, areaData: '', typedData: [] })
         setNewGroupDetails({ ...newGroupDetails, groupValue: '' })
-        setContacts([]);
         //COMMENT: CHECK SETCOLUMNVALIDATE ONCE
         setDialogType({ type: 'sendSuccess' });
     };
@@ -659,7 +654,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 mergedSegmentationDialog === 1 && handleFilterConfirm()
             }
         }
-        // let SegTabs =
 
         return dialogObj
     }
@@ -668,31 +662,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const { type, data } = dialogType || {}
 
         const dialogContent = {
-            manualUpload: ManualUploadDialog(
-                {
-                    classes: classes,
-                    styles: styles,
-                    groupList: groupData?.Groups,
-                    manualValues: manualValues,
-                    setManualValues: setManualValues,
-                    newGroupDetails: newGroupDetails,
-                    setNewGroupDetails: setNewGroupDetails,
-                    groupTextError: groupTextError,
-                    setGroupTextError: setGroupTextError,
-                    setDialogType: setDialogType,
-                    groupNameInput: newGroupDetails.groupValue,
-                    contacts: contacts,
-                    headers: headers,
-                    setheaders: setheaders,
-                    setLoader: setLoader,
-                    ToastMessages: ToastMessages,
-                    setToastMessage: setToastMessage,
-                    selectedGroups: selectedGroups,
-                    setContacts: setContacts,
-                    // setGroupList: setGroupList,
-                    setSelected: setSelectedGroups
-                }
-            ),
             quickMnualUpload: QuickManualUploadDialog({
                 classes: classes,
                 onClose: () => setDialogType(null),
@@ -700,11 +669,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onConfirm: () => handleConfirmC()
             }),
             filterRecipients: MergedSegmentationDialog(),
-            caution: CautionDialog({
-                classes: classes,
-                onClose: () => setDialogType({ type: "manualUpload" }),
-                onConfirm: () => handleConfirmC()
-            }),
             pulses: PulseDialog({
                 classes: classes,
                 campaign: campaignValues,
@@ -725,7 +689,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             sendSuccess: SendSuccessDialog(),
             summary: SummaryDialog({ classes: classes, count: data }),
             preSendSummary: PreSendSummary({ classes: classes, campaignId: params?.id, onClose: () => setDialogType(null), onConfirm: () => onSaveSettings(true) })
-            // noCredit: noCreditDialog(),
         }
 
         const currentDialog = dialogContent[type] || {}
