@@ -34,17 +34,21 @@ import {
 import Highlighter from 'react-highlight-words';
 import DynamicModal from './DynamicModal';
 import Buttons from './Buttons';
+import uniqid from 'uniqid';
 
 const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [isCampaign, setIsCampaign] = useState<boolean>(false);
+	const [fileData, setFileData] = useState<string>('');
+	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
 		templateButtons: [],
 	});
+	const [savedTemplateList, setSavedTemplateList] = useState<any>([]);
 	const [dynamicVariable, setDynamicVariable] = useState<string[]>([
 		'and',
 		'the',
@@ -64,8 +68,6 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 	};
 
 	const highlightText = ({ children, highlightIndex }: any) => {
-		console.log('children::', children);
-
 		return (
 			<strong
 				className={clsx(
@@ -76,6 +78,139 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 				{children}
 			</strong>
 		);
+	};
+
+	const setButtonsData = (buttonType: string, data: any) => {
+		if (buttonType === 'quickReply') {
+			const buttonData = data?.map((button: any) => {
+				return {
+					id: uniqid(),
+					typeOfAction: '',
+					fields: [
+						{
+							fieldName: translator('whatsapp.websiteButtonText'),
+							type: 'text',
+							placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+							value: button.title,
+						},
+					],
+				};
+			});
+			return buttonData;
+		} else {
+			const buttonData = data?.map((button: any) => {
+				if (button?.type === 'PHONE') {
+					return {
+						id: uniqid(),
+						typeOfAction: 'phonenumber',
+						fields: [
+							{
+								fieldName: translator('whatsapp.phoneButtonText'),
+								type: 'text',
+								placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
+								value: button.title,
+							},
+							{
+								fieldName: translator('whatsapp.country'),
+								type: 'select',
+								placeholder: 'Select Your Country Code',
+								value: '+972 Israel',
+							},
+							{
+								fieldName: translator('whatsapp.phoneNumber'),
+								type: 'tel',
+								placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+								value: button.phone,
+							},
+						],
+					};
+				} else {
+					return {
+						id: uniqid(),
+						typeOfAction: 'website',
+						fields: [
+							{
+								fieldName: translator('whatsapp.websiteButtonText'),
+								type: 'text',
+								placeholder: translator(
+									'whatsapp.websiteButtonTextPlaceholder'
+								),
+								value: button.title,
+							},
+							{
+								fieldName: translator('whatsapp.websiteURL'),
+								type: 'text',
+								placeholder: translator('whatsapp.websiteURLPlaceholder'),
+								value: button.url,
+							},
+						],
+					};
+				}
+			});
+			return buttonData;
+		}
+	};
+
+	const onSavedTemplateChange = (TemplateId: string) => {
+		setSavedTemplate(TemplateId);
+		const savedTemplateData = savedTemplateList?.find(
+			(template: any) => template.TemplateId === TemplateId
+		);
+		let updatedTemplateData = {
+			templateText: '',
+			templateButtons: [],
+		};
+		let updatedButtonType = '';
+		let updatedFileData = '';
+		if (savedTemplateData?.Data) {
+			if ('quick-reply' in savedTemplateData?.Data?.types) {
+				updatedButtonType = 'quickReply';
+				const buttonData = setButtonsData(
+					'quickReply',
+					savedTemplateData?.Data?.types['quick-reply']?.actions
+				);
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['quick-reply']?.body;
+				updatedTemplateData.templateButtons = buttonData;
+			}
+			if ('call-to-action' in savedTemplateData?.Data?.types) {
+				updatedButtonType = 'callToAction';
+				const buttonData = setButtonsData(
+					'callToAction',
+					savedTemplateData?.Data?.types['call-to-action']?.actions
+				);
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['call-to-action']?.body;
+				updatedTemplateData.templateButtons = buttonData;
+			} else if ('card' in savedTemplateData?.Data?.types) {
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['card']?.title;
+				if (savedTemplateData?.Data?.types['card']?.actions?.length > 0) {
+					updatedButtonType = 'callToAction';
+					const buttonData = setButtonsData(
+						'callToAction',
+						savedTemplateData?.Data?.types['card']?.actions
+					);
+					updatedTemplateData.templateButtons = buttonData;
+				}
+				if (savedTemplateData?.Data?.types['card']?.media?.length > 0) {
+					updatedFileData = savedTemplateData?.Data?.types['card']?.media[0];
+				}
+			} else if ('media' in savedTemplateData?.Data?.types) {
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['media']?.body;
+				if (savedTemplateData?.Data?.types['media']?.media?.length > 0) {
+					updatedFileData = savedTemplateData?.Data?.types['media']?.media[0];
+				}
+			} else if ('text' in savedTemplateData?.Data?.types) {
+				updatedTemplateData.templateText =
+					savedTemplateData?.Data?.types['text']?.body;
+			}
+		}
+		setFileData(updatedFileData);
+		// setTemplateName(savedTemplateData?.TemplateName || '');
+		setButtonType(updatedButtonType);
+		setTemplateData(updatedTemplateData);
 	};
 
 	return (
