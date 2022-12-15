@@ -110,8 +110,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         SendingMethod: 1,
         CampaignID: params.id
     });
-    const [totalCampaigns, setTotalCampaigns] = useState();
-    const [groupList, setGroupList] = useState([]);
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
@@ -124,7 +122,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         areaClick: false,
         groupClick: false,
         manualClick: false,
-        bsDot: false
     })
     const [newGroupDetails, setNewGroupDetails] = useState({
         toggleChecked: false,
@@ -183,7 +180,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
-            setTotalCampaigns(previousCampaignData?.length ?? 0);
             GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
             setFilterValues({
                 ...filterValues,
@@ -434,8 +430,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         filteredGroups.length === selectedGroups.length ? setSelectedGroups([...selectedGroups, group]) : setSelectedGroups([...filteredGroups])
     }
-
-    //TODO
 
     const callbackUpdateGroupFilterd = (groups) => {
         setFilterValues({ ...filterValues, selectedFilterGroups: groups })
@@ -745,7 +739,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     setToastMessage: setToastMessage,
                     selectedGroups: selectedGroups,
                     setContacts: setContacts,
-                    setGroupList: setGroupList,
+                    // setGroupList: setGroupList,
                     setSelected: setSelectedGroups
                 }
             ),
@@ -923,7 +917,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             {activeTab === 0 &&
                                 <Groups
                                     classes={classes}
-                                    list={showTestGroups ? [...testGroups, ...groupData?.Groups] : [...groupData?.Groups]}
+                                    list={[...groupData?.Groups]}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}
                                     callbackUpdateGroups={callbackUpdateGroups}
@@ -1023,7 +1017,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Tooltip>
                                         </Stack>
                                     </Stack>
-
                                     {NewGroupForm()}
                                 </Stack>
                             </Stack>

@@ -152,22 +152,29 @@ const SmsMarketingDialog = ({
     const handleValidation = () => {
         const tempErrors = {};
         if (!smsModel.FromNumber) {
-            tempErrors.FromNumber = 'From Number is required';
+            tempErrors.FromNumber = t('campaigns.newsLetterEditor.sendSettings.errors.reqFromNumber');
         }
         if (!smsModel.Text) {
-            tempErrors.Text = 'Text is required';
+            tempErrors.Text = t('campaigns.newsLetterEditor.sendSettings.errors.reqText');
         }
         if (!smsModel.SendDate) {
-            tempErrors.SendDate = 'Date is required';
+            tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.reqDate');
+
+        }
+        else if (Object.prototype.toString.call(smsModel.SendDate) === "[object Date]") {
+            tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.invalidDate');
         }
         if (!smsModel.SendTime) {
-            tempErrors.SendTime = 'Time is required';
+            tempErrors.SendTime = t('campaigns.newsLetterEditor.sendSettings.errors.reqTime');
+        }
+        else if (/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(smsModel.SendTime)) {
+            tempErrors.SendTime = t('campaigns.newsLetterEditor.sendSettings.errors.invalidTime');
         }
         if (!numberVerified) {
-            tempErrors.numberVerified = 'Please verified from number';
+            tempErrors.numberVerified = t('campaigns.newsLetterEditor.sendSettings.errors.enterVerifiedNumber');
         }
         if (smsModel.SendSmsTo === -1) {
-            tempErrors.SendSmsTo = 'Send to is required ';
+            tempErrors.SendSmsTo = t('campaigns.newsLetterEditor.sendSettings.errors.reqSendTo');
         }
         setErrors({ ...tempErrors })
         return Object.values(tempErrors).length === 0;

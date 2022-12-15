@@ -554,6 +554,16 @@
         "addLinkToCampaign": "Add link to this Email campaign",
         "addLinkToUpdate": "Add link to update contact"
       },
+      "errors": {
+        "reqFromNumber": "From Number is required",
+        "reqText": "Text is required",
+        "reqDate": "Date is required",
+        "reqTime": "Time is required",
+        "reqSendTo": "Send to is required",
+        "invalidDate": "Invalid date",
+        "invalidTime": "Invalid time",
+        "enterVerifiedNumber": "Please enter the verified phone number"
+      },
       "send": "Send",
       "doNotSend": "Do not send",
       "smsComplementary": "Complementary SMS Marketing"

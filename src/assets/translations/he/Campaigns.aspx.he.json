@@ -545,6 +545,16 @@
         "addLinkToCampaign": "הוסף קישור לקמפיין אימייל זה",
         "addLinkToUpdate": "הוסף קישור לעדכון מידע"
       },
+      "errors": {
+        "reqFromNumber": "הואחובהמספר עורך",
+        "reqText": "טקסט הוא חובה",
+        "reqDate": "תאריך הוא חובה",
+        "invalidDate": " תאריך לא תקין",
+        "invalidTime": "זמן לא תקין",
+        "reqTime": "זמן הוא חובה",
+        "reqSendTo": "שלח ל הוא חובה",
+        "enterVerifiedNumber": "נא להזין את מספר הטלפון המאומת"
+      },
       "send": "שלח",
       "doNotSend": "לא לשלוח"
     }
