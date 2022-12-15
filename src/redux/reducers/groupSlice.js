@@ -136,11 +136,22 @@ export const combinedGroup = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
+export const getDefaultGroup = createAsyncThunk(
+    'group/GetDefaultGroupID', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`group/GetDefaultGroupID`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 
 export const groupSlice = createSlice({
     name: 'group',
     initialState: {
+        defaultGroupId: -1,
         selectedGroups: [],
         subAccountAllGroups: [],
         groupData: null,
@@ -197,6 +208,9 @@ export const groupSlice = createSlice({
         })
         builder.addCase(combinedGroup.fulfilled, (state, action) => {
             state.groupData.push(action.payload);
+        })
+        builder.addCase(getDefaultGroup.fulfilled, (state, { payload }) => {
+            state.defaultGroupId = payload;
         })
         builder.addCase(createGroup.rejected, (state, { error }) => {
             state.error = error.message;

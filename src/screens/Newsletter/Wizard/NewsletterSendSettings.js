@@ -16,7 +16,7 @@ import { Button, Grid, Box } from "@material-ui/core";
 import {
     getAccountExtraData, getPreviousCampaignData, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
-import { combinedGroup, addRecipient, addRecipients, createGroup } from "../../../redux/reducers/groupSlice";
+import { combinedGroup, addRecipient, addRecipients, createGroup, getDefaultGroup } from "../../../redux/reducers/groupSlice";
 import { getAuthorizeNumbers } from '../../../redux/reducers/commonSlice'
 import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
@@ -33,7 +33,7 @@ import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
 import { getGroups, getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
-import PreSendSummary from "./Popups/PreSendSummary";
+import SendSummary from "./Popups/SendSummary";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
@@ -100,6 +100,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
+    const { defaultGroupId } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
@@ -111,22 +112,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
-    const [manualValues, setManualValues] = useState({
-        totalRecords: 0,
-        areaData: '',
-        typedData: [],
-        initialheadstate: [],
-        dropClick: false,
-        areaClick: false,
-        groupClick: false,
-        manualClick: false,
-    })
     const [newGroupDetails, setNewGroupDetails] = useState({
         toggleChecked: false,
         groupNameExist: false,
         groupValue: '',
     })
-
     const [filterValues, setFilterValues] = useState({
         toggleReci: false,
         selectedFilterGroups: [],
@@ -145,7 +135,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         snackbarRecipients: false,
         recipientsSnackbar: false
     })
-
     const [segmantIndication, setSegmantIndication] = useState(false);
     const [pulseIndication, setPulseIndication] = useState(false);
     const [smsMarketingIndication, setSmsMarketingIndication] = useState(false);
@@ -184,7 +173,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
-
         } catch (e) {
             dispatch(sendToTeamChannel({
                 MethodName: 'onReady',
@@ -237,11 +225,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setDialogType({ type: "delete" });
     };
 
-    const onSaveSettings = async (showSummary = false) => {
+    const onSaveSettings = async (showSummary = false, overrideGroupIds = null) => {
         setLoader(true)
         let response = null;
         let payload = {
             ...campaignValues,
+            AutoSendDelay: campaignValues.SendingMethod !== 3 ? null : campaignValues.AutoSendDelay,
+            AutoSendingByUserField: campaignValues.SendingMethod !== 3 ? null : campaignValues.AutoSendingByUserField,
             ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.map(x => x.CampaignID)?.join(','),
             ExeptionalGroups: filterValues?.selectedFilterGroups?.map(x => x.GroupID)?.join(','),
             CampaignID: params.id,
@@ -250,7 +240,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             TimeInterval: campaignValues.SendingMethod === 3 ? null : campaignValues.TimeInterval,
             SendDate: campaignValues.SendDate,
             SendingMethod: campaignValues.SendingMethod,
-            GroupIds: selectedGroups.map(grp => grp.GroupID).join(","),
+            GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
             ExceptionalDays: 0,
             IsBestTime: campaignValues.IsBestTime,
             IsSummaryRequest: showSummary
@@ -263,13 +253,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             console.log("ERROR-SAVE-SEND-SETTINGS:", error)
         }
         finally {
-            handleSaveResponse(response.payload);
+            handleSaveResponse(response.payload, showSummary);
         }
     }
-    const handleSaveResponse = (response) => {
+    const handleSaveResponse = (response, silenceSave = false) => {
         switch (response?.StatusCode) {
             case 201: {
-                setToastMessage(ToastMessages.CAMPAIGN_SETTINGS_SAVED);
+                if (!silenceSave)
+                    setToastMessage(ToastMessages.CAMPAIGN_SETTINGS_SAVED);
                 break;
             }
             case 401: {
@@ -293,15 +284,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleInputNewGroup = (e) => {
         setNewGroupDetails({ ...newGroupDetails, groupNameExist: false, groupValue: e.target.value });
     }
-    const handleConfirmC = () => {
-        for (let i = 0; i < filterValues.selectArray.length; i++) {
-            filterValues.selectArray[i].isdisabled = false;
-            filterValues.selectArray[i].idx = -1;
+    const handleConfirmC = async () => {
+        setLoader(true);
+        let groupId = defaultGroupId;
+        if (defaultGroupId <= 0) {
+            const responseDefaultGroup = await dispatch(getDefaultGroup());
+            groupId = responseDefaultGroup.payload
         }
-        setManualValues({ ...manualValues, totalRecords: 0, areaData: '', typedData: [] })
-        setNewGroupDetails({ ...newGroupDetails, groupValue: '' })
-        //COMMENT: CHECK SETCOLUMNVALIDATE ONCE
-        setDialogType({ type: 'sendSuccess' });
+        onSaveSettings(true, groupId.toString()).then(() => {
+            setDialogType({ type: 'SendSummary' });
+        })
     };
 
     const handleFilterConfirm = () => {
@@ -541,7 +533,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         return (
             <>
                 <Button
-                    onClick={onSaveSettings}
+                    onClick={() => onSaveSettings(false)}
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -570,7 +562,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
-                        setDialogType({ type: 'preSendSummary' })
+                        onSaveSettings(true).then(() => {
+                            setDialogType({ type: 'SendSummary' });
+                        })
                     }}
                 >
                     {t("mainReport.summary")}
@@ -687,8 +681,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel: () => setDialogType(null),
             }),
             sendSuccess: SendSuccessDialog(),
-            summary: SummaryDialog({ classes: classes, count: data }),
-            preSendSummary: PreSendSummary({ classes: classes, campaignId: params?.id, onClose: () => setDialogType(null), onConfirm: () => onSaveSettings(true) })
+            summary: SummaryDialog({ classes: classes, count: data })
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -1017,6 +1010,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => setDialogType(null)}
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => setDialogType(null)}
+            />}
+            {dialogType?.type === 'SendSummary' && <SendSummary
+                classes={classes}
+                onClose={() => setDialogType(null)}
+                onConfirm={() => onSaveSettings(true)}
+                isOpen={dialogType?.type === 'SendSummary'}
+                setDialogType={() => setDialogType(null)}
             />}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}

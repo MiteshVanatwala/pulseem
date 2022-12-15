@@ -6,20 +6,7 @@ import moment from "moment";
 import { DateField } from "../managment/index";
 import clsx from "clsx";
 import { Stack } from "@mui/material";
-import { useEffect, useState } from "react";
-
-
-const useStyles = makeStyles((theme) => ({
-    customWidth: {
-        maxWidth: 200,
-        backgroundColor: "black",
-        fontSize: "14px",
-        textAlign: 'center'
-    },
-    noMaxWidth: {
-        maxWidth: "none",
-    }
-}));
+import { useEffect, useState, useRef } from "react";
 
 
 const SendingMethod = ({
@@ -29,11 +16,12 @@ const SendingMethod = ({
     onUpdateCampaign = () => null
 }) => {
     const { t } = useTranslation();
-    const styles = useStyles();
     const { extraData } = useSelector((state) => state.sms);
     const [date, setDate] = useState(moment(campaign?.SendDate))
     const [isBestTime, setIsBestTime] = useState(false);
     const [isBestTimeFuture, setIsBestTimeFuture] = useState(false);
+    const [isAfterDay, setIsAfterDay] = useState(campaign?.AutoSendDelay > 0);
+    const sendDelayRef = useRef(null);
 
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
@@ -72,9 +60,11 @@ const SendingMethod = ({
             if (campaign?.SendingMethod === 2 && campaign?.IsBestTime) {
                 setIsBestTimeFuture(true)
             }
+            if (campaign?.SendingMethod === 3) {
+                sendDelayRef.current.value = campaign?.AutoSendDelay === 0 ? '' : (campaign?.AutoSendDelay.toString().replace('-', '') ?? '');
+            }
         }
     }, [campaign])
-
 
     const handleTimePicker = (value) => {
         const finalDate = moment(value, "YYYY-MM-DD HH:mm:ss");
@@ -85,39 +75,41 @@ const SendingMethod = ({
 
     const handleSelectChange = (e) => {
         let temp = {
-            spectialDateFieldID: e.target.event,
             selectedSpecialValue: ""
         }
         if (e.target.value !== "0") {
             Object.keys(extraData).map((item, i) => {
-                if (e.target.value === i + 3) {
+                if (e.target.value === (i + 3).toString()) {
                     temp.selectedSpecialValue = item;
                 }
-                else if (e.target.value === 1) {
+                else if (e.target.value === '1') {
                     temp.selectedSpecialValue = "Birthday";
                 }
-                else if (e.target.value === 2) {
+                else if (e.target.value === '2') {
                     temp.selectedSpecialValue = "Creation day";
                 }
             })
         }
-        onUpdateCampaign({ ...temp });
+        onUpdateCampaign({ ...temp, AutoSendingByUserField: e.target.value });
     }
 
     const handleSpecialDayChange = (e) => {
         const re = /^[0-9\b]+$/;
         if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <= 999)) {
-            onUpdateCampaign({ DaysBeforeAfter: e.target.value })
+            sendDelayRef.current.value = e.target.value;
+            onUpdateCampaign({ AutoSendDelay: `${campaign.isAfterDay ? e.target.value : `-${e.target.value}`}` });
         }
 
     }
 
     const handlebef = () => {
-        onUpdateCampaign({ afterClick: false, ToggleA: false, ToggleB: true })
+        setIsAfterDay(false);
+        onUpdateCampaign({ AutoSendDelay: `-${sendDelayRef.current.value}` })
     };
 
     const handleaf = () => {
-        onUpdateCampaign({ afterClick: true, ToggleA: true, ToggleB: false })
+        setIsAfterDay(true);
+        onUpdateCampaign({ AutoSendDelay: sendDelayRef.current.value })
     };
 
     return (
@@ -306,7 +298,7 @@ const SendingMethod = ({
                                         }}
                                         disabled={campaign.SendingMethod === 3 ? false : true}
                                         onChange={(e) => { handleSelectChange(e) }}
-                                        value={campaign.SendingMethod === 3 ? campaign.spectialDateFieldID : "0"}
+                                        value={campaign.SendingMethod === 3 ? campaign?.AutoSendingByUserField?.toString() : "0"}
                                     >
                                         <option value="0">{t("common.select")}</option>
                                         <option value="1">{t("mainReport.birthday")}</option>
@@ -331,11 +323,11 @@ const SendingMethod = ({
                                     }}
                                 >
                                     <input
+                                        ref={sendDelayRef}
                                         type="text"
                                         className={classes.inputDays}
-                                        placeholder="0"
-                                        disabled={campaign.SendingMethod === 3 ? false : true}
-                                        value={campaign.SendingMethod === 3 ? campaign.DaysBeforeAfter : ""}
+                                        placeholder={t('smsReport.insert')}
+                                        value={sendDelayRef.current?.value}
                                         onChange={(e) => { handleSpecialDayChange(e) }}
                                         maxLength="3"
                                     />
@@ -343,52 +335,29 @@ const SendingMethod = ({
                                     <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
                                         {t("mainReport.days")}
                                     </span>
+                                    <div style={{ display: "flex" }}>
+                                        <span
+                                            className={
+                                                campaign.SendingMethod === 3 && !isAfterDay ? clsx(classes.afterActive) : clsx(classes.after)
+                                            }
+                                            onClick={() => {
+                                                handlebef();
+                                            }}
+                                        >
+                                            {t("mainReport.before")}
+                                        </span>
+                                        <span
+                                            className={
+                                                campaign.SendingMethod === 3 && isAfterDay ? classes.beforeActive : classes.before
+                                            }
+                                            onClick={() => {
+                                                handleaf();
+                                            }}
+                                        >
+                                            {t("mainReport.after")}
+                                        </span>
 
-                                    {isRTL ?
-                                        <div style={{ display: "flex" }}>
-                                            <span
-                                                className={
-                                                    campaign.SendingMethod === 3 ? campaign.ToggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-                                                }
-                                                onClick={() => {
-                                                    handlebef();
-                                                }}
-                                            >
-                                                {t("mainReport.before")}
-                                            </span>
-                                            <span
-                                                className={
-                                                    campaign.SendingMethod === 3 ? campaign.ToggleA ? classes.beforeActive : classes.before : classes.disabledBefore
-                                                }
-                                                onClick={() => {
-                                                    handleaf();
-                                                }}
-                                            >
-                                                {t("mainReport.after")}
-                                            </span>
-
-                                        </div> : <div style={{ display: "flex" }}>
-                                            <span
-                                                className={
-                                                    campaign.SendingMethod === 3 ? campaign.ToggleB ? classes.beforeActive : classes.before : classes.disabledBefore
-                                                }
-                                                onClick={() => {
-                                                    handlebef();
-                                                }}
-                                            >
-                                                {t("mainReport.before")}
-                                            </span>
-                                            <span
-                                                className={
-                                                    campaign.SendingMethod === 3 ? campaign.ToggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-                                                }
-                                                onClick={() => {
-                                                    handleaf();
-                                                }}
-                                            >
-                                                {t("mainReport.after")}
-                                            </span>
-                                        </div>}
+                                    </div>
                                 </Box>
                                 <Box
                                     className={classes.dateBox}
@@ -400,7 +369,7 @@ const SendingMethod = ({
                                 >
                                     <DateField
                                         classes={classes}
-                                        value={campaign.SendingMethod === 3 ? campaign.SendDate : null}
+                                        value={campaign.SendingMethod === 3 ? campaign.SendDate : moment()}
                                         onTimeChange={(value) => handleTimePicker(value)}
                                         placeholder={t("notifications.hour")}
                                         isTimePicker={true}

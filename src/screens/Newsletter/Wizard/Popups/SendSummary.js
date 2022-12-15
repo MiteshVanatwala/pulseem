@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Dialog } from "../../../../components/managment/index";
+import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { FormControl, Link, MenuItem, OutlinedInput, Select } from "@material-ui/core";
+import { Link, MenuItem, Select } from "@material-ui/core";
 import { Box, Grid, Button } from "@material-ui/core";
-import MobilePreview from '../../../../components/MobilePreivew/MobilePreivew'
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,17 +10,17 @@ import clsx from "clsx";
 import { Stack } from "@mui/material";
 import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 import { getSendSummary } from "../../../../redux/reducers/newsletterSlice";
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import moment from 'moment';
+import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 
-
-const PreSendSummary = ({ classes,
-    campaignId = "",
-    campaignName = "",
-    fromEmail = "",
-    subject = "",
-    summaryPayload = {},
-    onConfirm = () => null,
-    onClose = () => null,
+const SendSummary = ({ classes,
+    isOpen = false,
     groups = [],
+    summaryPayload = {},
+    onClose = () => null,
+    onConfirm = () => null,
+    setDialogType = () => null,
     filteredGroups = null,
     filteredCampaigns = null,
     SendDate = "",
@@ -31,8 +29,10 @@ const PreSendSummary = ({ classes,
     const [detailsHide, setdetailsHide] = useState(true);
     const [subDetailsActive, setsubDetailsActive] = useState(false);
     const [subRecipientsDetails, setsubRecipients] = useState(false);
-    const { isRTL } = useSelector(state => state.core)
+    const { isRTL } = useSelector(state => state.core);
+    const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
+    const { newsletterInfo, newsletterSettings } = useSelector(state => state.newsletter);
 
     const { t } = useTranslation();
 
@@ -42,14 +42,50 @@ const PreSendSummary = ({ classes,
     }
     useEffect(() => {
         dispatch(getAuthorizedEmails())
-        let response = dispatch(getSendSummary(campaignId))
+        let response = dispatch(getSendSummary(newsletterInfo?.CampaignId))
         console.log("SUMMARY:", response)
     }, [])
 
+    const renderWhenToSend = () => {
+        switch (newsletterSettings?.SendingMethod) {
+            case 1: {
+                return t("sms.SendNow");
+            }
+            case 2: {
+                return `${newsletterSettings.SendDate.format('dddd , MMMM Do YYYY, h:mm a')}`;
+            }
+            case 3: {
+                const exDates = { ...extraData };
+                const newExDates = Object.keys(exDates).map((item, i) => {
+                    if (exDates[item]) {
+                        return item.toLowerCase().indexOf('extradate') > -1 && Object.values(extraData[item]);
+                    }
+                });
+                let specialField = null;
+                switch (newsletterSettings.AutoSendingByUserField) {
+                    case "1":
+                    case 1: {
+                        specialField = t("mainReport.birthday");
+                        break;
+                    }
+                    case "2":
+                    case 2: {
+                        specialField = t("mainReport.creationDay")
+                        break;
+                    }
+                    default: {
+                        specialField = exDates[`ExtraDate${newsletterSettings.AutoSendingByUserField - 2}`];
+                    }
+                }
+                return RenderHtml(`${newsletterSettings.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSettings.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")} ` + `<span>&nbsp;${specialField}</span>` + `&nbsp;-&nbsp;${moment(newsletterSettings.SendDate).format('h:mm a')}`, { display: 'flex' })
+            }
+        }
+    }
 
-    let DialogObject = {
+
+    const currentDialog = {
         style: { paddingBottom: 20 },
-        title: `${t("sms.smsSummaryDialogTitle")} '${campaignName}'`,
+        title: `${t("sms.smsSummaryDialogTitle")} '${newsletterInfo?.Name}'`,
         showDefaultButtons: false,
         showDivider: true,
         content: (
@@ -60,7 +96,7 @@ const PreSendSummary = ({ classes,
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
                                 <Select
-                                    value={fromEmail}
+                                    value={newsletterInfo?.FromEmail}
                                     // onChange={handleChange}
                                     displayEmpty
                                     inputProps={{
@@ -83,12 +119,12 @@ const PreSendSummary = ({ classes,
 
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
-                                <span className={classes.bodySum}>{subject}</span>
+                                <span className={classes.bodySum}>{newsletterInfo?.Subject}</span>
 
                             </Box>
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
-                                <span className={classes.bodySum}>{props.sendType === "3" ? `${props.days} ${t("mainReport.days")} ${props.after ? t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${props.time.format('h:mm a')}  ` : props.sendType === "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
+                                <span className={classes.bodySum}>{renderWhenToSend()}</span>
                             </Box>
 
                             {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>
@@ -119,31 +155,18 @@ const PreSendSummary = ({ classes,
                         <Box className={classes.sumRight}>
                             <Stack direction='column' alignItems='center' spacing={2}>
                                 <Stack style={{
-                                    background: 'grey',
+                                    borderRadius: 10,
+                                    border: '1px solid grey',
                                     width: '330px',
                                     height: '300px',
+                                    overflow: 'scroll'
 
                                 }}>
-
-                                </Stack>
-                                <Stack>
-                                    <Button
-                                        variant='contained'
-                                        size='small'
-                                        // onClick={onConfirm}
-                                        style={{ width: 180 }}
-                                        className={clsx(
-                                            classes.dialogButton,
-                                            classes.dialogBlueButton,
-                                            // summaryPayload.FinalCount <= 0 ? classes.disabled : null
-                                        )}>
-                                        {t("preview button")}
-                                    </Button>
+                                    {RenderHtml(newsletterSettings.HtmlPreview)}
                                 </Stack>
                             </Stack>
                         </Box>
                     </Box>
-
                     <Box>
                         <Box>
 
@@ -296,8 +319,14 @@ const PreSendSummary = ({ classes,
         onClose: handleSmsSettings,
     }
 
-    return DialogObject;
+    return <BaseDialog
+        classes={classes}
+        open={isOpen}
+        onClose={() => { setDialogType(null) }}
+        {...currentDialog}>
+        {currentDialog.content}
+    </BaseDialog>
 
 }
 
-export default PreSendSummary;
+export default SendSummary;
