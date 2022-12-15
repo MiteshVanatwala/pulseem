@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
@@ -14,9 +14,8 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import DataTable from '../../../components/Table/DataTable';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { GetProductReports, GetExporPRData } from '../../../redux/reducers/reportSlice';
+import { GetProductReports } from '../../../redux/reducers/reportSlice';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
-import { CSVLink } from 'react-csv'
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { preferredOrder } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
@@ -51,10 +50,6 @@ const ProductsReport = ({ classes }) => {
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const [showLoader, setLoader] = useState(true);
     const [dialogType, setDialogType] = useState(null);
-
-    const [csvData, setCsvData] = useState('')
-
-    const csvLinkRef = useRef(null)
 
     moment.locale(language)
 
@@ -108,8 +103,6 @@ const ProductsReport = ({ classes }) => {
                     ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
                 }
             }),
-
-
         },
         Abandoned: {
             title: t('report.ProductsReport.abandoned'),
@@ -121,8 +114,6 @@ const ProductsReport = ({ classes }) => {
                     ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
                 }
             }),
-
-
         },
         TotalRevenue: {
             title: 'report.ProductsReport.revenueFrmProd'
@@ -272,22 +263,13 @@ const ProductsReport = ({ classes }) => {
                             classes.actionButtonGreen,
                         )}
                         onClick={() => {
-                            setTimeout(() => {
-                                dispatch(GetExporPRData({ ...filterValues, IsExport: true }))
-                                setDialogType('exportFormat')
-                            }, 200);
+                            dispatch(GetProductReports({ ...filterValues, IsExport: true }))
+                            setDialogType('exportFormat')
                         }}
                         startIcon={<ExportIcon />}
                     >
                         {t('campaigns.exportFile')}
                     </Button>
-                    <CSVLink
-                        data={csvData}
-                        filename='report.csv'
-                        className='hidden'
-                        ref={csvLinkRef}
-                        target='_blank'
-                    />
                 </Grid>}
                 <Grid item className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
