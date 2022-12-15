@@ -10,15 +10,6 @@ export const GetProductReports = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-export const GetExporPRData = createAsyncThunk(
-  'ProductReport/GetExportData', async (data, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post(`ProductReport/Get`, data);
-      return response.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
 export const reportSlice = createSlice({
   name: 'report',
   initialState: {
@@ -33,12 +24,16 @@ export const reportSlice = createSlice({
     }
   },
   extraReducers: builder => {
-    builder.addCase(GetProductReports.fulfilled, (state, { payload }) => {
-      state.productsReportDetails = payload?.Data?.Products || [];
-      state.productCategories = payload?.Data?.Categories || [];
-    })
-    builder.addCase(GetExporPRData.fulfilled, (state, { payload }) => {
-      state.exportPRData = payload?.Data?.Products || [];
+    builder.addCase(GetProductReports.fulfilled, (state, { meta, payload }) => {
+      if (!meta?.arg?.IsExport) {
+        state.productsReportDetails = payload?.Data?.Products || [];
+        if (payload?.Data?.Categories?.length > 0) {
+          state.productCategories = payload?.Data?.Categories
+        }
+      }
+      else {
+        state.exportPRData = payload?.Data?.Products || [];
+      }
     })
   }
 })

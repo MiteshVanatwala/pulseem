@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
@@ -14,9 +14,8 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import DataTable from '../../../components/Table/DataTable';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { GetProductReports, GetExporPRData } from '../../../redux/reducers/reportSlice';
+import { GetProductReports } from '../../../redux/reducers/reportSlice';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
-// import { CSVLink } from 'react-csv'
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
@@ -25,11 +24,11 @@ import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 const DEFAULT_FILTER = {
     PageIndex: 1,
     PageSize: 6,
-    ProductName: '',
+    ProductName: null,
     CategoryID: [],
     IsExport: false,
     OrderBY: 0,
-    OrderByParameter: "ProductName"
+    OrderByParameter: null
 }
 
 const ProductsReport = ({ classes }) => {
@@ -51,10 +50,6 @@ const ProductsReport = ({ classes }) => {
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const [showLoader, setLoader] = useState(true);
     const [dialogType, setDialogType] = useState(null);
-
-    // const [csvData, setCsvData] = useState('')
-
-    // const csvLinkRef = useRef(null)
 
     moment.locale(language)
 
@@ -87,11 +82,14 @@ const ProductsReport = ({ classes }) => {
     ]
 
     useEffect(() => {
-        if (isSearching) {
+        const initProducts = async () => {
             setLoader(true);
-            dispatch(GetProductReports({ ...filterValues, PageSize: rowsPerPage }));
+            await dispatch(GetProductReports({ ...filterValues, PageSize: rowsPerPage }));
             setIsSearching(false)
             setLoader(false)
+        }
+        if (isSearching) {
+            initProducts();
         }
     }, [isSearching]);
 
@@ -108,8 +106,6 @@ const ProductsReport = ({ classes }) => {
                     ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
                 }
             }),
-
-
         },
         Abandoned: {
             title: t('report.ProductsReport.abandoned'),
@@ -121,8 +117,6 @@ const ProductsReport = ({ classes }) => {
                     ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
                 }
             }),
-
-
         },
         TotalRevenue: {
             title: 'report.ProductsReport.revenueFrmProd'
@@ -225,7 +219,7 @@ const ProductsReport = ({ classes }) => {
                                     <MenuItem key={`op${obj.CategoryId}`} value={obj.CategoryId}
                                         style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                                     >
-                                        <Checkbox checked={filterValues.CategoryID.indexOf(obj.CategoryId) > -1} />
+                                        <Checkbox size="small" color="primary" checked={filterValues.CategoryID.indexOf(obj.CategoryId) > -1} />
                                         <ListItemText primary={t(obj.CategoryName)} />
                                     </MenuItem>
                                 )
@@ -286,22 +280,13 @@ const ProductsReport = ({ classes }) => {
                             classes.actionButtonGreen,
                         )}
                         onClick={() => {
-                            setTimeout(() => {
-                                dispatch(GetExporPRData({ ...filterValues, IsExport: true }))
-                                setDialogType('exportFormat')
-                            }, 200);
+                            dispatch(GetProductReports({ ...filterValues, IsExport: true }))
+                            setDialogType('exportFormat')
                         }}
                         startIcon={<ExportIcon />}
                     >
                         {t('campaigns.exportFile')}
                     </Button>
-                    {/* <CSVLink
-                        data={csvData}
-                        filename='report.csv'
-                        className='hidden'
-                        ref={csvLinkRef}
-                        target='_blank'
-                    /> */}
                 </Grid>}
                 <Grid item className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
@@ -323,10 +308,8 @@ const ProductsReport = ({ classes }) => {
                     target="_blank">
                     {value && value.toLocaleString() || '0'}
                 </Typography>
-
             </Box>
         )
-
     }
 
     const renderRow = (row) => {
