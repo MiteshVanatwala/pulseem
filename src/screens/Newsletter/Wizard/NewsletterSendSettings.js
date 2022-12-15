@@ -16,15 +16,15 @@ import { Button, Grid, Box } from "@material-ui/core";
 import {
     getAccountExtraData, getPreviousCampaignData, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
-import { combinedGroup, addRecipient, addRecipients, createGroup } from "../../../redux/reducers/groupSlice";
+import { combinedGroup, addRecipient, addRecipients, createGroup, getDefaultGroup } from "../../../redux/reducers/groupSlice";
 import { getAuthorizeNumbers } from '../../../redux/reducers/commonSlice'
 import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { Stack } from "@mui/material";
 import RenderToast from "../../../components/core/RenderToast";
-import ManualUploadDialog from "./Popups/ManualUploadDialog";
+// import ManualUploadDialog from "./Popups/ManualUploadDialog";
 import QuickManualUploadDialog from "./Popups/QuickManualUploadDialog";
-import CautionDialog from "./Popups/CautionDialog";
+// import CautionDialog from "./Popups/CautionDialog";
 import DeleteDialog from "./Popups/DeleteDialog";
 import SendSuccessDialog from "./Popups/SendSuccessDialog";
 import SummaryDialog from "./Popups/SummaryDialog";
@@ -33,7 +33,7 @@ import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
 import { getGroups, getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
-import PreSendSummary from "./Popups/PreSendSummary";
+import SendSummary from "./Popups/SendSummary";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
@@ -99,9 +99,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const params = useParams();
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
-    const { windowSize, isRTL } = useSelector(
-        (state) => state.core
-    );
+    const { isRTL } = useSelector((state) => state.core);
+    const { defaultGroupId } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
@@ -110,30 +109,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         SendingMethod: 1,
         CampaignID: params.id
     });
-    const [totalCampaigns, setTotalCampaigns] = useState();
-    const [groupList, setGroupList] = useState([]);
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
-    const [manualValues, setManualValues] = useState({
-        totalRecords: 0,
-        areaData: '',
-        typedData: [],
-        initialheadstate: [],
-        dropClick: false,
-        areaClick: false,
-        groupClick: false,
-        manualClick: false,
-        bsDot: false
-    })
     const [newGroupDetails, setNewGroupDetails] = useState({
         toggleChecked: false,
         groupNameExist: false,
         groupValue: '',
     })
-    const [contacts, setContacts] = React.useState([]);
-    const [headers, setheaders] = useState(manualValues.initialheadstate);
-    const [groupTextError, setGroupTextError] = useState(false);
     const [filterValues, setFilterValues] = useState({
         toggleReci: false,
         selectedFilterGroups: [],
@@ -152,7 +135,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         snackbarRecipients: false,
         recipientsSnackbar: false
     })
-
     const [segmantIndication, setSegmantIndication] = useState(false);
     const [pulseIndication, setPulseIndication] = useState(false);
     const [smsMarketingIndication, setSmsMarketingIndication] = useState(false);
@@ -166,6 +148,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         FromNumber: "",
         SendDate: null,
         SendTime: null,
+        IsLinksStatistics: true
     });
 
     const initOnReady = () => {
@@ -183,7 +166,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
-            setTotalCampaigns(previousCampaignData?.length ?? 0);
             GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
             setFilterValues({
                 ...filterValues,
@@ -191,7 +173,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
-
         } catch (e) {
             dispatch(sendToTeamChannel({
                 MethodName: 'onReady',
@@ -244,11 +225,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setDialogType({ type: "delete" });
     };
 
-    const onSaveSettings = async (showSummary = false) => {
+    const onSaveSettings = async (showSummary = false, overrideGroupIds = null) => {
         setLoader(true)
         let response = null;
         let payload = {
             ...campaignValues,
+            AutoSendDelay: campaignValues.SendingMethod !== 3 ? null : campaignValues.AutoSendDelay,
+            AutoSendingByUserField: campaignValues.SendingMethod !== 3 ? null : campaignValues.AutoSendingByUserField,
             ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.map(x => x.CampaignID)?.join(','),
             ExeptionalGroups: filterValues?.selectedFilterGroups?.map(x => x.GroupID)?.join(','),
             CampaignID: params.id,
@@ -257,7 +240,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             TimeInterval: campaignValues.SendingMethod === 3 ? null : campaignValues.TimeInterval,
             SendDate: campaignValues.SendDate,
             SendingMethod: campaignValues.SendingMethod,
-            GroupIds: selectedGroups.map(grp => grp.GroupID).join(","),
+            GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
             ExceptionalDays: 0,
             IsBestTime: campaignValues.IsBestTime,
             IsSummaryRequest: showSummary
@@ -270,13 +253,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             console.log("ERROR-SAVE-SEND-SETTINGS:", error)
         }
         finally {
-            handleSaveResponse(response.payload);
+            handleSaveResponse(response.payload, showSummary);
         }
     }
-    const handleSaveResponse = (response) => {
+    const handleSaveResponse = (response, silenceSave = false) => {
         switch (response?.StatusCode) {
             case 201: {
-                setToastMessage(ToastMessages.CAMPAIGN_SETTINGS_SAVED);
+                if (!silenceSave)
+                    setToastMessage(ToastMessages.CAMPAIGN_SETTINGS_SAVED);
                 break;
             }
             case 401: {
@@ -300,16 +284,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleInputNewGroup = (e) => {
         setNewGroupDetails({ ...newGroupDetails, groupNameExist: false, groupValue: e.target.value });
     }
-    const handleConfirmC = () => {
-        for (let i = 0; i < filterValues.selectArray.length; i++) {
-            filterValues.selectArray[i].isdisabled = false;
-            filterValues.selectArray[i].idx = -1;
+    const handleConfirmC = async () => {
+        setLoader(true);
+        let groupId = defaultGroupId;
+        if (defaultGroupId <= 0) {
+            const responseDefaultGroup = await dispatch(getDefaultGroup());
+            groupId = responseDefaultGroup.payload
         }
-        setManualValues({ ...manualValues, totalRecords: 0, areaData: '', typedData: [] })
-        setNewGroupDetails({ ...newGroupDetails, groupValue: '' })
-        setContacts([]);
-        //COMMENT: CHECK SETCOLUMNVALIDATE ONCE
-        setDialogType({ type: 'sendSuccess' });
+        onSaveSettings(true, groupId.toString()).then(() => {
+            setDialogType({ type: 'SendSummary' });
+        })
     };
 
     const handleFilterConfirm = () => {
@@ -435,8 +419,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         filteredGroups.length === selectedGroups.length ? setSelectedGroups([...selectedGroups, group]) : setSelectedGroups([...filteredGroups])
     }
 
-    //TODO
-
     const callbackUpdateGroupFilterd = (groups) => {
         setFilterValues({ ...filterValues, selectedFilterGroups: groups })
     }
@@ -551,7 +533,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         return (
             <>
                 <Button
-                    onClick={onSaveSettings}
+                    onClick={() => onSaveSettings(false)}
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -580,7 +562,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
-                        setDialogType({ type: 'preSendSummary' })
+                        onSaveSettings(true).then(() => {
+                            setDialogType({ type: 'SendSummary' });
+                        })
                     }}
                 >
                     {t("mainReport.summary")}
@@ -664,7 +648,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 mergedSegmentationDialog === 1 && handleFilterConfirm()
             }
         }
-        // let SegTabs =
 
         return dialogObj
     }
@@ -673,31 +656,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const { type, data } = dialogType || {}
 
         const dialogContent = {
-            manualUpload: ManualUploadDialog(
-                {
-                    classes: classes,
-                    styles: styles,
-                    groupList: groupData?.Groups,
-                    manualValues: manualValues,
-                    setManualValues: setManualValues,
-                    newGroupDetails: newGroupDetails,
-                    setNewGroupDetails: setNewGroupDetails,
-                    groupTextError: groupTextError,
-                    setGroupTextError: setGroupTextError,
-                    setDialogType: setDialogType,
-                    groupNameInput: newGroupDetails.groupValue,
-                    contacts: contacts,
-                    headers: headers,
-                    setheaders: setheaders,
-                    setLoader: setLoader,
-                    ToastMessages: ToastMessages,
-                    setToastMessage: setToastMessage,
-                    selectedGroups: selectedGroups,
-                    setContacts: setContacts,
-                    setGroupList: setGroupList,
-                    setSelected: setSelectedGroups
-                }
-            ),
             quickMnualUpload: QuickManualUploadDialog({
                 classes: classes,
                 onClose: () => setDialogType(null),
@@ -705,11 +663,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onConfirm: () => handleConfirmC()
             }),
             filterRecipients: MergedSegmentationDialog(),
-            caution: CautionDialog({
-                classes: classes,
-                onClose: () => setDialogType({ type: "manualUpload" }),
-                onConfirm: () => handleConfirmC()
-            }),
             pulses: PulseDialog({
                 classes: classes,
                 campaign: campaignValues,
@@ -728,9 +681,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel: () => setDialogType(null),
             }),
             sendSuccess: SendSuccessDialog(),
-            summary: SummaryDialog({ classes: classes, count: data }),
-            preSendSummary: PreSendSummary({ classes: classes, campaignId: params?.id, onClose: () => setDialogType(null), onConfirm: () => onSaveSettings(true) })
-            // noCredit: noCreditDialog(),
+            summary: SummaryDialog({ classes: classes, count: data })
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -777,6 +728,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         setSmsMarketingModel({
                             SendDate: sendDate,
                             SendTime: moment(sendTime),
+                            IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData
                         });
                         setSegmantIndication(true)
@@ -871,7 +823,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             {activeTab === 0 &&
                                 <Groups
                                     classes={classes}
-                                    list={showTestGroups ? [...testGroups, ...groupData?.Groups] : [...groupData?.Groups]}
+                                    list={[...groupData?.Groups]}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}
                                     callbackUpdateGroups={callbackUpdateGroups}
@@ -971,7 +923,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             </Tooltip>
                                         </Stack>
                                     </Stack>
-
                                     {NewGroupForm()}
                                 </Stack>
                             </Stack>
@@ -1056,14 +1007,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setDialogType={() => setDialogType(null)}
                 isOpen={dialogType?.type === 'smsMarketing'}
                 smsMarketingModel={{ ...smsMarketingModel }}
-                onUpdate={(res) => {
-                    if (res && res?.SMSCampaignID > 0) {
-                        setSmsMarketingIndication(true)
-                    }
-                }}
                 onClose={() => setDialogType(null)}
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => setDialogType(null)}
+            />}
+            {dialogType?.type === 'SendSummary' && <SendSummary
+                classes={classes}
+                onClose={() => setDialogType(null)}
+                onConfirm={() => onSaveSettings(true)}
+                isOpen={dialogType?.type === 'SendSummary'}
+                setDialogType={() => setDialogType(null)}
             />}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}

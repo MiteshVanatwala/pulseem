@@ -1,5 +1,6 @@
-import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText } from '@material-ui/core'
-import React, { useState, useEffect } from 'react'
+import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup } from '@material-ui/core'
+import Switch from "react-switch";
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import LabeledTextField from '../../../../components/core/LabeledTextField';
 import clsx from 'clsx';
@@ -21,15 +22,14 @@ const SmsMarketingDialog = ({
     setDialogType = () => null,
     onClose = () => null,
     onCancel = () => null,
-    onConfirm = () => null,
-    onUpdate = () => null
+    onConfirm = () => null
 }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
     const { verifiedNumbers } = useSelector(state => state.common);
 
-    const [smsModel, setSmsModel] = useState(smsMarketingModel)
+    const [smsModel, setSmsModel] = useState({ ...smsMarketingModel })
     const [linkToUpdate, setLinkToUpdate] = useState(null);
     const [linkToCampaign, setLinkToCampaign] = useState(null);
     const [linkToUpdateEnabled, setLinkToUpdateEnabled] = useState(true);
@@ -38,6 +38,14 @@ const SmsMarketingDialog = ({
     const [showLoader, setLoader] = useState(false);
     const [numberVerified, setNumberVerified] = useState(true);
     const [errors, setErrors] = useState({});
+    const [isLinksStatistics, setIsLinksStatistics] = useState(true);
+    const toggleLinkStatistics = () => {
+        setIsLinksStatistics(!isLinksStatistics);
+    };
+
+    useEffect(() => {
+        setIsLinksStatistics(smsMarketingModel.IsLinksStatistics ?? true);
+    }, [])
 
     const sendToOptions = [
         {
@@ -103,16 +111,19 @@ const SmsMarketingDialog = ({
         if (handleValidation()) {
             const totalMarketing = { ...newsletterSettings };
             const smsCampaignPayload = {
-                CreditsPerSms: smsModel.CreditsPerSms,
-                FromNumber: smsModel.FromNumber,
-                SendSmsTo: smsModel.SendSmsTo,
-                SendDate: newVal,
-                EmailCampaignID: totalMarketing?.CampaignID,
-                GroupIds: selectedGroups.map((g) => g.GroupID),
-                Text: smsModel.Text,
                 Type: 0,
-                ...smsModel?.model
-            }
+                SendDate: newVal,
+                Name: smsModel.Name,
+                Text: smsModel.Text,
+                IsTestCampaign: false,
+                SendSmsTo: smsModel.SendSmsTo,
+                FromNumber: smsModel.FromNumber,
+                SmsBulkCost: smsModel.SmsBulkCost,
+                IsLinksStatistics: isLinksStatistics,
+                CreditsPerSms: smsModel.CreditsPerSms,
+                EmailCampaignID: totalMarketing?.CampaignID,
+                GroupIds: selectedGroups.map((g) => g.GroupID)
+            };
 
             const r = await dispatch(setSmsMarketing(smsCampaignPayload));
             handleTotalMarketingResponse(r.payload);
@@ -142,23 +153,36 @@ const SmsMarketingDialog = ({
     }
     const handleValidation = () => {
         const tempErrors = {};
+
+        if (!numberVerified) {
+            setNewSmsVerification(true);
+            return false;
+        }
+
         if (!smsModel.FromNumber) {
-            tempErrors.FromNumber = 'From Number is required';
+            tempErrors.FromNumber = t('campaigns.newsLetterEditor.sendSettings.errors.reqFromNumber');
         }
         if (!smsModel.Text) {
-            tempErrors.Text = 'Text is required';
+            tempErrors.Text = t('campaigns.newsLetterEditor.sendSettings.errors.reqText');
         }
         if (!smsModel.SendDate) {
-            tempErrors.SendDate = 'Date is required';
+            tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.reqDate');
+
+        }
+        else if (Object.prototype.toString.call(smsModel.SendDate) === "[object Date]") {
+            tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.invalidDate');
         }
         if (!smsModel.SendTime) {
-            tempErrors.SendTime = 'Time is required';
+            tempErrors.SendTime = t('campaigns.newsLetterEditor.sendSettings.errors.reqTime');
+        }
+        else if (/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(smsModel.SendTime)) {
+            tempErrors.SendTime = t('campaigns.newsLetterEditor.sendSettings.errors.invalidTime');
         }
         if (!numberVerified) {
-            tempErrors.numberVerified = 'Please verified from number';
+            tempErrors.numberVerified = t('campaigns.newsLetterEditor.sendSettings.errors.enterVerifiedNumber');
         }
         if (smsModel.SendSmsTo === -1) {
-            tempErrors.SendSmsTo = 'Send to is required ';
+            tempErrors.SendSmsTo = t('campaigns.newsLetterEditor.sendSettings.errors.reqSendTo');
         }
         setErrors({ ...tempErrors })
         return Object.values(tempErrors).length === 0;
@@ -166,7 +190,6 @@ const SmsMarketingDialog = ({
 
     const currentDialog = {
         title: t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title"),
-        description: 'This is the description',
         showDivider: true,
         disableBackdropClick: true,
         content: (
@@ -236,7 +259,6 @@ const SmsMarketingDialog = ({
                         classes={classes}
                         value={smsModel.SendDate}
                         onChange={(value) => {
-                            console.log(value);
                             setSmsModel({ ...smsModel, SendDate: value })
                         }}
                         placeholder={t("notifications.date")}
@@ -294,6 +316,44 @@ const SmsMarketingDialog = ({
                                 onClick={onAddLinkToUpdate}
                             >{t('campaigns.newsLetterEditor.sendSettings.smsMarketing.addLinkToUpdate')}</Button>
                         </Grid>
+                        <Grid item>
+                            <Box className={classes.switchDiv}>
+                                <FormGroup>
+                                    <Switch
+                                        className={
+                                            isRTL
+                                                ? clsx(classes.reactSwitchHe, "react-switch")
+                                                : clsx(classes.reactSwitch, "react-switch")
+                                        }
+                                        checked={isLinksStatistics}
+                                        onChange={() => {
+                                            toggleLinkStatistics(!isLinksStatistics);
+                                            setSmsModel({ ...smsModel, IsLinksStatistics: !isLinksStatistics });
+                                        }}
+                                        onColor="#28a745"
+                                        checkedIcon={false}
+                                        uncheckedIcon={false}
+                                        handleDiameter={30}
+                                        height={20}
+                                        width={48}
+                                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                                        id="material-switch"
+                                    />
+                                </FormGroup>
+                                <Box className={classes.radio}>
+                                    <Typography style={{ fontSize: "18px" }}>
+                                        {t("mainReport.keepTrack")}
+                                    </Typography>
+                                    <Typography
+
+                                        className={clsx(classes.descSwitch, classes.w100)}
+                                    >
+                                        {t("mainReport.keepDesc")}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
                 </Grid>
                 <Grid item md={12}>
@@ -309,7 +369,8 @@ const SmsMarketingDialog = ({
                 {newSmsVerification && <VerificationDialog
                     classes={classes}
                     isOpen={newSmsVerification}
-                    variant='sms' onClose={() => setNewSmsVerification(false)}
+                    variant='sms'
+                    onClose={() => setNewSmsVerification(false)}
                     Option={{
                         Step: 1,
                         Value: smsModel.FromNumber

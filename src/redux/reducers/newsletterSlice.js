@@ -204,6 +204,7 @@ export const newsletterSlice = createSlice({
     newsletterArchiveData: [],
     newsletterSendSummary: [],
     newsletterSettings: [],
+    newsletterInfo: [],
     groupData: null,
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
@@ -256,7 +257,8 @@ export const newsletterSlice = createSlice({
       state.directNewsletterReportError = action.error.message
     })
     builder.addCase(getEmailSendSettings.fulfilled, (state, { payload }) => {
-      state.newsletterSettings = payload?.Data;
+      state.newsletterSettings = payload?.Data?.Settings;
+      state.newsletterInfo = payload?.Data?.Info;
     })
     builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
       state.newsletterSendSummary = payload
