@@ -351,12 +351,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		clear: 'both',
 		lineHeight: '18px',
 		fontSize: '15px',
-		padding: '8px',
 		position: 'relative',
 		margin: '8px 0',
 		maxWidth: '85%',
 		wordWrap: 'break-word',
-		'&:after': {
+		'&::after': {
 			position: 'absolute',
 			content: '',
 			width: '0',
@@ -364,19 +363,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			borderStyle: 'solid',
 		},
 		'&.sent': {
-			background: '#e1ffc7',
-			borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
 			float: isRTL ? 'right' : 'left',
-			'&:after': {
-				borderWidth: '0px 0 10px 10px',
+			'&::after': {
+				borderWidth: '0px 10px 10px 0px',
 				borderColor: 'transparent transparent transparent #e1ffc7',
 				top: '0',
-				right: '-10px',
+				left: '-10px',
 			},
-			'& pre': {
-				margin: '0px',
-				fontFamily: 'Assistant',
-			},
+			'& pre': {},
 		},
 		'&.quick-reply-button': {
 			backgroundColor: '#b7b7b7',
@@ -397,11 +391,26 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 	},
+	whatsappMobileMessageTextAndImage: {
+		margin: '0px',
+		fontFamily: 'Assistant',
+		whiteSpace: 'pre-line',
+		background: '#e1ffc7',
+		padding: '8px',
+		borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
+		'& pre': {
+			wordWrap: 'break-word',
+			whiteSpace: 'pre-line',
+			margin: '0px',
+			fontFamily: 'Assistant',
+		},
+		'& img': {
+			width: '100%',
+		},
+	},
 	callToActionButtonsWrapper: {
 		borderTop: '1px solid #cbcbcb',
-		margin: '4px -8px 0px -8px',
 		textAlign: 'center',
-		padding: '4px 8px 0px 8px',
 		'& a': {
 			display: 'flex',
 			flexDirection: 'row',
@@ -717,6 +726,86 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 
+	alertModal: {
+		border: '2px solid #0371ad',
+		margin: '18px',
+		borderRadius: '4px',
+		padding: '14px 26px',
+		direction: isRTL ? 'rtl' : 'ltr',
+	},
+	alertModalClose: {
+		position: 'absolute',
+		top: '8px',
+		right: isRTL ? 'auto' : '9px',
+		left: isRTL ? '9px' : 'auto',
+		backgroundColor: '#0371ad',
+		color: 'white',
+		cursor: 'pointer',
+		borderRadius: '42px',
+		paddingTop: '0px',
+		height: '20px',
+		width: '20px',
+		textAlign: 'center',
+	},
+	alertModalTitle: {
+		fontFamily: 'OpenSansHebrew-Bold',
+		padding: '4px',
+		color: '#0371ad',
+		fontSize: '24px',
+		borderBottom: '1px solid #dfdfdf',
+	},
+	alertModalContent: {
+		padding: '8px 4px 0px 4px',
+		color: '#525252',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+	},
+	alertModalContentText: {},
+	alertModalContentChildren: {
+		padding: '12px 0px',
+	},
+	alertModalContentMobile: {
+		width: '300px',
+		margin: '0 auto',
+	},
+	alertModalAction: {
+		justifyContent: 'center',
+		'& button': {
+			color: '#fff',
+			width: '120px',
+			fontSize: '18px',
+			fontFamily: 'OpenSansHebrew',
+			borderRadius: '50px',
+			textTransform: 'capitalize',
+			margin: '6px 10px 0 10px',
+			padding: '2px 0px',
+		},
+		'& .ok-button': {
+			border: '1px solid #345233',
+			maxWidth: '250px',
+			borderTop: '0px solid #345233',
+			boxShadow: '0px 3px 3px #345233',
+			backgroundImage: 'linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)',
+			backgroundRepeat: 'repeat-x',
+		},
+		'& .cancel-button': {
+			border: '1px solid darkred',
+			maxWidth: '150px',
+			background: '#c9302c',
+			borderTop: '0px solid darkred',
+			boxShadow: '0px 3px 3px darkred',
+			backgroundImage: 'linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)',
+		},
+		'& .confirm-button': {
+			border: '1px solid #345233',
+			maxWidth: '250px',
+			borderTop: '0px solid #345233',
+			boxShadow: '0px 3px 3px #345233',
+			backgroundImage: 'linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)',
+			backgroundRepeat: 'repeat-x',
+		},
+	},
+
 	/* Send Campaign */
 
 	WhatsappCampainP1Title: {
@@ -894,25 +983,32 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			padding: '9px',
 		},
 	},
-  whatsappCampainHighlightContent: {
+	whatsappCampainHighlightContent: {
 		height: '240px',
-    border: '1px solid #ced4da',
+		border: '1px solid #ced4da',
 		borderBottom: '0px',
 		borderTopLeftRadius: '0.25rem',
 		borderTopRightRadius: '0.25rem',
 		padding: '8px',
 	},
-	whatsappCampainHighlightTextWrapper: {
-		
-	},
+	whatsappCampainHighlightTextWrapper: {},
 	whatsappCampainHighlightText: {
 		backgroundColor: '#169bd5',
 		color: '#ffffff',
 		padding: '0px 2px',
 		borderRadius: '4px',
 		cursor: 'pointer',
-    '&.updated': {
+		'&.updated': {
 			backgroundColor: '#2ca861',
 		},
+	},
+	whatsappCampaignActionButtonsBox: {
+		display: 'flex',
+		padding: '4px 8px 0px 0px',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+	},
+	whatsappCampaignActionButtonsWrapper: {
+		marginTop: '10px',
 	},
 });

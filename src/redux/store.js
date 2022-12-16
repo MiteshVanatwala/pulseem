@@ -1,46 +1,46 @@
-import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./reducers/userSlice";
-import coreReducer from "./reducers/coreSlice";
-import newsletterReducer from "./reducers/newsletterSlice";
-import landingPagesReducer from "./reducers/landingPagesSlice";
-import mmsReducer from "./reducers/mmsSlice";
-import automationsReducer from "./reducers/automationsSlice";
-import notificationReducer from "./reducers/notificationSlice";
-import smsReducer from "./reducers/smsSlice";
-import dashboardReducer from "./reducers/dashboardSlice";
-import recipientReportsReducer from "./reducers/recipientsReportSlice";
-import shortcutReducer from "./reducers/shortcutSlice";
-import paymentReducer from "./reducers/paymentSlice";
-import commonReducer from "./reducers/commonSlice";
-import siteTrackingReducer from "./reducers/siteTrackingSlice";
-import clientReducer from "./reducers/clientSlice";
-import groupSlice from "./reducers/groupSlice";
-import reportSlice from "./reducers/reportSlice";
-import ConnectorsSlice from "./reducers/ConnectorsSlice";
-import WhatsappSlice from "./reducers/WhatsappSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from './reducers/userSlice';
+import coreReducer from './reducers/coreSlice';
+import newsletterReducer from './reducers/newsletterSlice';
+import landingPagesReducer from './reducers/landingPagesSlice';
+import mmsReducer from './reducers/mmsSlice';
+import automationsReducer from './reducers/automationsSlice';
+import notificationReducer from './reducers/notificationSlice';
+import smsReducer from './reducers/smsSlice';
+import dashboardReducer from './reducers/dashboardSlice';
+import recipientReportsReducer from './reducers/recipientsReportSlice';
+import shortcutReducer from './reducers/shortcutSlice';
+import paymentReducer from './reducers/paymentSlice';
+import commonReducer from './reducers/commonSlice';
+import siteTrackingReducer from './reducers/siteTrackingSlice';
+import clientReducer from './reducers/clientSlice';
+import groupSlice from './reducers/groupSlice';
+import reportSlice from './reducers/reportSlice';
+import ConnectorsSlice from './reducers/ConnectorsSlice';
+import WhatsappReducer from './reducers/whatsappSlice';
 
 export default configureStore({
-  reducer: {
-    core: coreReducer,
-    user: userReducer,
-    newsletter: newsletterReducer,
-    landingPages: landingPagesReducer,
-    mms: mmsReducer,
-    automations: automationsReducer,
-    notification: notificationReducer,
-    sms: smsReducer,
-    dashboard: dashboardReducer,
-    recipientReports: recipientReportsReducer,
-    shortcuts: shortcutReducer,
-    payment: paymentReducer,
-    common: commonReducer,
-    siteTracking: siteTrackingReducer,
-    client: clientReducer,
-    group: groupSlice,
-    report: reportSlice,
-    connectors: ConnectorsSlice,
-    whatsapp: WhatsappSlice,
-  },
+	reducer: {
+		core: coreReducer,
+		user: userReducer,
+		newsletter: newsletterReducer,
+		landingPages: landingPagesReducer,
+		mms: mmsReducer,
+		automations: automationsReducer,
+		notification: notificationReducer,
+		sms: smsReducer,
+		dashboard: dashboardReducer,
+		recipientReports: recipientReportsReducer,
+		shortcuts: shortcutReducer,
+		payment: paymentReducer,
+		common: commonReducer,
+		siteTracking: siteTrackingReducer,
+		client: clientReducer,
+		group: groupSlice,
+		report: reportSlice,
+		connectors: ConnectorsSlice,
+		whatsapp: WhatsappReducer,
+	},
 });
 
 // export default store;

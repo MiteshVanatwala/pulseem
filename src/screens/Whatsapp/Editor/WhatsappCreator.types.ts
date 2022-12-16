@@ -23,6 +23,9 @@ export type TemplateFieldsProps = {
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	fileData: string;
+	setFileData: (fileData: File | undefined) => void;
+	savedTemplateList: savedTemplateListProps[];
 };
 
 export type MessageEditorProps = {
@@ -61,10 +64,12 @@ export type whatsappMobilePreviewProps = {
 	campaignNumber: string;
 	templateData: templateDataProps;
 	buttonType: string;
+	fileData: string;
 };
 
 export type ButtonsProps = {
-	classes: ClassesType;
+	classes: ClassesType['classes'];
+	onFormButtonClick: (buttonName: string) => void;
 };
 
 export type coreProps = {
@@ -108,3 +113,37 @@ export type templateDataProps = {
 export type WhatsappTipsProps = {
 	classes: ClassesType['classes'];
 };
+
+export type AlertModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	onConfirmOrYes: () => void;
+	title: string;
+	subtitle: string;
+	type: 'confirm' | 'delete' | 'alert' | 'submit';
+	children?: React.ReactNode;
+};
+
+export type savedTemplateListProps = {
+	CreatedDate: string;
+	Data: any;
+	RejectionReason: string;
+	Status: string;
+	StatusUpdatedDate: string;
+	TemplateId: string;
+	TemplateName: string;
+};
+
+export type toastProps = {
+	SUCCESS: toastKeyProps;
+	ERROR: toastKeyProps;
+	QUICK_SEND_SUCCESSS: toastKeyProps;
+};
+
+export interface toastKeyProps {
+	severity: string;
+	color: string;
+	message: string;
+	showAnimtionCheck: boolean;
+}

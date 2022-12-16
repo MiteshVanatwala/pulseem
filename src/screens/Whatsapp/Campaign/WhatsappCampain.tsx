@@ -1,13 +1,10 @@
-import React, { BaseSyntheticEvent, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
 import {
 	Box,
 	Grid,
-	Link,
-	FormControl,
-	FormLabel,
 	RadioGroup,
 	FormControlLabel,
 	Radio,
@@ -18,7 +15,7 @@ import {
 	Button,
 } from '@material-ui/core';
 import { Stack } from '@mui/material';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { WhatsappCampaignProps, coreProps } from './WhatsappCampaign.types';
 import { ClassesType } from '../../Classes.types';
 import CampaignFields from './CampaignFields';
@@ -35,9 +32,11 @@ import Highlighter from 'react-highlight-words';
 import DynamicModal from './DynamicModal';
 import Buttons from './Buttons';
 import uniqid from 'uniqid';
+import { getSavedTemplates } from '../../../redux/reducers/whatsappSlice';
 
 const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 	const { t: translator } = useTranslation();
+	const dispatch = useDispatch();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [isCampaign, setIsCampaign] = useState<boolean>(false);
@@ -58,6 +57,18 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 	>(['or']);
 	const [linkCount, setlinkCount] = useState(0);
 	const [messageCount, setMessageCount] = useState(0);
+
+	const getSavedTemplateFields = async () => {
+		let savedTemplate: any = await dispatch(
+			getSavedTemplates({ templateStatus: 3 })
+		);
+		setSavedTemplateList(savedTemplate.payload.Items);
+	};
+
+	useEffect(() => {
+		getSavedTemplateFields();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const handleSubmit = () => {};
 
@@ -247,7 +258,14 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 					<Grid className={classes.WhatsappCampainP1Left} item md={12} lg={6}>
 						<Grid container>
 							<Grid className={classes.WhatsappCampainFields} md={12} lg={12}>
-								<CampaignFields classes={classes} />
+								<CampaignFields
+									classes={classes}
+									savedTemplateList={savedTemplateList}
+									savedTemplate={savedTemplate}
+									onSavedTemplateChange={(e) =>
+										onSavedTemplateChange(e.target.value)
+									}
+								/>
 							</Grid>
 							<Grid className={classes.WhatsappCampainTextarea} md={12} lg={12}>
 								<div className={classes.whatsappCampainHighlightContent}>
@@ -263,7 +281,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 										/>
 									</div>
 									<Box
-										className={classes.whatsappActionButtonsWrapper}
+										className={classes.whatsappCampaignActionButtonsWrapper}
 										id='buttons-wrapper'>
 										{templateData.templateButtons?.map(
 											(button: quickReplyButtonProps | callToActionRowProps) =>
@@ -276,7 +294,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 														field.fieldName === 'Button Text' && (
 															<Box
 																key={button.id}
-																className={classes.whatsappActionButtonsBox}>
+																className={classes.whatsappCampaignActionButtonsBox}>
 																<Button
 																	className={classes.whatsappActionButtons}>
 																	{field.value}
@@ -326,6 +344,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 										campaignNumber='1'
 										templateData={templateData}
 										buttonType={buttonType}
+										fileData={fileData}
 									/>
 								</Box>
 							</Grid>
@@ -419,7 +438,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 					</Grid>
 				</Grid>
 				<Grid container>
-					<Buttons classes={classes} />
+					<Buttons classes={classes} onFormButtonClick={() => {}} />
 				</Grid>
 			</form>
 		</DefaultScreen>

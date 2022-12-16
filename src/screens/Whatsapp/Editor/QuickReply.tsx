@@ -58,27 +58,27 @@ const QuickReply = ({
 	};
 	const onButtonTextChange = (
 		e: BaseSyntheticEvent,
-		button: quickReplyButtonProps,
-		field: quickReplyButtonsFieldProps
+		changedButton: quickReplyButtonProps,
+		changedField: quickReplyButtonsFieldProps
 	) => {
 		if (e.target.value?.length > MAX_BUTTON_TEXT_LENGTH) return;
-		const updatedQuickButtons = quickReplyButtons.map((b) =>
-			b.id === button.id
+		const updatedQuickButtons = quickReplyButtons.map((button) =>
+			button.id === changedButton.id
 				? {
-						...b,
-						fields: b.fields.map((f: quickReplyButtonsFieldProps) =>
-							f.fieldName === field.fieldName
-								? { ...f, value: e.target.value }
-								: f
+						...button,
+						fields: button.fields.map((field: quickReplyButtonsFieldProps) =>
+							field.fieldName === changedField.fieldName
+								? { ...field, value: e.target.value }
+								: field
 						),
 				  }
-				: b
+				: button
 		);
 		setQuickReplyButtons(updatedQuickButtons);
 	};
-	const onDeleteButton = (button: quickReplyButtonProps) => {
+	const onDeleteButton = (changedButton: quickReplyButtonProps) => {
 		const updatedQuickButtons = quickReplyButtons.filter(
-			(b) => b.id !== button.id
+			(button) => button.id !== changedButton.id
 		);
 		setQuickReplyButtons(updatedQuickButtons);
 	};
@@ -89,7 +89,7 @@ const QuickReply = ({
 		} else {
 			setQuickReplyButtons(templateButtons);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isQuickReplyOpen]);
 	return (
 		<Dialog
@@ -102,7 +102,7 @@ const QuickReply = ({
 			<DialogTitle
 				id='form-dialog-title'
 				className={classes.quickReplayDialogHeader}>
-				{translator('whatsapp.quickReply.title')}
+				<>{translator('whatsapp.quickReply.title')}</>
 				<IconButton
 					aria-label='close'
 					onClick={closeQuickReply}
@@ -113,7 +113,7 @@ const QuickReply = ({
 			<DialogContent>
 				<DialogContentText
 					className={classes.quickReplayDialogHeaderDescription}>
-					{translator('whatsapp.quickReply.titleDescription')}
+					<>{translator('whatsapp.quickReply.titleDescription')}</>
 				</DialogContentText>
 				<form onSubmit={onSubmit}>
 					{quickReplyButtons?.map((button) => (
@@ -124,7 +124,7 @@ const QuickReply = ({
 							key={button.id}>
 							<Grid item>
 								<Typography>
-									{translator('whatsapp.quickReply.buttonText')}
+									<>{translator('whatsapp.quickReply.buttonText')}</>
 								</Typography>
 								<Grid container className={classes.quickReplayButtonWrapper}>
 									{button?.fields?.map(
@@ -168,19 +168,19 @@ const QuickReply = ({
 							color='primary'
 							onClick={addMore}
 							disabled={quickReplyButtons?.length >= 3 ? true : false}>
-							{translator('whatsapp.quickReply.addMore')}
+							<>{translator('whatsapp.quickReply.addMore')}</>
 						</Button>
 						<Button
 							onClick={closeQuickReply}
 							variant='contained'
 							color='secondary'>
-							{translator('whatsapp.quickReply.exit')}
+							<>{translator('whatsapp.quickReply.exit')}</>
 						</Button>
 						<Button
 							variant='contained'
 							type='submit'
 							className={classes.quickReplySave}>
-							{translator('whatsapp.quickReply.save')}
+							<>{translator('whatsapp.quickReply.save')}</>
 						</Button>
 					</DialogActions>
 				</form>

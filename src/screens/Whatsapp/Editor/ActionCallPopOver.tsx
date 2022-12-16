@@ -329,18 +329,20 @@ const ActionCallPopOver = ({
 			<DialogTitle
 				id='form-dialog-title'
 				className={classes.callToActionDialogHeaderTitle}>
-				{translator('whatsapp.callToActionTitle')}
-				<IconButton
-					aria-label='close'
-					onClick={closeCallToAction}
-					className={classes.callToActionDialogClose}>
-					<CloseIcon />
-				</IconButton>
+				<>
+					{translator('whatsapp.callToActionTitle')}
+					<IconButton
+						aria-label='close'
+						onClick={closeCallToAction}
+						className={classes.callToActionDialogClose}>
+						<CloseIcon />
+					</IconButton>
+				</>
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText
 					className={classes.callToActionDialogHeaderDescription}>
-					{translator('whatsapp.callToActionDialogContentText')}
+					<>{translator('whatsapp.callToActionDialogContentText')}</>
 				</DialogContentText>
 				<form onSubmit={onSubmit}>
 					<Grid container className={classes.callToActionFields} spacing={1}>
@@ -349,7 +351,7 @@ const ActionCallPopOver = ({
 								<Grid container spacing={3} key={'TOC' + index}>
 									<Grid item md={3}>
 										<Typography>
-											{translator('whatsapp.typeOfAction')}
+											<>{translator('whatsapp.typeOfAction')}</>
 										</Typography>
 										<TextField
 											select
@@ -360,8 +362,12 @@ const ActionCallPopOver = ({
 											onChange={(e) => onTypeOfActionChange(e, row)}
 											value={row.typeOfAction}
 											fullWidth>
-											<MenuItem value='phonenumber'>Phone Number</MenuItem>
-											<MenuItem value='website'>Website</MenuItem>
+											<MenuItem value='phonenumber'>
+												<>{translator('whatsapp.phoneNumber')}</>
+											</MenuItem>
+											<MenuItem value='website'>
+												<>{translator('whatsapp.website')}</>
+											</MenuItem>
 										</TextField>
 									</Grid>
 
@@ -385,8 +391,8 @@ const ActionCallPopOver = ({
 														}
 														helperText={
 															field.fieldName === 'Website URL'
-																? `${field.value.length}/${2000}`
-																: `${field.value.length}/${20}`
+																? `${field.value?.length}/${2000}`
+																: `${field.value?.length}/${20}`
 														}
 														placeholder={field.placeholder}
 														variant='outlined'
@@ -423,7 +429,7 @@ const ActionCallPopOver = ({
 
 									<Grid item md={1}>
 										<Typography style={{ visibility: 'hidden' }}>
-											{translator('whatsapp.callToActionRemoveButton')}
+											<>{translator('whatsapp.callToActionRemoveButton')}</>
 										</Typography>
 										<IconButton
 											color='secondary'
@@ -437,27 +443,27 @@ const ActionCallPopOver = ({
 					</Grid>
 
 					<DialogActions>
-						{callToActionFieldRows.length < 2 && (
+						{callToActionFieldRows?.length < 2 && (
 							<Button variant='contained' color='primary' onClick={addMore}>
-								{translator('whatsapp.callToActionAddMoreButton')}
+								<>{translator('whatsapp.callToActionAddMoreButton')}</>
 							</Button>
 						)}
 						<Button
 							onClick={closeCallToAction}
 							variant='contained'
 							color='secondary'>
-							{translator('whatsapp.callToActionExitButton')}
+							<>{translator('whatsapp.callToActionExitButton')}</>
 						</Button>
 						<Button
 							type='submit'
-							disabled={callToActionFieldRows.length === 0 ? true : false}
+							disabled={callToActionFieldRows?.length === 0 ? true : false}
 							variant='contained'
 							style={
-								callToActionFieldRows.length > 0
+								callToActionFieldRows?.length > 0
 									? { backgroundColor: 'green', color: 'white' }
 									: {}
 							}>
-							{translator('whatsapp.callToActionSaveButton')}
+							<>{translator('whatsapp.callToActionSaveButton')}</>
 						</Button>
 					</DialogActions>
 				</form>

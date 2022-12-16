@@ -56,7 +56,6 @@ const WhatsappTemplateEditor = ({
 		const textAreaHeight = textAreaElement?.scrollHeight || 0;
 		const buttonWrapperHeight = buttonsWrapperElement?.scrollHeight || 0;
 		const avaliableHeight = 240 - (textAreaHeight + buttonWrapperHeight);
-		console.log('avaliableHeight::', avaliableHeight);
 		if (textAreaHeight) {
 			if (avaliableHeight >= 25) {
 				setTextAreaHeight(25 + textAreaHeight + 'px');
@@ -93,10 +92,10 @@ const WhatsappTemplateEditor = ({
 				tooltipTitle: 'whatsapp.template.quickReplayTooltip',
 				buttonTitle: 'whatsapp.template.quickReplay',
 			},
-			{
-				tooltipTitle: 'whatsapp.template.removalLinkTooltip',
-				buttonTitle: 'whatsapp.template.removalLink',
-			},
+			// {
+			// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
+			// 	buttonTitle: 'whatsapp.template.removalLink',
+			// },
 			{
 				tooltipTitle: 'whatsapp.template.removalTextTooltip',
 				buttonTitle: 'whatsapp.template.removalText',
@@ -110,16 +109,16 @@ const WhatsappTemplateEditor = ({
 	);
 
 	const isDisableButton = (buttonTitle: string) => {
-		if (buttonTitle.includes('callToAction') && buttonType === 'quickReply') {
+		if (buttonTitle?.includes('callToAction') && buttonType === 'quickReply') {
 			return true;
 		} else if (
-			buttonTitle.includes('quickReplay') &&
+			buttonTitle?.includes('quickReplay') &&
 			buttonType === 'callToAction'
 		) {
 			return true;
 		} else if (
-			buttonTitle.includes('removalText') &&
-			templateText.includes('Reply “remove” to unsubscribe')
+			buttonTitle?.includes('removalText') &&
+			templateText?.includes('Reply “remove” to unsubscribe')
 		) {
 			return true;
 		}
@@ -146,8 +145,8 @@ const WhatsappTemplateEditor = ({
 				<Box
 					className={classes.whatsappActionButtonsWrapper}
 					id='buttons-wrapper'>
-					{buttons.map((button: quickReplyButtonProps | callToActionRowProps) =>
-						button.fields.map(
+					{buttons?.map((button: quickReplyButtonProps | callToActionRowProps) =>
+						button?.fields.map(
 							(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
 								field.fieldName === 'Button Text' && (
 									<Box
@@ -174,25 +173,29 @@ const WhatsappTemplateEditor = ({
 				<span className={classes.textInfoWrapper}>
 					{linkCount}
 					<span className={classes.textInfo}>
-						{linkCount === 1
-							? translator('mainReport.link')
-							: translator('mainReport.links')}
+						<>
+							{linkCount === 1
+								? translator('mainReport.link')
+								: translator('mainReport.links')}
+						</>
 					</span>
 				</span>
 
 				<span className={classes.textInfoWrapper}>
 					{messageCount}
 					<span className={classes.textInfo}>
-						{messageCount === 1
-							? translator('sms.message')
-							: translator('sms.messages')}
+						<>
+							{messageCount === 1
+								? translator('sms.message')
+								: translator('sms.messages')}
+						</>
 					</span>
 				</span>
 
 				<span className={classes.textInfoWrapper}>
 					{templateText?.length}/1024
 					<span className={classes.textInfo}>
-						{translator('mainReport.char')}
+						<>{translator('mainReport.char')}</>
 					</span>
 				</span>
 			</Box>
@@ -202,7 +205,7 @@ const WhatsappTemplateEditor = ({
 					<>
 						<Tooltip
 							disableFocusListener
-							title={translator('mainReport.aligntoRight')}
+							title={<>{translator('mainReport.aligntoRight')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>
@@ -223,7 +226,7 @@ const WhatsappTemplateEditor = ({
 						</Tooltip>
 						<Tooltip
 							disableFocusListener
-							title={translator('mainReport.alignToLeft')}
+							title={<>{translator('mainReport.alignToLeft')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>
@@ -249,7 +252,7 @@ const WhatsappTemplateEditor = ({
 					{actionButtons.map((button) => (
 						<Tooltip
 							disableFocusListener
-							title={translator(button.tooltipTitle)}
+							title={<>{translator(button.tooltipTitle)}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top'
 							arrow
@@ -263,7 +266,7 @@ const WhatsappTemplateEditor = ({
 											: null
 									)}
 									onClick={() => onButtonClick(button)}>
-									{translator(button.buttonTitle)}
+									<>{translator(button.buttonTitle)}</>
 								</Button>
 							)}
 						</Tooltip>

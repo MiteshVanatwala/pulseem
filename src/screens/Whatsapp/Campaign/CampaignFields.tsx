@@ -9,11 +9,11 @@ import {
 import { ClassesType } from '../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { coreProps } from './WhatsappCampaign.types';
+import { campaignFielsProps, coreProps } from './WhatsappCampaign.types';
 import clsx from 'clsx';
 import { useState } from 'react';
 
-const CampaignFields = ({ classes }: ClassesType) => {
+const CampaignFields = ({ classes, savedTemplateList, savedTemplate, onSavedTemplateChange }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -87,14 +87,20 @@ const CampaignFields = ({ classes }: ClassesType) => {
 						isCampaign
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
-					} //   onChange={onSavedTemplateChange}
-					//   value={savedTemplate}
-				>
-					{/* {names.map((name) => (
-                <MenuItem key={name} value={name}>
-                  {name}
-                </MenuItem>
-              ))} */}
+					}
+					onChange={onSavedTemplateChange}
+					value={savedTemplate}>
+					{savedTemplateList?.length > 0 ? (
+						savedTemplateList.map((template) => (
+							<MenuItem key={template.TemplateId} value={template.TemplateId}>
+								{template.TemplateName}
+							</MenuItem>
+						))
+					) : (
+						<MenuItem key={'no-data-template'} disabled>
+							<>{translator('whatsapp.noTemplateAaliable')}</>
+						</MenuItem>
+					)}
 				</TextField>
 				<Typography className={classes.WhatsappCampainButtonContent}>
 					{translator('whatsappCampaign.chooseTemplateDesc')}

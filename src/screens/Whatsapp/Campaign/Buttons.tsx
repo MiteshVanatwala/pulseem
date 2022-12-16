@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ButtonsProps } from '../Editor/WhatsappCreator.types';
 import { coreProps } from './WhatsappCampaign.types';
 
-const Buttons = ({ classes }: ButtonsProps['classes']) => {
+const Buttons = ({ classes }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
