@@ -316,13 +316,13 @@ const ActionCallPopOver = ({
 		e.preventDefault();
 		setCallToActionFieldRows(callToActionFieldRows);
 		updateTemplateData(callToActionFieldRows);
-		closeCallToAction();
+		closeCallToAction(false);
 	};
 
 	return (
 		<Dialog
 			open={isCallToActionOpen}
-			onClose={closeCallToAction}
+			onClose={() => closeCallToAction(true)}
 			aria-labelledby='form-dialog-title'
 			fullWidth
 			maxWidth='md'>
@@ -333,7 +333,7 @@ const ActionCallPopOver = ({
 					{translator('whatsapp.callToActionTitle')}
 					<IconButton
 						aria-label='close'
-						onClick={closeCallToAction}
+						onClick={() => closeCallToAction(true)}
 						className={classes.callToActionDialogClose}>
 						<CloseIcon />
 					</IconButton>
@@ -391,8 +391,8 @@ const ActionCallPopOver = ({
 														}
 														helperText={
 															field.fieldName === 'Website URL'
-																? `${field.value?.length}/${2000}`
-																: `${field.value?.length}/${20}`
+																? `${field.value?.length || 0}/${2000}`
+																: `${field.value?.length || 0}/${20}`
 														}
 														placeholder={field.placeholder}
 														variant='outlined'
@@ -449,7 +449,8 @@ const ActionCallPopOver = ({
 							</Button>
 						)}
 						<Button
-							onClick={closeCallToAction}
+							type='submit'
+							onClick={() => closeCallToAction(true)}
 							variant='contained'
 							color='secondary'>
 							<>{translator('whatsapp.callToActionExitButton')}</>
