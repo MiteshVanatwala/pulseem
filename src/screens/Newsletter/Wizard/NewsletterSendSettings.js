@@ -846,11 +846,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 </Stack>
                             </Stack>
                         </Stack>
-                        {groupData?.Groups && <Stack justifyContent="center" >
+                        <Stack justifyContent="center" >
                             {activeTab === 0 &&
                                 <Groups
                                     classes={classes}
-                                    list={[...groupData?.Groups]}
+                                    list={groupData?.Groups}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}
                                     callbackUpdateGroups={callbackUpdateGroups}
@@ -954,7 +954,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 </Stack>
                             </Stack>
                             }
-                        </Stack>}
+                        </Stack>
                     </Grid>
                     <Grid item xs={12} md={1}></Grid>
                     <Grid item md={4} xs={12}>

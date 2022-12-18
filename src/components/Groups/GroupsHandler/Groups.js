@@ -133,7 +133,7 @@ const Groups = ({ classes,
     }
 
     const renderSelectAll = () => {
-        const allSelected = list.length === selectedList.length;
+        const allSelected = list?.length === selectedList?.length;
 
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
