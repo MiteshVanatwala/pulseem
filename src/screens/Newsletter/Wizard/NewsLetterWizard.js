@@ -803,7 +803,8 @@ const NewsLetterWizard = ({ classes }) => {
                     startIcon={<BiSave />}
                     color="primary"
                 >{t("common.save")}
-                </Button><Button onClick={() => handleSubmit(true, false, false)}
+                </Button>
+                <Button onClick={() => handleSubmit(true, false, false)}
                     variant='contained'
                     size='medium'
                     className={clsx(

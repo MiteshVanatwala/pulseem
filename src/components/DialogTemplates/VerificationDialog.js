@@ -200,7 +200,8 @@ const VerificationDialog = ({
         //let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
 
         const EMAIL_SLIDE_1 = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)}
+                style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
                         {/* <Box pb={1} className={classes.textCenter}> */}
@@ -258,7 +259,7 @@ const VerificationDialog = ({
         const EMAIL_SLIDE_2 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide secondSlide' >
-                    <Box className='titleDescBox'>
+                    <Box className='titleDescBox'  style={{direction: isRTL ? 'ltr' : 'rtl'}}>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
                         <Box className='desc'>
                             <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>

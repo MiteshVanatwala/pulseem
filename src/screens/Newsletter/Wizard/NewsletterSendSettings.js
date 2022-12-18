@@ -17,7 +17,7 @@ import {
     getAccountExtraData, getPreviousCampaignData, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
 import { combinedGroup, addRecipient, addRecipients, createGroup, getDefaultGroup } from "../../../redux/reducers/groupSlice";
-import { getAuthorizeNumbers } from '../../../redux/reducers/commonSlice'
+import { getAuthorizeNumbers, getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
 import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { Stack } from "@mui/material";
@@ -33,6 +33,7 @@ import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
 import { getGroups, getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
+import { getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
 import SendSummary from "./Popups/SendSummary";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
@@ -44,6 +45,7 @@ import Badge from '@material-ui/core/Badge';
 import moment from 'moment';
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import WizardActions from "../../../components/Wizard/WizardActions";
+import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog.js";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -100,10 +102,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
+    const { verifiedEmails } = useSelector(state => state.common);
     const { defaultGroupId } = useSelector((state) => state.group);
+    const { campaignInfo } = useSelector((state) => state.campaignEditor);
     const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [newEMailVerification, setNewEmailVerification] = useState(false);
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({
         SendingMethod: 1,
@@ -156,7 +162,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             logout();
         }
 
+
         try {
+            const isVerified = verifiedEmails.find((email) => {
+                return email?.Number === campaignInfo.FromEmail;
+            });
+            setIsEmailVerified(isVerified);
+            setNewEmailVerification(!isVerified || isVerified === false);
             if (newsletterSettings.length === 0)
                 return;
 
@@ -183,7 +195,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     useEffect(() => {
-        if (dataReady && newsletterSettings) {
+        if (dataReady) {
             initOnReady();
         }
     }, [dataReady, newsletterSettings])
@@ -194,6 +206,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             try {
                 await dispatch(getEmailSendSettings(params.id));
 
+                if (!campaignInfo || campaignInfo?.length === 0)
+                    await dispatch(getCampaignInfo(params.id))
+                if (!verifiedEmails || verifiedEmails?.length === 0)
+                    await dispatch(getAuthorizedEmails())
                 if (!previousCampaignData || previousCampaignData.length === 0)
                     await dispatch(getPreviousCampaignData());
                 if (!groupData || groupData?.length === 0)
@@ -239,7 +255,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             PulseAmount: campaignValues.SendingMethod === 3 ? null : campaignValues.PulseAmount,
             TimeInterval: campaignValues.SendingMethod === 3 ? null : campaignValues.TimeInterval,
             SendDate: campaignValues.SendDate,
-            SendingMethod: campaignValues.SendingMethod,
+            SendingMethod: campaignValues.SendingMethod ?? 1,
             GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
             ExceptionalDays: 0,
             IsBestTime: campaignValues.IsBestTime,
@@ -293,7 +309,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             groupId = responseDefaultGroup.payload
         }
         onSaveSettings(true, groupId.toString()).then(() => {
-            setDialogType({ type: 'SendSummary' });
+            if (isEmailVerified) {
+                setDialogType({ type: 'SendSummary' });
+            }
+            else {
+                setNewEmailVerification(true);
+            }
         })
     };
 
@@ -384,7 +405,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     };
 
     const handlePulseDialog = () => {
-        setSourcePulses({ ...sourcePulses, SendingMethod: campaignValues.SendingMethod, PulseAmount: campaignValues.PulseAmount, TimeInterval: campaignValues.TimeInterval });
+        setSourcePulses({ ...sourcePulses, SendingMethod: campaignValues.SendingMethod ?? 1, PulseAmount: campaignValues.PulseAmount, TimeInterval: campaignValues.TimeInterval });
         setDialogType({ type: "pulses" });
     }
 
@@ -564,7 +585,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     }}
                     onClick={() => {
                         onSaveSettings(true).then(() => {
-                            setDialogType({ type: 'SendSummary' });
+                            if (isEmailVerified) {
+                                setDialogType({ type: 'SendSummary' });
+                            }
+                            else {
+                                setNewEmailVerification(true);
+                            }
                         })
                     }}
                 >
@@ -936,7 +962,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             classes={classes}
                             ToastMessages={ToastMessages}
                             setToastMessage={setToastMessage}
-                            campaign={{ ...campaignValues }}
+                            campaign={{ ...campaignValues, SendingMethod: campaignValues.SendingMethod ?? 1 }}
                             onUpdateCampaign={(data) => {
                                 setCampaignValues({ ...campaignValues, ...data })
                             }}
@@ -1103,6 +1129,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     {t("sms.filtersSave")}
                 </Alert>
             </Snackbar>
+            {newEMailVerification && <VerificationDialog
+                classes={classes}
+                isOpen={newEMailVerification}
+                variant='email'
+                onClose={() => setNewEmailVerification(false)}
+                Option={{
+                    Step: 1,
+                    Value: campaignInfo.FromEmail
+                }}
+            />}
             <Loader isOpen={showLoader} />
         </DefaultScreen >
     )
