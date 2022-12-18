@@ -154,15 +154,8 @@ const SendSummary = ({ classes,
                         </Box>
                         <Box className={classes.sumRight}>
                             <Stack direction='column' alignItems='center' spacing={2}>
-                                <Stack style={{
-                                    borderRadius: 10,
-                                    border: '1px solid grey',
-                                    width: '330px',
-                                    height: '300px',
-                                    overflow: 'scroll'
-
-                                }}>
-                                    {RenderHtml(`<iframe src=${newsletterSettings.PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 300px" />`)}
+                                <Stack className={classes.previewIframe}>
+                                    {RenderHtml(`<iframe src=${newsletterSettings.PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 100vh;pointer-events: none" />`)}
                                 </Stack>
                             </Stack>
                         </Box>
