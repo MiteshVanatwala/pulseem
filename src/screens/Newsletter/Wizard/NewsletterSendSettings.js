@@ -285,6 +285,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setNewGroupDetails({ ...newGroupDetails, groupNameExist: false, groupValue: e.target.value });
     }
     const handleConfirmC = async () => {
+        setDialogType(null);
         setLoader(true);
         let groupId = defaultGroupId;
         if (defaultGroupId <= 0) {
