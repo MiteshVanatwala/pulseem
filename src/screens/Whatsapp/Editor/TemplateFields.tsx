@@ -155,7 +155,11 @@ const TemplateFields = ({
 											padding: '0px 10px 0px 10px',
 										}}
 										onClick={(e) => onFileDeselect(e)}>
-										{fileData?.substring(0, 10) + '...'}&emsp;
+										{fileData
+											?.split('/')
+											[fileData?.split('/')?.length - 1]?.substring(0, 10) +
+											'...'}
+										&emsp;
 										<i className='zmdi zmdi-close'></i>
 									</Button>
 								</div>

@@ -406,6 +406,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'& img': {
 			width: '100%',
+			borderRadius: '4px',
 		},
 	},
 	callToActionButtonsWrapper: {

@@ -49,7 +49,7 @@ export type callToActionProps = callToActionRowProps[];
 
 export type actionProps = {
 	isCallToActionOpen: boolean;
-	closeCallToAction: () => void;
+	closeCallToAction: (isReset: boolean) => void;
 	classes: ClassesType['classes'];
 	callToActionFieldRows: callToActionProps;
 	setCallToActionFieldRows: (data: callToActionProps) => void;
@@ -125,9 +125,72 @@ export type AlertModalProps = {
 	children?: React.ReactNode;
 };
 
+export type savedTemplateVariablesProps = {
+	[key: number]: string;
+};
+
+export type savedTemplateActionProps = {
+	id: string;
+	title: string;
+};
+
+export type savedTemplateQuickReplyProps = {
+	action: savedTemplateActionProps;
+	body: string;
+};
+
+export type savedTemplateMediaProps = {
+	body: string;
+	media: string[];
+	media_type: string;
+};
+
+export type savedTemplateTextProps = {
+	body: string;
+};
+
+export type savedTemplateCardActionProps = {
+	title: string;
+	type: string;
+	url: string;
+	phone: string;
+};
+
+export type savedTemplateCardProps = {
+	action: savedTemplateCardActionProps[];
+	media: string[];
+	subtitle: string;
+	title: string;
+};
+
+export type savedTemplateCallToActionActionProps = {
+	title: string;
+	type: string;
+	url: string;
+	phone: string;
+};
+
+export type savedTemplateCallToActionProps = {
+	action: savedTemplateCallToActionActionProps[];
+	body: string;
+};
+
+export type savedTemplateTypesProps = {
+	['quick-reply']: savedTemplateQuickReplyProps;
+	['media']: savedTemplateMediaProps;
+	['text']: savedTemplateTextProps;
+	['card']: savedTemplateCardProps;
+	['call-to-action']: savedTemplateCallToActionProps;
+};
+
+export type savedTemplateDataProps = {
+	variables: savedTemplateVariablesProps;
+	types: savedTemplateTypesProps;
+};
+
 export type savedTemplateListProps = {
 	CreatedDate: string;
-	Data: any;
+	Data: savedTemplateDataProps;
 	RejectionReason: string;
 	Status: string;
 	StatusUpdatedDate: string;
@@ -141,9 +204,68 @@ export type toastProps = {
 	QUICK_SEND_SUCCESSS: toastKeyProps;
 };
 
-export interface toastKeyProps {
+export type toastKeyProps = {
 	severity: string;
 	color: string;
 	message: string;
 	showAnimtionCheck: boolean;
-}
+};
+
+export type fileUploadPayloadProps = {
+	Data: string;
+	ErrorCode: number;
+	Message: string;
+	Status: number;
+};
+
+export type fileUploadAPIProps = {
+	payload: fileUploadPayloadProps;
+};
+
+export type buttonsDataProps = {
+	title: string;
+	type: string;
+	url: string;
+	phone: string;
+};
+export type JSONFreetextVariableProps = {
+	[key: string]: string;
+};
+
+export type saveTemplateItemsProps = {
+	CreatedDate: string;
+	Data: savedTemplateDataProps;
+	RejectionReason: string;
+	Status: string;
+	StatusUpdatedDate: string;
+	TemplateId: string;
+	TemplateName: string;
+};
+
+export type saveTemplatePayloadProps = {
+	Error: string;
+	Count: number;
+	Message: string;
+	Status: string;
+	Items: saveTemplateItemsProps[];
+};
+
+export type savedTemplateAPIProps = {
+	payload: saveTemplatePayloadProps;
+};
+
+export type submitTemplateDataProps = {
+	createdDate: string;
+	templateId: string;
+	templateName: string;
+};
+
+export type submitTemplatePayloadProps = {
+	Data: submitTemplateDataProps;
+	Message: string;
+	Status: string;
+};
+
+export type submitTemplateAPIProps = {
+	payload: submitTemplatePayloadProps;
+};

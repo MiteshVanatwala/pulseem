@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import {
+	CallToAction,
+	JSONPropsText,
+	QuickReply,
+	TextMedia,
+	TextMediaAndButton,
+} from '../../screens/Whatsapp/Editor/JSON.types';
 
 type errorProps = {
 	message: string;
@@ -9,17 +16,13 @@ type getSavedTemplatesDataProps = {
 	templateStatus: number;
 };
 
-type submitTemplatesDataProps = {
-	friendlytemplatename: string;
-	templateName: string;
-	language: string;
-	variables: { [key: string]: string };
-	types: {
-		text: {
-			body: string;
-		};
-	};
-};
+type submitTemplatesDataProps =
+	| TextMediaAndButton
+	| QuickReply
+	| CallToAction
+	| TextMedia
+	| JSONPropsText
+	| undefined;
 
 export const getSavedTemplates = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
@@ -40,7 +43,7 @@ export const getSavedTemplates = createAsyncThunk(
 
 export const submitTemplates = createAsyncThunk(
 	'whatsAppCampaign/SubmitWhatsAppTemplate',
-	async (data: any, thunkAPI) => {
+	async (data: submitTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SubmitWhatsAppTemplate`,
@@ -57,7 +60,7 @@ export const submitTemplates = createAsyncThunk(
 
 export const uploadMedia = createAsyncThunk(
 	'whatsAppCampaign/UploadWhatsAppMediaFile',
-	async (data: any, thunkAPI) => {
+	async (data: FormData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/UploadWhatsAppMediaFile`,

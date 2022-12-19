@@ -12,12 +12,17 @@ import TemplateFields from './TemplateFields';
 import ActionCallPopOver from './ActionCallPopOver';
 import Buttons from './Buttons';
 import {
+	buttonsDataProps,
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
 	coreProps,
+	fileUploadAPIProps,
+	JSONFreetextVariableProps,
 	quickReplyButtonProps,
+	savedTemplateAPIProps,
 	savedTemplateListProps,
+	submitTemplateAPIProps,
 	templateDataProps,
 	toastProps,
 	WhatsappCreatorProps,
@@ -39,6 +44,7 @@ import {
 	uploadMedia,
 } from '../../../redux/reducers/whatsappSlice';
 import Toast from '../../../components/Toast/Toast.component';
+import { JSONProps } from './JSON.types';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const dispatch = useDispatch();
@@ -54,10 +60,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		savedTemplateListProps[]
 	>([]);
 	const getSavedTemplateFields = async () => {
-		let savedTemplate: any = await dispatch(
+		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
-		console.log('savedTemplate::', savedTemplate);
 		setSavedTemplateList(savedTemplate.payload.Items);
 	};
 	useEffect(() => {
@@ -193,13 +198,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const uploadFile = async (file: File | undefined) => {
 		if (file) {
-			setFileData(translator('whatsapp.alertModal.DeleteText'));
-			const myFormData = new FormData();
+			setFileData(translator('whatsapp.uploading'));
+			const myFormData: FormData = new FormData();
 			myFormData.append('file', file);
-			const uploadedFile: any = await dispatch(uploadMedia(myFormData));
-			console.log(uploadedFile);
+			const uploadedFile: fileUploadAPIProps = await dispatch<any>(
+				uploadMedia(myFormData)
+			);
 			if (uploadedFile.payload?.Data?.length > 0) {
-				// let urlSplit = uploadedFile.payload?.Data?.split('/');
 				setFileData(uploadedFile.payload?.Data);
 			} else {
 				setFileData('');
@@ -209,10 +214,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const setButtonsData = (buttonType: string, data: any) => {
-		console.log(data);
+	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		if (buttonType === 'quickReply') {
-			const buttonData = data?.map((button: any) => {
+			const buttonData = data?.map((button: buttonsDataProps) => {
 				return {
 					id: uniqid(),
 					typeOfAction: '',
@@ -226,10 +230,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					],
 				};
 			});
-			console.log(buttonData);
 			return buttonData;
 		} else {
-			const buttonData = data?.map((button: any) => {
+			const buttonData = data?.map((button: buttonsDataProps) => {
 				if (button?.type === 'PHONE') {
 					return {
 						id: uniqid(),
@@ -278,17 +281,16 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					};
 				}
 			});
-			console.log(buttonData);
 			return buttonData;
 		}
 	};
 
 	const onSavedTemplateChange = (TemplateId: string) => {
 		setSavedTemplate(TemplateId);
-		const savedTemplateData = savedTemplateList?.find(
+		const savedTemplateData: any = savedTemplateList?.find(
 			(template) => template.TemplateId === TemplateId
 		);
-		let updatedTemplateData = {
+		let updatedTemplateData: templateDataProps = {
 			templateText: '',
 			templateButtons: [],
 		};
@@ -318,12 +320,24 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				updatedTemplateData.templateText =
 					savedTemplateData?.Data?.types['card']?.title;
 				if (savedTemplateData?.Data?.types['card']?.actions?.length > 0) {
-					updatedButtonType = 'callToAction';
-					const buttonData = setButtonsData(
-						'callToAction',
-						savedTemplateData?.Data?.types['card']?.actions
-					);
-					updatedTemplateData.templateButtons = buttonData;
+					if (
+						savedTemplateData?.Data?.types['card']?.actions[0]?.type !==
+						'QUICK_REPLY'
+					) {
+						updatedButtonType = 'callToAction';
+						const buttonData = setButtonsData(
+							'callToAction',
+							savedTemplateData?.Data?.types['card']?.actions
+						);
+						updatedTemplateData.templateButtons = buttonData;
+					} else {
+						updatedButtonType = 'quickReply';
+						const buttonData = setButtonsData(
+							'quickReply',
+							savedTemplateData?.Data?.types['card']?.actions
+						);
+						updatedTemplateData.templateButtons = buttonData;
+					}
 				}
 				if (savedTemplateData?.Data?.types['card']?.media?.length > 0) {
 					updatedFileData = savedTemplateData?.Data?.types['card']?.media[0];
@@ -348,7 +362,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else {
 			setCallToActionFieldRows(updatedTemplateData.templateButtons);
 		}
-		console.log('templateData::', savedTemplateData);
 	};
 
   const getQuickReplyActions = () => {
@@ -400,7 +413,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const getJSONVariables = () => {
 		const dynamicFields = getDynamicFields(templateData.templateText);
 		if (dynamicFields?.length > 0) {
-			let variables: any = {};
+			let variables: JSONFreetextVariableProps = {};
 			for (let i = 0; i < dynamicFields.length; i++) {
 				variables[dynamicFields[i].replace(/[{}]/g, '')] = 'freetext';
 			}
@@ -422,7 +435,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const getRequestJSON = () => {
 		const generatedTemplatename = getFriendlyTemplateName();
 		const variables = getJSONVariables();
-		const requestJSON = {
+		const requestJSON: JSONProps = {
 			text: {
 				friendlyTemplateName: templateName,
 				templateName: generatedTemplatename,
@@ -505,7 +518,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (templateText?.length > 0 && fileData?.length > 0) {
 			return requestJSON.textMedia;
 		} else if (templateText?.length > 0) {
-			return templateText;
+			return requestJSON.text;
 		}
 	};
 
@@ -660,21 +673,17 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const onActionButtonDelete = (
 		button: quickReplyButtonProps | callToActionRowProps
 	) => {
-		console.log(templateData);
-		console.log(button);
 		if (buttonType === ActionButtons.QuickReply) {
 			const updatedData = updateTemplateDataOnDeleteAction(
 				quickReplyButtons,
 				button
 			);
-			console.log(updatedData);
 			setQuickReplyButtons([...updatedData]);
 		} else {
 			const updatedData = updateTemplateDataOnDeleteAction(
 				callToActionFieldRows,
 				button
 			);
-			console.log(updatedData);
 			setCallToActionFieldRows([...updatedData]);
 		}
 	};
@@ -710,8 +719,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onSubmitCampaign = async () => {
-		let submitTemplate: any = await dispatch(submitTemplates(getRequestJSON()));
-		console.log(submitTemplate);
+		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+			submitTemplates(getRequestJSON())
+		);
 		if (submitTemplate?.payload?.Status === 'Success') {
 			setIsSubmitCampaignOpen(false);
 			setToastMessage(ToastMessages.SUCCESS);
@@ -726,6 +736,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setToastMessage(ToastMessages.ERROR);
 			}
 			setIsSubmitCampaignOpen(false);
+		}
+	};
+
+	const closeCallToAction = (isReset: Boolean) => {
+		setIsCallToActionOpen(false);
+		if (isReset && buttonType === 'callToAction') {
+			setCallToActionFieldRows([...templateData.templateButtons]);
 		}
 	};
 
@@ -819,7 +836,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			/>
 			<ActionCallPopOver
 				isCallToActionOpen={isCallToActionOpen}
-				closeCallToAction={() => setIsCallToActionOpen(false)}
+				closeCallToAction={(isReset) => closeCallToAction(isReset)}
 				classes={classes}
 				callToActionFieldRows={callToActionFieldRows}
 				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
