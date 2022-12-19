@@ -56,7 +56,6 @@ const WhatsappTemplateEditor = ({
 		const textAreaHeight = textAreaElement?.scrollHeight || 0;
 		const buttonWrapperHeight = buttonsWrapperElement?.scrollHeight || 0;
 		const avaliableHeight = 240 - (textAreaHeight + buttonWrapperHeight);
-		console.log('avaliableHeight::', avaliableHeight);
 		if (textAreaHeight) {
 			if (avaliableHeight >= 25) {
 				setTextAreaHeight(25 + textAreaHeight + 'px');

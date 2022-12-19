@@ -103,7 +103,6 @@ const TemplateFields = ({
 						</Typography>
 
 						<TextField
-							required
 							select
 							id='selectSavedTemplate'
 							type='text'
@@ -141,7 +140,6 @@ const TemplateFields = ({
 									: '17px 15px 15px 7px',
 							}}>
 							<input
-								required
 								type='file'
 								className={classes.formFieldInput}
 								accept='image/png, image/jpeg, application/pdf, video/mp4'

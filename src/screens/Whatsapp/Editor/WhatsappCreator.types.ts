@@ -66,7 +66,8 @@ export type whatsappMobilePreviewProps = {
 };
 
 export type ButtonsProps = {
-	classes: ClassesType;
+	classes: ClassesType['classes'];
+	onFormButtonClick: (buttonName: string) => void;
 };
 
 export type coreProps = {
@@ -109,4 +110,14 @@ export type templateDataProps = {
 
 export type WhatsappTipsProps = {
 	classes: ClassesType['classes'];
+};
+
+export type AlertModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	title: string;
+	subtitle: string;
+	type: 'confirm' | 'delete' | 'alert' | 'submit';
+	children?: React.ReactNode;
 };

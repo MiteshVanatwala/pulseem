@@ -6,7 +6,7 @@ import { Button, Box } from '@material-ui/core';
 import { BsTrash } from 'react-icons/bs';
 import { useTranslation } from 'react-i18next';
 
-const Buttons = ({ classes }: ButtonsProps['classes']) => {
+const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -25,7 +25,8 @@ const Buttons = ({ classes }: ButtonsProps['classes']) => {
 					variant='contained'
 					size='medium'
 					className={clsx(classes.actionButton, classes.actionButtonRed)}
-					style={{ margin: '8px', padding: '9px 0' }}>
+					style={{ margin: '8px', padding: '9px 0' }}
+					onClick={() => onFormButtonClick('delete')}>
 					<BsTrash style={{ fontSize: '25' }} />
 				</Button>
 			</Box>
@@ -39,7 +40,8 @@ const Buttons = ({ classes }: ButtonsProps['classes']) => {
 					classes.backButton
 				)}
 				color='primary'
-				style={{ margin: '8px' }}>
+				style={{ margin: '8px' }}
+				onClick={() => onFormButtonClick('save')}>
 				<>{translator('whatsapp.saveSms')}</>
 			</Button>
 			<Button
@@ -52,7 +54,8 @@ const Buttons = ({ classes }: ButtonsProps['classes']) => {
 					classes.backButton
 				)}
 				color='primary'
-				style={{ margin: '8px' }}>
+				style={{ margin: '8px' }}
+				onClick={() => onFormButtonClick('submit')}>
 				<>
 					{!isFromAutomation
 						? translator('whatsapp.submit')
