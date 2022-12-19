@@ -588,5 +588,6 @@
   "main": "ראשי",
   "filesUploaded": "קבצים עלו בהצלחה",
   "filesNotUploaded": "קבצים נכשלו: ",
-  "saveAndContinue": "שמור והמשך"
+  "saveAndContinue": "שמור והמשך",
+  "backToAutomation": "חזור לאוטומציה"
 }

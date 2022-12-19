@@ -432,6 +432,10 @@ const NewsLetterWizard = ({ classes }) => {
                     }
                 }
                 else if (isExit === true) {
+                    if (isFromAutomation) {
+                        window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+                        return false;
+                    }
                     navigate(`/Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
@@ -781,7 +785,11 @@ const NewsLetterWizard = ({ classes }) => {
             handleSubmit(false, true);
         }
         else {
-            navigate(`/Campaigns`);
+            if (isFromAutomation) {
+                window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
+                return false;
+            }
+            navigate('/Campaigns');
         }
     }
 

@@ -539,20 +539,20 @@ const ClientSearchResult = ({ props, classes }) => {
       filterComponents: [FromDate, ToDate]
     },
     '8': {
-      title: t("sms.sendingTime"),
-      sortKey: 'Date',
+      title: t("common.SendDate"),
+      // sortKey: 'SentDate',
       component: {
-        mobile: ({ CreationDate = null, ...rest }) => (<>
+        mobile: ({ SentDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
-            {t("sms.sendingTime")}
+            {t("common.SendDate")}
           </Typography>
           <Typography>
-            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
-        web: ({ CreationDate = null, ...rest }) => (
+        web: ({ SentDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         )
       },
@@ -1430,6 +1430,7 @@ const ClientSearchResult = ({ props, classes }) => {
       Email,
       Status,
       SmsStatus,
+      SentDate,
       Cellphone,
       LogSms_ErrorType,
       LastSendDate,
@@ -1447,7 +1448,7 @@ const ClientSearchResult = ({ props, classes }) => {
               {renderPhoneNameCell(row)}
             </Box>
             <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
-              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
+              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType, SentDate: SentDate })}
               {/* <Typography className={classes.bold}>
                 {t("common.campaignRevenue")}
               </Typography>
