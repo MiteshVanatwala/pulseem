@@ -89,25 +89,28 @@ const DynamicModal = ({
 				<Grid container className={classes.whatsappCampaignDynamicFieldContent}>
 					<Grid className={classes.whatsappCampaignDynamicFieldContentText}>
 						<Stack direction='row' spacing={0}>
-							{dynamicButtons.map((button) => (
-								<Button
-									variant='outlined'
-									color='primary'
-									size='small'
-									style={{
-										margin: '0px 6px 6px 0px',
-										padding: '3px 9px',
-										borderRadius: '20px',
-									}}
-									className={
-										button.buttonTitle === activeDynamicButton
-											? classes.whatsappCampaignDynamicFieldButtonActive
-											: classes.whatsappCampaignDynamicFieldButton
-									}
-									onClick={() => setActiveDynamicButton(button.buttonTitle)}>
-									{translator(button.buttonTitle)}
-								</Button>
-							))}
+							{dynamicButtons.map(
+								(button: dynamicButtonProps, index: number) => (
+									<Button
+										key={index}
+										variant='outlined'
+										color='primary'
+										size='small'
+										style={{
+											margin: '0px 6px 6px 0px',
+											padding: '3px 9px',
+											borderRadius: '20px',
+										}}
+										className={
+											button.buttonTitle === activeDynamicButton
+												? classes.whatsappCampaignDynamicFieldButtonActive
+												: classes.whatsappCampaignDynamicFieldButton
+										}
+										onClick={() => setActiveDynamicButton(button.buttonTitle)}>
+										{translator(button.buttonTitle)}
+									</Button>
+								)
+							)}
 						</Stack>
 					</Grid>
 					{activeDynamicButton?.includes('pField') && (

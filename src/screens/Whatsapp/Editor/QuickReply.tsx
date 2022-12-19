@@ -31,6 +31,7 @@ const QuickReply = ({
 	setQuickReplyButtons,
 	updateTemplateData,
 	templateButtons,
+	isEdiable,
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
 	const onSubmit = (e: BaseSyntheticEvent) => {
@@ -137,6 +138,7 @@ const QuickReply = ({
 													onChange={(e) => onButtonTextChange(e, button, field)}
 													required
 													key={index}
+													disabled={!isEdiable}
 												/>
 												<Button
 													variant='outlined'
@@ -156,10 +158,12 @@ const QuickReply = ({
 									)}
 								</Grid>
 							</Grid>
-							<DeleteOutlinedIcon
-								className={classes.quickReplyDelete}
-								onClick={() => onDeleteButton(button)}
-							/>
+							{isEdiable && (
+								<DeleteOutlinedIcon
+									className={classes.quickReplyDelete}
+									onClick={() => onDeleteButton(button)}
+								/>
+							)}
 						</Grid>
 					))}
 					<DialogActions>

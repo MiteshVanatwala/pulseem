@@ -170,7 +170,7 @@ const WhatsappMobilePreview = ({
 																							target='_blank'
 																							href={`tel:${getValueByFieldName(
 																								button,
-																								'Phone Number'
+																								translator('whatsapp.phoneNumber')
 																							)}`}>
 																							<i
 																								className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
@@ -180,7 +180,9 @@ const WhatsappMobilePreview = ({
 																								}>
 																								{getValueByFieldName(
 																									button,
-																									'Button Text'
+																									translator(
+																										'whatsapp.phoneButtonText'
+																									)
 																								)}
 																							</span>
 																						</a>
@@ -198,7 +200,9 @@ const WhatsappMobilePreview = ({
 																								}>
 																								{getValueByFieldName(
 																									button,
-																									'Button Text'
+																									translator(
+																										'whatsapp.phoneButtonText'
+																									)
 																								)}
 																							</span>
 																						</a>
@@ -230,7 +234,7 @@ const WhatsappMobilePreview = ({
 																			width:
 																				getValueByFieldName(
 																					button,
-																					'Button Text'
+																					translator('whatsapp.phoneButtonText')
 																				)?.length <= templateText?.length
 																					? quickReplyWidth
 																					: '',
@@ -239,7 +243,7 @@ const WhatsappMobilePreview = ({
 																			className={classes.quickReplyButtonText}>
 																			{getValueByFieldName(
 																				button,
-																				'Button Text'
+																				translator('whatsapp.phoneButtonText')
 																			)}
 																		</span>
 																	</div>

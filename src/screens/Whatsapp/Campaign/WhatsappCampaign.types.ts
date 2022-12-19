@@ -26,5 +26,39 @@ export type campaignFielsProps = {
 	savedTemplateList: savedTemplateListProps[];
 	classes: ClassesType['classes'];
 	savedTemplate: string;
+	campaignName: string;
+	from: string;
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	onCampaignNameChange: (campaignName: string) => void;
+	onFromChange: (from: string) => void;
+};
+
+export type validationAlertModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	title: string;
+	requiredFields: string[];
+};
+
+export type testGroupDataProps = {
+	GroupID: number;
+	GroupName: string;
+	SubAccountID: number;
+	CreationDate: string;
+	UpdateDate: string;
+	IsTestGroup: boolean;
+	IsDynamic: boolean;
+	Recipients: number;
+};
+
+export type testGroupModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	onConfirmOrYes: () => void;
+	title: string;
+	testGroupData: testGroupDataProps[];
+	selectedTestGroup: testGroupDataProps[];
+	setSelectedTestGroup: (updatedSelectedGroup: testGroupDataProps[]) => void;
 };

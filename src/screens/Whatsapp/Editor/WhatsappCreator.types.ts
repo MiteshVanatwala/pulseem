@@ -57,6 +57,7 @@ export type actionProps = {
 	websiteField: callToActionFieldProps[];
 	addMore: () => void;
 	updateTemplateData: (data: callToActionProps) => void;
+	isEdiable: boolean;
 };
 
 export type whatsappMobilePreviewProps = {
@@ -90,6 +91,7 @@ export type quickReplyProps = {
 	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 	templateButtons: templateDataProps['templateButtons'];
+	isEdiable: boolean;
 };
 
 export type quickReplyButtonsFieldProps = {

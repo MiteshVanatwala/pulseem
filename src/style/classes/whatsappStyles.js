@@ -733,12 +733,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		borderRadius: '4px',
 		padding: '14px 26px',
 		direction: isRTL ? 'rtl' : 'ltr',
+		position: 'relative',
 	},
 	alertModalClose: {
 		position: 'absolute',
-		top: '8px',
-		right: isRTL ? 'auto' : '9px',
-		left: isRTL ? '9px' : 'auto',
+		top: '-11px',
+		right: isRTL ? 'auto' : '-11px',
+		left: isRTL ? '-11px' : 'auto',
 		backgroundColor: '#0371ad',
 		color: 'white',
 		cursor: 'pointer',
@@ -747,6 +748,37 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		height: '20px',
 		width: '20px',
 		textAlign: 'center',
+	},
+	alertModalInfoWrapper: {
+		position: 'absolute',
+		top: isRTL ? '24px' : '-65px',
+		right: isRTL ? '24px' : 'auto',
+		left: isRTL ? 'auto' : '-65px',
+		backgroundColor: '#0371ad',
+		color: 'white',
+		cursor: 'pointer',
+		borderRadius: '42px',
+		paddingTop: '0px',
+		height: isRTL ? 'auto' : '90px',
+		width: isRTL ? 'auto' : '90px',
+		textAlign: 'center',
+	},
+	alertModalInfo: {
+		position: 'absolute',
+		bottom: '15px',
+		right: isRTL ? 'auto' : '15px',
+		left: isRTL ? '15px' : 'auto',
+		backgroundColor: '#0371ad',
+		color: 'white',
+		cursor: 'pointer',
+		borderRadius: '42px',
+		paddingTop: '0px',
+		height: '20px',
+		width: '20px',
+		textAlign: 'center',
+	},
+	alertModalActionWrapper: {
+		overflow: 'auto',
 	},
 	alertModalTitle: {
 		fontFamily: 'OpenSansHebrew-Bold',
@@ -760,6 +792,29 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#525252',
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
+	},
+	testGroupModalContentWrapper: {
+		padding: '0 4px',
+	},
+	testGroupModalContentSearch: {
+		marginBottom: '10px',
+		marginTop: '24px',
+	},
+	testGroupModalGroupList: {
+		maxHeight: '253px',
+		overflowY: 'auto',
+	},
+	testGroupModalGroupDiv: {
+		width: '90%',
+		cursor: 'pointer',
+		display: 'flex',
+		justifyContent: 'space-between',
+		fontSize: '14px',
+		fontFamily: 'OpenSansHebrew',
+		paddingLeft: '18px',
+	},
+	testGroupModalContentSearchField: {
+		boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
 	},
 	alertModalContentText: {},
 	alertModalContentChildren: {
@@ -805,6 +860,15 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			backgroundImage: 'linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)',
 			backgroundRepeat: 'repeat-x',
 		},
+	},
+
+	validationAlertModalUl: {
+		padding: '0px',
+		margin: '15px 15px',
+	},
+	validationAlertModalLi: {
+		padding: '2px 0px 0px 0px',
+		color: '#ff0000',
 	},
 
 	/* Send Campaign */
@@ -1011,5 +1075,15 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappCampaignActionButtonsWrapper: {
 		marginTop: '10px',
+	},
+	testSendNewTag: {
+		backgroundColor: '#c9302c',
+		color: '#ffffff',
+		height: '22px',
+		borderRadius: '4px',
+		padding: '2px 4px',
+	},
+	testSendRadio: {
+		padding: '0 12px',
 	},
 });

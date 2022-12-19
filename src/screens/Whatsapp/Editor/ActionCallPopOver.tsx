@@ -31,6 +31,7 @@ const ActionCallPopOver = ({
 	websiteField,
 	addMore,
 	updateTemplateData,
+	isEdiable,
 }: actionProps) => {
 	const { t: translator } = useTranslation();
 
@@ -354,6 +355,7 @@ const ActionCallPopOver = ({
 											<>{translator('whatsapp.typeOfAction')}</>
 										</Typography>
 										<TextField
+											disabled={!isEdiable}
 											select
 											required
 											name='typeofaction'
@@ -377,6 +379,7 @@ const ActionCallPopOver = ({
 												<Grid item md={3} key={'TOCF' + fIndex}>
 													<Typography>{field.fieldName}</Typography>
 													<TextField
+														disabled={!isEdiable}
 														required={true}
 														type={field.type}
 														name={field.fieldName}
@@ -407,6 +410,7 @@ const ActionCallPopOver = ({
 												<Grid item md={2} key={'TOCF' + fIndex}>
 													<Typography>{field.fieldName}</Typography>
 													<TextField
+														disabled={!isEdiable}
 														select
 														required
 														name={field.fieldName}
@@ -426,17 +430,18 @@ const ActionCallPopOver = ({
 												</Grid>
 											)
 									)}
-
-									<Grid item md={1}>
-										<Typography style={{ visibility: 'hidden' }}>
-											<>{translator('whatsapp.callToActionRemoveButton')}</>
-										</Typography>
-										<IconButton
-											color='secondary'
-											onClick={() => onDeleteRow(row)}>
-											<DeleteOutlineIcon />
-										</IconButton>
-									</Grid>
+									{isEdiable && (
+										<Grid item md={1}>
+											<Typography style={{ visibility: 'hidden' }}>
+												<>{translator('whatsapp.callToActionRemoveButton')}</>
+											</Typography>
+											<IconButton
+												color='secondary'
+												onClick={() => onDeleteRow(row)}>
+												<DeleteOutlineIcon />
+											</IconButton>
+										</Grid>
+									)}
 								</Grid>
 							)
 						)}
@@ -455,17 +460,19 @@ const ActionCallPopOver = ({
 							color='secondary'>
 							<>{translator('whatsapp.callToActionExitButton')}</>
 						</Button>
-						<Button
-							type='submit'
-							disabled={callToActionFieldRows?.length === 0 ? true : false}
-							variant='contained'
-							style={
-								callToActionFieldRows?.length > 0
-									? { backgroundColor: 'green', color: 'white' }
-									: {}
-							}>
-							<>{translator('whatsapp.callToActionSaveButton')}</>
-						</Button>
+						{isEdiable && (
+							<Button
+								type='submit'
+								disabled={callToActionFieldRows?.length === 0 ? true : false}
+								variant='contained'
+								style={
+									callToActionFieldRows?.length > 0
+										? { backgroundColor: 'green', color: 'white' }
+										: {}
+								}>
+								<>{translator('whatsapp.callToActionSaveButton')}</>
+							</Button>
+						)}
 					</DialogActions>
 				</form>
 			</DialogContent>

@@ -110,63 +110,63 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] = useState(false);
 
-  enum ActionButtons {
-    QuickReply = "quickReply",
-  }
+	enum ActionButtons {
+		QuickReply = 'quickReply',
+	}
 
-  const websiteField = useMemo<callToActionFieldProps[]>(
-    () => [
-      {
-        fieldName: translator("whatsapp.websiteButtonText"),
-        type: "text",
-        placeholder: translator("whatsapp.websiteButtonTextPlaceholder"),
-        value: "",
-      },
-      {
-        fieldName: translator("whatsapp.websiteURL"),
-        type: "text",
-        placeholder: translator("whatsapp.websiteURLPlaceholder"),
-        value: "",
-      },
-    ],
-    [translator]
-  );
-  const phoneNumberField = useMemo<callToActionFieldProps[]>(
-    () => [
-      {
-        fieldName: translator("whatsapp.phoneButtonText"),
-        type: "text",
-        placeholder: translator("whatsapp.phoneButtonTextPlaceholder"),
-        value: "",
-      },
-      {
-        fieldName: translator("whatsapp.country"),
-        type: "select",
-        placeholder: "Select Your Country Code",
-        value: "+972 Israel",
-      },
-      {
-        fieldName: translator("whatsapp.phoneNumber"),
-        type: "tel",
-        placeholder: translator("whatsapp.phoneNumberPlaceholder"),
-        value: "",
-      },
-    ],
-    [translator]
-  );
+	const websiteField = useMemo<callToActionFieldProps[]>(
+		() => [
+			{
+				fieldName: translator('whatsapp.websiteButtonText'),
+				type: 'text',
+				placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+				value: '',
+			},
+			{
+				fieldName: translator('whatsapp.websiteURL'),
+				type: 'text',
+				placeholder: translator('whatsapp.websiteURLPlaceholder'),
+				value: '',
+			},
+		],
+		[translator]
+	);
+	const phoneNumberField = useMemo<callToActionFieldProps[]>(
+		() => [
+			{
+				fieldName: translator('whatsapp.phoneButtonText'),
+				type: 'text',
+				placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
+				value: '',
+			},
+			{
+				fieldName: translator('whatsapp.country'),
+				type: 'select',
+				placeholder: 'Select Your Country Code',
+				value: '+972 Israel',
+			},
+			{
+				fieldName: translator('whatsapp.phoneNumber'),
+				type: 'tel',
+				placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+				value: '',
+			},
+		],
+		[translator]
+	);
 
-  const initialFieldRow = {
-    id: uniqid(),
-    typeOfAction: "phonenumber",
-    fields: phoneNumberField,
-  };
+	const initialFieldRow = {
+		id: uniqid(),
+		typeOfAction: 'phonenumber',
+		fields: phoneNumberField,
+	};
 
-  const [callToActionFieldRows, setCallToActionFieldRows] =
-    useState<callToActionProps>([initialFieldRow]);
+	const [callToActionFieldRows, setCallToActionFieldRows] =
+		useState<callToActionProps>([initialFieldRow]);
 
-  const onTemplateNameChange = (e: BaseSyntheticEvent) => {
-    setTemplateName(e.target.value.toLowerCase());
-  };
+	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
+		setTemplateName(e.target.value.toLowerCase());
+	};
 
 	const resetFields = () => {
 		setTemplateName('');
@@ -364,31 +364,31 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-  const getQuickReplyActions = () => {
-    return templateData.templateButtons.map((button: quickReplyButtonProps) => {
-      return {
-        id: button.id,
-        title: getValueByFieldName(
-          button,
-          translator("whatsapp.websiteButtonText")
-        ),
-      };
-    });
-  };
+	const getQuickReplyActions = () => {
+		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
+			return {
+				id: button.id,
+				title: getValueByFieldName(
+					button,
+					translator('whatsapp.websiteButtonText')
+				),
+			};
+		});
+	};
 
-  const getActionPhoneNumber = (button: quickReplyButtonProps) => {
-    const phoneNumber = getValueByFieldName(
-      button,
-      translator("whatsapp.phoneNumber")
-    );
-    const countryCode = getValueByFieldName(
-      button,
-      translator("whatsapp.country")
-    );
-    return countryCode && phoneNumber
-      ? "+" + countryCode?.replace(/\D/g, "") + phoneNumber
-      : phoneNumber;
-  };
+	const getActionPhoneNumber = (button: quickReplyButtonProps) => {
+		const phoneNumber = getValueByFieldName(
+			button,
+			translator('whatsapp.phoneNumber')
+		);
+		const countryCode = getValueByFieldName(
+			button,
+			translator('whatsapp.country')
+		);
+		return countryCode && phoneNumber
+			? '+' + countryCode?.replace(/\D/g, '') + phoneNumber
+			: phoneNumber;
+	};
 
 	const getCallTOActionActions = () => {
 		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
@@ -527,32 +527,32 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setIsSubmitCampaignOpen(true);
 	};
 
-  const addDynamicField = (
-    selectionEnd: number | undefined,
-    textLength: number | undefined
-  ) => {
-    let updatedTemplateText = templateData.templateText;
-    if (
-      (selectionEnd === 0 && textLength === 0) ||
-      selectionEnd === textLength
-    ) {
-      updatedTemplateText =
-        updatedTemplateText +
-        getLastDynamicFieldByValue(
-          getLastDynamicFieldValue(updatedTemplateText)
-        );
-    } else {
-      updatedTemplateText = [
-        updatedTemplateText.slice(0, selectionEnd),
-        getLastDynamicFieldByValue(
-          getLastDynamicFieldValue(updatedTemplateText.slice(0, selectionEnd))
-        ),
-        updatedTemplateText.slice(selectionEnd),
-      ].join("");
-    }
+	const addDynamicField = (
+		selectionEnd: number | undefined,
+		textLength: number | undefined
+	) => {
+		let updatedTemplateText = templateData.templateText;
+		if (
+			(selectionEnd === 0 && textLength === 0) ||
+			selectionEnd === textLength
+		) {
+			updatedTemplateText =
+				updatedTemplateText +
+				getLastDynamicFieldByValue(
+					getLastDynamicFieldValue(updatedTemplateText)
+				);
+		} else {
+			updatedTemplateText = [
+				updatedTemplateText.slice(0, selectionEnd),
+				getLastDynamicFieldByValue(
+					getLastDynamicFieldValue(updatedTemplateText.slice(0, selectionEnd))
+				),
+				updatedTemplateText.slice(selectionEnd),
+			].join('');
+		}
 
-    return updatedTemplateText;
-  };
+		return updatedTemplateText;
+	};
 
 	const getDynamicFieldIndex = (text: string) => {
 		let indices = [];
@@ -653,22 +653,22 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-  const updateTemplateDataOnDeleteAction = (
-    data: quickReplyButtonProps[] | callToActionProps,
-    button: quickReplyButtonProps | callToActionRowProps
-  ) => {
-    const updatedButtonsData = data?.filter(
-      (d: quickReplyButtonProps | quickReplyButtonProps) => d.id !== button.id
-    );
-    setTemplateData({
-      ...templateData,
-      templateButtons: updatedButtonsData,
-    });
-    if (updatedButtonsData?.length <= 0) {
-      setButtonType("");
-    }
-    return updatedButtonsData;
-  };
+	const updateTemplateDataOnDeleteAction = (
+		data: quickReplyButtonProps[] | callToActionProps,
+		button: quickReplyButtonProps | callToActionRowProps
+	) => {
+		const updatedButtonsData = data?.filter(
+			(d: quickReplyButtonProps | quickReplyButtonProps) => d.id !== button.id
+		);
+		setTemplateData({
+			...templateData,
+			templateButtons: updatedButtonsData,
+		});
+		if (updatedButtonsData?.length <= 0) {
+			setButtonType('');
+		}
+		return updatedButtonsData;
+	};
 
 	const onActionButtonDelete = (
 		button: quickReplyButtonProps | callToActionRowProps
@@ -688,17 +688,17 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-  const updateTemplateButton = (
-    buttons: quickReplyButtonProps[] | callToActionProps,
-    buttonsType: string
-  ) => {
-    setTemplateData({ ...templateData, templateButtons: buttons });
-    buttons?.length > 0 ? setButtonType(buttonsType) : setButtonType("");
-  };
+	const updateTemplateButton = (
+		buttons: quickReplyButtonProps[] | callToActionProps,
+		buttonsType: string
+	) => {
+		setTemplateData({ ...templateData, templateButtons: buttons });
+		buttons?.length > 0 ? setButtonType(buttonsType) : setButtonType('');
+	};
 
-  const addMore = () => {
-    setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
-  };
+	const addMore = () => {
+		setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
+	};
 
 	const updateTemplateText = (text: string) => {
 		setTemplateData({
@@ -833,6 +833,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					updateTemplateButton(data, 'quickReply')
 				}
 				templateButtons={templateData.templateButtons}
+				isEdiable={true}
 			/>
 			<ActionCallPopOver
 				isCallToActionOpen={isCallToActionOpen}
@@ -846,6 +847,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				updateTemplateData={(data: callToActionProps) =>
 					updateTemplateButton(data, 'callToAction')
 				}
+				isEdiable={true}
 			/>
 			<AlertModal
 				classes={classes}

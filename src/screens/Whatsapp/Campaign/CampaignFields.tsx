@@ -11,9 +11,18 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { campaignFielsProps, coreProps } from './WhatsappCampaign.types';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { BaseSyntheticEvent, useState } from 'react';
 
-const CampaignFields = ({ classes, savedTemplateList, savedTemplate, onSavedTemplateChange }: campaignFielsProps) => {
+const CampaignFields = ({
+	classes,
+	savedTemplateList,
+	savedTemplate,
+	onSavedTemplateChange,
+	campaignName,
+	onCampaignNameChange,
+	from,
+	onFromChange
+}: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -28,7 +37,7 @@ const CampaignFields = ({ classes, savedTemplateList, savedTemplate, onSavedTemp
 				</Typography>
 				<TextField
 					required
-					id='templateName'
+					id='campaignName'
 					type='text'
 					placeholder={translator('whatsappCampaign.campaignNamePlaceholder')}
 					className={
@@ -36,8 +45,10 @@ const CampaignFields = ({ classes, savedTemplateList, savedTemplate, onSavedTemp
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
-					//   onChange={onTemplateNameChange}
-					//   value={templateName}
+					onChange={(e: BaseSyntheticEvent) =>
+						onCampaignNameChange(e.target.value)
+					}
+					value={campaignName}
 				/>
 				<Typography className={classes.WhatsappCampainButtonContent}>
 					{translator('whatsappCampaign.campaignDesc')}
@@ -66,8 +77,8 @@ const CampaignFields = ({ classes, savedTemplateList, savedTemplate, onSavedTemp
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
-					//   onChange={onTemplateNameChange}
-					//   value={templateName}
+					onChange={(e: BaseSyntheticEvent) => onFromChange(e.target.value)}
+					  value={from}
 				/>
 				<Typography className={classes.WhatsappCampainButtonContent}>
 					{translator('whatsappCampaign.fromDesc')}
