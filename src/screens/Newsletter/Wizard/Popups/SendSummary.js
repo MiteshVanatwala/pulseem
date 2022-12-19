@@ -13,6 +13,7 @@ import { getSendSummary } from "../../../../redux/reducers/newsletterSlice";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
+import { useParams } from "react-router";
 
 const SendSummary = ({ classes,
     isOpen = false,
@@ -35,6 +36,7 @@ const SendSummary = ({ classes,
     const { newsletterInfo, newsletterSettings } = useSelector(state => state.newsletter);
 
     const { t } = useTranslation();
+    const params = useParams();
 
     const handleSmsSettings = () => {
         onClose();
@@ -42,7 +44,7 @@ const SendSummary = ({ classes,
     }
     useEffect(() => {
         dispatch(getAuthorizedEmails())
-        let response = dispatch(getSendSummary(newsletterInfo?.CampaignId))
+        let response = dispatch(getSendSummary(params?.id))
         console.log("SUMMARY:", response)
     }, [])
 
@@ -78,6 +80,9 @@ const SendSummary = ({ classes,
                     }
                 }
                 return RenderHtml(`${newsletterSettings.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSettings.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")} ` + `<span>&nbsp;${specialField}</span>` + `&nbsp;-&nbsp;${moment(newsletterSettings.SendDate).format('h:mm a')}`, { display: 'flex' })
+            }
+            default: {
+                alert("לא נבחר זמן שליחה")
             }
         }
     }

@@ -9,7 +9,7 @@ import { DateField } from '../../../../components/managment';
 import moment from 'moment';
 import Editorbox from '../../../../components/Wizard/Editorbox';
 import { setSmsMarketing } from '../../../../redux/reducers/smsSlice'
-import VerificationDialog from '../../../../components/DialogTemplates/VerificationDialog';
+import VerificationDialog from '../../../../components/DialogTemplates/VerificationDialog.js';
 import { Loader } from '../../../../components/Loader/Loader';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 

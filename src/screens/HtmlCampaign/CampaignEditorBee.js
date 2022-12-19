@@ -354,6 +354,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         if (saveRef.current?.redirectAfterSave) {
           // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
+          return false;
         }
         else if (saveRef.current?.showAnimation) {
           setToastMessage(ToastMessages.CAMPAIGN_SAVED);

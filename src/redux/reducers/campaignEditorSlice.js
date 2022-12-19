@@ -147,7 +147,7 @@ export const campaignEditorSlice = createSlice({
                 state.userBlocks = blocks
             })
             .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
-                state.campaignInfo = payload;
+                state.campaignInfo = payload?.Message;
             })
             .addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
                 state.campaignInfo = payload?.Message;

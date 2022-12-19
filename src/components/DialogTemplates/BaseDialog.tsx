@@ -61,7 +61,7 @@ export const BaseDialog = ({
   const RenderExitButton = () => {
     return (
       <Box onClick={onExit} className={clsx(classes.solidDialogExitButton)}>
-        <ManagmentIcon classes={classes} icon={CloseIcon} uIcon={null} />
+        <ManagmentIcon classes={classes} icon={CloseIcon} uIcon={null} style={{paddingTop: '0.2rem'}} />
       </Box>
     );
   };
