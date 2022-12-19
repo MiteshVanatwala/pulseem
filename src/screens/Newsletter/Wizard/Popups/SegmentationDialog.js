@@ -18,11 +18,6 @@ const SegmentationDialog = ({
     handleSetValues = () => null
 }) => {
     const { t } = useTranslation();
-    const [selected, setSelected] = useState('0')
-
-    const handleChange = (e) => {
-        setSelected(e.target.value)
-    }
 
     return {
         title: t("campaigns.newsLetterEditor.sendSettings.send"),
@@ -34,11 +29,10 @@ const SegmentationDialog = ({
             />
         ),
         content: (
-            <Stack direction='column' spacing={2}>
+            <Stack direction='column' spacing={2} style={{height: '65vh'}}>
                 <Stack direction='row' spacing={3}>
                     <Box style={{ margin: 8 }}>
                         <DateField
-                            // minDate={moment()}
                             classes={classes}
                             value={campaign.FromDate}
                             onChange={(value) => handleSetValues({ ...campaign, FromDate: value })}
