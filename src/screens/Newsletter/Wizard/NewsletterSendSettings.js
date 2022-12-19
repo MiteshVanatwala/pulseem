@@ -172,7 +172,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             if (newsletterSettings.length === 0)
                 return;
 
-            const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [] } = newsletterSettings;
+            const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null } = newsletterSettings;
             const { Groups } = groupData;
 
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
@@ -181,8 +181,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
             setFilterValues({
                 ...filterValues,
+                toggleReci: ExceptionalDays !== '' && ExceptionalDays > 0,
                 selectedFilterGroups: ExeptionalGroups ? groupData?.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
-                selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.SMSCampaignID) > -1) : []
+                selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.CampaignID) > -1) : [],
+                exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
         } catch (e) {
@@ -249,6 +251,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             AutoSendDelay: campaignValues.SendingMethod !== 3 ? null : campaignValues.AutoSendDelay,
             AutoSendingByUserField: campaignValues.SendingMethod !== 3 ? null : campaignValues.AutoSendingByUserField,
             ExeptionalCampaigns: filterValues?.selectedFilterCampaigns?.map(x => x.CampaignID)?.join(','),
+            ExeptionalCampaignsList: filterValues?.selectedFilterCampaigns.map(x => x.CampaignID),
             ExeptionalGroups: filterValues?.selectedFilterGroups?.map(x => x.GroupID)?.join(','),
             CampaignID: params.id,
             Status: campaignValues.Status,
@@ -257,7 +260,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             SendDate: campaignValues.SendDate,
             SendingMethod: campaignValues.SendingMethod ?? 1,
             GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
-            ExceptionalDays: 0,
+            ExceptionalDays: filterValues?.exceptionalDays,
             IsBestTime: campaignValues.IsBestTime,
             IsSummaryRequest: showSummary
         }
@@ -459,11 +462,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const callbackFiltertedCampaigns = (campaign) => {
         const found = filterValues.selectedFilterCampaigns
             .map((c) => {
-                return c.SMSCampaignID;
+                return c.CampaignID;
             })
-            .includes(campaign.SMSCampaignID);
+            .includes(campaign.CampaignID);
         if (found) {
-            setFilterValues({ ...filterValues, selectedFilterCampaigns: filterValues.selectedFilterCampaigns.filter((c) => c.SMSCampaignID !== campaign.SMSCampaignID) })
+            setFilterValues({ ...filterValues, selectedFilterCampaigns: filterValues.selectedFilterCampaigns.filter((c) => c.CampaignID !== campaign.CampaignID) })
         } else {
             setFilterValues({ ...filterValues, selectedFilterCampaigns: [...filterValues.selectedFilterCampaigns, campaign] })
         }

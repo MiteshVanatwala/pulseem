@@ -109,11 +109,11 @@ const Groups = ({ classes,
         return list && list.length > 0 ? list?.filter((c) => {
             return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((campaign) => {
-            const isExist = selectedList.map((c) => { return c.SMSCampaignID }).includes(campaign.SMSCampaignID);
-            return (<ListItem id={campaign.SMSCampaignID} key={campaign.SMSCampaignID} onClick={() => onSelectGroup(campaign)} style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setIsHover(campaign.SMSCampaignID)}
+            const isExist = selectedList.map((c) => { return c.CampaignID }).includes(campaign.CampaignID);
+            return (<ListItem id={campaign.CampaignID} key={campaign.CampaignID} onClick={() => onSelectGroup(campaign)} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setIsHover(campaign.CampaignID)}
                 onMouseLeave={() => setIsHover(null)}
-                className={groupHover === campaign.SMSCampaignID ? classes.hoverListItem : null}
+                className={groupHover === campaign.CampaignID ? classes.hoverListItem : null}
             >
                 <ListItemAvatar>
                     <Avatar
