@@ -708,7 +708,8 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 												<Button
 													disabled={testSendSelection !== 'onecontact'}
 													variant='outlined'
-													color='primary'>
+													color='primary'
+													className={classes.testOneContactSendButton}>
 													SEND
 												</Button>
 											</Stack>

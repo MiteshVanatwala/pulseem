@@ -253,7 +253,7 @@ const WhatsappMobilePreview = ({
 													</>
 												)}
 											</div>
-											<form
+											{/* <form
 												className={classes.whatsappMobileConversationCompose}>
 												<div className='emoji'>
 													<svg
@@ -297,7 +297,7 @@ const WhatsappMobilePreview = ({
 														<i className='zmdi zmdi-mail-send'></i>
 													</div>
 												</button>
-											</form>
+											</form> */}
 										</div>
 									</div>
 								</div>

@@ -786,6 +786,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#0371ad',
 		fontSize: '24px',
 		borderBottom: '1px solid #dfdfdf',
+		textAlign: isRTL ? 'right' : 'left',
 	},
 	alertModalContent: {
 		padding: '8px 4px 0px 4px',
@@ -811,7 +812,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		justifyContent: 'space-between',
 		fontSize: '14px',
 		fontFamily: 'OpenSansHebrew',
-		paddingLeft: '18px',
+		paddingLeft: isRTL ? '0px' : '18px',
+		paddingRight: isRTL ? '18px' : '0px',
 	},
 	testGroupModalContentSearchField: {
 		boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
@@ -933,6 +935,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		left: isRTL ? '0' : 'auto',
 	},
 	whatsappCampaignDynamicFieldContent: {
+		direction: isRTL ? 'rtl' : 'ltr',
 		width: '558px',
 		padding: '0 18px 0 18px',
 		'@media screen and (max-width: 1200px)': {
@@ -1085,5 +1088,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	testSendRadio: {
 		padding: '0 12px',
+	},
+	testOneContactSendButton: {
+		color: '#009f00',
+		border: '1px solid #009f00',
+		marginRight: isRTL ? '8px !important' : '0px',
+		marginLeft: isRTL ? '0px' : '8px !important',
 	},
 });
