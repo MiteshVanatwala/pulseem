@@ -1727,6 +1727,9 @@ const SmsCreator = ({ classes, ...props }) => {
           </Paper>
           <Box style={{ marginTop: 20 }}>
             {testGroups
+              .filter((g) => {
+                return g.Recipients > 0
+              })
               .filter((val) => {
                 if (ContactSearch == "") {
                   return val;
