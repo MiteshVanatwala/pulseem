@@ -728,9 +728,9 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onRemovalLink = async () => {
-    onAddText("##SmsUnsubscribeURL##");
+    onAddText(t('sms.smsUnsubscribeMessage'));
     let total = splittedMsg;
-    total.push("##SmsUnsubscribeURL##")
+    total.push(t('sms.smsUnsubscribeMessage'))
     if (isLinksStatistics && SplittedLinks !== null) {
       setremovalLinkDisabled(true);
     }
@@ -761,7 +761,7 @@ const SmsCreator = ({ classes, ...props }) => {
       if (restoreBool)
         setremovalMessageButtonDisabled(false);
     }
-    if (smsModel.Text.includes("##SmsUnsubscribeURL##")) {
+    if (smsModel.Text.includes(t('sms.smsUnsubscribeMessage'))) {
       setremovalLinkDisabled(true);
     }
     else {
