@@ -7,7 +7,7 @@ import moment from 'moment';
 import { FaRegCalendarAlt, FaFilter } from 'react-icons/fa';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import { DateField, Dialog } from '../../../components/managment/index';
+import { DateField } from '../../../components/managment/index';
 import Toast from '../../../components/Toast/Toast.component';
 import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';
@@ -47,15 +47,16 @@ import {
 	getTestGroups,
 } from '../../../redux/reducers/smsSlice';
 import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
-import Summary from './smsSummary';
+import Summary from '../../Sms/Editor/smsSummary';
 import clsx from 'clsx';
-import OTP from './OTP';
+import OTP from '../../Sms/Editor/OTP';
 import { FaExclamationCircle } from 'react-icons/fa';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from '../../../redux/reducers/ConnectorsSlice';
+import { getUsersList } from '../../../redux/reducers/WhatsappSlice';
 
 function Alert(props) {
 	return <MuiAlert elevation={0} variant='filled' {...props} />;
@@ -154,7 +155,7 @@ const SmsSend = ({ classes, ...props }) => {
 		useState('');
 	const [sourcePulses, setSourcePulses] = useState({});
 	const [campaignSettings, setCampaignSettings] = useState(null);
-	
+
 	//#endregion
 	useEffect(() => {
 		if (!showLoader) {
@@ -230,7 +231,7 @@ const SmsSend = ({ classes, ...props }) => {
 
 	const isOtpPassed = async () => {
 		if (dataSaved.fromNumber !== null && dataSaved.fromNumber !== '') {
-			await dispatch(IsOTPPassed(dataSaved.fromNumber));
+			//   await dispatch(IsOTPPassed(dataSaved.fromNumber));
 		}
 	};
 
@@ -381,21 +382,22 @@ const SmsSend = ({ classes, ...props }) => {
 		setLoader(true);
 		if (id) {
 			if (!finishedCampaigns || finishedCampaigns?.length === 0) {
-				await dispatch(getFinishedCampaigns());
+				// await dispatch(getFinishedCampaigns());
 			}
 			if (!subAccountAllGroups || subAccountAllGroups?.length === 0) {
-				await dispatch(getGroupsBySubAccountId());
+				// await dispatch(getGroupsBySubAccountId());
 			}
 			if (!testGroups || testGroups?.length === 0) {
-				await dispatch(getTestGroups());
+				// await dispatch(getTestGroups());
 			}
 
-			const campaignSettingsRes = await dispatch(getCampaignSettings(id));
-
-			if (campaignSettingsRes.payload.error) {
-				logout();
-			}
-			setCampaignSettings(campaignSettingsRes.payload);
+			//   const campaignSettingsRes = await dispatch(getCampaignSettings(id));
+			const campaignSettingsRes = 'Jonak Roy';
+			//   if (campaignSettingsRes.payload.error) {
+			//     logout();
+			//   }
+			//   setCampaignSettings(campaignSettingsRes.payload);
+			setCampaignSettings(campaignSettingsRes);
 		}
 	};
 
@@ -419,7 +421,7 @@ const SmsSend = ({ classes, ...props }) => {
 		if (!extraData || extraData?.length === 0) getDataExtra();
 	}, [dispatch]);
 	const getDataExtra = async () => {
-		await dispatch(getAccountExtraData());
+		// await dispatch(getAccountExtraData());
 	};
 
 	useEffect(() => {
@@ -430,14 +432,19 @@ const SmsSend = ({ classes, ...props }) => {
 
 	const getSavedData = async () => {
 		if (id) {
-			let response = await dispatch(getSmsByID(id));
+			//   let response = await dispatch(getSmsByID(id));
+			let response = [{ payload: 'Jonak Roy' }];
 			if (response) {
 				setdataSaved({
 					...dataSaved,
-					campaignName: response.payload.Name,
-					fromNumber: response.payload.FromNumber,
-					msg: response.payload.Text,
+					//   campaignName: response.payload.Name,
+					campaignName: 'Jonak Roy',
+					//   fromNumber: response.payload.FromNumber,
+					fromNumber: '007',
+					//   msg: response.payload.Text,
+					msg: 'Hi there',
 					CreditPerSms: response.payload.CreditsPerSms,
+					CreditPerSms: 'Ten on ten',
 				});
 			}
 		}
@@ -540,8 +547,8 @@ const SmsSend = ({ classes, ...props }) => {
 			GroupName: groupValue,
 			GroupIds: temp,
 		};
-		await dispatch(smsCombinedGroup(payload));
-		await dispatch(getGroupsBySubAccountId());
+		// await dispatch(smsCombinedGroup(payload));
+		// await dispatch(getGroupsBySubAccountId());
 		settoggleChecked(false);
 		setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
 	};
@@ -800,23 +807,9 @@ const SmsSend = ({ classes, ...props }) => {
 					};
 					reader.readAsText(file, 'ISO-8859-8');
 				} else {
-					dispatch(
-						sendToTeamChannel({
-							MethodName: 'handleFiles',
-							ComponentName: 'SmsSend.js',
-							Text: `Client trying to upload non-acceptable file - ${file.name}`,
-						})
-					);
 					return false;
 				}
 			} catch (error) {
-				dispatch(
-					sendToTeamChannel({
-						MethodName: 'handleFiles',
-						ComponentName: 'SmsSend.js',
-						Text: error,
-					})
-				);
 				reject(error);
 			}
 		});
@@ -1573,17 +1566,20 @@ const SmsSend = ({ classes, ...props }) => {
 			}
 		}
 
-		const settingsSaved = await dispatch(saveSmsCampSettings(requestPayload));
+		// const settingsSaved = await dispatch(saveSmsCampSettings(requestPayload));
+		const settingsSaved = '';
 		if (settingsSaved.payload === true) {
 			if (toggle && exit !== 'exit') {
 				setToastMessage(ToastMessages.SUCCESS);
 			} else if (toggle && exit === 'exit') {
 				Redirect({ url: '/react/SMSCampaigns' });
 			} else {
-				let response = await dispatch(
-					getCampaignSumm(requestPayload.SmsCampaignID)
-				);
-				const estimated = estimatedEndDate(response.payload);
+				// let response = await dispatch(
+				//   getCampaignSumm(requestPayload.SmsCampaignID)
+				// );
+				// const estimated = estimatedEndDate(response.payload);
+
+				const estimated = '';
 				setestimationDate(estimated);
 				setsummModal(true);
 			}
@@ -1662,11 +1658,12 @@ const SmsSend = ({ classes, ...props }) => {
 			TotalRecipients: getCampaignSum.FinalCount,
 		};
 		setLoader(true);
-		let r = await dispatch(sendSms(payload));
+		// let r = await dispatch(sendSms(payload));
 		setLoader(false);
 
 		setsummModal(false);
-		handleSendResult(r.payload);
+		// handleSendResult(r.payload);
+		handleSendResult('');
 	};
 	const handleCautionCancel = () => {
 		if (dropClick === true) {
@@ -1770,10 +1767,11 @@ const SmsSend = ({ classes, ...props }) => {
 			};
 			setDialogType(null);
 			setLoader(true);
-			const r = await dispatch(saveManualClients(finalPayload));
+			//   const r = await dispatch(saveManualClients(finalPayload));
 			setLoader(false);
 
-			if (r.payload.Reason === 'no_recipients_to_update') {
+			//   if (r.payload.Reason === "no_recipients_to_update") {
+			if ('no_recipients_to_update') {
 				setToastMessage(ToastMessages.INVALID_RECIPIENTS);
 				settypedData([]);
 				setContacts([]);
@@ -1790,9 +1788,11 @@ const SmsSend = ({ classes, ...props }) => {
 				}
 
 				temp.push({
-					Recipients: r.payload.Recipients,
+					//   Recipients: r.payload.Recipients,
+					Recipients: '',
 					GroupName: groupNameInput,
-					GroupID: r.payload.GroupID,
+					//   GroupID: r.payload.GroupID,
+					GroupID: '',
 				});
 				setSelected(temp);
 				setareaData('');
@@ -1851,7 +1851,7 @@ const SmsSend = ({ classes, ...props }) => {
 
 	const handleDelete = () => {
 		if (id) {
-			dispatch(deleteSms(id));
+			//   dispatch(deleteSms(id));
 			setDialogType(null);
 			Redirect({ url: '/react/SMSCampaigns' });
 		}
@@ -2855,8 +2855,8 @@ const SmsSend = ({ classes, ...props }) => {
 	};
 	return (
 		<DefaultScreen
-			subPage={'create'}
-			currentPage='sms'
+			subPage={'send2'}
+			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}>
 			{renderToast()}
@@ -2997,7 +2997,7 @@ const SmsSend = ({ classes, ...props }) => {
 					}}
 				/>
 			)}
-			<Loader isOpen={showLoader} />
+			<Loader isOpen={false} />
 		</DefaultScreen>
 	);
 };

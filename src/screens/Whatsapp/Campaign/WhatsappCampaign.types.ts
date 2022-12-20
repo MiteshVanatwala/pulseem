@@ -62,3 +62,51 @@ export type testGroupModalProps = {
 	selectedTestGroup: testGroupDataProps[];
 	setSelectedTestGroup: (updatedSelectedGroup: testGroupDataProps[]) => void;
 };
+
+export type DateFieldProps = {
+	minDate: any;
+	classes: ClassesType;
+	value: any;
+	onChange: (value: any) => void;
+	onTimeChange: (value: any) => void;
+	placeholder: string;
+	isTimePicker: boolean;
+	buttons: any;
+	ampm: boolean;
+	maximumDate: any;
+	timePickerOpen: boolean;
+	rootStyle: any;
+	timeActive: any;
+	dateActive: any;
+	toolbarDisabled: boolean;
+	isRoundedOnMobile: boolean;
+	props: any;
+};
+
+export type RightPaneProps = {
+	classes: ClassesType;
+};
+
+export type GroupListProps = {
+	classes: ClassesType;
+};
+export type WhatsappCampaignSecondProps = {
+	classes: ClassesType;
+};
+
+export type GroupsProps = {
+	classes: ClassesType;
+	list: any[];
+	bsDot: boolean;
+	selectedList: any[];
+	innerHeight: number;
+	showSortBy: boolean;
+	showFilter: boolean;
+	showSelectAll: boolean;
+	callbackSelectedGroups: (group: any) => void;
+	callbackUpdateGroups: (value: testGroupDataProps[]) => void;
+	callbackSelectAll: () => void;
+	callbackReciFilter: () => void;
+	callbackShowTestGroup: (showTestGroups: boolean) => void;
+	uniqueKey: string;
+};

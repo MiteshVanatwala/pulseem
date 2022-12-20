@@ -26,16 +26,14 @@ const ValidationAlert = ({
 					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
 						{title}
 					</div>
-					{/* <Box className={classes.alertModalActionWrapper}> */}
-						<Box className={classes.alertModalClose}>
-							<Close fontSize={'small'} onClick={onClose} />
+					<Box className={classes.alertModalClose}>
+						<Close fontSize={'small'} onClick={onClose} />
+					</Box>
+					<Box className={classes.alertModalInfoWrapper}>
+						<Box className={classes.alertModalInfo}>
+							<InfoOutlined fontSize={'small'} onClick={onClose} />
 						</Box>
-						<Box className={classes.alertModalInfoWrapper}>
-							<Box className={classes.alertModalInfo}>
-								<InfoOutlined fontSize={'small'} onClick={onClose} />
-							</Box>
-						</Box>
-					{/* </Box> */}
+					</Box>
 					<div className={classes.alertModalContent}>
 						<ul className={classes.validationAlertModalUl}>
 							{requiredFields?.map((requiredField: string, index: number) => (

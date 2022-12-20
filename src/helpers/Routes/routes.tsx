@@ -246,6 +246,12 @@ export const getRoutes = (
         href: "/react/Whatsapp/send",
         isShow: true,
       },
+      {
+        key: "send_2",
+        title: "Send Whatsapp Campaign_2",
+        href: "/react/Whatsapp/send2",
+        isShow: true,
+      },
     ],
   },
   {
