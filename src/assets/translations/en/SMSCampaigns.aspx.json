@@ -575,5 +575,5 @@
   "notEnoughCreditLeftDesc": "To re-fill your account,<br/>please contact us at 03-524-0290 or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
   "addTrackingUrl": "Tracking URL",
   "showTestGroups": "Show Test Groups",
-  "smsUnsubscribeMessage": "To unsubscribe click on the link: ##SmsUnsubscribeURL##"
+  "smsUnsubscribeMessage": "To unsubscribe click: ##SmsUnsubscribeURL##"
 }
