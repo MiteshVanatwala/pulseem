@@ -75,11 +75,29 @@ export const uploadMedia = createAsyncThunk(
 	}
 );
 
+export const saveTemplates = createAsyncThunk(
+	'whatsAppCampaign/SaveWhatsAppTemplate',
+	async (data: submitTemplatesDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/SaveWhatsAppTemplate`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
 		savedTemplates: [],
 		submitTemplate: [],
+		saveTemplate: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -102,6 +120,9 @@ export const whatsappSlice = createSlice({
 		});
 		builder.addCase(submitTemplates.fulfilled, (state, { payload }) => {
 			state.submitTemplate = payload;
+		});
+		builder.addCase(saveTemplates.fulfilled, (state, { payload }) => {
+			state.saveTemplate = payload;
 		});
 	},
 });
