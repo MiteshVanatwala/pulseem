@@ -10,7 +10,7 @@ const DataTable = ({
     children,
     tableContainer = { classes: undefined, className: '' },
     table = { classes: undefined, className: '' },
-    tableHead = { tableHeadCells: [{ label: '', classes: undefined, className: '', align: '' }], classes: undefined, className: '' },
+    tableHead = { tableHeadCells: [{ label: '', icon: <></>, classes: undefined, className: '', align: '' }], classes: undefined, className: '' },
     ...props
 }) => {
 
@@ -19,7 +19,9 @@ const DataTable = ({
             <Table className={table.className ?? ''} aria-label="customized table" classes={table.classes}>
                 <TableHead>
                     <TableRow classes={tableHead.classes} className={tableHead.className ?? ''}>
-                        {tableHead.tableHeadCells?.map((obj, i) => <TableCell key={i} classes={obj.classes} className={obj.className ?? ''} align={obj.align ?? ''}>{obj.label ?? ''}</TableCell>)}
+                        {tableHead.tableHeadCells?.map((obj, i) => <TableCell key={i} classes={obj.classes} className={obj.className ?? ''} align={obj.align ?? ''}>
+                            <div style={{ maxWidth: '100%', maxHeight: '100%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>{obj.label ?? ''} {obj.icon}</div>
+                        </TableCell>)}
                     </TableRow>
                 </TableHead>
                 {
