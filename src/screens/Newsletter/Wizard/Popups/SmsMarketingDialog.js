@@ -16,7 +16,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 const SmsMarketingDialog = ({
     classes,
     selectedGroups = [],
-    newsletterSettings = null,
+    settings = null,
     isOpen = false,
     smsMarketingModel = null,
     setDialogType = () => null,
@@ -75,10 +75,10 @@ const SmsMarketingDialog = ({
     ];
 
     const onAddLinkToCampaign = () => {
-        setLinkToUpdate(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`);
+        setLinkToUpdate(`##RedirectToEmail##${settings.CampaignID}##ClientID##`);
     }
     const onAddLinkToUpdate = () => {
-        setLinkToCampaign(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${newsletterSettings.CampaignID}&Culture=he-IL`);
+        setLinkToCampaign(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${settings.CampaignID}&Culture=he-IL`);
     }
     const handleFromNumber = (value) => {
         setSmsModel({ ...smsModel, FromNumber: value });
@@ -90,8 +90,8 @@ const SmsMarketingDialog = ({
         }
     }
     const handleUpdate = (model) => {
-        setLinkToUpdateEnabled(model?.Text?.indexOf(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${newsletterSettings.CampaignID}&Culture=he-IL`) === -1)
-        setLinkToCampaignEnabled(model?.Text?.indexOf(`##RedirectToEmail##${newsletterSettings.CampaignID}##ClientID##`) === -1)
+        setLinkToUpdateEnabled(model?.Text?.indexOf(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${settings.CampaignID}&Culture=he-IL`) === -1)
+        setLinkToCampaignEnabled(model?.Text?.indexOf(`##RedirectToEmail##${settings.CampaignID}##ClientID##`) === -1)
         setSmsModel({
             ...smsModel,
             Text: model?.Text,
@@ -109,7 +109,7 @@ const SmsMarketingDialog = ({
         setSmsModel({ ...smsModel, SendDate: finalDate });
 
         if (handleValidation()) {
-            const totalMarketing = { ...newsletterSettings };
+            const totalMarketing = { ...settings };
             const smsCampaignPayload = {
                 Type: 0,
                 SendDate: newVal,

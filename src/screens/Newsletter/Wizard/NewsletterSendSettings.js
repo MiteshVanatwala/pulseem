@@ -111,7 +111,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [campaignValues, setCampaignValues] = useState({
         SendingMethod: 1,
-        CampaignID: params.id
+        CampaignID: params?.id
     });
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroups, setSelectedGroups] = useState([]);
@@ -204,7 +204,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setLoader(true);
         return new Promise(async (resolve, reject) => {
             try {
-                await dispatch(getEmailSendSettings(params.id));
+                await dispatch(getEmailSendSettings(params?.id));
 
                 if (!campaignInfo || campaignInfo?.length === 0)
                     await dispatch(getCampaignInfo(params.id))
@@ -1041,7 +1041,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
                 classes={classes}
                 selectedGroups={selectedGroups}
-                newsletterSettings={campaignValues}
+                settings={campaignValues}
                 setDialogType={() => setDialogType(null)}
                 isOpen={dialogType?.type === 'smsMarketing'}
                 smsMarketingModel={{ ...smsMarketingModel }}
@@ -1056,6 +1056,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 isOpen={dialogType?.type === 'SummaryDialog'}
                 setDialogType={() => setDialogType(null)}
                 groups={selectedGroups}
+                PreviewURL={newsletterSettings?.PreviewURL}
             />}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}
