@@ -101,7 +101,7 @@ const FilterRecipientsDialog = ({
 
 	const finishedCampaigns: testGroupDataProps[] = [
 		{
-			GroupID: 89979,
+			GroupID: 899579,
 			GroupName: 'ccccc (Testing)',
 			SubAccountID: 0,
 			CreationDate: '2017-08-20T11:02:08.933',
@@ -111,7 +111,7 @@ const FilterRecipientsDialog = ({
 			Recipients: 0,
 		},
 		{
-			GroupID: 89980,
+			GroupID: 891980,
 			GroupName: 'cdgsfsgdf (Testing)',
 			SubAccountID: 0,
 			CreationDate: '2017-08-20T11:02:39.197',
@@ -121,7 +121,7 @@ const FilterRecipientsDialog = ({
 			Recipients: 5,
 		},
 		{
-			GroupID: 166670,
+			GroupID: 1666780,
 			GroupName: 'left123',
 			SubAccountID: 0,
 			CreationDate: '2022-04-08T14:41:09.493',
@@ -131,7 +131,7 @@ const FilterRecipientsDialog = ({
 			Recipients: 1,
 		},
 		{
-			GroupID: 165652,
+			GroupID: 1655652,
 			GroupName: 'MeitalTest (Testing)',
 			SubAccountID: 0,
 			CreationDate: '2022-03-10T14:33:53.9',
@@ -141,7 +141,7 @@ const FilterRecipientsDialog = ({
 			Recipients: 0,
 		},
 		{
-			GroupID: 81457,
+			GroupID: 814457,
 			GroupName: 'omer (Testing)',
 			SubAccountID: 0,
 			CreationDate: '2022-04-08T14:41:09.493',
@@ -151,7 +151,7 @@ const FilterRecipientsDialog = ({
 			Recipients: 0,
 		},
 		{
-			GroupID: 55962,
+			GroupID: 552962,
 			GroupName: 'בדיקה (Testing)',
 			SubAccountID: 0,
 			CreationDate: '2016-01-18T18:24:45.42',
@@ -226,14 +226,12 @@ const FilterRecipientsDialog = ({
 	const callbackFiltertedCampaigns = (campaign: any) => {
 		const found = selectedFilterCampaigns
 			.map((c) => {
-				return c.SMSCampaignID;
+				return c.GroupID;
 			})
-			.includes(campaign.SMSCampaignID);
+			.includes(campaign.GroupID);
 		if (found) {
 			setFilterCampaigns(
-				selectedFilterCampaigns.filter(
-					(c) => c.SMSCampaignID !== campaign.SMSCampaignID
-				)
+				selectedFilterCampaigns.filter((c) => c.GroupID !== campaign.GroupID)
 			);
 		} else {
 			setFilterCampaigns([...selectedFilterCampaigns, campaign]);
@@ -370,12 +368,8 @@ const FilterRecipientsDialog = ({
 												innerHeight={160}
 												uniqueKey={'groups_2'}
 												showFilter={false}
-												callbackSelectAll={function (): void {
-													throw new Error('Function not implemented.');
-												}}
-												callbackReciFilter={function (): void {
-													throw new Error('Function not implemented.');
-												}}
+												callbackSelectAll={() => {}}
+												callbackReciFilter={() => {}}
 											/>
 										</div>
 									</div>
@@ -400,17 +394,9 @@ const FilterRecipientsDialog = ({
 												innerHeight={160}
 												uniqueKey={'campaigns'}
 												showFilter={false}
-												callbackSelectAll={function (): void {
-													throw new Error('Function not implemented.');
-												}}
-												callbackReciFilter={function (): void {
-													throw new Error('Function not implemented.');
-												}}
-												callbackShowTestGroup={function (
-													showTestGroups: boolean
-												): void {
-													throw new Error('Function not implemented.');
-												}}
+												callbackSelectAll={() => {}}
+												callbackReciFilter={() => {}}
+												callbackShowTestGroup={() => {}}
 											/>
 										</div>
 									</div>
@@ -432,8 +418,7 @@ const FilterRecipientsDialog = ({
 							className='cancel-button'
 							color='primary'
 							variant='contained'
-							// onClick={onCancel}
-						>
+							onClick={onFilterModalClose}>
 							{t('whatsapp.alertModal.calcelButtonText')}
 						</Button>
 					</Grid>

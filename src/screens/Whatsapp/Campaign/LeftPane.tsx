@@ -4,14 +4,14 @@ import { Grid, Tooltip, Checkbox } from '@material-ui/core';
 import { ClassesType } from '../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { GroupListProps, testGroupDataProps } from './WhatsappCampaign.types';
+import { LeftPaneProps, testGroupDataProps } from './WhatsappCampaign.types';
 import Groups from './Groups/Groups';
 import * as XLSX from 'xlsx';
 import ColumnAdjustmentModal from './ColumnAdjustmentModal';
 import AlertModal from '../Editor/AlertModal';
 import FilterRecipientsDialog from './FilterRecipientsDialog';
 
-const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
+const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 	const { testGroups } = useSelector((state: { sms: any }) => state.sms);
 	const subAccountAllGroups: testGroupDataProps[] = [
 		{
@@ -547,4 +547,4 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 	);
 };
 
-export default GroupsList;
+export default LeftPane;
