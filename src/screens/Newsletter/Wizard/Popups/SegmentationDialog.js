@@ -57,8 +57,8 @@ const SegmentationDialog = ({
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        disabled={campaign.IsNotOpened}
-                        checked={campaign.IsOpened}
+                        disabled={campaign.IsNotOpened || campaign.IsOpenedClicked}
+                        checked={campaign.IsOpened || campaign.IsOpenedClicked}
                         onChange={(e) => handleSetValues({ ...campaign, IsOpened: e.target.checked })}
                         color="primary"
                         inputProps={{ "aria-label": "secondary checkbox" }}
@@ -70,7 +70,7 @@ const SegmentationDialog = ({
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        disabled={campaign.IsOpened}
+                        disabled={campaign.IsOpened || campaign.IsOpenedClicked}
                         checked={campaign.IsNotOpened}
                         onChange={(e) => handleSetValues({ ...campaign, IsNotOpened: e.target.checked })}
                         color="primary"

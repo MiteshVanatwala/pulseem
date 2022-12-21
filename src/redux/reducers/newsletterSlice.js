@@ -261,7 +261,7 @@ export const newsletterSlice = createSlice({
       state.newsletterInfo = payload?.Data?.Info;
     })
     builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
-      state.newsletterSendSummary = payload
+      state.newsletterSendSummary = payload.Data
     })
     builder.addCase(getGroups.fulfilled, (state, { payload }) => {
       state.groupData = payload?.Data

@@ -25,14 +25,14 @@ import RenderToast from "../../../components/core/RenderToast";
 import QuickManualUploadDialog from "./Popups/QuickManualUploadDialog";
 import DeleteDialog from "./Popups/DeleteDialog";
 import SendSuccessDialog from "./Popups/SendSuccessDialog";
-import SummaryDialog from "./Popups/SummaryDialog";
+import ConfirmationDialog from "./Popups/ConfirmationDialog";
 import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
-import { getGroups, getEmailSendSettings, setEmailSendSettings } from "../../../redux/reducers/newsletterSlice";
+import { getGroups, getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
 import { getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
-import SendSummary from "./Popups/SendSummary";
+import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
@@ -104,7 +104,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { defaultGroupId } = useSelector((state) => state.group);
     const { campaignInfo } = useSelector((state) => state.campaignEditor);
     const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
-    const { ToastMessages, newsletterSettings, groupData } = useSelector(state => state.newsletter);
+    const { ToastMessages, newsletterSettings, groupData, newsletterSendSummary } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);
@@ -258,6 +258,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             SendDate: campaignValues.SendDate,
             SendingMethod: campaignValues.SendingMethod ?? 1,
             GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
+            GroupList: selectedGroups.map((g) => g.GroupID),
             ExceptionalDays: filterValues?.exceptionalDays,
             IsBestTime: campaignValues.IsBestTime,
             IsSummaryRequest: showSummary
@@ -309,9 +310,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             const responseDefaultGroup = await dispatch(getDefaultGroup());
             groupId = responseDefaultGroup.payload
         }
-        onSaveSettings(true, groupId.toString()).then(() => {
+        onSaveSettings(true, groupId.toString()).then(async () => {
             if (isEmailVerified) {
-                setDialogType({ type: 'SendSummary' });
+                setLoader(true);
+                await dispatch(getSendSummary(params?.id));
+                setDialogType({ type: 'SummaryDialog' });
+                setLoader(false);
             }
             else {
                 setNewEmailVerification(true);
@@ -588,9 +592,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
-                        onSaveSettings(true).then(() => {
+                        onSaveSettings(true).then(async () => {
                             if (isEmailVerified) {
-                                setDialogType({ type: 'SendSummary' });
+                                setLoader(true);
+                                await dispatch(getSendSummary(params?.id));
+                                setDialogType({ type: 'SummaryDialog' });
+                                setLoader(false);
                             }
                             else {
                                 setNewEmailVerification(true);
@@ -712,7 +719,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel: () => setDialogType(null),
             }),
             sendSuccess: SendSuccessDialog(),
-            summary: SummaryDialog({ classes: classes, count: data })
+            summary: ConfirmationDialog({ classes: classes, count: data })
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -1042,12 +1049,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel={() => setDialogType(null)}
                 onConfirm={() => setDialogType(null)}
             />}
-            {dialogType?.type === 'SendSummary' && <SendSummary
+            {dialogType?.type === 'SummaryDialog' && newsletterSendSummary !== null && <SummaryDialog
                 classes={classes}
                 onClose={() => setDialogType(null)}
                 onConfirm={() => onSaveSettings(true)}
-                isOpen={dialogType?.type === 'SendSummary'}
+                isOpen={dialogType?.type === 'SummaryDialog'}
                 setDialogType={() => setDialogType(null)}
+                groups={selectedGroups}
             />}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}

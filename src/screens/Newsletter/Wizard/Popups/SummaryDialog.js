@@ -1,33 +1,290 @@
-import { Box, Typography } from '@material-ui/core'
-import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { AiOutlineExclamationCircle } from 'react-icons/ai'
+import { useEffect, useState } from "react";
+import { FaMobileAlt } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { Link, MenuItem, Select } from "@material-ui/core";
+import { Box, Grid, Button } from "@material-ui/core";
+import { FaChevronDown } from 'react-icons/fa';
+import { FaChevronUp } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux'
+import clsx from "clsx";
+import { Stack } from "@mui/material";
+import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import moment from 'moment';
+import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
+import { useParams } from "react-router";
+import { getSendSummary } from '../../../../redux/reducers/newsletterSlice';
 
-const SummaryDialog = ({ classes, count = 0 }) => {
-    const { t } = useTranslation()
-    return {
-        title: t('mainReport.summary'),
-        showDivider: true,
-        disableBackdropClick: true,
-        icon: (
-            <AiOutlineExclamationCircle
-                style={{ fontSize: 30, color: "#fff" }}
-            />
-        ),
-        content: (
-            <Box>
-                <Typography className={classes.f18}>
-                    {count} sent
-                </Typography>
-            </Box>
-        ),
-        showDefaultButtons: true,
-        confirmText: t("common.Yes"),
-        cancelText: '',
-        // onClose: () => { history.push("/SMSCampaigns"); },
-        // onCancel: () => { setDialogType(null) },
-        // onConfirm: () => { onSaveSettings(true, "exit") }
+const SummaryDialog = ({ classes,
+    isOpen = false,
+    groups = [],
+    onClose = () => null,
+    onConfirm = () => null,
+    setDialogType = () => null,
+    filteredGroups = null,
+    filteredCampaigns = null,
+    SendDate = "",
+    ...props }) => {
+    const dispatch = useDispatch();
+    const [detailsHide, setdetailsHide] = useState(true);
+    const [subDetailsActive, setsubDetailsActive] = useState(false);
+    const [subRecipientsDetails, setsubRecipients] = useState(false);
+    const { isRTL } = useSelector(state => state.core);
+    const { extraData } = useSelector((state) => state.sms);
+    const { verifiedEmails } = useSelector(state => state.common);
+    const { newsletterSettings, newsletterSendSummary } = useSelector(state => state.newsletter);
+
+    const {
+        FinalClients,
+        TotalClients,
+        NoEmailClients,
+        PendingClients,
+        TotalNotToSend,
+        TimeInterval,
+        PulseAmount,
+        RestrictedClients,
+        DuplicateClients,
+        InvalidClients,
+        RemovedClients,
+        ExceptionalGroups,
+        ExceptionalCampaigns,
+        ExceptionalOpensClicksClientsCount,
+        ExceptionalDaysClientsCount,
+        ExceptionalCampaignsClientsCount,
+        ExceptionalGroupsClientsCount
+    } = newsletterSendSummary;
+
+    const { t } = useTranslation();
+    const params = useParams();
+
+    const handleSmsSettings = () => {
+        onClose();
+        // props.handleCallback()
     }
+    useEffect(() => {
+        dispatch(getAuthorizedEmails());
+    }, [])
+
+    const renderWhenToSend = () => {
+        switch (newsletterSendSummary?.SendingMethod) {
+            case 1: {
+                return t("sms.SendNow");
+            }
+            case 2: {
+                return `${newsletterSendSummary.SendDate.format('dddd , MMMM Do YYYY, h:mm a')}`;
+            }
+            case 3: {
+                const exDates = { ...extraData };
+                const newExDates = Object.keys(exDates).map((item, i) => {
+                    if (exDates[item]) {
+                        return item.toLowerCase().indexOf('extradate') > -1 && Object.values(extraData[item]);
+                    }
+                });
+                let specialField = null;
+                switch (newsletterSendSummary.AutoSendingByUserField) {
+                    case "1":
+                    case 1: {
+                        specialField = t("mainReport.birthday");
+                        break;
+                    }
+                    case "2":
+                    case 2: {
+                        specialField = t("mainReport.creationDay")
+                        break;
+                    }
+                    default: {
+                        specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField - 2}`];
+                    }
+                }
+                return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")} ` + `<span>&nbsp;${specialField}</span>` + `&nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
+            }
+            default: {
+                //alert("לא נבחר זמן שליחה")
+                break;
+            }
+        }
+    }
+    const renderGroupForSend = () => {
+        const tempGroups = newsletterSendSummary.Groups?.split(',');
+        if (tempGroups?.length > 0) {
+            const groupWithRecipients = tempGroups.map((group) => {
+                return groups.find((g) => {
+                    if (g.GroupName.trim().replace(' ', '') === group.trim().replace(' ', '')) {
+                        return g;
+                    }
+                })
+
+            });
+
+            return groupWithRecipients.map((group, idx) => { return renderDetailsLine(group.GroupName, group.Recipients?.toLocaleString()) });
+        }
+        return <></>
+    }
+    const renderDetailsLine = (property, value) => {
+        return <Box className={classes.summaryListItem}
+        >
+            <span>{property}</span>
+            <span className={classes.summaryDetailsSpanBold}>{value}</span>
+        </Box>;
+    }
+    const renderFilterDetails = () => {
+        return detailsHide ? <></> : (<Box className={classes.summaryExpandRecipientFilter}>
+            {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients.toLocaleString())}
+            {InvalidClients > 0 && renderDetailsLine(t("sms.invalidRecipients"), InvalidClients.toLocaleString())}
+            {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients.toLocaleString())}
+            {PendingClients > 0 && renderDetailsLine(t("campaigns.pendingClients"), PendingClients.toLocaleString())}
+            {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients.toLocaleString())}
+            {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients.toLocaleString())}
+            {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
+            {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
+            {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), ExceptionalOpensClicksClientsCount.toLocaleString())}
+            {ExceptionalGroups > 0 && renderDetailsLine(t("smsReport.inputTextFilter"), `${ExceptionalGroups.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalGroupsClientsCount})`)}
+        </Box>)
+    }
+    const currentDialog = {
+        style: { paddingBottom: 20 },
+        title: `${t("sms.smsSummaryDialogTitle")} '${newsletterSendSummary?.CampaignName}'`,
+        showDefaultButtons: false,
+        showDivider: true,
+        content: (
+            <>
+                <Box style={{ fontSize: "22px", marginTop: "5px" }}>
+                    <Box className={classes.baseSum}>
+                        <Box className={classes.sumLeft}>
+                            <Box className={classes.sumChild}>
+                                {/* <span className={clsx(classes.spanSum, classes.bold)}>{t("sms.smsSummaryCampaignFrom")}:</span> */}
+                                <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
+                                <Select
+                                    value={newsletterSendSummary?.FromEmail}
+                                    // onChange={handleChange}
+                                    displayEmpty
+                                    inputProps={{
+                                        'aria-label': 'Without label',
+                                        className: classes.p10,
+                                        style: { maxWidth: '70%' }
+                                    }}
+                                    variant='outlined'
+                                >
+                                    {verifiedEmails.map((obj) => (
+                                        <MenuItem
+                                            key={obj.Number}
+                                            value={obj.Number}
+                                        >
+                                            {obj.Number}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </Box>
+
+                            <Box className={classes.sumChild}>
+                                <span className={classes.spanSum}>{t("report.Subject")}:</span>
+                                <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
+
+                            </Box>
+                            <Box className={classes.sumChild}>
+                                <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
+                                <span className={classes.bodySum}>{renderWhenToSend()}</span>
+                            </Box>
+
+                            {PulseAmount > 0 ? <Box className={classes.sumChild}>
+                                <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
+                                <span className={classes.smsSummaryText}>
+                                    {`${t("smsReport.packetSend")} ${PulseAmount} ${PulseAmount === 1 ? t("common.Recipient") : t("common.Recipients")}`} {" "}
+                                    {`${t("sms.every")} ${TimeInterval} ${TimeInterval === 1 ? t("sms.hour") : t("sms.hours")}`}
+                                </span>
+                            </Box>
+                                : null}
+                            <Box className={classes.sumChild}>
+                                <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
+                                <span className={classes.bodySum}>
+                                    {`${t("sms.smsSummaryDialogTotalRecipients")}: ${newsletterSendSummary.FinalClients?.toLocaleString()}`}
+                                </span>
+                                <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
+                                    {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
+                                </Link>
+                            </Box>
+                        </Box>
+                        <Box className={classes.sumRight}>
+                            <Stack direction='column' alignItems='center' spacing={2}>
+                                <Stack className={classes.previewIframe}>
+                                    {RenderHtml(`<iframe src=${newsletterSettings.PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 100vh;pointer-events: none" />`)}
+                                </Stack>
+                            </Stack>
+                        </Box>
+                    </Box>
+                    <Box>
+                        {detailsHide ? null : <ul className={classes.sumList}>
+                            <li>
+                                <Link onClick={() => { setsubDetailsActive(!subDetailsActive) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
+                                    {t("sms.smsSummaryGroups")} ({newsletterSendSummary.Groups !== '' ? newsletterSendSummary.Groups?.split(',')?.length : 0})
+                                    {subDetailsActive ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
+                                </Link>
+                            </li>
+                        </ul>}
+
+
+                        {!detailsHide && subDetailsActive ? <Box style={{ borderTop: '1px solid #ccc' }}>{renderGroupForSend()}</Box> : null}
+                    </Box>
+                </Box>
+                <Box>
+                    {detailsHide ? null : <ul className={classes.sumList}>
+                        <li
+                            onClick={() => { setsubRecipients(!subRecipientsDetails) }}
+                        >
+                            <Link onClick={() => { setsubRecipients(!subRecipientsDetails) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
+                                {t("sms.smsSummaryRecipientsFilter")} ({TotalClients?.toLocaleString()})
+                                {subRecipientsDetails ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
+                            </Link>
+                        </li>
+                    </ul>}
+                    {subRecipientsDetails ? renderFilterDetails() : null}
+                </Box>
+                <Grid
+                    container
+                    spacing={4}
+                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={onConfirm}
+                            className={clsx(
+                                classes.dialogButton,
+                                classes.dialogConfirmButton,
+                                newsletterSendSummary.FinalClients <= 0 ? classes.disabled : null
+                            )}>
+                            {t("sms.sendDialog")}
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={() => { handleSmsSettings() }}
+                            className={clsx(
+                                classes.dialogButton,
+                                classes.dialogCancelButton
+                            )}>
+                            {t("sms.cancelDialog")}
+                        </Button>
+                    </Grid>
+                </Grid>
+            </>
+        ),
+        icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
+        confirmText: t("common.send"),
+        cancelText: '',
+        onClose: handleSmsSettings,
+    }
+
+    return <BaseDialog
+        classes={classes}
+        open={isOpen}
+        onClose={() => { setDialogType(null) }}
+        {...currentDialog}>
+        {currentDialog.content}
+    </BaseDialog>
+
 }
 
-export default SummaryDialog
+export default SummaryDialog;
