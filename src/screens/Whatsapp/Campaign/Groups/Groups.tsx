@@ -48,7 +48,7 @@ const Groups = ({
 	callbackReciFilter,
 	callbackShowTestGroup,
 	uniqueKey,
-}: ClassesType & GroupsProps) => {
+}: GroupsProps) => {
 	const { windowSize } = useSelector((state: { core: any }) => state.core);
 	const { t } = useTranslation();
 	const [groupNameSearch, setGroupNameSearch] = useState<string>('');

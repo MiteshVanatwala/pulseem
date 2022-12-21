@@ -43,8 +43,9 @@ import TestGroupModal from './TestGroupModal';
 import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/QuickReply';
 import ActionCallPopOver from '../Editor/ActionCallPopOver';
+import FilterRecipientsDialog from './FilterRecipientsDialog';
 
-const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
+const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const testGroupData: testGroupDataProps[] = [

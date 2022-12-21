@@ -8,7 +8,7 @@ export type coreProps = {
 };
 
 export type WhatsappCampaignProps = {
-	classes: ClassesType[];
+	classes: ClassesType['classes'];
 };
 
 export type dynamicButtonProps = {
@@ -63,39 +63,19 @@ export type testGroupModalProps = {
 	setSelectedTestGroup: (updatedSelectedGroup: testGroupDataProps[]) => void;
 };
 
-export type DateFieldProps = {
-	minDate: any;
-	classes: ClassesType;
-	value: any;
-	onChange: (value: any) => void;
-	onTimeChange: (value: any) => void;
-	placeholder: string;
-	isTimePicker: boolean;
-	buttons: any;
-	ampm: boolean;
-	maximumDate: any;
-	timePickerOpen: boolean;
-	rootStyle: any;
-	timeActive: any;
-	dateActive: any;
-	toolbarDisabled: boolean;
-	isRoundedOnMobile: boolean;
-	props: any;
-};
-
 export type RightPaneProps = {
-	classes: ClassesType;
+	classes: ClassesType['classes'];
 };
 
 export type GroupListProps = {
-	classes: ClassesType;
+	classes: ClassesType['classes'];
 };
 export type WhatsappCampaignSecondProps = {
-	classes: ClassesType;
+	classes: ClassesType['classes'];
 };
 
 export type GroupsProps = {
-	classes: ClassesType;
+	classes: ClassesType['classes'];
 	list: any[];
 	bsDot: boolean;
 	selectedList: any[];
@@ -109,4 +89,8 @@ export type GroupsProps = {
 	callbackReciFilter: () => void;
 	callbackShowTestGroup: (showTestGroups: boolean) => void;
 	uniqueKey: string;
+};
+
+export type FilterRecipientsDialogProps = {
+	classes: ClassesType['classes'];
 };

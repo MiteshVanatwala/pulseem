@@ -6,6 +6,7 @@ import { WhatsappCampaignSecondProps } from './WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import GroupsList from './GroupsList';
 import RightPane from './RightPane';
+import FilterRecipientsDialog from './FilterRecipientsDialog';
 
 const SendCampaign = ({
 	classes,
@@ -19,6 +20,7 @@ const SendCampaign = ({
 			classes={classes}
 			customPadding={true}>
 			<div>
+				<FilterRecipientsDialog classes={classes} />
 				<div>
 					<WizardTitle
 						title={translator('mainReport.smsCampaign')}

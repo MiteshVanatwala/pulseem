@@ -7,7 +7,6 @@ import clsx from 'clsx';
 import { GroupListProps, testGroupDataProps } from './WhatsappCampaign.types';
 import Groups from './Groups/Groups';
 import * as XLSX from 'xlsx';
-import Papa from 'papaparse';
 import ColumnAdjustmentModal from './ColumnAdjustmentModal';
 
 const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
@@ -79,7 +78,7 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 	const [manualClick, setmanualClick] = useState<boolean>(false);
 	const [toggleChecked, settoggleChecked] = useState<boolean>(false);
 	const [highlighted, setHighlighted] = useState<boolean>(false);
-	const [areaData, setareaData] = useState<any>([]);
+	const [areaData, setareaData] = useState<string>('');
 	const [selectedGroups, setSelected] = useState<testGroupDataProps[]>([]);
 	const [contacts, setContacts] = useState<any[]>([]);
 	const [totalRecords, settotalRecords] = useState<number>(0);
@@ -159,10 +158,11 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 
 	const handlePasted = () => {
 		let temp = areaData;
-		let a = temp.split('\n').filter((empty: any) => empty);
+		console.log('areaData::', areaData);
+		let a = temp?.split('\n').filter((empty: any) => empty);
 		let b = [];
 		let cols = 0;
-		if (temp.indexOf('\t') > -1) {
+		if (temp?.indexOf('\t') > -1) {
 			for (let i = 0; i < a.length; i++) {
 				let splitted = a[i].split('\t');
 				b.push(splitted);
@@ -191,6 +191,87 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 		setinitialheadstate(dummyArr);
 		setheaders(dummyArr);
 		setIsColumnAdjustmentModal(true);
+	};
+
+	const handleFiles = (e: React.DragEvent<HTMLTextAreaElement>) => {
+		console.log('Drag::', e);
+		e.preventDefault();
+		setHighlighted(false);
+		if (e?.dataTransfer?.files && e?.dataTransfer?.files?.length > 0) {
+			const file: File = e.dataTransfer.files[0];
+			const reader = new FileReader();
+			return new Promise((resolve, reject) => {
+				try {
+					if (file.name.toLowerCase().indexOf('xls') > -1) {
+						console.log('Drag::XLS', file);
+						reader.onload = function (e: any) {
+							if (e?.target?.result) {
+								var data = new Uint8Array(e?.target?.result);
+								setTimeout(() => {
+									var workbook = XLSX.read(data, { type: 'array' });
+									var csv = XLSX.utils.sheet_to_csv(
+										workbook.Sheets[workbook.SheetNames[0]]
+									);
+
+									let temp = csv;
+									let a = temp.split('\n');
+									let b = [];
+									for (let i = 0; i < a.length; i++) {
+										b.push(a[i].split(','));
+									}
+									b.pop();
+									settypedData(b);
+									settotalRecords(b.length);
+
+									setareaData(b.join('\n'));
+									let dummyArr: any = [];
+									for (let i = 0; i < b[0].length; i++) {
+										dummyArr.push(t('sms.adjustTitle'));
+									}
+									setinitialheadstate(dummyArr);
+									setheaders(dummyArr);
+
+									if (dummyArr !== 0) {
+										setDialogType({ type: 'manualUpload' });
+									}
+								}, 0);
+							}
+						};
+						reader.readAsArrayBuffer(file);
+					} else if (file.name.toLowerCase().indexOf('csv') > -1) {
+						reader.readAsText(file);
+						reader.onload = function (e: ProgressEvent<FileReader>) {
+							if (e?.target?.result) {
+								const lines = e.target.result?.toString()?.split('\n');
+								const linesWithoutCommas = lines.map((line: string) =>
+									line.replace(/"[^"]+"/g, function (v) {
+										return v.replace(/,/g, '');
+									})
+								);
+								const updatedData: string[][] = [];
+								linesWithoutCommas?.forEach((line: string) => {
+									if (line?.length > 0) {
+										updatedData.push(line?.split(';'));
+									}
+								});
+								settypedData(updatedData);
+								settotalRecords(updatedData?.length);
+								setareaData(
+									linesWithoutCommas
+										.filter((line: string) => line?.length > 0)
+										.join('\n')
+										?.replace(/;/g, ',')
+								);
+							}
+						};
+					} else {
+						return false;
+					}
+				} catch (error) {
+					reject(error);
+				}
+			});
+		}
 	};
 
 	return (
@@ -280,10 +361,8 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 							e.preventDefault();
 						}}
 						onPaste={areaChange}
-						onDrop={(e) => {
-							e.preventDefault();
-							setHighlighted(false);
-							// handleFiles(e);
+						onDrop={(e: React.DragEvent<HTMLTextAreaElement>) => {
+							handleFiles(e);
 						}}
 					/>
 				</Grid>
