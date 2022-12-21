@@ -31,6 +31,13 @@ import {
 	callToActionRowProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
+	savedTemplateCallToActionProps,
+	savedTemplateCardProps,
+	savedTemplateDataProps,
+	savedTemplateListProps,
+	savedTemplateMediaProps,
+	savedTemplateQuickReplyProps,
+	savedTemplateTextProps,
 	templateDataProps,
 } from '../Editor/WhatsappCreator.types';
 import Highlighter from 'react-highlight-words';
@@ -188,7 +195,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		templateText: '',
 		templateButtons: [],
 	});
-	const [savedTemplateList, setSavedTemplateList] = useState<any>([]);
+	const [savedTemplateList, setSavedTemplateList] = useState<
+		savedTemplateListProps[]
+	>([]);
 	const [dynamicVariable, setDynamicVariable] = useState<string[]>([
 		'and',
 		'the',
@@ -318,70 +327,67 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 
 	const onSavedTemplateChange = (TemplateId: string) => {
 		setSavedTemplate(TemplateId);
-		const savedTemplateData: any = savedTemplateList?.find(
-			(template: any) => template?.TemplateId === TemplateId
-		);
+		const savedTemplateData: savedTemplateListProps | undefined =
+			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
+		const templateData: savedTemplateDataProps | undefined =
+			savedTemplateData?.Data;
 		let updatedTemplateData: templateDataProps = {
 			templateText: '',
 			templateButtons: [],
 		};
 		let updatedButtonType = '';
 		let updatedFileData = '';
-		if (savedTemplateData?.Data) {
-			if ('quick-reply' in savedTemplateData?.Data?.types) {
+		if (templateData) {
+			if ('quick-reply' in templateData?.types) {
+				const quickReplyData: savedTemplateQuickReplyProps =
+					templateData?.types['quick-reply'];
 				updatedButtonType = 'quickReply';
 				const buttonData = setButtonsData(
 					'quickReply',
-					savedTemplateData?.Data?.types['quick-reply']?.actions
+					quickReplyData?.actions
 				);
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['quick-reply']?.body;
-				updatedTemplateData.templateButtons = buttonData;
+				updatedTemplateData.templateText = quickReplyData?.body;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			}
-			if ('call-to-action' in savedTemplateData?.Data?.types) {
+			if ('call-to-action' in templateData?.types) {
+				const callToActionData: savedTemplateCallToActionProps =
+					templateData?.types['call-to-action'];
 				updatedButtonType = 'callToAction';
 				const buttonData = setButtonsData(
 					'callToAction',
-					savedTemplateData?.Data?.types['call-to-action']?.actions
+					callToActionData?.actions
 				);
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['call-to-action']?.body;
-				updatedTemplateData.templateButtons = buttonData;
-			} else if ('card' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['card']?.title;
-				if (savedTemplateData?.Data?.types['card']?.actions?.length > 0) {
-					if (
-						savedTemplateData?.Data?.types['card']?.actions[0]?.type !==
-						'QUICK_REPLY'
-					) {
+				updatedTemplateData.templateText = callToActionData?.body;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else if ('card' in templateData?.types) {
+				const cardData: savedTemplateCardProps = templateData?.types['card'];
+				updatedTemplateData.templateText = cardData?.title;
+				if (cardData?.actions?.length > 0) {
+					if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
 						updatedButtonType = 'callToAction';
 						const buttonData = setButtonsData(
 							'callToAction',
-							savedTemplateData?.Data?.types['card']?.actions
+							cardData?.actions
 						);
-						updatedTemplateData.templateButtons = buttonData;
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					} else {
 						updatedButtonType = 'quickReply';
-						const buttonData = setButtonsData(
-							'quickReply',
-							savedTemplateData?.Data?.types['card']?.actions
-						);
-						updatedTemplateData.templateButtons = buttonData;
+						const buttonData = setButtonsData('quickReply', cardData?.actions);
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					}
 				}
-				if (savedTemplateData?.Data?.types['card']?.media?.length > 0) {
-					updatedFileData = savedTemplateData?.Data?.types['card']?.media[0];
+				if (cardData?.media?.length > 0) {
+					updatedFileData = cardData?.media[0];
 				}
-			} else if ('media' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['media']?.body;
-				if (savedTemplateData?.Data?.types['media']?.media?.length > 0) {
-					updatedFileData = savedTemplateData?.Data?.types['media']?.media[0];
+			} else if ('media' in templateData?.types) {
+				const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+				updatedTemplateData.templateText = mediaData?.body;
+				if (mediaData?.media?.length > 0) {
+					updatedFileData = mediaData?.media[0];
 				}
-			} else if ('text' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['text']?.body;
+			} else if ('text' in templateData?.types) {
+				const textData: savedTemplateTextProps = templateData?.types['text'];
+				updatedTemplateData.templateText = textData?.body;
 			}
 		}
 		setFileData(updatedFileData);

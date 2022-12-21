@@ -27,6 +27,7 @@ const ColumnAdjustmentModal = ({
   typedData,
 }: any) => {
   const theme: any = useTheme();
+  const { t } = useTranslation();
   const fullScreen = useMediaQuery(theme.breakpoints.down("lg"));
   const { t: translator } = useTranslation();
   const [groupTextError, setGroupTextError] = useState<boolean>(false);
@@ -105,6 +106,15 @@ const ColumnAdjustmentModal = ({
       onClose={onColumnAdjustmentModalClose}
       aria-labelledby="responsive-dialog-title"
     >
+      {/* <div className={classes.whatsappCampaignDynamicFieldTitle}>
+				{translator('whatsappCampaign.dfieldTitle')}
+			</div>
+			<Box className={classes.whatsappCampaignDynamicFieldClose}>
+				<IconButton>
+					<Close onClick={onColumnAdjustmentModalClose} />
+				</IconButton>
+			</Box> */}
+
       <div className={classes.columnAdjustmentModal}>
         <div
           id="responsive-dialog-title"
@@ -125,225 +135,206 @@ const ColumnAdjustmentModal = ({
         </Box>
         <div className={classes.columnAdjustmentModalContent}>
           <div className={classes.testGroupModalContentWrapper}>
-            <Grid
-              container
-              className={classes.whatsappCampaignDynamicFieldContent}
-            >
-              <Box>
-                <div className={classes.manualModal}>
-                  <Typography className={classes.inputLabel}>
-                    {translator("common.GroupName")}:
-                  </Typography>
-                  <div className={clsx(classes.buttonForm, classes.fullWidth)}>
-                    <TextField
-                      type="text"
-                      placeholder={translator("common.GroupName")}
-                      className={
-                        groupTextError
-                          ? clsx(classes.textInput, classes.error)
-                          : clsx(classes.textInput, classes.success)
-                      }
-                      // onChange={handleManualDialog}
-                      value={groupNameInput}
-                    ></TextField>
-                    {groupTextError ? (
-                      <span className={classes.errorLabel}>
-                        {GroupNameValidationMessage}
-                      </span>
-                    ) : null}
-                  </div>
+            <Box>
+              <div className={classes.manualModal}>
+                <Typography className={classes.inputLabel}>
+                  {translator("common.GroupName")}:
+                </Typography>
+                <div className={clsx(classes.buttonForm, classes.fullWidth)}>
+                  <TextField
+                    type="text"
+                    placeholder={translator("common.GroupName")}
+                    className={
+                      groupTextError
+                        ? clsx(classes.textInput, classes.error)
+                        : clsx(classes.textInput, classes.success)
+                    }
+                    // onChange={handleManualDialog}
+                    value={groupNameInput}
+                  ></TextField>
+                  {groupTextError ? (
+                    <span className={classes.errorLabel}>
+                      {GroupNameValidationMessage}
+                    </span>
+                  ) : null}
                 </div>
-                <Box className={clsx(classes.commonFieldPulse, classes.mb3)}>
-                  <Typography
-                    style={{ fontSize: "20px", marginInlineEnd: "10px" }}
-                  >
-                    {translator("sms.totalRecipients")}:
-                  </Typography>
-                  <Typography
-                    style={{
-                      fontSize: "20px",
-                      marginInlineEnd: "10px",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {contacts.length !== 0 ? contacts.length : typedData.length}
-                  </Typography>
-                  <Tooltip
-                    disableFocusListener
-                    title={translator("smsReport.manualTotalTooltip")}
-                    classes={{ tooltip: classes.customWidth }}
-                    style={{ justifyContent: "center", zIndex: 9999999999999 }}
-                  >
-                    <Typography className={classes.bodyInfo}>i</Typography>
-                  </Tooltip>
-                </Box>
-                <Box
-                  className={classes.sidebar}
-                  style={{ minHeight: "200px", maxWidth: "700px" }}
-                  key="columnAdjustment"
+              </div>
+              <Box className={clsx(classes.commonFieldPulse, classes.mb3)}>
+                <Typography
+                  style={{ fontSize: "20px", marginInlineEnd: "10px" }}
                 >
-                  <table
-                    style={{
-                      borderCollapse: "collapse",
-                      overflowX: "auto",
-                      minWidth: "100px",
-                    }}
-                  >
-                    {typedData.length !== 0 || contacts.length !== 0 ? (
-                      headers.map((item: any, idx: any) => {
-                        return (
-                          <th key={idx} className={classes.manualHeader}>
-                            <div
-                              onClick={() => {
-                                handleChangeId(idx);
-                              }}
-                              className={classes.adjustP}
-                              style={{ textAlign: "center", cursor: "pointer" }}
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                }}
-                              >
-                                <Typography
-                                  style={{
-                                    fontWeight: "700",
-                                    cursor: "pointer",
-                                    marginInlineEnd: "20px",
-                                  }}
-                                  className={
-                                    columnValidate === true &&
-                                    headers[idx] ===
-                                      translator("sms.adjustTitle")
-                                      ? classes.columnError
-                                      : null
-                                  }
-                                >
-                                  {headers[idx]}
-                                </Typography>
-                                {headers[idx] !==
-                                translator("sms.adjustTitle") ? (
-                                  <AiOutlineClose
-                                    style={{ marginInlineEnd: "8px" }}
-                                    onClick={() => {
-                                      handleCloseSpan(idx, headers[idx]);
-                                    }}
-                                  />
-                                ) : null}
-                                {dropIndex === idx ? (
-                                  <BsChevronUp />
-                                ) : (
-                                  <BsChevronDown
-                                    style={{ marginInlineStart: "4px" }}
-                                  />
-                                )}{" "}
-                              </div>
-                              {dropIndex === idx ? (
-                                <div className={classes.adjustC}>
-                                  {selectArray.map((item: any, id: any) => {
-                                    return (
-                                      <span
-                                        className={
-                                          item.isdisabled
-                                            ? clsx(classes.grayGroup)
-                                            : clsx(classes.grouping)
-                                        }
-                                        onClick={(e: any) => {
-                                          handleSelectFirst(item, id, idx, e);
-                                        }}
-                                      >
-                                        {item.label}
-                                      </span>
-                                    );
-                                  })}
-                                </div>
-                              ) : null}
-                            </div>
-                          </th>
-                        );
-                      })
-                    ) : (
-                      <>Nodata</>
-                    )}
-                    {contacts.length !== 0
-                      ? contacts.map((item: any, idx: any) => {
-                          if (idx > contacts.length - 6) {
-                            return (
-                              <tbody>
-                                <tr id={idx} key={idx}>
-                                  {item.map((temp: any, idx: any) => {
-                                    return (
-                                      <td
-                                        id={idx}
-                                        className={classes.tableColumn}
-                                      >
-                                        {temp}
-                                      </td>
-                                    );
-                                  })}
-                                </tr>
-                              </tbody>
-                            );
-                          }
-                          return null;
-                        })
-                      : typedData.map((item: any, id: any) => {
-                          if (id > typedData.length - 6) {
-                            return (
-                              <tbody>
-                                <tr key={id}>
-                                  {headers.map((data: any, idx: any) => {
-                                    return (
-                                      <td
-                                        key={idx}
-                                        className={classes.tableColumn}
-                                      >
-                                        {item[idx]}
-                                      </td>
-                                    );
-                                  })}
-                                </tr>
-                              </tbody>
-                            );
-                          }
-                          return null;
-                        })}
-                  </table>
-                </Box>
+                  {translator("sms.totalRecipients")}:
+                </Typography>
+                <Typography
+                  style={{
+                    fontSize: "20px",
+                    marginInlineEnd: "10px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {contacts.length !== 0 ? contacts.length : typedData.length}
+                </Typography>
+                <Tooltip
+                  disableFocusListener
+                  title={translator("smsReport.manualTotalTooltip")}
+                  classes={{ tooltip: classes.customWidth }}
+                  style={{ justifyContent: "center", zIndex: 9999999999999 }}
+                >
+                  <Typography className={classes.bodyInfo}>i</Typography>
+                </Tooltip>
               </Box>
-            </Grid>
+              <Box
+                className={classes.columnAdjustmentModalTableWrapper}
+                key="columnAdjustment"
+              >
+                <table>
+                  {typedData.length !== 0 || contacts.length !== 0 ? (
+                    headers.map((item: any, idx: any) => {
+                      return (
+                        <th key={idx} className={classes.manualHeader}>
+                          <div
+                            onClick={() => {
+                              handleChangeId(idx);
+                            }}
+                            className={classes.adjustP}
+                            style={{
+                              textAlign: "center",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <Typography
+                                style={{
+                                  fontWeight: "700",
+                                  cursor: "pointer",
+                                  marginInlineEnd: "20px",
+                                }}
+                                className={
+                                  columnValidate === true &&
+                                  headers[idx] === translator("sms.adjustTitle")
+                                    ? classes.columnError
+                                    : null
+                                }
+                              >
+                                {headers[idx]}
+                              </Typography>
+                              {headers[idx] !==
+                              translator("sms.adjustTitle") ? (
+                                <AiOutlineClose
+                                  style={{ marginInlineEnd: "8px" }}
+                                  onClick={() => {
+                                    handleCloseSpan(idx, headers[idx]);
+                                  }}
+                                />
+                              ) : null}
+                              {dropIndex === idx ? (
+                                <BsChevronUp />
+                              ) : (
+                                <BsChevronDown
+                                  style={{ marginInlineStart: "4px" }}
+                                />
+                              )}{" "}
+                            </div>
+                            {dropIndex === idx ? (
+                              <div className={classes.adjustC}>
+                                {selectArray.map((item: any, id: any) => {
+                                  return (
+                                    <span
+                                      className={
+                                        item.isdisabled
+                                          ? clsx(classes.grayGroup)
+                                          : clsx(classes.grouping)
+                                      }
+                                      onClick={(e: any) => {
+                                        handleSelectFirst(item, id, idx, e);
+                                      }}
+                                    >
+                                      {item.label}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            ) : null}
+                          </div>
+                        </th>
+                      );
+                    })
+                  ) : (
+                    <>Nodata</>
+                  )}
+                  {contacts.length !== 0
+                    ? contacts.map((item: any, idx: any) => {
+                        if (idx > contacts.length - 6) {
+                          return (
+                            <tbody>
+                              <tr id={idx} key={idx}>
+                                {item.map((temp: any, idx: any) => {
+                                  return (
+                                    <td
+                                      id={idx}
+                                      className={classes.tableColumn}
+                                    >
+                                      {temp}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            </tbody>
+                          );
+                        }
+                        return null;
+                      })
+                    : typedData.map((item: any, id: any) => {
+                        if (id > typedData.length - 6) {
+                          return (
+                            <tbody>
+                              <tr key={id}>
+                                {headers.map((data: any, idx: any) => {
+                                  return (
+                                    <td
+                                      key={idx}
+                                      className={classes.tableColumn}
+                                    >
+                                      {item[idx]}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            </tbody>
+                          );
+                        }
+                        return null;
+                      })}
+                </table>
+              </Box>
+            </Box>
           </div>
         </div>
-        <DialogActions>
+        <Grid container className={classes.alertModalAction}>
           <Button
-            // color="primary"
+            className="ok-button"
             variant="contained"
-            style={{
-              margin: "6px",
-              padding: "3px 9px",
-              borderRadius: "20px",
-              backgroundColor: "#d63511",
-              color: "white",
-            }}
+            color="primary"
+            autoFocus
+            // onClick={onConfirmOrYes}
           >
-            Cancel
+            {t("whatsapp.alertModal.okButtonText")}
           </Button>
           <Button
-            // color="secondary"
+            className="cancel-button"
+            color="primary"
             variant="contained"
-            style={{
-              margin: "6px",
-              padding: "3px 9px",
-              borderRadius: "20px",
-              backgroundColor: "#1e8a22",
-              color: "white",
-            }}
+            onClick={onColumnAdjustmentModalClose}
           >
-            Ok
+            {t("whatsapp.alertModal.calcelButtonText")}
           </Button>
-        </DialogActions>
+        </Grid>
       </div>
     </Dialog>
   );

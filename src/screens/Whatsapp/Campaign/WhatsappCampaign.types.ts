@@ -67,7 +67,7 @@ export type RightPaneProps = {
   classes: ClassesType["classes"];
 };
 
-export type GroupListProps = {
+export type LeftPaneProps = {
   classes: ClassesType["classes"];
 };
 export type WhatsappCampaignSecondProps = {
