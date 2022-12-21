@@ -21,7 +21,13 @@ import {
 	JSONFreetextVariableProps,
 	quickReplyButtonProps,
 	savedTemplateAPIProps,
+	savedTemplateCallToActionProps,
+	savedTemplateCardProps,
+	savedTemplateDataProps,
 	savedTemplateListProps,
+	savedTemplateMediaProps,
+	savedTemplateQuickReplyProps,
+	savedTemplateTextProps,
 	submitTemplateAPIProps,
 	templateDataProps,
 	toastProps,
@@ -181,15 +187,19 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setCallToActionFieldRows([initialFieldRow]);
 	};
 
+	const resetToast = () => {
+		setToastMessage({
+			severity: '',
+			color: '',
+			message: '',
+			showAnimtionCheck: false,
+		});
+	};
+
 	const renderToast = () => {
 		if (toastMessage.message?.length > 0) {
 			setTimeout(() => {
-				setToastMessage({
-					severity: '',
-					color: '',
-					message: '',
-					showAnimtionCheck: false,
-				});
+				resetToast();
 			}, 4000);
 			return <Toast data={toastMessage} onClose={undefined} />;
 		}
@@ -215,53 +225,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
-		if (buttonType === 'quickReply') {
-			const buttonData = data?.map((button: buttonsDataProps) => {
-				return {
-					id: uniqid(),
-					typeOfAction: '',
-					fields: [
-						{
-							fieldName: translator('whatsapp.websiteButtonText'),
-							type: 'text',
-							placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-							value: button.title,
-						},
-					],
-				};
-			});
-			return buttonData;
-		} else {
-			const buttonData = data?.map((button: buttonsDataProps) => {
-				if (button?.type === 'PHONE') {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
-						typeOfAction: 'phonenumber',
-						fields: [
-							{
-								fieldName: translator('whatsapp.phoneButtonText'),
-								type: 'text',
-								placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-								value: button.title,
-							},
-							{
-								fieldName: translator('whatsapp.country'),
-								type: 'select',
-								placeholder: 'Select Your Country Code',
-								value: '+972 Israel',
-							},
-							{
-								fieldName: translator('whatsapp.phoneNumber'),
-								type: 'tel',
-								placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-								value: button.phone,
-							},
-						],
-					};
-				} else {
-					return {
-						id: uniqid(),
-						typeOfAction: 'website',
+						typeOfAction: '',
 						fields: [
 							{
 								fieldName: translator('whatsapp.websiteButtonText'),
@@ -271,86 +241,129 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								),
 								value: button.title,
 							},
-							{
-								fieldName: translator('whatsapp.websiteURL'),
-								type: 'text',
-								placeholder: translator('whatsapp.websiteURLPlaceholder'),
-								value: button.url,
-							},
 						],
 					};
-				}
-			});
-			return buttonData;
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: translator('whatsapp.phoneButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.phoneButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.country'),
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972 Israel',
+								},
+								{
+									fieldName: translator('whatsapp.phoneNumber'),
+									type: 'tel',
+									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: translator('whatsapp.websiteButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.websiteButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.websiteURL'),
+									type: 'text',
+									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
 		}
 	};
 
 	const onSavedTemplateChange = (TemplateId: string) => {
 		setSavedTemplate(TemplateId);
-		const savedTemplateData: any = savedTemplateList?.find(
-			(template) => template.TemplateId === TemplateId
-		);
+		const savedTemplateData: savedTemplateListProps | undefined =
+			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
+		const templateData: savedTemplateDataProps | undefined =
+			savedTemplateData?.Data;
 		let updatedTemplateData: templateDataProps = {
 			templateText: '',
 			templateButtons: [],
 		};
 		let updatedButtonType = '';
 		let updatedFileData = '';
-		if (savedTemplateData?.Data) {
-			if ('quick-reply' in savedTemplateData?.Data?.types) {
+		if (templateData) {
+			if ('quick-reply' in templateData?.types) {
+				const quickReplyData: savedTemplateQuickReplyProps =
+					templateData?.types['quick-reply'];
 				updatedButtonType = 'quickReply';
 				const buttonData = setButtonsData(
 					'quickReply',
-					savedTemplateData?.Data?.types['quick-reply']?.actions
+					quickReplyData?.actions
 				);
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['quick-reply']?.body;
-				updatedTemplateData.templateButtons = buttonData;
+				updatedTemplateData.templateText = quickReplyData?.body;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			}
-			if ('call-to-action' in savedTemplateData?.Data?.types) {
+			if ('call-to-action' in templateData?.types) {
+				const callToActionData: savedTemplateCallToActionProps =
+					templateData?.types['call-to-action'];
 				updatedButtonType = 'callToAction';
 				const buttonData = setButtonsData(
 					'callToAction',
-					savedTemplateData?.Data?.types['call-to-action']?.actions
+					callToActionData?.actions
 				);
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['call-to-action']?.body;
-				updatedTemplateData.templateButtons = buttonData;
-			} else if ('card' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['card']?.title;
-				if (savedTemplateData?.Data?.types['card']?.actions?.length > 0) {
-					if (
-						savedTemplateData?.Data?.types['card']?.actions[0]?.type !==
-						'QUICK_REPLY'
-					) {
+				updatedTemplateData.templateText = callToActionData?.body;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else if ('card' in templateData?.types) {
+				const cardData: savedTemplateCardProps = templateData?.types['card'];
+				updatedTemplateData.templateText = cardData?.title;
+				if (cardData?.actions?.length > 0) {
+					if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
 						updatedButtonType = 'callToAction';
 						const buttonData = setButtonsData(
 							'callToAction',
-							savedTemplateData?.Data?.types['card']?.actions
+							cardData?.actions
 						);
-						updatedTemplateData.templateButtons = buttonData;
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					} else {
 						updatedButtonType = 'quickReply';
-						const buttonData = setButtonsData(
-							'quickReply',
-							savedTemplateData?.Data?.types['card']?.actions
-						);
-						updatedTemplateData.templateButtons = buttonData;
+						const buttonData = setButtonsData('quickReply', cardData?.actions);
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					}
 				}
-				if (savedTemplateData?.Data?.types['card']?.media?.length > 0) {
-					updatedFileData = savedTemplateData?.Data?.types['card']?.media[0];
+				if (cardData?.media?.length > 0) {
+					updatedFileData = cardData?.media[0];
 				}
-			} else if ('media' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['media']?.body;
-				if (savedTemplateData?.Data?.types['media']?.media?.length > 0) {
-					updatedFileData = savedTemplateData?.Data?.types['media']?.media[0];
+			} else if ('media' in templateData?.types) {
+				const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+				updatedTemplateData.templateText = mediaData?.body;
+				if (mediaData?.media?.length > 0) {
+					updatedFileData = mediaData?.media[0];
 				}
-			} else if ('text' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['text']?.body;
+			} else if ('text' in templateData?.types) {
+				const textData: savedTemplateTextProps = templateData?.types['text'];
+				updatedTemplateData.templateText = textData?.body;
 			}
 		}
 		setFileData(updatedFileData);
