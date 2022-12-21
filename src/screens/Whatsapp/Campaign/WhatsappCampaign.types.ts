@@ -93,4 +93,6 @@ export type GroupsProps = {
 
 export type FilterRecipientsDialogProps = {
 	classes: ClassesType['classes'];
+	isFilterModal: boolean;
+	onFilterModalClose: () => void;
 };

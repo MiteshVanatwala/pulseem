@@ -11,7 +11,11 @@ import {
 	testGroupDataProps,
 } from './WhatsappCampaign.types';
 
-const FilterRecipientsDialog = ({ classes }: FilterRecipientsDialogProps) => {
+const FilterRecipientsDialog = ({
+	classes,
+	isFilterModal,
+	onFilterModalClose,
+}: FilterRecipientsDialogProps) => {
 	const [toggleReci, settoggleReci] = useState<boolean>(false);
 	const [exceptionalDays, setExceptionalDays] = useState<string>('');
 	const [dialogType, setDialogType] = useState<{}>({ type: null });
@@ -263,8 +267,8 @@ const FilterRecipientsDialog = ({ classes }: FilterRecipientsDialogProps) => {
 		<>
 			<Dialog
 				// fullScreen={fullScreen}
-				open={true}
-				// onClose={onClose}
+				open={isFilterModal}
+				onClose={onFilterModalClose}
 				aria-labelledby='responsive-dialog-title'>
 				<Box
 					style={{

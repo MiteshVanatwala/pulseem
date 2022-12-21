@@ -8,6 +8,7 @@ import { GroupListProps, testGroupDataProps } from './WhatsappCampaign.types';
 import Groups from './Groups/Groups';
 import * as XLSX from 'xlsx';
 import ColumnAdjustmentModal from './ColumnAdjustmentModal';
+import FilterRecipientsDialog from './FilterRecipientsDialog';
 
 const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 	const { testGroups } = useSelector((state: { sms: any }) => state.sms);
@@ -90,6 +91,7 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
 	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
 		useState<boolean>(false);
+	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
 	const [typedData, settypedData] = useState<any>([['Demo', 'Title', 'Name']]);
 	const [initialheadstate, setinitialheadstate] = useState<any>([
 		'Adjust Title',
@@ -521,6 +523,11 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 				headers={headers}
 				setheaders={setheaders}
 				typedData={typedData}
+			/>
+			<FilterRecipientsDialog
+				isFilterModal={isFilterModal}
+				onFilterModalClose={() => setIsFilterModal(false)}
+				classes={classes}
 			/>
 		</Grid>
 	);
