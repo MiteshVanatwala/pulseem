@@ -105,15 +105,6 @@ const ColumnAdjustmentModal = ({
       onClose={onColumnAdjustmentModalClose}
       aria-labelledby="responsive-dialog-title"
     >
-      {/* <div className={classes.whatsappCampaignDynamicFieldTitle}>
-				{translator('whatsappCampaign.dfieldTitle')}
-			</div>
-			<Box className={classes.whatsappCampaignDynamicFieldClose}>
-				<IconButton>
-					<Close onClick={onColumnAdjustmentModalClose} />
-				</IconButton>
-			</Box> */}
-
       <div className={classes.columnAdjustmentModal}>
         <div
           id="responsive-dialog-title"
