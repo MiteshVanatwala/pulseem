@@ -316,13 +316,13 @@ const ActionCallPopOver = ({
 		e.preventDefault();
 		setCallToActionFieldRows(callToActionFieldRows);
 		updateTemplateData(callToActionFieldRows);
-		closeCallToAction();
+		closeCallToAction(false);
 	};
 
 	return (
 		<Dialog
 			open={isCallToActionOpen}
-			onClose={closeCallToAction}
+			onClose={() => closeCallToAction(true)}
 			aria-labelledby='form-dialog-title'
 			fullWidth
 			maxWidth='md'>
@@ -333,7 +333,7 @@ const ActionCallPopOver = ({
 					{translator('whatsapp.callToActionTitle')}
 					<IconButton
 						aria-label='close'
-						onClick={closeCallToAction}
+						onClick={() => closeCallToAction(true)}
 						className={classes.callToActionDialogClose}>
 						<CloseIcon />
 					</IconButton>
@@ -362,8 +362,12 @@ const ActionCallPopOver = ({
 											onChange={(e) => onTypeOfActionChange(e, row)}
 											value={row.typeOfAction}
 											fullWidth>
-											<MenuItem value='phonenumber'>Phone Number</MenuItem>
-											<MenuItem value='website'>Website</MenuItem>
+											<MenuItem value='phonenumber'>
+												<>{translator('whatsapp.phoneNumber')}</>
+											</MenuItem>
+											<MenuItem value='website'>
+												<>{translator('whatsapp.website')}</>
+											</MenuItem>
 										</TextField>
 									</Grid>
 
@@ -387,8 +391,8 @@ const ActionCallPopOver = ({
 														}
 														helperText={
 															field.fieldName === 'Website URL'
-																? `${field.value.length}/${2000}`
-																: `${field.value.length}/${20}`
+																? `${field.value?.length || 0}/${2000}`
+																: `${field.value?.length || 0}/${20}`
 														}
 														placeholder={field.placeholder}
 														variant='outlined'
@@ -439,23 +443,24 @@ const ActionCallPopOver = ({
 					</Grid>
 
 					<DialogActions>
-						{callToActionFieldRows.length < 2 && (
+						{callToActionFieldRows?.length < 2 && (
 							<Button variant='contained' color='primary' onClick={addMore}>
 								<>{translator('whatsapp.callToActionAddMoreButton')}</>
 							</Button>
 						)}
 						<Button
-							onClick={closeCallToAction}
+							type='submit'
+							onClick={() => closeCallToAction(true)}
 							variant='contained'
 							color='secondary'>
 							<>{translator('whatsapp.callToActionExitButton')}</>
 						</Button>
 						<Button
 							type='submit'
-							disabled={callToActionFieldRows.length === 0 ? true : false}
+							disabled={callToActionFieldRows?.length === 0 ? true : false}
 							variant='contained'
 							style={
-								callToActionFieldRows.length > 0
+								callToActionFieldRows?.length > 0
 									? { backgroundColor: 'green', color: 'white' }
 									: {}
 							}>

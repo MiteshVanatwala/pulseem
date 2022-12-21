@@ -92,10 +92,10 @@ const WhatsappTemplateEditor = ({
 				tooltipTitle: 'whatsapp.template.quickReplayTooltip',
 				buttonTitle: 'whatsapp.template.quickReplay',
 			},
-			{
-				tooltipTitle: 'whatsapp.template.removalLinkTooltip',
-				buttonTitle: 'whatsapp.template.removalLink',
-			},
+			// {
+			// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
+			// 	buttonTitle: 'whatsapp.template.removalLink',
+			// },
 			{
 				tooltipTitle: 'whatsapp.template.removalTextTooltip',
 				buttonTitle: 'whatsapp.template.removalText',
@@ -109,16 +109,16 @@ const WhatsappTemplateEditor = ({
 	);
 
 	const isDisableButton = (buttonTitle: string) => {
-		if (buttonTitle.includes('callToAction') && buttonType === 'quickReply') {
+		if (buttonTitle?.includes('callToAction') && buttonType === 'quickReply') {
 			return true;
 		} else if (
-			buttonTitle.includes('quickReplay') &&
+			buttonTitle?.includes('quickReplay') &&
 			buttonType === 'callToAction'
 		) {
 			return true;
 		} else if (
-			buttonTitle.includes('removalText') &&
-			templateText.includes('Reply “remove” to unsubscribe')
+			buttonTitle?.includes('removalText') &&
+			templateText?.includes('Reply “remove” to unsubscribe')
 		) {
 			return true;
 		}
@@ -145,8 +145,8 @@ const WhatsappTemplateEditor = ({
 				<Box
 					className={classes.whatsappActionButtonsWrapper}
 					id='buttons-wrapper'>
-					{buttons.map((button: quickReplyButtonProps | callToActionRowProps) =>
-						button.fields.map(
+					{buttons?.map((button: quickReplyButtonProps | callToActionRowProps) =>
+						button?.fields.map(
 							(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
 								field.fieldName === 'Button Text' && (
 									<Box

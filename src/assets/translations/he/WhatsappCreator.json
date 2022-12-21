@@ -11,6 +11,13 @@
 	"submit": "שלח",
 	"saveSms": "שמור",
 	"saveAndExit": "שמור וצא",
+	"submitted": "התבנית נשלחה בהצלחה",
+	"error": "משהו השתבש",
+	"online": "באינטרנט",
+	"uploadFileTitle": "העלה קובץ-PNG,JPG,PDF,MP4",
+	"uploading": "מעלה...",
+	"totalSize": "גודל כולל",
+	"fileDescription": "רק קובץ אחד - עד 16 מגה-בייט",
 
 	"whatsappTemplate": "צור תבנית WhatsApp חדשה",
 	"toolTip1": "צור את התוכן שברצונך לשלוח לנמענים שלך ולאחר מכן בחר כיצד, מתי ולמי לשלוח",
@@ -22,6 +29,7 @@
 	"selectSavedTemplatePlaceholder": "בחר תבנית שמורה",
 	"typeText": "הוסף טקסט כאן - עד 1024 תווים",
 	"yourMessage": "ההודעה שלך",
+	"noTemplateAaliable": "אין תבנית זמינה",
 
 	"callToActionButton": "קריאה לפעולה",
 	"callToActionSaveButton": "שמור",
@@ -39,14 +47,15 @@
 	"websiteButtonText": "טקסט לחצן",
 	"websiteButtonTextPlaceholder": "בקר באתר שלנו",
 	"websiteURL": "כתובת האתר",
+	"website": "אתר אינטרנט",
 	"websiteURLPlaceholder": "הזן את כתובת האתר שלך",
 
 	"template": {
 		"textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
-		"callToActionTooltip": "קריאה לפעולה",
-		"callToAction": "קריאה לפעולה",
-		"quickReplayTooltip": "שידור חוזר מהיר",
-		"quickReplay": "שידור חוזר מהיר",
+		"callToActionTooltip": "כפתור פעולה",
+		"callToAction": "כפתור פעולה",
+		"quickReplayTooltip": "תגובה מהירה",
+		"quickReplay": "תגובה מהירה",
 		"removalLinkTooltip": "קישור להסרה",
 		"removalLink": "קישור להסרה",
 		"removalTextTooltip": "טקסט הסרה",
@@ -73,6 +82,8 @@
 		"DeleteText": "מחק מסע פרסום",
 		"DeleteTitle": "האם אתה בטוח?",
 		"ConfirmText": "שלח מסע פרסום",
-		"ConfirmTitle": "האם אתה בטוח שברצונך לשלוח את התבנית שלך?"
+		"ConfirmTitle": "האם אתה בטוח שברצונך לשלוח את התבנית שלך?",
+		"fileSizeAlert": "גודל הקובץ צריך להיות פחות מ-16MB",
+		"alert": "עֵרָנִי"
 	}
 }

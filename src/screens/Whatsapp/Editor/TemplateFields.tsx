@@ -11,6 +11,7 @@ import {
 	Button,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
+import AlertModal from './AlertModal';
 
 const TemplateFields = ({
 	classes,
@@ -20,11 +21,13 @@ const TemplateFields = ({
 	onSavedTemplateChange,
 	fileData,
 	setFileData,
+	savedTemplateList,
 }: TemplateFieldsProps & ClassesType) => {
-	const { windowSize } = useSelector(
+	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { t: translator } = useTranslation();
+	const [isAlert, setIsAlert] = useState(false);
 	const [isCampaign, setIsCampaign] = useState(false);
 
 	const units = ['bytes', 'KB', 'MB'];
@@ -46,7 +49,7 @@ const TemplateFields = ({
 				setFileData(e.target.files[0]);
 				setFileSize(niceBytes(e.target.files[0].size));
 			} else {
-				alert('File size should be less than 16MB');
+				setIsAlert(true);
 			}
 		}
 	};
@@ -55,19 +58,6 @@ const TemplateFields = ({
 		e.preventDefault();
 		setFileData(undefined);
 	};
-
-	const names = [
-		'Oliver Hansen',
-		'Van Henry',
-		'April Tucker',
-		'Ralph Hubbard',
-		'Omar Alexander',
-		'Carlos Abbott',
-		'Miriam Wagner',
-		'Bradley Wilkerson',
-		'Virginia Andrews',
-		'Kelly Snyder',
-	];
 
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
@@ -116,11 +106,19 @@ const TemplateFields = ({
 							}
 							onChange={onSavedTemplateChange}
 							value={savedTemplate}>
-							{names.map((name) => (
-								<MenuItem key={name} value={name}>
-									{name}
+							{savedTemplateList?.length > 0 ? (
+								savedTemplateList.map((template) => (
+									<MenuItem
+										key={template.TemplateId}
+										value={template.TemplateId}>
+										{template.TemplateName}
+									</MenuItem>
+								))
+							) : (
+								<MenuItem key={'no-data-template'} disabled>
+									<>{translator('whatsapp.noTemplateAaliable')}</>
 								</MenuItem>
-							))}
+							)}
 						</TextField>
 					</Grid>
 				</Grid>
@@ -130,14 +128,15 @@ const TemplateFields = ({
 				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
-							Upload File-PNG,JPG,PDF,MP4
+							<>{translator('whatsapp.uploadFileTitle')}</>
 						</Typography>
 						<label
 							className={classes.customFileUpload}
 							style={{
-								padding: fileData?.name
-									? '14px 15px 12px 7px'
-									: '17px 15px 15px 7px',
+								padding:
+									fileData?.length > 0
+										? '14px 15px 12px 7px'
+										: '17px 15px 15px 7px',
 							}}>
 							<input
 								type='file'
@@ -145,7 +144,7 @@ const TemplateFields = ({
 								accept='image/png, image/jpeg, application/pdf, video/mp4'
 								onChange={(e) => onFileUploadChange(e)}
 							/>
-							{fileData?.name ? (
+							{fileData?.length > 0 ? (
 								<div style={{ marginRight: 'auto' }}>
 									<Button
 										variant='contained'
@@ -156,7 +155,11 @@ const TemplateFields = ({
 											padding: '0px 10px 0px 10px',
 										}}
 										onClick={(e) => onFileDeselect(e)}>
-										{fileData?.name?.substring(0, 10) + '...'}&emsp;
+										{fileData
+											?.split('/')
+											[fileData?.split('/')?.length - 1]?.substring(0, 10) +
+											'...'}
+										&emsp;
 										<i className='zmdi zmdi-close'></i>
 									</Button>
 								</div>
@@ -166,13 +169,29 @@ const TemplateFields = ({
 						</label>
 
 						<Typography className={classes.buttonContent}>
-							{fileData?.name
-								? `Total Size ${fileSize}`
-								: 'Only one file - up to 16 MB'}
+							{fileData?.length > 0 ? (
+								<>
+									{isRTL
+										? `${fileSize} ${translator('whatsapp.totalSize')}`
+										: `${translator('whatsapp.totalSize')} ${fileSize}`}
+								</>
+							) : (
+								<>{translator('whatsapp.fileDescription')}</>
+							)}
 						</Typography>
 					</Grid>
 				</Grid>
 			</Grid>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isAlert}
+				onClose={() => setIsAlert(false)}
+				title={translator('whatsapp.alertModal.alert')}
+				subtitle={translator('whatsapp.alertModal.fileSizeAlert')}
+				type='alert'
+				onConfirmOrYes={() => setIsAlert(false)}
+			/>
 		</Grid>
 	);
 };

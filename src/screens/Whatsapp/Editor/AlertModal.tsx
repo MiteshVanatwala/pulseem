@@ -10,6 +10,7 @@ const AlertModal = ({
 	isOpen,
 	type,
 	onClose,
+	onConfirmOrYes,
 	title,
 	subtitle,
 	children,
@@ -51,7 +52,8 @@ const AlertModal = ({
 								<Button
 									className='confirm-button'
 									color='secondary'
-									variant='contained'>
+									variant='contained'
+									onClick={onConfirmOrYes}>
 									{translator('whatsapp.alertModal.confirmButtonText')}
 								</Button>
 								<Button
@@ -68,7 +70,8 @@ const AlertModal = ({
 								<Button
 									className='confirm-button'
 									color='secondary'
-									variant='contained'>
+									variant='contained'
+									onClick={onConfirmOrYes}>
 									{translator('whatsapp.alertModal.yesButtonText')}
 								</Button>
 								<Button
@@ -85,7 +88,8 @@ const AlertModal = ({
 								<Button
 									className='confirm-button'
 									color='secondary'
-									variant='contained'>
+									variant='contained'
+									onClick={onConfirmOrYes}>
 									{translator('whatsapp.alertModal.submitButtonText')}
 								</Button>
 								<Button

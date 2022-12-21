@@ -363,7 +363,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		clear: 'both',
 		lineHeight: '18px',
 		fontSize: '15px',
-		padding: '8px',
 		position: 'relative',
 		margin: '8px 0',
 		maxWidth: '85%',
@@ -376,8 +375,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			borderStyle: 'solid',
 		},
 		'&.sent': {
-			background: '#e1ffc7',
-			borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
 			float: isRTL ? 'right' : 'left',
 			'&::after': {
 				borderWidth: '0px 10px 10px 0px',
@@ -385,11 +382,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				top: '0',
 				left: '-10px',
 			},
-			'& pre': {
-				margin: '0px',
-				fontFamily: 'Assistant',
-				whiteSpace: 'pre-line',
-			},
+			'& pre': {},
 		},
 		'&.quick-reply-button': {
 			backgroundColor: '#b7b7b7',
@@ -410,11 +403,27 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 	},
+	whatsappMobileMessageTextAndImage: {
+		margin: '0px',
+		fontFamily: 'Assistant',
+		whiteSpace: 'pre-line',
+		background: '#e1ffc7',
+		padding: '8px',
+		borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
+		'& pre': {
+			wordWrap: 'break-word',
+			whiteSpace: 'pre-line',
+			margin: '0px',
+			fontFamily: 'Assistant',
+		},
+		'& img': {
+			width: '100%',
+			borderRadius: '4px',
+		},
+	},
 	callToActionButtonsWrapper: {
 		borderTop: '1px solid #cbcbcb',
-		margin: '4px -8px 0px -8px',
 		textAlign: 'center',
-		padding: '4px 8px 0px 8px',
 		'& a': {
 			display: 'flex',
 			flexDirection: 'row',
