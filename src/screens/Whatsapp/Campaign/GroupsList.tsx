@@ -8,6 +8,7 @@ import { GroupListProps, testGroupDataProps } from './WhatsappCampaign.types';
 import Groups from './Groups/Groups';
 import * as XLSX from 'xlsx';
 import ColumnAdjustmentModal from './ColumnAdjustmentModal';
+import AlertModal from '../Editor/AlertModal';
 import FilterRecipientsDialog from './FilterRecipientsDialog';
 
 const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
@@ -75,6 +76,8 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 		},
 	];
 	const { t } = useTranslation();
+	const [isAlert, setIsAlert] = useState(false);
+	const [alertModalSubtitle, setAlertModalSubtitle] = useState<string>('');
 	const [groupClick, setgroupClick] = useState<boolean>(true);
 	const [manualClick, setmanualClick] = useState<boolean>(false);
 	const [toggleChecked, settoggleChecked] = useState<boolean>(false);
@@ -195,83 +198,86 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 	};
 
 	const handleFiles = (e: React.DragEvent<HTMLTextAreaElement>) => {
-		console.log('Drag::', e);
 		e.preventDefault();
 		setHighlighted(false);
 		if (e?.dataTransfer?.files && e?.dataTransfer?.files?.length > 0) {
-			const file: File = e.dataTransfer.files[0];
-			const reader = new FileReader();
-			return new Promise((resolve, reject) => {
-				try {
-					if (file.name.toLowerCase().indexOf('xls') > -1) {
-						console.log('Drag::XLS', file);
-						reader.onload = function (e: any) {
-							if (e?.target?.result) {
-								var data = new Uint8Array(e?.target?.result);
-								setTimeout(() => {
-									var workbook = XLSX.read(data, { type: 'array' });
-									var csv = XLSX.utils.sheet_to_csv(
-										workbook.Sheets[workbook.SheetNames[0]]
+			if (e?.dataTransfer?.files?.length === 1) {
+				const file: File = e.dataTransfer.files[0];
+				const reader = new FileReader();
+				return new Promise((resolve, reject) => {
+					try {
+						if (file.name.toLowerCase().indexOf('xls') > -1) {
+							reader.onload = function (e: any) {
+								if (e?.target?.result) {
+									var data = new Uint8Array(e?.target?.result);
+									setTimeout(() => {
+										var workbook = XLSX.read(data, { type: 'array' });
+										var csv: string = XLSX.utils.sheet_to_csv(
+											workbook.Sheets[workbook.SheetNames[0]]
+										);
+
+										let temp: string = csv;
+										let a: string[] = temp.split('\n');
+										let b: string[][] = [];
+										for (let i = 0; i < a.length; i++) {
+											b.push(a[i].split(','));
+										}
+										b.pop();
+										settypedData(b);
+										settotalRecords(b.length);
+										setareaData(b.join('\n'));
+										let dummyArr: any = [];
+										for (let i = 0; i < b[0].length; i++) {
+											dummyArr.push(t('sms.adjustTitle'));
+										}
+										setinitialheadstate(dummyArr);
+										setheaders(dummyArr);
+
+										setIsColumnAdjustmentModal(true);
+									}, 0);
+								}
+							};
+							reader.readAsArrayBuffer(file);
+						} else if (file.name.toLowerCase().indexOf('csv') > -1) {
+							reader.readAsText(file);
+							reader.onload = function (e: ProgressEvent<FileReader>) {
+								if (e?.target?.result) {
+									const lines = e.target.result?.toString()?.split('\n');
+									const linesWithoutCommas = lines.map((line: string) =>
+										line.replace(/"[^"]+"/g, function (v) {
+											return v.replace(/,/g, '');
+										})
 									);
-
-									let temp = csv;
-									let a = temp.split('\n');
-									let b = [];
-									for (let i = 0; i < a.length; i++) {
-										b.push(a[i].split(','));
-									}
-									b.pop();
-									settypedData(b);
-									settotalRecords(b.length);
-
-									setareaData(b.join('\n'));
-									let dummyArr: any = [];
-									for (let i = 0; i < b[0].length; i++) {
-										dummyArr.push(t('sms.adjustTitle'));
-									}
-									setinitialheadstate(dummyArr);
-									setheaders(dummyArr);
-
-									if (dummyArr !== 0) {
-										setDialogType({ type: 'manualUpload' });
-									}
-								}, 0);
-							}
-						};
-						reader.readAsArrayBuffer(file);
-					} else if (file.name.toLowerCase().indexOf('csv') > -1) {
-						reader.readAsText(file);
-						reader.onload = function (e: ProgressEvent<FileReader>) {
-							if (e?.target?.result) {
-								const lines = e.target.result?.toString()?.split('\n');
-								const linesWithoutCommas = lines.map((line: string) =>
-									line.replace(/"[^"]+"/g, function (v) {
-										return v.replace(/,/g, '');
-									})
-								);
-								const updatedData: string[][] = [];
-								linesWithoutCommas?.forEach((line: string) => {
-									if (line?.length > 0) {
-										updatedData.push(line?.split(';'));
-									}
-								});
-								settypedData(updatedData);
-								settotalRecords(updatedData?.length);
-								setareaData(
-									linesWithoutCommas
-										.filter((line: string) => line?.length > 0)
-										.join('\n')
-										?.replace(/;/g, ',')
-								);
-							}
-						};
-					} else {
-						return false;
+									const updatedData: string[][] = [];
+									linesWithoutCommas?.forEach((line: string) => {
+										if (line?.length > 0) {
+											updatedData.push(line?.split(';'));
+										}
+									});
+									settypedData(updatedData);
+									settotalRecords(updatedData?.length);
+									setareaData(
+										linesWithoutCommas
+											.filter((line: string) => line?.length > 0)
+											.join('\n')
+											?.replace(/;/g, ',')
+									);
+									setIsColumnAdjustmentModal(true);
+								}
+							};
+						} else {
+							setAlertModalSubtitle('File type is not supported');
+							setIsAlert(true);
+							return false;
+						}
+					} catch (error) {
+						reject(error);
 					}
-				} catch (error) {
-					reject(error);
-				}
-			});
+				});
+			} else {
+				setAlertModalSubtitle('Multiple files are not supported');
+				setIsAlert(true);
+			}
 		}
 	};
 
@@ -527,6 +533,15 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 				isFilterModal={isFilterModal}
 				onFilterModalClose={() => setIsFilterModal(false)}
 				classes={classes}
+			/>
+			<AlertModal
+				classes={classes}
+				isOpen={isAlert}
+				onClose={() => setIsAlert(false)}
+				title={t('whatsapp.alertModal.alert')}
+				subtitle={alertModalSubtitle}
+				type='alert'
+				onConfirmOrYes={() => setIsAlert(false)}
 			/>
 		</Grid>
 	);
