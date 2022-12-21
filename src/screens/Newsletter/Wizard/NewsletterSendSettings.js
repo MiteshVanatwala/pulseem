@@ -22,9 +22,7 @@ import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { Stack } from "@mui/material";
 import RenderToast from "../../../components/core/RenderToast";
-// import ManualUploadDialog from "./Popups/ManualUploadDialog";
 import QuickManualUploadDialog from "./Popups/QuickManualUploadDialog";
-// import CautionDialog from "./Popups/CautionDialog";
 import DeleteDialog from "./Popups/DeleteDialog";
 import SendSuccessDialog from "./Popups/SendSuccessDialog";
 import SummaryDialog from "./Popups/SummaryDialog";
@@ -447,6 +445,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const callbackUpdateGroupFilterd = (groups) => {
         setFilterValues({ ...filterValues, selectedFilterGroups: groups })
     }
+    const callbackUpdateCampaignFilterd = (campaigns) => {
+        setFilterValues({ ...filterValues, selectedFilterCampaigns: campaigns })
+    }
     const callbackFilteredGroups = (group) => {
         const found = filterValues.selectedFilterGroups
             .map((g) => {
@@ -618,13 +619,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             onConfirm: () => handleFilterConfirm(),
             totalCampaigns: previousCampaignData,
             callbackFiltertedCampaigns: (campaign) => callbackFiltertedCampaigns(campaign),
-            callbackUpdateCampaignFilter: (group) => callbackUpdateGroupFilterd(group),
+            callbackUpdateCampaignFilter: (campagin) => callbackUpdateCampaignFilterd(campagin),
             handleReciInput: handleReciInput,
             filterValues: filterValues,
             setFilterValues: setFilterValues,
             groupList: groupData?.Groups,
-            callbackUpdateGroupFilterd: callbackUpdateGroupFilterd,
-            callbackFilteredGroups: callbackFilteredGroups,
+            callbackUpdateGroupFilterd: (group) => callbackUpdateGroupFilterd(group),
+            callbackFilteredGroups: (group) => callbackFilteredGroups(group),
             renderHtml: renderHtml,
         })
 
