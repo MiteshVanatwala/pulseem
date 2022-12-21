@@ -187,15 +187,19 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setCallToActionFieldRows([initialFieldRow]);
 	};
 
+	const resetToast = () => {
+		setToastMessage({
+			severity: '',
+			color: '',
+			message: '',
+			showAnimtionCheck: false,
+		});
+	};
+
 	const renderToast = () => {
 		if (toastMessage.message?.length > 0) {
 			setTimeout(() => {
-				setToastMessage({
-					severity: '',
-					color: '',
-					message: '',
-					showAnimtionCheck: false,
-				});
+				resetToast();
 			}, 4000);
 			return <Toast data={toastMessage} onClose={undefined} />;
 		}
@@ -221,53 +225,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
-		if (buttonType === 'quickReply') {
-			const buttonData = data?.map((button: buttonsDataProps) => {
-				return {
-					id: uniqid(),
-					typeOfAction: '',
-					fields: [
-						{
-							fieldName: translator('whatsapp.websiteButtonText'),
-							type: 'text',
-							placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-							value: button.title,
-						},
-					],
-				};
-			});
-			return buttonData;
-		} else {
-			const buttonData = data?.map((button: buttonsDataProps) => {
-				if (button?.type === 'PHONE') {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
-						typeOfAction: 'phonenumber',
-						fields: [
-							{
-								fieldName: translator('whatsapp.phoneButtonText'),
-								type: 'text',
-								placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-								value: button.title,
-							},
-							{
-								fieldName: translator('whatsapp.country'),
-								type: 'select',
-								placeholder: 'Select Your Country Code',
-								value: '+972 Israel',
-							},
-							{
-								fieldName: translator('whatsapp.phoneNumber'),
-								type: 'tel',
-								placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-								value: button.phone,
-							},
-						],
-					};
-				} else {
-					return {
-						id: uniqid(),
-						typeOfAction: 'website',
+						typeOfAction: '',
 						fields: [
 							{
 								fieldName: translator('whatsapp.websiteButtonText'),
@@ -277,17 +241,63 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								),
 								value: button.title,
 							},
-							{
-								fieldName: translator('whatsapp.websiteURL'),
-								type: 'text',
-								placeholder: translator('whatsapp.websiteURLPlaceholder'),
-								value: button.url,
-							},
 						],
 					};
-				}
-			});
-			return buttonData;
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: translator('whatsapp.phoneButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.phoneButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.country'),
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972 Israel',
+								},
+								{
+									fieldName: translator('whatsapp.phoneNumber'),
+									type: 'tel',
+									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: translator('whatsapp.websiteButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.websiteButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.websiteURL'),
+									type: 'text',
+									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
 		}
 	};
 
@@ -313,7 +323,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					quickReplyData?.actions
 				);
 				updatedTemplateData.templateText = quickReplyData?.body;
-				updatedTemplateData.templateButtons = buttonData;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			}
 			if ('call-to-action' in templateData?.types) {
 				const callToActionData: savedTemplateCallToActionProps =
@@ -324,7 +334,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					callToActionData?.actions
 				);
 				updatedTemplateData.templateText = callToActionData?.body;
-				updatedTemplateData.templateButtons = buttonData;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			} else if ('card' in templateData?.types) {
 				const cardData: savedTemplateCardProps = templateData?.types['card'];
 				updatedTemplateData.templateText = cardData?.title;
@@ -335,11 +345,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							'callToAction',
 							cardData?.actions
 						);
-						updatedTemplateData.templateButtons = buttonData;
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					} else {
 						updatedButtonType = 'quickReply';
 						const buttonData = setButtonsData('quickReply', cardData?.actions);
-						updatedTemplateData.templateButtons = buttonData;
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					}
 				}
 				if (cardData?.media?.length > 0) {
