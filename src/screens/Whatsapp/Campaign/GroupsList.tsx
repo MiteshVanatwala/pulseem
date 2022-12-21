@@ -120,8 +120,7 @@ const GroupsList = ({ classes }: ClassesType & GroupListProps) => {
 	};
 
 	const callbackFilter = () => {
-		setDialogType({ type: null });
-		setDialogType({ type: 'filterRecipients' });
+		setIsFilterModal(true);
 	};
 
 	const callbackSelectAll = () => {
