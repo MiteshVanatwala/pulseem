@@ -526,8 +526,12 @@
       "segmCritCb1": "לקוחות שפתחו דיוור",
       "segmCritCb2": "לקוחות שלא פתחו דיוור",
       "segmCritCb3": "לקוחות שהקליקו על קישור",
-      "segmCritCb4": "בדיוור לקוחות שלא הקליקו על קישורים בדיוור",
+      "segmCritCb4": "לקוחות שלא הקליקו על קישורים בדיוור",
       "insertCampaginName": "אילו הגדרות שליחה לשכפל מקמפיין ##campaignName##?",
+      "emailFilterInput": "לא לשלוח ללקוחות שקיבלו ניוזלטר במספר הימים האחרונים",
+      "pendingClients": "לקוחות הממתינים לאישור",
+      "restrictedClients": "לקוחות חסומים",
+      "duplicatedClients": "לקוחות כפולים",
       "filters": "סינון",
       "segmentations": "פילוחים",
       "smsMarketing": {

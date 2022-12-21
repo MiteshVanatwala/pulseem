@@ -537,6 +537,10 @@
       "segmCritCb3": "Recipients That Clicked On Links",
       "segmCritCb4": "Recipients That Not Clicked On Links",
       "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
+      "emailFilterInput": "Don't send to recipients that got Email in last previous days",
+      "pendingClients": "Pending clients for approval",
+      "restrictedClients": "Restricted clients",
+      "duplicatedClients": "Duplicated clients",
       "filters": "Filters",
       "segmentations": "Segmentations",
       "smsMarketing": {
@@ -644,5 +648,5 @@
   "totalSize": "Total size",
   "kb": "KB",
   "saveBlock": "Save Block",
-  "savedBlocks": "Saved blocks"
+  "savedBlocks": "Saved-blocks"
 }
