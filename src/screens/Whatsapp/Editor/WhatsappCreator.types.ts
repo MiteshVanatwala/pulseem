@@ -130,12 +130,14 @@ export type savedTemplateVariablesProps = {
 };
 
 export type savedTemplateActionProps = {
-	id: string;
 	title: string;
+	type: string;
+	url: string;
+	phone: string;
 };
 
 export type savedTemplateQuickReplyProps = {
-	action: savedTemplateActionProps;
+	actions: savedTemplateActionProps[];
 	body: string;
 };
 
@@ -157,7 +159,7 @@ export type savedTemplateCardActionProps = {
 };
 
 export type savedTemplateCardProps = {
-	action: savedTemplateCardActionProps[];
+	actions: savedTemplateCardActionProps[];
 	media: string[];
 	subtitle: string;
 	title: string;
@@ -171,21 +173,21 @@ export type savedTemplateCallToActionActionProps = {
 };
 
 export type savedTemplateCallToActionProps = {
-	action: savedTemplateCallToActionActionProps[];
+	actions: savedTemplateCallToActionActionProps[];
 	body: string;
 };
 
 export type savedTemplateTypesProps = {
-	['quick-reply']: savedTemplateQuickReplyProps;
-	['media']: savedTemplateMediaProps;
-	['text']: savedTemplateTextProps;
-	['card']: savedTemplateCardProps;
-	['call-to-action']: savedTemplateCallToActionProps;
+	'quick-reply': savedTemplateQuickReplyProps;
+	'call-to-action': savedTemplateCallToActionProps;
+	media: savedTemplateMediaProps;
+	text: savedTemplateTextProps;
+	card: savedTemplateCardProps;
 };
 
 export type savedTemplateDataProps = {
-	variables: savedTemplateVariablesProps;
 	types: savedTemplateTypesProps;
+	variables: savedTemplateVariablesProps;
 };
 
 export type savedTemplateListProps = {
