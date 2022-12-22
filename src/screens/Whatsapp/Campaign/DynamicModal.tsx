@@ -71,6 +71,12 @@ const DynamicModal = ({
 		[]
 	);
 
+	const onAddRemovalLink = () => {
+		if (!linkInput?.includes('##SMSUnsubscribelink##')) {
+			setLinkInput(linkInput + '##SMSUnsubscribelink##');
+		}
+	};
+
 	return (
 		<>
 			<Dialog
@@ -87,7 +93,9 @@ const DynamicModal = ({
 					</IconButton>
 				</Box>
 				<Grid container className={classes.whatsappCampaignDynamicFieldContent}>
-					<Grid container className={classes.whatsappCampaignDynamicFieldContentText}>
+					<Grid
+						container
+						className={classes.whatsappCampaignDynamicFieldContentText}>
 						<Stack direction='row' spacing={0}>
 							{dynamicButtons.map(
 								(button: dynamicButtonProps, index: number) => (
@@ -212,6 +220,14 @@ const DynamicModal = ({
 								}
 								value={linkInput}
 							/>
+							<Button
+								variant='outlined'
+								color='primary'
+								size='small'
+								className={classes.whatsappCampaignDynamicFieldLinkRemoval}
+								onClick={() => onAddRemovalLink()}>
+								Add removal link
+							</Button>
 						</div>
 					)}
 

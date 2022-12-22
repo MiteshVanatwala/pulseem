@@ -961,6 +961,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			color: '#ffffff',
 		},
 	},
+	whatsappCampaignDynamicFieldLinkRemoval: {
+		textTransform: 'capitalize',
+		fontSize: '14px',
+		backgroundColor: '#0371ad',
+		color: '#ffffff',
+		marginTop: '6px',
+		marginLeft: '10px',
+		padding: '3px 9px',
+		borderRadius: '20px',
+		'&:hover': {
+			textTransform: 'capitalize',
+			fontSize: '14px',
+			backgroundColor: '#0371ad',
+			color: '#ffffff',
+		},
+	},
 	whatsappCampaignDynamicFieldPersonalField: {
 		fontSize: '14px',
 		width: 'calc(100% - 288px)',
