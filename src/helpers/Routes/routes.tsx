@@ -18,16 +18,18 @@ import {
   GroupMenuIcon,
 } from "../../assets/images/settings/index";
 import { FaBinoculars } from "react-icons/fa";
-import SettingsLogo from "../../assets/images/settings-white.png";
 import { FaHome } from "react-icons/fa";
+import { logout } from "../Api/PulseemReactAPI";
+import { MdLogout } from "react-icons/md";
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
   style: string = "",
-  isAllowSwitchAccount: Boolean = false
+  isAllowSwitchAccount: Boolean = false,
+  title: string = "Settings"
 ) => ({
   key: "settings",
-  title: <img alt="settings" src={SettingsLogo} className={style} />,
+  title: title,
   href: "/Pulseem/AccountSettings.aspx",
   options: [
     {
@@ -74,6 +76,13 @@ export const getSettingsItem = (
       isFaIcon: true,
       isShow: true,
     },
+    {
+      title: t("appBar.logout"),
+      onClick: logout,
+      iconSrc: MdLogout,
+      isFaIcon: true,
+      isShow: true,
+    },
   ],
 });
 
@@ -93,13 +102,6 @@ export const getRoutes = (
     href: "/react",
     isShow: windowSize && windowSize === "xs" ? true : false,
     icon: <img alt="Dashboard" src={DashboardIcon} />,
-  },
-  {
-    key: "homepage",
-    title: t("dashboard.pageTitle"),
-    href: "/react",
-    isShow: true,
-    icon: <FaHome style={{ color: "#fff" }} />,
   },
   {
     key: "groups",
@@ -223,17 +225,6 @@ export const getRoutes = (
         href: "/Pulseem/ResponsesReport.aspx?fromreact=true",
         isShow: true,
       },
-    ],
-  },
-  {
-    key: "mms",
-    title: "MMS",
-    pageTitle: t("mms.logPageHeaderResource1.Text"),
-    iconUnicode: "\ue11b",
-    href: "/react/MmsCampaigns",
-    isShow: true,
-    icon: <img alt="Mms" src={MmsIcon} />,
-    options: [
       {
         title: t("master.NewMMSCampaign.Text"),
         href: "/Pulseem/MmsCampaignEdit.aspx?fromreact=true",
@@ -316,7 +307,7 @@ export const getRoutes = (
         title: t("master.manageNotifications"),
         href: "/react/Notifications",
         isShow: true,
-      }
+      },
     ],
   },
   {

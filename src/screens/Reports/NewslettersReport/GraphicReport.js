@@ -453,7 +453,7 @@ const GraphicReport = ({ props, classes }) => {
       return (
         <Box className={clsx(classes.mt25, classes.mb10, classes.reportPaperBgGray, classes.spaceBetween)}>
           {items.map((item, idx) => (
-            <Box className={clsx(classes.ml25, classes.ps25, classes.pr25)} key={idx}>
+            <Box className={clsx(classes.ml25, classes.ps25, classes.ps25)} key={idx}>
               <Typography className={clsx(classes.bold, classes.blue, classes.f20)}>
                 {t(item.title)}
               </Typography>

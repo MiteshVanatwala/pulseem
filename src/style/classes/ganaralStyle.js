@@ -305,9 +305,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   plr10: {
     padding: "0 10px",
   },
-  pr25: {
-    paddingInlineStart: 25,
-  },
   pr10: {
     paddingInlineStart: 10,
   },
@@ -715,7 +712,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "600",
     marginInlineEnd: "10px",
     "@media screen and (max-width: 768px)": {
-      // width : '300px',
       fontSize: "26px",
     },
   },
@@ -757,7 +753,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#157eaf",
     fontSize: "30px",
     "@media screen and (max-width: 768px)": {
-      // width : '300px',
       fontSize: "24px",
     },
   },

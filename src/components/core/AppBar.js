@@ -4,7 +4,6 @@ import {
   Grow, Paper, Popper, MenuList, SvgIcon, Grid, Box
 } from '@material-ui/core';
 import clsx from 'clsx';
-import { ArrowDropUp } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLanguage } from '../../redux/reducers/coreSlice'
 import { useTranslation } from "react-i18next";
@@ -21,6 +20,8 @@ import {
 } from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
 import useRedirect from '../../helpers/Routes/Redirect';
+import { IoIosArrowDown } from 'react-icons/io';
+import { BsGlobe2 } from 'react-icons/bs';
 
 const AppBarItem = ({
   item,
@@ -67,11 +68,11 @@ const AppBarItem = ({
           className={clsx(
             currentStyle,
             textStyle,
-            { [classes.chosenText]: chosen })}>
+            chosen ? 'chosenText' : ''
+          )}>
           {showIcon ? (item.iconUnicode || item.icon) : (item && item.title) ?? ''}
         </IconButton>
-
-        {(chosen || open) && <ArrowDropUp className={classes.appBarItemArrow} />}
+        {item?.options?.length > 0 && <IoIosArrowDown className={clsx(classes.appBarItemArrow, 'downArraow')} />}
       </Box>
       <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition placement={'bottom-start'} disablePortal>
         {({ TransitionProps }) => (
@@ -92,22 +93,19 @@ const AppBarItem = ({
                       <MenuItem
                         key={option.title}
                         onClick={() => {
-                          if (!option.href || option.href === '') {
-                            onInnerClick(option)
+                          if (option.onClick) {
+                            option.onClick()
                           }
-                          else Redirect({ url: option.href })
+                          else {
+                            if (!option.href || option.href === '') {
+                              onInnerClick(option)
+                            }
+                            else Redirect({ url: option.href })
+                          }
                         }}
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
-                        {option.isFaIcon ?
-                          <option.iconSrc style={{ padding: '0 5px' }} />
-                          :
-                          <img
-                            src={option.iconSrc || DoubleArrowIcon}
-                            alt='Double Arrow Icon'
-                            className={classes.appBarItemDoubleArrowIcon} />
-                        }
                         {option.title}
                       </MenuItem>
                     </Box>
@@ -115,6 +113,7 @@ const AppBarItem = ({
                 </MenuList>
 
               </ClickAwayListener>
+              <div className={classes.appBarItemPaperBottom}></div>
             </Paper>
           </Grow>
         )}
@@ -146,7 +145,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
   ]
 
   const item = {
-    title: (languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title) ?? '',
+    title: <Box className={clsx(classes.flex, classes.justifyEvenly)} ><BsGlobe2 style={{ marginInline: 6 }} /> <p>{(languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title) ?? ''}</p></Box>,
     options: languages
   }
 
@@ -217,7 +216,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   }
   const { t } = useTranslation();
   const routes = getRoutes(t, cookieIsClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
-  const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
+  const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), companyName)
 
   // const navigate = ({ uri }) => {
   //   if (!!uri) {
@@ -244,19 +243,13 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           onInnerClick={() => Redirect({ url: route.href })}
         />
       ))}
-      {windowSize === 'xl' || windowSize === 'lg' ? <>
-        <Box className={classes.appBerSpace} />
-        <Typography
-          className={classes.appBarUsername}>
-          {companyName}
-        </Typography>
-      </> : null}
       <Box className={classes.appBarAfterTollbarContainer}>
         <AppBarItem
           classes={classes}
-          item={settings}
         />
-        <LanguageSelector classes={classes} />
+        <Box style={{ zIndex: 1300 }}>
+          <LanguageSelector classes={classes} />
+        </Box>
         {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
           classes={classes}
           item={{ title: t('appBar.admin') }}
@@ -271,14 +264,6 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
             returnToMainAccount()
           }}
         />}
-        <AppBarItem
-          classes={classes}
-          item={{ title: question }}
-          onMainClick={() => {
-            openInNewTab('/Pages/Home.aspx?action=support&fromreact=true')
-          }}
-          textStyle={classes.appBarQuestionIcon}
-        />
       </Box>
     </>
   )
@@ -292,11 +277,9 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       routes[4],
       { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: true },
       routes[6],
-      // { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount !== true },
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
       { title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount === true }      //routes[1]
-      //{ title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: true }
     ]
     return (
       <>
@@ -310,7 +293,6 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
             <FaBars />
           </IconButton>
         </Box>
-        {/* <LanguageSelector windowSize={windowSize} classes={classes} /> */}
         <Popper
           open={open}
           anchorEl={topNavRef.current}
@@ -385,12 +367,14 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     <QuestionIcon />
   </SvgIcon>
   return (
-    <Box style={{ flexGrow: 1 }}>
+    <Box style={{ flexGrow: 1 }} className={clsx(classes.pl25, classes.ps25)}>
       <AppBar position='static' className={classes.appBar} ref={topNavRef}>
-        <Toolbar variant='dense'>
+        <Toolbar variant='dense' className={classes.justifyBetween}>
           <Button
-            style={{ padding: 0, matgin: 0 }}
-            onClick={() => Redirect({ url: routes[0].href })}>
+            // style={{ padding: 0, matgin: 0 }}
+            onClick={() => Redirect({ url: routes[0].href })}
+            className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
+          >
             <Box
               component='img'
               src={`${imageURL}`}
@@ -399,11 +383,6 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           </Button>
           {settingsLoaded && <>
             {renderAppBar()}
-            <AppBarItem
-              classes={classes}
-              item={{ title: t('appBar.logout') }}
-              onMainClick={logout}
-            />
           </>
           }
         </Toolbar>

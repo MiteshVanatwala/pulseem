@@ -73,7 +73,7 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
             <Box style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
                 <img src={arrowDown} width={50} height={50} className={classes.pl25} alt="" />
                 <Typography className={clsx(classes.f28, classes.bold)} align='center'>{t('smsReport.amountSent')}</Typography>
-                <img src={arrowDown} width={50} height={50} className={classes.pr25} alt="" />
+                <img src={arrowDown} width={50} height={50} className={classes.ps25} alt="arrow" />
             </Box>
             <Paper elevation={3} className={classes.smsGraph} style={{ position: 'relative' }}>
                 <Loader isOpen={showLoader} showBackdrop={false} />
