@@ -115,6 +115,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	>(initialQuickReplyButtons);
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] = useState(false);
+	const [linkCount, setlinkCount] = useState<number>(0);
+	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 
 	enum ActionButtons {
 		QuickReply = 'quickReply',
@@ -374,6 +376,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			setQuickReplyButtons(updatedTemplateData.templateButtons);
 		} else {
 			setCallToActionFieldRows(updatedTemplateData.templateButtons);
+		}
+		if (templateData?.variables) {
+			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
 		}
 	};
 
@@ -806,6 +811,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										? setIsQuickReplyOpen(true)
 										: setIsCallToActionOpen(true)
 								}
+								dynamicFieldCount={dynamicFieldCount}
+								linkCount={linkCount}
 							/>
 						</Grid>
 

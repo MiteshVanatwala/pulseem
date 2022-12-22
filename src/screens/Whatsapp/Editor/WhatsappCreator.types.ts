@@ -15,6 +15,8 @@ export type WhatsappCreatorProps = {
 	OnEditorActionButtonClick(
 		button: quickReplyButtonProps | callToActionRowProps
 	): void;
+	dynamicFieldCount: number;
+	linkCount: number;
 };
 
 export type TemplateFieldsProps = {

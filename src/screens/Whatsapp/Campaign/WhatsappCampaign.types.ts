@@ -23,14 +23,15 @@ export type dynamicModalProps = {
 };
 
 export type campaignFielsProps = {
-  savedTemplateList: savedTemplateListProps[];
-  classes: ClassesType["classes"];
-  savedTemplate: string;
-  campaignName: string;
-  from: string;
-  onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
-  onCampaignNameChange: (campaignName: string) => void;
-  onFromChange: (from: string) => void;
+	savedTemplateList: savedTemplateListProps[];
+	classes: ClassesType['classes'];
+	savedTemplate: string;
+	campaignName: string;
+	from: string;
+	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	onCampaignNameChange: (campaignName: string) => void;
+	onFromChange: (from: string) => void;
+	onCampaignFromRestore: () => void;
 };
 
 export type validationAlertModalProps = {
@@ -108,4 +109,10 @@ export type SummaryModalProps = {
   groups: any[];
   filteredGroups: any;
   filteredCampaigns: any;
+};
+
+export type tagDataProps = {
+	children: string;
+	className: string;
+	highlightIndex: number;
 };
