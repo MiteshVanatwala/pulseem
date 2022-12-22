@@ -973,7 +973,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             classes={classes}
                             ToastMessages={ToastMessages}
                             setToastMessage={setToastMessage}
-                            campaign={{ ...campaignValues, SendingMethod: campaignValues.SendingMethod ?? 1 }}
+                            campaign={{ ...campaignValues, SendingMethod: (!campaignValues.SendingMethod || campaignValues.SendingMethod === 0) ? 1 : campaignValues.SendingMethod }}
                             onUpdateCampaign={(data) => {
                                 setCampaignValues({ ...campaignValues, ...data })
                             }}
