@@ -512,6 +512,7 @@
       "upload": "The file will appear as an attached file in your mail"
     },
     "errors": {
+      "campaignWasNotSent": "The campaign was not sent!",
       "invaliApiKey": "Invalid or missing API KEY",
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
@@ -520,10 +521,18 @@
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
       "campaignSubject": "Please fill in a campaign subject",
-      "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
+      "invalidCampaignId": "Invalid campaign ID / not belong to the account",
       "CampaignNotFound": "Campaign not found or deleted",
       "missingSendingDate": "Campaign was not saved! Missing Sending Date",
-      "campaignAlreadySent": "The current campaign already sent"
+      "campaignAlreadySent": "The current campaign already sent",
+      "LOCK_SENDING": "This User is locked for sending email campaigns<br/>For further support please contact us ",
+      "UNAUTHORIZED_FROM_EMAIL": "This Email address is not authorized for sending email campaigns<br/>For further support please contact us ",
+      "NO_RECIPIENTS": "You did not select any recipients<br/>Please select recipients and try again",
+      "MONTHLY_RESTRICTIONS": "You have passed your monthly sending restriction<br/>For further support please contact us ",
+      "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since it’s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
+      "BULK_ENDED": "Your bulk has ended!<br/>To purchase a new bulk enter your dashboard<br/>Or contact our costumer support:",
+      "MONTHLY_BULK_ENDED": "You monthly bulk has ended!<br/>To purchase a new bulk enter your dashboard",
+      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
     },
     "success": "Success",
     "sendSettings": {

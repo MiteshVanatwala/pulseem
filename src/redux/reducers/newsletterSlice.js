@@ -191,6 +191,16 @@ export const getSendSummary = createAsyncThunk(
     }
   });
 
+export const sendCampaign = createAsyncThunk(
+  'email/SendCampaign', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.put(`email/SendCampaign/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {

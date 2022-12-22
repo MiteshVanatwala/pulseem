@@ -13,6 +13,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo } from "../../../../redux/reducers/campaignEditorSlice";
+import { sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -24,6 +25,7 @@ const SummaryDialog = ({ classes,
     filteredCampaigns = null,
     PreviewURL = null,
     SendDate = "",
+    handleSendResponse = () => null,
     ...props }) => {
     const dispatch = useDispatch();
     const [detailsHide, setdetailsHide] = useState(true);
@@ -58,9 +60,9 @@ const SummaryDialog = ({ classes,
 
     const { t } = useTranslation();
 
-    const handleSmsSettings = () => {
-        onClose();
-        // props.handleCallback()
+    const handleSmsSettings = async () => {
+        const sendResponse = await dispatch(sendCampaign(campaignInfo.CampaignID));
+        handleSendResponse(sendResponse.payload);
     }
     useEffect(() => {
         dispatch(getAuthorizedEmails());
@@ -261,7 +263,7 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={onConfirm}
+                            onClick={() => { handleSmsSettings() }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
@@ -274,7 +276,7 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => { handleSmsSettings() }}
+                            onClick={() => { setDialogType(null) }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogCancelButton
