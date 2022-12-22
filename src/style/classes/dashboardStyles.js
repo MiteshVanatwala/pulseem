@@ -188,7 +188,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         transition: ' ease-in-out .4s'
     },
     tabTitle: {
-        color: '#006996',
+        color: '#000',
         fontSize: 32,
         textAlign: 'center',
         lineHeight: '1.1'

@@ -14,8 +14,8 @@ const ButtonWithTitle = ({ classes, title, buttonText, redirect, innerStyle, but
                 size='medium'
                 className={clsx(
                     classes.actionButton,
-                    buttonClass ? buttonClass : classes.actionButtonLightGreen,
-                    classes.backButton,
+                    buttonClass ? buttonClass : '',
+                    classes.backButton
                 )}
                 color="primary"
                 style={{ margin: '8px' }}

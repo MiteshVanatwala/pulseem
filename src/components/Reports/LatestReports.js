@@ -255,7 +255,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                     title={NoDataObject[tabType].title}
                     buttonText={NoDataObject[tabType].buttonText}
                     redirect={NoDataObject[tabType].redirect}
-                    buttonClass={classes.createButton} />
+                    buttonClass={clsx(classes.btn, classes.btnRounded)} />
                 )
             }
           </Grid>
