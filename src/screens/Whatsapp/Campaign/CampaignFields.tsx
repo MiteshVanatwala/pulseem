@@ -80,6 +80,28 @@ const CampaignFields = ({
 					onChange={(e: BaseSyntheticEvent) => onFromChange(e.target.value)}
 					value={from}
 				/>
+				{/* <TextField
+					select
+					type='text'
+					className={
+						isCampaign
+							? clsx(classes.buttonField, classes.error)
+							: clsx(classes.buttonField, classes.success)
+					}
+					onChange={onSavedTemplateChange}
+					value={savedTemplate}>
+					{savedTemplateList?.length > 0 ? (
+						savedTemplateList.map((template) => (
+							<MenuItem key={template.TemplateId} value={template.TemplateId}>
+								{template.TemplateName}
+							</MenuItem>
+						))
+					) : (
+						<MenuItem key={'no-data-template'} disabled>
+							<>{translator('whatsapp.noTemplateAaliable')}</>
+						</MenuItem>
+					)}
+				</TextField> */}
 				<Typography
 					className={clsx(classes.WhatsappCampainButtonContent, 'red')}>
 					{translator('whatsappCampaign.fromDesc')}
