@@ -31,6 +31,7 @@ export type campaignFielsProps = {
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
 	onCampaignNameChange: (campaignName: string) => void;
 	onFromChange: (from: string) => void;
+	onCampaignFromRestore: () => void;
 };
 
 export type validationAlertModalProps = {
@@ -61,4 +62,10 @@ export type testGroupModalProps = {
 	testGroupData: testGroupDataProps[];
 	selectedTestGroup: testGroupDataProps[];
 	setSelectedTestGroup: (updatedSelectedGroup: testGroupDataProps[]) => void;
+};
+
+export type tagDataProps = {
+	children: string;
+	className: string;
+	highlightIndex: number;
 };

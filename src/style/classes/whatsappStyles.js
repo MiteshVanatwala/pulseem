@@ -898,6 +898,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
 		color: '#959595',
+		'&.red': {
+			color: '#ca332f',
+		},
 	},
 	WhatsappCampainFields: {
 		marginBottom: '18px',

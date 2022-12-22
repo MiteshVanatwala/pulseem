@@ -27,6 +27,8 @@ const WhatsappTemplateEditor = ({
 	templateText,
 	templateTextRef,
 	OnEditorActionButtonClick,
+	dynamicFieldCount,
+	linkCount
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -42,8 +44,6 @@ const WhatsappTemplateEditor = ({
 	}));
 	const styles = useStyles();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [linkCount, setlinkCount] = useState(0);
-	const [messageCount, setMessageCount] = useState(0);
 	const [alignment, setAlignment] = useState<string>('right');
 	const [textAreaHeight, setTextAreaHeight] = useState<string>('auto');
 
@@ -182,10 +182,10 @@ const WhatsappTemplateEditor = ({
 				</span>
 
 				<span className={classes.textInfoWrapper}>
-					{messageCount}
+					{dynamicFieldCount}
 					<span className={classes.textInfo}>
 						<>
-							{messageCount === 1
+							{dynamicFieldCount === 1
 								? translator('sms.message')
 								: translator('sms.messages')}
 						</>

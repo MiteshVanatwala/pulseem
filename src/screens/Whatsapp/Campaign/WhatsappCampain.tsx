@@ -20,17 +20,27 @@ import {
 	WhatsappCampaignProps,
 	coreProps,
 	testGroupDataProps,
+	tagDataProps,
 } from './WhatsappCampaign.types';
 import { ClassesType } from '../../Classes.types';
 import CampaignFields from './CampaignFields';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/WhatsappMobilePreview';
 import {
+	buttonsDataProps,
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
+	savedTemplateAPIProps,
+	savedTemplateCallToActionProps,
+	savedTemplateCardProps,
+	savedTemplateDataProps,
+	savedTemplateListProps,
+	savedTemplateMediaProps,
+	savedTemplateQuickReplyProps,
+	savedTemplateTextProps,
 	templateDataProps,
 } from '../Editor/WhatsappCreator.types';
 import Highlighter from 'react-highlight-words';
@@ -187,7 +197,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 		templateText: '',
 		templateButtons: [],
 	});
-	const [savedTemplateList, setSavedTemplateList] = useState<any>([]);
+	const [savedTemplateList, setSavedTemplateList] = useState<
+		savedTemplateListProps[]
+	>([]);
 	const [dynamicVariable, setDynamicVariable] = useState<string[]>([
 		'and',
 		'the',
@@ -204,15 +216,15 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 
 	const [callToActionFieldRows, setCallToActionFieldRows] =
 		useState<callToActionProps>([initialFieldRow]);
-	const [linkCount, setlinkCount] = useState(0);
-	const [messageCount, setMessageCount] = useState(0);
+	const [linkCount, setlinkCount] = useState<number>(0);
+	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
 
 	const getSavedTemplateFields = async () => {
-		let savedTemplate: any = await dispatch(
+		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
 		setSavedTemplateList(savedTemplate.payload.Items);
@@ -226,72 +238,32 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 	const handleSubmit = () => {};
 
 	const isUpdatedVaraiable = (variable: string) => {
-		return updatedDynamicVariable.includes(variable?.toLowerCase())
+		return updatedDynamicVariable?.includes(variable?.toLowerCase())
 			? true
 			: false;
 	};
 
-	const highlightText = ({ children, highlightIndex }: any) => {
+	const highlightText = (tagData: tagDataProps) => {
 		return (
 			<strong
 				className={clsx(
 					classes.whatsappCampainHighlightText,
-					`${isUpdatedVaraiable(children) && 'updated'}`
+					`${isUpdatedVaraiable(tagData?.children) && 'updated'}`
 				)}
 				onClick={() => setIsDynamcFieldModal(true)}>
-				{children}
+				{tagData?.children}
 			</strong>
 		);
 	};
 
-	const setButtonsData = (buttonType: string, data: any) => {
-		if (buttonType === 'quickReply') {
-			const buttonData = data?.map((button: any) => {
-				return {
-					id: uniqid(),
-					typeOfAction: '',
-					fields: [
-						{
-							fieldName: translator('whatsapp.websiteButtonText'),
-							type: 'text',
-							placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-							value: button.title,
-						},
-					],
-				};
-			});
-			return buttonData;
-		} else {
-			const buttonData = data?.map((button: any) => {
-				if (button?.type === 'PHONE') {
+	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
-						typeOfAction: 'phonenumber',
-						fields: [
-							{
-								fieldName: translator('whatsapp.phoneButtonText'),
-								type: 'text',
-								placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-								value: button.title,
-							},
-							{
-								fieldName: translator('whatsapp.country'),
-								type: 'select',
-								placeholder: 'Select Your Country Code',
-								value: '+972 Israel',
-							},
-							{
-								fieldName: translator('whatsapp.phoneNumber'),
-								type: 'tel',
-								placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-								value: button.phone,
-							},
-						],
-					};
-				} else {
-					return {
-						id: uniqid(),
-						typeOfAction: 'website',
+						typeOfAction: '',
 						fields: [
 							{
 								fieldName: translator('whatsapp.websiteButtonText'),
@@ -301,158 +273,130 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 								),
 								value: button.title,
 							},
-							{
-								fieldName: translator('whatsapp.websiteURL'),
-								type: 'text',
-								placeholder: translator('whatsapp.websiteURLPlaceholder'),
-								value: button.url,
-							},
 						],
 					};
-				}
-			});
-			return buttonData;
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: translator('whatsapp.phoneButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.phoneButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.country'),
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972 Israel',
+								},
+								{
+									fieldName: translator('whatsapp.phoneNumber'),
+									type: 'tel',
+									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: translator('whatsapp.websiteButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.websiteButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.websiteURL'),
+									type: 'text',
+									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
 		}
 	};
 
-	// const onSavedTemplateChange = (TemplateId: string) => {
-	// 	setSavedTemplate(TemplateId);
-	// 	const savedTemplateData = savedTemplateList?.find(
-	// 		(template: any) => template.TemplateId === TemplateId
-	// 	);
-	// 	let updatedTemplateData = {
-	// 		templateText: '',
-	// 		templateButtons: [],
-	// 	};
-	// 	let updatedButtonType = '';
-	// 	let updatedFileData = '';
-	// 	if (savedTemplateData?.Data) {
-	// 		if ('quick-reply' in savedTemplateData?.Data?.types) {
-	// 			updatedButtonType = 'quickReply';
-	// 			const buttonData = setButtonsData(
-	// 				'quickReply',
-	// 				savedTemplateData?.Data?.types['quick-reply']?.actions
-	// 			);
-	// 			updatedTemplateData.templateText =
-	// 				savedTemplateData?.Data?.types['quick-reply']?.body;
-	// 			updatedTemplateData.templateButtons = buttonData;
-	// 		}
-	// 		if ('call-to-action' in savedTemplateData?.Data?.types) {
-	// 			updatedButtonType = 'callToAction';
-	// 			const buttonData = setButtonsData(
-	// 				'callToAction',
-	// 				savedTemplateData?.Data?.types['call-to-action']?.actions
-	// 			);
-	// 			updatedTemplateData.templateText =
-	// 				savedTemplateData?.Data?.types['call-to-action']?.body;
-	// 			updatedTemplateData.templateButtons = buttonData;
-	// 		} else if ('card' in savedTemplateData?.Data?.types) {
-	// 			updatedTemplateData.templateText =
-	// 				savedTemplateData?.Data?.types['card']?.title;
-	// 			if (
-	// 				savedTemplateData?.Data?.types['card']?.actions[0]?.type !==
-	// 				'QUICK_REPLY'
-	// 			) {
-	// 				updatedButtonType = 'callToAction';
-	// 				const buttonData = setButtonsData(
-	// 					'callToAction',
-	// 					savedTemplateData?.Data?.types['card']?.actions
-	// 				);
-	// 				updatedTemplateData.templateButtons = buttonData;
-	// 			} else {
-	// 				updatedButtonType = 'quickReply';
-	// 				const buttonData = setButtonsData(
-	// 					'quickReply',
-	// 					savedTemplateData?.Data?.types['card']?.actions
-	// 				);
-	// 				updatedTemplateData.templateButtons = buttonData;
-	// 			}
-	// 			if (savedTemplateData?.Data?.types['card']?.media?.length > 0) {
-	// 				updatedFileData = savedTemplateData?.Data?.types['card']?.media[0];
-	// 			}
-	// 		} else if ('media' in savedTemplateData?.Data?.types) {
-	// 			updatedTemplateData.templateText =
-	// 				savedTemplateData?.Data?.types['media']?.body;
-	// 			if (savedTemplateData?.Data?.types['media']?.media?.length > 0) {
-	// 				updatedFileData = savedTemplateData?.Data?.types['media']?.media[0];
-	// 			}
-	// 		} else if ('text' in savedTemplateData?.Data?.types) {
-	// 			updatedTemplateData.templateText =
-	// 				savedTemplateData?.Data?.types['text']?.body;
-	// 		}
-	// 	}
-	// 	setFileData(updatedFileData);
-	// 	// setTemplateName(savedTemplateData?.TemplateName || '');
-	// 	setButtonType(updatedButtonType);
-	// 	setTemplateData(updatedTemplateData);
-	// };
-
 	const onSavedTemplateChange = (TemplateId: string) => {
 		setSavedTemplate(TemplateId);
-		const savedTemplateData: any = savedTemplateList?.find(
-			(template: any) => template?.TemplateId === TemplateId
-		);
+		const savedTemplateData: savedTemplateListProps | undefined =
+			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
+		const templateData: savedTemplateDataProps | undefined =
+			savedTemplateData?.Data;
+		console.log('templateData::', templateData);
 		let updatedTemplateData: templateDataProps = {
 			templateText: '',
 			templateButtons: [],
 		};
 		let updatedButtonType = '';
 		let updatedFileData = '';
-		if (savedTemplateData?.Data) {
-			if ('quick-reply' in savedTemplateData?.Data?.types) {
+		if (templateData) {
+			if ('quick-reply' in templateData?.types) {
+				const quickReplyData: savedTemplateQuickReplyProps =
+					templateData?.types['quick-reply'];
 				updatedButtonType = 'quickReply';
 				const buttonData = setButtonsData(
 					'quickReply',
-					savedTemplateData?.Data?.types['quick-reply']?.actions
+					quickReplyData?.actions
 				);
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['quick-reply']?.body;
-				updatedTemplateData.templateButtons = buttonData;
+				updatedTemplateData.templateText = quickReplyData?.body;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			}
-			if ('call-to-action' in savedTemplateData?.Data?.types) {
+			if ('call-to-action' in templateData?.types) {
+				const callToActionData: savedTemplateCallToActionProps =
+					templateData?.types['call-to-action'];
 				updatedButtonType = 'callToAction';
 				const buttonData = setButtonsData(
 					'callToAction',
-					savedTemplateData?.Data?.types['call-to-action']?.actions
+					callToActionData?.actions
 				);
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['call-to-action']?.body;
-				updatedTemplateData.templateButtons = buttonData;
-			} else if ('card' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['card']?.title;
-				if (savedTemplateData?.Data?.types['card']?.actions?.length > 0) {
-					if (
-						savedTemplateData?.Data?.types['card']?.actions[0]?.type !==
-						'QUICK_REPLY'
-					) {
+				updatedTemplateData.templateText = callToActionData?.body;
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else if ('card' in templateData?.types) {
+				const cardData: savedTemplateCardProps = templateData?.types['card'];
+				updatedTemplateData.templateText = cardData?.title;
+				if (cardData?.actions?.length > 0) {
+					if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
 						updatedButtonType = 'callToAction';
 						const buttonData = setButtonsData(
 							'callToAction',
-							savedTemplateData?.Data?.types['card']?.actions
+							cardData?.actions
 						);
-						updatedTemplateData.templateButtons = buttonData;
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					} else {
 						updatedButtonType = 'quickReply';
-						const buttonData = setButtonsData(
-							'quickReply',
-							savedTemplateData?.Data?.types['card']?.actions
-						);
-						updatedTemplateData.templateButtons = buttonData;
+						const buttonData = setButtonsData('quickReply', cardData?.actions);
+						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 					}
 				}
-				if (savedTemplateData?.Data?.types['card']?.media?.length > 0) {
-					updatedFileData = savedTemplateData?.Data?.types['card']?.media[0];
+				if (cardData?.media?.length > 0) {
+					updatedFileData = cardData?.media[0];
 				}
-			} else if ('media' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['media']?.body;
-				if (savedTemplateData?.Data?.types['media']?.media?.length > 0) {
-					updatedFileData = savedTemplateData?.Data?.types['media']?.media[0];
+			} else if ('media' in templateData?.types) {
+				const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+				updatedTemplateData.templateText = mediaData?.body;
+				if (mediaData?.media?.length > 0) {
+					updatedFileData = mediaData?.media[0];
 				}
-			} else if ('text' in savedTemplateData?.Data?.types) {
-				updatedTemplateData.templateText =
-					savedTemplateData?.Data?.types['text']?.body;
+			} else if ('text' in templateData?.types) {
+				const textData: savedTemplateTextProps = templateData?.types['text'];
+				updatedTemplateData.templateText = textData?.body;
 			}
 		}
 		setFileData(updatedFileData);
@@ -463,6 +407,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 			setQuickReplyButtons(updatedTemplateData.templateButtons);
 		} else {
 			setCallToActionFieldRows(updatedTemplateData.templateButtons);
+		}
+		if (templateData?.variables) {
+			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
 		}
 	};
 
@@ -497,6 +444,10 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 			setIsTestGroupModal(false);
 			setIsValidationAlert(true);
 		}
+	};
+
+	const onCampaignFromRestore = () => {
+		setFrom('012345689');
 	};
 
 	return (
@@ -552,6 +503,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 									}
 									from={from}
 									onFromChange={(from) => setFrom(from)}
+									onCampaignFromRestore={() => onCampaignFromRestore()}
 								/>
 							</Grid>
 							<Grid className={classes.WhatsappCampainTextarea} md={12} lg={12}>
@@ -564,7 +516,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 											]}
 											autoEscape={true}
 											textToHighlight="The dog is chasing the cat. Or perhaps they're just playing?"
-											highlightTag={highlightText}
+											highlightTag={(tagData: tagDataProps) =>
+												highlightText(tagData)
+											}
 										/>
 									</div>
 									<Box
@@ -612,11 +566,11 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 
 									<span className={classes.textInfoWrapper}>
 										<span className={classes.textInfo}>
-											{messageCount === 1
+											{dynamicFieldCount === 1
 												? translator('whatsappCampaign.dfield')
 												: translator('whatsappCampaign.dfields')}
 										</span>
-										&nbsp;{messageCount}
+										&nbsp;{dynamicFieldCount}
 									</span>
 
 									<span className={classes.textInfoWrapper}>

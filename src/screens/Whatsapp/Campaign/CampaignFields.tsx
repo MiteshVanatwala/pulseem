@@ -21,7 +21,8 @@ const CampaignFields = ({
 	campaignName,
 	onCampaignNameChange,
 	from,
-	onFromChange
+	onFromChange,
+	onCampaignFromRestore,
 }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
@@ -61,10 +62,9 @@ const CampaignFields = ({
 					</Typography>
 					<Typography
 						className={classes.restoreBtn}
-						//   onClick={() => {
-						//     handleRestore();
-						//   }}
-					>
+						onClick={() => {
+							onCampaignFromRestore();
+						}}>
 						{translator('whatsappCampaign.restore')}
 					</Typography>
 				</Box>
@@ -78,9 +78,10 @@ const CampaignFields = ({
 							: clsx(classes.buttonField, classes.success)
 					}
 					onChange={(e: BaseSyntheticEvent) => onFromChange(e.target.value)}
-					  value={from}
+					value={from}
 				/>
-				<Typography className={classes.WhatsappCampainButtonContent}>
+				<Typography
+					className={clsx(classes.WhatsappCampainButtonContent, 'red')}>
 					{translator('whatsappCampaign.fromDesc')}
 				</Typography>
 			</Grid>
