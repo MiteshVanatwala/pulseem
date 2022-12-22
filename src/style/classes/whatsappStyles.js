@@ -1259,4 +1259,32 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			borderCollapse: 'collapse',
 		},
 	},
+
+	campaignSummaryTextWrapper: {
+		display: 'grid',
+		marginBottom: '20px',
+		justifyContent: 'space-between',
+	},
+	campaignSummaryTextTitle: {
+		color: '#1771ad',
+		fontSize: '20px',
+		marginBottom: '7px',
+	},
+	campaignSummaryTextDesc: {
+		fontSize: '1rem',
+		fontWeight: 700,
+	},
+	campaignSummaryTextDetail: {},
+	summaryModal: {
+		border: '2px solid #0371ad',
+		margin: '18px',
+		borderRadius: '4px',
+		padding: '14px 26px',
+		direction: isRTL ? 'rtl' : 'ltr',
+		position: 'relative',
+	},
+	campaignSummaryImportantText: {
+		textAlign: 'center',
+		color: '#DC3D1B',
+	},
 });

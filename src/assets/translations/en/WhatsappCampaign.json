@@ -1,5 +1,8 @@
 {
   "note": "Important note! Do not exceed the daily message limit - messages beyond the limit will be charged",
+  "summaryNote": "Important note!",
+  "summaryNote2": "Do not exceed the daily",
+  "summaryNote3": "message limit",
   "header": "Send Whatsapp Campaign",
   "campaignName": "Campaign Name",
   "campaignNamePlaceholder": "Campaign Name",

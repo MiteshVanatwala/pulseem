@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaMobileAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import { Link } from '@material-ui/core';
+import { Link, TextField } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import MobilePreview from '../Editor/WhatsappMobilePreview';
 import { FaChevronDown } from 'react-icons/fa';
@@ -15,14 +15,7 @@ import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 const SummaryModal = ({
 	classes,
 	open,
-	campaignName,
 	fromNumber,
-	summaryPayload,
-	onConfirm,
-	textMsg,
-	groups,
-	filteredGroups,
-	filteredCampaigns,
 }: // ...props
 SummaryModalProps) => {
 	const theme: any = useTheme();
@@ -46,10 +39,11 @@ SummaryModalProps) => {
 			fullScreen={fullScreen}
 			open={open}
 			onClose={onSummaryModalClose}
-			aria-labelledby='responsive-dialog-title'>
-			<div className={classes.alertModal}>
+			aria-labelledby='responsive-dialog-title'
+			maxWidth={'md'}>
+			<div className={classes.summaryModal}>
 				<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-					{t('whatsappCampaign.dfieldTitle')}
+					Summary
 				</div>
 				<Box className={classes.alertModalClose}>
 					<Close fontSize={'small'} onClick={onSummaryModalClose} />
@@ -64,7 +58,75 @@ SummaryModalProps) => {
 				</Box>
 				<div className={classes.alertModalContent}>
 					<div className={classes.testGroupModalContentWrapper}>
-						<Grid container>
+						<Grid container style={{ justifyContent: 'space-between' }}>
+							<Grid item lg={6}>
+								<Box className={classes.campaignSummaryTextWrapper}>
+									<span className={classes.campaignSummaryTextTitle}>
+										Campaign From
+									</span>
+									<span className={classes.campaignSummaryTextDesc}>
+										215646512
+									</span>
+								</Box>
+								<Box className={classes.campaignSummaryTextWrapper}>
+									<span className={classes.campaignSummaryTextTitle}>
+										Campaign Name
+									</span>
+									<span className={classes.campaignSummaryTextDesc}>
+										215646512
+									</span>
+								</Box>
+								<Box className={classes.campaignSummaryTextWrapper}>
+									<span className={classes.campaignSummaryTextTitle}>When</span>
+									<span className={classes.campaignSummaryTextDesc}>
+										215646512
+									</span>
+								</Box>
+								<Box className={classes.campaignSummaryTextWrapper}>
+									<span className={classes.campaignSummaryTextTitle}>For</span>
+									<span className={classes.campaignSummaryTextDesc}>
+										215646512
+									</span>
+									<span className={classes.campaignSummaryTextDetail}>
+										<Link
+											onClick={() => {
+												setdetailsHide(!detailsHide);
+											}}
+											style={{
+												textDecoration: 'underline',
+												marginTop: '6px',
+												fontSize: '16px',
+												color: 'gray',
+												width: '50px',
+												cursor: 'pointer',
+											}}>
+											Details
+										</Link>
+									</span>
+								</Box>
+								<div>&emsp;</div>
+								<Box className={classes.campaignSummaryTextWrapper}>
+									<span className={classes.campaignSummaryTextTitle}>
+										Send Randomly to -
+									</span>
+									<span className={classes.campaignSummaryTextDesc}>
+										<input
+											placeholder='Insert'
+											style={{
+												width: '25%',
+												padding: '4px',
+												textAlign: 'center',
+												fontWeight: 'bold',
+											}}
+										/>
+										&nbsp;
+										<span style={{ fontSize: '12px' }}>
+											Recipients out of total
+										</span>
+									</span>
+								</Box>
+							</Grid>
+
 							<Grid item lg={6}>
 								<Box className={classes.sumRight}>
 									<MobilePreview
@@ -80,45 +142,23 @@ SummaryModalProps) => {
 										//   keyItem="summaryPreview"
 									/>
 								</Box>
+
 								<Box className={classes.campaignSummaryImportantText}>
-									Important message
-								</Box>
-							</Grid>
-							<Grid item lg={6}>
-								<Box className={classes.campaignSummaryTextWrapper}>
-									<span className={classes.campaignSummaryTextTitle}>
-										Campaign From
-									</span>
-									<span className={classes.campaignSummaryTextDesc}>
-										215646512
-									</span>
-								</Box>
-								<Box className={classes.campaignSummaryTextWrapper}>
-									<span className={classes.campaignSummaryTextTitle}>
-										Campaign From
-									</span>
-									<span className={classes.campaignSummaryTextDesc}>
-										215646512
-									</span>
-								</Box>
-								<Box className={classes.campaignSummaryTextWrapper}>
-									<span className={classes.campaignSummaryTextTitle}>
-										Campaign From
-									</span>
-									<span className={classes.campaignSummaryTextDesc}>
-										215646512
-									</span>
-								</Box>
-								<Box className={classes.campaignSummaryTextWrapper}>
-									<span className={classes.campaignSummaryTextTitle}>
-										Campaign From
-									</span>
-									<span className={classes.campaignSummaryTextDesc}>
-										215646512
-									</span>
-									<span className={classes.campaignSummaryTextDetail}>
-										Details
-									</span>
+									<div>
+										<b>
+											{t('whatsappCampaign.summaryNote')}
+											<br />
+											{t('whatsappCampaign.summaryNote2')}
+											<br />
+											{t('whatsappCampaign.summaryNote3')}
+											<br />
+											<span>
+												<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
+													Check your limit
+												</a>
+											</span>
+										</b>
+									</div>
 								</Box>
 							</Grid>
 						</Grid>
