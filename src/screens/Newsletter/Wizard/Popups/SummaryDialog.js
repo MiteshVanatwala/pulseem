@@ -12,8 +12,7 @@ import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import { useParams } from "react-router";
-import { getSendSummary } from '../../../../redux/reducers/newsletterSlice';
+import { saveCampaignInfo } from "../../../../redux/reducers/campaignEditorSlice";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -30,10 +29,12 @@ const SummaryDialog = ({ classes,
     const [detailsHide, setdetailsHide] = useState(true);
     const [subDetailsActive, setsubDetailsActive] = useState(false);
     const [subRecipientsDetails, setsubRecipients] = useState(false);
+    const [fromEmail, setFromEmail] = useState(null);
     const { isRTL } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
     const { newsletterSendSummary } = useSelector(state => state.newsletter);
+    const { campaignInfo } = useSelector((state) => state.campaignEditor);
 
     const {
         FinalClients,
@@ -64,6 +65,10 @@ const SummaryDialog = ({ classes,
     useEffect(() => {
         dispatch(getAuthorizedEmails());
     }, [])
+
+    useEffect(() => {
+        setFromEmail(newsletterSendSummary?.FromEmail);
+    }, [newsletterSendSummary])
 
     const renderWhenToSend = () => {
         switch (newsletterSendSummary?.SendingMethod) {
@@ -141,6 +146,14 @@ const SummaryDialog = ({ classes,
             {ExceptionalGroups > 0 && renderDetailsLine(t("smsReport.inputTextFilter"), `${ExceptionalGroups.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalGroupsClientsCount})`)}
         </Box>)
     }
+    const handleFromEmailChanged = (event) => {
+        if (campaignInfo && campaignInfo.CampaignID) {
+            setFromEmail(event.target.value);
+            const updateInfo = { ...campaignInfo };
+            updateInfo.FromEmail = event.target.value;
+            dispatch(saveCampaignInfo(updateInfo));
+        }
+    }
     const currentDialog = {
         style: { paddingBottom: 20 },
         title: `${t("sms.smsSummaryDialogTitle")} '${newsletterSendSummary?.CampaignName}'`,
@@ -155,9 +168,10 @@ const SummaryDialog = ({ classes,
                                 {/* <span className={clsx(classes.spanSum, classes.bold)}>{t("sms.smsSummaryCampaignFrom")}:</span> */}
                                 <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
                                 <Select
-                                    value={newsletterSendSummary?.FromEmail}
+                                    value={fromEmail}
                                     // onChange={handleChange}
                                     displayEmpty
+                                    onChange={handleFromEmailChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
                                         className: classes.p10,
