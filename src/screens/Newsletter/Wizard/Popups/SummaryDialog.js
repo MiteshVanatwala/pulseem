@@ -23,6 +23,7 @@ const SummaryDialog = ({ classes,
     setDialogType = () => null,
     filteredGroups = null,
     filteredCampaigns = null,
+    PreviewURL = null,
     SendDate = "",
     ...props }) => {
     const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const SummaryDialog = ({ classes,
     const { isRTL } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
-    const { newsletterSettings, newsletterSendSummary } = useSelector(state => state.newsletter);
+    const { newsletterSendSummary } = useSelector(state => state.newsletter);
 
     const {
         FinalClients,
@@ -55,7 +56,6 @@ const SummaryDialog = ({ classes,
     } = newsletterSendSummary;
 
     const { t } = useTranslation();
-    const params = useParams();
 
     const handleSmsSettings = () => {
         onClose();
@@ -197,20 +197,20 @@ const SummaryDialog = ({ classes,
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
                                 <span className={classes.bodySum}>
-                                    {`${t("sms.smsSummaryDialogTotalRecipients")}: ${newsletterSendSummary.FinalClients?.toLocaleString()}`}
+                                    {`${t("sms.smsSummaryDialogTotalRecipients")}: ${FinalClients?.toLocaleString()}`}
                                 </span>
                                 <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
                                     {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
                                 </Link>
                             </Box>
                         </Box>
-                        <Box className={classes.sumRight}>
+                        {PreviewURL && <Box className={classes.sumRight}>
                             <Stack direction='column' alignItems='center' spacing={2}>
                                 <Stack className={classes.previewIframe}>
-                                    {RenderHtml(`<iframe src=${newsletterSettings.PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 100vh;pointer-events: none" />`)}
+                                    {RenderHtml(`<iframe src=${PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 100vh;pointer-events: none" />`)}
                                 </Stack>
                             </Stack>
-                        </Box>
+                        </Box>}
                     </Box>
                     <Box>
                         {detailsHide ? null : <ul className={classes.sumList}>
@@ -251,7 +251,7 @@ const SummaryDialog = ({ classes,
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
-                                newsletterSendSummary.FinalClients <= 0 ? classes.disabled : null
+                                FinalClients <= 0 ? classes.disabled : null
                             )}>
                             {t("sms.sendDialog")}
                         </Button>
