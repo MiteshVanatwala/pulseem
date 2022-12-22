@@ -4,9 +4,9 @@ import { IconButton, Box, Grid, Paper, Typography } from '@material-ui/core';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import LighBulb from '../../assets/images/lightbulb.png'
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
+import { HornIcon, Illustration_tipulseem } from '../../assets/images/dashboard/index'
 
 const PulseemTips = ({ classes, t, isRTL }) => {
   const { tips } = useSelector(state => state.dashboard);
@@ -57,17 +57,18 @@ const PulseemTips = ({ classes, t, isRTL }) => {
 
   return (
     <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
-      <Box className={classes.tipsTitle}>
-        <img src={LighBulb} className={classes.lightBulb} alt="Pulseem Tips" />
+      <Box className={clsx(classes.tipsTitle, classes.dashBoxtitleSection)}>
+        <HornIcon className={classes.mlr10} />
         <Typography
-          align='center'
-          variant='h5'
-          className={classes.blue}>
-          <b>{t('dashboard.tip')}</b>{t('dashboard.ulseem')}
+          className={clsx(classes.dInline, classes.pe10, 'title')}
+        >
+          {t('dashboard.tip')}{t('dashboard.ulseem')}
         </Typography>
       </Box>
+      <Box className={classes.flexJustifyCenter}>
+        <Illustration_tipulseem />
+      </Box>
       <Box dir={'ltr'} >
-        {renderArrows(activeTip, tips.length - 1, setActiveTip, classes.carouselTipsArrows)}
         <Carousel
           autoPlay={true}
           interval={8000}
@@ -84,6 +85,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
             );
           })}
         </Carousel>
+        {renderArrows(activeTip, tips.length - 1, setActiveTip, classes.carouselTipsArrows)}
       </Box>
     </Paper>
   );

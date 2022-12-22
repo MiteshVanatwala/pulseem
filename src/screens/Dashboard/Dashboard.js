@@ -95,7 +95,7 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={3} md={2} className={classes.dashboardSide}>
+        <Grid item xs={12} sm={3} md={2} className={clsx(classes.dashboardSide, classes.pt20)}>
           <Shortcut
             windowSize={windowSize}
             classes={classes}

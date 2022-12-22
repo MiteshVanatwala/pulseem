@@ -21,6 +21,8 @@ import { FaBinoculars } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { logout } from "../Api/PulseemReactAPI";
 import { MdLogout } from "react-icons/md";
+import Whatsapp from "../../assets/images/dashboard/Whatsapp";
+import { HiArrowRight } from "react-icons/hi";
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
@@ -79,7 +81,7 @@ export const getSettingsItem = (
     {
       title: t("appBar.logout"),
       onClick: logout,
-      iconSrc: MdLogout,
+      iconSrc: HiArrowRight,
       isFaIcon: true,
       isShow: true,
     },
@@ -233,6 +235,33 @@ export const getRoutes = (
       {
         title: t("master.MmsCampaignMnage.Text"),
         href: "/react/MmsCampaigns",
+        isShow: true,
+      },
+    ],
+  },
+  {
+    key: "whatsapp",
+    title: "Whatsapp",
+    pageTitle: t("whatsapp.PageResource1.Title"),
+    iconUnicode: "\ue181",
+    href: "/react/SMSCampaigns",
+    isShow: true,
+    icon: <Whatsapp />,
+    options: [
+      {
+        key: "create",
+        title: t("Option1"),
+        href: "/",
+        isShow: true,
+      },
+      {
+        title: t("Option2"),
+        href: "/",
+        isShow: true,
+      },
+      {
+        title: t("Option3"),
+        href: "/",
         isShow: true,
       },
     ],

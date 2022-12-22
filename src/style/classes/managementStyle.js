@@ -1142,7 +1142,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "space-between",
     width: "100%",
     position: "absolute",
-    top: "calc(50% - 24px)",
+    top: "calc(75% - 24px)",
     zIndex: 1,
   },
   carouselTips: {
@@ -1188,9 +1188,23 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 180,
     margin: 10,
   },
-  recipientTitleSection: {
+  dashBoxtitleSection: {
     marginBottom: "1.2rem",
-    borderBottom: "1px solid #ccc",
+    borderBottom: "none !important",
+    background: '#F0F5FF',
+    height: 50,
+    color: "#0371AD",
+    fontSize: 20,
+    padding: '10px 0 0 20px',
+    '& .title': {
+      fontSize: 20,
+      color: '#000'
+    }
+
+  },
+  icon_Info: {
+    color: '#FF0054 !important',
+    fontSize: 10
   },
   noRecipients: {
     color: "#AAAAAA",
@@ -1206,9 +1220,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: -10,
   },
   tipsTitle: {
-    textAlign: "center",
-    padding: "20px 20px 0px 20px",
-    marginBottom: 10,
+    maxHeight: 39
   },
   bulkStatusTitleSection: {
     marginBottom: "1rem",
@@ -1251,15 +1263,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     background: "transparent",
     color: "#0371AD",
   },
-  // bulkOutlineStatic: {
-  //   marginBottom: '1rem',
-  //   padding: '3px 15px',
-  //   borderRadius: '.9rem',
-  //   border: '1px solid #0371AD',
-  //   background: 'transparent',
-  //   color: '#0371AD',
-  //   transition: 'all ease-in-out 0.2s'
-  // },
   bulkOutline: {
     marginBottom: "1rem",
     padding: "3px 15px",
@@ -1275,7 +1278,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     // }
   },
   bulkTitle: {
-    fontWeight: 700,
+    fontWeight: 400,
     fontSize: "12",
     lineHeight: "2.1rem",
   },
@@ -1285,13 +1288,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     lineHeight: "2.1rem",
     textDecoration: "underline",
     color: "#0371AD",
-  },
-  dashboardTitle: {
-    fontWeight: "bold",
-    color: "#0371AD",
-    marginTop: 10,
-    marginInlineStart: windowSize === "xs" ? 15 : 30,
-    fontSize: 20,
   },
   dashboardUsername: {
     fontWeight: "bold",
@@ -1310,6 +1306,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     margin: "30px 30px 0px 30px",
     borderRadius: 10,
+    border: '3px solid #F0F5FF',
+    '&.MuiPaper-elevation3': {
+      boxShadow: 'none'
+    }
   },
   dashboardBottomPaper: {
     [theme.breakpoints.up("lg")]: {
@@ -1320,6 +1320,29 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     margin: 30,
     borderRadius: 10,
+    border: '3px solid #F0F5FF',
+    '&.MuiPaper-elevation3': {
+      boxShadow: 'none'
+    }
+  },
+  bulkStatusContainer: {
+    '& .MuiDivider-root': {
+      width: '100%',
+      border: '1px #F0F5FF solid',
+      height: 0,
+    },
+    '& .bubbleNew': {
+      marginTop: '-5px',
+      position: 'relative',
+      '& .bubbleText': {
+        color: '#000',
+        position: 'absolute',
+        zIndex: 10,
+        fontSize: 18,
+        left: 25,
+        fontWeight: 'bold'
+      }
+    }
   },
   bulkMargin: {
     [theme.breakpoints.down("xs")]: {
@@ -1346,17 +1369,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 100,
     marginBottom: 10,
   },
+
   activeTab: {
     background: blue,
     borderRadius: 5,
     color: "white",
-  },
-  tabText: {
-    fontSize: 20,
-    textTransform: "capitalize",
-    padding: 2,
-    minWidth: 120,
-    minHeight: 40,
   },
   SMSLastReportGrid: {
     padding: "15px 20px 0px 20px",
@@ -1376,7 +1393,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: "baseline",
   },
   lastReportTitleSection: {
-    marginTop: 5,
+    paddingTop: '0 !important',
     marginBottom: "1.2rem",
     borderBottom: "1px solid #ccc",
   },
@@ -1388,6 +1405,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   lastReportsTabPanels: {
     paddingRight: windowSize !== "xs" ? 25 : 0,
     paddingLeft: windowSize !== "xs" ? 25 : 0,
+    '& .MuiDivider-root': {
+      width: '100%',
+      border: '1px #F0F5FF solid',
+      height: 0,
+    },
   },
   tabPanel: {
     minHeight: 220,
@@ -1397,6 +1419,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     [theme.breakpoints.down("md")]: {
       marginTop: 0,
     },
+    borderTop: 'none'
   },
   chartLabel: {
     position: "absolute",
@@ -1413,11 +1436,30 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     margin: "auto",
     cursor: "pointer",
     textDecoration: "none",
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     "&:hover": {
       textDecoration: "none",
     },
+    '& .centerText': {
+      fontWeight: 500,
+      fontSize: 15,
+    },
+    '& .quantity': {
+      fontWeight: 700,
+      fontSize: 28.676,
+      color: '#FF4D2A'
+    },
+    '& .MuiDivider-root': {
+      height: 2.8,
+      backgroundColor: '#cdcdcd',
+      width: 20.3
+    }
   },
   doughnutBox: {
+    marginTop: 20,
     width: 200,
     height: 200,
     position: "relative",

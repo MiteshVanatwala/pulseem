@@ -1,11 +1,21 @@
-const appBarTitleTextSize = { xs: 18, sm: 17, md: 15, lg: 17, xl: 19 }
+const appBarTitleTextSize = { xs: 13, sm: 12, md: 10, lg: 12, xl: 14 }
 
 export const appBarStyle = (windowSize, isRTL, theme) => ({
   appBarItemContainer: {
     display: 'flex',
     flexDirection: 'column',
     textDecoration: 'none',
-    zIndex: 1300
+    zIndex: 1300,
+    '& .chosenText, .chosenText~.downArraow': {
+      fontWeight: 'bold',
+      color: '#FF0054'
+    },
+    '&:hover': {
+      '& .MuiIconButton-root, svg': {
+        fontWeight: 'bold',
+        color: '#FF0054'
+      }
+    }
   },
   appBarHrefContainer: {
     display: 'flex',
@@ -13,20 +23,6 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'none',
     justifyContent: 'center',
     cursor: 'pointer',
-    '& .chosenText, .chosenText~.downArraow': {
-      fontWeight: 'bold',
-      color: '#FF0054'
-    },
-    '&:hover': {
-      backgroundColor: 'rgba(0, 0, 0, 0.04)',
-      '& .MuiIconButton-root, svg': {
-        fontWeight: 'bold',
-        color: '#FF0054'
-      },
-      '& .downArraow': {
-        transform: 'rotate(180deg)'
-      }
-    }
   },
   appBarItemText: {
     display: 'flex',
@@ -97,6 +93,13 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
       paddingRight: isRTL ? '0px !important' : '10px !important',
       paddingLeft: isRTL ? '10px !important' : '0px !important',
     },
+    '&.active': {
+      background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+      color: '#fff',
+      '& svg': {
+        color: '#fff',
+      },
+    },
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
       color: '#fff',
@@ -128,7 +131,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: '#fff',
     height: '45px',
     zIndex: 50000000,
-    boxShadow: '0px 1px 5px black',
+    boxShadow: '0px 1px 10px 4a4a4aab',
     height: 62.78,
     borderRadius: '0% 0% 4% 4% / 70% 70% 100% 100% '
   },
@@ -153,13 +156,24 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     justifyContent: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
+    '& .settingsContainer': {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      '& .settingsBorder': {
+        borderRight: '3px solid #FF0054',
+        height: 24
+      }
+    },
     '&>div': {
       '&:nth-child(1)': {
-        borderInline: '1px solid #FF0054',
-        padding: '0 10px'
+        '&>div': {
+          padding: '0 19px 0 16px'
+        }
       },
       '&:nth-child(2)': {
-        paddingLeft: 20
+        paddingLeft: isRTL ? 0 : 25.5,
+        paddingRight: isRTL ? 25.5 : 0
       }
     }
   },
@@ -217,7 +231,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   phoneAppBarItemContainer: {
     display: 'flex',
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   phoneAppBarItemIcon: {
     fontFamily: 'pulseemicons',

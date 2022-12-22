@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, Box, Grid, Paper, Typography, Link, Tooltip } from '@material-ui/core';
+import { IconButton, Box, Grid, Paper, Typography, Link, Tooltip, Divider } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Doughnut } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
-import { BsInfoCircleFill } from 'react-icons/bs';
+import { BsInfoCircle } from 'react-icons/bs';
 import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
+import { ChartIcon } from '../../assets/images/dashboard/index'
 
 
 const RecipientChart = ({ classes, }) => {
@@ -198,19 +199,19 @@ const RecipientChart = ({ classes, }) => {
             },
             hoverOffset: 10,
             backgroundColor: [
-                '#67B7DC',
-                '#648FD5',
-                '#6771DC',
+                '#FF8871',
+                '#FFC4B8',
+                '#FF4D2A',
             ],
             hoverBackgroundColor: [
-                '#67B7DC',
-                '#648FD5',
-                '#6771DC',
+                '#FF8871',
+                '#FFC4B8',
+                '#FF4D2A',
             ],
             hoverBorderColor: [
-                '#67B7DC',
-                '#648FD5',
-                '#6771DC',
+                '#FF8871',
+                '#FFC4B8',
+                '#FF4D2A',
             ]
         };
 
@@ -223,7 +224,9 @@ const RecipientChart = ({ classes, }) => {
                     report.Error,
                     report.Removed
                 ],
-                borderWidth: 0,
+                borderWidth: 5,
+                borderRadius: 10,
+                cutout: '80%'
             }],
         }
         return (
@@ -231,12 +234,15 @@ const RecipientChart = ({ classes, }) => {
                 key={`doughnut${report.ReportSection}`}
                 item xs={12} sm={12} md={4}
                 className={classes.doughnutGrid}>
-                <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
                     <Link
                         href="#!"
                         className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
+                        onClick={() => openReports(report.ReportSection, "total")}>
+                        <Typography className={'centerText'}>{t(titles[index].mainTitle)}</Typography>
+                        <Divider />
+                        <Typography className={'quantity'}>{report.Total.toLocaleString()}</Typography>
+                    </Link>
                     <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
                 </Box>
             </Grid>
@@ -269,7 +275,7 @@ const RecipientChart = ({ classes, }) => {
                     qReportType = 2;
                     break;
                 }
-                default:{
+                default: {
                     break;
                 }
             }
@@ -289,7 +295,7 @@ const RecipientChart = ({ classes, }) => {
                     qReportType = 1;
                     break;
                 }
-                default:{
+                default: {
                     break;
                 }
             }
@@ -418,10 +424,12 @@ const RecipientChart = ({ classes, }) => {
     return (
         <Paper elevation={3} className={classes.dashboardTopPaper}>
             <Grid container>
-                <Grid item xs={12} className={classes.recipientTitleSection}>
-                    <Box>
+                <Grid item xs={12} className={classes.dashBoxtitleSection}>
+                    <Box className={classes.flex}>
+                        <ChartIcon className={classes.mlr10} />
                         <Typography
-                            className={clsx(classes.dInlineBlock, classes.dashboardTitle)}>
+                            className={clsx(classes.dInlineBlock, 'title')}
+                        >
                             {t('dashboard.yourRecipients')}
                         </Typography>
                         {totalRecipient > 0 && <Tooltip
@@ -434,8 +442,8 @@ const RecipientChart = ({ classes, }) => {
                             }}
                             enterTouchDelay={50}
                             placement={"top"}>
-                            <IconButton aria-label={t('dashboard.chartTooltip')}>
-                                <BsInfoCircleFill />
+                            <IconButton style={{ alignSelf: 'flex-end' }} className={classes.icon_Info} aria-label={t('dashboard.chartTooltip')}>
+                                <BsInfoCircle />
                             </IconButton>
                         </Tooltip>
                         }

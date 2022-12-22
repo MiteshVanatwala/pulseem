@@ -32,6 +32,7 @@ const AppBarItem = ({
   menuWidth = 290,
   onInnerClick = () => null
 }) => {
+  const { t } = useTranslation()
   const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
 
@@ -84,6 +85,11 @@ const AppBarItem = ({
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   style={{ padding: 0 }}>
+                  <Box>
+                    <MenuItem key={-1}>
+
+                    </MenuItem>
+                  </Box>
                   {item.options && item.options.map((option, index) => (
                     option.isShow &&
                     <Box
@@ -104,9 +110,12 @@ const AppBarItem = ({
                           }
                         }}
                         classes={{ root: classes.appBarItemMenuRoot }}
-                        className={classes.appBarItemMenuItem}
+                        className={clsx(classes.appBarItemMenuItem, option.title === t("appBar.logout") ? 'active' : '')}
                       >
                         {option.title}
+                        {
+                          option.title === t("appBar.logout") && <option.iconSrc style={{ padding: '0 5px', marginLeft: 'auto' }} />
+                        }
                       </MenuItem>
                     </Box>
                   ))}
@@ -244,9 +253,14 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
         />
       ))}
       <Box className={classes.appBarAfterTollbarContainer}>
-        <AppBarItem
-          classes={classes}
-        />
+        <Box className='settingsContainer'>
+          <span className='settingsBorder'></span>
+          <AppBarItem
+            classes={classes}
+            item={settings}
+          />
+          <span className='settingsBorder'></span>
+        </Box>
         <Box style={{ zIndex: 1300 }}>
           <LanguageSelector classes={classes} />
         </Box>

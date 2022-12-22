@@ -567,5 +567,6 @@
   "birthDate": "Birth Date",
   "uploadInProgress": "Upload in progress...",
   "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>",
-  "next": "Next"
+  "next": "Next",
+  "new": "New"
 }

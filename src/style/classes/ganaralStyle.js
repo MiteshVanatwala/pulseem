@@ -765,6 +765,29 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
     // },
   },
+  btn: {
+    padding: '2px 10px',
+    fontWeight: 'bold',
+    '&:hover': {
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      color: '#fff',
+      '& svg': {
+        color: '#fff'
+      }
+    },
+    border: '2px solid #F65026',
+    '& svg': {
+      marginLeft: 5,
+      color: '#FF0054'
+    },
+  },
+  btnDisabled: {
+    opacity: 0.7,
+    pointerEvents: 'none'
+  },
+  btnRounded: {
+    borderRadius: 20,
+  },
   buttonForm: {
     display: "flex",
     flexDirection: "column",
@@ -1643,9 +1666,31 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "14px",
     },
   },
-  activeTab: {
-    borderBottom: "4px solid #168ee3",
-    color: "#007bff !important",
+  tablistRoot: {
+    '& .MuiTabs-fixed': {
+      '& .MuiTabs-flexContainer': {
+        height: '100%',
+        background: '#fff',
+        borderRadius: 10
+      }
+    }
+  },
+  btnTab: {
+    fontSize: 20,
+    textTransform: "capitalize",
+    padding: 2,
+    minWidth: 120,
+    minHeight: 40,
+    color: '#000',
+    background: '#E6E6E6',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    border: '3px solid #fff',
+    borderBottom: 'none',
+  },
+  currentActiveTab: {
+    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: "#fff !important",
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
@@ -2099,7 +2144,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   graphCampaignName: {
-    fontWeight: "bold",
+    color: '#000',
     maxWidth: graphTextWidth[windowSize],
   },
   mt24: {
