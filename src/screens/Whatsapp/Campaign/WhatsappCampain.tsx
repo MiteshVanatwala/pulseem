@@ -339,7 +339,6 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
 		const templateData: savedTemplateDataProps | undefined =
 			savedTemplateData?.Data;
-		console.log('templateData::', templateData);
 		let updatedTemplateData: templateDataProps = {
 			templateText: '',
 			templateButtons: [],
