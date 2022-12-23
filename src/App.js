@@ -62,6 +62,9 @@ import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
 import WhatsappCampaign from './screens/Whatsapp/Campaign/WhatsappCampain';
 import SendCampaign from './screens/Whatsapp/Campaign/SendCampaign';
+import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAppTemplates';
+import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
+import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
 
 const renderRoutes = (classes, redirect) => {
 	const transferUrl =
@@ -231,6 +234,21 @@ const renderRoutes = (classes, redirect) => {
 			<Route
 				path={`/react/Whatsapp/send2`}
 				element={<SendCampaign classes={classes} />}
+			/>
+
+			<Route
+				path={`/react/Whatsapp/TemplateManagement`}
+				element={<ManageWhatsAppTemplates classes={classes} />}
+			/>
+
+			<Route
+				path={`/react/Whatsapp/Reports`}
+				element={<WhatsappReports classes={classes} />}
+			/>
+
+			<Route
+				path={`/react/Whatsapp/CampaignManagement`}
+				element={<ManageWhatsAppCampaigns classes={classes} />}
 			/>
 
 			{/* MMS */}

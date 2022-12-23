@@ -1287,4 +1287,151 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textAlign: 'center',
 		color: '#DC3D1B',
 	},
+
+	/* Management and report pages */
+
+	manageWhatsappTemplates: {},
+	manageTemplatesHeaderButtons: {
+		marginTop: '18px',
+		justifyContent: 'space-between',
+		'& button': {
+			background: 'blue',
+			color: 'white',
+			margin: '4px 8px',
+			textTransform: 'none',
+			fontSize: '16px',
+		},
+		'& .green': {
+			background: '#27AE60',
+		},
+		'& .blue': {
+			background: '#3498DB',
+		},
+	},
+	manageTemplatesCampaignCount: {
+		marginTop: '25px',
+		fontSize: '14px',
+		marginRight: '10px',
+	},
+	manageTemplatesTableWrapper: {
+		marginTop: '17px',
+		padding: '0 8px',
+	},
+	manageTemplatesTableWrapperPadding: {
+		padding: '0px 220px',
+		'@media screen and (max-width: 1264px)': {
+			padding: '0px 160px',
+		},
+		'@media screen and (max-width: 1170px)': {
+			padding: '0 8px',
+		},
+	},
+
+	whatsappReportHeaderButtons: {
+		marginTop: '18px',
+		justifyContent: 'space-between',
+		'& button': {
+			background: 'blue',
+			color: 'white',
+			margin: '4px 8px',
+			textTransform: 'none',
+			fontSize: '16px',
+		},
+		'& .green': {
+			background: '#27AE60',
+		},
+		'& .blue': {
+			background: '#3498DB',
+		},
+	},
+	whatsappReportHeaderExportButton: {
+		'& img': {
+			width: '24px',
+			height: '24px',
+		},
+		'& button': {
+			background: '#1d683f',
+			'&:hover': {
+				background: '#1d683f',
+			},
+		},
+	},
+	whatsappReportCampaignCount: {
+		marginTop: '25px',
+		fontSize: '14px',
+		marginRight: '10px',
+	},
+	whatsappReportTableWrapper: {
+		marginTop: '17px',
+		padding: '0 8px',
+		'& table': {
+			'& tr': {
+				'& th': {
+					'&:nth-child(1)': {
+						width: '270px',
+					},
+					'&:nth-child(2)': {
+						width: '160px',
+					},
+					'&:nth-child(3)': {
+						width: '70px',
+						color: '#26BE35',
+					},
+					'&:nth-child(4)': {
+						width: '140px',
+					},
+					'&:nth-child(5)': {
+						width: '70px',
+					},
+					'&:nth-child(6)': {
+						width: '160px',
+					},
+					'&:nth-child(7)': {
+						width: '160px',
+					},
+				},
+				'& td': {
+					'&:nth-child(1)': {
+						width: '270px',
+						'& p': {
+							textDecoration: 'none',
+						},
+					},
+					'&:nth-child(2)': {
+						width: '160px',
+					},
+					'&:nth-child(3)': {
+						width: '70px',
+						'& p': {
+							color: '#26BE35',
+						},
+					},
+					'&:nth-child(4)': {
+						width: '140px',
+						'& p': {
+							color: '#6464FF',
+						},
+					},
+					'&:nth-child(5)': {
+						width: '70px',
+						'& p': {
+							color: '#6464FF',
+						},
+					},
+					'&:nth-child(6)': {
+						width: '160px',
+						'& p': {
+							color: 'red',
+						},
+					},
+					'&:nth-child(7)': {
+						width: '160px',
+					},
+					'& p': {
+						textDecoration: 'underline',
+					},
+				},
+			},
+		},
+	},
 });
