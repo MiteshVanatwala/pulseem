@@ -258,7 +258,7 @@ export const getRoutes = (
 				href: '/react/Whatsapp/TemplateManagement',
 				isShow: true,
 			},
-      {
+			{
 				key: 'campaignmanagement',
 				title: 'Whatsapp Campaign Management',
 				href: '/react/Whatsapp/CampaignManagement',
@@ -268,6 +268,12 @@ export const getRoutes = (
 				key: 'reports',
 				title: 'Whatsapp Reports',
 				href: '/react/Whatsapp/Reports',
+				isShow: true,
+			},
+			{
+				key: 'chat',
+				title: 'Whatsapp Chat',
+				href: '/react/Whatsapp/Chat',
 				isShow: true,
 			},
 		],
