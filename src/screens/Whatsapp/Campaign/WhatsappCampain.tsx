@@ -20,17 +20,20 @@ import {
 	WhatsappCampaignProps,
 	coreProps,
 	testGroupDataProps,
+	tagDataProps,
 } from './WhatsappCampaign.types';
 import { ClassesType } from '../../Classes.types';
 import CampaignFields from './CampaignFields';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/WhatsappMobilePreview';
 import {
+	buttonsDataProps,
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
+	savedTemplateAPIProps,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -214,15 +217,15 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 
 	const [callToActionFieldRows, setCallToActionFieldRows] =
 		useState<callToActionProps>([initialFieldRow]);
-	const [linkCount, setlinkCount] = useState(0);
-	const [messageCount, setMessageCount] = useState(0);
+	const [linkCount, setlinkCount] = useState<number>(0);
+	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
 
 	const getSavedTemplateFields = async () => {
-		let savedTemplate: any = await dispatch(
+		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
 		setSavedTemplateList(savedTemplate.payload.Items);
@@ -236,72 +239,32 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const handleSubmit = () => {};
 
 	const isUpdatedVaraiable = (variable: string) => {
-		return updatedDynamicVariable.includes(variable?.toLowerCase())
+		return updatedDynamicVariable?.includes(variable?.toLowerCase())
 			? true
 			: false;
 	};
 
-	const highlightText = ({ children, highlightIndex }: any) => {
+	const highlightText = (tagData: tagDataProps) => {
 		return (
 			<strong
 				className={clsx(
 					classes.whatsappCampainHighlightText,
-					`${isUpdatedVaraiable(children) && 'updated'}`
+					`${isUpdatedVaraiable(tagData?.children) && 'updated'}`
 				)}
 				onClick={() => setIsDynamcFieldModal(true)}>
-				{children}
+				{tagData?.children}
 			</strong>
 		);
 	};
 
-	const setButtonsData = (buttonType: string, data: any) => {
-		if (buttonType === 'quickReply') {
-			const buttonData = data?.map((button: any) => {
-				return {
-					id: uniqid(),
-					typeOfAction: '',
-					fields: [
-						{
-							fieldName: translator('whatsapp.websiteButtonText'),
-							type: 'text',
-							placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-							value: button.title,
-						},
-					],
-				};
-			});
-			return buttonData;
-		} else {
-			const buttonData = data?.map((button: any) => {
-				if (button?.type === 'PHONE') {
+	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
-						typeOfAction: 'phonenumber',
-						fields: [
-							{
-								fieldName: translator('whatsapp.phoneButtonText'),
-								type: 'text',
-								placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-								value: button.title,
-							},
-							{
-								fieldName: translator('whatsapp.country'),
-								type: 'select',
-								placeholder: 'Select Your Country Code',
-								value: '+972 Israel',
-							},
-							{
-								fieldName: translator('whatsapp.phoneNumber'),
-								type: 'tel',
-								placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-								value: button.phone,
-							},
-						],
-					};
-				} else {
-					return {
-						id: uniqid(),
-						typeOfAction: 'website',
+						typeOfAction: '',
 						fields: [
 							{
 								fieldName: translator('whatsapp.websiteButtonText'),
@@ -311,17 +274,63 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 								),
 								value: button.title,
 							},
-							{
-								fieldName: translator('whatsapp.websiteURL'),
-								type: 'text',
-								placeholder: translator('whatsapp.websiteURLPlaceholder'),
-								value: button.url,
-							},
 						],
 					};
-				}
-			});
-			return buttonData;
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: translator('whatsapp.phoneButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.phoneButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.country'),
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972 Israel',
+								},
+								{
+									fieldName: translator('whatsapp.phoneNumber'),
+									type: 'tel',
+									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: translator('whatsapp.websiteButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.websiteButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.websiteURL'),
+									type: 'text',
+									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
 		}
 	};
 
@@ -399,6 +408,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		} else {
 			setCallToActionFieldRows(updatedTemplateData.templateButtons);
 		}
+		if (templateData?.variables) {
+			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+		}
 	};
 
 	const onChangeTestSendRadio = (value: string) => {
@@ -432,6 +444,10 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 			setIsTestGroupModal(false);
 			setIsValidationAlert(true);
 		}
+	};
+
+	const onCampaignFromRestore = () => {
+		setFrom('012345689');
 	};
 
 	return (
@@ -487,6 +503,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 									}
 									from={from}
 									onFromChange={(from) => setFrom(from)}
+									onCampaignFromRestore={() => onCampaignFromRestore()}
 								/>
 							</Grid>
 							<Grid className={classes.WhatsappCampainTextarea} md={12} lg={12}>
@@ -499,7 +516,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 											]}
 											autoEscape={true}
 											textToHighlight="The dog is chasing the cat. Or perhaps they're just playing?"
-											highlightTag={highlightText}
+											highlightTag={(tagData: tagDataProps) =>
+												highlightText(tagData)
+											}
 										/>
 									</div>
 									<Box
@@ -547,11 +566,11 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 
 									<span className={classes.textInfoWrapper}>
 										<span className={classes.textInfo}>
-											{messageCount === 1
+											{dynamicFieldCount === 1
 												? translator('whatsappCampaign.dfield')
 												: translator('whatsappCampaign.dfields')}
 										</span>
-										&nbsp;{messageCount}
+										&nbsp;{dynamicFieldCount}
 									</span>
 
 									<span className={classes.textInfoWrapper}>

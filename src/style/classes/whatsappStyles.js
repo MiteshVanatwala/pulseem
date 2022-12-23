@@ -1269,4 +1269,251 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
     textAlign: "center",
     color: "#DC3D1B",
   },
+  WhatsappCampainP1Title: {
+    fontSize: windowSize === "xs" ? "25px" : "36px",
+    color: "#333333",
+    paddingBlock: "0.5rem",
+    fontFamily: "Assistant",
+    fontWeight: "bold",
+    marginTop: 20,
+    whiteSpace: windowSize === "xs" ? "break-spaces" : null,
+  },
+  WhatsappCampainP1: {},
+  WhatsappCampainP1Left: {
+    padding: "0px 8px 0px 8px",
+  },
+  WhatsappCampainP1Right: {
+    padding: "0px 108px 0px 204px",
+    "@media screen and (max-width: 768px)": {
+      padding: "0px",
+    },
+  },
+  WhatsappCampainButtonContent: {
+    fontFamily: "OpenSansHebrew",
+    fontSize: "12px",
+    color: "#959595",
+    "&.red": {
+      color: "#ca332f",
+    },
+  },
+  WhatsappCampainFields: {
+    marginBottom: "18px",
+  },
+  WhatsappCampainTextarea: {},
+  WhatsappCampainRadioButton: {
+    color: "#0677fa",
+    "&.Mui-checked": {
+      color: "#0677fa",
+    },
+  },
+  WhatsappCampainSwitch: {
+    "& span": {
+      color: "#ffffff",
+      "&.Mui-checked": {
+        color: "#ffffff",
+      },
+    },
+    "& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track": {
+      backgroundColor: "#19762b",
+    },
+  },
+  whatsappCampaignDynamicFieldTitle: {
+    color: "#157eaf",
+    fontFamily: "OpenSansHebrew",
+    fontSize: "20px",
+    fontWeight: "600",
+    padding: "12px 18px",
+    textAlign: isRTL ? "right" : "left",
+  },
+  whatsappCampaignDynamicFieldClose: {
+    position: "absolute",
+    top: "0",
+    right: isRTL ? "auto" : "0",
+    left: isRTL ? "0" : "auto",
+  },
+  whatsappCampaignDynamicFieldContent: {
+    direction: isRTL ? "rtl" : "ltr",
+    width: "558px",
+    padding: "0 18px 0 18px",
+    "@media screen and (max-width: 1200px)": {
+      width: "100%",
+    },
+  },
+  whatsappCampaignDynamicFieldContentText: {
+    padding: "0px 0px 6px 0px",
+  },
+  whatsappCampaignDynamicFieldButton: {
+    textTransform: "capitalize",
+    fontSize: "14px",
+  },
+  whatsappCampaignDynamicFieldButtonActive: {
+    textTransform: "capitalize",
+    fontSize: "14px",
+    backgroundColor: "#0371ad",
+    color: "#ffffff",
+    "&:hover": {
+      textTransform: "capitalize",
+      fontSize: "14px",
+      backgroundColor: "#0371ad",
+      color: "#ffffff",
+    },
+  },
+  whatsappCampaignDynamicFieldLinkRemoval: {
+    textTransform: "capitalize",
+    fontSize: "14px",
+    backgroundColor: "#0371ad",
+    color: "#ffffff",
+    marginTop: "6px",
+    marginLeft: "10px",
+    padding: "3px 9px",
+    borderRadius: "20px",
+    "&:hover": {
+      textTransform: "capitalize",
+      fontSize: "14px",
+      backgroundColor: "#0371ad",
+      color: "#ffffff",
+    },
+  },
+  whatsappCampaignDynamicFieldPersonalField: {
+    fontSize: "14px",
+    width: "calc(100% - 288px)",
+    "@media screen and (max-width: 1200px)": {
+      width: "100%",
+    },
+    "& .MuiSelect-select.MuiSelect-select": {
+      padding: "10px 4px",
+    },
+  },
+  whatsappCampaignDynamicFieldTextarea: {
+    width: "calc(100% - 220px)",
+    height: "122px",
+    fontFamily: "OpenSansHebrew",
+    fontSize: "14px",
+    padding: "8px",
+    resize: "none",
+    border: "1px solid #c9c9c9",
+    borderRadius: "4px",
+    "@media screen and (max-width: 1200px)": {
+      width: "100%",
+    },
+  },
+  whatsappCampaignDynamicFieldLink: {
+    width: "100%",
+    "& .keep-track": {
+      fontFamily: "OpenSansHebrew",
+      fontSize: "12px",
+      fontWeight: "600",
+      paddingTop: "11px",
+    },
+    "& .keep-track-desc": {
+      width: "200px",
+      color: "#C2C2C2",
+      fontFamily: "OpenSansHebrew",
+      fontSize: "12px",
+    },
+    "& .dynamic-link-switch": {
+      "& .MuiSwitch-thumb": {
+        color: "#ffffff",
+      },
+      "& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track": {
+        backgroundColor: "#2f9d1a",
+      },
+    },
+    "& .link-input": {
+      width: "calc(100% - 208px)",
+      "@media screen and (max-width: 1200px)": {
+        width: "100%",
+      },
+      "& input": {
+        fontFamily: "OpenSansHebrew",
+        fontSize: "14px",
+        padding: "14px 14px",
+      },
+    },
+  },
+  whatsappCampaignDynamicFieldLandingPage: {
+    fontSize: "14px",
+    width: "calc(100% - 288px)",
+    "@media screen and (max-width: 1200px)": {
+      width: "100%",
+    },
+    "& .MuiSelect-select.MuiSelect-select": {
+      padding: "10px 4px",
+    },
+  },
+  whatsappCampaignDynamicFieldNavigationSelect: {
+    fontSize: "14px",
+    marginBottom: "12px",
+    width: "calc(100% - 288px)",
+    "@media screen and (max-width: 1200px)": {
+      width: "100%",
+    },
+    "& .MuiSelect-select.MuiSelect-select": {
+      padding: "10px 4px",
+    },
+  },
+  whatsappCampaignDynamicFieldNavigationText: {
+    fontSize: "12px",
+    width: "calc(100% - 208px)",
+    "@media screen and (max-width: 1200px)": {
+      width: "100%",
+    },
+    "& input": {
+      fontFamily: "OpenSansHebrew",
+      fontSize: "13px",
+      padding: "9px",
+    },
+  },
+  whatsappCampainHighlightContent: {
+    height: "240px",
+    border: "1px solid #ced4da",
+    borderBottom: "0px",
+    borderTopLeftRadius: "0.25rem",
+    borderTopRightRadius: "0.25rem",
+    padding: "8px",
+  },
+  whatsappCampainHighlightTextWrapper: {},
+  whatsappCampainHighlightText: {
+    backgroundColor: "#169bd5",
+    color: "#ffffff",
+    padding: "0px 2px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    "&.updated": {
+      backgroundColor: "#2ca861",
+    },
+  },
+  whatsappCampaignActionButtonsBox: {
+    display: "flex",
+    padding: "4px 8px 0px 0px",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  whatsappCampaignActionButtonsWrapper: {
+    marginTop: "10px",
+  },
+  testSendNewTag: {
+    backgroundColor: "#c9302c",
+    color: "#ffffff",
+    height: "22px",
+    borderRadius: "4px",
+    padding: "2px 4px",
+  },
+  testSendRadio: {
+    padding: "0 12px",
+  },
+  testOneContactSendButton: {
+    color: "#009f00",
+    border: "1px solid #009f00",
+    marginRight: isRTL ? "8px !important" : "0px",
+    marginLeft: isRTL ? "0px" : "8px !important",
+  },
+  columnAdjustmentModalTableWrapper: {
+    width: "450px",
+    overflow: "auto",
+    "& table": {
+      maxWidth: "100%",
+      borderCollapse: "collapse",
+    },
+  },
 });
