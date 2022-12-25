@@ -201,6 +201,38 @@ export const sendCampaign = createAsyncThunk(
     }
   });
 
+export const saveCampaignInfo = createAsyncThunk(
+  'email/CreateOrUpdate', async (campaign, thunkAPI) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await PulseemReactInstance.post(`email/CreateOrUpdate`, campaign);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+  }
+)
+
+export const getCampaignInfo = createAsyncThunk(
+  'email/GetCampaignInfo', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`email/GetCampaignInfo/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const getCreditsByFileTotalBytes = createAsyncThunk(
+  'email/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`email/GetCreditsByFileTotalBytes`, campaign);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {
@@ -216,6 +248,7 @@ export const newsletterSlice = createSlice({
     newsletterSettings: [],
     newsletterInfo: [],
     groupData: null,
+    campaignInfo: [],
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
       INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
@@ -275,6 +308,12 @@ export const newsletterSlice = createSlice({
     })
     builder.addCase(getGroups.fulfilled, (state, { payload }) => {
       state.groupData = payload?.Data
+    })
+    builder.addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
+      state.campaignInfo = payload?.Message;
+    })
+    builder.addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
+      state.campaignInfo = payload?.Message;
     })
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })

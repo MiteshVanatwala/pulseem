@@ -30,8 +30,7 @@ import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
-import { getGroups, getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
-import { getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
+import { getCampaignInfo, getGroups, getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
 import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
@@ -103,9 +102,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { isRTL } = useSelector((state) => state.core);
     const { verifiedEmails } = useSelector(state => state.common);
     const { defaultGroupId } = useSelector((state) => state.group);
-    const { campaignInfo } = useSelector((state) => state.campaignEditor);
     const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
-    const { ToastMessages, newsletterSettings, groupData, newsletterSendSummary } = useSelector(state => state.newsletter);
+    const { ToastMessages, newsletterSettings, groupData, newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);

@@ -12,7 +12,7 @@ import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import { saveCampaignInfo } from "../../../../redux/reducers/campaignEditorSlice";
+import { saveCampaignInfo } from "../../../../redux/reducers/newsletterSlice";
 import { sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 
 const SummaryDialog = ({ classes,
@@ -35,8 +35,7 @@ const SummaryDialog = ({ classes,
     const { isRTL } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
-    const { newsletterSendSummary } = useSelector(state => state.newsletter);
-    const { campaignInfo } = useSelector((state) => state.campaignEditor);
+    const { newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
 
     const {
         FinalClients,
