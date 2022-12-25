@@ -734,7 +734,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }),
             exit: ExitDialog({
                 classes: classes,
-                onClose: () => navigate("/SMSCampaigns"),
+                onConfirm: () => {
+                    setDialogType(null);
+                    onSaveSettings(false).then(() => {
+                        navigate("/react/Campaigns/")
+                    })
+                },
+                onClose: () => navigate("/react/Campaigns/"),
                 onCancel: () => setDialogType(null),
             }),
             sendSuccess: SendSuccessDialog({
