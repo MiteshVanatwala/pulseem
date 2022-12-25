@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import Gif from "../../../../assets/images/managment/check-circle.gif";
 
-const SendSuccessDialog = () => {
+const SendSuccessDialog = ({
+    onConfirm = () => null
+}) => {
 
     const navigate = useNavigate();
 
@@ -21,7 +23,7 @@ const SendSuccessDialog = () => {
                     <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
                         {t("sms.campaignIsOnItsWay")}
                     </p>
-                    <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { navigate("/SMSCampaigns") }}>{t("common.confirm")}</span>
+                    <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { onConfirm() }}>{t("common.confirm")}</span>
                 </div>
             </Box>
         ),

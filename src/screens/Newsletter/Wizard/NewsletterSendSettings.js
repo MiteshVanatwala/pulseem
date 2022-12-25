@@ -44,6 +44,7 @@ import moment from 'moment';
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import WizardActions from "../../../components/Wizard/WizardActions";
 import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog.js";
+import SendResponseDialog from './Popups/SendResponseDialog';
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -256,7 +257,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             PulseAmount: campaignValues.SendingMethod === 3 ? null : campaignValues.PulseAmount,
             TimeInterval: campaignValues.SendingMethod === 3 ? null : campaignValues.TimeInterval,
             SendDate: campaignValues.SendDate,
-            SendingMethod: campaignValues.SendingMethod ?? 1,
+            SendingMethod: campaignValues.SendingMethod === 0 ? 1 : campaignValues.SendingMethod ?? 1,
             GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
             GroupList: selectedGroups.map((g) => g.GroupID),
             ExceptionalDays: filterValues?.exceptionalDays,
@@ -297,6 +298,26 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR);
             }
+        }
+    }
+    const SEND_PROC = {
+        401: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.invaliApiKey'), ShowContactSupport: false } },
+        402: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.LOCK_SENDING'), ShowContactSupport: true } },
+        403: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.UNAUTHORIZED_FROM_EMAIL'), ShowContactSupport: true } },
+        404: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.NO_RECIPIENTS'), ShowContactSupport: false } },
+        405: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.BULK_ENDED'), ShowContactSupport: true } },
+        409: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.MONTHLY_BULK_ENDED'), ShowContactSupport: true } },
+        406: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.MONTHLY_RESTRICTIONS'), ShowContactSupport: true } },
+        407: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.FIRST_CAMPAIGN_RESTRICTIONS'), ShowContactSupport: false } },
+        408: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.ACCOUNT_HAS_NO_PRICE_LIST'), ShowContactSupport: true } }
+    };
+
+    const handleSendResponse = (response) => {
+        if (response?.StatusCode === 201) {
+            setDialogType({ type: 'sendSuccess' });
+        }
+        else {
+            setDialogType(SEND_PROC[response?.StatusCode]);
         }
     }
     const handleInputNewGroup = (e) => {
@@ -718,7 +739,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose: () => navigate("/SMSCampaigns"),
                 onCancel: () => setDialogType(null),
             }),
-            sendSuccess: SendSuccessDialog(),
+            sendSuccess: SendSuccessDialog({
+                onConfirm: () => {
+                    setDialogType(null);
+                    navigate('/react/campaigns');
+                }
+            }),
             summary: ConfirmationDialog({ classes: classes, count: data })
         }
 
@@ -1057,6 +1083,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setDialogType={() => setDialogType(null)}
                 groups={selectedGroups}
                 PreviewURL={newsletterSettings?.PreviewURL}
+                handleSendResponse={handleSendResponse}
+            />}
+            {dialogType?.type === 'SendResponse' && <SendResponseDialog
+                classes={classes}
+                data={dialogType.data}
+                isOpen={dialogType?.type === 'SendResponse'}
+                key={'SendResponse'}
+                setDialogType={setDialogType}
             />}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}

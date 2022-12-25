@@ -13,6 +13,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo } from "../../../../redux/reducers/campaignEditorSlice";
+import { sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -24,6 +25,7 @@ const SummaryDialog = ({ classes,
     filteredCampaigns = null,
     PreviewURL = null,
     SendDate = "",
+    handleSendResponse = () => null,
     ...props }) => {
     const dispatch = useDispatch();
     const [detailsHide, setdetailsHide] = useState(true);
@@ -58,9 +60,9 @@ const SummaryDialog = ({ classes,
 
     const { t } = useTranslation();
 
-    const handleSmsSettings = () => {
-        onClose();
-        // props.handleCallback()
+    const handleSmsSettings = async () => {
+        const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
+        handleSendResponse(sendResponse.payload);
     }
     useEffect(() => {
         dispatch(getAuthorizedEmails());
@@ -137,7 +139,7 @@ const SummaryDialog = ({ classes,
             {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients.toLocaleString())}
             {InvalidClients > 0 && renderDetailsLine(t("sms.invalidRecipients"), InvalidClients.toLocaleString())}
             {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients.toLocaleString())}
-            {PendingClients > 0 && renderDetailsLine(t("campaigns.pendingClients"), PendingClients.toLocaleString())}
+            {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients.toLocaleString())}
             {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients.toLocaleString())}
             {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
@@ -261,7 +263,7 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={onConfirm}
+                            onClick={() => { handleSmsSettings() }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
@@ -274,7 +276,7 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => { handleSmsSettings() }}
+                            onClick={() => { setDialogType(null) }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogCancelButton
