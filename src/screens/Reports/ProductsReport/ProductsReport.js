@@ -20,6 +20,7 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { preferredOrder } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -320,7 +321,12 @@ const ProductsReport = ({ classes }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={clsx(classes.flex1)}>
-                    <img src={ImageURL} alt={ProductName} className={classes.imgFluid} />
+                    <LazyBackground
+                        url={ImageURL}
+                        title={ProductName}
+                        height={'100px'}
+                    />
+                    {/* <img src={ImageURL} alt={ProductName} className={classes.imgFluid} /> */}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
