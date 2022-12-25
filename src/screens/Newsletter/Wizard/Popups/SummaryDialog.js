@@ -61,7 +61,7 @@ const SummaryDialog = ({ classes,
     const { t } = useTranslation();
 
     const handleSmsSettings = async () => {
-        const sendResponse = await dispatch(sendCampaign(campaignInfo.CampaignID));
+        const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
         handleSendResponse(sendResponse.payload);
     }
     useEffect(() => {
@@ -139,7 +139,7 @@ const SummaryDialog = ({ classes,
             {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients.toLocaleString())}
             {InvalidClients > 0 && renderDetailsLine(t("sms.invalidRecipients"), InvalidClients.toLocaleString())}
             {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients.toLocaleString())}
-            {PendingClients > 0 && renderDetailsLine(t("campaigns.pendingClients"), PendingClients.toLocaleString())}
+            {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients.toLocaleString())}
             {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients.toLocaleString())}
             {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}

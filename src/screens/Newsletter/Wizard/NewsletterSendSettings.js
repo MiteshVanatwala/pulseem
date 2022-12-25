@@ -257,7 +257,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             PulseAmount: campaignValues.SendingMethod === 3 ? null : campaignValues.PulseAmount,
             TimeInterval: campaignValues.SendingMethod === 3 ? null : campaignValues.TimeInterval,
             SendDate: campaignValues.SendDate,
-            SendingMethod: campaignValues.SendingMethod ?? 1,
+            SendingMethod: campaignValues.SendingMethod === 0 ? 1 : campaignValues.SendingMethod ?? 1,
             GroupIds: overrideGroupIds ?? selectedGroups.map(grp => grp.GroupID).join(","),
             GroupList: selectedGroups.map((g) => g.GroupID),
             ExceptionalDays: filterValues?.exceptionalDays,
