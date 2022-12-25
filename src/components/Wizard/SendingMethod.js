@@ -338,7 +338,7 @@ const SendingMethod = ({
                                     <div style={{ display: "flex" }}>
                                         <span
                                             className={
-                                                campaign.SendingMethod === 3 && !isAfterDay ? clsx(classes.afterActive) : clsx(classes.after)
+                                                campaign.SendingMethod === 3 && !isAfterDay ? classes.beforeActive : classes.before
                                             }
                                             onClick={() => {
                                                 handlebef();
@@ -348,7 +348,7 @@ const SendingMethod = ({
                                         </span>
                                         <span
                                             className={
-                                                campaign.SendingMethod === 3 && isAfterDay ? classes.beforeActive : classes.before
+                                                campaign.SendingMethod === 3 && isAfterDay ? classes.afterActive : classes.after
                                             }
                                             onClick={() => {
                                                 handleaf();
