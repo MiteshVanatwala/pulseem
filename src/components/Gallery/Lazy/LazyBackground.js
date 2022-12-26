@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Box } from '@material-ui/core'
+import { CiImageOff } from 'react-icons/ci';
 
 const LazyBackground = (props) => {
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -29,8 +30,9 @@ const LazyBackground = (props) => {
     else {
         bgObject["background-size"] = "cover";
     }
+
     if (imageError) {
-        return <Box className="responsive-bg" style={bgObject} title={props?.title}> {props.children}</Box>
+        return <CiImageOff style={{ width: '100%', height: '100%', padding: 15 }} />
     }
 
     return imageLoaded ? (
