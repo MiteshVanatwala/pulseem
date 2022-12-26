@@ -6,7 +6,7 @@ import SendGreenIcon from './greenSend.png'
 import GroupsIcon from './groups.png'
 import PreviewIcon from './preview.png'
 import SettingsIcon from './settings.png'
-import ReportsIcon from './reports.png'
+// import ReportsIcon from './reports.png'
 import ShareIcon from './share.png'
 import CopyIcon from './copy.png'
 import EmbedCodeIcon from './embed_code.png'
@@ -23,7 +23,9 @@ import CloseIcon from './x.png'
 import AddRecipient from './addRecipient.png'
 import AddRecipients from './addRecipients.png'
 import Reset from './reset.png'
-
+import List from './List'
+import ReportsIcon from './ReportsIcon'
+import GroupRemoval from './GroupRemoval'
 
 export {
   AutomationIcon,
@@ -50,5 +52,9 @@ export {
   DeletePhone,
   AddRecipient,
   AddRecipients,
-  Reset
+  Reset,
+  List as ListIcon,
+  GroupRemoval
+  // ReportsIcon
+
 }

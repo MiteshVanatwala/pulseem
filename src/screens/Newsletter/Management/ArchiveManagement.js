@@ -599,7 +599,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       subPage='archiveManagement'
       classes={classes}
       containerClass={classes.managmentNarrow}>
-      <Title Text={t('campaigns.logPageHeaderArchive.Text')} Classes={classes.managementTitle} />
+      <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

@@ -11,14 +11,14 @@ const shortcutPaperHeight = {
     sm: '100%',
     md: '100%',
     lg: '100%',
-    xl: 'calc(100vh - 47px)'
+    xl: 'calc(100vh - 40px)'
 }
 
 const shortcutBoxWidth = {
     xs: 'auto',
-    sm: '100%',
-    md: '100%',
-    lg: '100%',
+    sm: '92.1%',
+    md: '92.1%',
+    lg: '92.1%',
     xl: 'auto'
 }
 
@@ -59,13 +59,14 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     },
     shortcutBox: {
         borderRadius: 20,
+        marginBottom: 19,
         marginTop: 28,
         position: windowSize !== 'xl' && windowSize !== 'xs' ? 'block' : 'sticky',
         top: windowSize !== 'xl' ? 47 : 0,
         right: isRTL ? 'auto' : 0,
         left: isRTL ? 0 : 'auto',
         width: shortcutBoxWidth[windowSize],
-        height: shortcutPaperHeight[windowSize],
+        height: '92.1%',
         [theme.breakpoints.down('xs')]: {
             margin: '10px 10px 10px 10px'
         },
@@ -80,7 +81,8 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         [theme.breakpoints.down('xs')]: {
             borderRadius: 10,
         },
-        height: shortcutPaperHeight[windowSize],
+        // height: shortcutPaperHeight[windowSize],
+        height: 'calc(95vh - 47px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

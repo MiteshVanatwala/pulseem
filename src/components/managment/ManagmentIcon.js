@@ -48,10 +48,12 @@ export const ManagmentIcon = ({
           // href={href}
           className={clsx(disable && classes.disabledCursor,
             classes.managmentIconContainer,
-            rootClass
+            rootClass,
           )}>
           {!!uIcon ?
-            uIcon
+            <div>
+              {uIcon}
+            </div>
             : <img
               src={icon}
               alt='Icon'

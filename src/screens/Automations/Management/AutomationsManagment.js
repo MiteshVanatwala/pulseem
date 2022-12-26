@@ -800,7 +800,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       currentPage='automations'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('automations.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
+      <Title Text={t('automations.logPageHeaderResource1.Text')} classes={classes} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

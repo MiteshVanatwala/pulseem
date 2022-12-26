@@ -771,7 +771,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       currentPage='newsletter'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('campaigns.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
+      <Title Text={t('campaigns.logPageHeaderResource1.Text')} classes={classes} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

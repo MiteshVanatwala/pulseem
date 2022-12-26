@@ -1048,7 +1048,7 @@ const SmsManagnentScreen = ({ classes }) => {
       currentPage='sms'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
+      <Title Text={t('common.SMSReports')} classes={classes} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

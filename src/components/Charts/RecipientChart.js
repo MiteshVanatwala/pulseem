@@ -95,20 +95,35 @@ const RecipientChart = ({ classes, }) => {
 
             if (!tooltipEl) {
                 tooltipEl = document.createElement('div');
-                tooltipEl.style.background = '#fff';
+                tooltipEl.style.background = '#CCFF00';
                 tooltipEl.style.width = '70px';
                 tooltipEl.style.height = '70px';
-                tooltipEl.style.boxShadow = '0px 0px 5px -1px';
                 tooltipEl.style.borderRadius = '50px';
                 tooltipEl.style.color = 'black';
                 tooltipEl.style.opacity = 1;
                 tooltipEl.style.pointerEvents = 'none';
                 tooltipEl.style.position = 'absolute';
+                tooltipEl.style.left = '65.3px';
+                tooltipEl.style.top = '-55px';
                 tooltipEl.style.transform = 'translate(-50%, 0)';
                 tooltipEl.style.transition = 'all .1s ease';
                 tooltipEl.style.display = 'flex';
                 tooltipEl.style.alignItems = 'center';
                 tooltipEl.style.justifyContent = 'center';
+
+                let indicator = document.createElement('div');
+
+                indicator.style.width = 0;
+                indicator.style.height = 0;
+                indicator.style.position = 'absolute';
+                indicator.style.top = '61px';
+                indicator.style.right = '3px';
+                indicator.style.borderLeft = '9px solid transparent';
+                indicator.style.borderRight = '9px solid transparent';
+                indicator.style.borderTop = '18px solid #ccff00';
+                indicator.style.transform = 'rotate(325deg)';
+
+                tooltipEl.appendChild(indicator)
 
                 const table = document.createElement('table');
                 table.style.margin = '0px';
@@ -166,8 +181,8 @@ const RecipientChart = ({ classes, }) => {
 
             const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
             tooltipEl.style.opacity = 1;
-            tooltipEl.style.left = positionX + tooltip.caretX + 'px';
-            tooltipEl.style.top = '50px';
+            tooltipEl.style.left = tooltip._eventPosition.x - 20 + 'px';
+            tooltipEl.style.top = tooltip._eventPosition.y - 80 + 'px';
             tooltipEl.style.font = tooltip.options.bodyFont.string;
         };
 

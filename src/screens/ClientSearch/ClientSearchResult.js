@@ -716,7 +716,7 @@ const ClientSearchResult = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
     >
       {renderToast()}
-      <Title Text={t('client.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
+      <Title Text={t('client.logPageHeaderResource1.Text')} classes={classes} />
       <Grid item lg={8} xs={windowSize === "xs" && 12} style={{ paddingTop: 40, margin: '0 auto' }}>
         {revenueSummary && <SummaryRow
           data={revenueSummary}

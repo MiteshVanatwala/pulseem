@@ -31,11 +31,11 @@ const barHeight = {
 };
 
 const tipsFontSize = {
-  xs: 18,
-  sm: 16,
-  md: 14,
-  lg: 14,
-  xl: 18,
+  xs: 13,
+  sm: 11,
+  md: 9,
+  lg: 9,
+  xl: 13,
 };
 
 const shortcutFontSize = {
@@ -58,17 +58,33 @@ const shortcutFontSize = {
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   management: {
     maxWidth: 1500,
+    '& .topSection': {
+      marginTop: 37.870,
+      border: '2px solid #F0F5FF',
+      borderRadius: 10,
+      paddingBottom: 31,
+      '& .searchLine': {
+        paddingLeft: 31
+      }
+    }
   },
   managmentNarrow: {
     maxWidth: 1050,
   },
+  mgmtTitleContainer: {
+    width: 'auto !important',
+    background: '#F0F5FF',
+    padding: '11px 0 8px 31.69px',
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10
+  },
   managementTitle: {
-    fontSize: windowSize === "xs" ? "25px" : "36px",
-    color: "#333333",
-    paddingBlock: "0.5rem",
+    fontSize: windowSize === "xs" ? 20 : 29,
+    // paddingBlock: "0.5rem",
     fontFamily: "Assistant",
     fontWeight: "bold",
-    marginTop: 20,
+    fontWeight: 300,
+    color: '#4D4D4D'
   },
   tableRow: {
     marginBox: 20,
@@ -145,12 +161,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tableRowRoot: {
     display: "flex",
     justifyContent: "center",
-    borderBottom: "1px solid #797979",
+    border: 'none',
+    // borderBottom: "1px solid #797979",
     "&:last-child": {
       borderBottom: 0,
     },
     "&:nth-of-type(even)": {
-      backgroundColor: "#E3E9F0",
+      backgroundColor: "#f7faff",
     },
     "&.directEmailRow": {
       "&:nth-of-type(4n+3)": {
@@ -188,7 +205,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
   },
   tableRowReportHead: {
-    backgroundColor: "#E3E9F0",
+    backgroundColor: "#F0F5FF",
     borderColor: "transparent",
   },
 
@@ -269,6 +286,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px) and (min-width: 480px)": {
       padding: 0,
     },
+    '& .rowIcon': {
+      alignSelf: 'center',
+      padding: 2
+    }
   },
   managmentIcon: {
     width: iconWidth[windowSize],
@@ -506,11 +527,75 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: 0,
   },
   tableStyle: {
-    overflowX: "visible",
+    overflowX: "clip",
+    border: "2px solid #F0F5FF",
+    borderRadius: 20
   },
   tableContainer: {
     width: "100%",
-    border: "1px solid #7F7F7F",
+    '& .tableBodyContainer': {
+      display: 'grid',
+      padding: '0 17px 32.8px 17px'
+    },
+    '& .MuiTableCell-head': {
+      fontWeight: 300,
+      fontSize: 18
+    },
+    '& .MuiTableBody-root': {
+      '& .MuiTableRow-root': {
+        borderBottom: '1px solid #F0F5FF',
+        paddingTop: 10,
+        paddingBottom: 10,
+        '& .MuiTableCell-root:last-child': {
+          borderRight: 'none',
+        },
+        '& .rowTitle': {
+          textAlign: 'left',
+          alignItems: 'flex-start'
+        },
+        '& .MuiTableCell-root': {
+          borderRight: '2px solid #F0F5FF',
+          marginTop: 0,
+          marginBottom: 0,
+          '& .rowIconContainer': {
+            '&.blue': {
+              '& div': {
+                '& div': {
+                  background: '#F0F5FF',
+                }
+              }
+            },
+            '&.white': {
+              '& div': {
+                '& div': {
+                  background: '#fff'
+                }
+              }
+            },
+            '& div': {
+              '& div': {
+                width: 25,
+                height: 25,
+                alignSelf: 'center',
+                borderRadius: 20,
+                padding: 4,
+              }
+            }
+          },
+          '& *.MuiTypography-root': {
+            fontSize: 16,
+            color: '#000'
+            // fontWeight: 600
+          }
+          // border: '2px solid #F0F5FF'
+          // '& div': {
+          //   '&> div:nth-child(2)': {
+          //     textAlign: 'left'
+          //   }
+          // }
+        }
+      }
+    }
   },
   flex2: {
     flex: 2,
@@ -578,6 +663,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiSelect-icon": {
       color: "#000",
     },
+    '& svg': {
+      color: '#F65026',
+      marginLeft: -30,
+      fontSize: 30
+    },
+    '& .MuiSelect-select': {
+      '&:focus': {
+        background: 'transparent'
+      }
+    },
     color: "#000",
     marginInlineStart: 15,
   },
@@ -611,7 +706,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiInputBase-root": {
       fontSize: 14,
       padding: 0,
-      height: 30,
+      height: 30
     },
     "& .MuiOutlinedInput": {
       "&-input": {
@@ -638,11 +733,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         borderColor: "#a6a6a6",
       },
       "&-root": {
+        '& fieldset': {
+          border: 'none',
+        },
         "&:hover fieldset": {
-          borderColor: "#797979",
+          border: 'none',
         },
         "&.Mui-focused fieldset": {
-          border: "1px solid #797979",
+          border: 'none',
         },
       },
     },
@@ -651,11 +749,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     transform: isRTL ? "rotateY(0deg)" : "rotateY(180deg)",
     marginInlineStart: 10,
     padding: 10,
+    color: '#F65026'
   },
   tablePadingtonArrowOppisite: {
     transform: isRTL ? "rotateY(180deg)" : "rotateY(0deg)",
     marginInlineEnd: 10,
     padding: 10,
+    color: '#F65026'
   },
   tablePadingtonGridItem: {
     display: "flex",
@@ -695,7 +795,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   linePadding: {
-    paddingBlock: "1rem",
+    paddingBlock: "25px",
+    margin: '0px !important'
   },
   responsiveLinePadding: {
     paddingBlock: "1rem",
@@ -704,7 +805,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   lineTopMarging: {
-    marginTop: "1rem",
+    marginTop: "2rem",
   },
 
   customDialog: {
@@ -1140,23 +1241,30 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   carouselTipsArrows: {
     display: "flex",
     justifyContent: "space-between",
-    width: "100%",
+    width: "80%",
     position: "absolute",
-    top: "calc(75% - 24px)",
+    top: "calc(72% - 24px)",
     zIndex: 1,
   },
   carouselTips: {
     position: "relative",
+    '& .control-dots': {
+      bottom: 5
+    },
     "& .control-dots .dot": {
-      background: "white!important",
-      height: "10px!important",
-      width: "10px!important",
+      width: "18px!important",
       boxShadow: "unset!important",
-      border: "1px solid #000",
-      margin: "0 2px!important",
+      border: "1px solid #979797",
+      marginTop: -5,
+      height: '3px !important',
+      background: '#979797 !important',
+      marginInline: 3.5,
+      borderRadius: 20
     },
     "& .control-dots .dot.selected": {
-      background: "#000!important",
+      border: "1px solid #ff0054",
+      background: "#ff0054!important",
+      borderRadius: 20
     },
   },
   doughnutGrid: {
@@ -1319,6 +1427,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       margin: 10,
     },
     margin: 30,
+    paddingBottom: 25,
     borderRadius: 10,
     border: '3px solid #F0F5FF',
     '&.MuiPaper-elevation3': {
@@ -1363,6 +1472,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tipulseemMsg: {
     fontSize: tipsFontSize[windowSize],
     padding: "0px 20px 20px 20px",
+    maxWidth: 204,
+    textAlign: 'center',
+    margin: 'auto'
   },
   lightBulb: {
     width: 100,
@@ -1430,7 +1542,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 18,
     fontWeight: "bold",
     textTransform: "uppercase",
-    color: "gray",
+    color: "#000",
     right: 0,
     left: 0,
     margin: "auto",
@@ -1446,6 +1558,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& .centerText': {
       fontWeight: 500,
       fontSize: 15,
+      marginBottom: 19,
     },
     '& .quantity': {
       fontWeight: 700,
@@ -1454,8 +1567,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     '& .MuiDivider-root': {
       height: 2.8,
-      backgroundColor: '#cdcdcd',
-      width: 20.3
+      backgroundColor: '#CCFF00',
+      width: 20.3,
     }
   },
   doughnutBox: {

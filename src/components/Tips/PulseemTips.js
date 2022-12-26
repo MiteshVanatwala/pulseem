@@ -44,14 +44,16 @@ const PulseemTips = ({ classes, t, isRTL }) => {
     }
 
     return (
-      <Grid item className={className}>
-        <IconButton onClick={handlePrevious}>
-          <ArrowBackIosIcon />
-        </IconButton>
-        <IconButton onClick={handleNext}>
-          <ArrowForwardIosIcon />
-        </IconButton>
-      </Grid>
+      <Box className={classes.justifyCenterOfCenter}>
+        <Grid item className={className}>
+          <IconButton onClick={handlePrevious}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton onClick={handleNext}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </Grid>
+      </Box>
     );
   }
 

@@ -747,7 +747,7 @@ const MmsManagnentScreen = ({ classes }) => {
       currentPage='mms'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('mms.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
+      <Title Text={t('mms.logPageHeaderResource1.Text')} classes={classes} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

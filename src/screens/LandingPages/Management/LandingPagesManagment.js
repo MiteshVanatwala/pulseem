@@ -699,7 +699,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       currentPage='landingPages'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('landingPages.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
+      <Title Text={t('landingPages.logPageHeaderResource1.Text')} classes={classes} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

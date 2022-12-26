@@ -1272,7 +1272,7 @@ const NotificationManagement = ({ classes }) => {
       classes={classes}
       containerClass={classes.management}>
       <Title
-        Text={t('notifications.notificationManagement')} Classes={classes.managementTitle}
+        Text={t('notifications.notificationManagement')} classes={classes}
         ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
         Element={
           <Button onClick={() => {

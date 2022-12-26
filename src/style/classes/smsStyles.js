@@ -497,7 +497,19 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: 'white'
     },
     management: {
-        maxWidth: 1500
+        maxWidth: 1500,
+        '& .topSection': {
+            marginTop: 37.870,
+            border: '2px solid #F0F5FF',
+            borderRadius: 10,
+            paddingBottom: 31,
+            '& .searchLine': {
+                paddingLeft: 31,
+                '& .MuiGrid-item': {
+                    marginRight: 27.42
+                }
+            }
+        }
     },
     adjustC:
     {
