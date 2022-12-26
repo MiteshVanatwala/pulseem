@@ -1005,7 +1005,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     <Grid item xs={12} md={1}></Grid>
                     <Grid item md={4} xs={12}>
                         <SendingMethod
-                            disabled={newsletterSettings.Status !== 0}
+                            disabled={newsletterSettings.Status !== 1}
                             classes={classes}
                             ToastMessages={ToastMessages}
                             setToastMessage={setToastMessage}
@@ -1041,7 +1041,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!segmantIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 0}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 1}
                                                 onClick={() => setDialogType({ type: 'filterRecipients' })}
                                             >
                                                 {t('mainReport.recipientFilter')}
@@ -1052,7 +1052,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 0}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 1}
                                                 onClick={() => {
                                                     handleSmsMarketing();
                                                 }}
