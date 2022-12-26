@@ -594,5 +594,7 @@
   "filesUploaded": "Files successfully uplaoded",
   "filesNotUploaded": "Files failed: ",
   "saveAndContinue": "Save and Continue",
-  "backToAutomation": "Back to automation"
+  "backToAutomation": "Back to automation",
+  "backToHome": "To Home page",
+  "backToCampaigns": "To Campaigns"
 }

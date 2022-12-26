@@ -13,6 +13,7 @@ const SendingMethod = ({
     extraButtons = null,
     classes,
     campaign = null,
+    disabled = false,
     onUpdateCampaign = () => null
 }) => {
     const { t } = useTranslation();
@@ -130,6 +131,7 @@ const SendingMethod = ({
                             <FormControlLabel
                                 value="1"
                                 control={<Radio
+                                    disabled={disabled}
                                     color="primary"
                                     style={{ paddingInlineStart: 0, paddingTop: 0 }}
                                     className={campaign.SendingMethod !== 1 ? classes.radioButtonDisabled : classes.radioButtonActive}
@@ -153,7 +155,7 @@ const SendingMethod = ({
                                 <Stack direction='row' alignItems='center'>
                                     <Checkbox
                                         className={classes.ml20}
-                                        disabled={campaign.SendingMethod !== 1}
+                                        disabled={campaign.SendingMethod !== 1 || disabled}
                                         checked={campaign.SendingMethod === 1 && isBestTime === true}
                                         color="primary"
                                         inputProps={{ "aria-label": "secondary checkbox" }}
@@ -181,6 +183,7 @@ const SendingMethod = ({
                             <FormControlLabel
                                 value="1"
                                 control={<Radio
+                                    disabled={disabled}
                                     color="primary"
                                     style={{ paddingInlineStart: 0, paddingTop: 0 }}
                                     className={campaign.SendingMethod !== 2 ? classes.radioButtonDisabled : classes.radioButtonActive}
@@ -234,7 +237,7 @@ const SendingMethod = ({
                                 <Stack direction='row' alignItems='center'>
                                     <Checkbox
                                         className={classes.ml20}
-                                        disabled={campaign.SendingMethod !== 2}
+                                        disabled={campaign.SendingMethod !== 2 || disabled}
                                         checked={campaign.SendingMethod === 2 && isBestTimeFuture === true}
                                         color="primary"
                                         inputProps={{ "aria-label": "secondary checkbox" }}
@@ -263,6 +266,7 @@ const SendingMethod = ({
                             <FormControlLabel
                                 value="1"
                                 control={<Radio
+                                    disabled={disabled}
                                     color="primary"
                                     style={{ paddingInlineStart: 0, paddingTop: 0 }}
                                     className={campaign.SendingMethod !== 3 ? classes.radioButtonDisabled : classes.radioButtonActive}

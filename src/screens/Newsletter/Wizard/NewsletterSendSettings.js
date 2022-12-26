@@ -744,9 +744,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onCancel: () => setDialogType(null),
             }),
             sendSuccess: SendSuccessDialog({
-                onConfirm: () => {
+                classes,
+                onBackToCampaigns: () => {
                     setDialogType(null);
                     navigate('/react/campaigns');
+                },
+                onBackToHome: () => {
+                    setDialogType(null);
+                    navigate('/react');
                 }
             }),
             summary: ConfirmationDialog({ classes: classes, count: data })
@@ -1000,6 +1005,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     <Grid item xs={12} md={1}></Grid>
                     <Grid item md={4} xs={12}>
                         <SendingMethod
+                            disabled={newsletterSettings.Status !== 0}
                             classes={classes}
                             ToastMessages={ToastMessages}
                             setToastMessage={setToastMessage}
@@ -1013,7 +1019,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3}
+                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings.Status !== 0}
                                                 onClick={() => {
                                                     handlePulseDialog();
                                                 }}
@@ -1035,7 +1041,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!segmantIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 0}
                                                 onClick={() => setDialogType({ type: 'filterRecipients' })}
                                             >
                                                 {t('mainReport.recipientFilter')}
@@ -1046,7 +1052,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 0}
                                                 onClick={() => {
                                                     handleSmsMarketing();
                                                 }}
@@ -1062,10 +1068,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             </Box>
             <WizardActions
                 classes={classes}
-                onBack={handlePreviousPage}
-                onDelete={onHandleDelete}
+                onBack={newsletterSettings.Status === 0 && handlePreviousPage}
+                onDelete={newsletterSettings.Status === 0 && onHandleDelete}
                 onExit={() => { setDialogType({ type: "exit" }) }}
-                additionalButtons={renderButtons()}
+                additionalButtons={newsletterSettings.Status === 0 && renderButtons()}
             />
             {renderDialog()}
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
@@ -1096,6 +1102,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 key={'SendResponse'}
                 setDialogType={setDialogType}
             />}
+            {/* //#region snacks */}
             <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}
                 autoHideDuration={5000}
@@ -1180,6 +1187,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     {t("sms.filtersSave")}
                 </Alert>
             </Snackbar>
+            {/* //#endregion  */}
             {newEMailVerification && <VerificationDialog
                 classes={classes}
                 isOpen={newEMailVerification}

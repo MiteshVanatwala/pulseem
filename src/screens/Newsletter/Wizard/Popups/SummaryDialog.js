@@ -289,7 +289,7 @@ const SummaryDialog = ({ classes,
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
         confirmText: t("common.send"),
         cancelText: '',
-        onClose: handleSmsSettings,
+        onClose: () => { setDialogType(null) },
     }
 
     return <BaseDialog
