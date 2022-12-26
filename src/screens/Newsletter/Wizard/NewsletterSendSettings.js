@@ -1019,7 +1019,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings.Status !== 0}
+                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings.Status !== 1}
                                                 onClick={() => {
                                                     handlePulseDialog();
                                                 }}
@@ -1068,10 +1068,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             </Box>
             <WizardActions
                 classes={classes}
-                onBack={newsletterSettings.Status === 0 && handlePreviousPage}
-                onDelete={newsletterSettings.Status === 0 && onHandleDelete}
+                onBack={newsletterSettings.Status === 1 && handlePreviousPage}
+                onDelete={newsletterSettings.Status === 1 && onHandleDelete}
                 onExit={() => { setDialogType({ type: "exit" }) }}
-                additionalButtons={newsletterSettings.Status === 0 && renderButtons()}
+                additionalButtons={newsletterSettings.Status === 1 && renderButtons()}
             />
             {renderDialog()}
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
