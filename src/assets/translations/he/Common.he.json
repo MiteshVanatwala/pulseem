@@ -589,5 +589,7 @@
   "filesUploaded": "קבצים עלו בהצלחה",
   "filesNotUploaded": "קבצים נכשלו: ",
   "saveAndContinue": "שמור והמשך",
-  "backToAutomation": "חזור לאוטומציה"
+  "backToAutomation": "חזור לאוטומציה",
+  "backToHome": "לדף הבית",
+  "backToCampaigns": "לניהול קמפיינים"
 }

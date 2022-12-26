@@ -128,7 +128,7 @@ const useStyles = makeStyles({
     }
 })
 
-const NewsLetterWizard = ({ classes }) => {
+const NewsLetterInfo = ({ classes }) => {
     const { id } = useParams();
     const queryParams = new URLSearchParams(window.location.search)
     const isNew = queryParams.get("new")
@@ -959,4 +959,4 @@ const NewsLetterWizard = ({ classes }) => {
     )
 }
 
-export default NewsLetterWizard
+export default NewsLetterInfo;

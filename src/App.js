@@ -36,7 +36,7 @@ import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
-import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
+import NewsLetterInfo from './screens/Newsletter/Wizard/NewsLetterInfo';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from "./screens/Whatsapp/Editor/WhatsappCreator";
@@ -101,7 +101,6 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         path={`/react/CampaignStatistics/:campaignID`}
-        // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
         element={<GraphicReport classes={classes} />}
       />
       <Route
@@ -112,10 +111,6 @@ const renderRoutes = (classes, redirect) => {
         path={`/ClientSearch`}
         element={transferUrl("/Pulseem/ClientSearch.aspx")}
       />
-      {/* <Route
-        path={`/ClientAdvancedSearch`}
-        element={transferUrl('/Pulseem/ClientAdvancedSearch.aspx')}
-      /> */}
       <Route
         path={`/DynamicGroups`}
         element={transferUrl("/Pulseem/DynamicGroups.aspx")}
@@ -138,11 +133,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path="/react/Campaigns/Create"
-        element={<NewsLetterWizard classes={classes} />}
+        element={<NewsLetterInfo classes={classes} />}
       />
       <Route
         path="/react/Campaigns/Create/:id"
-        element={<NewsLetterWizard classes={classes} />}
+        element={<NewsLetterInfo classes={classes} />}
       />
       <Route
         exact
@@ -315,10 +310,6 @@ const renderRoutes = (classes, redirect) => {
         path={`/Reports/ProductsReport`}
         element={<ProductsReport classes={classes} />}
       />
-      {/* <Route
-        path={`/CampaignComparison`}
-        element={transferUrl('/Pulseem/CampaignComparison.aspx')}
-      /> */}
       <Route
         path={`/ClientReport`}
         element={transferUrl("/Pulseem/ClientReport.aspx")}

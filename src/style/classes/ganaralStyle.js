@@ -2630,5 +2630,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '.Mui-expanded': {
       margin: '0 !important'
     }
+  },
+  flexColumnCenter: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });

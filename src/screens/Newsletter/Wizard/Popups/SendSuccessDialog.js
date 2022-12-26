@@ -1,30 +1,64 @@
-import { Box } from '@material-ui/core'
+import { Box, Typography, Button, Grid } from '@material-ui/core'
+import clsx from 'clsx';
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
 import Gif from "../../../../assets/images/managment/check-circle.gif";
 
 const SendSuccessDialog = ({
-    onConfirm = () => null
+    classes,
+    onBackToCampaigns = () => null,
+    onBackToHome = () => null
 }) => {
-
-    const navigate = useNavigate();
-
     const { t } = useTranslation()
+    const { isRTL } = useSelector((state) => state.core);
     return {
         showDivider: false,
         disableBackdropClick: true,
         content: (
-            <Box>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                    <img src={Gif} style={{ width: "150px", height: "150px" }} alt="Success" />
-                    <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
-                    <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-                        {t("sms.campaignIsOnItsWay")}
-                    </p>
-                    <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { onConfirm() }}>{t("common.confirm")}</span>
-                </div>
+            <Box className={clsx(classes.flexColumnCenter, classes.p20)}>
+                <img src={Gif} style={{ width: 150, height: 150 }} alt="Success" />
+                <Typography className={clsx(classes.fontBold, classes.font24, classes.mt2)}>
+                    {t('campaigns.weSent')}
+                </Typography>
+                <Typography className={clsx(classes.font18, classes.mt2)}>
+                    {t('campaigns.campaignIsOnItsWay')}
+                </Typography>
+                <Grid
+                    container
+                    spacing={4}
+                    className={clsx(
+                        classes.dialogButtonsContainer,
+                        classes.mt3
+                    )}
+                >
+                    <Grid item>
+                        <Button onClick={() => { onBackToHome() }}
+                            variant='contained'
+                            size='medium'
+                            className={clsx(
+                                classes.actionButton,
+                                classes.actionButtonLightBlue,
+                                classes.backButton
+                            )}
+                            style={{ margin: '8px' }}
+                            color="primary"
+                        >{t('common.backToHome')}</Button>
+                    </Grid>
+                    <Grid item>
+                        <Button onClick={() => { onBackToCampaigns() }}
+                            variant='contained'
+                            size='medium'
+                            className={clsx(
+                                classes.actionButton,
+                                classes.actionButtonLightBlue,
+                                classes.backButton
+                            )}
+                            style={{ margin: '8px' }}
+                            color="primary"
+                        >{t('common.backToCampaigns')}</Button>
+                    </Grid>
+                </Grid>
             </Box>
         ),
         renderButtons: false,
