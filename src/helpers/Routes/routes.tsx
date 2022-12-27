@@ -243,15 +243,15 @@ export const getRoutes = (
 			{
 				key: 'send',
 				title: 'Send Whatsapp Campaign',
-				href: '/react/Whatsapp/send',
+				href: '/react/Whatsapp/send/page1',
 				isShow: true,
 			},
-			{
-				key: 'send_2',
-				title: 'Send Whatsapp Campaign_2',
-				href: '/react/Whatsapp/send2',
-				isShow: true,
-			},
+			// {
+			// 	key: 'send_2',
+			// 	title: 'Send Whatsapp Campaign_2',
+			// 	href: '/react/Whatsapp/send/page2',
+			// 	isShow: true,
+			// },
 			{
 				key: 'templatemanagement',
 				title: 'Whatsapp Template Management',

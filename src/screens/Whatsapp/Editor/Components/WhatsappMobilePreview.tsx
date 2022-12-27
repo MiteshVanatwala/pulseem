@@ -1,4 +1,4 @@
-import AccountUser from '../../../assets/images/acc-user.jpg';
+import AccountUser from '../../../../assets/images/acc-user.jpg';
 
 import { Box, Button, Grid } from '@material-ui/core';
 import {
@@ -7,7 +7,7 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	whatsappMobilePreviewProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

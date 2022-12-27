@@ -18,9 +18,9 @@ import {
 	actionProps,
 	callToActionFieldProps,
 	callToActionRowProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
-import { countryCodes } from '../Constant';
+import { countryCodes } from '../../Constant';
 
 const ActionCallPopOver = ({
 	isCallToActionOpen,
@@ -32,7 +32,7 @@ const ActionCallPopOver = ({
 	websiteField,
 	addMore,
 	updateTemplateData,
-	isEdiable,
+	isEditable,
 }: actionProps) => {
 	const { t: translator } = useTranslation();
 
@@ -101,7 +101,7 @@ const ActionCallPopOver = ({
 				id='form-dialog-title'
 				className={classes.callToActionDialogHeaderTitle}>
 				<>
-					{translator('whatsapp.callToActionTitle')}
+					<>{translator('whatsapp.callToActionTitle')}</>
 					<IconButton
 						aria-label='close'
 						onClick={() => closeCallToAction(true)}
@@ -125,7 +125,7 @@ const ActionCallPopOver = ({
 											<>{translator('whatsapp.typeOfAction')}</>
 										</Typography>
 										<TextField
-											disabled={!isEdiable}
+											disabled={!isEditable}
 											select
 											required
 											name='typeofaction'
@@ -149,7 +149,7 @@ const ActionCallPopOver = ({
 												<Grid item md={3} key={'TOCF' + fIndex}>
 													<Typography>{field.fieldName}</Typography>
 													<TextField
-														disabled={!isEdiable}
+														disabled={!isEditable}
 														required={true}
 														type={field.type}
 														name={field.fieldName}
@@ -180,7 +180,7 @@ const ActionCallPopOver = ({
 												<Grid item md={2} key={'TOCF' + fIndex}>
 													<Typography>{field.fieldName}</Typography>
 													<TextField
-														disabled={!isEdiable}
+														disabled={!isEditable}
 														select
 														required
 														name={field.fieldName}
@@ -200,7 +200,7 @@ const ActionCallPopOver = ({
 												</Grid>
 											)
 									)}
-									{isEdiable && (
+									{isEditable && (
 										<Grid item md={1}>
 											<Typography style={{ visibility: 'hidden' }}>
 												<>{translator('whatsapp.callToActionRemoveButton')}</>
@@ -230,7 +230,7 @@ const ActionCallPopOver = ({
 							color='secondary'>
 							<>{translator('whatsapp.callToActionExitButton')}</>
 						</Button>
-						{isEdiable && (
+						{isEditable && (
 							<Button
 								type='submit'
 								disabled={callToActionFieldRows?.length === 0 ? true : false}

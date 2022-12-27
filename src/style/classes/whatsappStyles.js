@@ -1035,9 +1035,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
 		color: '#959595',
-		'&.red': {
-			color: '#ca332f',
-		},
 	},
 	WhatsappCampainFields: {
 		marginBottom: '18px',
@@ -1094,22 +1091,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontSize: '14px',
 		backgroundColor: '#0371ad',
 		color: '#ffffff',
-		'&:hover': {
-			textTransform: 'capitalize',
-			fontSize: '14px',
-			backgroundColor: '#0371ad',
-			color: '#ffffff',
-		},
-	},
-	whatsappCampaignDynamicFieldLinkRemoval: {
-		textTransform: 'capitalize',
-		fontSize: '14px',
-		backgroundColor: '#0371ad',
-		color: '#ffffff',
-		marginTop: '6px',
-		marginLeft: '10px',
-		padding: '3px 9px',
-		borderRadius: '20px',
 		'&:hover': {
 			textTransform: 'capitalize',
 			fontSize: '14px',
@@ -1432,6 +1413,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					},
 				},
 			},
+		},
+	},
+	whatsappCampaignDynamicFieldLinkRemoval: {
+		textTransform: 'capitalize',
+		fontSize: '14px',
+		backgroundColor: '#0371ad',
+		color: '#ffffff',
+		marginTop: '6px',
+		marginLeft: '10px',
+		padding: '3px 9px',
+		borderRadius: '20px',
+		'&:hover': {
+			textTransform: 'capitalize',
+			fontSize: '14px',
+			backgroundColor: '#0371ad',
+			color: '#ffffff',
 		},
 	},
 });

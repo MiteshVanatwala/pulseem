@@ -1,4 +1,4 @@
-import { ClassesType } from '../../Classes.types';
+import { ClassesType } from '../../../Classes.types';
 import { BaseSyntheticEvent, RefObject } from 'react';
 
 export type WhatsappCreatorProps = {
@@ -59,7 +59,7 @@ export type actionProps = {
 	websiteField: callToActionFieldProps[];
 	addMore: () => void;
 	updateTemplateData: (data: callToActionProps) => void;
-	isEdiable: boolean;
+	isEditable: boolean;
 };
 
 export type whatsappMobilePreviewProps = {
@@ -93,7 +93,7 @@ export type quickReplyProps = {
 	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 	templateButtons: templateDataProps['templateButtons'];
-	isEdiable: boolean;
+	isEditable: boolean;
 };
 
 export type quickReplyButtonsFieldProps = {

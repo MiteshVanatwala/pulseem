@@ -1,49 +1,36 @@
 import React, { useState } from 'react';
-import { FaMobileAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import { Link, TextField } from '@material-ui/core';
+import { Link } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
-import MobilePreview from '../Editor/WhatsappMobilePreview';
-import { FaChevronDown } from 'react-icons/fa';
-import { FaChevronUp } from 'react-icons/fa';
+import MobilePreview from '../../Editor/Components/WhatsappMobilePreview';
 import { useSelector } from 'react-redux';
-import clsx from 'clsx';
-import { SummaryModalProps } from './WhatsappCampaign.types';
+import { coreProps, SummaryModalProps } from '../Types/WhatsappCampaign.types';
 import { useTheme } from '@mui/material/styles';
 import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 
-const SummaryModal = ({
-	classes,
-	open,
-	fromNumber,
-}: // ...props
-SummaryModalProps) => {
-	const theme: any = useTheme();
+const SummaryModal = ({ classes, isOpen, fromNumber, onSummaryModalClose }: SummaryModalProps) => {
+	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 
 	const [detailsHide, setdetailsHide] = useState<boolean>(true);
-	const [subDetailsActive, setsubDetailsActive] = useState<boolean>(false);
-	const [subRecipientsDetails, setsubRecipients] = useState<boolean>(false);
-	const { isRTL } = useSelector((state: { core: any }) => state.core);
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
-	const { t } = useTranslation();
+	const { t: translator } = useTranslation();
 
 	const handleSmsSettings = () => {
 		// props.handleCallback();
 	};
 
-	const onSummaryModalClose = () => {};
-
 	return (
 		<Dialog
 			fullScreen={fullScreen}
-			open={open}
+			open={isOpen}
 			onClose={onSummaryModalClose}
 			aria-labelledby='responsive-dialog-title'
 			maxWidth={'md'}>
 			<div className={classes.summaryModal}>
 				<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-					Summary
+					{translator('whatsappCampaign.summary')}
 				</div>
 				<Box className={classes.alertModalClose}>
 					<Close fontSize={'small'} onClick={onSummaryModalClose} />
@@ -62,7 +49,7 @@ SummaryModalProps) => {
 							<Grid item lg={6}>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										Campaign From
+										{translator('whatsappCampaign.campaignFrom')}
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
@@ -70,20 +57,24 @@ SummaryModalProps) => {
 								</Box>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										Campaign Name
+										{translator('whatsappCampaign.campaignName')}
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
 									</span>
 								</Box>
 								<Box className={classes.campaignSummaryTextWrapper}>
-									<span className={classes.campaignSummaryTextTitle}>When</span>
+									<span className={classes.campaignSummaryTextTitle}>
+										{translator('whatsappCampaign.when')}
+									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
 									</span>
 								</Box>
 								<Box className={classes.campaignSummaryTextWrapper}>
-									<span className={classes.campaignSummaryTextTitle}>For</span>
+									<span className={classes.campaignSummaryTextTitle}>
+										{translator('whatsappCampaign.for')}
+									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
 									</span>
@@ -100,18 +91,18 @@ SummaryModalProps) => {
 												width: '50px',
 												cursor: 'pointer',
 											}}>
-											Details
+											{translator('whatsappCampaign.details')}
 										</Link>
 									</span>
 								</Box>
 								<div>&emsp;</div>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										Send Randomly to -
+										{translator('whatsappCampaign.sendRandomlyTo')}
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										<input
-											placeholder='Insert'
+											placeholder={translator('whatsappCampaign.insert')}
 											style={{
 												width: '25%',
 												padding: '4px',
@@ -121,7 +112,7 @@ SummaryModalProps) => {
 										/>
 										&nbsp;
 										<span style={{ fontSize: '12px' }}>
-											Recipients out of total
+											{translator('whatsappCampaign.recipient')}
 										</span>
 									</span>
 								</Box>
@@ -146,15 +137,15 @@ SummaryModalProps) => {
 								<Box className={classes.campaignSummaryImportantText}>
 									<div>
 										<b>
-											{t('whatsappCampaign.summaryNote')}
+											{translator('whatsappCampaign.summaryNote')}
 											<br />
-											{t('whatsappCampaign.summaryNote2')}
+											{translator('whatsappCampaign.summaryNote2')}
 											<br />
-											{t('whatsappCampaign.summaryNote3')}
+											{translator('whatsappCampaign.summaryNote3')}
 											<br />
 											<span>
 												<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
-													Check your limit
+													{translator('whatsappCampaign.limit')}
 												</a>
 											</span>
 										</b>
@@ -172,14 +163,14 @@ SummaryModalProps) => {
 						autoFocus
 						// onClick={onConfirmOrYes}
 					>
-						{t('whatsapp.alertModal.okButtonText')}
+						{translator('whatsapp.alertModal.okButtonText')}
 					</Button>
 					<Button
 						className='cancel-button'
 						color='primary'
 						variant='contained'
 						onClick={onSummaryModalClose}>
-						{t('whatsapp.alertModal.calcelButtonText')}
+						{translator('whatsapp.alertModal.calcelButtonText')}
 					</Button>
 				</Grid>
 			</div>

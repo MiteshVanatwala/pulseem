@@ -17,11 +17,10 @@ import { useTranslation } from 'react-i18next';
 import {
 	testGroupDataProps,
 	testGroupModalProps,
-} from './WhatsappCampaign.types';
-import { FaCheck } from 'react-icons/fa';
-import { HiOutlineUserGroup } from 'react-icons/hi';
+} from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import TestGroupModalRows from './TestGroupModalRows';
 
 const TestGroupModal = ({
 	classes,
@@ -46,18 +45,15 @@ const TestGroupModal = ({
 			(testGroup: testGroupDataProps) =>
 				testGroup?.GroupName?.substring(0, searchText?.length) === searchText
 		);
-		setSearchGroupResult([...searchedGroup]);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [searchText]);
+		setSearchGroupResult(searchedGroup);
+	}, [searchText, testGroupData]);
 
 	const isSelectdGroup = (groupID: number) => {
-		let isSelected = false;
-		selectedTestGroup.forEach((selectedGroup: testGroupDataProps) => {
-			if (selectedGroup.GroupID === groupID) {
-				isSelected = true;
-			}
-		});
-		return isSelected;
+		const selectedGroup = selectedTestGroup.find(
+			(selectedGroup: testGroupDataProps) => selectedGroup.GroupID === groupID
+		);
+
+		return !!selectedGroup;
 	};
 
 	const onSelectGroup = (groupID: number) => {
@@ -131,86 +127,14 @@ const TestGroupModal = ({
 									/>
 								</Grid>
 							</Grid>
-							<Box className={classes.testGroupModalGroupList}>
-								{searchText?.length <= 0 ? (
-									<>
-										{testGroupData?.map(
-											(group: testGroupDataProps, index: number) => (
-												<div
-													key={index}
-													className={clsx(classes.searchCon)}
-													onClick={() => {
-														onSelectGroup(group.GroupID);
-													}}>
-													<span
-														// style={{
-														// 	marginInlineEnd: windowSize !== 'xs' ? '25px' : '10px',
-														// }}
-														className={
-															isSelectdGroup(group.GroupID)
-																? classes.greenDoc
-																: classes.blueDoc
-														}>
-														{isSelectdGroup(group.GroupID) ? (
-															<FaCheck className={clsx(classes.green)} />
-														) : (
-															<HiOutlineUserGroup />
-														)}
-													</span>
-													<div className={classes.testGroupModalGroupDiv}>
-														<span className={classes.ellipsisText}>
-															{group.GroupName}
-														</span>
-														<span style={{ whiteSpace: 'nowrap' }}>
-															{group.Recipients}{' '}
-															{group.Recipients === 1
-																? translator('sms.recipient')
-																: translator('sms.recipients')}
-														</span>
-													</div>
-												</div>
-											)
-										)}
-									</>
-								) : (
-									<>
-										{searchGroupResult?.map(
-											(group: testGroupDataProps, index: number) => (
-												<div
-													key={index}
-													className={clsx(classes.searchCon)}
-													onClick={() => {
-														onSelectGroup(group.GroupID);
-													}}>
-													<span
-														className={
-															isSelectdGroup(group.GroupID)
-																? classes.greenDoc
-																: classes.blueDoc
-														}>
-														{isSelectdGroup(group.GroupID) ? (
-															<FaCheck className={clsx(classes.green)} />
-														) : (
-															<HiOutlineUserGroup />
-														)}
-													</span>
-													<div className={classes.testGroupModalGroupDiv}>
-														<span className={classes.ellipsisText}>
-															{group.GroupName}
-														</span>
-														<span style={{ whiteSpace: 'nowrap' }}>
-															{group.Recipients}{' '}
-															{group.Recipients === 1
-																? translator('sms.recipient')
-																: translator('sms.recipients')}
-														</span>
-													</div>
-												</div>
-											)
-										)}
-									</>
-								)}
-							</Box>
+							<TestGroupModalRows
+								classes={classes}
+								searchText={searchText}
+								testGroupData={testGroupData}
+								searchGroupResult={searchGroupResult}
+								onSelectGroup={(groupID: number) => onSelectGroup(groupID)}
+								isSelectdGroup={(groupID: number) => isSelectdGroup(groupID)}
+							/>
 						</div>
 					</div>
 					<Grid container className={classes.alertModalAction}>
@@ -220,14 +144,14 @@ const TestGroupModal = ({
 							color='primary'
 							autoFocus
 							onClick={onConfirmOrYes}>
-							{translator('whatsapp.alertModal.okButtonText')}
+							<>{translator('whatsapp.alertModal.okButtonText')}</>
 						</Button>
 						<Button
 							className='cancel-button'
 							color='primary'
 							variant='contained'
 							onClick={onCancel}>
-							{translator('whatsapp.alertModal.calcelButtonText')}
+							<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 						</Button>
 					</Grid>
 				</div>

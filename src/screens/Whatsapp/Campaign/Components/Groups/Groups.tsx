@@ -30,8 +30,11 @@ import { MdClear } from 'react-icons/md';
 import './Groups.styles.css';
 import { BsDot } from 'react-icons/bs';
 import { BsFilter } from 'react-icons/bs';
-import { GroupsProps, testGroupDataProps } from '../WhatsappCampaign.types';
-import { ClassesType } from '../../../Classes.types';
+import {
+	GroupsProps,
+	testGroupDataProps,
+} from '../../Types/WhatsappCampaign.types';
+import { coreProps } from '../../../Editor/Types/WhatsappCreator.types';
 
 const Groups = ({
 	classes,
@@ -49,8 +52,10 @@ const Groups = ({
 	callbackShowTestGroup,
 	uniqueKey,
 }: GroupsProps) => {
-	const { windowSize } = useSelector((state: { core: any }) => state.core);
-	const { t } = useTranslation();
+	const { windowSize } = useSelector(
+		(state: { core: coreProps }) => state.core
+	);
+	const { t: translator } = useTranslation();
 	const [groupNameSearch, setGroupNameSearch] = useState<string>('');
 	const [clearInput, setClearInput] = useState<boolean>(false);
 	const [groupHover, setIsHover] = useState<any>(null);
@@ -131,9 +136,11 @@ const Groups = ({
 						/>
 						<ListItemSecondaryAction className={'groupText'}>
 							{group[groupRecipientsKey]?.toLocaleString()}{' '}
-							{group[groupRecipientsKey] !== 1
-								? t('notifications.recipients')
-								: t('notifications.recipient')}
+							<>
+								{group[groupRecipientsKey] !== 1
+									? translator('notifications.recipients')
+									: translator('notifications.recipient')}
+							</>
 						</ListItemSecondaryAction>
 					</ListItem>
 				);
@@ -166,8 +173,8 @@ const Groups = ({
 				</ListItemAvatar>
 				<ListItemText
 					className={'groupText'}
-					title={t('notifications.selectAll')}
-					primary={t('notifications.selectAll')}
+					title={translator('notifications.selectAll')}
+					primary={translator('notifications.selectAll')}
 				/>
 			</ListItem>
 		);
@@ -180,15 +187,15 @@ const Groups = ({
 	const groupSortOptions = [
 		{
 			value: 'Group Name',
-			text: t('notifications.sort_by_group'),
+			text: translator('notifications.sort_by_group'),
 		},
 		{
 			value: 'Creation Date',
-			text: t('notifications.sort_by_creation'),
+			text: translator('notifications.sort_by_creation'),
 		},
 		{
 			value: 'Update Date',
-			text: t('notifications.sort_by_updated'),
+			text: translator('notifications.sort_by_updated'),
 		},
 	];
 
@@ -263,7 +270,7 @@ const Groups = ({
 						<Input
 							autoComplete='off'
 							onChange={handleSearch}
-							placeholder={t('notifications.buttons.search')}
+							placeholder={translator('notifications.buttons.search')}
 							id='searchGroup'
 							startAdornment={
 								<InputAdornment position='start'>
@@ -291,7 +298,7 @@ const Groups = ({
 						<Input
 							autoComplete='off'
 							onChange={handleSearch}
-							placeholder={t('notifications.buttons.search')}
+							placeholder={translator('notifications.buttons.search')}
 							id='searchGroup'
 							startAdornment={
 								<InputAdornment position='start'>
@@ -333,7 +340,7 @@ const Groups = ({
 										}}
 									/>
 								) : null}{' '}
-								{t('mainReport.recipientFilter')}
+								<>{translator('mainReport.recipientFilter')}</>
 							</Button>
 						) : null}
 						<Button
@@ -345,7 +352,7 @@ const Groups = ({
 									: classes.twoLineButton
 							)}
 							onClick={() => handleShowTestGroup()}>
-							{t('sms.showTestGroups')}
+							<>{translator('sms.showTestGroups')}</>
 						</Button>
 						<FormControl
 							className={clsx(classes.formControl, classes.dropDown)}>
@@ -402,7 +409,7 @@ const Groups = ({
 					) : (
 						<Typography
 							className={clsx(classes.bottomShadow, classes.noSelection)}>
-							<>{t('notifications.noGroupsSelected')}</>
+							<>{translator('notifications.noGroupsSelected')}</>
 						</Typography>
 					)
 				}

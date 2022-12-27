@@ -1,7 +1,5 @@
-import { ClassesType } from '../../Classes.types';
+import { ClassesType } from '../../../Classes.types';
 import {
-	Typography,
-	Button,
 	Grid,
 	Box,
 	FormControlLabel,
@@ -10,35 +8,26 @@ import {
 	Radio,
 	FormHelperText,
 	Divider,
-	TextField,
-	Tooltip,
 } from '@material-ui/core';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { BaseSyntheticEvent, useState } from 'react';
 // import { DateField } from "./DateField/DateField";
-import { FaRegCalendarAlt, FaFilter } from 'react-icons/fa';
-import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
-import { RightPaneProps } from './WhatsappCampaign.types';
+import { RightPaneProps, coreProps } from '../Types/WhatsappCampaign.types';
 import { FiClock } from 'react-icons/fi';
-import { CalendarIcon } from '../../../assets/images/managment/index';
+import { CalendarIcon } from '../../../../assets/images/managment/index';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
-	const { t } = useTranslation();
+	const { t: translator } = useTranslation();
 	const [sendType, setSendType] = useState<string>('1');
-	const [togglePulse, settogglePulse] = useState<boolean>(false);
-	const [toggleRandom, settoggleRandom] = useState<boolean>(false);
-	const [pulsePer, setpulsePer] = useState<string>('recipients');
-	const [pulseAmount, setPulseAmount] = useState<string>('');
-	const [timeInterval, setTimeInterval] = useState<string>('');
-	const [random, setrandom] = useState<string>('');
-	const [minName, setminName] = useState<string>('mins');
-	const [hourName, sethourName] = useState<string>('Hours');
-	const [selectedGroups, setSelected] = useState<any[]>([]);
-	const [sendDate, handleFromDate] = useState(null);
-	const [sendTime, setsendTime] = useState(null);
+	const [sendDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
+		null
+	);
+	const [sendTime, setsendTime] = useState<MaterialUiPickersDate | null>(null);
 
 	const [timePickerOpen, setTimePickerOpen] = useState<boolean>(false);
 	const [toggleB, settoggleB] = useState<boolean>(true);
@@ -51,21 +40,13 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 	const [toastMessage, setToastMessage] = useState<string>('');
 
 	const { windowSize, isRTL, language } = useSelector(
-		(state: { core: any }) => state.core
+		(state: { core: coreProps }) => state.core
 	);
 	moment.locale(language);
 	const direction: any = {
 		true: 'rtl',
 		false: 'ltr',
 	};
-	const {
-		OTPPassed,
-		ToastMessages,
-		extraData,
-		getCampaignSum,
-		testGroups,
-		finishedCampaigns,
-	} = useSelector((state: { sms: any }) => state.sms);
 
 	const handleSendType = (event: BaseSyntheticEvent) => {
 		if (event.target.value === '1') {
@@ -76,17 +57,15 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 			handleFromDate(null);
 			// setTimeInterval(-1);
 			// setPulseAmount(-1);
-			setrandom('');
-			settogglePulse(false);
 		}
 		setSendType(event.target.value);
 	};
 
-	const handleDatePicker = (value: any) => {
+	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
 		handleFromDate(value);
 	};
 
-	const handleTimePicker = (value: any) => {
+	const handleTimePicker = (value: MaterialUiPickersDate | null) => {
 		var date = moment(sendDate);
 		var time = moment(value, 'HH:mm');
 
@@ -97,7 +76,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 
 		if (date < moment()) {
 			date = moment();
-			setToastMessage(ToastMessages.DATE_PASS);
+			setToastMessage('ToastMessages.DATE_PASS');
 		}
 
 		// handleFromDate(date);
@@ -128,7 +107,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 		}
 	};
 
-	const handleRadioTime = (value: any) => {
+	const handleRadioTime = (value: MaterialUiPickersDate | null) => {
 		setsendTime(value);
 	};
 
@@ -137,15 +116,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 			//   setDateFieldID("0");
 		} else {
 			//   setDateFieldID(e.target.value);
-			Object.keys(extraData).map((item, i) => {
-				if (parseInt(e.target.value) === i + 3) {
-					//   setSelectedSpecialValue(item);
-				} else if (parseInt(e.target.value) === 1) {
-					//   setSelectedSpecialValue("Birthday");
-				} else if (parseInt(e.target.value) === 2) {
-					//   setSelectedSpecialValue("Creation day");
-				}
-			});
 		}
 	};
 
@@ -166,7 +136,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 				<h2
 					className={classes.sectionTitle}
 					style={{ marginTop: windowSize === 'xs' ? 15 : '' }}>
-					{t('notifications.whenToSend')}
+					{translator('notifications.whenToSend')}
 				</h2>
 				<FormControl component='fieldset'>
 					<RadioGroup
@@ -188,12 +158,12 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 							}
 							label={
 								<span className={classes.radioText}>
-									{t('notifications.immediateSend')}
+									{translator('notifications.immediateSend')}
 								</span>
 							}
 						/>
 						<FormHelperText className={classes.helpText}>
-							{t('notifications.immediateDescription')}
+							{translator('notifications.immediateDescription')}
 						</FormHelperText>
 						<FormControlLabel
 							value='2'
@@ -209,7 +179,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 							}
 							label={
 								<span className={classes.radioText}>
-									{t('notifications.futureSend')}
+									{translator('notifications.futureSend')}
 								</span>
 							}
 						/>
@@ -225,14 +195,14 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									className: classes.datePickerInput,
 								}}
 								PopoverProps={{
-									dir: direction[isRTL],
+									dir: direction['isRTL'],
 								}}
 								variant='inline'
 								keyboardIcon={<CalendarIcon />}
 								format={'DD/MM/YYYY'}
 								margin='none'
 								minDate={moment()}
-								placeholder={t('notifications.date')}
+								placeholder={translator('notifications.date')}
 								initialFocusedDate={moment()}
 								value={sendType === '2' ? sendDate : null}
 								onChange={handleDatePicker}
@@ -240,16 +210,16 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									'aria-label': 'change date',
 									className: classes.datePickerButton,
 								}}
-								cancelLabel={t('common.cancel')}
-								okLabel={t('common.confirm')}
+								cancelLabel={translator('common.cancel')}
+								okLabel={translator('common.confirm')}
 								id='datePicker'
 								disabled={sendType === '2' ? false : true}
 								onClose={() => setIsDatePickerOpen(false)}
 								open={isDatePickerOpen}
 								onClick={() => setIsDatePickerOpen(true)}
-								invalidDateMessage={t('common.invalidDate')}
-								maxDateMessage={t('common.maximalDateRequired')}
-								minDateMessage={t('common.minimalDateRequired')}
+								invalidDateMessage={translator('common.invalidDate')}
+								maxDateMessage={translator('common.maximalDateRequired')}
+								minDateMessage={translator('common.minimalDateRequired')}
 								autoOk={true}
 							/>
 						</Box>
@@ -269,11 +239,11 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									className: classes.datePickerInput,
 								}}
 								PopoverProps={{
-									dir: direction[isRTL],
+									dir: direction['isRTL'],
 								}}
 								format={'HH:mm a'}
 								margin='none'
-								placeholder={t('notifications.hour')}
+								placeholder={translator('notifications.hour')}
 								initialFocusedDate={moment().hours(0).minutes(0)}
 								value={sendType === '2' ? sendDate : null}
 								keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
@@ -282,8 +252,8 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									'aria-label': 'change time',
 									className: classes.datePickerButton,
 								}}
-								cancelLabel={t('common.cancel')}
-								okLabel={t('common.confirm')}
+								cancelLabel={translator('common.cancel')}
+								okLabel={translator('common.confirm')}
 								ampm={false}
 								id='timePicker'
 								disabled={sendType === '2' ? false : true}
@@ -312,7 +282,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 							}
 							label={
 								<span className={classes.radioText}>
-									{t('mainReport.specialDate')}
+									{translator('mainReport.specialDate')}
 								</span>
 							}
 						/>
@@ -323,7 +293,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 								pointerEvents: sendType === '3' ? 'auto' : 'none',
 							}}>
 							<select
-								placeholder={t('common.select')}
+								placeholder={translator('common.select')}
 								style={{
 									border: '1px solid #818181',
 									backgroundColor: 'white',
@@ -338,22 +308,11 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									handleSelectChange(e);
 								}}
 								value={sendType === '3' ? spectialDateFieldID : '0'}>
-								<option value='0'>{t('common.select')}</option>
-								<option value='1'>{t('mainReport.birthday')}</option>
-								<option value='2'>{t('mainReport.creationDay')}</option>
-								{extraData &&
-									Object.keys(extraData).map((item, i) => {
-										if (extraData[item]) {
-											return (
-												item.toLowerCase().indexOf('extradate') > -1 && (
-													<option value={i + 3} key={`extrakey_${i}`}>
-														{Object.values(extraData[item])}
-													</option>
-												)
-											);
-										}
-										return <></>;
-									})}
+								<option value='0'>{translator('common.select')}</option>
+								<option value='1'>{translator('mainReport.birthday')}</option>
+								<option value='2'>
+									{translator('mainReport.creationDay')}
+								</option>
 							</select>
 						</Box>
 
@@ -384,7 +343,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									marginBottom: '8px',
 									fontSize: 14,
 								}}>
-								{t('mainReport.days')}
+								{translator('mainReport.days')}
 							</span>
 
 							{isRTL ? (
@@ -400,7 +359,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 										onClick={() => {
 											handlebef();
 										}}>
-										{t('mainReport.before')}
+										{translator('mainReport.before')}
 									</span>
 									<span
 										className={
@@ -413,7 +372,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 										onClick={() => {
 											handleaf();
 										}}>
-										{t('mainReport.after')}
+										{translator('mainReport.after')}
 									</span>
 								</div>
 							) : (
@@ -429,7 +388,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 										onClick={() => {
 											handlebef();
 										}}>
-										{t('mainReport.before')}
+										{translator('mainReport.before')}
 									</span>
 									<span
 										className={
@@ -442,7 +401,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 										onClick={() => {
 											handleaf();
 										}}>
-										{t('mainReport.after')}
+										{translator('mainReport.after')}
 									</span>
 								</div>
 							)}
@@ -464,11 +423,11 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									className: classes.datePickerInput,
 								}}
 								PopoverProps={{
-									dir: direction[isRTL],
+									dir: direction[isRTL?.toString()],
 								}}
 								format={'HH:mm a'}
 								margin='none'
-								placeholder={t('notifications.hour')}
+								placeholder={translator('notifications.hour')}
 								initialFocusedDate={moment().hours(0).minutes(0)}
 								value={sendType === '3' ? sendTime : null}
 								keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
@@ -477,8 +436,8 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									'aria-label': 'change time',
 									className: classes.datePickerButton,
 								}}
-								cancelLabel={t('common.cancel')}
-								okLabel={t('common.confirm')}
+								cancelLabel={translator('common.cancel')}
+								okLabel={translator('common.confirm')}
 								ampm={false}
 								id='timePicker'
 								disabled={sendType === '3' ? false : true}
@@ -492,54 +451,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 				</FormControl>
 			</Grid>
 			<Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
-			<div className={classes.pulseDiv}>
-				<span
-					className={
-						selectedGroups.length >= 1 && sendType !== '3'
-							? classes.pulse
-							: classes.pulseDisable
-					}
-					onClick={() => {
-						handlePulseDialog();
-					}}>
-					<FaRegCalendarAlt style={{ fontSize: '125%' }} />
-					{t('mainReport.pulseSend')}
-				</span>
-				<Tooltip
-					disableFocusListener
-					title={t('smsReport.pulseSendTip')}
-					classes={{ tooltip: classes.customWidth }}>
-					<span className={classes.bodyInfo}>i</span>
-				</Tooltip>
-			</div>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					justifyContent: 'center',
-					color: '#7f7f7f',
-					fontWeight: '400',
-					fontSize: '14px',
-				}}>
-				{togglePulse ? (
-					<span style={{ marginBottom: '5px', marginTop: '5px' }}>
-						{t('smsReport.packetSend')} - {pulseAmount}{' '}
-						{pulsePer === '' || pulsePer === 'recipients'
-							? t('sms.recipients')
-							: t('common.Percent')}{' '}
-						{t('sms.every')} {timeInterval}{' '}
-						{hourName === '' || minName === 'mins'
-							? t('common.minutes')
-							: t('common.hours')}
-					</span>
-				) : null}
-				{toggleRandom ? (
-					<span>
-						{t('smsReport.randomSend')} - {random}{' '}
-						{t('smsReport.randomRecipients')}
-					</span>
-				) : null}
-			</div>
 		</div>
 	);
 };

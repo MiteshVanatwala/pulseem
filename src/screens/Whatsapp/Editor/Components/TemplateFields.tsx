@@ -1,8 +1,8 @@
 import React, { BaseSyntheticEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { coreProps, TemplateFieldsProps } from './WhatsappCreator.types';
-import { ClassesType } from '../../Classes.types';
+import { coreProps, TemplateFieldsProps } from '../Types/WhatsappCreator.types';
+import { ClassesType } from '../../../Classes.types';
 import {
 	TextField,
 	Typography,
@@ -11,7 +11,7 @@ import {
 	Button,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import AlertModal from './AlertModal';
+import AlertModal from '../Popups/AlertModal';
 
 const TemplateFields = ({
 	classes,
@@ -65,7 +65,7 @@ const TemplateFields = ({
 				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
-							{translator('whatsapp.templateName')}
+							<>{translator('whatsapp.templateName')}</>
 						</Typography>
 
 						<TextField
@@ -83,13 +83,13 @@ const TemplateFields = ({
 						/>
 
 						<Typography className={classes.buttonContent}>
-							{translator('whatsapp.templateDesc')}
+							<>{translator('whatsapp.templateDesc')}</>
 						</Typography>
 					</Grid>
 
 					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
-							{translator('whatsapp.selectSavedTemplate')}
+							<>{translator('whatsapp.selectSavedTemplate')}</>
 						</Typography>
 
 						<TextField

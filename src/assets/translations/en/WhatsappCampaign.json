@@ -30,5 +30,15 @@
   "lPagePlaceholder": "Choose a landing page",
   "navigation": "Navigation",
   "navAppPlaceholder": "Choose navigation application",
-  "navigationPlaceholder": "Enter address"
+  "navigationPlaceholder": "Enter address",
+  "summary": "Summary",
+  "campaignFrom": "Campaign From",
+  "when": "When",
+  "for": "For",
+  "details": "Details",
+  "sendRandomlyTo": "Send Randomly to -",
+  "insert": "Insert",
+  "recipient": "Recipients out of total",
+  "limit": "Check your limit",
+  "filter": "Filter"
 }

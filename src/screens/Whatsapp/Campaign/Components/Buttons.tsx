@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { coreProps, ButtonsProps } from './WhatsappCreator.types';
 import { Button, Box } from '@material-ui/core';
 import { BsTrash } from 'react-icons/bs';
 import { useTranslation } from 'react-i18next';
+import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
+import { coreProps } from '../Types/WhatsappCampaign.types';
 
-const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
+const Buttons = ({ classes }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -25,8 +26,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 					variant='contained'
 					size='medium'
 					className={clsx(classes.actionButton, classes.actionButtonRed)}
-					style={{ margin: '8px', padding: '9px 0' }}
-					onClick={() => onFormButtonClick('delete')}>
+					style={{ margin: '8px', padding: '9px 0' }}>
 					<BsTrash style={{ fontSize: '25' }} />
 				</Button>
 			</Box>
@@ -40,8 +40,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 					classes.backButton
 				)}
 				color='primary'
-				style={{ margin: '8px' }}
-				onClick={() => onFormButtonClick('save')}>
+				style={{ margin: '8px' }}>
 				<>{translator('whatsapp.saveSms')}</>
 			</Button>
 			<Button
@@ -54,13 +53,12 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 					classes.backButton
 				)}
 				color='primary'
-				style={{ margin: '8px' }}
-				onClick={() => onFormButtonClick('submit')}>
-				<>
-					{!isFromAutomation
-						? translator('whatsapp.submit')
-						: translator('whatsapp.saveAndExit')}
-				</>
+				style={{ margin: '8px' }}>
+				{!isFromAutomation ? (
+					<>{translator('whatsapp.send')}</>
+				) : (
+					<>{translator('whatsapp.saveAndExit')}</>
+				)}
 			</Button>
 		</div>
 	);
