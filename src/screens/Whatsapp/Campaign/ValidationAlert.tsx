@@ -50,7 +50,7 @@ const ValidationAlert = ({
 							color='primary'
 							autoFocus
 							onClick={onClose}>
-							{translator('whatsapp.alertModal.okButtonText')}
+							<>{translator('whatsapp.alertModal.okButtonText')}</>
 						</Button>
 					</Grid>
 				</div>
