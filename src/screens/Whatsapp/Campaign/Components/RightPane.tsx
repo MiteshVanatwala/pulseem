@@ -1,7 +1,5 @@
 import { ClassesType } from '../../../Classes.types';
 import {
-	Typography,
-	Button,
 	Grid,
 	Box,
 	FormControlLabel,
@@ -10,14 +8,11 @@ import {
 	Radio,
 	FormHelperText,
 	Divider,
-	TextField,
-	Tooltip,
 } from '@material-ui/core';
+import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { BaseSyntheticEvent, useState } from 'react';
 // import { DateField } from "./DateField/DateField";
-import { FaRegCalendarAlt, FaFilter } from 'react-icons/fa';
-import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
@@ -29,15 +24,6 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [sendType, setSendType] = useState<string>('1');
-	const [togglePulse, settogglePulse] = useState<boolean>(false);
-	const [toggleRandom, settoggleRandom] = useState<boolean>(false);
-	const [pulsePer, setpulsePer] = useState<string>('recipients');
-	const [pulseAmount, setPulseAmount] = useState<string>('');
-	const [timeInterval, setTimeInterval] = useState<string>('');
-	const [random, setrandom] = useState<string>('');
-	const [minName, setminName] = useState<string>('mins');
-	const [hourName, sethourName] = useState<string>('Hours');
-	const [selectedGroups, setSelected] = useState<string[]>([]);
 	const [sendDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);
@@ -61,9 +47,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 		true: 'rtl',
 		false: 'ltr',
 	};
-	const { ToastMessages, extraData } = useSelector(
-		(state: { sms: any }) => state.sms
-	);
 
 	const handleSendType = (event: BaseSyntheticEvent) => {
 		if (event.target.value === '1') {
@@ -74,8 +57,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 			handleFromDate(null);
 			// setTimeInterval(-1);
 			// setPulseAmount(-1);
-			setrandom('');
-			settogglePulse(false);
 		}
 		setSendType(event.target.value);
 	};
@@ -95,7 +76,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 
 		if (date < moment()) {
 			date = moment();
-			setToastMessage(ToastMessages.DATE_PASS);
+			setToastMessage('ToastMessages.DATE_PASS');
 		}
 
 		// handleFromDate(date);
@@ -135,15 +116,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 			//   setDateFieldID("0");
 		} else {
 			//   setDateFieldID(e.target.value);
-			Object.keys(extraData).map((item, i) => {
-				if (parseInt(e.target.value) === i + 3) {
-					//   setSelectedSpecialValue(item);
-				} else if (parseInt(e.target.value) === 1) {
-					//   setSelectedSpecialValue("Birthday");
-				} else if (parseInt(e.target.value) === 2) {
-					//   setSelectedSpecialValue("Creation day");
-				}
-			});
 		}
 	};
 
@@ -341,19 +313,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 								<option value='2'>
 									{translator('mainReport.creationDay')}
 								</option>
-								{extraData &&
-									Object.keys(extraData).map((item, i) => {
-										if (extraData[item]) {
-											return (
-												item.toLowerCase().indexOf('extradate') > -1 && (
-													<option value={i + 3} key={`extrakey_${i}`}>
-														{Object.values(extraData[item])}
-													</option>
-												)
-											);
-										}
-										return <></>;
-									})}
 							</select>
 						</Box>
 
