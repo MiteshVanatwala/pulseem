@@ -1263,7 +1263,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '14px 26px',
 		direction: isRTL ? 'rtl' : 'ltr',
 		position: 'relative',
-		width: '450px',
 	},
 	campaignSummaryImportantText: {
 		textAlign: 'center',
