@@ -4,7 +4,11 @@ import { Grid, Tooltip, Checkbox } from "@material-ui/core";
 import { ClassesType } from "../../Classes.types";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
-import { LeftPaneProps, testGroupDataProps } from "./WhatsappCampaign.types";
+import {
+  LeftPaneProps,
+  smsProps,
+  testGroupDataProps,
+} from "./WhatsappCampaign.types";
 import Groups from "./Groups/Groups";
 import * as XLSX from "xlsx";
 import ColumnAdjustmentModal from "./ColumnAdjustmentModal";
@@ -12,7 +16,7 @@ import AlertModal from "../Editor/AlertModal";
 import FilterRecipientsDialog from "./FilterRecipientsDialog";
 
 const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
-  const { testGroups } = useSelector((state: { sms: any }) => state.sms);
+  const { testGroups } = useSelector((state: { sms: smsProps }) => state.sms);
   const subAccountAllGroups: testGroupDataProps[] = [
     {
       GroupID: 89979,
@@ -75,7 +79,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
       Recipients: 2,
     },
   ];
-  const { t } = useTranslation();
+  const { t: translator } = useTranslation();
   const [isAlert, setIsAlert] = useState(false);
   const [alertModalSubtitle, setAlertModalSubtitle] = useState<string>("");
   const [groupClick, setgroupClick] = useState<boolean>(true);
@@ -84,7 +88,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
   const [highlighted, setHighlighted] = useState<boolean>(false);
   const [areaData, setareaData] = useState<string>("");
   const [selectedGroups, setSelected] = useState<testGroupDataProps[]>([]);
-  const [contacts, setContacts] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<number[]>([]);
   const [totalRecords, settotalRecords] = useState<number>(0);
   const [groupValue, setgroupValue] = useState<string>("");
   const [groupNameExist, setGroupNameExist] = useState<boolean>(false);
@@ -95,13 +99,15 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
   const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
     useState<boolean>(false);
   const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
-  const [typedData, settypedData] = useState<any>([["Demo", "Title", "Name"]]);
-  const [initialheadstate, setinitialheadstate] = useState<any>([
+  const [typedData, settypedData] = useState<string[][]>([
+    ["Demo", "Title", "Name"],
+  ]);
+  const [initialheadstate, setinitialheadstate] = useState<string[]>([
     "Adjust Title",
     "Adjust Title",
     "Adjust Title",
   ]);
-  const [headers, setheaders] = useState<any>(initialheadstate);
+  const [headers, setheaders] = useState<string[]>(initialheadstate);
 
   const handleCombined = () => {};
 
@@ -139,7 +145,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
     setAllGroupsSelected(!allGroupsSelected);
   };
 
-  const callbackShowTestGroup = async (showTestGroups: any) => {
+  const callbackShowTestGroup = async (showTestGroups: boolean) => {
     if (!showTestGroups && testGroups.length > 0) {
       setShowTestGroups(true);
       //setGroupList(testGroups.concat(subAccountAllGroups));
@@ -163,7 +169,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
   const handlePasted = () => {
     let temp = areaData;
     console.log("areaData::", areaData);
-    let a = temp?.split("\n").filter((empty: any) => empty);
+    let a = temp?.split("\n").filter((empty: string) => empty);
     let b = [];
     let cols = 0;
     if (temp?.indexOf("\t") > -1) {
@@ -190,7 +196,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 
     let dummyArr = [];
     for (let i = 0; i < cols; i++) {
-      dummyArr.push(t("sms.adjustTitle"));
+      dummyArr.push(translator("sms.adjustTitle"));
     }
     setinitialheadstate(dummyArr);
     setheaders(dummyArr);
@@ -207,9 +213,11 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
         return new Promise((resolve, reject) => {
           try {
             if (file.name.toLowerCase().indexOf("xls") > -1) {
-              reader.onload = function (e: any) {
+              reader.onload = function (e: ProgressEvent<FileReader>) {
                 if (e?.target?.result) {
-                  var data = new Uint8Array(e?.target?.result);
+                  var data = new Uint8Array(
+                    e?.target?.result as ArrayBufferLike
+                  );
                   setTimeout(() => {
                     var workbook = XLSX.read(data, { type: "array" });
                     var csv: string = XLSX.utils.sheet_to_csv(
@@ -226,9 +234,9 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
                     settypedData(b);
                     settotalRecords(b.length);
                     setareaData(b.join("\n"));
-                    let dummyArr: any = [];
+                    let dummyArr = [];
                     for (let i = 0; i < b[0].length; i++) {
-                      dummyArr.push(t("sms.adjustTitle"));
+                      dummyArr.push(translator("sms.adjustTitle"));
                     }
                     setinitialheadstate(dummyArr);
                     setheaders(dummyArr);
@@ -289,10 +297,12 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
       className={classes.wizardFlex}
     >
       <Grid item md={12} xs={12} className={classes.infoDiv}>
-        <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+        <span className={classes.conInfo}>
+          {translator("mainReport.whomTosend")}
+        </span>
         <Tooltip
           disableFocusListener
-          title={t("smsReport.whomtoSendTip")}
+          title={translator("smsReport.whomtoSendTip")}
           classes={{ tooltip: classes.customWidth }}
         >
           <span className={classes.bodyInfo}>i</span>
@@ -316,7 +326,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
             }}
             style={{ cursor: "pointer" }}
           >
-            {t("mainReport.groups")}
+            {translator("mainReport.groups")}
           </span>
         </Grid>
         <Grid
@@ -337,11 +347,11 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
               setmanualClick(true);
             }}
           >
-            {t("mainReport.manual")}
+            {translator("mainReport.manual")}
           </span>
           <Tooltip
             disableFocusListener
-            title={t("smsReport.manualTip")}
+            title={translator("smsReport.manualTip")}
             classes={{ tooltip: classes.customWidth }}
           >
             <span className={classes.bodyInfo}>i</span>
@@ -358,7 +368,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
           }
         >
           <textarea
-            placeholder={t("sms.dragXlOrCsv")}
+            placeholder={translator("sms.dragXlOrCsv")}
             spellCheck="false"
             autoComplete="off"
             className={
@@ -430,14 +440,14 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
                       : classes.createGroupSpanDisabled
                   }
                 >
-                  {t("mainReport.createNewGroup")}
+                  {translator("mainReport.createNewGroup")}
                 </span>
                 <span className={classes.iconNew}>
-                  {t("mainReport.newFeature")}
+                  {translator("mainReport.newFeature")}
                 </span>
                 <Tooltip
                   disableFocusListener
-                  title={t("mainReport.tooltipCreateGroup")}
+                  title={translator("mainReport.tooltipCreateGroup")}
                   classes={{ tooltip: classes.customWidth }}
                   style={{ marginInlineStart: "5px" }}
                 >
@@ -450,12 +460,12 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
                 <input
                   type="text"
                   className={classes.groupInput}
-                  placeholder={t("smsReport.groupName")}
+                  placeholder={translator("smsReport.groupName")}
                   // onChange={inputGroup}
                   value={groupValue}
                 />
                 <span className={classes.saveBtn} onClick={handleCombined}>
-                  {t("mainReport.save")}
+                  {translator("mainReport.save")}
                 </span>
                 {groupNameExist ? (
                   <span
@@ -466,7 +476,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
                       display: "block",
                     }}
                   >
-                    {t("sms.groupNameExists").replace(
+                    {translator("sms.groupNameExists").replace(
                       "#groupName#",
                       groupValue
                     )}
@@ -483,7 +493,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
               }}
             >
               <span>
-                {t("mainReport.totalReci")}:{" "}
+                {translator("mainReport.totalReci")}:{" "}
                 {selectedGroups
                   ?.reduce(function (a, b) {
                     return a + b["Recipients"];
@@ -493,7 +503,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
               <Tooltip
                 placement={"bottom"}
                 disableFocusListener
-                title={t("smsReport.finalReciTip")}
+                title={translator("smsReport.finalReciTip")}
                 classes={{ tooltip: classes.customWidth }}
                 style={{ marginInlineStart: "5px" }}
               >
@@ -517,7 +527,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
                     handlePasted();
                   }}
                 >
-                  {t("sms.editFields")}
+                  {translator("sms.editFields")}
                 </span>
                 <span
                   className={classes.clearDiv}
@@ -528,12 +538,12 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
                     settotalRecords(0);
                   }}
                 >
-                  {t("sms.clearList")}
+                  {translator("sms.clearList")}
                 </span>
               </div>
             )}
             <span>
-              {t("sms.totalRecords")}: {totalRecords}
+              {translator("sms.totalRecords")}: {totalRecords}
             </span>
           </div>
         ) : null}
@@ -555,7 +565,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
         classes={classes}
         isOpen={isAlert}
         onClose={() => setIsAlert(false)}
-        title={t("whatsapp.alertModal.alert")}
+        title={translator("whatsapp.alertModal.alert")}
         subtitle={alertModalSubtitle}
         type="alert"
         onConfirmOrYes={() => setIsAlert(false)}

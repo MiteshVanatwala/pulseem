@@ -15,8 +15,9 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { useTheme } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { BaseSyntheticEvent, useState } from "react";
 import { Close, SupervisedUserCircleOutlined } from "@material-ui/icons";
+import { ColumnAdjustmentModalProps } from "./WhatsappCampaign.types";
 
 const ColumnAdjustmentModal = ({
   classes,
@@ -25,7 +26,7 @@ const ColumnAdjustmentModal = ({
   headers,
   setheaders,
   typedData,
-}: any) => {
+}: ColumnAdjustmentModalProps) => {
   const theme: any = useTheme();
   const { t } = useTranslation();
   const fullScreen = useMediaQuery(theme.breakpoints.down("lg"));
@@ -34,8 +35,8 @@ const ColumnAdjustmentModal = ({
   const [groupNameInput, setgroupNameInput] = useState<string>("");
   const [GroupNameValidationMessage, setGroupNameValidationMessage] =
     useState<string>("");
-  const [contacts, setContacts] = useState<any>([]);
-  const [dropIndex, setdropIndex] = useState<any>(-1);
+  const [contacts, setContacts] = useState<number[]>([]);
+  const [dropIndex, setdropIndex] = useState<number>(-1);
   const [columnValidate, setcolumnValidate] = useState<boolean>(false);
   const [selectArray, setselectArray] = useState<any>([
     {
@@ -58,7 +59,7 @@ const ColumnAdjustmentModal = ({
     },
   ]);
 
-  const handleChangeId = (id: any) => {
+  const handleChangeId = (id: number) => {
     if (dropIndex === -1) {
       setdropIndex(id);
     } else {
@@ -66,7 +67,7 @@ const ColumnAdjustmentModal = ({
     }
   };
 
-  const handleCloseSpan = (id: any, name: any) => {
+  const handleCloseSpan = (id: number, name: string) => {
     let h = headers;
 
     headers[id] = translator("sms.adjustTitle");
@@ -83,12 +84,17 @@ const ColumnAdjustmentModal = ({
     }
   };
 
-  const handleSelectFirst = (name: any, id: any, idx: any, e: any) => {
+  const handleSelectFirst = (
+    name: any,
+    id: number,
+    idx: number,
+    e: BaseSyntheticEvent
+  ) => {
     // id -  index of select array
     // idx - header index
     let h = headers;
     h[idx] = name.label;
-    selectArray.forEach((value: any, index: any) => {
+    selectArray.forEach((value: any, index: number) => {
       if (value.idx === idx) {
         selectArray[index].isdisabled = false;
         selectArray[index].idx = -1;
@@ -189,7 +195,7 @@ const ColumnAdjustmentModal = ({
               >
                 <table>
                   {typedData.length !== 0 || contacts.length !== 0 ? (
-                    headers.map((item: any, idx: any) => {
+                    headers.map((item: string, idx: number) => {
                       return (
                         <th key={idx} className={classes.manualHeader}>
                           <div
@@ -219,7 +225,7 @@ const ColumnAdjustmentModal = ({
                                   columnValidate === true &&
                                   headers[idx] === translator("sms.adjustTitle")
                                     ? classes.columnError
-                                    : null
+                                    : ""
                                 }
                               >
                                 {headers[idx]}
@@ -243,7 +249,7 @@ const ColumnAdjustmentModal = ({
                             </div>
                             {dropIndex === idx ? (
                               <div className={classes.adjustC}>
-                                {selectArray.map((item: any, id: any) => {
+                                {selectArray.map((item: any, id: number) => {
                                   return (
                                     <span
                                       className={
@@ -251,7 +257,7 @@ const ColumnAdjustmentModal = ({
                                           ? clsx(classes.grayGroup)
                                           : clsx(classes.grouping)
                                       }
-                                      onClick={(e: any) => {
+                                      onClick={(e) => {
                                         handleSelectFirst(item, id, idx, e);
                                       }}
                                     >
@@ -274,7 +280,7 @@ const ColumnAdjustmentModal = ({
                           return (
                             <tbody>
                               <tr id={idx} key={idx}>
-                                {item.map((temp: any, idx: any) => {
+                                {item.map((temp: string, idx: string) => {
                                   return (
                                     <td
                                       id={idx}
@@ -290,12 +296,12 @@ const ColumnAdjustmentModal = ({
                         }
                         return null;
                       })
-                    : typedData.map((item: any, id: any) => {
+                    : typedData.map((item: string[], id: number) => {
                         if (id > typedData.length - 6) {
                           return (
                             <tbody>
                               <tr key={id}>
-                                {headers.map((data: any, idx: any) => {
+                                {headers.map((data: string, idx: number) => {
                                   return (
                                     <td
                                       key={idx}

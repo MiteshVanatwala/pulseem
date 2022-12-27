@@ -2,9 +2,14 @@ import { BaseSyntheticEvent } from "react";
 import { ClassesType } from "../../Classes.types";
 import { savedTemplateListProps } from "../Editor/WhatsappCreator.types";
 
+export type smsProps = {
+  testGroups: [];
+};
+
 export type coreProps = {
   windowSize: string;
   isRTL: boolean;
+  language: string;
 };
 
 export type WhatsappCampaignProps = {
@@ -23,15 +28,15 @@ export type dynamicModalProps = {
 };
 
 export type campaignFielsProps = {
-	savedTemplateList: savedTemplateListProps[];
-	classes: ClassesType['classes'];
-	savedTemplate: string;
-	campaignName: string;
-	from: string;
-	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
-	onCampaignNameChange: (campaignName: string) => void;
-	onFromChange: (from: string) => void;
-	onCampaignFromRestore: () => void;
+  savedTemplateList: savedTemplateListProps[];
+  classes: ClassesType["classes"];
+  savedTemplate: string;
+  campaignName: string;
+  from: string;
+  onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+  onCampaignNameChange: (campaignName: string) => void;
+  onFromChange: (from: string) => void;
+  onCampaignFromRestore: () => void;
 };
 
 export type validationAlertModalProps = {
@@ -84,7 +89,7 @@ export type GroupsProps = {
   showSortBy: boolean;
   showFilter: boolean;
   showSelectAll: boolean;
-  callbackSelectedGroups: (group: any) => void;
+  callbackSelectedGroups: (group: testGroupDataProps) => void;
   callbackUpdateGroups: (value: testGroupDataProps[]) => void;
   callbackSelectAll: () => void;
   callbackReciFilter: () => void;
@@ -112,7 +117,16 @@ export type SummaryModalProps = {
 };
 
 export type tagDataProps = {
-	children: string;
-	className: string;
-	highlightIndex: number;
+  children: string;
+  className: string;
+  highlightIndex: number;
+};
+
+export type ColumnAdjustmentModalProps = {
+  classes: ClassesType["classes"];
+  isColumnAdjustmentModal: boolean;
+  onColumnAdjustmentModalClose: () => void;
+  headers: string[];
+  setheaders: any;
+  typedData: any;
 };
