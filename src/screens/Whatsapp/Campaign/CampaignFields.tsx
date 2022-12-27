@@ -34,7 +34,7 @@ const CampaignFields = ({
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 			<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 				<Typography className={classes.buttonHead}>
-					{translator('whatsappCampaign.campaignName')}
+					<>{translator('whatsappCampaign.campaignName')}</>
 				</Typography>
 				<TextField
 					required
@@ -52,20 +52,20 @@ const CampaignFields = ({
 					value={campaignName}
 				/>
 				<Typography className={classes.WhatsappCampainButtonContent}>
-					{translator('whatsappCampaign.campaignDesc')}
+					<>{translator('whatsappCampaign.campaignDesc')}</>
 				</Typography>
 			</Grid>
 			<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 				<Box className={classes.inputCampDiv}>
 					<Typography className={classes.buttonHead}>
-						{translator('whatsappCampaign.from')}
+						<>{translator('whatsappCampaign.from')}</>
 					</Typography>
 					<Typography
 						className={classes.restoreBtn}
 						onClick={() => {
 							onCampaignFromRestore();
 						}}>
-						{translator('whatsappCampaign.restore')}
+						<>{translator('whatsappCampaign.restore')}</>
 					</Typography>
 				</Box>
 				<TextField
@@ -104,13 +104,13 @@ const CampaignFields = ({
 				</TextField> */}
 				<Typography
 					className={clsx(classes.WhatsappCampainButtonContent, 'red')}>
-					{translator('whatsappCampaign.fromDesc')}
+					<>{translator('whatsappCampaign.fromDesc')}</>
 				</Typography>
 			</Grid>
 
 			<Grid item xs={12} md={12} sm={12} className={classes.buttonForm}>
 				<Typography className={classes.buttonHead}>
-					{translator('whatsappCampaign.chooseTemplate')}
+					<>{translator('whatsappCampaign.chooseTemplate')}</>
 				</Typography>
 
 				<TextField
@@ -137,7 +137,7 @@ const CampaignFields = ({
 					)}
 				</TextField>
 				<Typography className={classes.WhatsappCampainButtonContent}>
-					{translator('whatsappCampaign.chooseTemplateDesc')}
+					<>{translator('whatsappCampaign.chooseTemplateDesc')}</>
 				</Typography>
 			</Grid>
 		</Grid>

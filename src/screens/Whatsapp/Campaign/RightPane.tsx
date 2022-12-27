@@ -477,7 +477,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
                   className: classes.datePickerInput,
                 }}
                 PopoverProps={{
-                  dir: direction["isRTL"],
+                  dir: direction[isRTL?.toString()],
                 }}
                 format={"HH:mm a"}
                 margin="none"
@@ -505,57 +505,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
         </FormControl>
       </Grid>
       <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
-      <div className={classes.pulseDiv}>
-        <span
-          className={
-            selectedGroups.length >= 1 && sendType !== "3"
-              ? classes.pulse
-              : classes.pulseDisable
-          }
-          onClick={() => {
-            handlePulseDialog();
-          }}
-        >
-          <FaRegCalendarAlt style={{ fontSize: "125%" }} />
-          {translator("mainReport.pulseSend")}
-        </span>
-        <Tooltip
-          disableFocusListener
-          title={translator("smsReport.pulseSendTip")}
-          classes={{ tooltip: classes.customWidth }}
-        >
-          <span className={classes.bodyInfo}>i</span>
-        </Tooltip>
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          color: "#7f7f7f",
-          fontWeight: "400",
-          fontSize: "14px",
-        }}
-      >
-        {togglePulse ? (
-          <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-            {translator("smsReport.packetSend")} - {pulseAmount}{" "}
-            {pulsePer === "" || pulsePer === "recipients"
-              ? translator("sms.recipients")
-              : translator("common.Percent")}{" "}
-            {translator("sms.every")} {timeInterval}{" "}
-            {hourName === "" || minName === "mins"
-              ? translator("common.minutes")
-              : translator("common.hours")}
-          </span>
-        ) : null}
-        {toggleRandom ? (
-          <span>
-            {translator("smsReport.randomSend")} - {random}{" "}
-            {translator("smsReport.randomRecipients")}
-          </span>
-        ) : null}
-      </div>
     </div>
   );
 };

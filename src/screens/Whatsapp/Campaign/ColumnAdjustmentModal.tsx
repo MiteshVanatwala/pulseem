@@ -28,7 +28,6 @@ const ColumnAdjustmentModal = ({
   typedData,
 }: ColumnAdjustmentModalProps) => {
   const theme: any = useTheme();
-  const { t } = useTranslation();
   const fullScreen = useMediaQuery(theme.breakpoints.down("lg"));
   const { t: translator } = useTranslation();
   const [groupTextError, setGroupTextError] = useState<boolean>(false);
@@ -275,15 +274,15 @@ const ColumnAdjustmentModal = ({
                     <>Nodata</>
                   )}
                   {contacts.length !== 0
-                    ? contacts.map((item: any, idx: any) => {
+                    ? contacts.map((item: any, idx: number) => {
                         if (idx > contacts.length - 6) {
                           return (
                             <tbody>
-                              <tr id={idx} key={idx}>
-                                {item.map((temp: string, idx: string) => {
+                              <tr id={idx.toString()} key={idx}>
+                                {item.map((temp: string, idx: number) => {
                                   return (
                                     <td
-                                      id={idx}
+                                      id={idx.toString()}
                                       className={classes.tableColumn}
                                     >
                                       {temp}
@@ -296,7 +295,7 @@ const ColumnAdjustmentModal = ({
                         }
                         return null;
                       })
-                    : typedData.map((item: string[], id: number) => {
+                    : typedData.map((item: string, id: number) => {
                         if (id > typedData.length - 6) {
                           return (
                             <tbody>
@@ -330,7 +329,7 @@ const ColumnAdjustmentModal = ({
             autoFocus
             // onClick={onConfirmOrYes}
           >
-            {t("whatsapp.alertModal.okButtonText")}
+            {translator("whatsapp.alertModal.okButtonText")}
           </Button>
           <Button
             className="cancel-button"
@@ -338,7 +337,7 @@ const ColumnAdjustmentModal = ({
             variant="contained"
             onClick={onColumnAdjustmentModalClose}
           >
-            {t("whatsapp.alertModal.calcelButtonText")}
+            {translator("whatsapp.alertModal.calcelButtonText")}
           </Button>
         </Grid>
       </div>

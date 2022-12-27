@@ -201,13 +201,10 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
   const [savedTemplateList, setSavedTemplateList] = useState<
     savedTemplateListProps[]
   >([]);
-  const [dynamicVariable, setDynamicVariable] = useState<string[]>([
-    "and",
-    "the",
-  ]);
+  const [dynamicVariable, setDynamicVariable] = useState<string[]>(["booking"]);
   const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
     string[]
-  >(["or"]);
+  >(["confirmed"]);
   const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
     string[]
   >([]);
@@ -223,6 +220,13 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
   const [quickReplyButtons, setQuickReplyButtons] = useState<
     quickReplyButtonProps[]
   >(initialQuickReplyButtons);
+
+  let updatedTemplateData: templateDataProps = {
+    templateText: "",
+    templateButtons: [],
+  };
+  let updatedButtonType: string = "";
+  let updatedFileData: string = "";
 
   const getSavedTemplateFields = async () => {
     let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
@@ -335,70 +339,82 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
     }
   };
 
+  const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
+    const quickReplyData: savedTemplateQuickReplyProps =
+      templateData?.types["quick-reply"];
+    updatedButtonType = "quickReply";
+    const buttonData = setButtonsData("quickReply", quickReplyData?.actions);
+    updatedTemplateData.templateText = quickReplyData?.body;
+    updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+  };
+
+  const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
+    const callToActionData: savedTemplateCallToActionProps =
+      templateData?.types["call-to-action"];
+    updatedButtonType = "callToAction";
+    const buttonData = setButtonsData(
+      "callToAction",
+      callToActionData?.actions
+    );
+    updatedTemplateData.templateText = callToActionData?.body;
+    updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+  };
+
+  const saveCardTemplate = (templateData: savedTemplateDataProps) => {
+    const cardData: savedTemplateCardProps = templateData?.types["card"];
+    updatedTemplateData.templateText = cardData?.title;
+    if (cardData?.actions?.length > 0) {
+      if (cardData?.actions[0]?.type !== "QUICK_REPLY") {
+        updatedButtonType = "callToAction";
+        const buttonData = setButtonsData("callToAction", cardData?.actions);
+        updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+      } else {
+        updatedButtonType = "quickReply";
+        const buttonData = setButtonsData("quickReply", cardData?.actions);
+        updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+      }
+    }
+    if (cardData?.media?.length > 0) {
+      updatedFileData = cardData?.media[0];
+    }
+  };
+
+  const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
+    const mediaData: savedTemplateMediaProps = templateData?.types["media"];
+    updatedTemplateData.templateText = mediaData?.body;
+    if (mediaData?.media?.length > 0) {
+      updatedFileData = mediaData?.media[0];
+    }
+  };
+
+  const saveTextTemplate = (templateData: savedTemplateDataProps) => {
+    const textData: savedTemplateTextProps = templateData?.types["text"];
+    updatedTemplateData.templateText = textData?.body;
+  };
+
+  const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
+    if ("quick-reply" in templateData?.types) {
+      saveQuickreplyTemplate(templateData);
+    }
+    if ("call-to-action" in templateData?.types) {
+      saveCallToActionTemplate(templateData);
+    } else if ("card" in templateData?.types) {
+      saveCardTemplate(templateData);
+    } else if ("media" in templateData?.types) {
+      saveMediaTemplate(templateData);
+    } else if ("text" in templateData?.types) {
+      saveTextTemplate(templateData);
+    }
+  };
+
   const onSavedTemplateChange = (TemplateId: string) => {
     setSavedTemplate(TemplateId);
     const savedTemplateData: savedTemplateListProps | undefined =
       savedTemplateList?.find((template) => template.TemplateId === TemplateId);
     const templateData: savedTemplateDataProps | undefined =
       savedTemplateData?.Data;
-    let updatedTemplateData: templateDataProps = {
-      templateText: "",
-      templateButtons: [],
-    };
-    let updatedButtonType = "";
-    let updatedFileData = "";
     if (templateData) {
-      if ("quick-reply" in templateData?.types) {
-        const quickReplyData: savedTemplateQuickReplyProps =
-          templateData?.types["quick-reply"];
-        updatedButtonType = "quickReply";
-        const buttonData = setButtonsData(
-          "quickReply",
-          quickReplyData?.actions
-        );
-        updatedTemplateData.templateText = quickReplyData?.body;
-        updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-      }
-      if ("call-to-action" in templateData?.types) {
-        const callToActionData: savedTemplateCallToActionProps =
-          templateData?.types["call-to-action"];
-        updatedButtonType = "callToAction";
-        const buttonData = setButtonsData(
-          "callToAction",
-          callToActionData?.actions
-        );
-        updatedTemplateData.templateText = callToActionData?.body;
-        updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-      } else if ("card" in templateData?.types) {
-        const cardData: savedTemplateCardProps = templateData?.types["card"];
-        updatedTemplateData.templateText = cardData?.title;
-        if (cardData?.actions?.length > 0) {
-          if (cardData?.actions[0]?.type !== "QUICK_REPLY") {
-            updatedButtonType = "callToAction";
-            const buttonData = setButtonsData(
-              "callToAction",
-              cardData?.actions
-            );
-            updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-          } else {
-            updatedButtonType = "quickReply";
-            const buttonData = setButtonsData("quickReply", cardData?.actions);
-            updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-          }
-        }
-        if (cardData?.media?.length > 0) {
-          updatedFileData = cardData?.media[0];
-        }
-      } else if ("media" in templateData?.types) {
-        const mediaData: savedTemplateMediaProps = templateData?.types["media"];
-        updatedTemplateData.templateText = mediaData?.body;
-        if (mediaData?.media?.length > 0) {
-          updatedFileData = mediaData?.media[0];
-        }
-      } else if ("text" in templateData?.types) {
-        const textData: savedTemplateTextProps = templateData?.types["text"];
-        updatedTemplateData.templateText = textData?.body;
-      }
+      setUpdatedTemplateData(templateData);
     }
     setFileData(updatedFileData);
     // setTemplateName(savedTemplateData?.TemplateName || '');
@@ -468,7 +484,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
         <Box>
           <div style={{ textAlign: "right", color: "#DC3D1B" }}>
             <b>
-              {translator("whatsappCampaign.note")}
+              <>{translator("whatsappCampaign.note")}</>
               <br />
               <span style={{ marginRight: 300 }}>
                 Check your limit{" "}
@@ -517,7 +533,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
                         ...updatedDynamicVariable,
                       ]}
                       autoEscape={true}
-                      textToHighlight="The dog is chasing the cat. Or perhaps they're just playing?"
+                      textToHighlight="Hi {{1}}, Your booking is confirmed. Thank you."
                       highlightTag={(tagData: tagDataProps) =>
                         highlightText(tagData)
                       }
@@ -562,18 +578,22 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
                 <Box className={classes.whatsappSmallInfoDiv}>
                   <span className={classes.textInfoWrapper}>
                     <span className={classes.textInfo}>
-                      {linkCount === 1
-                        ? translator("whatsappCampaign.link")
-                        : translator("whatsappCampaign.links")}
+                      {linkCount === 1 ? (
+                        <>{translator("whatsappCampaign.link")}</>
+                      ) : (
+                        <>{translator("whatsappCampaign.links")}</>
+                      )}
                     </span>
                     &nbsp;{linkCount}
                   </span>
 
                   <span className={classes.textInfoWrapper}>
                     <span className={classes.textInfo}>
-                      {dynamicFieldCount === 1
-                        ? translator("whatsappCampaign.dfield")
-                        : translator("whatsappCampaign.dfields")}
+                      {dynamicFieldCount === 1 ? (
+                        <>{translator("whatsappCampaign.dfield")}</>
+                      ) : (
+                        <>{translator("whatsappCampaign.dfields")}</>
+                      )}
                     </span>
                     &nbsp;{dynamicFieldCount}
                   </span>
@@ -581,7 +601,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
                   <span className={classes.textInfoWrapper}>
                     {/* {templateText?.length} */}
                     <span className={classes.textInfo}>
-                      {translator("whatsappCampaign.char")}
+                      <>{translator("whatsappCampaign.char")}</>
                     </span>
                     &nbsp;0/1024
                   </span>
@@ -617,10 +637,10 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 
                   <Box className={classes.radio}>
                     <Typography style={{ fontSize: "18px" }}>
-                      {translator("whatsappCampaign.tsend")}
+                      <>{translator("whatsappCampaign.tsend")}</>
                     </Typography>
                     <Typography className={classes.descSwitch}>
-                      {translator("whatsappCampaign.tsendDesc")}
+                      <>{translator("whatsappCampaign.tsendDesc")}</>
                     </Typography>
                   </Box>
                 </Box>
@@ -695,7 +715,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
                           }
                         />
                         <span className={classes.testSendNewTag}>
-                          {translator("mainReport.newFeature")}
+                          <>{translator("mainReport.newFeature")}</>
                         </span>
                       </Stack>
                       {testSendSelection === "testgroup" && (
@@ -710,7 +730,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
                               {selectedTestGroup.length <= 0 && (
                                 <div>
                                   {" "}
-                                  {translator("mainReport.ChooseLinks")}
+                                  <>{translator("mainReport.ChooseLinks")}</>
                                 </div>
                               )}
                               {selectedTestGroup.length > 0 ? (
@@ -782,7 +802,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
         setQuickReplyButtons={() => {}}
         updateTemplateData={() => {}}
         templateButtons={templateData.templateButtons}
-        isEdiable={false}
+        isEditable={false}
       />
       <ActionCallPopOver
         isCallToActionOpen={isCallToActionOpen}
@@ -794,7 +814,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
         websiteField={websiteField}
         addMore={() => {}}
         updateTemplateData={() => {}}
-        isEdiable={false}
+        isEditable={false}
       />
     </DefaultScreen>
   );
