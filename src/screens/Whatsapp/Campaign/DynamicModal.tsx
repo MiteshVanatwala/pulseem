@@ -1,29 +1,21 @@
-import React, { useState, useMemo, BaseSyntheticEvent } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
 	Button,
 	Box,
 	IconButton,
 	Dialog,
 	DialogActions,
-	TextField,
-	MenuItem,
-	Switch,
-	Typography,
-	FormGroup,
-	Select,
 	Grid,
 } from '@material-ui/core';
 import { useMediaQuery, Stack } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Close } from '@material-ui/icons';
-import clsx from 'clsx';
 import {
-	coreProps,
 	dynamicButtonProps,
 	dynamicModalProps,
 } from './WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import DynamicModalFields from './DynamicModalFields';
 
 const DynamicModal = ({
 	classes,
@@ -33,7 +25,6 @@ const DynamicModal = ({
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 	const { t: translator } = useTranslation();
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
 	const [navApp, setNavApp] = React.useState<string>('');
 	const [landPage, setLandPage] = React.useState<string>('');
@@ -72,8 +63,8 @@ const DynamicModal = ({
 	);
 
 	const onAddRemovalLink = () => {
-		if (!linkInput?.includes('##SMSUnsubscribelink##')) {
-			setLinkInput(linkInput + '##SMSUnsubscribelink##');
+		if (!linkInput?.includes('##WHATSAPPUnsubscribelink##')) {
+			setLinkInput(linkInput + '##WHATSAPPUnsubscribelink##');
 		}
 	};
 
@@ -126,179 +117,23 @@ const DynamicModal = ({
 								)}
 							</Stack>
 						</Grid>
-						{activeDynamicButton?.includes('pField') && (
-							<Select
-								required
-								value={personalField}
-								displayEmpty
-								variant='outlined'
-								className={classes.whatsappCampaignDynamicFieldPersonalField}
-								renderValue={
-									personalField !== ''
-										? undefined
-										: () => translator('whatsappCampaign.pFieldPlaceholder')
-								}
-								onChange={(e: BaseSyntheticEvent) =>
-									setPersonalField(e.target.value)
-								}>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-								<MenuItem value='Jonak'>Jonak</MenuItem>
-								<MenuItem value='Roy'>Roy</MenuItem>
-							</Select>
-						)}
-
-						{activeDynamicButton?.includes('text') && (
-							<textarea
-								required
-								placeholder={translator('whatsappCampaign.textPlaceholder')}
-								className={classes.whatsappCampaignDynamicFieldTextarea}
-								onChange={(e: BaseSyntheticEvent) =>
-									setTextInput(e.target.value)
-								}
-								value={textInput}
-							/>
-						)}
-
-						{activeDynamicButton?.includes('link') && (
-							<div className={classes.whatsappCampaignDynamicFieldLink}>
-								<Box className={classes.switchDiv}>
-									<FormGroup>
-										<Switch
-											className={
-												isRTL
-													? clsx(
-															classes.reactSwitchHe,
-															'react-switch',
-															'dynamic-link-switch'
-													  )
-													: clsx(
-															classes.reactSwitch,
-															'react-switch',
-															'dynamic-link-switch'
-													  )
-											}
-											checked={true}
-										/>
-									</FormGroup>
-									<Box>
-										<Typography className='keep-track'>
-											{translator('mainReport.keepTrack')}
-										</Typography>
-										<Typography className='keep-track-desc'>
-											{translator('mainReport.keepDesc')}
-										</Typography>
-									</Box>
-								</Box>
-								<br />
-								<TextField
-									required
-									variant='outlined'
-									placeholder={translator('whatsappCampaign.linkPlaceholder')}
-									className='link-input'
-									onChange={(e: BaseSyntheticEvent) =>
-										setLinkInput(e.target.value)
-									}
-									value={linkInput}
-								/>
-								<Button
-									variant='outlined'
-									color='primary'
-									size='small'
-									className={classes.whatsappCampaignDynamicFieldLinkRemoval}
-									onClick={() => onAddRemovalLink()}>
-									Add removal link
-								</Button>
-							</div>
-						)}
-
-						{activeDynamicButton?.includes('lPage') && (
-							<Select
-								required
-								value={landPage}
-								displayEmpty
-								variant='outlined'
-								className={classes.whatsappCampaignDynamicFieldLandingPage}
-								renderValue={
-									landPage !== ''
-										? undefined
-										: () => translator('whatsappCampaign.lPagePlaceholder')
-								}
-								onChange={(e: BaseSyntheticEvent) =>
-									setLandPage(e.target.value)
-								}>
-								<MenuItem value='Landing page 1'>Landing page 1</MenuItem>
-								<MenuItem value='Landing page 2'>Landing page 2</MenuItem>
-							</Select>
-						)}
-
-						{activeDynamicButton?.includes('navigation') && (
-							<Grid container>
-								<Grid item lg={12}>
-									<Select
-										required
-										value={navApp}
-										displayEmpty
-										variant='outlined'
-										className={
-											classes.whatsappCampaignDynamicFieldNavigationSelect
-										}
-										renderValue={
-											navApp !== ''
-												? undefined
-												: () => translator('whatsappCampaign.navAppPlaceholder')
-										}
-										onChange={(e: BaseSyntheticEvent) =>
-											setNavApp(e.target.value)
-										}>
-										<MenuItem value='Waze'>Waze</MenuItem>
-										<MenuItem value='Google Maps'>Google Maps</MenuItem>
-									</Select>
-								</Grid>
-								<Grid item lg={12}>
-									<TextField
-										required
-										variant='outlined'
-										placeholder={translator(
-											'whatsappCampaign.navigationPlaceholder'
-										)}
-										className={
-											classes.whatsappCampaignDynamicFieldNavigationText
-										}
-										onChange={(e: BaseSyntheticEvent) =>
-											setNavAddress(e.target.value)
-										}
-										value={navAddress}
-									/>
-								</Grid>
-							</Grid>
-						)}
+						<DynamicModalFields
+							classes={classes}
+							activeDynamicButton={activeDynamicButton}
+							personalField={personalField}
+							textInput={textInput}
+							linkInput={linkInput}
+							navApp={navApp}
+							landPage={landPage}
+							navAddress={navAddress}
+							setTextInput={setTextInput}
+							setPersonalField={setPersonalField}
+							onAddRemovalLink={onAddRemovalLink}
+							setLinkInput={setLinkInput}
+							setLandPage={setLandPage}
+							setNavApp={setNavApp}
+							setNavAddress={setNavAddress}
+						/>
 					</Grid>
 				</Box>
 				<DialogActions>

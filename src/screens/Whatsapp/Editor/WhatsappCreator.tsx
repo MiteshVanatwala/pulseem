@@ -118,6 +118,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 
+	let updatedTemplateData: templateDataProps = {
+		templateText: '',
+		templateButtons: [],
+	};
+	let updatedButtonType: string = '';
+	let updatedFileData: string = '';
+
 	enum ActionButtons {
 		QuickReply = 'quickReply',
 	}
@@ -303,69 +310,77 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
+	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
+		const quickReplyData: savedTemplateQuickReplyProps =
+			templateData?.types['quick-reply'];
+		updatedButtonType = 'quickReply';
+		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		updatedTemplateData.templateText = quickReplyData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
+		const callToActionData: savedTemplateCallToActionProps =
+			templateData?.types['call-to-action'];
+		updatedButtonType = 'callToAction';
+		const buttonData = setButtonsData(
+			'callToAction',
+			callToActionData?.actions
+		);
+		updatedTemplateData.templateText = callToActionData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
+		const cardData: savedTemplateCardProps = templateData?.types['card'];
+		updatedTemplateData.templateText = cardData?.title;
+		if (cardData?.actions?.length > 0) {
+			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
+				updatedButtonType = 'callToAction';
+				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else {
+				updatedButtonType = 'quickReply';
+				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			}
+		}
+		if (cardData?.media?.length > 0) {
+			updatedFileData = cardData?.media[0];
+		}
+	};
+
+	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
+		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+		updatedTemplateData.templateText = mediaData?.body;
+		if (mediaData?.media?.length > 0) {
+			updatedFileData = mediaData?.media[0];
+		}
+	};
+
+	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
+		const textData: savedTemplateTextProps = templateData?.types['text'];
+		updatedTemplateData.templateText = textData?.body;
+	};
+
 	const onSavedTemplateChange = (TemplateId: string) => {
 		setSavedTemplate(TemplateId);
 		const savedTemplateData: savedTemplateListProps | undefined =
 			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
 		const templateData: savedTemplateDataProps | undefined =
 			savedTemplateData?.Data;
-		let updatedTemplateData: templateDataProps = {
-			templateText: '',
-			templateButtons: [],
-		};
-		let updatedButtonType = '';
-		let updatedFileData = '';
 		if (templateData) {
 			if ('quick-reply' in templateData?.types) {
-				const quickReplyData: savedTemplateQuickReplyProps =
-					templateData?.types['quick-reply'];
-				updatedButtonType = 'quickReply';
-				const buttonData = setButtonsData(
-					'quickReply',
-					quickReplyData?.actions
-				);
-				updatedTemplateData.templateText = quickReplyData?.body;
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+				saveQuickreplyTemplate(templateData);
 			}
 			if ('call-to-action' in templateData?.types) {
-				const callToActionData: savedTemplateCallToActionProps =
-					templateData?.types['call-to-action'];
-				updatedButtonType = 'callToAction';
-				const buttonData = setButtonsData(
-					'callToAction',
-					callToActionData?.actions
-				);
-				updatedTemplateData.templateText = callToActionData?.body;
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+				saveCallToActionTemplate(templateData);
 			} else if ('card' in templateData?.types) {
-				const cardData: savedTemplateCardProps = templateData?.types['card'];
-				updatedTemplateData.templateText = cardData?.title;
-				if (cardData?.actions?.length > 0) {
-					if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-						updatedButtonType = 'callToAction';
-						const buttonData = setButtonsData(
-							'callToAction',
-							cardData?.actions
-						);
-						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-					} else {
-						updatedButtonType = 'quickReply';
-						const buttonData = setButtonsData('quickReply', cardData?.actions);
-						updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-					}
-				}
-				if (cardData?.media?.length > 0) {
-					updatedFileData = cardData?.media[0];
-				}
+				saveCardTemplate(templateData);
 			} else if ('media' in templateData?.types) {
-				const mediaData: savedTemplateMediaProps = templateData?.types['media'];
-				updatedTemplateData.templateText = mediaData?.body;
-				if (mediaData?.media?.length > 0) {
-					updatedFileData = mediaData?.media[0];
-				}
+				saveMediaTemplate(templateData);
 			} else if ('text' in templateData?.types) {
-				const textData: savedTemplateTextProps = templateData?.types['text'];
-				updatedTemplateData.templateText = textData?.body;
+				saveTextTemplate(templateData);
 			}
 		}
 		setFileData(updatedFileData);
@@ -853,7 +868,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					updateTemplateButton(data, 'quickReply')
 				}
 				templateButtons={templateData.templateButtons}
-				isEdiable={true}
+				isEditable={true}
 			/>
 			<ActionCallPopOver
 				isCallToActionOpen={isCallToActionOpen}
@@ -867,7 +882,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				updateTemplateData={(data: callToActionProps) =>
 					updateTemplateButton(data, 'callToAction')
 				}
-				isEdiable={true}
+				isEditable={true}
 			/>
 			<AlertModal
 				classes={classes}

@@ -69,3 +69,30 @@ export type tagDataProps = {
 	className: string;
 	highlightIndex: number;
 };
+
+export type DynamicModalFieldsProps = {
+	classes: ClassesType['classes'];
+	activeDynamicButton: string;
+	personalField: string;
+	textInput: string;
+	linkInput: string;
+	navApp: string;
+	landPage: string;
+	navAddress: string;
+	setTextInput: (value: string) => void;
+	setPersonalField: (value: string) => void;
+	onAddRemovalLink: () => void;
+	setLinkInput: (value: string) => void;
+	setLandPage: (value: string) => void;
+	setNavApp: (value: string) => void;
+	setNavAddress: (value: string) => void;
+};
+
+export type TestGroupModalRows = {
+	classes: ClassesType['classes'];
+	searchText: string;
+	testGroupData: testGroupDataProps[];
+	searchGroupResult: testGroupDataProps[];
+	onSelectGroup: (groupID: number) => void;
+	isSelectdGroup: (groupID: number) => boolean;
+};
