@@ -390,6 +390,21 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 		updatedTemplateData.templateText = textData?.body;
 	};
 
+	const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
+		if ('quick-reply' in templateData?.types) {
+			saveQuickreplyTemplate(templateData);
+		}
+		if ('call-to-action' in templateData?.types) {
+			saveCallToActionTemplate(templateData);
+		} else if ('card' in templateData?.types) {
+			saveCardTemplate(templateData);
+		} else if ('media' in templateData?.types) {
+			saveMediaTemplate(templateData);
+		} else if ('text' in templateData?.types) {
+			saveTextTemplate(templateData);
+		}
+	};
+
 	const onSavedTemplateChange = (TemplateId: string) => {
 		setSavedTemplate(TemplateId);
 		const savedTemplateData: savedTemplateListProps | undefined =
@@ -397,18 +412,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 		const templateData: savedTemplateDataProps | undefined =
 			savedTemplateData?.Data;
 		if (templateData) {
-			if ('quick-reply' in templateData?.types) {
-				saveQuickreplyTemplate(templateData);
-			}
-			if ('call-to-action' in templateData?.types) {
-				saveCallToActionTemplate(templateData);
-			} else if ('card' in templateData?.types) {
-				saveCardTemplate(templateData);
-			} else if ('media' in templateData?.types) {
-				saveMediaTemplate(templateData);
-			} else if ('text' in templateData?.types) {
-				saveTextTemplate(templateData);
-			}
+			setUpdatedTemplateData(templateData);
 		}
 		setFileData(updatedFileData);
 		// setTemplateName(savedTemplateData?.TemplateName || '');
