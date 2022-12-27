@@ -546,32 +546,37 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         borderBottom: '1px solid #F0F5FF',
         paddingTop: 10,
         paddingBottom: 10,
+        '&:nth-child(even)': {
+          '& .rowIconContainer': {
+            '& div': {
+              '& div': {
+                background: '#fff',
+              }
+            }
+          }
+        },
+        '&:nth-child(odd)': {
+          '& .rowIconContainer': {
+            '& div': {
+              '& div': {
+                background: '#F0F5FF',
+              }
+            }
+          }
+        },
         '& .MuiTableCell-root:last-child': {
           borderRight: 'none',
         },
         '& .rowTitle': {
-          textAlign: 'left',
+          textAlign: 'center',
           alignItems: 'flex-start'
         },
         '& .MuiTableCell-root': {
           borderRight: '2px solid #F0F5FF',
           marginTop: 0,
           marginBottom: 0,
+
           '& .rowIconContainer': {
-            '&.blue': {
-              '& div': {
-                '& div': {
-                  background: '#F0F5FF',
-                }
-              }
-            },
-            '&.white': {
-              '& div': {
-                '& div': {
-                  background: '#fff'
-                }
-              }
-            },
             '& div': {
               '& div': {
                 width: 25,
@@ -584,15 +589,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           },
           '& *.MuiTypography-root': {
             fontSize: 16,
-            color: '#000'
-            // fontWeight: 600
           }
-          // border: '2px solid #F0F5FF'
-          // '& div': {
-          //   '&> div:nth-child(2)': {
-          //     textAlign: 'left'
-          //   }
-          // }
         }
       }
     }

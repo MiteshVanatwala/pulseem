@@ -438,7 +438,7 @@ const NewslettersReport = ({ classes }) => {
     const { CampaignID } = row
 
     return (
-      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }} className={clsx('rowIconContainer', index % 2 == 0 ? 'blue' : 'white')}>
+      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }} className={'rowIconContainer'}>
         <ManagmentIcon
           classes={classes}
           iconClass={classes.w25}

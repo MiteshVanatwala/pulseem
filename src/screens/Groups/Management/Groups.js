@@ -657,6 +657,7 @@ const Groups = ({ classes }) => {
                         ]}
                         variant="body1"
                         align="center"
+                        classes={{ container: 'rowIconContainer' }}
                     />
                 </TableCell>
             </TableRow>

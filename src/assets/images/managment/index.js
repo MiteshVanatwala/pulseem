@@ -1,10 +1,10 @@
-import AutomationIcon from './automation.png'
-import DeleteIcon from './delete.png'
+import AutomationIcon from './Automation.tsx'
+import DeleteIcon from './Delete.tsx'
 import DuplicateIcon from './duplicate.png'
 import EditIcon from './edit.png'
 import SendGreenIcon from './greenSend.png'
 import GroupsIcon from './groups.png'
-import PreviewIcon from './preview.png'
+import PreviewIcon from './Preview.tsx'
 import SettingsIcon from './settings.png'
 // import ReportsIcon from './reports.png'
 import ShareIcon from './share.png'
@@ -20,12 +20,14 @@ import { ReactComponent as CalendarIcon } from './calendar.svg'
 import { ReactComponent as SearchIcon } from './search.svg'
 import { ReactComponent as PageArrowIcon } from './page_arrow.svg'
 import CloseIcon from './x.png'
-import AddRecipient from './addRecipient.png'
-import AddRecipients from './addRecipients.png'
+import AddRecipient from './AddRecipient.tsx'
+import AddRecipients from './AddRecipients.tsx'
 import Reset from './reset.png'
 import List from './List'
 import ReportsIcon from './ReportsIcon'
 import GroupRemoval from './GroupRemoval'
+import ResetIcon from './Reset.tsx'
+import SettingIcon from './Setting'
 
 export {
   AutomationIcon,
@@ -54,7 +56,9 @@ export {
   AddRecipients,
   Reset,
   List as ListIcon,
-  GroupRemoval
+  GroupRemoval,
+  ResetIcon,
+  SettingIcon
   // ReportsIcon
 
 }
