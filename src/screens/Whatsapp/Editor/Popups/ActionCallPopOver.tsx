@@ -18,9 +18,9 @@ import {
 	actionProps,
 	callToActionFieldProps,
 	callToActionRowProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
-import { countryCodes } from '../Constant';
+import { countryCodes } from '../../Constant';
 
 const ActionCallPopOver = ({
 	isCallToActionOpen,

@@ -3,7 +3,7 @@ import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Close, InfoOutlined } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
-import { validationAlertModalProps } from './WhatsappCampaign.types';
+import { validationAlertModalProps } from '../Types/WhatsappCampaign.types';
 
 const ValidationAlert = ({
 	classes,

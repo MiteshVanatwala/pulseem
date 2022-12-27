@@ -13,7 +13,7 @@ import { Close } from '@material-ui/icons';
 import {
 	dynamicButtonProps,
 	dynamicModalProps,
-} from './WhatsappCampaign.types';
+} from '../Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import DynamicModalFields from './DynamicModalFields';
 

@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent } from "react";
-import { ClassesType } from "../../Classes.types";
-import { savedTemplateListProps } from "../Editor/WhatsappCreator.types";
+import { ClassesType } from "../../../Classes.types";
+import { savedTemplateListProps } from "../../Editor/Types/WhatsappCreator.types";
 
 export type smsProps = {
   testGroups: [];
@@ -128,7 +128,7 @@ export type ColumnAdjustmentModalProps = {
   onColumnAdjustmentModalClose: () => void;
   headers: string[];
   setheaders: any;
-  typedData: string[];
+  typedData: string[][];
 };
 
 export type DynamicModalFieldsProps = {

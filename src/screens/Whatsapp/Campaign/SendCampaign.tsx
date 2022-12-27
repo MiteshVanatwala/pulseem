@@ -2,12 +2,12 @@ import { ClassesType } from "../../Classes.types";
 import DefaultScreen from "../../DefaultScreen";
 import WizardTitle from "../../../components/Wizard/WizardTitle";
 import { Grid } from "@material-ui/core";
-import { WhatsappCampaignSecondProps } from "./WhatsappCampaign.types";
+import { WhatsappCampaignSecondProps } from "./Types/WhatsappCampaign.types";
 import { useTranslation } from "react-i18next";
-import RightPane from "./RightPane";
-import LeftPane from "./LeftPane";
+import RightPane from "./Components/RightPane";
+import LeftPane from "./Components/LeftPane";
 import { useState } from "react";
-import SummaryModal from "./SummaryModal";
+import SummaryModal from "./Popups/SummaryModal";
 
 const SendCampaign = ({
   classes,

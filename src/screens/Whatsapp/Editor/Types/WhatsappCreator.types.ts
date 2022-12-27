@@ -1,4 +1,4 @@
-import { ClassesType } from '../../Classes.types';
+import { ClassesType } from '../../../Classes.types';
 import { BaseSyntheticEvent, RefObject } from 'react';
 
 export type WhatsappCreatorProps = {

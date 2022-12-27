@@ -3,12 +3,12 @@ import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link, TextField } from "@material-ui/core";
 import { Box, Grid, Button, Dialog, useMediaQuery } from "@material-ui/core";
-import MobilePreview from "../Editor/WhatsappMobilePreview";
+import MobilePreview from "../../Editor/Components/WhatsappMobilePreview";
 import { FaChevronDown } from "react-icons/fa";
 import { FaChevronUp } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
-import { coreProps, SummaryModalProps } from "./WhatsappCampaign.types";
+import { coreProps, SummaryModalProps } from "../Types/WhatsappCampaign.types";
 import { useTheme } from "@mui/material/styles";
 import { Close, SupervisedUserCircleOutlined } from "@material-ui/icons";
 

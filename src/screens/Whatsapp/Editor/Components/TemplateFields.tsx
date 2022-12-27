@@ -1,8 +1,8 @@
 import React, { BaseSyntheticEvent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { coreProps, TemplateFieldsProps } from './WhatsappCreator.types';
-import { ClassesType } from '../../Classes.types';
+import { coreProps, TemplateFieldsProps } from '../Types/WhatsappCreator.types';
+import { ClassesType } from '../../../Classes.types';
 import {
 	TextField,
 	Typography,
@@ -11,7 +11,7 @@ import {
 	Button,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import AlertModal from './AlertModal';
+import AlertModal from '../Popups/AlertModal';
 
 const TemplateFields = ({
 	classes,

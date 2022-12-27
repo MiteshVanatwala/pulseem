@@ -6,10 +6,10 @@ import {
 	Grid,
 	Button,
 } from '@material-ui/core';
-import { ClassesType } from '../../Classes.types';
+import { ClassesType } from '../../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { campaignFielsProps, coreProps } from './WhatsappCampaign.types';
+import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { BaseSyntheticEvent, useState } from 'react';
 

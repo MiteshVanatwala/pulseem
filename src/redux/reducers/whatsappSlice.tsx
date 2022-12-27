@@ -6,7 +6,7 @@ import {
 	QuickReply,
 	TextMedia,
 	TextMediaAndButton,
-} from '../../screens/Whatsapp/Editor/JSON.types';
+} from '../../screens/Whatsapp/Editor/Types/JSON.types';
 
 type errorProps = {
 	message: string;

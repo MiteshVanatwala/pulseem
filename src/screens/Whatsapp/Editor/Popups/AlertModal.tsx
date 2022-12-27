@@ -2,7 +2,7 @@ import { Button, Box, Dialog, Grid } from '@material-ui/core';
 import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Close } from '@material-ui/icons';
-import { AlertModalProps } from './WhatsappCreator.types';
+import { AlertModalProps } from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
 
 const AlertModal = ({

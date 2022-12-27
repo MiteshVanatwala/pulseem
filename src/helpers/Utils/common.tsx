@@ -1,7 +1,7 @@
 import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
-} from '../../screens/Whatsapp/Editor/WhatsappCreator.types';
+} from '../../screens/Whatsapp/Editor/Types/WhatsappCreator.types';
 
 export const getValueByFieldName = (
 	button: quickReplyButtonProps,

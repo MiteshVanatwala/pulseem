@@ -9,7 +9,7 @@ import {
 import { FaFilter } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import Groups from "./Groups/Groups";
+import Groups from "../Components/Groups/Groups";
 import { BaseSyntheticEvent, useState } from "react";
 import clsx from "clsx";
 import {
@@ -17,7 +17,7 @@ import {
   FilterRecipientsDialogProps,
   smsProps,
   testGroupDataProps,
-} from "./WhatsappCampaign.types";
+} from "../Types/WhatsappCampaign.types";
 import { Close, SupervisedUserCircleOutlined } from "@material-ui/icons";
 
 const FilterRecipientsDialog = ({

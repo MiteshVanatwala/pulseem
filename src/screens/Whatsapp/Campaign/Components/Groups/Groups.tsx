@@ -30,8 +30,8 @@ import { MdClear } from 'react-icons/md';
 import './Groups.styles.css';
 import { BsDot } from 'react-icons/bs';
 import { BsFilter } from 'react-icons/bs';
-import { GroupsProps, testGroupDataProps } from '../WhatsappCampaign.types';
-import { ClassesType } from '../../../Classes.types';
+import { GroupsProps, testGroupDataProps } from '../../Types/WhatsappCampaign.types';
+import { ClassesType } from '../../../../Classes.types';
 
 const Groups = ({
 	classes,

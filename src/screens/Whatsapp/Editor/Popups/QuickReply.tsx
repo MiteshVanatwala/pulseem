@@ -19,7 +19,7 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	quickReplyProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 

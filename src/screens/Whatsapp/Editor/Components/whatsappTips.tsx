@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { coreProps, WhatsappTipsProps } from './WhatsappCreator.types';
+import { coreProps, WhatsappTipsProps } from '../Types/WhatsappCreator.types';
 
 const WhatsappTips = ({ classes }: WhatsappTipsProps) => {
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
