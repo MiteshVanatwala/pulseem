@@ -224,12 +224,12 @@ const renderRoutes = (classes, redirect) => {
       />
 
       <Route
-        path={`/react/Whatsapp/send`}
+        path={`/react/Whatsapp/send/page1`}
         element={<WhatsappCampaign classes={classes} />}
       />
 
       <Route
-        path={`/react/Whatsapp/send2`}
+        path={`/react/Whatsapp/send/page2`}
         element={<SendCampaign classes={classes} />}
       />
 

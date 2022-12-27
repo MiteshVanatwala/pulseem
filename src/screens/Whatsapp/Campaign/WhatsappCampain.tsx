@@ -22,7 +22,6 @@ import {
 	testGroupDataProps,
 	tagDataProps,
 } from './Types/WhatsappCampaign.types';
-import { ClassesType } from '../../Classes.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
@@ -53,10 +52,11 @@ import TestGroupModal from './Popups/TestGroupModal';
 import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
-import FilterRecipientsDialog from './Popups/FilterRecipientsDialog';
+import { useNavigate } from 'react-router-dom';
 
 const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const testGroupData: testGroupDataProps[] = [
 		{
@@ -240,7 +240,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handleSubmit = () => {};
+	const handleSubmit = () => {
+		navigate('/react/Whatsapp/send/page2');
+	};
 
 	const isUpdatedVaraiable = (variable: string) => {
 		return updatedDynamicVariable?.includes(variable?.toLowerCase())
