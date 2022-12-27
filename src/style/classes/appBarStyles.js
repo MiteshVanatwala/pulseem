@@ -160,9 +160,16 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      '& .MuiButtonBase-root': {
+        fontWeight: 600
+      },
       '& .settingsBorder': {
-        borderRight: '3px solid #FF0054',
+        background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+        width: 1.5,
         height: 24
+      },
+      '& svg': {
+        color: '#FF0076'
       }
     },
     '&>div': {
