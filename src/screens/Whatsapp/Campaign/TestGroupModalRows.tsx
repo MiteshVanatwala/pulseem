@@ -44,9 +44,11 @@ const TestGroupModalRows = ({
 								<span className={classes.ellipsisText}>{group.GroupName}</span>
 								<span style={{ whiteSpace: 'nowrap' }}>
 									{group.Recipients}{' '}
-									{group.Recipients === 1
-										? translator('sms.recipient')
-										: translator('sms.recipients')}
+									{group.Recipients === 1 ? (
+										<>{translator('sms.recipient')}</>
+									) : (
+										<>{translator('sms.recipients')}</>
+									)}
 								</span>
 							</div>
 						</div>
@@ -81,8 +83,8 @@ const TestGroupModalRows = ({
 									<span style={{ whiteSpace: 'nowrap' }}>
 										{group.Recipients}{' '}
 										{group.Recipients === 1
-											? translator('sms.recipient')
-											: translator('sms.recipients')}
+											? <>{translator('sms.recipient')}</>
+											: <>{translator('sms.recipients')}</>}
 									</span>
 								</div>
 							</div>

@@ -481,7 +481,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 				<Box>
 					<div style={{ textAlign: 'right', color: '#DC3D1B' }}>
 						<b>
-							{translator('whatsappCampaign.note')}
+							<>{translator('whatsappCampaign.note')}</>
 							<br />
 							<span style={{ marginRight: 300 }}>
 								Check your limit{' '}
@@ -572,18 +572,22 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 								<Box className={classes.whatsappSmallInfoDiv}>
 									<span className={classes.textInfoWrapper}>
 										<span className={classes.textInfo}>
-											{linkCount === 1
-												? translator('whatsappCampaign.link')
-												: translator('whatsappCampaign.links')}
+											{linkCount === 1 ? (
+												<>{translator('whatsappCampaign.link')}</>
+											) : (
+												<>{translator('whatsappCampaign.links')}</>
+											)}
 										</span>
 										&nbsp;{linkCount}
 									</span>
 
 									<span className={classes.textInfoWrapper}>
 										<span className={classes.textInfo}>
-											{dynamicFieldCount === 1
-												? translator('whatsappCampaign.dfield')
-												: translator('whatsappCampaign.dfields')}
+											{dynamicFieldCount === 1 ? (
+												<>{translator('whatsappCampaign.dfield')}</>
+											) : (
+												<>{translator('whatsappCampaign.dfields')}</>
+											)}
 										</span>
 										&nbsp;{dynamicFieldCount}
 									</span>
@@ -591,7 +595,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 									<span className={classes.textInfoWrapper}>
 										{/* {templateText?.length} */}
 										<span className={classes.textInfo}>
-											{translator('whatsappCampaign.char')}
+											<>{translator('whatsappCampaign.char')}</>
 										</span>
 										&nbsp;0/1024
 									</span>
@@ -627,10 +631,10 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 
 									<Box className={classes.radio}>
 										<Typography style={{ fontSize: '18px' }}>
-											{translator('whatsappCampaign.tsend')}
+											<>{translator('whatsappCampaign.tsend')}</>
 										</Typography>
 										<Typography className={classes.descSwitch}>
-											{translator('whatsappCampaign.tsendDesc')}
+											<>{translator('whatsappCampaign.tsendDesc')}</>
 										</Typography>
 									</Box>
 								</Box>
@@ -702,7 +706,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 													}
 												/>
 												<span className={classes.testSendNewTag}>
-													{translator('mainReport.newFeature')}
+													<>{translator('mainReport.newFeature')}</>
 												</span>
 											</Stack>
 											{testSendSelection === 'testgroup' && (
@@ -716,7 +720,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 															{selectedTestGroup.length <= 0 && (
 																<div>
 																	{' '}
-																	{translator('mainReport.ChooseLinks')}
+																	<>{translator('mainReport.ChooseLinks')}</>
 																</div>
 															)}
 															{selectedTestGroup.length > 0 ? (

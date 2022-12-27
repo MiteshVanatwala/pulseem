@@ -22,15 +22,15 @@ const DynamicModalFields = ({
 	textInput,
 	linkInput,
 	navApp,
-    landPage,
-    navAddress,
+	landPage,
+	navAddress,
 	setTextInput,
 	setPersonalField,
 	onAddRemovalLink,
-    setLinkInput,
-    setLandPage,
-    setNavApp,
-    setNavAddress
+	setLinkInput,
+	setLandPage,
+	setNavApp,
+	setNavAddress,
 }: DynamicModalFieldsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -46,7 +46,7 @@ const DynamicModalFields = ({
 					renderValue={
 						personalField !== ''
 							? undefined
-							: () => translator('whatsappCampaign.pFieldPlaceholder')
+							: () => <>{translator('whatsappCampaign.pFieldPlaceholder')}</>
 					}
 					onChange={(e: BaseSyntheticEvent) =>
 						setPersonalField(e.target.value)
@@ -89,10 +89,10 @@ const DynamicModalFields = ({
 						</FormGroup>
 						<Box>
 							<Typography className='keep-track'>
-								{translator('mainReport.keepTrack')}
+								<>{translator('mainReport.keepTrack')}</>
 							</Typography>
 							<Typography className='keep-track-desc'>
-								{translator('mainReport.keepDesc')}
+								<>{translator('mainReport.keepDesc')}</>
 							</Typography>
 						</Box>
 					</Box>
@@ -126,7 +126,7 @@ const DynamicModalFields = ({
 					renderValue={
 						landPage !== ''
 							? undefined
-							: () => translator('whatsappCampaign.lPagePlaceholder')
+							: () => <>{translator('whatsappCampaign.lPagePlaceholder')}</>
 					}
 					onChange={(e: BaseSyntheticEvent) => setLandPage(e.target.value)}>
 					<MenuItem value='Landing page 1'>Landing page 1</MenuItem>
@@ -146,7 +146,9 @@ const DynamicModalFields = ({
 							renderValue={
 								navApp !== ''
 									? undefined
-									: () => translator('whatsappCampaign.navAppPlaceholder')
+									: () => (
+											<>{translator('whatsappCampaign.navAppPlaceholder')}</>
+									  )
 							}
 							onChange={(e: BaseSyntheticEvent) => setNavApp(e.target.value)}>
 							<MenuItem value='Waze'>Waze</MenuItem>

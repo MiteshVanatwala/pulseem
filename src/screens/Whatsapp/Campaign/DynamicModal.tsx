@@ -76,7 +76,7 @@ const DynamicModal = ({
 				onClose={onDynamcFieldModalClose}
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.whatsappCampaignDynamicFieldTitle}>
-					{translator('whatsappCampaign.dfieldTitle')}
+					<>{translator('whatsappCampaign.dfieldTitle')}</>
 				</div>
 				<Box className={classes.whatsappCampaignDynamicFieldClose}>
 					<IconButton>
@@ -111,7 +111,7 @@ const DynamicModal = ({
 											onClick={() =>
 												setActiveDynamicButton(button.buttonTitle)
 											}>
-											{translator(button.buttonTitle)}
+											<>{translator(button.buttonTitle)}</>
 										</Button>
 									)
 								)}

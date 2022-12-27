@@ -101,7 +101,7 @@ const ActionCallPopOver = ({
 				id='form-dialog-title'
 				className={classes.callToActionDialogHeaderTitle}>
 				<>
-					{translator('whatsapp.callToActionTitle')}
+					<>{translator('whatsapp.callToActionTitle')}</>
 					<IconButton
 						aria-label='close'
 						onClick={() => closeCallToAction(true)}

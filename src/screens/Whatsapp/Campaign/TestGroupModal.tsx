@@ -144,14 +144,14 @@ const TestGroupModal = ({
 							color='primary'
 							autoFocus
 							onClick={onConfirmOrYes}>
-							{translator('whatsapp.alertModal.okButtonText')}
+							<>{translator('whatsapp.alertModal.okButtonText')}</>
 						</Button>
 						<Button
 							className='cancel-button'
 							color='primary'
 							variant='contained'
 							onClick={onCancel}>
-							{translator('whatsapp.alertModal.calcelButtonText')}
+							<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 						</Button>
 					</Grid>
 				</div>
