@@ -1,7 +1,5 @@
 import { ClassesType } from '../../Classes.types';
 import {
-	Typography,
-	Button,
 	Grid,
 	Box,
 	FormControlLabel,
@@ -10,13 +8,10 @@ import {
 	Radio,
 	FormHelperText,
 	Divider,
-	TextField,
-	Tooltip,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { BaseSyntheticEvent, useState } from 'react';
 // import { DateField } from "./DateField/DateField";
-import { FaRegCalendarAlt, FaFilter } from 'react-icons/fa';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
@@ -58,14 +53,9 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 		true: 'rtl',
 		false: 'ltr',
 	};
-	const {
-		OTPPassed,
-		ToastMessages,
-		extraData,
-		getCampaignSum,
-		testGroups,
-		finishedCampaigns,
-	} = useSelector((state: { sms: any }) => state.sms);
+	const { ToastMessages, extraData } = useSelector(
+		(state: { sms: any }) => state.sms
+	);
 
 	const handleSendType = (event: BaseSyntheticEvent) => {
 		if (event.target.value === '1') {
@@ -492,54 +482,6 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 				</FormControl>
 			</Grid>
 			<Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
-			<div className={classes.pulseDiv}>
-				<span
-					className={
-						selectedGroups.length >= 1 && sendType !== '3'
-							? classes.pulse
-							: classes.pulseDisable
-					}
-					onClick={() => {
-						handlePulseDialog();
-					}}>
-					<FaRegCalendarAlt style={{ fontSize: '125%' }} />
-					{t('mainReport.pulseSend')}
-				</span>
-				<Tooltip
-					disableFocusListener
-					title={t('smsReport.pulseSendTip')}
-					classes={{ tooltip: classes.customWidth }}>
-					<span className={classes.bodyInfo}>i</span>
-				</Tooltip>
-			</div>
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					justifyContent: 'center',
-					color: '#7f7f7f',
-					fontWeight: '400',
-					fontSize: '14px',
-				}}>
-				{togglePulse ? (
-					<span style={{ marginBottom: '5px', marginTop: '5px' }}>
-						{t('smsReport.packetSend')} - {pulseAmount}{' '}
-						{pulsePer === '' || pulsePer === 'recipients'
-							? t('sms.recipients')
-							: t('common.Percent')}{' '}
-						{t('sms.every')} {timeInterval}{' '}
-						{hourName === '' || minName === 'mins'
-							? t('common.minutes')
-							: t('common.hours')}
-					</span>
-				) : null}
-				{toggleRandom ? (
-					<span>
-						{t('smsReport.randomSend')} - {random}{' '}
-						{t('smsReport.randomRecipients')}
-					</span>
-				) : null}
-			</div>
 		</div>
 	);
 };

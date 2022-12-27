@@ -41,7 +41,7 @@ const SendCampaign = ({
 				</div>
 				<SummaryModal
 					classes={classes}
-					open={true}
+					open={false}
 					campaignName={''}
 					fromNumber={''}
 					summaryPayload={undefined}
