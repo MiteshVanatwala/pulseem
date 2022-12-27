@@ -44,7 +44,7 @@ const AlertModal = ({
 								color='primary'
 								autoFocus
 								onClick={onClose}>
-								{translator('whatsapp.alertModal.okButtonText')}
+								<>{translator('whatsapp.alertModal.okButtonText')}</>
 							</Button>
 						)}
 						{type === 'confirm' && (
@@ -54,14 +54,14 @@ const AlertModal = ({
 									color='secondary'
 									variant='contained'
 									onClick={onConfirmOrYes}>
-									{translator('whatsapp.alertModal.confirmButtonText')}
+									<>{translator('whatsapp.alertModal.confirmButtonText')}</>
 								</Button>
 								<Button
 									className='cancel-button'
 									color='primary'
 									variant='contained'
 									onClick={onClose}>
-									{translator('whatsapp.alertModal.calcelButtonText')}
+									<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 								</Button>
 							</>
 						)}
@@ -72,14 +72,14 @@ const AlertModal = ({
 									color='secondary'
 									variant='contained'
 									onClick={onConfirmOrYes}>
-									{translator('whatsapp.alertModal.yesButtonText')}
+									<>{translator('whatsapp.alertModal.yesButtonText')}</>
 								</Button>
 								<Button
 									className='cancel-button'
 									color='primary'
 									variant='contained'
 									onClick={onClose}>
-									{translator('whatsapp.alertModal.calcelButtonText')}
+									<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 								</Button>
 							</>
 						)}
@@ -90,14 +90,14 @@ const AlertModal = ({
 									color='secondary'
 									variant='contained'
 									onClick={onConfirmOrYes}>
-									{translator('whatsapp.alertModal.submitButtonText')}
+									<>{translator('whatsapp.alertModal.submitButtonText')}</>
 								</Button>
 								<Button
 									className='cancel-button'
 									color='primary'
 									variant='contained'
 									onClick={onClose}>
-									{translator('whatsapp.alertModal.calcelButtonText')}
+									<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 								</Button>
 							</>
 						)}

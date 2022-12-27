@@ -15,6 +15,8 @@ export type WhatsappCreatorProps = {
 	OnEditorActionButtonClick(
 		button: quickReplyButtonProps | callToActionRowProps
 	): void;
+	dynamicFieldCount: number;
+	linkCount: number;
 };
 
 export type TemplateFieldsProps = {
@@ -57,6 +59,7 @@ export type actionProps = {
 	websiteField: callToActionFieldProps[];
 	addMore: () => void;
 	updateTemplateData: (data: callToActionProps) => void;
+	isEditable: boolean;
 };
 
 export type whatsappMobilePreviewProps = {
@@ -90,6 +93,7 @@ export type quickReplyProps = {
 	setQuickReplyButtons: (data: quickReplyButtonProps[]) => void;
 	updateTemplateData: (data: quickReplyButtonProps[]) => void;
 	templateButtons: templateDataProps['templateButtons'];
+	isEditable: boolean;
 };
 
 export type quickReplyButtonsFieldProps = {

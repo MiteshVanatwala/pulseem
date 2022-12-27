@@ -1,28 +1,13 @@
-const shortcutEditLeft = {
-	xs: '8%',
-	sm: '18px',
-	md: '15px',
-	lg: '22px',
-	xl: '28px',
-};
-
-const shortcutPaperHeight = {
-	xs: '',
-	sm: '100%',
-	md: '100%',
-	lg: '100%',
-	xl: 'calc(100vh - 47px)',
-};
-
-const shortcutBoxWidth = {
-	xs: 'auto',
-	sm: '100%',
-	md: '100%',
-	lg: '100%',
-	xl: 'auto',
-};
-
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
+	whatsappCampaignTitle: {
+		fontSize: windowSize === 'xs' ? '25px' : '30px',
+		color: '#333333',
+		paddingBlock: '0.5rem',
+		fontFamily: 'Assistant',
+		fontWeight: 'bold',
+		marginTop: 0,
+		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
+	},
 	whatsappTemplateTitle: {
 		fontSize: windowSize === 'xs' ? '25px' : '36px',
 		color: '#333333',
@@ -261,6 +246,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',
+		'@media screen and (max-width: 768px)': {
+			alignItems: 'flex-start',
+		},
 	},
 	whatsappPhoneImg: {
 		width: '100%',
@@ -478,11 +466,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			background: '#1e1e1e',
 			borderRadius: '20px',
 			'@media (max-width: 768px)': {
-				borderRadius: '0',
-				flex: 'none',
-				padding: '0',
+				// borderRadius: '0',
+				// flex: 'none',
+				// padding: '0',
 				maxWidth: 'none',
-				overflow: 'hidden',
+				// overflow: 'hidden',
 				height: '100%',
 				width: '100%',
 			},
@@ -738,18 +726,20 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			lineHeight: '15px',
 		},
 	},
+
 	alertModal: {
 		border: '2px solid #0371ad',
 		margin: '18px',
 		borderRadius: '4px',
 		padding: '14px 26px',
 		direction: isRTL ? 'rtl' : 'ltr',
+		position: 'relative',
 	},
 	alertModalClose: {
 		position: 'absolute',
-		top: '8px',
-		right: isRTL ? 'auto' : '9px',
-		left: isRTL ? '9px' : 'auto',
+		top: '-11px',
+		right: isRTL ? 'auto' : '-11px',
+		left: isRTL ? '-11px' : 'auto',
 		backgroundColor: '#0371ad',
 		color: 'white',
 		cursor: 'pointer',
@@ -759,18 +749,74 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		width: '20px',
 		textAlign: 'center',
 	},
+	alertModalInfoWrapper: {
+		position: 'absolute',
+		top: isRTL ? '24px' : '-65px',
+		right: isRTL ? '24px' : 'auto',
+		left: isRTL ? 'auto' : '-65px',
+		backgroundColor: '#0371ad',
+		color: 'white',
+		cursor: 'pointer',
+		borderRadius: '42px',
+		paddingTop: '0px',
+		height: isRTL ? 'auto' : '90px',
+		width: isRTL ? 'auto' : '90px',
+		textAlign: 'center',
+	},
+	alertModalInfo: {
+		position: 'absolute',
+		bottom: '15px',
+		right: isRTL ? 'auto' : '15px',
+		left: isRTL ? '15px' : 'auto',
+		backgroundColor: '#0371ad',
+		color: 'white',
+		cursor: 'pointer',
+		borderRadius: '42px',
+		paddingTop: '0px',
+		height: '20px',
+		width: '20px',
+		textAlign: 'center',
+	},
+	alertModalActionWrapper: {
+		overflow: 'auto',
+	},
 	alertModalTitle: {
 		fontFamily: 'OpenSansHebrew-Bold',
 		padding: '4px',
 		color: '#0371ad',
 		fontSize: '24px',
 		borderBottom: '1px solid #dfdfdf',
+		textAlign: isRTL ? 'right' : 'left',
 	},
 	alertModalContent: {
 		padding: '8px 4px 0px 4px',
 		color: '#525252',
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
+	},
+	testGroupModalContentWrapper: {
+		padding: '0 4px',
+	},
+	testGroupModalContentSearch: {
+		marginBottom: '10px',
+		marginTop: '24px',
+	},
+	testGroupModalGroupList: {
+		maxHeight: '253px',
+		overflowY: 'auto',
+	},
+	testGroupModalGroupDiv: {
+		width: '90%',
+		cursor: 'pointer',
+		display: 'flex',
+		justifyContent: 'space-between',
+		fontSize: '14px',
+		fontFamily: 'OpenSansHebrew',
+		paddingLeft: isRTL ? '0px' : '18px',
+		paddingRight: isRTL ? '18px' : '0px',
+	},
+	testGroupModalContentSearchField: {
+		boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
 	},
 	alertModalContentText: {},
 	alertModalContentChildren: {
@@ -816,5 +862,256 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			backgroundImage: 'linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)',
 			backgroundRepeat: 'repeat-x',
 		},
+	},
+
+	validationAlertModalUl: {
+		padding: '0px',
+		margin: '15px 15px',
+	},
+	validationAlertModalLi: {
+		padding: '2px 0px 0px 0px',
+		color: '#ff0000',
+	},
+
+	/* Send Campaign */
+
+	WhatsappCampainP1Title: {
+		fontSize: windowSize === 'xs' ? '25px' : '36px',
+		color: '#333333',
+		paddingBlock: '0.5rem',
+		fontFamily: 'Assistant',
+		fontWeight: 'bold',
+		marginTop: 20,
+		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
+	},
+	WhatsappCampainP1: {},
+	WhatsappCampainP1Left: {
+		padding: '0px 8px 0px 8px',
+	},
+	WhatsappCampainP1Right: {
+		padding: '0px 108px 0px 204px',
+		'@media screen and (max-width: 768px)': {
+			padding: '0px',
+		},
+	},
+	WhatsappCampainButtonContent: {
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+		color: '#959595',
+		'&.red': {
+			color: '#ca332f',
+		},
+	},
+	WhatsappCampainFields: {
+		marginBottom: '18px',
+	},
+	WhatsappCampainTextarea: {},
+	WhatsappCampainRadioButton: {
+		color: '#0677fa',
+		'&.Mui-checked': {
+			color: '#0677fa',
+		},
+	},
+	WhatsappCampainSwitch: {
+		'& span': {
+			color: '#ffffff',
+			'&.Mui-checked': {
+				color: '#ffffff',
+			},
+		},
+		'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
+			backgroundColor: '#19762b',
+		},
+	},
+	whatsappCampaignDynamicFieldTitle: {
+		color: '#157eaf',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '20px',
+		fontWeight: '600',
+		padding: '12px 18px',
+		textAlign: isRTL ? 'right' : 'left',
+	},
+	whatsappCampaignDynamicFieldClose: {
+		position: 'absolute',
+		top: '0',
+		right: isRTL ? 'auto' : '0',
+		left: isRTL ? '0' : 'auto',
+	},
+	whatsappCampaignDynamicFieldContent: {
+		direction: isRTL ? 'rtl' : 'ltr',
+		width: '558px',
+		padding: '0 18px 0 18px',
+		'@media screen and (max-width: 1200px)': {
+			width: '100%',
+		},
+	},
+	whatsappCampaignDynamicFieldContentText: {
+		padding: '0px 0px 6px 0px',
+	},
+	whatsappCampaignDynamicFieldButton: {
+		textTransform: 'capitalize',
+		fontSize: '14px',
+	},
+	whatsappCampaignDynamicFieldButtonActive: {
+		textTransform: 'capitalize',
+		fontSize: '14px',
+		backgroundColor: '#0371ad',
+		color: '#ffffff',
+		'&:hover': {
+			textTransform: 'capitalize',
+			fontSize: '14px',
+			backgroundColor: '#0371ad',
+			color: '#ffffff',
+		},
+	},
+	whatsappCampaignDynamicFieldLinkRemoval: {
+		textTransform: 'capitalize',
+		fontSize: '14px',
+		backgroundColor: '#0371ad',
+		color: '#ffffff',
+		marginTop: '6px',
+		marginLeft: '10px',
+		padding: '3px 9px',
+		borderRadius: '20px',
+		'&:hover': {
+			textTransform: 'capitalize',
+			fontSize: '14px',
+			backgroundColor: '#0371ad',
+			color: '#ffffff',
+		},
+	},
+	whatsappCampaignDynamicFieldPersonalField: {
+		fontSize: '14px',
+		width: 'calc(100% - 288px)',
+		'@media screen and (max-width: 1200px)': {
+			width: '100%',
+		},
+		'& .MuiSelect-select.MuiSelect-select': {
+			padding: '10px 4px',
+		},
+	},
+	whatsappCampaignDynamicFieldTextarea: {
+		width: 'calc(100% - 220px)',
+		height: '122px',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '14px',
+		padding: '8px',
+		resize: 'none',
+		border: '1px solid #c9c9c9',
+		borderRadius: '4px',
+		'@media screen and (max-width: 1200px)': {
+			width: '100%',
+		},
+	},
+	whatsappCampaignDynamicFieldLink: {
+		width: '100%',
+		'& .keep-track': {
+			fontFamily: 'OpenSansHebrew',
+			fontSize: '12px',
+			fontWeight: '600',
+			paddingTop: '11px',
+		},
+		'& .keep-track-desc': {
+			width: '200px',
+			color: '#C2C2C2',
+			fontFamily: 'OpenSansHebrew',
+			fontSize: '12px',
+		},
+		'& .dynamic-link-switch': {
+			'& .MuiSwitch-thumb': {
+				color: '#ffffff',
+			},
+			'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
+				backgroundColor: '#2f9d1a',
+			},
+		},
+		'& .link-input': {
+			width: 'calc(100% - 208px)',
+			'@media screen and (max-width: 1200px)': {
+				width: '100%',
+			},
+			'& input': {
+				fontFamily: 'OpenSansHebrew',
+				fontSize: '14px',
+				padding: '14px 14px',
+			},
+		},
+	},
+	whatsappCampaignDynamicFieldLandingPage: {
+		fontSize: '14px',
+		width: 'calc(100% - 288px)',
+		'@media screen and (max-width: 1200px)': {
+			width: '100%',
+		},
+		'& .MuiSelect-select.MuiSelect-select': {
+			padding: '10px 4px',
+		},
+	},
+	whatsappCampaignDynamicFieldNavigationSelect: {
+		fontSize: '14px',
+		marginBottom: '12px',
+		width: 'calc(100% - 288px)',
+		'@media screen and (max-width: 1200px)': {
+			width: '100%',
+		},
+		'& .MuiSelect-select.MuiSelect-select': {
+			padding: '10px 4px',
+		},
+	},
+	whatsappCampaignDynamicFieldNavigationText: {
+		fontSize: '12px',
+		width: 'calc(100% - 208px)',
+		'@media screen and (max-width: 1200px)': {
+			width: '100%',
+		},
+		'& input': {
+			fontFamily: 'OpenSansHebrew',
+			fontSize: '13px',
+			padding: '9px',
+		},
+	},
+	whatsappCampainHighlightContent: {
+		height: '240px',
+		border: '1px solid #ced4da',
+		borderBottom: '0px',
+		borderTopLeftRadius: '0.25rem',
+		borderTopRightRadius: '0.25rem',
+		padding: '8px',
+	},
+	whatsappCampainHighlightTextWrapper: {},
+	whatsappCampainHighlightText: {
+		backgroundColor: '#169bd5',
+		color: '#ffffff',
+		padding: '0px 2px',
+		borderRadius: '4px',
+		cursor: 'pointer',
+		'&.updated': {
+			backgroundColor: '#2ca861',
+		},
+	},
+	whatsappCampaignActionButtonsBox: {
+		display: 'flex',
+		padding: '4px 8px 0px 0px',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+	},
+	whatsappCampaignActionButtonsWrapper: {
+		marginTop: '10px',
+	},
+	testSendNewTag: {
+		backgroundColor: '#c9302c',
+		color: '#ffffff',
+		height: '22px',
+		borderRadius: '4px',
+		padding: '2px 4px',
+	},
+	testSendRadio: {
+		padding: '0 12px',
+	},
+	testOneContactSendButton: {
+		color: '#009f00',
+		border: '1px solid #009f00',
+		marginRight: isRTL ? '8px !important' : '0px',
+		marginLeft: isRTL ? '0px' : '8px !important',
 	},
 });
