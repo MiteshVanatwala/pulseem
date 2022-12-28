@@ -58,7 +58,6 @@ const Groups = ({
 	const { t: translator } = useTranslation();
 	const [groupNameSearch, setGroupNameSearch] = useState<string>('');
 	const [clearInput, setClearInput] = useState<boolean>(false);
-	const [groupHover, setIsHover] = useState<any>(null);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 
 	const handleShowTestGroup = () => {
@@ -74,7 +73,7 @@ const Groups = ({
 		setGroupNameSearch('');
 		setClearInput(false);
 	};
-	const onSelectGroup = (group: any) => {
+	const onSelectGroup = (group: testGroupDataProps) => {
 		callbackSelectedGroups(group);
 	};
 
@@ -84,7 +83,7 @@ const Groups = ({
 
 	const defaultProps = {
 		options: selectedList,
-		getOptionLabel: (group: any) => {
+		getOptionLabel: (group: testGroupDataProps) => {
 			if (group) {
 				return group.GroupName;
 			}
@@ -95,25 +94,23 @@ const Groups = ({
 		const groupIdKey = 'GroupID';
 		const groupRecipientsKey = 'Recipients';
 		return list
-			.filter((g: any) => {
+			.filter((g: testGroupDataProps) => {
 				return g.GroupName.toLowerCase().includes(
 					groupNameSearch.toLowerCase()
 				);
 			})
-			.map((group: any) => {
+			.map((group: testGroupDataProps) => {
 				const isExist = selectedList
-					.map((group: any) => {
+					.map((group: testGroupDataProps) => {
 						return group[groupIdKey];
 					})
 					.includes(group[groupIdKey]);
 				return (
 					<ListItem
-						id={group[groupIdKey]}
 						key={group[groupIdKey]}
 						onClick={() => onSelectGroup(group)}
-						style={{ cursor: 'pointer' }}
-						onMouseEnter={() => setIsHover(group[groupIdKey])}
-						onMouseLeave={() => setIsHover(null)}>
+						className={classes.groupListRow}
+						style={{ cursor: 'pointer' }}>
 						<ListItemAvatar>
 							<Avatar
 								className={clsx(
@@ -152,7 +149,7 @@ const Groups = ({
 
 		return (
 			<ListItem
-				id='liSelectAll'
+				className={classes.groupListRow}
 				key='liSelectAll'
 				onClick={() => onSelectAllGroup()}
 				style={{ cursor: 'pointer' }}>
@@ -220,40 +217,40 @@ const Groups = ({
 		sortBy(sortBySelected, selected);
 	};
 
-	const sortBy = (sortBy: any, direction: any) => {
+	const sortBy = (sortBy: string, direction: string) => {
 		if (list) {
 			if (sortBy === 'Group Name') {
 				direction === 'asc'
-					? list.sort((a: any, b: any) =>
+					? list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
 							a.GroupName.toUpperCase() < b.GroupName.toUpperCase()
 								? -1
 								: Number(a.GroupName.toUpperCase() > b.GroupName.toUpperCase())
 					  )
-					: list.sort((a: any, b: any) =>
+					: list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
 							b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
 								? -1
 								: Number(b.GroupName.toUpperCase() > a.GroupName.toUpperCase())
 					  );
 			} else if (sortBy === 'Update Date' && list[0] && list[0].UpdateDate) {
 				direction === 'asc'
-					? list.sort((a: any, b: any) =>
+					? list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
 							a.UpdateDate !== null && b.UpdateDate !== null
 								? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
 								: -1
 					  )
-					: list.sort((a: any, b: any) =>
+					: list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
 							a.UpdateDate !== null && b.UpdateDate !== null
 								? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
 								: -1
 					  );
 			} else if (sortBy === 'Creation Date') {
 				direction === 'asc'
-					? list.sort((a: any, b: any) =>
+					? list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
 							a.CreationDate !== null && b.CreationDate !== null
 								? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
 								: -1
 					  )
-					: list.sort((a: any, b: any) =>
+					: list.sort((a: testGroupDataProps, b: testGroupDataProps) =>
 							a.CreationDate !== null && b.CreationDate !== null
 								? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
 								: -1
@@ -388,9 +385,10 @@ const Groups = ({
 				multiple
 				id='multiple-limit-tags'
 				value={selectedList}
-				getOptionSelected={(option: any, value) =>
-					option.GroupName === value.GroupName
-				}
+				getOptionSelected={(
+					option: testGroupDataProps,
+					value: testGroupDataProps
+				) => option.GroupName === value.GroupName}
 				getOptionLabel={(group) => group.GroupName}
 				defaultValue={[]}
 				open={false}

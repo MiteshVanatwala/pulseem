@@ -82,9 +82,9 @@ export type WhatsappCampaignSecondProps = {
 
 export type GroupsProps = {
 	classes: ClassesType['classes'];
-	list: any[];
+	list: testGroupDataProps[];
 	bsDot: boolean;
-	selectedList: any[];
+	selectedList: testGroupDataProps[];
 	innerHeight: number;
 	showSortBy: boolean;
 	showFilter: boolean;
@@ -108,7 +108,7 @@ export type SummaryModalProps = {
 	isOpen: boolean;
 	campaignName: string;
 	fromNumber: string;
-  onSummaryModalClose: () => void;
+	onSummaryModalClose: () => void;
 };
 
 export type tagDataProps = {
@@ -122,7 +122,7 @@ export type ColumnAdjustmentModalProps = {
 	isColumnAdjustmentModal: boolean;
 	onColumnAdjustmentModalClose: () => void;
 	headers: string[];
-	setheaders: any;
+	setheaders: (headers: string[]) => void;
 	typedData: string[][];
 };
 
@@ -144,11 +144,18 @@ export type DynamicModalFieldsProps = {
 	setNavAddress: (value: string) => void;
 };
 
-export type TestGroupModalRows = {
+export type TestGroupModalRowsProps = {
 	classes: ClassesType['classes'];
 	searchText: string;
 	testGroupData: testGroupDataProps[];
 	searchGroupResult: testGroupDataProps[];
 	onSelectGroup: (groupID: number) => void;
 	isSelectdGroup: (groupID: number) => boolean;
+};
+
+export type selectArrayProps = {
+	isdisabled: boolean;
+	idx: number;
+	value: string;
+	label: string;
 };

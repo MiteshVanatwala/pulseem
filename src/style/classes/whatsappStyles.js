@@ -478,7 +478,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				borderRadius: '600px / 50px',
 				background: 'inherit',
 				content: '',
-				top: '0',
 				position: 'absolute',
 				height: '103.1%',
 				width: 'calc(100% - 26px)',
@@ -499,7 +498,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					borderRadius: '600px / 50px',
 					background: 'inherit',
 					content: '',
-					top: '0',
 					position: 'absolute',
 					height: '103%',
 					width: 'calc(100% - 26px)',
@@ -1443,6 +1441,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			'& svg': {
 				color: '#0371ad',
 			},
+		},
+	},
+	groupListRow: {
+		'&:hover': {
+			backgroundColor: '#f1f1f1',
 		},
 	},
 });

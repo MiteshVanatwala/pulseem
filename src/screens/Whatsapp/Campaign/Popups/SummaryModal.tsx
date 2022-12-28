@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import MobilePreview from '../../Editor/Components/WhatsappMobilePreview';
-import { useSelector } from 'react-redux';
-import { coreProps, SummaryModalProps } from '../Types/WhatsappCampaign.types';
+import { SummaryModalProps } from '../Types/WhatsappCampaign.types';
 import { useTheme } from '@mui/material/styles';
 import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 
-const SummaryModal = ({ classes, isOpen, fromNumber, onSummaryModalClose }: SummaryModalProps) => {
+const SummaryModal = ({
+	classes,
+	isOpen,
+	fromNumber,
+	onSummaryModalClose,
+}: SummaryModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 
 	const [detailsHide, setdetailsHide] = useState<boolean>(true);
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
 	const { t: translator } = useTranslation();
-
-	const handleSmsSettings = () => {
-		// props.handleCallback();
-	};
 
 	return (
 		<Dialog
