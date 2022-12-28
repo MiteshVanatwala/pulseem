@@ -44,6 +44,28 @@ const RecipientChart = ({ classes, }) => {
         }
     ];
 
+
+    const COLOR_SCHEME = [
+        [
+            '#FF4D2A',
+            '#FFE1DB',
+            '#FFC4B8',
+            '#FF8871',
+        ],
+        [
+            '#FF3343',
+            '#FFDDE0',
+            '#FFBBC0',
+            '#FF7782',
+        ],
+        [
+            '#FF0054',
+            '#FFD4E2',
+            '#FFAAC6',
+            '#FF558D',
+        ]
+    ]
+
     let data = [];
     if (recipientsReport) {
         recipientsReport.map(report => {
@@ -88,7 +110,7 @@ const RecipientChart = ({ classes, }) => {
     //     )
     // };
 
-    const renderDoughnut = (report, index) => {
+    const renderDoughnut = (report, index, colorScheme) => {
 
         const getOrCreateTooltip = (chart) => {
             let tooltipEl = chart.canvas.parentNode.querySelector('div');
@@ -213,21 +235,9 @@ const RecipientChart = ({ classes, }) => {
                 }
             },
             hoverOffset: 10,
-            backgroundColor: [
-                '#FF8871',
-                '#FFC4B8',
-                '#FF4D2A',
-            ],
-            hoverBackgroundColor: [
-                '#FF8871',
-                '#FFC4B8',
-                '#FF4D2A',
-            ],
-            hoverBorderColor: [
-                '#FF8871',
-                '#FFC4B8',
-                '#FF4D2A',
-            ]
+            backgroundColor: colorScheme,
+            hoverBackgroundColor: colorScheme,
+            hoverBorderColor: colorScheme
         };
 
         let innerData = {
@@ -237,7 +247,7 @@ const RecipientChart = ({ classes, }) => {
                 data: [
                     report.Active,
                     report.Error,
-                    report.Removed
+                    report.Removed,
                 ],
                 borderWidth: 5,
                 borderRadius: 10,
@@ -348,7 +358,7 @@ const RecipientChart = ({ classes, }) => {
                                 return;
                             }
                             if (report.Total) {
-                                return renderDoughnut(report, index)
+                                return renderDoughnut(report, index, COLOR_SCHEME[index])
                             }
                             // else {
                             //     return renderCircleAdd(titles[index])
@@ -389,7 +399,7 @@ const RecipientChart = ({ classes, }) => {
                         return;
                     }
                     if (report.Total) {
-                        return renderDoughnut(report, index)
+                        return renderDoughnut(report, index, COLOR_SCHEME[index])
                     }
                     // else {
                     //     return renderCircleAdd(titles[index])
