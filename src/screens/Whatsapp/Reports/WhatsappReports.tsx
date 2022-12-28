@@ -212,7 +212,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					</div>
 
 					<span className={classes.whatsappReportCampaignCount}>
-						2 Campaigns
+						{rows?.length || 0} Campaigns
 					</span>
 				</Grid>
 

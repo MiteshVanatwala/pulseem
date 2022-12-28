@@ -328,7 +328,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
-						2 Campaigns
+						{rows?.length || 0} Campaigns
 					</span>
 				</Grid>
 
