@@ -88,13 +88,11 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 	const [highlighted, setHighlighted] = useState<boolean>(false);
 	const [areaData, setareaData] = useState<string>('');
 	const [selectedGroups, setSelected] = useState<testGroupDataProps[]>([]);
-	const [contacts, setContacts] = useState<number[]>([]);
 	const [totalRecords, settotalRecords] = useState<number>(0);
 	const [groupValue, setgroupValue] = useState<string>('');
 	const [groupNameExist, setGroupNameExist] = useState<boolean>(false);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [bsDot, setbsDot] = useState<boolean>(false);
-	const [dialogType, setDialogType] = useState<{}>({ type: null });
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
 	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
 		useState<boolean>(false);
@@ -517,7 +515,6 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 									className={classes.clearDiv}
 									onClick={() => {
 										setareaData('');
-										setContacts([]);
 										settypedData([]);
 										settotalRecords(0);
 									}}>

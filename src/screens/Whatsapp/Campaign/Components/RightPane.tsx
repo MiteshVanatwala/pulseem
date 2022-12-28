@@ -12,7 +12,6 @@ import {
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { BaseSyntheticEvent, useState } from 'react';
-// import { DateField } from "./DateField/DateField";
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';

@@ -2,11 +2,9 @@ import {
   Box,
   Checkbox,
   Dialog,
-  DialogActions,
   Button,
   Grid,
 } from "@material-ui/core";
-import { FaFilter } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import Groups from "../Components/Groups/Groups";
@@ -274,8 +272,6 @@ const FilterRecipientsDialog = ({
     }
   };
 
-  const onClose = () => {};
-
   return (
     <>
       <Dialog
@@ -291,13 +287,13 @@ const FilterRecipientsDialog = ({
             {translator("whatsappCampaign.filter")}
           </div>
           <Box className={classes.filterModalClose}>
-            <Close fontSize={"small"} onClick={onClose} />
+            <Close fontSize={"small"} onClick={onFilterModalClose} />
           </Box>
           <Box className={classes.filterModalInfoWrapper}>
             <Box className={classes.filterModalInfo}>
               <SupervisedUserCircleOutlined
                 fontSize={"small"}
-                onClick={onClose}
+                onClick={onFilterModalClose}
               />
             </Box>
           </Box>
