@@ -41,5 +41,13 @@
   "insert": "לְהַכנִיס",
   "recipient": "נמענים מתוך סך הכל",
   "limit": "בדוק את המגבלה שלך",
-  "filter": "לְסַנֵן"
+  "filter": "לְסַנֵן",
+  "oneContact": "שלח לאיש קשר אחד",
+  "testGroups": "שלח לקבוצות בדיקה",
+  "sendTitle": "בחר קבוצה לשליחת מבחן",
+  "sendValidation": "השדות הבאים אינם חוקיים",
+  "sendButton": "לִשְׁלוֹחַ",
+  "checkLimit": "בדוק את המגבלה שלך",
+  "here": "פה",
+  "whatsappCampaign": "צור קמפיין WhatsApp חדש"
 }

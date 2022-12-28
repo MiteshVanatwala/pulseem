@@ -1,89 +1,89 @@
 import {
-	AutomationsIcon,
-	DashboardIcon,
-	GroupsIcon,
-	LandingPageIcon,
-	MmsIcon,
-	NewsletterIcon,
-	NotificationsIcon,
-	ReportsIcon,
-	SmsIcon,
-} from '../../assets/images/drawer/index';
+  AutomationsIcon,
+  DashboardIcon,
+  GroupsIcon,
+  LandingPageIcon,
+  MmsIcon,
+  NewsletterIcon,
+  NotificationsIcon,
+  ReportsIcon,
+  SmsIcon,
+} from "../../assets/images/drawer/index";
 import {
-	CodeMenuIcon,
-	DolarMenuIcon,
-	SettingsMenuIcon,
-	StarMenuIcon,
-	GrafMenuIcon,
-	GroupMenuIcon,
-} from '../../assets/images/settings/index';
-import { FaBinoculars } from 'react-icons/fa';
-import SettingsLogo from '../../assets/images/settings-white.png';
-import { FaHome } from 'react-icons/fa';
+  CodeMenuIcon,
+  DolarMenuIcon,
+  SettingsMenuIcon,
+  StarMenuIcon,
+  GrafMenuIcon,
+  GroupMenuIcon,
+} from "../../assets/images/settings/index";
+import { FaBinoculars } from "react-icons/fa";
+import SettingsLogo from "../../assets/images/settings-white.png";
+import { FaHome } from "react-icons/fa";
 
 export const getSettingsItem = (
-	t: (text: string) => null | VoidFunction = () => null,
-	style: string = '',
-	isAllowSwitchAccount: Boolean = false
+  t: (text: string) => null | VoidFunction = () => null,
+  style: string = "",
+  isAllowSwitchAccount: Boolean = false
 ) => ({
-	key: 'settings',
-	title: <img alt='settings' src={SettingsLogo} className={style} />,
-	href: '/Pulseem/AccountSettings.aspx',
-	options: [
-		{
-			title: t('master.RadMenuItemResource2.Text'),
-			href: '/Pulseem/AccountSettings.aspx?fromreact=true',
-			iconSrc: SettingsMenuIcon,
-			isShow: true,
-		},
-		{
-			title: t('master.linkAccountBilling.Text'),
-			href: '/Pulseem/AccountBilling.aspx?fromreact=true',
-			iconSrc: DolarMenuIcon,
-			isShow: true,
-		},
-		{
-			title: t('master.RadMenuItemResource3.Text'),
-			href: '/Pulseem/AccountUsers.aspx?fromreact=true',
-			iconSrc: GroupMenuIcon,
-			isShow: isAllowSwitchAccount,
-		},
-		{
-			title: t('master.RadMenuItemResource4.Text'),
-			href: '/Pulseem/AccountUsersReport.aspx?fromreact=true',
-			iconSrc: GrafMenuIcon,
-			isShow: isAllowSwitchAccount,
-		},
-		{
-			title: t('master.RadMenuItemResource23.Text'),
-			href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true',
-			iconSrc: StarMenuIcon,
-			isShow: true,
-		},
-		{
-			title: t('master.linkApiSettingsResource1.Text'),
-			href: '/Pulseem/ApiSettings.aspx?fromreact=true',
-			iconSrc: CodeMenuIcon,
-			isShow: true,
-		},
-		{
-			key: 'SiteTracking',
-			title: t('master.siteTracking'),
-			href: '/react/SiteTracking',
-			iconSrc: FaBinoculars,
-			isFaIcon: true,
-			isShow: true,
-		},
-	],
+  key: "settings",
+  title: <img alt="settings" src={SettingsLogo} className={style} />,
+  href: "/Pulseem/AccountSettings.aspx",
+  options: [
+    {
+      title: t("master.RadMenuItemResource2.Text"),
+      href: "/Pulseem/AccountSettings.aspx?fromreact=true",
+      iconSrc: SettingsMenuIcon,
+      isShow: true,
+    },
+    {
+      title: t("master.linkAccountBilling.Text"),
+      href: "/Pulseem/AccountBilling.aspx?fromreact=true",
+      iconSrc: DolarMenuIcon,
+      isShow: true,
+    },
+    {
+      title: t("master.RadMenuItemResource3.Text"),
+      href: "/Pulseem/AccountUsers.aspx?fromreact=true",
+      iconSrc: GroupMenuIcon,
+      isShow: isAllowSwitchAccount,
+    },
+    {
+      title: t("master.RadMenuItemResource4.Text"),
+      href: "/Pulseem/AccountUsersReport.aspx?fromreact=true",
+      iconSrc: GrafMenuIcon,
+      isShow: isAllowSwitchAccount,
+    },
+    {
+      title: t("master.RadMenuItemResource23.Text"),
+      href: "/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true",
+      iconSrc: StarMenuIcon,
+      isShow: true,
+    },
+    {
+      title: t("master.linkApiSettingsResource1.Text"),
+      href: "/Pulseem/ApiSettings.aspx?fromreact=true",
+      iconSrc: CodeMenuIcon,
+      isShow: true,
+    },
+    {
+      key: "SiteTracking",
+      title: t("master.siteTracking"),
+      href: "/react/SiteTracking",
+      iconSrc: FaBinoculars,
+      isFaIcon: true,
+      isShow: true,
+    },
+  ],
 });
 
 export const getRoutes = (
-	t: (text: string) => null | VoidFunction = (par: string) => null,
-	isClalAccount: Boolean | string = false,
-	features: any = null,
-	subAccountSettings: any = null,
-	windowSize: string | number | null = null,
-	isRTL: Boolean = false
+  t: (text: string) => null | VoidFunction = (par: string) => null,
+  isClalAccount: Boolean | string = false,
+  features: any = null,
+  subAccountSettings: any = null,
+  windowSize: string | number | null = null,
+  isRTL: Boolean = false
 ) => [
 	// smsOldVersion
 	{
