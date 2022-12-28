@@ -20,12 +20,13 @@ import ExcelImg from '../../../assets/images/excel.png';
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import { coreProps } from '../Editor/WhatsappCreator.types';
+import { coreProps } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import Pagination from '../management/Component/Pagination';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -34,10 +35,11 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	);
 	const [fromDate, handleFromDate] = useState<any>(null);
 	const [toDate, handleToDate] = useState<any>(null);
-	const [campaineNameSearch, setCampaineNameSearch] = useState('');
-	const [isSearching, setSearching] = useState(false);
-	const [page, setPage] = useState(1);
-	const rows: any = [1, 2, 3, 4, 5, 6];
+	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
+	const [isSearching, setSearching] = useState<boolean>(false);
+	const [page, setPage] = useState<number>(1);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+	const rows: any = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -107,6 +109,16 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				</Typography>
 			</>
 		);
+	};
+
+	const getRows = () => {
+		let sortData = isSearching ? rows : rows;
+		sortData = sortData.slice(
+			(page - 1) * rowsPerPage,
+			(page - 1) * rowsPerPage + rowsPerPage
+		);
+
+		return sortData?.length > 0 ? sortData : rows;
 	};
 	return (
 		<DefaultScreen
@@ -246,7 +258,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{rows.map(() => (
+							{getRows()?.map(() => (
 								<TableRow
 									key={Math.round(Math.random() * 999999999)}
 									classes={rowStyle}>
@@ -370,14 +382,17 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						</Table>
 					</TableContainer>
 				</Grid>
-				<TablePagination
+				<Pagination
 					classes={classes}
-					rows={50}
-					rowsPerPage={2}
-					// onRowsPerPageChange={handleRowsPerPageChange}
+					rows={rows?.length}
+					rowsPerPage={rowsPerPage}
+					onRowsPerPageChange={(rowsNumber: number) =>
+						setRowsPerPage(rowsNumber)
+					}
 					rowsPerPageOptions={[10, 20, 30, 40]}
 					page={page}
-					// onPageChange={setPage}
+					onPageChange={(pageNumber: number) => setPage(pageNumber)}
+					returnPageOne={false}
 				/>
 			</div>
 		</DefaultScreen>

@@ -29,13 +29,15 @@ import {
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import { coreProps } from '../Editor/WhatsappCreator.types';
+import { coreProps } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { templatData } from '../Constant';
+import Pagination from './Component/Pagination';
+import RestoreDeletedModal from './Popups/RestoreDeletedModal';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -44,10 +46,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	);
 	const [fromDate, handleFromDate] = useState<any>(null);
 	const [toDate, handleToDate] = useState<any>(null);
-	const [campaineNameSearch, setCampaineNameSearch] = useState('');
-	const [isSearching, setSearching] = useState(false);
-	const [page, setPage] = useState(1);
-	const [rowsPerPage, setRowsPerPage] = useState(1);
+	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
+	const [isSearching, setSearching] = useState<boolean>(false);
+	const [page, setPage] = useState<number>(1);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+
+	const [isRestoreDeletedModal, setIsRestoreDeletedModal] =
+		useState<boolean>(false);
 
 	const rows: any = [1, 2, 3, 4, 5, 6];
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -245,6 +250,16 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			</Grid>
 		);
 	};
+
+	const getRows = () => {
+		let sortData = isSearching ? templatData : templatData;
+		sortData = sortData.slice(
+			(page - 1) * rowsPerPage,
+			(page - 1) * rowsPerPage + rowsPerPage
+		);
+
+		return sortData?.length > 0 ? sortData : templatData;
+	};
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -331,7 +346,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					className={classes.manageTemplatesHeaderButtons}>
 					<div>
 						<Button className={'green'}>Create Campaign</Button>
-						<Button className={'blue'}>Restore Deleted</Button>
+						<Button
+							className={'blue'}
+							onClick={() => setIsRestoreDeletedModal(true)}>
+							Restore Deleted
+						</Button>
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
@@ -378,7 +397,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{templatData.map((template: any) => (
+							{getRows()?.map((template: any) => (
 								<TableRow
 									key={Math.round(Math.random() * 999999999)}
 									classes={rowStyle}>
@@ -417,16 +436,26 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						</Table>
 					</TableContainer>
 				</Grid>
-				<TablePagination
+				<Pagination
 					classes={classes}
-					rows={rowsPerPage}
-					rowsPerPage={2}
-					// onRowsPerPageChange={(val: number) => setRowsPerPage(val)}
+					rows={templatData?.length}
+					rowsPerPage={rowsPerPage}
+					onRowsPerPageChange={(rowsNumber: number) =>
+						setRowsPerPage(rowsNumber)
+					}
 					rowsPerPageOptions={[10, 20, 30, 40]}
 					page={page}
-					// onPageChange={setPage}
+					onPageChange={(pageNumber: number) => setPage(pageNumber)}
+					returnPageOne={false}
 				/>
 			</div>
+			<RestoreDeletedModal
+				classes={classes}
+				title={'Select the WhatsApp campaigns you want to restore'}
+				isOpen={isRestoreDeletedModal}
+				onClose={() => setIsRestoreDeletedModal(false)}
+				onConfirmOrYes={() => {}}
+			/>
 		</DefaultScreen>
 	);
 };

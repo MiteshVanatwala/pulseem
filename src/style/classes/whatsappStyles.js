@@ -1431,4 +1431,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			color: '#ffffff',
 		},
 	},
+	restoreDeletedModalFormGroup: {
+		maxHeight: '216px',
+		overflowX: 'auto',
+		display: 'grid',
+	},
+	restoreDeletedModalFormLabel: {
+		margin: '0px',
+		'& span': {
+			padding: '2px',
+			'& svg': {
+				color: '#0371ad',
+			},
+		},
+	},
 });

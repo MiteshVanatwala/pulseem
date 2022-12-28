@@ -246,12 +246,6 @@ export const getRoutes = (
 				href: '/react/Whatsapp/send/page1',
 				isShow: true,
 			},
-			// {
-			// 	key: 'send_2',
-			// 	title: 'Send Whatsapp Campaign_2',
-			// 	href: '/react/Whatsapp/send/page2',
-			// 	isShow: true,
-			// },
 			{
 				key: 'templatemanagement',
 				title: 'Whatsapp Template Management',
@@ -268,12 +262,6 @@ export const getRoutes = (
 				key: 'reports',
 				title: 'Whatsapp Reports',
 				href: '/react/Whatsapp/Reports',
-				isShow: true,
-			},
-			{
-				key: 'chat',
-				title: 'Whatsapp Chat',
-				href: '/react/Whatsapp/Chat',
 				isShow: true,
 			},
 		],
