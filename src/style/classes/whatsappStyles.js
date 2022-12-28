@@ -1408,6 +1408,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					},
 					'& p': {
 						textDecoration: 'underline',
+						fontFamily: 'Assistant',
+						fontWeight: '500',
 					},
 				},
 			},
