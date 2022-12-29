@@ -21,6 +21,13 @@ import {
 	coreProps,
 	testGroupDataProps,
 	tagDataProps,
+	personalFieldDataProps,
+	personalFieldAPIProps,
+	updatedVariableProps,
+	landingPageDataProps,
+	landingPageAPIProps,
+	testGroupsProps,
+	smsReducerProps,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -53,73 +60,22 @@ import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
+import { testGroupData } from '../Constant';
+import { getDynamicFields } from '../Common';
+import {
+	getAccountExtraData,
+	getPreviousLandingData,
+	getTestGroups,
+} from '../../../redux/reducers/smsSlice';
 
 const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const testGroupData: testGroupDataProps[] = [
-		{
-			GroupID: 89979,
-			GroupName: 'ccccc (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:08.933',
-			UpdateDate: '2017-08-20T11:02:08.933',
-			IsTestGroup: false,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 89980,
-			GroupName: 'cdgsfsgdf (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:39.197',
-			UpdateDate: '2017-08-20T12:44:55.69',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 5,
-		},
-		{
-			GroupID: 166670,
-			GroupName: 'left123',
-			SubAccountID: 0,
-			CreationDate: '2022-04-08T14:41:09.493',
-			UpdateDate: '2022-04-17T12:46:45.297',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 1,
-		},
-		{
-			GroupID: 165652,
-			GroupName: 'MeitalTest (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2022-03-10T14:33:53.9',
-			UpdateDate: '2022-03-10T14:33:53.9',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 81457,
-			GroupName: 'omer (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-05-21T14:44:26.487',
-			UpdateDate: '2017-05-21T14:45:34.537',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 55962,
-			GroupName: 'בדיקה (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2016-01-18T18:24:45.42',
-			UpdateDate: '2016-01-18T18:28:09.06',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 2,
-		},
-	];
+
+	const { testGroups } = useSelector(
+		(state: { sms: smsReducerProps }) => state.sms
+	);
 	const websiteField = useMemo<callToActionFieldProps[]>(
 		() => [
 			{
@@ -198,13 +154,17 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		templateText: '',
 		templateButtons: [],
 	});
+	const [personalFields, setpersonalFields] = useState<personalFieldDataProps>(
+		{}
+	);
+	const [landingPages, setLandingPages] = useState<landingPageDataProps[]>([]);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
-	const [dynamicVariable, setDynamicVariable] = useState<string[]>(['booking']);
+	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
-		string[]
-	>(['confirmed']);
+		updatedVariableProps[]
+	>([]);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
@@ -216,6 +176,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		useState<callToActionProps>([initialFieldRow]);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
+	const [dynamicModalVariable, setDynamicModalVariable] = useState<number>(0);
+
+	const [testSendOneContact, setTestSendOneContact] = useState<string>('');
 
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
@@ -237,6 +200,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 
 	useEffect(() => {
 		getSavedTemplateFields();
+		if (!testGroups || testGroups?.length === 0) {
+			dispatch(getTestGroups());
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -244,21 +210,71 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		navigate('/react/Whatsapp/send/page2');
 	};
 
+	const getDynamicModalValues = async () => {
+		const staticPersonalField: personalFieldDataProps = {
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
+			FirstName: translator('smsReport.firstName'),
+			LastName: translator('smsReport.lastName'),
+			Email: translator('common.Mail'),
+			Telephone: translator('common.telephone'),
+			Cellphone: translator('common.Cellphone'),
+			Address: translator('common.address'),
+			BirthDate: translator('common.birthDate'),
+			City: translator('common.city'),
+			State: translator('common.state'),
+			Country: translator('common.country'),
+			Zip: translator('common.zip'),
+			Company: translator('common.company'),
+			ReminderDate: translator('recipient.reminderDate'),
+		};
+		const { payload: personalFieldData }: personalFieldAPIProps =
+			await dispatch<any>(getAccountExtraData());
+		const { payload: landingPageData }: landingPageAPIProps =
+			await dispatch<any>(getPreviousLandingData());
+		setLandingPages(landingPageData);
+		setpersonalFields({ ...staticPersonalField, ...personalFieldData });
+	};
+
+	const openDynamcFieldModal = async (variable: string) => {
+		if (!personalFields || landingPages?.length <= 0) {
+			await getDynamicModalValues();
+		}
+		setDynamicModalVariable(Number(variable?.replace(/[{}]/g, '')));
+		setIsDynamcFieldModal(true);
+	};
+
 	const isUpdatedVaraiable = (variable: string) => {
-		return updatedDynamicVariable?.includes(variable?.toLowerCase())
-			? true
-			: false;
+		let updatedVariable = variable?.replace(/[{}]/g, '');
+		const isAvaliable = updatedDynamicVariable?.find(
+			(dynamicVariable: updatedVariableProps) =>
+				dynamicVariable.VariableIndex === Number(updatedVariable)
+		);
+		return !!isAvaliable;
+	};
+
+	const getUpdatedVariableValue = (variable: string) => {
+		let updatedVariable = variable?.replace(/[{}]/g, '');
+		const variableValue = updatedDynamicVariable?.find(
+			(dynamicVariable: updatedVariableProps) =>
+				dynamicVariable.VariableIndex === Number(updatedVariable)
+		)?.VariableValue;
+		return variableValue ? variableValue : variable;
 	};
 
 	const highlightText = (tagData: tagDataProps) => {
+		const isUpdated = isUpdatedVaraiable(tagData?.children);
 		return (
 			<strong
 				className={clsx(
 					classes.whatsappCampainHighlightText,
-					`${isUpdatedVaraiable(tagData?.children) && 'updated'}`
+					`${isUpdated && 'updated'}`
 				)}
-				onClick={() => setIsDynamcFieldModal(true)}>
-				{tagData?.children}
+				onClick={() => openDynamcFieldModal(tagData?.children)}>
+				{isUpdated
+					? getUpdatedVariableValue(tagData?.children)
+					: tagData?.children}
 			</strong>
 		);
 	};
@@ -408,7 +424,15 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
+	const resetDynamicFields = () => {
+		setDynamicVariable([]);
+		setUpdatedDynamicVariable([]);
+		setDynamicModalVariable(0);
+	};
+
 	const onSavedTemplateChange = (TemplateId: string) => {
+		resetDynamicFields();
+
 		setSavedTemplate(TemplateId);
 		const savedTemplateData: savedTemplateListProps | undefined =
 			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
@@ -421,6 +445,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		// setTemplateName(savedTemplateData?.TemplateName || '');
 		setButtonType(updatedButtonType);
 		setTemplateData(updatedTemplateData);
+		setDynamicVariable(getDynamicFields(updatedTemplateData.templateText));
 		if (updatedButtonType === 'quickReply') {
 			setQuickReplyButtons(updatedTemplateData.templateButtons);
 		} else {
@@ -447,7 +472,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		setSelectedTestGroup(updatedSelectedGroup);
 	};
 
-	const onOkTestSending = () => {
+	const validateSaveCampaign = () => {
 		if (campaignName?.length <= 0 || from?.length <= 0) {
 			let validationErrors = [];
 			if (campaignName?.length <= 0 && from?.length <= 0) {
@@ -459,13 +484,36 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 				validationErrors.push('Text for sending - required fields');
 			}
 			setGroupSendValidationErrors([...validationErrors]);
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	const onOkTestSending = () => {
+		if (validateSaveCampaign()) {
+		} else {
 			setIsTestGroupModal(false);
+			setIsValidationAlert(true);
+		}
+	};
+
+	const onTestOneSend = () => {
+		if (validateSaveCampaign()) {
+		} else {
 			setIsValidationAlert(true);
 		}
 	};
 
 	const onCampaignFromRestore = () => {
 		setFrom('012345689');
+	};
+
+	const onDynamcFieldModalSave = (
+		updatedDynamicVariable: updatedVariableProps[]
+	) => {
+		setUpdatedDynamicVariable(updatedDynamicVariable);
+		setIsDynamcFieldModal(false);
 	};
 
 	return (
@@ -496,12 +544,6 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 					</div>
 				</Box>
 			</Grid>
-
-			<DynamicModal
-				classes={classes}
-				isDynamcFieldModal={isDynamcFieldModal}
-				onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-			/>
 			<br />
 			<form onSubmit={handleSubmit}>
 				<Grid container className={classes.WhatsappCampainP1}>
@@ -530,10 +572,10 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 										<Highlighter
 											searchWords={[
 												...dynamicVariable,
-												...updatedDynamicVariable,
+												// ...updatedDynamicVariable,
 											]}
 											autoEscape={true}
-											textToHighlight='Hi {{1}}, Your booking is confirmed. Thank you.'
+											textToHighlight={templateData.templateText}
 											highlightTag={(tagData: tagDataProps) =>
 												highlightText(tagData)
 											}
@@ -678,14 +720,22 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 															: clsx(classes.buttonField, classes.success)
 													}
 													disabled={testSendSelection !== 'onecontact'}
-													//   onChange={onTemplateNameChange}
-													//   value={templateName}
+													onChange={(e: BaseSyntheticEvent) =>
+														setTestSendOneContact(
+															e.target.value?.replace(/\D/g, '')
+														)
+													}
+													value={testSendOneContact}
 												/>
 												<Button
-													disabled={testSendSelection !== 'onecontact'}
+													disabled={
+														testSendSelection !== 'onecontact' ||
+														testSendOneContact?.length === 0
+													}
 													variant='outlined'
 													color='primary'
-													className={classes.testOneContactSendButton}>
+													className={classes.testOneContactSendButton}
+													onClick={() => onTestOneSend()}>
 													{translator('whatsappCampaign.sendButton')}
 												</Button>
 											</Stack>
@@ -765,6 +815,20 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 					<Buttons classes={classes} onFormButtonClick={() => {}} />
 				</Grid>
 			</form>
+
+			<DynamicModal
+				classes={classes}
+				isDynamcFieldModal={isDynamcFieldModal}
+				onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
+				personalFields={personalFields}
+				landingPageData={landingPages}
+				dynamicModalVariable={dynamicModalVariable}
+				onDynamcFieldModalSave={(updatedDynamicVariable) =>
+					onDynamcFieldModalSave(updatedDynamicVariable)
+				}
+				dynamicVariable={updatedDynamicVariable}
+			/>
+
 			<ValidationAlert
 				classes={classes}
 				isOpen={isValidationAlert}
@@ -778,7 +842,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 				isOpen={isTestGroupModal}
 				onClose={() => setIsTestGroupModal(false)}
 				title={translator('whatsappCampaign.sendTitle')}
-				testGroupData={testGroupData}
+				testGroupData={testGroups}
 				selectedTestGroup={selectedTestGroup}
 				setSelectedTestGroup={(updatedSelectedGroup) =>
 					setSelectedTestGroup(updatedSelectedGroup)

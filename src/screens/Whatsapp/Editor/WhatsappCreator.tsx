@@ -51,6 +51,7 @@ import {
 } from '../../../redux/reducers/whatsappSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
+import { getDynamicFieldIndex, getDynamicFields, getLastDynamicFieldByValue, getLastDynamicFieldValue } from '../Common';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const dispatch = useDispatch();
@@ -589,49 +590,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 
 		return updatedTemplateText;
-	};
-
-	const getDynamicFieldIndex = (text: string) => {
-		let indices = [];
-		for (let i = 0; i < text.length; i++) {
-			if (
-				dynamicFieldL5.test(text.slice(i, i + 5)) ||
-				dynamicFieldL6.test(text.slice(i, i + 6))
-			) {
-				indices.push(i);
-			}
-		}
-		return indices;
-	};
-
-	const getDynamicFields = (text: string) => {
-		let indices = [];
-		for (let i = 0; i < text.length; i++) {
-			if (dynamicFieldL5.test(text.slice(i, i + 5))) {
-				indices.push(text.slice(i, i + 5));
-			}
-			if (dynamicFieldL6.test(text.slice(i, i + 6))) {
-				indices.push(text.slice(i, i + 6));
-			}
-		}
-		return indices;
-	};
-
-	const getLastDynamicFieldValue = (text: string) => {
-		let str = text;
-		let indices: string[] = [];
-		for (let i = 0; i < str.length; i++) {
-			if (dynamicFieldL5.test(str.slice(i, i + 5))) {
-				indices.push(str.slice(i, i + 5).replace(/[{}]/g, ''));
-			} else if (dynamicFieldL6.test(str.slice(i, i + 6))) {
-				indices.push(str.slice(i, i + 6).replace(/[{}]/g, ''));
-			}
-		}
-		return indices?.length > 0 ? indices[indices?.length - 1] : '0';
-	};
-
-	const getLastDynamicFieldByValue = (value: string) => {
-		return `{{${(Number(value) + 1).toString()}}}`;
 	};
 
 	const reOrderDynamicFieldValue = (text: string) => {

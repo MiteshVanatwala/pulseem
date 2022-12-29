@@ -1,3 +1,13 @@
+import { testGroupDataProps } from './Campaign/Types/WhatsappCampaign.types';
+
+export enum fieldIDs {
+	'personalField' = 1,
+	'text' = 2,
+	'link' = 3,
+	'landingPage' = 4,
+	'navigation' = 5,
+}
+
 export const countryCodes = [
 	'+93 AF',
 	'+355 AL',
@@ -227,4 +237,67 @@ export const countryCodes = [
 	'+967 YE',
 	'+260 ZM',
 	'+263 ZW',
+];
+
+export const testGroupData: testGroupDataProps[] = [
+	{
+		GroupID: 89979,
+		GroupName: 'ccccc (Testing)',
+		SubAccountID: 0,
+		CreationDate: '2017-08-20T11:02:08.933',
+		UpdateDate: '2017-08-20T11:02:08.933',
+		IsTestGroup: false,
+		IsDynamic: false,
+		Recipients: 0,
+	},
+	{
+		GroupID: 89980,
+		GroupName: 'cdgsfsgdf (Testing)',
+		SubAccountID: 0,
+		CreationDate: '2017-08-20T11:02:39.197',
+		UpdateDate: '2017-08-20T12:44:55.69',
+		IsTestGroup: true,
+		IsDynamic: false,
+		Recipients: 5,
+	},
+	{
+		GroupID: 166670,
+		GroupName: 'left123',
+		SubAccountID: 0,
+		CreationDate: '2022-04-08T14:41:09.493',
+		UpdateDate: '2022-04-17T12:46:45.297',
+		IsTestGroup: true,
+		IsDynamic: false,
+		Recipients: 1,
+	},
+	{
+		GroupID: 165652,
+		GroupName: 'MeitalTest (Testing)',
+		SubAccountID: 0,
+		CreationDate: '2022-03-10T14:33:53.9',
+		UpdateDate: '2022-03-10T14:33:53.9',
+		IsTestGroup: true,
+		IsDynamic: false,
+		Recipients: 0,
+	},
+	{
+		GroupID: 81457,
+		GroupName: 'omer (Testing)',
+		SubAccountID: 0,
+		CreationDate: '2017-05-21T14:44:26.487',
+		UpdateDate: '2017-05-21T14:45:34.537',
+		IsTestGroup: true,
+		IsDynamic: false,
+		Recipients: 0,
+	},
+	{
+		GroupID: 55962,
+		GroupName: 'בדיקה (Testing)',
+		SubAccountID: 0,
+		CreationDate: '2016-01-18T18:24:45.42',
+		UpdateDate: '2016-01-18T18:28:09.06',
+		IsTestGroup: true,
+		IsDynamic: false,
+		Recipients: 2,
+	},
 ];

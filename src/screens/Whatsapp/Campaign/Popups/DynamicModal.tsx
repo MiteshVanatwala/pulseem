@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
 	Button,
 	Box,
@@ -13,28 +13,38 @@ import { Close } from '@material-ui/icons';
 import {
 	dynamicButtonProps,
 	dynamicModalProps,
+	updatedVariableProps,
 } from '../Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import DynamicModalFields from './DynamicModalFields';
+import { fieldIDs } from '../../Constant';
 
 const DynamicModal = ({
 	classes,
 	isDynamcFieldModal,
 	onDynamcFieldModalClose,
+	onDynamcFieldModalSave,
+	personalFields,
+	landingPageData,
+	dynamicModalVariable,
+	dynamicVariable,
 }: dynamicModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 	const { t: translator } = useTranslation();
 
 	const [navApp, setNavApp] = React.useState<string>('');
-	const [landPage, setLandPage] = React.useState<string>('');
-	const [personalField, setPersonalField] = React.useState<string>('');
-	const [textInput, setTextInput] = React.useState<string>('');
-	const [linkInput, setLinkInput] = React.useState<string>('');
-	const [navAddress, setNavAddress] = React.useState<string>('');
 	const [activeDynamicButton, setActiveDynamicButton] = useState<string>(
 		'whatsappCampaign.pField'
 	);
+	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
+		updatedVariableProps[]
+	>([]);
+
+	const onClose = () => {
+		setUpdatedDynamicVariable(dynamicVariable);
+		onDynamcFieldModalClose();
+	};
 
 	const dynamicButtons = useMemo<dynamicButtonProps[]>(
 		() => [
@@ -62,10 +72,85 @@ const DynamicModal = ({
 		[]
 	);
 
-	const onAddRemovalLink = () => {
-		if (!linkInput?.includes('##WHATSAPPUnsubscribelink##')) {
-			setLinkInput(linkInput + '##WHATSAPPUnsubscribelink##');
+	const onAddRemovalLink = (isTrackLink: boolean) => {
+		if (
+			!getFieldValueByID(fieldIDs['link'])?.includes(
+				'##WHATSAPPUnsubscribelink##'
+			)
+		) {
+			updateDynamicVariables(
+				'link',
+				'##WHATSAPPUnsubscribelink##',
+				isTrackLink
+			);
 		}
+	};
+
+	const onSave = () => {
+		onDynamcFieldModalSave(updatedDynamicVariable);
+	};
+
+	const getfieldTypeId = (field: string) => {
+		switch (field) {
+			case 'personalField':
+				return fieldIDs['personalField'];
+			case 'text':
+				return fieldIDs['text'];
+			case 'link':
+				return fieldIDs['link'];
+			case 'landingPage':
+				return fieldIDs['landingPage'];
+			case 'navigation':
+				return fieldIDs['navigation'];
+			default:
+				return 0;
+		}
+	};
+
+	const updateDynamicVariables = (
+		field: string,
+		value: string,
+		isTrackLink: boolean = false
+	) => {
+		const isVariableUpdated = updatedDynamicVariable?.find(
+			(updatedVariable: updatedVariableProps) =>
+				updatedVariable.VariableIndex === dynamicModalVariable
+		);
+		if (!!isVariableUpdated) {
+			const newDynamicVariables = updatedDynamicVariable.map(
+				(updatedVariable) => {
+					if (updatedVariable.VariableIndex !== dynamicModalVariable)
+						return updatedVariable;
+
+					return {
+						...updatedVariable,
+						VariableValue: value,
+						FieldTypeId: getfieldTypeId(field),
+						IsStatastic: isTrackLink,
+					};
+				}
+			);
+			setUpdatedDynamicVariable(newDynamicVariables);
+		} else {
+			setUpdatedDynamicVariable([
+				...updatedDynamicVariable,
+				{
+					FieldTypeId: getfieldTypeId(field),
+					VariableIndex: dynamicModalVariable,
+					VariableValue: value,
+					IsStatastic: true,
+				},
+			]);
+		}
+	};
+
+	const getFieldValueByID = (fieldID: number) => {
+		const value = updatedDynamicVariable?.find(
+			(updatedVariable: updatedVariableProps) =>
+				updatedVariable.VariableIndex === dynamicModalVariable &&
+				updatedVariable.FieldTypeId === fieldID
+		)?.VariableValue;
+		return value ? value : '';
 	};
 
 	return (
@@ -73,14 +158,14 @@ const DynamicModal = ({
 			<Dialog
 				fullScreen={fullScreen}
 				open={isDynamcFieldModal}
-				onClose={onDynamcFieldModalClose}
+				onClose={onClose}
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.whatsappCampaignDynamicFieldTitle}>
 					<>{translator('whatsappCampaign.dfieldTitle')}</>
 				</div>
 				<Box className={classes.whatsappCampaignDynamicFieldClose}>
 					<IconButton>
-						<Close onClick={onDynamcFieldModalClose} />
+						<Close onClick={onClose} />
 					</IconButton>
 				</Box>
 				<Box style={{ height: '203px' }}>
@@ -120,25 +205,37 @@ const DynamicModal = ({
 						<DynamicModalFields
 							classes={classes}
 							activeDynamicButton={activeDynamicButton}
-							personalField={personalField}
-							textInput={textInput}
-							linkInput={linkInput}
+							personalField={getFieldValueByID(fieldIDs['personalField'])}
+							textInput={getFieldValueByID(fieldIDs['text'])}
+							linkInput={getFieldValueByID(fieldIDs['link'])}
 							navApp={navApp}
-							landPage={landPage}
-							navAddress={navAddress}
-							setTextInput={setTextInput}
-							setPersonalField={setPersonalField}
-							onAddRemovalLink={onAddRemovalLink}
-							setLinkInput={setLinkInput}
-							setLandPage={setLandPage}
+							landPage={getFieldValueByID(fieldIDs['landingPage'])}
+							navAddress={getFieldValueByID(fieldIDs['navigation'])}
+							setTextInput={(value: string) =>
+								updateDynamicVariables('text', value)
+							}
+							setPersonalField={(value: string) =>
+								updateDynamicVariables('personalField', value)
+							}
+							onAddRemovalLink={(isTrackLink) => onAddRemovalLink(isTrackLink)}
+							setLinkInput={(value, isTrackLink) =>
+								updateDynamicVariables('link', value, isTrackLink)
+							}
+							setLandPage={(value: string) =>
+								updateDynamicVariables('landingPage', value)
+							}
 							setNavApp={setNavApp}
-							setNavAddress={setNavAddress}
+							setNavAddress={(value: string) =>
+								updateDynamicVariables('navigation', value)
+							}
+							personalFields={personalFields}
+							landingPageData={landingPageData}
 						/>
 					</Grid>
 				</Box>
 				<DialogActions>
 					<Button
-						// color="primary"
+						onClick={() => onClose()}
 						variant='contained'
 						style={{
 							margin: '6px',
@@ -150,7 +247,7 @@ const DynamicModal = ({
 						Exit
 					</Button>
 					<Button
-						// color="secondary"
+						onClick={() => onSave()}
 						variant='contained'
 						style={{
 							margin: '6px',
