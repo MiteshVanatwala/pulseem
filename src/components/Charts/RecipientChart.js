@@ -416,7 +416,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        redirect={`/react/groups?NewGroup=true`}
                         buttonClass={classes.createButton} />
                 )}
 
@@ -456,7 +456,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        redirect={`/react/Groups?NewGroup=true`}
                         buttonClass={classes.importButtonBlue} />
                 }
             </Grid>
