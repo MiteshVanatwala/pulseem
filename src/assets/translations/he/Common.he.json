@@ -589,5 +589,9 @@
   "saveAndContinue": "שמור והמשך",
   "backToAutomation": "חזור לאוטומציה",
   "showError": "הצג שגיאה",
-  "showTemplateId": "הצג תבנית"
+  "showTemplateId": "הצג תבנית",
+  "delivered": "הועבר",
+  "Queued": "בתור",
+  "read": "נקרא",
+  "NoInboundIn24Session": "לא התקבלה תשובה"
 }

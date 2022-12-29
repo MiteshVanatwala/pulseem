@@ -16,8 +16,8 @@ import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/PulseemArrays';
-import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
+import { WhatsappStatus } from '../../../helpers/PulseemArrays';
+import { whatsappStatusToString, whatsappStatusColor } from '../../../helpers/functions';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
@@ -108,9 +108,9 @@ const DirectWhatsappReportTab = ({
             text = `${text.format('DD/MM/YYYY HH:mm')}`
         }
         if (dataType === 'status') {
-            text = t(smsStatusToString(text));
+            text = t(whatsappStatusToString(text));
             return (
-                <Typography style={{ color: smsStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+                <Typography style={{ color: whatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
             )
         }
 
@@ -273,7 +273,7 @@ const DirectWhatsappReportTab = ({
                             <MenuItem value="" className={classes.dropDownItem}>
                                 {t("common.Status")}
                             </MenuItem>
-                            {SmsStatus.map(so => {
+                            {WhatsappStatus.map(so => {
                                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
                             })}
                         </Select>
@@ -531,8 +531,8 @@ const DirectWhatsappReportTab = ({
                             {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
                         </Box>
                         <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-                            <Typography style={{ color: smsStatusColor(STATUS) }}>
-                                {t(smsStatusToString(STATUS))}
+                            <Typography style={{ color: whatsappStatusColor(STATUS) }}>
+                                {t(whatsappStatusToString(STATUS))}
                             </Typography>
                         </Box>
                     </Box>
