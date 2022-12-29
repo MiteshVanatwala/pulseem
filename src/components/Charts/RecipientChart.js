@@ -464,7 +464,7 @@ const RecipientChart = ({ classes, }) => {
     const renderArrows = (value, length, setItem, className) => {
         let selectedItem = value;
         const handleNext = () => {
-            if (value >= length) return;
+            if ((value + 1) >= length) return;
             selectedItem++;
             setItem(selectedItem);
         }
@@ -475,7 +475,7 @@ const RecipientChart = ({ classes, }) => {
         }
 
         return (
-            <Grid item className={className}>
+            <Grid item className={className} style={{ height: '100%' }}>
                 <IconButton onClick={handlePrevious}>
                     <ArrowBackIosIcon />
                 </IconButton>
