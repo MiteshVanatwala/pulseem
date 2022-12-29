@@ -587,5 +587,7 @@
   "filesUploaded": "קבצים עלו בהצלחה",
   "filesNotUploaded": "קבצים נכשלו: ",
   "saveAndContinue": "שמור והמשך",
-  "backToAutomation": "חזור לאוטומציה"
+  "backToAutomation": "חזור לאוטומציה",
+  "showError": "הצג שגיאה",
+  "showTemplateId": "הצג תבנית"
 }

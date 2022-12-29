@@ -22,6 +22,7 @@ import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import { useSelector } from 'react-redux';
+import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -360,7 +361,7 @@ const DirectWhatsappReportTab = ({
                     <TableCell
                         classes={cellStyle}
                         align='center'
-                        className={classes.flex2}>
+                        className={classes.flex1}>
                         {t('report.failure')}
                     </TableCell>
                     <TableCell
@@ -442,8 +443,24 @@ const DirectWhatsappReportTab = ({
                 <TableCell
                     classes={noborderCell}
                     align='center'
-                    className={classes.flex2} title={row.ErrorMessage}>
-                    {row.ErrorMessage?.substring(0, 10)}...
+                    className={classes.flex1} title={row.ErrorMessage}>
+                    <CustomTooltip
+                        isSimpleTooltip={false}
+                        interactive={true}
+                        forceDirection={'ltr'}
+                        classes={{
+                            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                            arrow: classes.fBlack,
+                        }}
+                        arrow={true}
+                        style={{ fontSize: 15 }}
+                        placement={"top"}
+                        title={<Typography noWrap={false}>{row.ErrorMessage}</Typography>}
+                    >
+                        {row.ErrorMessage && row.ErrorMessage !== '' && <Typography>
+                            {t('common.showError')}
+                        </Typography>}
+                    </CustomTooltip>
                 </TableCell>
                 {windowSize !== 'xs' && (
                     <>
@@ -451,7 +468,23 @@ const DirectWhatsappReportTab = ({
                             classes={noborderCell}
                             align='center'
                             className={classes.flex1} title={row.ReferenceId}>
-                            {row.ReferenceId}
+                            <CustomTooltip
+                                isSimpleTooltip={false}
+                                interactive={true}
+                                forceDirection={'ltr'}
+                                classes={{
+                                    tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                    arrow: classes.fBlack,
+                                }}
+                                arrow={true}
+                                style={{ fontSize: 15 }}
+                                placement={"top"}
+                                title={<Typography noWrap={false}>{row.ReferenceId}</Typography>}
+                            >
+                                {row.ReferenceId && row.ReferenceId !== '' && <Typography>
+                                    {t('common.showTemplateId')}
+                                </Typography>}
+                            </CustomTooltip>
                         </TableCell>
                     </>
                 )}

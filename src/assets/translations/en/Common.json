@@ -592,5 +592,7 @@
   "filesUploaded": "Files successfully uplaoded",
   "filesNotUploaded": "Files failed: ",
   "saveAndContinue": "Save and Continue",
-  "backToAutomation": "Back to automation"
+  "backToAutomation": "Back to automation",
+  "showError": "Show error",
+  "showTemplateId": "Show Template"
 }

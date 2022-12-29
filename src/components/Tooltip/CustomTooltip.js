@@ -31,7 +31,7 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
-const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = null }) => {
+const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = null, forceDirection = null }) => {
   const { isRTL } = useSelector(state => state.core)
   return (isSimpleTooltip ?
     <BootstrapTooltip
@@ -50,7 +50,7 @@ const CustomTooltip = ({ children, classes, text, title, placement = 'top', arro
       style={{ ...style, maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}
       title={
         <React.Fragment>
-          <span style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: textAlign, ...titleStyle }}>{title}</span>
+          <span style={{ direction: forceDirection ? forceDirection : isRTL ? 'rtl' : 'ltr', textAlign: textAlign, ...titleStyle }}>{title}</span>
         </React.Fragment>
       }
     >
