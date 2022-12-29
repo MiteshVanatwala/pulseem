@@ -2507,11 +2507,36 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ltr: {
     direction: 'ltr'
   },
+
+  selectPlaceholderInput: {
+    height: '90%',
+    opacity: 1,
+    border: 'none',
+    boxShadow: 'none',
+    background: 'none',
+    width: '95%',
+    borderRadius: 5,
+    paddingLeft: 10,
+    fontSize: '0.9rem',
+    position: 'absolute',
+    pointerEvents: 'none',
+    '&::placeholder': {
+      color: '#bfbfbf'
+    }
+  },
+
   selectInputFormControl: {
     '&.MuiFormControl-root': {
       marginInline: 3,
       '& label': {
         marginInline: 5
+      },
+      '& .outerborder': {
+        border: '1px solid #c4c4c4',
+        borderRadius: 5,
+        '& .MuiSelect-select': {
+          border: 'none !important'
+        },
       },
       '& .MuiSelect-select': {
         minWidth: 200,
@@ -2527,6 +2552,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
+
   dialogZindex: {
     zIndex: '1000 !important'
   },

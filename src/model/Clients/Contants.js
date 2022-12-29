@@ -18,6 +18,7 @@ const CLIENT_CONSTANTS = {
         StatCity: 14,
         Revenue: 15,
         ShowGroup: 16,
+        Product: 17
     },
     SMS_STATUS: {
         NoSms: -1,
@@ -64,6 +65,10 @@ const CLIENT_CONSTANTS = {
         CampaignID: null,
         FromDate: null,
         ToDate: null,
+    },
+    PRODUCT_REPORT_TYPE: {
+        PURCHASED: 1,
+        ABANDONED: 2
     },
     SMS_STATUSES: {
         noStatus: {
