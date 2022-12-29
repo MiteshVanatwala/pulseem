@@ -146,7 +146,8 @@ const DynamicModal = ({
 							borderRadius: '20px',
 							backgroundColor: '#d63511',
 							color: 'white',
-						}}>
+						}}
+						onClick={() => onDynamcFieldModalClose()}>
 						Exit
 					</Button>
 					<Button

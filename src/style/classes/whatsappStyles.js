@@ -1450,4 +1450,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			backgroundColor: '#f1f1f1',
 		},
 	},
+	whatsappDatePicker: {
+		border: '1px solid #0000003b',
+		borderRadius: '4px',
+		padding: '3px 0px 2px 10px',
+		background: 'url(../../../../assets/images/managment/calendar.svg)',
+	},
 });

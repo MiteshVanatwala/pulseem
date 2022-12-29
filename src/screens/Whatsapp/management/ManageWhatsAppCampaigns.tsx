@@ -20,12 +20,9 @@ import {
 	SearchIcon,
 	GroupsIcon,
 	PreviewIcon,
+	CalendarIcon,
 } from '../../../assets/images/managment/index';
-import {
-	DateField,
-	ManagmentIcon,
-	TablePagination,
-} from '../../../components/managment/index';
+import { DateField, ManagmentIcon } from '../../../components/managment/index';
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
@@ -38,14 +35,18 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { templatData } from '../Constant';
 import Pagination from './Component/Pagination';
 import RestoreDeletedModal from './Popups/RestoreDeletedModal';
+import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const [fromDate, handleFromDate] = useState<any>(null);
-	const [toDate, handleToDate] = useState<any>(null);
+	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
+		null
+	);
+	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
@@ -54,7 +55,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [isRestoreDeletedModal, setIsRestoreDeletedModal] =
 		useState<boolean>(false);
 
-	const rows: any = [1, 2, 3, 4, 5, 6];
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -64,8 +64,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
 	useEffect(() => {
 		if (
-			fromDate?.length > 0 ||
-			toDate?.length > 0 ||
+			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
+			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
 			campaineNameSearch?.length > 0
 		) {
 			setSearching(true);
@@ -290,28 +290,24 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 					{windowSize !== 'xs' ? (
 						<Grid item>
-							<DateField
-								toolbarDisabled={false}
-								classes={classes}
+							<DatePicker
+								className={classes.whatsappDatePicker}
+								onChange={handleFromDate}
 								value={fromDate}
-								// onChange={handleFromDateChange}
-								placeholder={translator('mms.locToDateResource1.Text')}
-								minDate={undefined}
-								onTimeChange={undefined}
+								format={'DD/MM/YYYY'}
+								placeholder={'From Date'}
 							/>
 						</Grid>
 					) : null}
 
 					{windowSize !== 'xs' ? (
 						<Grid item>
-							<DateField
-								toolbarDisabled={false}
-								classes={classes}
+							<DatePicker
+								className={classes.whatsappDatePicker}
+								onChange={handleToDate}
 								value={toDate}
-								// onChange={handleToDate}
-								placeholder={translator('mms.locToDateResource1.Text')}
-								minDate={undefined}
-								onTimeChange={undefined}
+								format={'DD/MM/YYYY'}
+								placeholder={'To Date'}
 							/>
 						</Grid>
 					) : null}

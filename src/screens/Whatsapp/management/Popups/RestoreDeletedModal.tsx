@@ -3,8 +3,6 @@ import {
 	Box,
 	Dialog,
 	Grid,
-	TextField,
-	InputAdornment,
 	Checkbox,
 	FormGroup,
 	FormControlLabel,
@@ -13,7 +11,7 @@ import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { RestoreDeletedModalProps } from '../Types/Management.types';
 
 const RestoreDeletedModal = ({
 	classes,
@@ -21,7 +19,7 @@ const RestoreDeletedModal = ({
 	onClose,
 	onConfirmOrYes,
 	title,
-}: any) => {
+}: RestoreDeletedModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	const { t: translator } = useTranslation();
@@ -30,7 +28,7 @@ const RestoreDeletedModal = ({
 		onClose();
 	};
 
-	const deletedCampaigns = [
+	const deletedCampaigns: { id: string; campaignName: string }[] = [
 		{
 			id: '21',
 			campaignName: 'demo campaign 1',
@@ -93,16 +91,18 @@ const RestoreDeletedModal = ({
 								<FormGroup
 									aria-label='position'
 									className={classes.restoreDeletedModalFormGroup}>
-									{deletedCampaigns?.map((campaign: any) => (
-										<FormControlLabel
-											className={classes.restoreDeletedModalFormLabel}
-											key={campaign.id}
-											value={campaign.id}
-											control={<Checkbox />}
-											label={campaign.campaignName}
-											labelPlacement='end'
-										/>
-									))}
+									{deletedCampaigns?.map(
+										(campaign: { id: string; campaignName: string }) => (
+											<FormControlLabel
+												className={classes.restoreDeletedModalFormLabel}
+												key={campaign.id}
+												value={campaign.id}
+												control={<Checkbox />}
+												label={campaign.campaignName}
+												labelPlacement='end'
+											/>
+										)
+									)}
 								</FormGroup>
 							</Box>
 						</div>

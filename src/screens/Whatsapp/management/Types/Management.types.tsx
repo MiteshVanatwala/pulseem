@@ -10,3 +10,11 @@ export type paginationProps = {
 	onRowsPerPageChange: (rowsNumber: number) => void;
 	onPageChange: (pageNumber: number) => void;
 };
+
+export type RestoreDeletedModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	onConfirmOrYes: () => void;
+	title: string;
+};

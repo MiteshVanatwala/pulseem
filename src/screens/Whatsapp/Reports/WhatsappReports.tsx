@@ -27,14 +27,18 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from '../management/Component/Pagination';
+import { DatePicker } from '@material-ui/pickers';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const [fromDate, handleFromDate] = useState<any>(null);
-	const [toDate, handleToDate] = useState<any>(null);
+	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
+		null
+	);
+	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
@@ -49,8 +53,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
 	useEffect(() => {
 		if (
-			fromDate?.length > 0 ||
-			toDate?.length > 0 ||
+			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
+			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
 			campaineNameSearch?.length > 0
 		) {
 			setSearching(true);
@@ -150,28 +154,24 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 					{windowSize !== 'xs' ? (
 						<Grid item>
-							<DateField
-								toolbarDisabled={false}
-								classes={classes}
+							<DatePicker
+								className={classes.whatsappDatePicker}
+								onChange={handleFromDate}
 								value={fromDate}
-								// onChange={handleFromDateChange}
-								placeholder={translator('mms.locToDateResource1.Text')}
-								minDate={undefined}
-								onTimeChange={undefined}
+								format={'DD/MM/YYYY'}
+								placeholder={'From Date'}
 							/>
 						</Grid>
 					) : null}
 
 					{windowSize !== 'xs' ? (
 						<Grid item>
-							<DateField
-								toolbarDisabled={false}
-								classes={classes}
+							<DatePicker
+								className={classes.whatsappDatePicker}
+								onChange={handleToDate}
 								value={toDate}
-								// onChange={handleToDate}
-								placeholder={translator('mms.locToDateResource1.Text')}
-								minDate={undefined}
-								onTimeChange={undefined}
+								format={'DD/MM/YYYY'}
+								placeholder={'To Date'}
 							/>
 						</Grid>
 					) : null}
