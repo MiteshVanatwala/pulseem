@@ -33,7 +33,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         paddingBlock: 15
     },
     dashboard: {
-        background: '#F2F2F2',
+        background: 'transparent',
         padding: 0,
         maxHeight: 'unset',
     },
@@ -46,29 +46,40 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         textTransform: 'uppercase',
         color: '#65d638'
     },
+    dashboardChartTitle: {
+        maxHeight: 47
+    },
     shortcutTitle: {
         maxHeight: 39,
-        maxWidth: 285,
+        // maxWidth: 285,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20
     },
     shortcutSubtitle: {
         fontSize: windowSize === 'xs' ? 16 : 18,
         padding: '0 10px 0 10px',
-        marginBottom: 15
+        marginBottom: 15,
+        maxHeight: '10%'
     },
     shortcutBox: {
         borderRadius: 20,
         marginBottom: 19,
         marginTop: 28,
+        overflow: 'hidden',
         position: windowSize !== 'xl' && windowSize !== 'xs' ? 'block' : 'sticky',
         top: windowSize !== 'xl' ? 47 : 0,
         right: isRTL ? 'auto' : 0,
         left: isRTL ? 0 : 'auto',
         width: shortcutBoxWidth[windowSize],
-        height: '92.1%',
+        height: '100%',
+        maxHeight: '780px',
+        ['@media (max-width:1280px)']: {
+            maxHeight: 'calc(100% - 65px)',
+            width: '100%'
+        },
         [theme.breakpoints.down('xs')]: {
-            margin: '10px 10px 10px 10px'
+            margin: '10px 10px 10px 10px',
+            maxHeight: 'calc(100% - 50px)',
         },
         border: '3px solid #F0F5FF',
         '& .MuiPaper-rounded': {
@@ -82,7 +93,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
             borderRadius: 10,
         },
         // height: shortcutPaperHeight[windowSize],
-        height: 'calc(95vh - 47px)',
+        height: '95%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -95,7 +106,11 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
             borderRadius: '5px'
         },
         scrollbarWidth: 'none',
-        '-ms-overflow-style': 'none' /* IE 11 */
+        '-ms-overflow-style': 'none', /* IE 11 */
+        ['@media (max-width:1280px)']: {
+            height: '100%',
+            overflow: 'hidden'
+        },
     },
     shortcutBtnBox: {
         position: 'relative',
@@ -182,8 +197,14 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         },
     },
     dashboardSide: {
+        paddingRight: isRTL ? 0 : 30,
+        paddingLeft: !isRTL ? 0 : 30,
         [theme.breakpoints.down('sm')]: {
-            order: 2
+            order: 2,
+            padding: 0,
+            justifyContent: 'center',
+            display: 'flex',
+            justifyContent: 'center'
         },
     },
     transitionElem: {

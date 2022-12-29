@@ -449,7 +449,7 @@ const RecipientChart = ({ classes, }) => {
     return (
         <Paper elevation={3} className={classes.dashboardTopPaper}>
             <Grid container>
-                <Grid item xs={12} className={classes.dashBoxtitleSection}>
+                <Grid item xs={12} className={clsx(classes.dashBoxtitleSection, classes.dashboardChartTitle)}>
                     <Box className={classes.flex}>
                         <ChartIcon className={classes.mlr10} />
                         <Typography

@@ -383,7 +383,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   return (
     <Box style={{ flexGrow: 1 }} className={clsx(classes.pl25, classes.ps25)}>
       <AppBar position='static' className={classes.appBar} ref={topNavRef}>
-        <Toolbar variant='dense' className={classes.justifyBetween}>
+        <Toolbar variant='dense' className={clsx(classes.justifyBetween, classes.h100)}>
           <Button
             // style={{ padding: 0, matgin: 0 }}
             onClick={() => Redirect({ url: routes[0].href })}

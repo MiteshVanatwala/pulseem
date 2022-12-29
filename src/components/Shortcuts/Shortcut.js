@@ -309,7 +309,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <FlagIcon className={classes.mlr10} />
           <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
         </Box>
-        <Paper elevation={windowSize === 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
+        <Paper className={classes.shortcutPaper} ref={shortcutRef}>
 
           <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
           {shortcuts && shortcuts.map((item, index) => {

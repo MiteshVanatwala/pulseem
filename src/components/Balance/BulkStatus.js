@@ -243,7 +243,7 @@ const BulkStatus = ({ classes }) => {
               <WhatsappIcon className={classes.shoppingCartIcon} />
             </Box>
             <Box className={clsx(classes.flex2)}>
-              <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
+              <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
             </Box>
             <Box className={clsx(classes.flex2)}>
               <Typography className={classes.bulkTitle}>

@@ -32,9 +32,9 @@ const barHeight = {
 
 const tipsFontSize = {
   xs: 13,
-  sm: 11,
-  md: 9,
-  lg: 9,
+  sm: 13,
+  md: 11,
+  lg: 13,
   xl: 13,
 };
 
@@ -113,6 +113,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   flex: {
     display: "flex",
+  },
+  flexWrap: {
+    flexWrap: 'wrap'
   },
   flexRow: {
     flexDirection: "row",
@@ -1270,12 +1273,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
   },
   barChart: {
+    width: '100%',
     float: isRTL ? "left" : "right",
     "& canvas": {
       height: barHeight[windowSize],
     },
     paddingLeft: windowSize !== "xs" ? 15 : 0,
-    paddingRight: windowSize !== "xs" ? 15 : 0,
+    // paddingRight: windowSize !== "xs" ? 15 : 0,
   },
   barContainer: {
     width: windowSize !== "xs" ? "460px !important" : "100%",
@@ -1418,11 +1422,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   dashboardBottomPaper: {
     [theme.breakpoints.up("lg")]: {
-      height: 370,
+      minHeight: 370,
     },
     [theme.breakpoints.down("xs")]: {
       margin: 10,
     },
+    height: 'max-content',
     margin: 30,
     paddingBottom: 25,
     borderRadius: 10,
@@ -1432,6 +1437,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   bulkStatusContainer: {
+    ['@media (max-width:1550px)']: {
+      '& div': {
+        zoom: '95%',
+      }
+    },
+    ['@media (max-width:1280px)']: {
+      '& div': {
+        zoom: '100%',
+      }
+    },
     '& .MuiDivider-root': {
       width: '100%',
       border: '1px #F0F5FF solid',
@@ -1471,7 +1486,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "0px 20px 20px 20px",
     maxWidth: 204,
     textAlign: 'center',
-    margin: 'auto'
+    margin: 'auto',
+    ['@media (max-width:1280px)']: {
+      maxWidth: '65%',
+      fontSize: '14px'
+    },
   },
   lightBulb: {
     width: 100,
@@ -1505,6 +1524,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingTop: '0 !important',
     marginBottom: "1.2rem",
     borderBottom: "1px solid #ccc",
+    [theme.breakpoints.down('xs')]: {
+      height: 'auto',
+      '& .MuiTabs-root': {
+        marginLeft: 0,
+        marginTop: 10
+      }
+    }
   },
   lastReportRowItem: {
     display: "flex",

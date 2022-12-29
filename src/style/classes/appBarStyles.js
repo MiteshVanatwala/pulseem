@@ -115,16 +115,17 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   },
   pulseemAppBarLogo: {
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
+    borderRadius: 0,
     height: '100%',
     '&.logoRTL': {
       padding: '15px 15px 15px 0px',
       marginRight: '-24px',
-      borderRadius: '0% 0% 25% 0% / 0% 0% 60% 0%'
+      // borderRadius: '0% 0% 25% 0% / 0% 0% 60% 0%'
     },
     '&.logoLTR': {
       padding: '15px 0px 15px 15px',
       marginLeft: '-24px',
-      borderRadius: '0% 0% 0% 40% / 70% 0% 100% 100%',
+      // borderRadius: '0% 0% 0% 40% / 70% 0% 100% 100%',
     }
   },
   appBar: {
@@ -133,7 +134,8 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     zIndex: 50000000,
     boxShadow: '0px 1px 10px 4a4a4aab',
     height: 62.78,
-    borderRadius: '0% 0% 4% 4% / 70% 70% 100% 100% '
+    borderRadius: '0% 0% 4% 4% / 70% 70% 100% 100% ',
+    overflow: 'hidden'
   },
   appBarLogo: {
     marginInlineEnd: '1vw',

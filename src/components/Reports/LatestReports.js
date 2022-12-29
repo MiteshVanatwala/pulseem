@@ -215,8 +215,60 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
-        <Grid container justifyContent={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
-          <Grid item lg={showGraphs ? 6 : 12} xs={12} className={tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null}>
+        <Box className={clsx(!showGraphs ? classes.tabPanel : null, classes.spaceBetween, classes.flexJustifyCenter, classes.flexWrap)}>
+          <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1)}>
+            {
+              showGraphs ? (innerData.map((c, index) => {
+                const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
+                return (
+                  <>
+
+                    {index === 0 && <Divider />}
+                    <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
+                      <Box className={clsx(classes.flex2, classes.paddingSides15)}>
+                        <BootstrapTooltip title={c.CampaignName} placement="top">
+                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f16, classes.ellipsisText, classes.graphCampaignName)}>
+                            {c.CampaignName}
+                          </Link>
+                        </BootstrapTooltip>
+                      </Box>
+                      <Box className={classes.flex1}>
+                        {tabType === "sms" && <Box>
+                          <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5, classes.f16)}>
+                            {c.TotalSendPlan.toLocaleString()} {`${c.TotalSendPlan === 1 ? t('common.Recipient') : t('common.Recipients')}`}
+                          </Typography>
+                        </Box>}
+                      </Box>
+                      <Box className={classes.flex1}>
+                        <Typography className={clsx(classes.dInlineBlock, classes.f16, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                          {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    {index === innerData.length - 1 && <Divider />}
+                  </>
+                )
+              })) :
+                (
+                  <ButtonWithTitle
+                    classes={classes}
+                    title={NoDataObject[tabType].title}
+                    buttonText={NoDataObject[tabType].buttonText}
+                    redirect={NoDataObject[tabType].redirect}
+                  />
+                )
+            }
+          </Box>
+          {showGraphs &&
+            <Box className={classes.flex1}>
+              <Box className={classes.barChart}>
+                <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
+              </Box>
+            </Box>
+          }
+        </Box>
+        {/* <Grid container justifyContent={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
+          <Grid item lg={showGraphs ? 6 : 12} md={12} className={tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null}>
             {
               showGraphs ? (innerData.map((c, index) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
@@ -259,13 +311,13 @@ const LatestReports = ({ classes, t, isRTL }) => {
                 )
             }
           </Grid>
-          {showGraphs && <Grid item lg={6} xs={12}>
+          {showGraphs && <Grid item lg={6} md={12}>
             <Box className={classes.barChart}>
               <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
             </Box>
           </Grid>
           }
-        </Grid>
+        </Grid> */}
       </TabPanel >
     );
   }
@@ -285,7 +337,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
           alignItems='center'
           item xs={12}
           className={clsx(classes.lastReportTitleSection, classes.dashBoxtitleSection)}>
-          <Box className={clsx(classes.spaceBetween, classes.w100)}>
+          <Box className={clsx(classes.spaceBetween, classes.w100, classes.flexWrap)}>
             <Box className={classes.mt2}>
               <NotesIcon className={classes.mlr10} />
               <Typography
@@ -322,7 +374,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
   }
 
   return (
-    <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.lastReportPadding)
+    <Paper elevation={3} style={{ height: 'max-content' }} className={clsx(classes.dashboardBottomPaper, classes.lastReportPadding)
     } >
       {renderTabsLastReports()}
     </Paper >
