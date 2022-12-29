@@ -24,14 +24,16 @@ const RecipientChart = ({ classes, }) => {
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
 
-    const useStylesBootstrap = makeStyles((theme) => ({
-        arrow: {
-            color: theme.palette.common.black,
-        },
-        tooltip: {
-            backgroundColor: theme.palette.common.black,
-        },
-    }));
+    let slidesCount = 0;
+    recipientsReport?.forEach(report => {
+        if (report.ReportSection === 2 && !Notifications.FeatureExist ||
+            report.ReportSection === 1 && !Sms.FeatureExist) {
+            return
+        }
+        else {
+            slidesCount++;
+        }
+    })
 
     const dispatch = useDispatch();
     const initData = async () => {
@@ -464,24 +466,38 @@ const RecipientChart = ({ classes, }) => {
     const renderArrows = (value, length, setItem, className) => {
         let selectedItem = value;
         const handleNext = () => {
-            if (value >= length) return;
+            if (selectedItem >= slidesCount) {
+                return;
+            }
             selectedItem++;
             setItem(selectedItem);
         }
         const handlePrevious = () => {
-            if (selectedItem <= 0) return;
+            if (selectedItem <= 0) {
+                return;
+            }
             selectedItem--;
             setItem(selectedItem);
         }
 
         return (
-            <Grid item className={className}>
-                <IconButton onClick={handlePrevious}>
+            <Grid item className={className} style={{ height: '100%' }}>
+                {selectedItem > 0 ? <IconButton onClick={handlePrevious}>
                     <ArrowBackIosIcon />
                 </IconButton>
-                <IconButton onClick={handleNext}>
-                    <ArrowForwardIosIcon />
-                </IconButton>
+                    :
+                    <IconButton>
+                        <></>
+                    </IconButton>
+                }
+                {
+                    selectedItem < (slidesCount - 1) ? <IconButton onClick={handleNext}>
+                        <ArrowForwardIosIcon />
+                    </IconButton> :
+                        <IconButton >
+                            <></>
+                        </IconButton>
+                }
             </Grid>
         );
     }
