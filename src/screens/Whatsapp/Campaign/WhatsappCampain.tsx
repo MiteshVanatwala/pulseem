@@ -60,7 +60,6 @@ import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
-import { testGroupData } from '../Constant';
 import { getDynamicFields } from '../Common';
 import {
 	getAccountExtraData,
@@ -139,7 +138,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
 	const [from, setFrom] = useState<string>('');
-	const [isCampaign, setIsCampaign] = useState<boolean>(false);
+	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
@@ -473,17 +472,18 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const validateSaveCampaign = () => {
-		if (campaignName?.length <= 0 || from?.length <= 0) {
+		if (campaignName?.length <= 0 || savedTemplate?.length <= 0) {
 			let validationErrors = [];
-			if (campaignName?.length <= 0 && from?.length <= 0) {
+			if (campaignName?.length <= 0 && savedTemplate?.length <= 0) {
 				validationErrors.push('Campaign name - required fields');
-				validationErrors.push('Text for sending - required fields');
+				validationErrors.push('Template for sending - required fields');
 			} else if (campaignName?.length <= 0) {
 				validationErrors.push('Campaign name - required fields');
-			} else if (from?.length <= 0) {
-				validationErrors.push('Text for sending - required fields');
+			} else if (savedTemplate?.length <= 0) {
+				validationErrors.push('Template for sending - required fields');
 			}
 			setGroupSendValidationErrors([...validationErrors]);
+			setShowValidation(true);
 			return false;
 		} else {
 			return true;
@@ -564,6 +564,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 									from={from}
 									onFromChange={(from) => setFrom(from)}
 									onCampaignFromRestore={() => onCampaignFromRestore()}
+									showValidation={showValidation}
 								/>
 							</Grid>
 							<Grid className={classes.WhatsappCampainTextarea} md={12} lg={12}>
@@ -714,11 +715,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 													placeholder={translator(
 														'whatsappCampaign.oneContactPlaceholder'
 													)}
-													className={
-														isCampaign
-															? clsx(classes.buttonField, classes.error)
-															: clsx(classes.buttonField, classes.success)
-													}
+													className={clsx(classes.buttonField, classes.success)}
 													disabled={testSendSelection !== 'onecontact'}
 													onChange={(e: BaseSyntheticEvent) =>
 														setTestSendOneContact(

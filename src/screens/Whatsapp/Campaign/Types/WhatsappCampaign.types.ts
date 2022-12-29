@@ -44,6 +44,7 @@ export type campaignFielsProps = {
 	onCampaignNameChange: (campaignName: string) => void;
 	onFromChange: (from: string) => void;
 	onCampaignFromRestore: () => void;
+	showValidation: boolean;
 };
 
 export type validationAlertModalProps = {

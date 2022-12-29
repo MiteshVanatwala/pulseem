@@ -15,12 +15,12 @@ const CampaignFields = ({
 	from,
 	onFromChange,
 	onCampaignFromRestore,
+	showValidation,
 }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const [isCampaign, setIsCampaign] = useState<boolean>(false);
 
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
@@ -34,7 +34,7 @@ const CampaignFields = ({
 					type='text'
 					placeholder={translator('whatsappCampaign.campaignNamePlaceholder')}
 					className={
-						isCampaign
+						showValidation && campaignName?.length === 0
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
@@ -63,11 +63,7 @@ const CampaignFields = ({
 				<TextField
 					required
 					type='text'
-					className={
-						isCampaign
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
+					className={clsx(classes.buttonField)}
 					onChange={(e: BaseSyntheticEvent) =>
 						onFromChange(e.target.value?.replace(/\D/g, ''))
 					}
@@ -112,7 +108,7 @@ const CampaignFields = ({
 					id='selectSavedTemplate'
 					type='text'
 					className={
-						isCampaign
+						showValidation && savedTemplate?.length === 0
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
