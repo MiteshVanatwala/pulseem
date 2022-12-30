@@ -7,6 +7,9 @@ import {
 	TextMedia,
 	TextMediaAndButton,
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
+import {
+	saveCampaignDataProps,
+} from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
 type errorProps = {
 	message: string;
@@ -23,6 +26,33 @@ type submitTemplatesDataProps =
 	| TextMedia
 	| JSONPropsText
 	| undefined;
+
+type saveCampaignSettingsDataProps = {
+	WACampaignID: number;
+	SendTypeID: number;
+	Groups: number[];
+	SendExeptional?: {
+		IsExceptionalroups?: boolean;
+		Groups?: number[];
+		IsExceptionSmsCampaigns?: boolean;
+		Campaigns?: number[];
+		ExceptionalDays?: number;
+	};
+	RandomSettings?: {
+		RandomAmount?: number;
+	};
+	specialsettings?: {
+		datefieldid?: number;
+		day?: number;
+		intervaltypeid?: number;
+		sendhour?: string;
+	};
+	FutureDateTime?: string;
+};
+
+type sendCampaignDataProps = {
+	WACampaignID: number;
+};
 
 export const getSavedTemplates = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
@@ -92,12 +122,79 @@ export const saveTemplates = createAsyncThunk(
 	}
 );
 
+export const saveCampaign = createAsyncThunk(
+	'whatsAppCampaign/SaveWhatsappCampaign',
+	async (data: saveCampaignDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/SaveWhatsappCampaign`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const saveCampaignSettings = createAsyncThunk(
+	'whatsAppCampaign/SaveWACampaignSettings',
+	async (data: saveCampaignSettingsDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/SaveWACampaignSettings`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const sendCampaign = createAsyncThunk(
+	'whatsAppCampaign/Send',
+	async (data: sendCampaignDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/Send`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const fromPhoneNumbers = createAsyncThunk(
+	'whatsAppCampaign/GetPhoneNumbers',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetPhoneNumbers`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
 		savedTemplates: [],
 		submitTemplate: [],
 		saveTemplate: [],
+		fromPhoneNumbers: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -109,6 +206,12 @@ export const whatsappSlice = createSlice({
 				severity: 'error',
 				color: 'error',
 				message: 'whatsapp.error',
+				showAnimtionCheck: true,
+			},
+			SAVE_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign submitted succesfully',
 				showAnimtionCheck: true,
 			},
 		},
@@ -123,6 +226,9 @@ export const whatsappSlice = createSlice({
 		});
 		builder.addCase(saveTemplates.fulfilled, (state, { payload }) => {
 			state.saveTemplate = payload;
+		});
+		builder.addCase(fromPhoneNumbers.fulfilled, (state, { payload }) => {
+			state.fromPhoneNumbers = payload;
 		});
 	},
 });

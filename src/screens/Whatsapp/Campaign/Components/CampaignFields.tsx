@@ -16,6 +16,7 @@ const CampaignFields = ({
 	onFromChange,
 	onCampaignFromRestore,
 	showValidation,
+	phoneNumbersList,
 }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
@@ -60,37 +61,39 @@ const CampaignFields = ({
 						<>{translator('whatsappCampaign.restore')}</>
 					</Typography>
 				</Box>
-				<TextField
-					required
-					type='text'
-					className={clsx(classes.buttonField)}
-					onChange={(e: BaseSyntheticEvent) =>
-						onFromChange(e.target.value?.replace(/\D/g, ''))
-					}
-					value={from}
-				/>
-				{/* <TextField
-					select
-					type='text'
-					className={
-						isCampaign
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
-					onChange={onSavedTemplateChange}
-					value={savedTemplate}>
-					{savedTemplateList?.length > 0 ? (
-						savedTemplateList.map((template) => (
-							<MenuItem key={template.TemplateId} value={template.TemplateId}>
-								{template.TemplateName}
+				{phoneNumbersList?.length === 1 ? (
+					<TextField
+						required
+						type='text'
+						disabled
+						className={clsx(classes.buttonField)}
+						onChange={(e: BaseSyntheticEvent) =>
+							onFromChange(e.target.value?.replace(/\D/g, ''))
+						}
+						value={from}
+					/>
+				) : (
+					<TextField
+						select
+						type='text'
+						className={classes.buttonField}
+						onChange={(e: BaseSyntheticEvent) =>
+							onFromChange(e.target.value?.replace(/\D/g, ''))
+						}
+						value={from}>
+						{phoneNumbersList?.length > 0 ? (
+							phoneNumbersList?.map((phone: string, index: number) => (
+								<MenuItem key={index} value={phone}>
+									{phone}
+								</MenuItem>
+							))
+						) : (
+							<MenuItem key={'no-data-template'} disabled>
+								<>{translator('whatsapp.noTemplateAaliable')}</>
 							</MenuItem>
-						))
-					) : (
-						<MenuItem key={'no-data-template'} disabled>
-							<>{translator('whatsapp.noTemplateAaliable')}</>
-						</MenuItem>
-					)}
-				</TextField> */}
+						)}
+					</TextField>
+				)}
 				<Typography
 					className={clsx(classes.WhatsappCampainButtonContent, 'red')}>
 					<>{translator('whatsappCampaign.fromDesc')}</>

@@ -4,10 +4,14 @@ import clsx from 'clsx';
 import { Button, Box } from '@material-ui/core';
 import { BsTrash } from 'react-icons/bs';
 import { useTranslation } from 'react-i18next';
-import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
+import { campaignPage1ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
 import { coreProps } from '../Types/WhatsappCampaign.types';
 
-const Buttons = ({ classes }: ButtonsProps) => {
+const Buttons = ({
+	classes,
+	onDeleteCampaign,
+	onSaveCampaign,
+}: campaignPage1ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -26,7 +30,8 @@ const Buttons = ({ classes }: ButtonsProps) => {
 					variant='contained'
 					size='medium'
 					className={clsx(classes.actionButton, classes.actionButtonRed)}
-					style={{ margin: '8px', padding: '9px 0' }}>
+					style={{ margin: '8px', padding: '9px 0' }}
+					onClick={onDeleteCampaign}>
 					<BsTrash style={{ fontSize: '25' }} />
 				</Button>
 			</Box>
@@ -40,7 +45,8 @@ const Buttons = ({ classes }: ButtonsProps) => {
 					classes.backButton
 				)}
 				color='primary'
-				style={{ margin: '8px' }}>
+				style={{ margin: '8px' }}
+				onClick={onSaveCampaign}>
 				<>{translator('whatsapp.saveSms')}</>
 			</Button>
 			<Button

@@ -1,4 +1,5 @@
 import { testGroupDataProps } from './Campaign/Types/WhatsappCampaign.types';
+import { toastProps } from './Editor/Types/WhatsappCreator.types';
 
 export enum fieldIDs {
 	'personalField' = 1,
@@ -301,3 +302,10 @@ export const testGroupData: testGroupDataProps[] = [
 		Recipients: 2,
 	},
 ];
+
+export const resetToastData: toastProps['SUCCESS'] = {
+	severity: '',
+	color: '',
+	message: '',
+	showAnimtionCheck: false,
+};

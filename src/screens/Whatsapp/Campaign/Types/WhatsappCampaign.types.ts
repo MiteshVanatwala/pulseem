@@ -45,6 +45,7 @@ export type campaignFielsProps = {
 	onFromChange: (from: string) => void;
 	onCampaignFromRestore: () => void;
 	showValidation: boolean;
+	phoneNumbersList: string[];
 };
 
 export type validationAlertModalProps = {
@@ -152,6 +153,8 @@ export type DynamicModalFieldsProps = {
 	setNavAddress: (value: string) => void;
 	personalFields: personalFieldDataProps;
 	landingPageData: landingPageDataProps[];
+	isTrackLink: boolean;
+	setIsTrackLink: () => void;
 };
 
 export type TestGroupModalRowsProps = {
@@ -172,6 +175,10 @@ export type selectArrayProps = {
 
 export type personalFieldAPIProps = {
 	payload: personalFieldDataProps;
+};
+
+export type phoneNumberAPIProps = {
+	payload: string[];
 };
 
 export type personalFieldDataProps = {
@@ -208,4 +215,24 @@ export type testGroupsProps = {
 	Recipients: number;
 	SubAccountID: number;
 	UpdateDate: string;
+};
+
+export type saveCampaignDataProps = {
+	WACampaignID: number;
+	TemplateId: string;
+	Variables: updatedVariableProps[];
+	name: string;
+	fromnumber: string;
+	IsTestCampaign: boolean;
+};
+
+export type saveCampaignResponsePayloadProps = {
+	Data: { WACampaignId: number };
+	ErrorCode: number;
+	Message: string | null;
+	Status: number;
+};
+
+export type saveCampaignResponseProps = {
+	payload: saveCampaignResponsePayloadProps;
 };

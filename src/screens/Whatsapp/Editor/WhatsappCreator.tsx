@@ -51,7 +51,13 @@ import {
 } from '../../../redux/reducers/whatsappSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
-import { getDynamicFieldIndex, getDynamicFields, getLastDynamicFieldByValue, getLastDynamicFieldValue } from '../Common';
+import {
+	getDynamicFieldIndex,
+	getDynamicFields,
+	getLastDynamicFieldByValue,
+	getLastDynamicFieldValue,
+} from '../Common';
+import { resetToastData } from '../Constant';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const dispatch = useDispatch();
@@ -95,12 +101,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			],
 		},
 	];
-	const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>({
-		severity: '',
-		color: '',
-		message: '',
-		showAnimtionCheck: false,
-	});
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 	const [templateName, setTemplateName] = useState<string>('');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
@@ -198,12 +200,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const resetToast = () => {
-		setToastMessage({
-			severity: '',
-			color: '',
-			message: '',
-			showAnimtionCheck: false,
-		});
+		setToastMessage(resetToastData);
 	};
 
 	const renderToast = () => {

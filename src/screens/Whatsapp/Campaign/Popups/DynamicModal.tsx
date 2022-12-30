@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
 	Button,
 	Box,
@@ -34,6 +34,7 @@ const DynamicModal = ({
 	const { t: translator } = useTranslation();
 
 	const [navApp, setNavApp] = React.useState<string>('');
+	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [activeDynamicButton, setActiveDynamicButton] = useState<string>(
 		'whatsappCampaign.pField'
 	);
@@ -78,6 +79,7 @@ const DynamicModal = ({
 				'##WHATSAPPUnsubscribelink##'
 			)
 		) {
+			setIsTrackLink(true);
 			updateDynamicVariables(
 				'link',
 				'##WHATSAPPUnsubscribelink##',
@@ -126,7 +128,7 @@ const DynamicModal = ({
 						...updatedVariable,
 						VariableValue: value,
 						FieldTypeId: getfieldTypeId(field),
-						IsStatastic: isTrackLink,
+						IsStatastic: field === 'link' ? isTrackLink : false,
 					};
 				}
 			);
@@ -138,7 +140,7 @@ const DynamicModal = ({
 					FieldTypeId: getfieldTypeId(field),
 					VariableIndex: dynamicModalVariable,
 					VariableValue: value,
-					IsStatastic: true,
+					IsStatastic: field === 'link' ? isTrackLink : false,
 				},
 			]);
 		}
@@ -164,8 +166,8 @@ const DynamicModal = ({
 					<>{translator('whatsappCampaign.dfieldTitle')}</>
 				</div>
 				<Box className={classes.whatsappCampaignDynamicFieldClose}>
-					<IconButton>
-						<Close onClick={onClose} />
+					<IconButton onClick={onClose}>
+						<Close />
 					</IconButton>
 				</Box>
 				<Box style={{ height: '203px' }}>
@@ -230,6 +232,8 @@ const DynamicModal = ({
 							}
 							personalFields={personalFields}
 							landingPageData={landingPageData}
+							isTrackLink={isTrackLink}
+							setIsTrackLink={() => setIsTrackLink(!isTrackLink)}
 						/>
 					</Grid>
 				</Box>

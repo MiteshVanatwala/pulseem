@@ -75,6 +75,12 @@ export type ButtonsProps = {
 	onFormButtonClick: (buttonName: string) => void;
 };
 
+export type campaignPage1ButtonsProps = {
+	classes: ClassesType['classes'];
+	onDeleteCampaign: () => void;
+	onSaveCampaign: () => void;
+};
+
 export type coreProps = {
 	windowSize: string;
 	isRTL: boolean;
@@ -208,6 +214,7 @@ export type toastProps = {
 	SUCCESS: toastKeyProps;
 	ERROR: toastKeyProps;
 	QUICK_SEND_SUCCESSS: toastKeyProps;
+	SAVE_CAMPAIGN_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {

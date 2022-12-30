@@ -37,10 +37,11 @@ const DynamicModalFields = ({
 	setNavAddress,
 	personalFields,
 	landingPageData,
+	isTrackLink,
+	setIsTrackLink,
 }: DynamicModalFieldsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	return (
 		<>
 			{activeDynamicButton?.includes('pField') && (
@@ -58,9 +59,13 @@ const DynamicModalFields = ({
 					onChange={(e: BaseSyntheticEvent) =>
 						setPersonalField(e.target.value)
 					}>
-					{Object.keys(personalFields)?.map((personalFieldKey: string) => (
-						<MenuItem value={personalFieldKey}>{personalFieldKey}</MenuItem>
-					))}
+					{Object.keys(personalFields)?.map(
+						(personalFieldKey: string, index: number) => (
+							<MenuItem key={index} value={personalFieldKey}>
+								{personalFieldKey}
+							</MenuItem>
+						)
+					)}
 				</Select>
 			)}
 
@@ -92,8 +97,9 @@ const DynamicModalFields = ({
 												'dynamic-link-switch'
 										  )
 								}
+								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
 								checked={isTrackLink}
-								onChange={() => setIsTrackLink(!isTrackLink)}
+								onChange={() => setIsTrackLink()}
 							/>
 						</FormGroup>
 						<Box>
@@ -114,6 +120,7 @@ const DynamicModalFields = ({
 						onChange={(e: BaseSyntheticEvent) =>
 							setLinkInput(e.target.value, isTrackLink)
 						}
+						disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
 						value={linkInput}
 					/>
 					<Button
@@ -141,7 +148,9 @@ const DynamicModalFields = ({
 					}
 					onChange={(e: BaseSyntheticEvent) => setLandPage(e.target.value)}>
 					{landingPageData?.map((landingPage: landingPageDataProps) => (
-						<MenuItem value={landingPage.CampaignName}>
+						<MenuItem
+							key={landingPage.CampaignID}
+							value={landingPage.CampaignName}>
 							{landingPage.CampaignName}
 						</MenuItem>
 					))}

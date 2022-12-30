@@ -28,6 +28,10 @@ import {
 	landingPageAPIProps,
 	testGroupsProps,
 	smsReducerProps,
+	saveCampaignDataProps,
+	saveCampaignResponseProps,
+	saveCampaignResponsePayloadProps,
+	phoneNumberAPIProps,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -48,12 +52,17 @@ import {
 	savedTemplateQuickReplyProps,
 	savedTemplateTextProps,
 	templateDataProps,
+	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import Highlighter from 'react-highlight-words';
 import DynamicModal from './Popups/DynamicModal';
 import Buttons from './Components/Buttons';
 import uniqid from 'uniqid';
-import { getSavedTemplates } from '../../../redux/reducers/whatsappSlice';
+import {
+	fromPhoneNumbers,
+	getSavedTemplates,
+	saveCampaign,
+} from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
 import { RiCloseFill } from 'react-icons/ri';
@@ -66,6 +75,9 @@ import {
 	getPreviousLandingData,
 	getTestGroups,
 } from '../../../redux/reducers/smsSlice';
+import Toast from '../../../components/Toast/Toast.component';
+import { resetToastData } from '../Constant';
+import AlertModal from '../Editor/Popups/AlertModal';
 
 const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -137,12 +149,13 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
-	const [from, setFrom] = useState<string>('');
+	const [from, setFrom] = useState<string>('16067520281');
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
@@ -157,6 +170,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		{}
 	);
 	const [landingPages, setLandingPages] = useState<landingPageDataProps[]>([]);
+	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
@@ -183,6 +197,14 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
 
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
+
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
+
 	let updatedTemplateData: templateDataProps = {
 		templateText: '',
 		templateButtons: [],
@@ -202,11 +224,26 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		if (!testGroups || testGroups?.length === 0) {
 			dispatch(getTestGroups());
 		}
+		if (!personalFields || landingPages?.length <= 0) {
+			getDynamicModalValues();
+		}
+		getPhoneNumber();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handleSubmit = () => {
-		navigate('/react/Whatsapp/send/page2');
+	const getPhoneNumber = async () => {
+		// const { payload: phoneNumberData }: phoneNumberAPIProps =
+		// 	await dispatch<any>(fromPhoneNumbers());
+		const phoneNumberData: phoneNumberAPIProps['payload'] = [
+			'91901000001',
+			'91901000002',
+			'91901000003',
+		];
+		if (phoneNumberData?.length > 0) {
+			setFrom(phoneNumberData[0]);
+		}
+		setPhoneNumbersList(phoneNumberData);
 	};
 
 	const getDynamicModalValues = async () => {
@@ -236,10 +273,34 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		setpersonalFields({ ...staticPersonalField, ...personalFieldData });
 	};
 
-	const openDynamcFieldModal = async (variable: string) => {
-		if (!personalFields || landingPages?.length <= 0) {
-			await getDynamicModalValues();
+	const resetFields = () => {
+		setCampaignName('');
+		setSavedTemplate('');
+		setFrom('');
+		setTemplateData({
+			templateText: '',
+			templateButtons: [],
+		});
+		setTestSendOneContact('');
+		setIsTestSend(false);
+		setSelectedTestGroup([]);
+	};
+
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} onClose={undefined} />;
 		}
+		return null;
+	};
+
+	const openDynamcFieldModal = async (variable: string) => {
 		setDynamicModalVariable(Number(variable?.replace(/[{}]/g, '')));
 		setIsDynamcFieldModal(true);
 	};
@@ -490,6 +551,15 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
+	const onDeleteClick = () => {
+		setIsDeleteCampaignOpen(true);
+	};
+
+	const onDeleteCampaign = () => {
+		resetFields();
+		setIsDeleteCampaignOpen(false);
+	};
+
 	const onOkTestSending = () => {
 		if (validateSaveCampaign()) {
 		} else {
@@ -506,7 +576,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onCampaignFromRestore = () => {
-		setFrom('012345689');
+		setFrom('16067520281');
 	};
 
 	const onDynamcFieldModalSave = (
@@ -516,12 +586,56 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
+	const saveCampaignCall = async () => {
+		const reqData: saveCampaignDataProps = {
+			WACampaignID: 0,
+			TemplateId: savedTemplate,
+			Variables: updatedDynamicVariable,
+			name: campaignName,
+			fromnumber: from,
+			IsTestCampaign: isTestSend,
+		};
+		const { payload }: saveCampaignResponseProps = await dispatch<any>(
+			saveCampaign(reqData)
+		);
+		return payload;
+	};
+
+	const onSaveCampaign = async () => {
+		if (validateSaveCampaign()) {
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+
+			if (data.Status === 0) {
+				setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
+			} else {
+				data?.Message
+					? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		} else {
+			setIsValidationAlert(true);
+		}
+	};
+
+	const onSubmit = async (e: BaseSyntheticEvent) => {
+		e.preventDefault();
+		const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+		if (data.Status === 0) {
+			navigate('/react/Whatsapp/send/page2');
+		} else {
+			data?.Message
+				? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
+				: setToastMessage(ToastMessages.ERROR);
+		}
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}>
+			{renderToast()}
 			<Grid container justifyContent='space-between' alignItems='center'>
 				<Title
 					Text={translator('whatsappCampaign.header')}
@@ -545,11 +659,15 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 				</Box>
 			</Grid>
 			<br />
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={(e: BaseSyntheticEvent) => onSubmit(e)}>
 				<Grid container className={classes.WhatsappCampainP1}>
 					<Grid className={classes.WhatsappCampainP1Left} item md={12} lg={6}>
 						<Grid container>
-							<Grid className={classes.WhatsappCampainFields} md={12} lg={12}>
+							<Grid
+								item
+								className={classes.WhatsappCampainFields}
+								md={12}
+								lg={12}>
 								<CampaignFields
 									classes={classes}
 									savedTemplateList={savedTemplateList}
@@ -565,16 +683,18 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 									onFromChange={(from) => setFrom(from)}
 									onCampaignFromRestore={() => onCampaignFromRestore()}
 									showValidation={showValidation}
+									phoneNumbersList={phoneNumbersList}
 								/>
 							</Grid>
-							<Grid className={classes.WhatsappCampainTextarea} md={12} lg={12}>
+							<Grid
+								item
+								className={classes.WhatsappCampainTextarea}
+								md={12}
+								lg={12}>
 								<div className={classes.whatsappCampainHighlightContent}>
 									<div className={classes.whatsappCampainHighlightTextWrapper}>
 										<Highlighter
-											searchWords={[
-												...dynamicVariable,
-												// ...updatedDynamicVariable,
-											]}
+											searchWords={dynamicVariable}
 											autoEscape={true}
 											textToHighlight={templateData.templateText}
 											highlightTag={(tagData: tagDataProps) =>
@@ -809,7 +929,11 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 					</Grid>
 				</Grid>
 				<Grid container>
-					<Buttons classes={classes} onFormButtonClick={() => {}} />
+					<Buttons
+						classes={classes}
+						onDeleteCampaign={() => onDeleteClick()}
+						onSaveCampaign={() => onSaveCampaign()}
+					/>
 				</Grid>
 			</form>
 
@@ -868,6 +992,16 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 				addMore={() => {}}
 				updateTemplateData={() => {}}
 				isEditable={false}
+			/>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isDeleteCampaignOpen}
+				onClose={() => setIsDeleteCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.DeleteText')}
+				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+				type='delete'
+				onConfirmOrYes={() => onDeleteCampaign()}
 			/>
 		</DefaultScreen>
 	);
