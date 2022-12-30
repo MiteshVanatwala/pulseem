@@ -6,7 +6,7 @@ import {
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon, GroupsIcon, PreviewIcon
+  DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon, GroupsIcon, PreviewIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField, RestorDialogContent
@@ -24,9 +24,10 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const MmsManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { mmsData, mmsDeletedData } = useSelector(state => state.mms)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -143,7 +144,7 @@ const MmsManagnentScreen = ({ classes }) => {
     }
 
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -183,21 +184,19 @@ const MmsManagnentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('mms.locSearchCampaignResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -210,24 +209,17 @@ const MmsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             href='/Pulseem/MmsCampaignEdit.aspx?fromreact=true'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('mms.create')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
               data: mmsDeletedData
@@ -264,7 +256,7 @@ const MmsManagnentScreen = ({ classes }) => {
     const iconsMap = [
       {
         key: 'send',
-        icon: SendGreenIcon,
+        uIcon: SendIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
         remove: windowSize === 'xs' || Status !== 1,
         rootClass: classes.sendIcon,
@@ -273,7 +265,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -287,7 +279,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         disable: Status !== 1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -296,7 +288,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -308,7 +300,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'groups',
-        icon: GroupsIcon,
+        uIcon: GroupsIcon,
         disable: GroupNames.length === 0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -322,7 +314,7 @@ const MmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
         rootClass: classes.paddingIcon,
@@ -347,6 +339,7 @@ const MmsManagnentScreen = ({ classes }) => {
             <ManagmentIcon
               classes={classes}
               {...icon}
+              uIcon={<icon.uIcon width={16} height={18} className={'rowIcon'} />}
             />
           </Grid>
         ))}
@@ -510,10 +503,12 @@ const MmsManagnentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {sortData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -744,11 +739,13 @@ const MmsManagnentScreen = ({ classes }) => {
   }
   return (
     <DefaultScreen
-      currentPage='mms'
+      currentPage='sms'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('mms.logPageHeaderResource1.Text')} classes={classes} />
-      {renderSearchLine()}
+      <Box className={'topSection'}>
+        <Title Text={t('mms.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

@@ -1,4 +1,4 @@
-import { Button, Grid, Tab } from '@material-ui/core';
+import { Button, Grid, Tab, Tabs } from '@material-ui/core';
 import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +20,7 @@ import { ExportIcon } from '../../../assets/images/managment/index'
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
@@ -308,39 +309,41 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             justifyContent='space-between'
             alignItems='center'
             item xs={12}
-            className={classes.borderBottom1}>
-            <TabList
+            className={clsx(classes.directSendTabSection)}>
+
+            <Tabs
+              value={tabValue}
               onChange={(e, value) => { setAdvanceSearch(tabValue !== value ? false : advanceSearch); setTabValue(value) }}
-              indicatorColor="primary"
+              className={clsx(classes.tab, classes.tablistRoot)}
+              classes={{ indicator: classes.hideIndicator }}
             >
-              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
-              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-            </TabList>
+
+              <Tab label={t('appBar.sms.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} value={0} />
+              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} value={1} />
+            </Tabs>
+            {/* </TabList> */}
             <Grid item>
               {!isArchive && <Button
                 onClick={() => {
                   window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
                 }}
-                variant='contained'
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonArchive,
-                  classes.actionButtonLightBlue)}>
+                  classes.btn, classes.btnRounded
+                )}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+              >
                 {t('master.campaignsArchive')}
               </Button>}
               {windowSize !== 'xs' && <CustomTooltip
                 style={{ fontSize: 14 }}
                 text={t('report.ExportLimitation')}
                 icon={<Button
-                  variant='contained'
-                  size='medium'
                   className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonGreen,
-                    classes.exportButton, exportEnable === false ? classes.disabled : ''
+                    classes.btn, classes.btnRounded,
+                    exportEnable === false ? classes.disabled : ''
                   )}
                   onClick={handleExportFile}
-                  startIcon={<ExportIcon />}
+                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   {t('campaigns.exportFile')}
                 </Button>}
@@ -354,6 +357,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             <TabPanel value={0} index={0} className={classes.p0}>
               <DirectSMSReportTab
                 classes={classes}
+                title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
                 dispatch={dispatch}
                 windowSize={windowSize}
                 isRTL={isRTL}
@@ -377,6 +381,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             <TabPanel value={1} index={1} className={classes.p0}>
               <DirectEmailReportTab
                 classes={classes}
+                title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
                 dispatch={dispatch}
                 windowSize={windowSize}
                 isRTL={isRTL}
@@ -410,7 +415,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} classes={classes} />
       {renderTabs()}
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>

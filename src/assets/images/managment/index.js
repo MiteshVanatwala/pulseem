@@ -1,16 +1,15 @@
 import AutomationIcon from './Automation.tsx'
 import DeleteIcon from './Delete.tsx'
-import DuplicateIcon from './duplicate.png'
-import EditIcon from './edit.png'
+import DuplicateIcon from './Duplicate.tsx'
 import SendGreenIcon from './greenSend.png'
-import GroupsIcon from './groups.png'
+import GroupsIcon from './Groups.tsx'
 import PreviewIcon from './Preview.tsx'
 import SettingsIcon from './settings.png'
 // import ReportsIcon from './reports.png'
 import ShareIcon from './share.png'
-import CopyIcon from './copy.png'
+import CopyIcon from './Copy.tsx'
 import EmbedCodeIcon from './embed_code.png'
-import SurveryResultsIcon from './survery_results.png'
+import SurveryResultsIcon from './SurveryResults.tsx'
 import DeleteRecipient from './deleteRecipient.png'
 import DeleteEmail from './deleteEmail.png'
 import DeletePhone from './deletePhone.png'
@@ -28,6 +27,8 @@ import ReportsIcon from './ReportsIcon'
 import GroupRemoval from './GroupRemoval'
 import ResetIcon from './Reset.tsx'
 import SettingIcon from './Setting'
+import SendIcon from './Send.tsx'
+import EditIcon from './Edit'
 
 export {
   AutomationIcon,
@@ -58,7 +59,8 @@ export {
   List as ListIcon,
   GroupRemoval,
   ResetIcon,
-  SettingIcon
+  SettingIcon,
+  SendIcon
   // ReportsIcon
 
 }

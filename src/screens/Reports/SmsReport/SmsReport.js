@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel
 } from '@material-ui/core'
 import Switch from "react-switch";
 import {
@@ -23,6 +23,8 @@ import { smsReportStatus } from '../../../helpers/Constants';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { Title } from '../../../components/managment/Title';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -220,7 +222,7 @@ const SmsReport = ({ classes }) => {
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -274,40 +276,38 @@ const SmsReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
-            checked={smsQuery.ShowTestCampaigns}
-            onColor="#0371ad"
-            handleDiameter={20}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            height={15}
-            width={40}
-            className={clsx({ [classes.rtlSwitch]: isRTL })}
-            onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={smsQuery.ShowTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
           />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => clearSearch()}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -321,15 +321,12 @@ const SmsReport = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
+              classes.btn, classes.btnRounded,
               smsReport.length > 0 ? null : classes.disabled
             )}
             onClick={handleDownloadCsv}
-            startIcon={<ExportIcon />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -636,10 +633,12 @@ const SmsReport = ({ classes }) => {
     if (rowData.length > 0) {
       rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
       return (
-        <TableBody>
-          {rowData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-        </TableBody>
+        <Box className='tableBodyContainer'>
+          <TableBody>
+            {rowData
+              .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+          </TableBody>
+        </Box>
       )
     }
     return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -679,8 +678,10 @@ const SmsReport = ({ classes }) => {
       containerClass={classes.management}
       currentPage="reports"
       subPage="SmsReport">
-      <Title Text={t('common.SMSReports')} classes={classes} />
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title Text={t('common.SMSReports')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

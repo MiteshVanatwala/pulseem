@@ -21,6 +21,8 @@ import { ConvertColorStatus, ConvertEmailStatusText, EllipsisText, SourceType } 
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const RenderRow = ({
   classes,
@@ -203,6 +205,7 @@ const RenderRow = ({
 
 const DirectEmailReportTab = ({
   classes,
+  title,
   dispatch,
   windowSize,
   handleSearchInput = () => null,
@@ -435,15 +438,13 @@ const DirectEmailReportTab = ({
   const renderSearchLine = () => {
     const { email = false } = isSearching || {};
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
           <Link
@@ -458,13 +459,11 @@ const DirectEmailReportTab = ({
 
         {email ? <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => {
               clearSearch('email');
             }}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid> : null}
@@ -615,27 +614,29 @@ const DirectEmailReportTab = ({
     let sortData = directEmailReport && directEmailReport.DirectReport ? directEmailReport.DirectReport : null;
 
     return (
-      <TableBody className={classes.tableDirectRow}>
-        {!sortData || sortData.length === 0 ?
-          <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
-            <Typography>{t("common.NoDataTryFilter")}</Typography>
-          </Box> :
-          sortData.map(row =>
-            windowSize === 'xs' ? renderPhoneRow(row) :
-              <RenderRow
-                windowSize={windowSize}
-                classes={classes}
-                row={row}
-                noborderCell={noborderCell}
-                cellStyle={cellStyle}
-                rowStyle={rowStyle}
-                t={t}
-                isArchive={isArchive}
-                dispatch={dispatch}
-                onRefresh={handleSearch} />
-          )
-        }
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody className={classes.tableDirectRow}>
+          {!sortData || sortData.length === 0 ?
+            <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+              <Typography>{t("common.NoDataTryFilter")}</Typography>
+            </Box> :
+            sortData.map(row =>
+              windowSize === 'xs' ? renderPhoneRow(row) :
+                <RenderRow
+                  windowSize={windowSize}
+                  classes={classes}
+                  row={row}
+                  noborderCell={noborderCell}
+                  cellStyle={cellStyle}
+                  rowStyle={rowStyle}
+                  t={t}
+                  isArchive={isArchive}
+                  dispatch={dispatch}
+                  onRefresh={handleSearch} />
+            )
+          }
+        </TableBody>
+      </Box>
     )
   }
 
@@ -649,8 +650,8 @@ const DirectEmailReportTab = ({
             </Typography>
           </Grid>
         </Grid>
-        <TableContainer className={clsx(classes.borderAround, classes.mt10)}>
-          <Table className={clsx(classes.tableContainer, classes.noborder)} aria-label="collapsible table">
+        <TableContainer className={clsx(classes.tableStyle, classes.mt10)}>
+          <Table className={clsx(classes.tableContainer)} aria-label="collapsible table">
             {windowSize !== 'xs' && renderTableHead()}
             {renderTableBody()}
           </Table>
@@ -678,7 +679,10 @@ const DirectEmailReportTab = ({
 
   return (
     <>
-      {renderSearchLine()}
+      <Box className={'topSection'}>
+        <Title Text={title} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderTable()}
       {renderTablePagination()}
       {<TotalSection classes={classes} TotalObject={directEmailReport} callerType="email" />}

@@ -153,7 +153,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     flexDirection: "column",
     minWidth: 50,
-    padding: "0 10px",
+    padding: 10,
     "@media screen and (max-width: 1240px)": {
       padding: "0px 5px",
     },
@@ -547,8 +547,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& .MuiTableBody-root': {
       '& .MuiTableRow-root': {
         borderBottom: '1px solid #F0F5FF',
-        paddingTop: 10,
-        paddingBottom: 10,
         '&:nth-child(even)': {
           '& .rowIconContainer': {
             '& div': {
@@ -1549,6 +1547,19 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tabPanel: {
     minHeight: 220,
     marginTop: 20,
+  },
+
+  directSendTabSection: {
+    marginTop: 30,
+    background: 'aliceblue',
+    padding: 0,
+    maxWidth: 1400,
+    marginInline: 25,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    '& .MuiTabs-root': {
+      height: '100%'
+    }
   },
   lastReportPadding: {
     [theme.breakpoints.down("md")]: {

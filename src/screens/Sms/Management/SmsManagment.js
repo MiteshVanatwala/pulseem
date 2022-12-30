@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-  GroupsIcon, PreviewIcon
+  GroupsIcon, PreviewIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField, RestorDialogContent
@@ -29,9 +29,10 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const SmsManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
   const { smsData, smsDeletedData } = useSelector(state => state.sms)
   const { username } = useSelector(state => state.user)
   const { t } = useTranslation()
@@ -153,7 +154,7 @@ const SmsManagnentScreen = ({ classes }) => {
     }
 
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -193,21 +194,17 @@ const SmsManagnentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -227,42 +224,39 @@ const SmsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
-            variant='contained'
-            size='medium'
             onClick={() => {
               Redirect({ url: "/react/sms/create" })
             }}
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+              classes.btn, classes.btnRounded
+            )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('sms.create')}
           </Button>
         </Grid>
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
+              classes.btn, classes.btnRounded
             )}
             onClick={() => setDialogType({
               type: 'restore',
               data: smsDeletedData
-            })}>
+            })}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('campaigns.restoreDeleted')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonDarkBlue
+              classes.btn, classes.btnRounded
             )}
-            onClick={handleVerificationDialog}>
+            onClick={handleVerificationDialog}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('sms.verificationDialogTitle')}
           </Button>
         </Grid>}
@@ -295,7 +289,7 @@ const SmsManagnentScreen = ({ classes }) => {
     const iconsMap = [
       {
         key: 'send',
-        icon: SendGreenIcon,
+        uIcon: SendIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
@@ -304,7 +298,7 @@ const SmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -318,7 +312,7 @@ const SmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         href: `/react/sms/edit/${Id}`,
@@ -326,7 +320,7 @@ const SmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -338,7 +332,7 @@ const SmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'groups',
-        icon: GroupsIcon,
+        uIcon: GroupsIcon,
         disable: Groups && Groups.length === 0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -352,7 +346,7 @@ const SmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'automation',
-        icon: AutomationIcon,
+        uIcon: AutomationIcon,
         disable: AutomationID === 0,
         lable: t('campaigns.automation'),
         remove: windowSize === 'xs',
@@ -363,7 +357,7 @@ const SmsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
         disable: AutomationID !== 0,
@@ -383,12 +377,13 @@ const SmsManagnentScreen = ({ classes }) => {
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
-            className={icon.disable && classes.disabledCursor}
+            className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
             key={icon.key}
             item >
             <ManagmentIcon
               classes={classes}
               {...icon}
+              uIcon={<icon.uIcon width={16} height={18} className={'rowIcon'} />}
             />
           </Grid>
         ))}
@@ -417,7 +412,9 @@ const SmsManagnentScreen = ({ classes }) => {
             [classes.recipientsStatusSending]: status === 2,
             [classes.recipientsStatusCanceled]: status === 5
           }
-        )}>
+        )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+        >
           {t(statuses[status])}
         </Typography>
       </>
@@ -554,16 +551,18 @@ const SmsManagnentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {sortData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
   const renderTable = () => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize !== 'xs' && renderTableHead()}
           {renderTableBody()}
@@ -1048,8 +1047,10 @@ const SmsManagnentScreen = ({ classes }) => {
       currentPage='sms'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('common.SMSReports')} classes={classes} />
-      {renderSearchLine()}
+      <Box className={'topSection'}>
+        <Title Text={t('common.SMSReports')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

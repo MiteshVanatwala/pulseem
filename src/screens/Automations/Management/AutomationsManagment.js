@@ -27,11 +27,12 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
   const Redirect = useNavigate();
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -145,7 +146,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
 
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -185,21 +186,17 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('mms.locSearchCampaignResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -212,24 +209,16 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             href='/Pulseem/CreateAutomations.aspx?fromreact=true'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('automations.createResource.Text')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
               data: automationsDeletedData
@@ -266,7 +255,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
     const iconsMap = [
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -276,7 +265,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
         href: !IsActive ? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true` : '',
@@ -292,7 +281,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       },
       //{
       //  key: 'duplicate',
-      //  icon: DuplicateIcon,
+      //  uIcon: DuplicateIcon,
       //  lable: t('campaigns.lnkEditResource1.ToolTip'),
       //  rootClass: classes.paddingIcon,
       //  onClick: () => {
@@ -304,7 +293,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       //},
       {
         key: 'reports',
-        icon: ReportsIcon,
+        uIcon: ReportsIcon,
         lable: t('campaigns.Reports'),
         remove: windowSize === 'xs',
         href: `/Pulseem/automationreport.aspx?AutomationID=${ID}&fromreact=true`,
@@ -312,7 +301,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
         rootClass: classes.paddingIcon,
@@ -332,10 +321,14 @@ const AutomationsManagnentScreen = ({ classes }) => {
         {iconsMap.map(icon => (
           <Grid
             key={icon.key}
-            item >
+            item
+            className={'rowIconContainer'}
+          >
             <ManagmentIcon
               classes={classes}
+              className={'rowIconContainer'}
               {...icon}
+              uIcon={<icon.uIcon width={16} height={18} className={'rowIcon'} />}
             />
           </Grid>
         ))}
@@ -522,10 +515,12 @@ const AutomationsManagnentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {rowData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -800,8 +795,10 @@ const AutomationsManagnentScreen = ({ classes }) => {
       currentPage='automations'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('automations.logPageHeaderResource1.Text')} classes={classes} />
-      {renderSearchLine()}
+      <Box className={'topSection'}>
+        <Title Text={t('automations.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePadington()}

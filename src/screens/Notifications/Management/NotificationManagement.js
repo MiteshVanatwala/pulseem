@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-  GroupsIcon, PreviewIcon
+  GroupsIcon, PreviewIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, RestorDialogContent, SearchField
@@ -29,7 +29,7 @@ import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { MdNotificationsActive } from 'react-icons/md';
+import { MdArrowBackIos, MdArrowForwardIos, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
@@ -37,7 +37,7 @@ import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { notificationData, subAccountApiKey } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -275,7 +275,7 @@ const NotificationManagement = ({ classes }) => {
     }
 
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -315,21 +315,17 @@ const NotificationManagement = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -343,48 +339,32 @@ const NotificationManagement = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {<Grid item>
           <Button
-            variant='contained'
-            size='medium'
             onClick={() => Redirect({ url: '/react/Notification/create' })}
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.createNotification')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={handleShowDeletedItems}>
             {t('notifications.restoreDeleted')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={handleShowGroups}>
             {t('notifications.buttons.groups')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={handleShowSubscribers}>
             {t('notifications.buttons.subscribers')}
           </Button>
@@ -428,7 +408,7 @@ const NotificationManagement = ({ classes }) => {
     const iconsMap = [
       {
         key: 'send',
-        icon: SendGreenIcon,
+        uIcon: SendIcon,
         lable: t('notifications.buttons.send'),
         remove: StatusID !== 0,
         rootClass: classes.sendIcon,
@@ -437,7 +417,7 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('notifications.buttons.preview'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -447,7 +427,7 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         disable: StatusID !== 0,
         lable: t('notifications.buttons.edit'),
         // remove: windowSize === 'xs',
@@ -456,7 +436,7 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('notifications.buttons.duplicate'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -468,7 +448,7 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'groups',
-        icon: GroupsIcon,
+        uIcon: GroupsIcon,
         disable: (!HasGroups),
         lable: t('notifications.buttons.groups'),
         rootClass: classes.paddingIcon,
@@ -478,7 +458,7 @@ const NotificationManagement = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('notifications.buttons.delete'),
         showPhone: true,
         rootClass: classes.paddingIcon,
@@ -497,12 +477,13 @@ const NotificationManagement = ({ classes }) => {
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
-            className={icon.disable && classes.disabledCursor}
+            className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
             key={icon.key}
             item >
             <ManagmentIcon
               classes={classes}
               {...icon}
+              uIcon={<icon.uIcon width={16} height={18} className={'rowIcon'} />}
             />
           </Grid>
         ))}
@@ -684,10 +665,12 @@ const NotificationManagement = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {rowData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -1271,22 +1254,25 @@ const NotificationManagement = ({ classes }) => {
       currentPage='notifications'
       classes={classes}
       containerClass={classes.management}>
-      <Title
-        Text={t('notifications.notificationManagement')} classes={classes}
-        ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
-        Element={
-          <Button onClick={() => {
-            setCookie('scriptDialog', true);
-            setShowScriptDialog(true);
-          }
-          }
-            variant='contained'
-            className={clsx(
-              classes.actionButton,
-              classes.implementButtonFlex,
-              classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
-        } />
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title
+          Text={t('notifications.notificationManagement')} classes={classes}
+          ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
+          Element={
+            <Button onClick={() => {
+              setCookie('scriptDialog', true);
+              setShowScriptDialog(true);
+            }
+            }
+              className={clsx(
+                classes.implementButtonFlex,
+                classes.btn, classes.btnRounded
+              )}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            >{t('master.implementScript')}</Button>
+          } />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-  GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
+  GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, PopMassage, SearchField, RestorDialogContent
@@ -28,9 +28,10 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import EmailVerification from '../../Verification/EmailVerification';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -150,7 +151,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       )
     }
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -190,21 +191,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.searchButton, classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.searchButton, classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -221,24 +218,23 @@ const NewsletterManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+              classes.btn,
+              classes.btnRounded,
+            )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('campaigns.create')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
+              classes.btn,
+              classes.btnRounded,
             )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
               data: newslettersDeletedData
@@ -248,26 +244,23 @@ const NewsletterManagnentScreen = ({ classes }) => {
         </Grid>}
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonDarkBlue
+              classes.btn,
+              classes.btnRounded,
             )}
             onClick={redirctToArchive}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t('master.redirectToArchive')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonDarkBlue
+              classes.btn,
+              classes.btnRounded,
             )}
-            // onClick={() => setVerificationDialog(true)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({ type: 'verifyEmail' })}
           >
             {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}
@@ -312,7 +305,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     const iconsMap = [[
       {
         key: 'send',
-        icon: SendGreenIcon,
+        uIcon: SendIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
@@ -321,7 +314,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -331,7 +324,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -340,7 +333,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -352,7 +345,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'groups',
-        icon: GroupsIcon,
+        uIcon: GroupsIcon,
         disable: Groups && Groups.length === 0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -366,7 +359,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'copy',
-        icon: CopyIcon,
+        uIcon: CopyIcon,
         lable: t('campaigns.CloneResource1.HeaderText'),
         rootClass: classes.paddingIcon,
         text: shareUrl || '',
@@ -381,7 +374,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'reports',
-        icon: ReportsIcon,
+        uIcon: ReportsIcon,
         disable: Status === 1,
         lable: t('campaigns.Reports'),
         remove: windowSize === 'xs',
@@ -390,7 +383,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'automation',
-        icon: AutomationIcon,
+        uIcon: AutomationIcon,
         disable: AutomationID === 0,
         lable: t('campaigns.automation'),
         remove: windowSize === 'xs',
@@ -401,7 +394,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         rootClass: classes.paddingIcon,
         disable: AutomationID !== 0,
@@ -428,12 +421,14 @@ const NewsletterManagnentScreen = ({ classes }) => {
               container>
               {map.map(icon => (
                 <Grid
-                  className={clsx(icon.disable && classes.disabledCursor)}
+                  style={{ flex: 1, alignItems: 'center', }}
+                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
                   key={icon.key}
                   item >
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
+                    uIcon={<icon.uIcon width={16} height={18} className={'rowIcon'} />}
                   />
                   {icon.key === 'copy' && renderCopyToClipoard}
                 </Grid>
@@ -583,10 +578,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {sortData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -771,8 +768,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
       currentPage='newsletter'
       classes={classes}
       containerClass={classes.management}>
-      <Title Text={t('campaigns.logPageHeaderResource1.Text')} classes={classes} />
-      {renderSearchLine()}
+      <Box className={'topSection'}>
+        <Title Text={t('campaigns.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
