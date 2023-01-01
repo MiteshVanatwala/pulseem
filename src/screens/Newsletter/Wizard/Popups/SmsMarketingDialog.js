@@ -81,6 +81,25 @@ const SmsMarketingDialog = ({
     const onAddLinkToUpdate = () => {
         setLinkToCampaign(`https://${window.location.hostname}/Pulseem/Home/UpdateClientInfo/?ClientID===ClientID==&CampaignID=${settings.CampaignID}&Culture=he-IL`);
     }
+    const validateFromNumber = (e) => {
+        const text = e.target.value;
+        var lastChar = text.substring(text.length, text.length - 1);
+        var isNumber = /^[0-9]*$/;
+        var english = /^[A-Za-z0-9 ]*$/;
+
+        if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
+            e.target.value = text.substring(0, 10);
+        }
+        if (text.match(isNumber) && text.length >= 13) {
+            e.target.value = text.substring(0, 13);
+        }
+        if (!text.match(english)) {
+            e.target.value = e.target.value.replace(lastChar, '');
+        }
+
+        handleFromNumber(e.target.value)
+
+    }
     const handleFromNumber = (value) => {
         setSmsModel({ ...smsModel, FromNumber: value });
         if (value.length > 8) {
@@ -250,9 +269,7 @@ const SmsMarketingDialog = ({
                             onLoadedData={(e) => {
                                 handleFromNumber(e.target.value);
                             }}
-                            onChange={(e) => {
-                                handleFromNumber(e.target.value);
-                            }}
+                            onChange={validateFromNumber}
                             onKeyPress={(e) => {
                                 if (!e.key.match(/^[0-9]*$/)) {
                                     e.preventDefault();
