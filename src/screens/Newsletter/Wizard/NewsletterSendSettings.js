@@ -904,7 +904,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             {activeTab === 0 &&
                                 <Groups
                                     classes={classes}
-                                    list={showTestGroups ? [...testGroups, ...groupData?.Groups] : [...groupData?.Groups]}
+                                    list={showTestGroups ? [...testGroups.concat(groupData?.Groups)] : groupData?.Groups}
                                     // list={groupData?.Groups}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}
