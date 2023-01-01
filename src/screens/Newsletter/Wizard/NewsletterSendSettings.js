@@ -823,6 +823,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             });
         }
     }
+    const callbackShowTextGroups = async (showTestGroups) => {
+        if (!showTestGroups && testGroups.length > 0) {
+            setShowTestGroups(true);
+        }
+        else {
+            setShowTestGroups(false);
+        }
+    }
 
     return (
         <DefaultScreen
@@ -896,13 +904,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             {activeTab === 0 &&
                                 <Groups
                                     classes={classes}
-                                    list={groupData?.Groups}
+                                    list={showTestGroups ? [...testGroups, ...groupData?.Groups] : [...groupData?.Groups]}
+                                    // list={groupData?.Groups}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}
                                     callbackUpdateGroups={callbackUpdateGroups}
                                     callbackSelectAll={callbackSelectAll}
                                     //callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
-                                    callbackShowTestGroup={() => setShowTestGroups(!showTestGroups)}
+                                    callbackShowTestGroup={callbackShowTextGroups}
+                                    // () => setShowTestGroups(!showTestGroups)}
                                     showFilter={false}
                                     isSms={true}
                                     uniqueKey={'groups_2'}

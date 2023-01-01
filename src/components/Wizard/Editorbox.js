@@ -281,7 +281,7 @@ const Editorbox = ({
             setremovalMessageButtonDisabled(true);
         }
         setLoader(false);
-        onFromNumberInit(smsModel.FromNumber ?? fromNumber);
+        onFromNumberInit(smsModel.FromNumber && smsModel.FromNumber !== '' ? smsModel.FromNumber : fromNumber);
     }
     const linkCalculation = () => {
         const text = document.getElementById("yourMessage").value;
