@@ -77,15 +77,10 @@ const SummaryDialog = ({ classes,
                 return t("sms.SendNow");
             }
             case 2: {
-                return `${newsletterSendSummary.SendDate.format('dddd , MMMM Do YYYY, h:mm a')}`;
+                return `${moment(newsletterSendSummary?.SendDate).format('dddd , MMMM Do YYYY, h:mm a')}`;
             }
             case 3: {
                 const exDates = { ...extraData };
-                const newExDates = Object.keys(exDates).map((item, i) => {
-                    if (exDates[item]) {
-                        return item.toLowerCase().indexOf('extradate') > -1 && Object.values(extraData[item]);
-                    }
-                });
                 let specialField = null;
                 switch (newsletterSendSummary.AutoSendingByUserField) {
                     case "1":
