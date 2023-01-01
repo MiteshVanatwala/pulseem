@@ -1,4 +1,4 @@
-import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup } from '@material-ui/core'
+import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup, TextField, Link } from '@material-ui/core'
 import Switch from "react-switch";
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
@@ -28,6 +28,7 @@ const SmsMarketingDialog = ({
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
     const { verifiedNumbers } = useSelector(state => state.common);
+    const { commonSettings } = useSelector(state => state.sms);
 
     const [smsModel, setSmsModel] = useState({ ...smsMarketingModel })
     const [linkToUpdate, setLinkToUpdate] = useState(null);
@@ -178,9 +179,6 @@ const SmsMarketingDialog = ({
         else if (/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(smsModel.SendTime)) {
             tempErrors.SendTime = t('campaigns.newsLetterEditor.sendSettings.errors.invalidTime');
         }
-        if (!numberVerified) {
-            tempErrors.numberVerified = t('campaigns.newsLetterEditor.sendSettings.errors.enterVerifiedNumber');
-        }
         if (smsModel.SendSmsTo === -1) {
             tempErrors.SendSmsTo = t('campaigns.newsLetterEditor.sendSettings.errors.reqSendTo');
         }
@@ -223,32 +221,49 @@ const SmsMarketingDialog = ({
                     </FormControl >
                 </Grid>
                 <Grid item sm={12} md={6}>
-                    <LabeledTextField
-                        textFieldProps={{
-                            className: classes.NoPaddingtextField,
-                            helperText: !!errors.FromNumber && errors.FromNumber,
-                            error: !!errors.FromNumber,
-                            onChange: (e) => {
+                    <Box className={classes.spaceBetween}>
+                        <Box>
+                            <Typography>
+                                {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.fromNumber')}
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Link
+                                className={clsx(classes.textColorGrey, classes.link, commonSettings?.DefaultCellNumber === smsModel.FromNumber ? classes.disabled : null)}
+                                style={{ fontSize: '0.9rem' }}
+                                onClick={() => {
+                                    handleFromNumber(commonSettings?.DefaultCellNumber);
+                                }}
+                            >
+                                {t("mainReport.restore")}
+                            </Link>
+                        </Box>
+
+                    </Box>
+                    <Box>
+                        <TextField
+                            style={{ width: '100%' }}
+                            variant="outlined"
+                            className={classes.NoPaddingtextField}
+                            helperText={!!errors.FromNumber && errors.FromNumber}
+                            error={!!errors.FromNumber}
+                            onLoadedData={(e) => {
                                 handleFromNumber(e.target.value);
-                            },
-                            onKeyPress: (e) => {
+                            }}
+                            onChange={(e) => {
+                                handleFromNumber(e.target.value);
+                            }}
+                            onKeyPress={(e) => {
                                 if (!e.key.match(/^[0-9]*$/)) {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     return false;
                                 }
-                            }
-                            ,
-                            value: smsModel.FromNumber
-                        }}
-                        labelProps={{
-                            label: t('campaigns.newsLetterEditor.sendSettings.smsMarketing.fromNumber')
-                        }}
-                        containerProps={{
-                            direction: 'column'
-                        }}
-                    />
-                    {!numberVerified && <strong className={classes.link} onClick={() => setNewSmsVerification(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>}
+                            }}
+                            value={smsModel.FromNumber}
+                        />
+                        {!numberVerified && <strong className={classes.link} onClick={() => setNewSmsVerification(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>}
+                    </Box>
                 </Grid>
                 <Grid item sm={12} md={6}>
                     <Typography>
