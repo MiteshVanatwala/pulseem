@@ -17,7 +17,7 @@ import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { WhatsappStatus } from '../../../helpers/PulseemArrays';
-import { whatsappStatusToString, whatsappStatusColor } from '../../../helpers/functions';
+import { WhatsappStatusToString, WhatsappStatusColor } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
@@ -108,9 +108,9 @@ const DirectWhatsappReportTab = ({
             text = `${text.format('DD/MM/YYYY HH:mm')}`
         }
         if (dataType === 'status') {
-            text = t(whatsappStatusToString(text));
+            text = t(WhatsappStatusToString(text));
             return (
-                <Typography style={{ color: whatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+                <Typography style={{ color: WhatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
             )
         }
 
@@ -531,8 +531,8 @@ const DirectWhatsappReportTab = ({
                             {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
                         </Box>
                         <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-                            <Typography style={{ color: whatsappStatusColor(STATUS) }}>
-                                {t(whatsappStatusToString(STATUS))}
+                            <Typography style={{ color: WhatsappStatusColor(STATUS) }}>
+                                {t(WhatsappStatusToString(STATUS))}
                             </Typography>
                         </Box>
                     </Box>
