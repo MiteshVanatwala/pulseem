@@ -1,14 +1,19 @@
 import { BaseSyntheticEvent } from 'react';
-import { ClassesType } from '../../Classes.types';
-import { savedTemplateListProps } from '../Editor/WhatsappCreator.types';
+import { ClassesType } from '../../../Classes.types';
+import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
+
+export type smsProps = {
+	testGroups: [];
+};
 
 export type coreProps = {
 	windowSize: string;
 	isRTL: boolean;
+	language: string;
 };
 
 export type WhatsappCampaignProps = {
-	classes: ClassesType[];
+	classes: ClassesType['classes'];
 };
 
 export type dynamicButtonProps = {
@@ -64,10 +69,61 @@ export type testGroupModalProps = {
 	setSelectedTestGroup: (updatedSelectedGroup: testGroupDataProps[]) => void;
 };
 
+export type RightPaneProps = {
+	classes: ClassesType['classes'];
+};
+
+export type LeftPaneProps = {
+	classes: ClassesType['classes'];
+};
+export type WhatsappCampaignSecondProps = {
+	classes: ClassesType['classes'];
+};
+
+export type GroupsProps = {
+	classes: ClassesType['classes'];
+	list: testGroupDataProps[];
+	bsDot: boolean;
+	selectedList: testGroupDataProps[];
+	innerHeight: number;
+	showSortBy: boolean;
+	showFilter: boolean;
+	showSelectAll: boolean;
+	callbackSelectedGroups: (group: testGroupDataProps) => void;
+	callbackUpdateGroups: (value: testGroupDataProps[]) => void;
+	callbackSelectAll: () => void;
+	callbackReciFilter: () => void;
+	callbackShowTestGroup: (showTestGroups: boolean) => void;
+	uniqueKey: string;
+};
+
+export type FilterRecipientsDialogProps = {
+	classes: ClassesType['classes'];
+	isFilterModal: boolean;
+	onFilterModalClose: () => void;
+};
+
+export type SummaryModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	campaignName: string;
+	fromNumber: string;
+	onSummaryModalClose: () => void;
+};
+
 export type tagDataProps = {
 	children: string;
 	className: string;
 	highlightIndex: number;
+};
+
+export type ColumnAdjustmentModalProps = {
+	classes: ClassesType['classes'];
+	isColumnAdjustmentModal: boolean;
+	onColumnAdjustmentModalClose: () => void;
+	headers: string[];
+	setheaders: (headers: string[]) => void;
+	typedData: string[][];
 };
 
 export type DynamicModalFieldsProps = {
@@ -88,11 +144,32 @@ export type DynamicModalFieldsProps = {
 	setNavAddress: (value: string) => void;
 };
 
-export type TestGroupModalRows = {
+export type TestGroupModalRowsProps = {
 	classes: ClassesType['classes'];
 	searchText: string;
 	testGroupData: testGroupDataProps[];
 	searchGroupResult: testGroupDataProps[];
 	onSelectGroup: (groupID: number) => void;
 	isSelectdGroup: (groupID: number) => boolean;
+};
+
+export type selectArrayProps = {
+	isdisabled: boolean;
+	idx: number;
+	value: string;
+	label: string;
+};
+
+export type groupsListProps = {
+	classes: ClassesType['classes'];
+	list: any;
+	groupNameSearch: any;
+	selectedList: any;
+	onSelectGroup: (group: testGroupDataProps) => void;
+};
+
+export type GroupsSelectAllProps = {
+	classes: ClassesType['classes'];
+	onSelectAllGroup: () => void;
+	allSelected: boolean;
 };

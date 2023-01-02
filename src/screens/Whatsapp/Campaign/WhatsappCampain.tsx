@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +21,10 @@ import {
 	coreProps,
 	testGroupDataProps,
 	tagDataProps,
-} from './WhatsappCampaign.types';
-import { ClassesType } from '../../Classes.types';
-import CampaignFields from './CampaignFields';
+} from './Types/WhatsappCampaign.types';
+import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
-import WhatsappMobilePreview from '../Editor/WhatsappMobilePreview';
+import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
 	buttonsDataProps,
 	callToActionFieldProps,
@@ -42,20 +41,22 @@ import {
 	savedTemplateQuickReplyProps,
 	savedTemplateTextProps,
 	templateDataProps,
-} from '../Editor/WhatsappCreator.types';
+} from '../Editor/Types/WhatsappCreator.types';
 import Highlighter from 'react-highlight-words';
-import DynamicModal from './DynamicModal';
-import Buttons from './Buttons';
+import DynamicModal from './Popups/DynamicModal';
+import Buttons from './Components/Buttons';
 import uniqid from 'uniqid';
 import { getSavedTemplates } from '../../../redux/reducers/whatsappSlice';
-import ValidationAlert from './ValidationAlert';
-import TestGroupModal from './TestGroupModal';
+import ValidationAlert from './Popups/ValidationAlert';
+import TestGroupModal from './Popups/TestGroupModal';
 import { RiCloseFill } from 'react-icons/ri';
-import QuickReply from '../Editor/QuickReply';
-import ActionCallPopOver from '../Editor/ActionCallPopOver';
+import QuickReply from '../Editor/Popups/QuickReply';
+import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
+import { useNavigate } from 'react-router-dom';
 
-const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
+const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const testGroupData: testGroupDataProps[] = [
 		{
@@ -239,7 +240,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handleSubmit = () => {};
+	const handleSubmit = () => {
+		navigate('/react/Whatsapp/send/page2');
+	};
 
 	const isUpdatedVaraiable = (variable: string) => {
 		return updatedDynamicVariable?.includes(variable?.toLowerCase())
@@ -483,10 +486,10 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 						<b>
 							<>{translator('whatsappCampaign.note')}</>
 							<br />
-							<span style={{ marginRight: 300 }}>
-								Check your limit{' '}
+							<span style={isRTL ? { marginRight: 180 } : { marginRight: 300 }}>
+								{translator('whatsappCampaign.checkLimit')}{' '}
 								<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
-									here
+									{translator('whatsappCampaign.here')}
 								</a>
 							</span>
 						</b>
@@ -657,7 +660,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 												}
 												label={
 													<Typography style={{ fontSize: 18 }}>
-														Send to one contact
+														{translator('whatsappCampaign.oneContact')}
 													</Typography>
 												}
 											/>
@@ -683,7 +686,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 													variant='outlined'
 													color='primary'
 													className={classes.testOneContactSendButton}>
-													SEND
+													{translator('whatsappCampaign.sendButton')}
 												</Button>
 											</Stack>
 											<br />
@@ -701,7 +704,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 													}
 													label={
 														<Typography style={{ fontSize: 18 }}>
-															Send to test groups
+															{translator('whatsappCampaign.testGroups')}
 														</Typography>
 													}
 												/>
@@ -766,7 +769,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 				classes={classes}
 				isOpen={isValidationAlert}
 				onClose={() => setIsValidationAlert(false)}
-				title={'The following fields are invalid'}
+				title={translator('whatsappCampaign.sendValidation')}
 				requiredFields={groupSendValidationErrors}
 			/>
 
@@ -774,7 +777,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps & ClassesType) => {
 				classes={classes}
 				isOpen={isTestGroupModal}
 				onClose={() => setIsTestGroupModal(false)}
-				title={'Select group for test sending'}
+				title={translator('whatsappCampaign.sendTitle')}
 				testGroupData={testGroupData}
 				selectedTestGroup={selectedTestGroup}
 				setSelectedTestGroup={(updatedSelectedGroup) =>

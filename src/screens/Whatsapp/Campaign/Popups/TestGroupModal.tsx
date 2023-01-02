@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import {
 	testGroupDataProps,
 	testGroupModalProps,
-} from './WhatsappCampaign.types';
+} from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import TestGroupModalRows from './TestGroupModalRows';

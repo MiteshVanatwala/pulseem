@@ -8,9 +8,9 @@ import React, {
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
-import TemplateFields from './TemplateFields';
-import ActionCallPopOver from './ActionCallPopOver';
-import Buttons from './Buttons';
+import TemplateFields from './Components/TemplateFields';
+import ActionCallPopOver from './Popups/ActionCallPopOver';
+import Buttons from './Components/Buttons';
 import {
 	buttonsDataProps,
 	callToActionFieldProps,
@@ -32,17 +32,17 @@ import {
 	templateDataProps,
 	toastProps,
 	WhatsappCreatorProps,
-} from './WhatsappCreator.types';
+} from './Types/WhatsappCreator.types';
 import { ClassesType } from '../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import { Box, Grid } from '@material-ui/core';
-import WhatsappTemplateEditor from './WhatsappTemplateEditor';
-import { actionButtonProps } from './WhatsappCreator.types';
-import QuickReply from './QuickReply';
+import WhatsappTemplateEditor from './Components/WhatsappTemplateEditor';
+import { actionButtonProps } from './Types/WhatsappCreator.types';
+import QuickReply from './Popups/QuickReply';
 import { useDispatch, useSelector } from 'react-redux';
-import WhatsappMobilePreview from './WhatsappMobilePreview';
-import WhatsappTips from './whatsappTips';
-import AlertModal from './AlertModal';
+import WhatsappMobilePreview from './Components/WhatsappMobilePreview';
+import WhatsappTips from './Components/whatsappTips';
+import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
 	getSavedTemplates,
@@ -50,7 +50,7 @@ import {
 	uploadMedia,
 } from '../../../redux/reducers/whatsappSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import { JSONProps } from './JSON.types';
+import { JSONProps } from './Types/JSON.types';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const dispatch = useDispatch();

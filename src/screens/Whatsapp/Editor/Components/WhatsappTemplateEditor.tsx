@@ -9,13 +9,13 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	WhatsappCreatorProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import clsx from 'clsx';
 import { Box, Button, makeStyles, Tooltip } from '@material-ui/core';
 import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft';
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import { ClassesType } from '../../Classes.types';
+import { ClassesType } from '../../../Classes.types';
 
 const WhatsappTemplateEditor = ({
 	classes,

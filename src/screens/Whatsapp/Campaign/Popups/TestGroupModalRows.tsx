@@ -1,7 +1,7 @@
 import { FaCheck } from 'react-icons/fa';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import clsx from 'clsx';
-import { testGroupDataProps } from './WhatsappCampaign.types';
+import { testGroupDataProps, TestGroupModalRowsProps } from '../Types/WhatsappCampaign.types';
 import { Box } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,7 @@ const TestGroupModalRows = ({
 	searchGroupResult,
 	onSelectGroup,
 	isSelectdGroup,
-}: any) => {
+}: TestGroupModalRowsProps) => {
 	const { t: translator } = useTranslation();
 	return (
 		<Box className={classes.testGroupModalGroupList}>

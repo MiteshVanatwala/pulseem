@@ -19,7 +19,7 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	quickReplyProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -167,25 +167,29 @@ const QuickReply = ({
 						</Grid>
 					))}
 					<DialogActions>
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={addMore}
-							disabled={quickReplyButtons?.length >= 3 ? true : false}>
-							<>{translator('whatsapp.quickReply.addMore')}</>
-						</Button>
+						{isEditable && (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={addMore}
+								disabled={quickReplyButtons?.length >= 3 ? true : false}>
+								<>{translator('whatsapp.quickReply.addMore')}</>
+							</Button>
+						)}
 						<Button
 							onClick={closeQuickReply}
 							variant='contained'
 							color='secondary'>
 							<>{translator('whatsapp.quickReply.exit')}</>
 						</Button>
-						<Button
-							variant='contained'
-							type='submit'
-							className={classes.quickReplySave}>
-							<>{translator('whatsapp.quickReply.save')}</>
-						</Button>
+						{isEditable && (
+							<Button
+								variant='contained'
+								type='submit'
+								className={classes.quickReplySave}>
+								<>{translator('whatsapp.quickReply.save')}</>
+							</Button>
+						)}
 					</DialogActions>
 				</form>
 			</DialogContent>

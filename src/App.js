@@ -61,6 +61,7 @@ import NotificationSend from "./screens/Notifications/Editor/NotificationSend";
 import WhatsappCreator from "./screens/Whatsapp/Editor/WhatsappCreator";
 import PageNotFound from "./screens/404";
 import WhatsappCampaign from "./screens/Whatsapp/Campaign/WhatsappCampain";
+import SendCampaign from "./screens/Whatsapp/Campaign/SendCampaign";
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -223,8 +224,13 @@ const renderRoutes = (classes, redirect) => {
       />
 
       <Route
-        path={`/react/Whatsapp/send`}
+        path={`/react/Whatsapp/send/page1`}
         element={<WhatsappCampaign classes={classes} />}
+      />
+
+      <Route
+        path={`/react/Whatsapp/send/page2`}
+        element={<SendCampaign classes={classes} />}
       />
 
       {/* MMS */}

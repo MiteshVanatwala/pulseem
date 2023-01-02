@@ -1,15 +1,7 @@
-import {
-	Box,
-	TextField,
-	Typography,
-	MenuItem,
-	Grid,
-	Button,
-} from '@material-ui/core';
-import { ClassesType } from '../../Classes.types';
+import { Box, TextField, Typography, MenuItem, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { campaignFielsProps, coreProps } from './WhatsappCampaign.types';
+import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { BaseSyntheticEvent, useState } from 'react';
 
@@ -25,7 +17,7 @@ const CampaignFields = ({
 	onCampaignFromRestore,
 }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
-	const { isRTL, windowSize } = useSelector(
+	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const [isCampaign, setIsCampaign] = useState<boolean>(false);
@@ -70,14 +62,15 @@ const CampaignFields = ({
 				</Box>
 				<TextField
 					required
-					id='templateName'
 					type='text'
 					className={
 						isCampaign
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
-					onChange={(e: BaseSyntheticEvent) => onFromChange(e.target.value)}
+					onChange={(e: BaseSyntheticEvent) =>
+						onFromChange(e.target.value?.replace(/\D/g, ''))
+					}
 					value={from}
 				/>
 				{/* <TextField
@@ -115,6 +108,7 @@ const CampaignFields = ({
 
 				<TextField
 					select
+					required
 					id='selectSavedTemplate'
 					type='text'
 					className={

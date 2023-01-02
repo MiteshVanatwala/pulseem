@@ -10,6 +10,7 @@ export const TablePagination = ({
   page = 1,
   rowsPerPageOptions = [],
   rowsPerPage,
+  isNew,
   onRowsPerPageChange = () => null,
   onPageChange = () => null,
   returnPageOne = true,
