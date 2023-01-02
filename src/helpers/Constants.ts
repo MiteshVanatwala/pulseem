@@ -183,3 +183,13 @@ export const UploadSettings = {
     }
 
 };
+
+export const WhatsappStatus = [
+    { id: null, value: 'common.All' },
+    { id: 1, value: 'common.Pending' },
+    { id: 2, value: 'common.Sent' },
+    { id: 3, value: 'common.delivered' },
+    { id: 4, value: 'common.failedStatus' },
+    { id: 5, value: 'common.Queued' },
+    { id: 6, value: 'common.read' }
+];

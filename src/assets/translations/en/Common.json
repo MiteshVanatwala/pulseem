@@ -596,5 +596,11 @@
   "saveAndContinue": "Save and Continue",
   "backToAutomation": "Back to automation",
   "backToHome": "To Home page",
-  "backToCampaigns": "To Campaigns"
+  "backToCampaigns": "To Campaigns",
+  "showError": "Show error",
+  "showTemplateId": "Show Template",
+  "delivered": "Delivered",
+  "Queued": "Queued",
+  "read": "Read",
+  "NoInboundIn24Session": "No inbound"
 }

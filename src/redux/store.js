@@ -19,6 +19,7 @@ import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
 import ConnectorsSlice from './reducers/ConnectorsSlice';
 import galleryReducer from './reducers/gallerySlice'
+import whatsappReducer from './reducers/whatsappSlice'
 
 export default configureStore({
   reducer: {
@@ -41,6 +42,7 @@ export default configureStore({
     group: groupSlice,
     report: reportSlice,
     connectors: ConnectorsSlice,
-    gallery: galleryReducer
+    gallery: galleryReducer,
+    whatsapp: whatsappReducer
   },
 });

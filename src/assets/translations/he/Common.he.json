@@ -591,5 +591,11 @@
   "saveAndContinue": "שמור והמשך",
   "backToAutomation": "חזור לאוטומציה",
   "backToHome": "לדף הבית",
-  "backToCampaigns": "לניהול קמפיינים"
+  "backToCampaigns": "לניהול קמפיינים",
+  "showError": "הצג שגיאה",
+  "showTemplateId": "הצג תבנית",
+  "delivered": "הועבר",
+  "Queued": "בתור",
+  "read": "נקרא",
+  "NoInboundIn24Session": "לא התקבלה תשובה"
 }
