@@ -428,7 +428,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
-                    uIcon={<icon.uIcon width={16} height={18} className={'rowIcon'} />}
+                    uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                   />
                   {icon.key === 'copy' && renderCopyToClipoard}
                 </Grid>

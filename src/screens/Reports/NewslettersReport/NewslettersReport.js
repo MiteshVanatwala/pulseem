@@ -443,7 +443,7 @@ const NewslettersReport = ({ classes }) => {
           classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
-          uIcon={<RowIcon width={16} height={18} className={'rowIcon'} />}
+          uIcon={<RowIcon width={18} height={20} className={'rowIcon'} />}
           // lable={t('mainReport.locGraph.HeaderText')}
           // href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
           {...mgmtIconProps}

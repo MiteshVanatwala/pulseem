@@ -104,7 +104,7 @@ const IconWrapper = ({ iconName = "", onClick = () => false, ...props }) => {
       classes={props.classes}
       onClick={onClick}
     >
-      {icon.type === 1 ? <img src={icon.url} alt={icon.url} /> : <icon.comp width={16} height={18} />}
+      {icon.type === 1 ? <img src={icon.url} alt={icon.url} /> : <icon.comp width={18} height={20} />}
     </Box>
   );
 };
