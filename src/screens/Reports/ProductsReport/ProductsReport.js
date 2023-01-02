@@ -344,13 +344,13 @@ const ProductsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(Purchased, hrefs.Purchased)}
+                    {renderIntData(Purchased, Purchased > 0 && hrefs.Purchased)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(Abandoned, hrefs.Abandoned)}
+                    {renderIntData(Abandoned, Abandoned > 0 && hrefs.Abandoned)}
                 </TableCell>
                 <TableCell
                     classes={noBorderCellStyle}
