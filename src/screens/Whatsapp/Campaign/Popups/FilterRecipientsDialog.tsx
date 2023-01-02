@@ -24,149 +24,155 @@ const FilterRecipientsDialog = ({
   classes,
   isFilterModal,
   onFilterModalClose,
+  subAccountAllGroups,
+  finishedCampaigns,
+  selectedFilterCampaigns,
+  setFilterCampaigns,
+  selectedFilterGroups,
+  setFilterGroups,
 }: FilterRecipientsDialogProps) => {
   const [toggleReci, settoggleReci] = useState<boolean>(false);
   const [exceptionalDays, setExceptionalDays] = useState<string>("");
   const [dialogType, setDialogType] = useState<{}>({ type: null });
   const [RecipientsBool, setRecipientsBool] = useState<boolean>(false);
-  const [selectedFilterCampaigns, setFilterCampaigns] = useState<
-    testGroupDataProps[]
-  >([]);
+  // const [selectedFilterCampaigns, setFilterCampaigns] = useState<
+  //   testGroupDataProps[]
+  // >([]);
   const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
-  const [selectedFilterGroups, setFilterGroups] = useState<
-    testGroupDataProps[]
-  >([]);
+  // const [selectedFilterGroups, setFilterGroups] = useState<
+  //   testGroupDataProps[]
+  // >([]);
   const [bsDot, setbsDot] = useState<boolean>(false);
   const [snackbarRecipients, setsnackbarRecipients] = useState<boolean>(false);
   const [RecipientsSnackbar, setRecipientsSnackbar] = useState<boolean>(false);
 
   const { testGroups } = useSelector((state: { sms: smsProps }) => state.sms);
 
-  const subAccountAllGroups: testGroupDataProps[] = [
-    {
-      GroupID: 89979,
-      GroupName: "ccccc (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2017-08-20T11:02:08.933",
-      UpdateDate: "2017-08-20T11:02:08.933",
-      IsTestGroup: false,
-      IsDynamic: false,
-      Recipients: 0,
-    },
-    {
-      GroupID: 89980,
-      GroupName: "cdgsfsgdf (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2017-08-20T11:02:39.197",
-      UpdateDate: "2017-08-20T12:44:55.69",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 5,
-    },
-    {
-      GroupID: 166670,
-      GroupName: "left123",
-      SubAccountID: 0,
-      CreationDate: "2022-04-08T14:41:09.493",
-      UpdateDate: "2022-04-17T12:46:45.297",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 1,
-    },
-    {
-      GroupID: 165652,
-      GroupName: "MeitalTest (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2022-03-10T14:33:53.9",
-      UpdateDate: "2022-03-10T14:33:53.9",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 0,
-    },
-    {
-      GroupID: 81457,
-      GroupName: "omer (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2022-04-08T14:41:09.493",
-      UpdateDate: "2017-05-21T14:45:34.537",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 0,
-    },
-    {
-      GroupID: 55962,
-      GroupName: "בדיקה (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2016-01-18T18:24:45.42",
-      UpdateDate: "2016-01-18T18:28:09.06",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 2,
-    },
-  ];
+  // const subAccountAllGroups: testGroupDataProps[] = [
+  //   {
+  //     GroupID: 89979,
+  //     GroupName: "ccccc (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2017-08-20T11:02:08.933",
+  //     UpdateDate: "2017-08-20T11:02:08.933",
+  //     IsTestGroup: false,
+  //     IsDynamic: false,
+  //     Recipients: 0,
+  //   },
+  //   {
+  //     GroupID: 89980,
+  //     GroupName: "cdgsfsgdf (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2017-08-20T11:02:39.197",
+  //     UpdateDate: "2017-08-20T12:44:55.69",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 5,
+  //   },
+  //   {
+  //     GroupID: 166670,
+  //     GroupName: "left123",
+  //     SubAccountID: 0,
+  //     CreationDate: "2022-04-08T14:41:09.493",
+  //     UpdateDate: "2022-04-17T12:46:45.297",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 1,
+  //   },
+  //   {
+  //     GroupID: 165652,
+  //     GroupName: "MeitalTest (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2022-03-10T14:33:53.9",
+  //     UpdateDate: "2022-03-10T14:33:53.9",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 0,
+  //   },
+  //   {
+  //     GroupID: 81457,
+  //     GroupName: "omer (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2022-04-08T14:41:09.493",
+  //     UpdateDate: "2017-05-21T14:45:34.537",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 0,
+  //   },
+  //   {
+  //     GroupID: 55962,
+  //     GroupName: "בדיקה (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2016-01-18T18:24:45.42",
+  //     UpdateDate: "2016-01-18T18:28:09.06",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 2,
+  //   },
+  // ];
 
-  const finishedCampaigns: testGroupDataProps[] = [
-    {
-      GroupID: 899579,
-      GroupName: "ccccc (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2017-08-20T11:02:08.933",
-      UpdateDate: "2017-08-20T11:02:08.933",
-      IsTestGroup: false,
-      IsDynamic: false,
-      Recipients: 0,
-    },
-    {
-      GroupID: 891980,
-      GroupName: "cdgsfsgdf (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2017-08-20T11:02:39.197",
-      UpdateDate: "2017-08-20T12:44:55.69",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 5,
-    },
-    {
-      GroupID: 1666780,
-      GroupName: "left123",
-      SubAccountID: 0,
-      CreationDate: "2022-04-08T14:41:09.493",
-      UpdateDate: "2022-04-17T12:46:45.297",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 1,
-    },
-    {
-      GroupID: 1655652,
-      GroupName: "MeitalTest (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2022-03-10T14:33:53.9",
-      UpdateDate: "2022-03-10T14:33:53.9",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 0,
-    },
-    {
-      GroupID: 814457,
-      GroupName: "omer (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2022-04-08T14:41:09.493",
-      UpdateDate: "2017-05-21T14:45:34.537",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 0,
-    },
-    {
-      GroupID: 552962,
-      GroupName: "בדיקה (Testing)",
-      SubAccountID: 0,
-      CreationDate: "2016-01-18T18:24:45.42",
-      UpdateDate: "2016-01-18T18:28:09.06",
-      IsTestGroup: true,
-      IsDynamic: false,
-      Recipients: 2,
-    },
-  ];
+  // const finishedCampaigns: testGroupDataProps[] = [
+  //   {
+  //     GroupID: 899579,
+  //     GroupName: "ccccc (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2017-08-20T11:02:08.933",
+  //     UpdateDate: "2017-08-20T11:02:08.933",
+  //     IsTestGroup: false,
+  //     IsDynamic: false,
+  //     Recipients: 0,
+  //   },
+  //   {
+  //     GroupID: 891980,
+  //     GroupName: "cdgsfsgdf (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2017-08-20T11:02:39.197",
+  //     UpdateDate: "2017-08-20T12:44:55.69",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 5,
+  //   },
+  //   {
+  //     GroupID: 1666780,
+  //     GroupName: "left123",
+  //     SubAccountID: 0,
+  //     CreationDate: "2022-04-08T14:41:09.493",
+  //     UpdateDate: "2022-04-17T12:46:45.297",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 1,
+  //   },
+  //   {
+  //     GroupID: 1655652,
+  //     GroupName: "MeitalTest (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2022-03-10T14:33:53.9",
+  //     UpdateDate: "2022-03-10T14:33:53.9",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 0,
+  //   },
+  //   {
+  //     GroupID: 814457,
+  //     GroupName: "omer (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2022-04-08T14:41:09.493",
+  //     UpdateDate: "2017-05-21T14:45:34.537",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 0,
+  //   },
+  //   {
+  //     GroupID: 552962,
+  //     GroupName: "בדיקה (Testing)",
+  //     SubAccountID: 0,
+  //     CreationDate: "2016-01-18T18:24:45.42",
+  //     UpdateDate: "2016-01-18T18:28:09.06",
+  //     IsTestGroup: true,
+  //     IsDynamic: false,
+  //     Recipients: 2,
+  //   },
+  // ];
 
   const { t: translator } = useTranslation();
 
@@ -291,7 +297,7 @@ const FilterRecipientsDialog = ({
             {translator("whatsappCampaign.filter")}
           </div>
           <Box className={classes.filterModalClose}>
-            <Close fontSize={"small"} onClick={onClose} />
+            <Close fontSize={"small"} onClick={onFilterModalClose} />
           </Box>
           <Box className={classes.filterModalInfoWrapper}>
             <Box className={classes.filterModalInfo}>
