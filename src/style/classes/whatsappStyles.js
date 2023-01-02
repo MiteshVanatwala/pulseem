@@ -1473,4 +1473,26 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '3px 0px 2px 10px',
 		background: 'url(../../../../assets/images/managment/calendar.svg)',
 	},
+	whatsappManagementbuttonField: {
+		borderRadius: '5px',
+		border: '1px solid #bbb',
+		outline: 'none',
+		padding: '3px 11px 3px 2px',
+		fontSize: '16px',
+		width: 'calc(100% - 15px)',
+		'&::placeholder': {
+			fontSize: '16px',
+		},
+		'& label': {
+			marginTop: '0px',
+		},
+		'& label + .MuiInput-formControl': {
+			marginTop: '0px',
+		},
+		'& .MuiInputLabel-formControl': {
+			transform: 'none',
+			top: '10px',
+			left: '12px',
+		},
+	},
 });

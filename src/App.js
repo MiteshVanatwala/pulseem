@@ -222,33 +222,48 @@ const renderRoutes = (classes, redirect) => {
 			{/* Whatsapp */}
 
 			<Route
-				path={`/react/Whatsapp/create`}
+				path={`/react/whatsapp/template/create`}
 				element={<WhatsappCreator classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/Whatsapp/send/page1`}
+				path={`/react/whatsapp/campaign/create/page1`}
 				element={<WhatsappCampaign classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/Whatsapp/send/page2`}
+				path={`/react/whatsapp/campaign/create/page2`}
 				element={<SendCampaign classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/Whatsapp/TemplateManagement`}
+				path={`/react/whatsapp/templatemanagement`}
 				element={<ManageWhatsAppTemplates classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/Whatsapp/Reports`}
+				path={`/react/whatsapp/reports`}
 				element={<WhatsappReports classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/Whatsapp/CampaignManagement`}
+				path={`/react/whatsapp/campaignmanagement`}
 				element={<ManageWhatsAppCampaigns classes={classes} />}
+			/>
+
+			<Route
+				path={`/react/whatsapp/template/edit/:templateID`}
+				element={<WhatsappCreator classes={classes} />}
+			/>
+
+			<Route
+				path={`/react/whatsapp/campaign/edit/page1/:campaignID`}
+				element={<WhatsappCampaign classes={classes} />}
+			/>
+
+			<Route
+				path={`/react/whatsapp/campaign/edit/page2/:campaignID`}
+				element={<SendCampaign classes={classes} />}
 			/>
 
 			{/* MMS */}

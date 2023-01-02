@@ -7,9 +7,7 @@ import {
 	TextMedia,
 	TextMediaAndButton,
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
-import {
-	saveCampaignDataProps,
-} from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import { saveCampaignDataProps } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
 type errorProps = {
 	message: string;
@@ -17,6 +15,10 @@ type errorProps = {
 
 type getSavedTemplatesDataProps = {
 	templateStatus: number;
+};
+
+type getSavedTemplatesDataByIdProps = {
+	templateId: string;
 };
 
 type submitTemplatesDataProps =
@@ -57,6 +59,23 @@ type sendCampaignDataProps = {
 export const getSavedTemplates = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
 	async (data: getSavedTemplatesDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppTemplate`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getSavedTemplatesById = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppTemplate',
+	async (data: getSavedTemplatesDataByIdProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/GetWhatsAppTemplate`,

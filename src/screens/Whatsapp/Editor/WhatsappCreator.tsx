@@ -116,8 +116,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
-	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] = useState(false);
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] =
+		useState<boolean>(false);
+	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
+		useState<boolean>(false);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 

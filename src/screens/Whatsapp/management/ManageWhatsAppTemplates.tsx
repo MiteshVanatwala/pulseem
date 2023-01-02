@@ -1,6 +1,8 @@
 import {
+	Box,
 	Button,
 	Grid,
+	MenuItem,
 	Table,
 	TableCell,
 	TableContainer,
@@ -10,49 +12,79 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import uniqid from 'uniqid';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-	AutomationIcon,
 	DeleteIcon,
 	DuplicateIcon,
 	EditIcon,
 	SendGreenIcon,
 	SearchIcon,
-	GroupsIcon,
 	PreviewIcon,
 } from '../../../assets/images/managment/index';
-import {
-	DateField,
-	ManagmentIcon,
-	TablePagination,
-} from '../../../components/managment/index';
+import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import { coreProps } from '../Editor/Types/WhatsappCreator.types';
+import {
+	buttonsDataProps,
+	callToActionProps,
+	coreProps,
+	quickReplyButtonProps,
+	savedTemplateAPIProps,
+	savedTemplateCallToActionProps,
+	savedTemplateCardProps,
+	savedTemplateDataProps,
+	savedTemplateListProps,
+	savedTemplateMediaProps,
+	savedTemplateQuickReplyProps,
+	savedTemplateTextProps,
+	templateDataProps,
+} from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
-import { DatePicker } from '@material-ui/pickers';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import {
+	ManagmentIconProps,
+	statusProps,
+	templateRowDataProps,
+} from './Types/Management.types';
+import AlertModal from '../Editor/Popups/AlertModal';
+import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
+import { getSavedTemplatesById } from '../../../redux/reducers/whatsappSlice';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
+	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
-		null
-	);
-	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
+	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
+		useState<boolean>(false);
+	const [isPreviewCampaignOpen, setIsPreviewCampaignOpen] =
+		useState<boolean>(false);
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] =
+		useState<boolean>(false);
+	const [isDuplicateCampaignOpen, setIsDuplicateCampaignOpen] =
+		useState<boolean>(false);
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
+	const [campainStatusSearch, setCampainStatusSearch] = useState<string>('Status');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
 	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-	const rows: any = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+	const [templateData, setTemplateData] = useState<templateDataProps>({
+		templateText: '',
+		templateButtons: [],
+	});
+	const [savedTemplateList, setSavedTemplateList] = useState<
+		savedTemplateListProps[]
+	>([]);
+	const [buttonType, setButtonType] = useState<string>('');
+	const [fileData, setFileData] = useState<string>('');
+	const rows: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -60,31 +92,27 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		root: classes.tableCellRoot,
 	};
 	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
+	let updatedTemplateData: templateDataProps = {
+		templateText: '',
+		templateButtons: [],
+	};
+	let updatedButtonType: string = '';
+	let updatedFileData: string = '';
 	useEffect(() => {
-		if (
-			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
-			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
-			campaineNameSearch?.length > 0
-		) {
+		if (campainStatusSearch?.length > 0 || campaineNameSearch?.length > 0) {
 			setSearching(true);
 		}
-	}, [fromDate, toDate, campaineNameSearch]);
-	const handleFromDateChange = (value: any) => {
-		if (toDate && value > toDate) {
-			handleToDate(null);
-		}
-		handleFromDate(value);
-	};
-	const handleCampainNameChange = (event: any) => {
+	}, [campaineNameSearch, campainStatusSearch]);
+
+	const handleCampainNameChange = (event: BaseSyntheticEvent) => {
 		setCampaineNameSearch(event.target.value);
 	};
 	const clearSearch = () => {
 		setCampaineNameSearch('');
-		handleFromDate(null);
-		handleToDate(null);
+		setCampainStatusSearch('');
 		setSearching(false);
 	};
-	const renderNameCell = (row: any) => {
+	const renderNameCell = (row: templateRowDataProps) => {
 		let date = null;
 		let text = '';
 		if (!row.SendDate) {
@@ -123,33 +151,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			</>
 		);
 	};
-	const renderRecipientsCell = (recipients: any) => {
-		return (
-			<>
-				<Typography className={classes.middleText}>
-					{recipients.toLocaleString()}
-				</Typography>
-				<Typography className={classes.middleText}>
-					{translator('campaigns.recipients')}
-				</Typography>
-			</>
-		);
-	};
-
-	const renderMessagesCell = (messages: any) => {
-		return (
-			<>
-				<Typography className={classes.middleText}>
-					{messages.toLocaleString()}
-				</Typography>
-				<Typography className={classes.middleText}>
-					{translator('sms.CreditsResource1.HeaderText')}
-				</Typography>
-			</>
-		);
-	};
-	const renderStatusCell = (status: any) => {
-		const statuses: any = {
+	const renderStatusCell = (status: number) => {
+		const statuses: statusProps = {
 			1: 'common.Created',
 			2: 'common.Sending',
 			3: 'campaigns.Stopped',
@@ -172,47 +175,267 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			</>
 		);
 	};
-	const renderCellIcons = (row: any) => {
-		const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row;
 
-		const iconsMap = [
+	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					return {
+						id: uniqid(),
+						typeOfAction: '',
+						fields: [
+							{
+								fieldName: translator('whatsapp.websiteButtonText'),
+								type: 'text',
+								placeholder: translator(
+									'whatsapp.websiteButtonTextPlaceholder'
+								),
+								value: button.title,
+							},
+						],
+					};
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: translator('whatsapp.phoneButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.phoneButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.country'),
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972 Israel',
+								},
+								{
+									fieldName: translator('whatsapp.phoneNumber'),
+									type: 'tel',
+									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: translator('whatsapp.websiteButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.websiteButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.websiteURL'),
+									type: 'text',
+									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
+		}
+	};
+
+	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
+		const quickReplyData: savedTemplateQuickReplyProps =
+			templateData?.types['quick-reply'];
+		updatedButtonType = 'quickReply';
+		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		updatedTemplateData.templateText = quickReplyData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
+		const callToActionData: savedTemplateCallToActionProps =
+			templateData?.types['call-to-action'];
+		updatedButtonType = 'callToAction';
+		const buttonData = setButtonsData(
+			'callToAction',
+			callToActionData?.actions
+		);
+		updatedTemplateData.templateText = callToActionData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
+		const cardData: savedTemplateCardProps = templateData?.types['card'];
+		updatedTemplateData.templateText = cardData?.title;
+		if (cardData?.actions?.length > 0) {
+			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
+				updatedButtonType = 'callToAction';
+				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else {
+				updatedButtonType = 'quickReply';
+				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			}
+		}
+		if (cardData?.media?.length > 0) {
+			updatedFileData = cardData?.media[0];
+		}
+	};
+
+	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
+		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+		updatedTemplateData.templateText = mediaData?.body;
+		if (mediaData?.media?.length > 0) {
+			updatedFileData = mediaData?.media[0];
+		}
+	};
+
+	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
+		const textData: savedTemplateTextProps = templateData?.types['text'];
+		updatedTemplateData.templateText = textData?.body;
+	};
+
+	const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
+		if ('quick-reply' in templateData?.types) {
+			saveQuickreplyTemplate(templateData);
+		}
+		if ('call-to-action' in templateData?.types) {
+			saveCallToActionTemplate(templateData);
+		} else if ('card' in templateData?.types) {
+			saveCardTemplate(templateData);
+		} else if ('media' in templateData?.types) {
+			saveMediaTemplate(templateData);
+		} else if ('text' in templateData?.types) {
+			saveTextTemplate(templateData);
+		}
+	};
+
+	const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
+		if (templateData) {
+			setUpdatedTemplateData(templateData);
+		}
+		setFileData(updatedFileData);
+		setButtonType(updatedButtonType);
+		setTemplateData(updatedTemplateData);
+	};
+
+	const onPreview = async (templateId: string) => {
+		const templateData: savedTemplateAPIProps = await dispatch<any>(
+			getSavedTemplatesById({
+				templateId: templateId
+					? templateId
+					: 'HX7d12be9e2c0cef2863d4adb5e27c40e2',
+			})
+		);
+		if (templateData.payload.Status === 'SUCCESS') {
+			const templates = templateData.payload.Items
+				? templateData.payload.Items
+				: [];
+			if (templates && templates?.length > 0) {
+				const templateData = templates[0]?.Data;
+				onSavedTemplateChange(templateData);
+			}
+			setIsPreviewCampaignOpen(true);
+		}
+	};
+
+	const onRowIconClick = (key: string, templateId: string) => {
+		switch (key) {
+			case 'send':
+				setIsSubmitCampaignOpen(true);
+				break;
+			case 'preview':
+				onPreview(templateId);
+				break;
+			case 'duplicate':
+				setIsDuplicateCampaignOpen(true);
+				break;
+			case 'delete':
+				setIsDeleteCampaignOpen(true);
+				break;
+
+			default:
+				break;
+		}
+	};
+
+	const renderCellIcons = (row: templateRowDataProps) => {
+		const { Status, AutomationID, AutomationTriggerInActive } = row;
+
+		const iconsMap: ManagmentIconProps[] = [
 			{
 				key: 'send',
+				buttonKey: 'send',
 				icon: SendGreenIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
 				remove:
 					Status !== 1 ||
 					(AutomationID !== 0 && AutomationTriggerInActive === false),
+				onClick: (key: string, templateId: string) =>
+					onRowIconClick(key, templateId),
+				classes: classes,
 				rootClass: classes.sendIcon,
 				textClass: classes.sendIconText,
+				templateId: row.Id.toString(),
 			},
 			{
 				key: 'preview',
+				buttonKey: 'preview',
 				icon: PreviewIcon,
 				lable: translator('campaigns.Image1Resource1.ToolTip'),
 				remove: windowSize === 'xs',
+				onClick: (key: string, templateId: string) =>
+					onRowIconClick(key, templateId),
+				classes: classes,
 				rootClass: classes.paddingIcon,
+				templateId: row.Id.toString(),
 			},
 			{
 				key: 'edit',
+				buttonKey: 'edit',
 				icon: EditIcon,
 				disable: Status !== 1 || AutomationID !== 0,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
+				onClick: (key: string, templateId: string) =>
+					onRowIconClick(key, templateId),
+				classes: classes,
 				rootClass: classes.paddingIcon,
+				href: `/react/whatsapp/template/edit/${'01212'}`,
+				templateId: row.Id.toString(),
 			},
 			{
 				key: 'duplicate',
+				buttonKey: 'duplicate',
 				icon: DuplicateIcon,
 				lable: translator('campaigns.lnkEditResource1.ToolTip'),
+				onClick: (key: string, templateId: string) =>
+					onRowIconClick(key, templateId),
+				classes: classes,
 				rootClass: classes.paddingIcon,
+				templateId: row.Id.toString(),
 			},
 			{
 				key: 'delete',
+				buttonKey: 'delete',
 				icon: DeleteIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
-				showPhone: true,
 				disable: AutomationID !== 0,
+				onClick: (key: string, templateId: string) =>
+					onRowIconClick(key, templateId),
+				classes: classes,
 				rootClass: classes.paddingIcon,
+				templateId: row.Id?.toString(),
 			},
 		];
 		return (
@@ -226,7 +449,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						className={icon?.disable ? classes.disabledCursor : ''}
 						key={icon.key}
 						item>
-						<ManagmentIcon classes={classes} {...icon} uIcon={false} />
+						<ManagmentIcon {...icon} />
 					</Grid>
 				))}
 			</Grid>
@@ -235,6 +458,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 	const getRows = () => {
 		let sortData = isSearching ? rows : rows;
+		
 		sortData = sortData.slice(
 			(page - 1) * rowsPerPage,
 			(page - 1) * rowsPerPage + rowsPerPage
@@ -242,6 +466,19 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 		return sortData?.length > 0 ? sortData : rows;
 	};
+
+	const onSubmitCampaign = async () => {
+		console.log('onSubmitCampaign');
+	};
+
+	const onDeleteCampaign = async () => {
+		console.log('onDeleteCampaign');
+	};
+
+	const onDuplicateCampaign = async () => {
+		console.log('onDuplicateCampaign');
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -257,7 +494,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			<div className={classes.manageWhatsappTemplates}>
 				<Grid container spacing={2} className={classes.lineTopMarging}>
-					<Grid item>
+					<Grid item lg={2}>
 						<TextField
 							variant='outlined'
 							size='small'
@@ -270,29 +507,21 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						/>
 					</Grid>
 
-					{windowSize !== 'xs' ? (
-						<Grid item>
-							<DatePicker
-								className={classes.whatsappDatePicker}
-								onChange={handleFromDate}
-								value={fromDate}
-								format={'DD/MM/YYYY'}
-								placeholder={'From Date'}
-							/>
-						</Grid>
-					) : null}
+					<Grid item lg={2}>
+						<TextField
+							select
+							type='text'
+							className={classes.whatsappManagementbuttonField}
+							onChange={(e: BaseSyntheticEvent) =>
+								setCampainStatusSearch(e.target.value)
+							}
+							value={campainStatusSearch}>
+							<MenuItem key={'no-data-template'} value={'template.TemplateId'}>
+								<>template.TemplateId</>
+							</MenuItem>
+						</TextField>
+					</Grid>
 
-					{windowSize !== 'xs' ? (
-						<Grid item>
-							<DatePicker
-								className={classes.whatsappDatePicker}
-								onChange={handleToDate}
-								value={toDate}
-								format={'DD/MM/YYYY'}
-								placeholder={'To Date'}
-							/>
-						</Grid>
-					) : null}
 					<Grid item>
 						<Button
 							size='large'
@@ -322,12 +551,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					spacing={2}
 					className={classes.manageTemplatesHeaderButtons}>
 					<div>
-						<Button className={'green'}>Create Campaign</Button>
-						<Button className={'blue'}>Restore Deleted</Button>
+						<Button className={'green'}>Create Template</Button>
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
-						{rows?.length || 0} Campaigns
+						{rows?.length || 0} Templates
 					</span>
 				</Grid>
 
@@ -387,7 +615,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 										classes={cellStyle}
 										align='center'
 										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderStatusCell(1)}
+										{renderStatusCell(2)}
 									</TableCell>
 									<TableCell
 										component='th'
@@ -425,6 +653,64 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					returnPageOne={false}
 				/>
 			</div>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isSubmitCampaignOpen}
+				onClose={() => setIsSubmitCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.ConfirmText')}
+				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
+				onConfirmOrYes={() => onSubmitCampaign()}
+				type='submit'>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						campaignNumber='1'
+						templateData={templateData}
+						buttonType={buttonType}
+						fileData={fileData}
+					/>
+				</Box>
+			</AlertModal>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isPreviewCampaignOpen}
+				onClose={() => setIsPreviewCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.ConfirmText')}
+				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
+				onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
+				type='alert'>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						campaignNumber='1'
+						templateData={templateData}
+						buttonType={buttonType}
+						fileData={fileData}
+					/>
+				</Box>
+			</AlertModal>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isDeleteCampaignOpen}
+				onClose={() => setIsDeleteCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.DeleteText')}
+				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+				type='delete'
+				onConfirmOrYes={() => onDeleteCampaign()}
+			/>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isDuplicateCampaignOpen}
+				onClose={() => setIsDuplicateCampaignOpen(false)}
+				title={'Duplicate Template'}
+				subtitle={'Do you want to duplicate this template?'}
+				type='delete'
+				onConfirmOrYes={() => onDuplicateCampaign()}
+			/>
 		</DefaultScreen>
 	);
 };
