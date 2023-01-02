@@ -1007,6 +1007,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '2px 0px 0px 0px',
 		color: '#ff0000',
 	},
+	infoAlertModalLi: {
+		padding: '2px 0px 0px 0px',
+	},
 
 	/* Send Campaign */
 

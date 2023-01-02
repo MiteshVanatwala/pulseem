@@ -56,6 +56,14 @@ export type validationAlertModalProps = {
 	requiredFields: string[];
 };
 
+export type infoModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	title: string;
+	requiredFields: string[];
+};
+
 export type testGroupDataProps = {
 	GroupID: number;
 	GroupName: string;

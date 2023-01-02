@@ -71,7 +71,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const [isDuplicateCampaignOpen, setIsDuplicateCampaignOpen] =
 		useState<boolean>(false);
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
-	const [campainStatusSearch, setCampainStatusSearch] = useState<string>('Status');
+	const [campainStatusSearch, setCampainStatusSearch] =
+		useState<string>('Status');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
 	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -79,9 +80,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		templateText: '',
 		templateButtons: [],
 	});
-	const [savedTemplateList, setSavedTemplateList] = useState<
-		savedTemplateListProps[]
-	>([]);
 	const [buttonType, setButtonType] = useState<string>('');
 	const [fileData, setFileData] = useState<string>('');
 	const rows: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
@@ -334,7 +332,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplatesById({
 				templateId: templateId
-					? templateId
+					? 'HX7d12be9e2c0cef2863d4adb5e27c40e2'
 					: 'HX7d12be9e2c0cef2863d4adb5e27c40e2',
 			})
 		);
@@ -458,7 +456,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 	const getRows = () => {
 		let sortData = isSearching ? rows : rows;
-		
+
 		sortData = sortData.slice(
 			(page - 1) * rowsPerPage,
 			(page - 1) * rowsPerPage + rowsPerPage
@@ -677,8 +675,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				classes={classes}
 				isOpen={isPreviewCampaignOpen}
 				onClose={() => setIsPreviewCampaignOpen(false)}
-				title={translator('whatsapp.alertModal.ConfirmText')}
-				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
+				title={'Preview'}
+				subtitle={''}
 				onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
 				type='alert'>
 				<Box className={classes.alertModalContentMobile}>
