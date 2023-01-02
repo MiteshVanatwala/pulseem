@@ -14,13 +14,11 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
-import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { WhatsappStatus } from '../../../helpers/PulseemArrays';
+import { WhatsappStatus } from '../../../helpers/Constants';
 import { WhatsappStatusToString, WhatsappStatusColor } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import { useSelector } from 'react-redux';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 

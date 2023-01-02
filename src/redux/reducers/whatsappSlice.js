@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getDirectReport = createAsyncThunk(
   'Whatsapp/GetDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`Whatsapp/GetDirectReport`, data);
+      const response = await PulseemReactInstance.post(`Whatsapp/GetDirectReport`, data);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
