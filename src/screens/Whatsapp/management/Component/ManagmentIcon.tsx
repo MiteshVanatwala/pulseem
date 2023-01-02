@@ -15,7 +15,7 @@ export const ManagmentIcon = ({
 	buttonKey,
 	onClick,
 	rootClass,
-	templateId
+	id
 }: ManagmentIconProps) => {
 	const Redirect = useRedirect();
 
@@ -29,7 +29,7 @@ export const ManagmentIcon = ({
 				if (href) {
 					Redirect({ url: href, openNewTab: openNewTab });
 				} else {
-					onClick(buttonKey, templateId);
+					onClick(buttonKey, id);
 				}
 			}}
 			className={clsx({

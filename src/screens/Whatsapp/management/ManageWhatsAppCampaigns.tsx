@@ -22,7 +22,7 @@ import {
 	PreviewIcon,
 	CalendarIcon,
 } from '../../../assets/images/managment/index';
-import { DateField, ManagmentIcon } from '../../../components/managment/index';
+import ManagmentIcon from './Component/ManagmentIcon';
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
@@ -37,6 +37,7 @@ import Pagination from './Component/Pagination';
 import RestoreDeletedModal from './Popups/RestoreDeletedModal';
 import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { ManagmentIconProps } from './Types/Management.types';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -174,12 +175,40 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			</>
 		);
 	};
-	const renderCellIcons = (row: any) => {
-		const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row;
 
-		const iconsMap = [
+	const onRowIconClick = (key: string, templateId: string) => {
+		switch (key) {
+			case 'send':
+				// setIsSubmitCampaignOpen(true);
+				break;
+			case 'preview':
+				// onPreview(templateId);
+				break;
+			case 'duplicate':
+				// setIsDuplicateCampaignOpen(true);
+				break;
+			case 'groups':
+				// setIsDuplicateCampaignOpen(true);
+				break;
+			case 'automation':
+				// setIsDuplicateCampaignOpen(true);
+				break;
+			case 'delete':
+				// setIsDeleteCampaignOpen(true);
+				break;
+
+			default:
+				break;
+		}
+	};
+
+	const renderCellIcons = (row: any) => {
+		const { Status, Groups, AutomationID, AutomationTriggerInActive } = row;
+
+		const iconsMap: ManagmentIconProps[] = [
 			{
 				key: 'send',
+				buttonKey: 'send',
 				icon: SendGreenIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
 				remove:
@@ -187,50 +216,77 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					(AutomationID !== 0 && AutomationTriggerInActive === false),
 				rootClass: classes.sendIcon,
 				textClass: classes.sendIconText,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.Id.toString(),
+				href: `/react/whatsapp/campaign/edit/page2/${'01212'}`,
 			},
 			{
 				key: 'preview',
+				buttonKey: 'preview',
 				icon: PreviewIcon,
 				lable: translator('campaigns.Image1Resource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.Id.toString(),
 			},
 			{
 				key: 'edit',
+				buttonKey: 'edit',
 				icon: EditIcon,
 				disable: Status !== 1 || AutomationID !== 0,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.Id.toString(),
 			},
 			{
 				key: 'duplicate',
+				buttonKey: 'duplicate',
 				icon: DuplicateIcon,
 				lable: translator('campaigns.lnkEditResource1.ToolTip'),
 				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.Id.toString(),
 			},
 			{
 				key: 'groups',
+				buttonKey: 'groups',
 				icon: GroupsIcon,
 				disable: Groups && Groups.length === 0,
 				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.Id.toString(),
 			},
 			{
 				key: 'automation',
+				buttonKey: 'automation',
 				icon: AutomationIcon,
 				disable: AutomationID === 0,
-				lable: translator('campaigns.automation'),
 				remove: windowSize === 'xs',
+				lable: translator('campaigns.automation'),
 				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.Id.toString(),
 			},
 			{
 				key: 'delete',
+				buttonKey: 'delete',
 				icon: DeleteIcon,
-				lable: translator('campaigns.DeleteResource1.HeaderText'),
-				showPhone: true,
 				disable: AutomationID !== 0,
 				rootClass: classes.paddingIcon,
+				lable: translator('campaigns.DeleteResource1.HeaderText'),
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.Id.toString(),
 			},
 		];
 		return (
@@ -244,7 +300,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						className={icon?.disable ? classes.disabledCursor : ''}
 						key={icon.key}
 						item>
-						<ManagmentIcon classes={classes} {...icon} uIcon={false} />
+						<ManagmentIcon {...icon} />
 					</Grid>
 				))}
 			</Grid>

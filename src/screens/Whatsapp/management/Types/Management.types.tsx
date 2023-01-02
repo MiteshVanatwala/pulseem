@@ -49,5 +49,5 @@ export type ManagmentIconProps = {
 	remove?: boolean;
 	rootClass?: any;
 	textClass?: any;
-	templateId: string;
+	id: string;
 };

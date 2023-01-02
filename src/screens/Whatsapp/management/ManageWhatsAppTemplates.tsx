@@ -387,7 +387,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				classes: classes,
 				rootClass: classes.sendIcon,
 				textClass: classes.sendIconText,
-				templateId: row.Id.toString(),
+				id: row.Id.toString(),
 			},
 			{
 				key: 'preview',
@@ -399,7 +399,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					onRowIconClick(key, templateId),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				templateId: row.Id.toString(),
+				id: row.Id.toString(),
 			},
 			{
 				key: 'edit',
@@ -412,7 +412,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				classes: classes,
 				rootClass: classes.paddingIcon,
 				href: `/react/whatsapp/template/edit/${'01212'}`,
-				templateId: row.Id.toString(),
+				id: row.Id.toString(),
 			},
 			{
 				key: 'duplicate',
@@ -423,7 +423,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					onRowIconClick(key, templateId),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				templateId: row.Id.toString(),
+				id: row.Id.toString(),
 			},
 			{
 				key: 'delete',
@@ -435,7 +435,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					onRowIconClick(key, templateId),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				templateId: row.Id?.toString(),
+				id: row.Id?.toString(),
 			},
 		];
 		return (
