@@ -290,6 +290,10 @@ const SmsCreator = ({ classes, ...props }) => {
         setOTPOpen(true);
         break;
       }
+      case 8: {// English letters not allowed
+        setDialogType({ type: "englishLetterDialog" });
+        break;
+      }
       default:
       case 5: {// ACCEPTED
         break;
@@ -1214,8 +1218,20 @@ const SmsCreator = ({ classes, ...props }) => {
         navigate(`/sms/send/${campaignId}`);
       }
     }
-    else if (r.payload.Status === 3) {
-      setOTPOpen(true);
+    else {
+      switch (r.payload.Status) {
+        case 3: {
+          setOTPOpen(true);
+          break;
+        }
+        case 8: {
+          setDialogType({ type: "englishLetterDialog" });
+          break;
+        }
+        default: {
+          break;
+        }
+      }
     }
   };
 
@@ -1875,6 +1891,38 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
   }
+  const englishLetterNotAllowed = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <FaExclamationCircle style={{ fontSize: 100 }} />
+          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{renderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
+          <Box style={{ marginTop: 25 }}>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmButton
+              )}>
+              {t("common.Ok")}
+            </Button>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 
@@ -1888,7 +1936,8 @@ const SmsCreator = ({ classes, ...props }) => {
       exit: exitDialog(),
       alert: alertDialog(),
       noCredit: noCreditDialog(),
-      linkStatisticAlert: siteTrackingLinkDialog(data)
+      linkStatisticAlert: siteTrackingLinkDialog(data),
+      englishLetterDialog: englishLetterNotAllowed()
     }
 
     const currentDialog = dialogContent[type] || {}

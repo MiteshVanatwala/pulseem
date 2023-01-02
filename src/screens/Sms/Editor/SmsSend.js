@@ -278,6 +278,9 @@ const SmsSend = ({ classes, ...props }) => {
         setOTPOpen(true);
         break;
       }
+      case 8: {
+        setDialogType({ type: "englishLetterDialog" });
+      }
       default: {
         break;
       }
@@ -2594,7 +2597,8 @@ const SmsSend = ({ classes, ...props }) => {
       delete: deleteDialog(),
       exit: exitDialog(),
       sendSuccess: sendSuccessDialog(),
-      noCredit: noCreditDialog()
+      noCredit: noCreditDialog(),
+      englishLetterDialog: englishLetterNotAllowed()
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -2611,6 +2615,38 @@ const SmsSend = ({ classes, ...props }) => {
       )
     }
     return <></>
+  }
+  const englishLetterNotAllowed = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <FaExclamationCircle style={{ fontSize: 100 }} />
+          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{renderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
+          <Box style={{ marginTop: 25 }}>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmButton
+              )}>
+              {t("common.Ok")}
+            </Button>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
   }
   return (
     <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
