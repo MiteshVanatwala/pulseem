@@ -39,7 +39,8 @@ import {
   removeSmsClient,
   searchAllClients,
   getExportData,
-  setUnsubscribedClients
+  setUnsubscribedClients,
+  getClientsById
 } from "../../redux/reducers/clientSlice";
 import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
@@ -118,6 +119,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [searchData, setSearchData] = useState(null);
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
+  const [clientToEdit, setClientToEdit] = useState(null);
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -1264,9 +1266,17 @@ const ClientSearchResult = ({ props, classes }) => {
           icon: EditIcon,
           lable: t("common.edit"),
           rootClass: classes.paddingIcon,
-          onClick: () => {
-            setSelectedClients([ClientID])
-            setDialog(DialogType.EDIT_RECIPIENT)
+          onClick: async () => {
+            setLoader(true);
+            setSelectedClients([ClientID]);
+            const recipientRequest = await dispatch(getClientsById([ClientID]));
+            const clientToEdit = recipientRequest?.payload?.Data[0];
+            //const existsClient = data.find((c) => { return c.ClientID === ClientID });
+            const tempData = data.filter((c) => { return c.ClientID !== ClientID });
+            setData([ ...tempData, clientToEdit ])
+            setClientToEdit(clientToEdit);
+            setDialog(DialogType.EDIT_RECIPIENT);
+            setLoader(false);
           }
         },
         {
@@ -1699,9 +1709,7 @@ const ClientSearchResult = ({ props, classes }) => {
               closeDialog && setDialog(null);
               getData();
             }}
-            recipientData={
-              selectedClients[0] && (data?.find((obj) => obj?.ClientID === selectedClients[0]))
-            }
+            recipientData={clientToEdit}
           />
         }
         case DialogType.UNSUB_RECIPIENT: {

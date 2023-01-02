@@ -569,5 +569,8 @@
   "addTrackingUrl": "מעקב URL",
   "showTestGroups": "הצג קבוצות ניסיון",
   "hour": "שעה",
-  "hours": "שעות"
+  "hours": "שעות",
+  "smsUnsubscribeMessage": "להסרה לחצו: ##SmsUnsubscribeURL##",
+  "englishLetterNotApprovedTitle": "חשבון זה אינו מאושר לשימוש בתווים באנגלית ב-'קמפיין מאת'",
+  "englishLetterNotApprovedDescription": "כדי לפתוח אפשרות זו עליך לעבור תהליך אימות בוידאו עם שירות הלקוחות שלנו<br/>אנא פנה אלינו בטלפון <a href='tel:03-524-0290'>03-524-0290</a><br/>או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
 }

@@ -576,5 +576,8 @@
   "addTrackingUrl": "Tracking URL",
   "showTestGroups": "Show Test Groups",
   "hour": "Hour",
-  "hours": "Hours"
+  "hours": "Hours",
+  "smsUnsubscribeMessage": "To unsubscribe click: ##SmsUnsubscribeURL##",
+  "englishLetterNotApprovedTitle": "This user is not approved for using English characters for 'Campaign from'.",
+  "englishLetterNotApprovedDescription": "In order to open this option, you must go through a video verification process with our customer support<br/>please contact by phone <a href='tel:03-524-0290'>03-524-0290</a><br/>Or email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
 }
