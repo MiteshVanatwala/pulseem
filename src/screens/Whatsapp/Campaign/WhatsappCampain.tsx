@@ -21,6 +21,17 @@ import {
 	coreProps,
 	testGroupDataProps,
 	tagDataProps,
+	personalFieldDataProps,
+	personalFieldAPIProps,
+	updatedVariableProps,
+	landingPageDataProps,
+	landingPageAPIProps,
+	testGroupsProps,
+	smsReducerProps,
+	saveCampaignDataProps,
+	saveCampaignResponseProps,
+	saveCampaignResponsePayloadProps,
+	phoneNumberAPIProps,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -41,85 +52,41 @@ import {
 	savedTemplateQuickReplyProps,
 	savedTemplateTextProps,
 	templateDataProps,
+	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import Highlighter from 'react-highlight-words';
 import DynamicModal from './Popups/DynamicModal';
 import Buttons from './Components/Buttons';
 import uniqid from 'uniqid';
-import { getSavedTemplates } from '../../../redux/reducers/whatsappSlice';
+import {
+	fromPhoneNumbers,
+	getSavedTemplates,
+	saveCampaign,
+} from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
 import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
+import { getDynamicFields } from '../Common';
+import {
+	getAccountExtraData,
+	getPreviousLandingData,
+	getTestGroups,
+} from '../../../redux/reducers/smsSlice';
+import Toast from '../../../components/Toast/Toast.component';
+import { resetToastData } from '../Constant';
+import AlertModal from '../Editor/Popups/AlertModal';
 
 const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const testGroupData: testGroupDataProps[] = [
-		{
-			GroupID: 89979,
-			GroupName: 'ccccc (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:08.933',
-			UpdateDate: '2017-08-20T11:02:08.933',
-			IsTestGroup: false,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 89980,
-			GroupName: 'cdgsfsgdf (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:39.197',
-			UpdateDate: '2017-08-20T12:44:55.69',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 5,
-		},
-		{
-			GroupID: 166670,
-			GroupName: 'left123',
-			SubAccountID: 0,
-			CreationDate: '2022-04-08T14:41:09.493',
-			UpdateDate: '2022-04-17T12:46:45.297',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 1,
-		},
-		{
-			GroupID: 165652,
-			GroupName: 'MeitalTest (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2022-03-10T14:33:53.9',
-			UpdateDate: '2022-03-10T14:33:53.9',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 81457,
-			GroupName: 'omer (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-05-21T14:44:26.487',
-			UpdateDate: '2017-05-21T14:45:34.537',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 55962,
-			GroupName: 'בדיקה (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2016-01-18T18:24:45.42',
-			UpdateDate: '2016-01-18T18:28:09.06',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 2,
-		},
-	];
+
+	const { testGroups } = useSelector(
+		(state: { sms: smsReducerProps }) => state.sms
+	);
 	const websiteField = useMemo<callToActionFieldProps[]>(
 		() => [
 			{
@@ -182,12 +149,13 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
-	const [from, setFrom] = useState<string>('');
-	const [isCampaign, setIsCampaign] = useState<boolean>(false);
+	const [from, setFrom] = useState<string>('16067520281');
+	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
@@ -198,13 +166,18 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		templateText: '',
 		templateButtons: [],
 	});
+	const [personalFields, setpersonalFields] = useState<personalFieldDataProps>(
+		{}
+	);
+	const [landingPages, setLandingPages] = useState<landingPageDataProps[]>([]);
+	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
-	const [dynamicVariable, setDynamicVariable] = useState<string[]>(['booking']);
+	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
-		string[]
-	>(['confirmed']);
+		updatedVariableProps[]
+	>([]);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
@@ -216,10 +189,21 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		useState<callToActionProps>([initialFieldRow]);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
+	const [dynamicModalVariable, setDynamicModalVariable] = useState<number>(0);
+
+	const [testSendOneContact, setTestSendOneContact] = useState<string>('');
 
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
+
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
+
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 
 	let updatedTemplateData: templateDataProps = {
 		templateText: '',
@@ -237,28 +221,120 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 
 	useEffect(() => {
 		getSavedTemplateFields();
+		if (!testGroups || testGroups?.length === 0) {
+			dispatch(getTestGroups());
+		}
+		if (!personalFields || landingPages?.length <= 0) {
+			getDynamicModalValues();
+		}
+		getPhoneNumber();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handleSubmit = () => {
-		navigate('/react/Whatsapp/send/page2');
+	const getPhoneNumber = async () => {
+		// const { payload: phoneNumberData }: phoneNumberAPIProps =
+		// 	await dispatch<any>(fromPhoneNumbers());
+		const phoneNumberData: phoneNumberAPIProps['payload'] = [
+			'91901000001',
+			'91901000002',
+			'91901000003',
+		];
+		if (phoneNumberData?.length > 0) {
+			setFrom(phoneNumberData[0]);
+		}
+		setPhoneNumbersList(phoneNumberData);
+	};
+
+	const getDynamicModalValues = async () => {
+		const staticPersonalField: personalFieldDataProps = {
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
+			FirstName: translator('smsReport.firstName'),
+			LastName: translator('smsReport.lastName'),
+			Email: translator('common.Mail'),
+			Telephone: translator('common.telephone'),
+			Cellphone: translator('common.Cellphone'),
+			Address: translator('common.address'),
+			BirthDate: translator('common.birthDate'),
+			City: translator('common.city'),
+			State: translator('common.state'),
+			Country: translator('common.country'),
+			Zip: translator('common.zip'),
+			Company: translator('common.company'),
+			ReminderDate: translator('recipient.reminderDate'),
+		};
+		const { payload: personalFieldData }: personalFieldAPIProps =
+			await dispatch<any>(getAccountExtraData());
+		const { payload: landingPageData }: landingPageAPIProps =
+			await dispatch<any>(getPreviousLandingData());
+		setLandingPages(landingPageData);
+		setpersonalFields({ ...staticPersonalField, ...personalFieldData });
+	};
+
+	const resetFields = () => {
+		setCampaignName('');
+		setSavedTemplate('');
+		setFrom('');
+		setTemplateData({
+			templateText: '',
+			templateButtons: [],
+		});
+		setTestSendOneContact('');
+		setIsTestSend(false);
+		setSelectedTestGroup([]);
+	};
+
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} onClose={undefined} />;
+		}
+		return null;
+	};
+
+	const openDynamcFieldModal = async (variable: string) => {
+		setDynamicModalVariable(Number(variable?.replace(/[{}]/g, '')));
+		setIsDynamcFieldModal(true);
 	};
 
 	const isUpdatedVaraiable = (variable: string) => {
-		return updatedDynamicVariable?.includes(variable?.toLowerCase())
-			? true
-			: false;
+		let updatedVariable = variable?.replace(/[{}]/g, '');
+		const isAvaliable = updatedDynamicVariable?.find(
+			(dynamicVariable: updatedVariableProps) =>
+				dynamicVariable.VariableIndex === Number(updatedVariable)
+		);
+		return !!isAvaliable;
+	};
+
+	const getUpdatedVariableValue = (variable: string) => {
+		let updatedVariable = variable?.replace(/[{}]/g, '');
+		const variableValue = updatedDynamicVariable?.find(
+			(dynamicVariable: updatedVariableProps) =>
+				dynamicVariable.VariableIndex === Number(updatedVariable)
+		)?.VariableValue;
+		return variableValue ? variableValue : variable;
 	};
 
 	const highlightText = (tagData: tagDataProps) => {
+		const isUpdated = isUpdatedVaraiable(tagData?.children);
 		return (
 			<strong
 				className={clsx(
 					classes.whatsappCampainHighlightText,
-					`${isUpdatedVaraiable(tagData?.children) && 'updated'}`
+					`${isUpdated && 'updated'}`
 				)}
-				onClick={() => setIsDynamcFieldModal(true)}>
-				{tagData?.children}
+				onClick={() => openDynamcFieldModal(tagData?.children)}>
+				{isUpdated
+					? getUpdatedVariableValue(tagData?.children)
+					: tagData?.children}
 			</strong>
 		);
 	};
@@ -408,7 +484,15 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
+	const resetDynamicFields = () => {
+		setDynamicVariable([]);
+		setUpdatedDynamicVariable([]);
+		setDynamicModalVariable(0);
+	};
+
 	const onSavedTemplateChange = (TemplateId: string) => {
+		resetDynamicFields();
+
 		setSavedTemplate(TemplateId);
 		const savedTemplateData: savedTemplateListProps | undefined =
 			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
@@ -421,6 +505,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		// setTemplateName(savedTemplateData?.TemplateName || '');
 		setButtonType(updatedButtonType);
 		setTemplateData(updatedTemplateData);
+		setDynamicVariable(getDynamicFields(updatedTemplateData.templateText));
 		if (updatedButtonType === 'quickReply') {
 			setQuickReplyButtons(updatedTemplateData.templateButtons);
 		} else {
@@ -447,25 +532,101 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		setSelectedTestGroup(updatedSelectedGroup);
 	};
 
-	const onOkTestSending = () => {
-		if (campaignName?.length <= 0 || from?.length <= 0) {
+	const validateSaveCampaign = () => {
+		if (campaignName?.length <= 0 || savedTemplate?.length <= 0) {
 			let validationErrors = [];
-			if (campaignName?.length <= 0 && from?.length <= 0) {
+			if (campaignName?.length <= 0 && savedTemplate?.length <= 0) {
 				validationErrors.push('Campaign name - required fields');
-				validationErrors.push('Text for sending - required fields');
+				validationErrors.push('Template for sending - required fields');
 			} else if (campaignName?.length <= 0) {
 				validationErrors.push('Campaign name - required fields');
-			} else if (from?.length <= 0) {
-				validationErrors.push('Text for sending - required fields');
+			} else if (savedTemplate?.length <= 0) {
+				validationErrors.push('Template for sending - required fields');
 			}
 			setGroupSendValidationErrors([...validationErrors]);
+			setShowValidation(true);
+			return false;
+		} else {
+			return true;
+		}
+	};
+
+	const onDeleteClick = () => {
+		setIsDeleteCampaignOpen(true);
+	};
+
+	const onDeleteCampaign = () => {
+		resetFields();
+		setIsDeleteCampaignOpen(false);
+	};
+
+	const onOkTestSending = () => {
+		if (validateSaveCampaign()) {
+		} else {
 			setIsTestGroupModal(false);
 			setIsValidationAlert(true);
 		}
 	};
 
+	const onTestOneSend = () => {
+		if (validateSaveCampaign()) {
+		} else {
+			setIsValidationAlert(true);
+		}
+	};
+
 	const onCampaignFromRestore = () => {
-		setFrom('012345689');
+		setFrom('16067520281');
+	};
+
+	const onDynamcFieldModalSave = (
+		updatedDynamicVariable: updatedVariableProps[]
+	) => {
+		setUpdatedDynamicVariable(updatedDynamicVariable);
+		setIsDynamcFieldModal(false);
+	};
+
+	const saveCampaignCall = async () => {
+		const reqData: saveCampaignDataProps = {
+			WACampaignID: 0,
+			TemplateId: savedTemplate,
+			Variables: updatedDynamicVariable,
+			name: campaignName,
+			fromnumber: from,
+			IsTestCampaign: isTestSend,
+		};
+		const { payload }: saveCampaignResponseProps = await dispatch<any>(
+			saveCampaign(reqData)
+		);
+		return payload;
+	};
+
+	const onSaveCampaign = async () => {
+		if (validateSaveCampaign()) {
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+
+			if (data.Status === 0) {
+				setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
+			} else {
+				data?.Message
+					? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		} else {
+			setIsValidationAlert(true);
+		}
+	};
+
+	const onSubmit = async (e: BaseSyntheticEvent) => {
+		e.preventDefault();
+		const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+		if (data.Status === 0) {
+			navigate('/react/Whatsapp/send/page2');
+		} else {
+			data?.Message
+				? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	return (
@@ -474,6 +635,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}>
+			{renderToast()}
 			<Grid container justifyContent='space-between' alignItems='center'>
 				<Title
 					Text={translator('whatsappCampaign.header')}
@@ -496,18 +658,16 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 					</div>
 				</Box>
 			</Grid>
-
-			<DynamicModal
-				classes={classes}
-				isDynamcFieldModal={isDynamcFieldModal}
-				onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-			/>
 			<br />
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={(e: BaseSyntheticEvent) => onSubmit(e)}>
 				<Grid container className={classes.WhatsappCampainP1}>
 					<Grid className={classes.WhatsappCampainP1Left} item md={12} lg={6}>
 						<Grid container>
-							<Grid className={classes.WhatsappCampainFields} md={12} lg={12}>
+							<Grid
+								item
+								className={classes.WhatsappCampainFields}
+								md={12}
+								lg={12}>
 								<CampaignFields
 									classes={classes}
 									savedTemplateList={savedTemplateList}
@@ -522,18 +682,21 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 									from={from}
 									onFromChange={(from) => setFrom(from)}
 									onCampaignFromRestore={() => onCampaignFromRestore()}
+									showValidation={showValidation}
+									phoneNumbersList={phoneNumbersList}
 								/>
 							</Grid>
-							<Grid className={classes.WhatsappCampainTextarea} md={12} lg={12}>
+							<Grid
+								item
+								className={classes.WhatsappCampainTextarea}
+								md={12}
+								lg={12}>
 								<div className={classes.whatsappCampainHighlightContent}>
 									<div className={classes.whatsappCampainHighlightTextWrapper}>
 										<Highlighter
-											searchWords={[
-												...dynamicVariable,
-												...updatedDynamicVariable,
-											]}
+											searchWords={dynamicVariable}
 											autoEscape={true}
-											textToHighlight='Hi {{1}}, Your booking is confirmed. Thank you.'
+											textToHighlight={templateData.templateText}
 											highlightTag={(tagData: tagDataProps) =>
 												highlightText(tagData)
 											}
@@ -672,20 +835,24 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 													placeholder={translator(
 														'whatsappCampaign.oneContactPlaceholder'
 													)}
-													className={
-														isCampaign
-															? clsx(classes.buttonField, classes.error)
-															: clsx(classes.buttonField, classes.success)
-													}
+													className={clsx(classes.buttonField, classes.success)}
 													disabled={testSendSelection !== 'onecontact'}
-													//   onChange={onTemplateNameChange}
-													//   value={templateName}
+													onChange={(e: BaseSyntheticEvent) =>
+														setTestSendOneContact(
+															e.target.value?.replace(/\D/g, '')
+														)
+													}
+													value={testSendOneContact}
 												/>
 												<Button
-													disabled={testSendSelection !== 'onecontact'}
+													disabled={
+														testSendSelection !== 'onecontact' ||
+														testSendOneContact?.length === 0
+													}
 													variant='outlined'
 													color='primary'
-													className={classes.testOneContactSendButton}>
+													className={classes.testOneContactSendButton}
+													onClick={() => onTestOneSend()}>
 													{translator('whatsappCampaign.sendButton')}
 												</Button>
 											</Stack>
@@ -762,9 +929,27 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 					</Grid>
 				</Grid>
 				<Grid container>
-					<Buttons classes={classes} onFormButtonClick={() => {}} />
+					<Buttons
+						classes={classes}
+						onDeleteCampaign={() => onDeleteClick()}
+						onSaveCampaign={() => onSaveCampaign()}
+					/>
 				</Grid>
 			</form>
+
+			<DynamicModal
+				classes={classes}
+				isDynamcFieldModal={isDynamcFieldModal}
+				onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
+				personalFields={personalFields}
+				landingPageData={landingPages}
+				dynamicModalVariable={dynamicModalVariable}
+				onDynamcFieldModalSave={(updatedDynamicVariable) =>
+					onDynamcFieldModalSave(updatedDynamicVariable)
+				}
+				dynamicVariable={updatedDynamicVariable}
+			/>
+
 			<ValidationAlert
 				classes={classes}
 				isOpen={isValidationAlert}
@@ -778,7 +963,7 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 				isOpen={isTestGroupModal}
 				onClose={() => setIsTestGroupModal(false)}
 				title={translator('whatsappCampaign.sendTitle')}
-				testGroupData={testGroupData}
+				testGroupData={testGroups}
 				selectedTestGroup={selectedTestGroup}
 				setSelectedTestGroup={(updatedSelectedGroup) =>
 					setSelectedTestGroup(updatedSelectedGroup)
@@ -807,6 +992,16 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 				addMore={() => {}}
 				updateTemplateData={() => {}}
 				isEditable={false}
+			/>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isDeleteCampaignOpen}
+				onClose={() => setIsDeleteCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.DeleteText')}
+				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+				type='delete'
+				onConfirmOrYes={() => onDeleteCampaign()}
 			/>
 		</DefaultScreen>
 	);

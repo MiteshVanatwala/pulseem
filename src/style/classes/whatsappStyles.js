@@ -1019,12 +1019,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginTop: 20,
 		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
 	},
-	WhatsappCampainP1: {},
+	WhatsappCampainP1: {
+		'@media screen and (max-width: 786px)': {
+			flexDirection: 'column',
+		},
+	},
 	WhatsappCampainP1Left: {
 		padding: '0px 8px 0px 8px',
 	},
 	WhatsappCampainP1Right: {
 		padding: '0px 108px 0px 204px',
+		'@media screen and (max-width: 1325px)': {
+			padding: '0px 82px 0px 186px',
+		},
+		'@media screen and (max-width: 1279px)': {
+			marginTop: '24px',
+		},
 		'@media screen and (max-width: 768px)': {
 			padding: '0px',
 		},
@@ -1033,11 +1043,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
 		color: '#959595',
+		'&.red': {
+			color: '#ca332f',
+		},
 	},
 	WhatsappCampainFields: {
 		marginBottom: '18px',
 	},
-	WhatsappCampainTextarea: {},
+	WhatsappCampainTextarea: {
+		'@media screen and (max-width: 959px)': {
+			width: '100%',
+		},
+	},
 	WhatsappCampainRadioButton: {
 		color: '#0677fa',
 		'&.Mui-checked': {

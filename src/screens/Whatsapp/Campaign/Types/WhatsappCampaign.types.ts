@@ -25,6 +25,13 @@ export type dynamicModalProps = {
 	classes: ClassesType['classes'];
 	isDynamcFieldModal: boolean;
 	onDynamcFieldModalClose: () => void;
+	onDynamcFieldModalSave: (
+		updatedDynamicVariable: updatedVariableProps[]
+	) => void;
+	personalFields: personalFieldDataProps;
+	dynamicModalVariable: number;
+	landingPageData: landingPageDataProps[];
+	dynamicVariable: updatedVariableProps[];
 };
 
 export type campaignFielsProps = {
@@ -37,6 +44,8 @@ export type campaignFielsProps = {
 	onCampaignNameChange: (campaignName: string) => void;
 	onFromChange: (from: string) => void;
 	onCampaignFromRestore: () => void;
+	showValidation: boolean;
+	phoneNumbersList: string[];
 };
 
 export type validationAlertModalProps = {
@@ -137,11 +146,15 @@ export type DynamicModalFieldsProps = {
 	navAddress: string;
 	setTextInput: (value: string) => void;
 	setPersonalField: (value: string) => void;
-	onAddRemovalLink: () => void;
-	setLinkInput: (value: string) => void;
+	onAddRemovalLink: (isTrackLink: boolean) => void;
+	setLinkInput: (value: string, isTrackLink: boolean) => void;
 	setLandPage: (value: string) => void;
 	setNavApp: (value: string) => void;
 	setNavAddress: (value: string) => void;
+	personalFields: personalFieldDataProps;
+	landingPageData: landingPageDataProps[];
+	isTrackLink: boolean;
+	setIsTrackLink: () => void;
 };
 
 export type TestGroupModalRowsProps = {
@@ -158,4 +171,68 @@ export type selectArrayProps = {
 	idx: number;
 	value: string;
 	label: string;
+};
+
+export type personalFieldAPIProps = {
+	payload: personalFieldDataProps;
+};
+
+export type phoneNumberAPIProps = {
+	payload: string[];
+};
+
+export type personalFieldDataProps = {
+	[key: string]: string;
+};
+
+export type landingPageAPIProps = {
+	payload: landingPageDataProps[];
+};
+
+export type landingPageDataProps = {
+	CampaignID: number;
+	CampaignName: string;
+	PageHref: string;
+};
+
+export type updatedVariableProps = {
+	FieldTypeId: number;
+	VariableIndex: number;
+	VariableValue: string;
+	IsStatastic: boolean;
+};
+
+export type smsReducerProps = {
+	testGroups: testGroupsProps[];
+};
+
+export type testGroupsProps = {
+	CreationDate: string;
+	GroupID: number;
+	GroupName: string;
+	IsDynamic: boolean;
+	IsTestGroup: boolean;
+	Recipients: number;
+	SubAccountID: number;
+	UpdateDate: string;
+};
+
+export type saveCampaignDataProps = {
+	WACampaignID: number;
+	TemplateId: string;
+	Variables: updatedVariableProps[];
+	name: string;
+	fromnumber: string;
+	IsTestCampaign: boolean;
+};
+
+export type saveCampaignResponsePayloadProps = {
+	Data: { WACampaignId: number };
+	ErrorCode: number;
+	Message: string | null;
+	Status: number;
+};
+
+export type saveCampaignResponseProps = {
+	payload: saveCampaignResponsePayloadProps;
 };

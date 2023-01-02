@@ -15,12 +15,13 @@ const CampaignFields = ({
 	from,
 	onFromChange,
 	onCampaignFromRestore,
+	showValidation,
+	phoneNumbersList,
 }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const [isCampaign, setIsCampaign] = useState<boolean>(false);
 
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
@@ -34,7 +35,7 @@ const CampaignFields = ({
 					type='text'
 					placeholder={translator('whatsappCampaign.campaignNamePlaceholder')}
 					className={
-						isCampaign
+						showValidation && campaignName?.length === 0
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
@@ -60,41 +61,39 @@ const CampaignFields = ({
 						<>{translator('whatsappCampaign.restore')}</>
 					</Typography>
 				</Box>
-				<TextField
-					required
-					type='text'
-					className={
-						isCampaign
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
-					onChange={(e: BaseSyntheticEvent) =>
-						onFromChange(e.target.value?.replace(/\D/g, ''))
-					}
-					value={from}
-				/>
-				{/* <TextField
-					select
-					type='text'
-					className={
-						isCampaign
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
-					onChange={onSavedTemplateChange}
-					value={savedTemplate}>
-					{savedTemplateList?.length > 0 ? (
-						savedTemplateList.map((template) => (
-							<MenuItem key={template.TemplateId} value={template.TemplateId}>
-								{template.TemplateName}
+				{phoneNumbersList?.length === 1 ? (
+					<TextField
+						required
+						type='text'
+						disabled
+						className={clsx(classes.buttonField)}
+						onChange={(e: BaseSyntheticEvent) =>
+							onFromChange(e.target.value?.replace(/\D/g, ''))
+						}
+						value={from}
+					/>
+				) : (
+					<TextField
+						select
+						type='text'
+						className={classes.buttonField}
+						onChange={(e: BaseSyntheticEvent) =>
+							onFromChange(e.target.value?.replace(/\D/g, ''))
+						}
+						value={from}>
+						{phoneNumbersList?.length > 0 ? (
+							phoneNumbersList?.map((phone: string, index: number) => (
+								<MenuItem key={index} value={phone}>
+									{phone}
+								</MenuItem>
+							))
+						) : (
+							<MenuItem key={'no-data-template'} disabled>
+								<>{translator('whatsapp.noTemplateAaliable')}</>
 							</MenuItem>
-						))
-					) : (
-						<MenuItem key={'no-data-template'} disabled>
-							<>{translator('whatsapp.noTemplateAaliable')}</>
-						</MenuItem>
-					)}
-				</TextField> */}
+						)}
+					</TextField>
+				)}
 				<Typography
 					className={clsx(classes.WhatsappCampainButtonContent, 'red')}>
 					<>{translator('whatsappCampaign.fromDesc')}</>
@@ -112,7 +111,7 @@ const CampaignFields = ({
 					id='selectSavedTemplate'
 					type='text'
 					className={
-						isCampaign
+						showValidation && savedTemplate?.length === 0
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
