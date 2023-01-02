@@ -665,8 +665,8 @@ const SmsCreator = ({ classes }) => {
       handleSmsModelChange(
         "Text",
         tmpStr.substring(0, startPos) +
-          text +
-          tmpStr.substring(endPos, tmpStr.length)
+        text +
+        tmpStr.substring(endPos, tmpStr.length)
       );
 
       // move cursor:
@@ -805,8 +805,10 @@ const SmsCreator = ({ classes }) => {
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
     if (smsModel.Text.includes(removelReplyText)) {
       setremovalMessageButtonDisabled(true);
-    } else {
-      if (restoreBool) setremovalMessageButtonDisabled(false);
+    }
+    else {
+      if (restoreBool)
+        setremovalMessageButtonDisabled(false);
     }
     if (smsModel.Text.includes(t('sms.smsUnsubscribeMessage'))) {
       setremovalLinkDisabled(true);
@@ -1337,14 +1339,13 @@ const SmsCreator = ({ classes }) => {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
           Redirect({
-            url: `/react/sms/edit/${campaignId}${
-              isFromAutomation
+            url: `/react/sms/edit/${campaignId}${isFromAutomation
                 ? "?FromAutomation=" +
-                  FromAutomation +
-                  "&NodeToEdit=" +
-                  NodeToEdit
+                FromAutomation +
+                "&NodeToEdit=" +
+                NodeToEdit
                 : ""
-            }`,
+              }`,
           });
           setToastMessage(null);
         }, 1500);
