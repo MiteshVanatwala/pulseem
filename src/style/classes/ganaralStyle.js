@@ -55,6 +55,23 @@ const graphTextWidth = {
 };
 
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
+  background: {
+    position: 'fixed',
+    bottom: 0,
+    width: '100vw',
+    height: '100vh',
+    zIndex: -1,
+    '& svg': {
+      position: 'absolute',
+      bottom: 0
+    },
+    '& .rightSvg': {
+      right: 0
+    },
+    '& .leftSvg': {
+      left: 0
+    }
+  },
   sidebar: {
     "&::-webkit-scrollbar": {
       display: "block !important",

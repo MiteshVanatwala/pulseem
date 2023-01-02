@@ -7,6 +7,8 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { getRoutes, getSettingsItem } from '../helpers/Routes/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
+import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
+import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, customStyle = '' }) => {
   const { t } = useTranslation();
@@ -68,6 +70,10 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         maxWidth='xl'
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}
       >
+        <div className={classes.background}>
+          <Illustration_BG_BL className={'leftSvg'} width={'16.72%'} height={'63.65%'} />
+          <Illustration_BG_BR className={'rightSvg'} width={'19.64%'} height={'39.80%'} />
+        </div>
         {children}
       </Container>
     </HelmetProvider>
