@@ -35,6 +35,8 @@ import {
 	testGroupDataProps,
 } from '../../Types/WhatsappCampaign.types';
 import { coreProps } from '../../../Editor/Types/WhatsappCreator.types';
+import GroupsList from './Component/GroupsList';
+import GroupsSelectAll from './Component/GroupsSelectAll';
 
 const Groups = ({
 	classes,
@@ -69,7 +71,6 @@ const Groups = ({
 		setGroupNameSearch(event.target.value);
 	};
 	const resetSearch = (event: BaseSyntheticEvent) => {
-		// document.querySelector("#searchGroup").value = "";
 		setGroupNameSearch('');
 		setClearInput(false);
 	};
@@ -88,93 +89,6 @@ const Groups = ({
 				return group.GroupName;
 			}
 		},
-	};
-
-	const renderGroups = () => {
-		const groupIdKey = 'GroupID';
-		const groupRecipientsKey = 'Recipients';
-		return list
-			.filter((g: testGroupDataProps) => {
-				return g.GroupName.toLowerCase().includes(
-					groupNameSearch.toLowerCase()
-				);
-			})
-			.map((group: testGroupDataProps) => {
-				const isExist = selectedList
-					.map((group: testGroupDataProps) => {
-						return group[groupIdKey];
-					})
-					.includes(group[groupIdKey]);
-				return (
-					<ListItem
-						key={group[groupIdKey]}
-						onClick={() => onSelectGroup(group)}
-						className={classes.groupListRow}
-						style={{ cursor: 'pointer' }}>
-						<ListItemAvatar>
-							<Avatar
-								className={clsx(
-									classes.listIcon,
-									classes.transparentBg,
-									isExist ? classes.green : classes.blue,
-									isExist ? classes.borderGreen : classes.borderBlue
-								)}>
-								{isExist ? (
-									<FaCheck className={clsx(classes.green)} />
-								) : (
-									<HiUserGroup className={clsx(classes.blue)} />
-								)}
-							</Avatar>
-						</ListItemAvatar>
-						<ListItemText
-							className={'groupText'}
-							title={group.GroupName}
-							primary={group.GroupName}
-						/>
-						<ListItemSecondaryAction className={'groupText'}>
-							{group[groupRecipientsKey]?.toLocaleString()}{' '}
-							<>
-								{group[groupRecipientsKey] !== 1
-									? translator('notifications.recipients')
-									: translator('notifications.recipient')}
-							</>
-						</ListItemSecondaryAction>
-					</ListItem>
-				);
-			});
-	};
-
-	const renderSelectAll = () => {
-		const allSelected = list.length === selectedList.length;
-
-		return (
-			<ListItem
-				className={classes.groupListRow}
-				key='liSelectAll'
-				onClick={() => onSelectAllGroup()}
-				style={{ cursor: 'pointer' }}>
-				<ListItemAvatar>
-					<Avatar
-						className={clsx(
-							classes.listIcon,
-							classes.transparentBg,
-							allSelected ? classes.green : classes.blue,
-							allSelected ? classes.borderGreen : classes.borderBlue
-						)}>
-						{allSelected ? (
-							<FaCheck className={clsx(classes.green)} />
-						) : (
-							<HiUserGroup className={clsx(classes.blue)} />
-						)}
-					</Avatar>
-				</ListItemAvatar>
-				<ListItemText
-					className={'groupText'}
-					title={translator('notifications.selectAll')}
-					primary={translator('notifications.selectAll')}
-				/>
-			</ListItem>
-		);
 	};
 
 	const onSelectAllGroup = () => {
@@ -420,8 +334,20 @@ const Groups = ({
 					overflow: 'auto',
 				}}>
 				<List key={uniqueKey}>
-					{showSelectAll && renderSelectAll()}
-					{renderGroups()}
+					{showSelectAll && (
+						<GroupsSelectAll
+							classes={classes}
+							onSelectAllGroup={onSelectAllGroup}
+							allSelected={list.length === selectedList.length}
+						/>
+					)}
+					<GroupsList
+						classes={classes}
+						list={list}
+						groupNameSearch={groupNameSearch}
+						selectedList={selectedList}
+						onSelectGroup={(group) => onSelectGroup(group)}
+					/>
 				</List>
 			</div>
 		</Box>

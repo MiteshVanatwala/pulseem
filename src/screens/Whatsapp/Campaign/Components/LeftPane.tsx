@@ -97,7 +97,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
 		useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
-	const [typedData, settypedData] = useState<string[][]>([
+	const [typedData, setTypedData] = useState<string[][]>([
 		['Demo', 'Title', 'Name'],
 	]);
 	const [initialheadstate, setinitialheadstate] = useState<string[]>([
@@ -146,51 +146,47 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 	const callbackShowTestGroup = async (showTestGroups: boolean) => {
 		if (!showTestGroups && testGroups.length > 0) {
 			setShowTestGroups(true);
-			//setGroupList(testGroups.concat(subAccountAllGroups));
 		} else {
 			setShowTestGroups(false);
-			// const g = subAccountAllGroups.filter((group) => { return group.IsTestGroup !== true });
-			// setGroupList(g);
 		}
 	};
 
 	const areaChange = (e: BaseSyntheticEvent) => {
 		let enteredValue: string[] = e.target.value.split('\n');
-		const records = enteredValue.filter((r: string) => {
-			return r !== '';
+		const records = enteredValue.filter((value: string) => {
+			return value !== '';
 		});
 		settotalRecords(records.length);
 		setareaData(e.target.value);
-		// setdropClick(false);
 	};
 
 	const handlePasted = () => {
 		let temp = areaData;
 		console.log('areaData::', areaData);
-		let a = temp?.split('\n').filter((empty: string) => empty);
-		let b = [];
+		let splittedAreaData = temp?.split('\n').filter((empty: string) => empty);
+		let updatedTypedData = [];
 		let cols = 0;
 		if (temp?.indexOf('\t') > -1) {
-			for (let i = 0; i < a.length; i++) {
-				let splitted = a[i].split('\t');
-				b.push(splitted);
+			for (let i = 0; i < splittedAreaData.length; i++) {
+				let splitted = splittedAreaData[i].split('\t');
+				updatedTypedData.push(splitted);
 				if (splitted.length > cols) {
 					cols = splitted.length;
 				}
 			}
 		} else {
-			const records = a.filter((r: string) => {
-				return r !== '';
+			const records = splittedAreaData.filter((areaData: string) => {
+				return areaData !== '';
 			});
 			for (let i = 0; i < records.length; i++) {
-				let splitted = a[i].split(',');
-				b.push(splitted);
+				let splitted = splittedAreaData[i].split(',');
+				updatedTypedData.push(splitted);
 				if (splitted.length > cols) {
 					cols = splitted.length;
 				}
 			}
 		}
-		settypedData(b);
+		setTypedData(updatedTypedData);
 
 		let dummyArr = [];
 		for (let i = 0; i < cols; i++) {
@@ -229,7 +225,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 											b.push(a[i].split(','));
 										}
 										b.pop();
-										settypedData(b);
+										setTypedData(b);
 										settotalRecords(b.length);
 										setareaData(b.join('\n'));
 										let dummyArr = [];
@@ -260,7 +256,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 											updatedData.push(line?.split(';'));
 										}
 									});
-									settypedData(updatedData);
+									setTypedData(updatedData);
 									settotalRecords(updatedData?.length);
 									setareaData(
 										linesWithoutCommas
@@ -515,7 +511,7 @@ const LeftPane = ({ classes }: ClassesType & LeftPaneProps) => {
 									className={classes.clearDiv}
 									onClick={() => {
 										setareaData('');
-										settypedData([]);
+										setTypedData([]);
 										settotalRecords(0);
 									}}>
 									{translator('sms.clearList')}

@@ -244,3 +244,17 @@ export type saveCampaignResponsePayloadProps = {
 export type saveCampaignResponseProps = {
 	payload: saveCampaignResponsePayloadProps;
 };
+
+export type groupsListProps = {
+	classes: ClassesType['classes'];
+	list: any;
+	groupNameSearch: any;
+	selectedList: any;
+	onSelectGroup: (group: testGroupDataProps) => void;
+};
+
+export type GroupsSelectAllProps = {
+	classes: ClassesType['classes'];
+	onSelectAllGroup: () => void;
+	allSelected: boolean;
+};
