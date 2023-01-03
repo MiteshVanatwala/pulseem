@@ -629,6 +629,17 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
+	const onFormButtonClick = (buttonName: string) => {
+		switch (buttonName) {
+			case 'Save':
+				onSaveCampaign();
+				break;
+
+			default:
+				break;
+		}
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -931,8 +942,9 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 				<Grid container>
 					<Buttons
 						classes={classes}
-						onDeleteCampaign={() => onDeleteClick()}
-						onSaveCampaign={() => onSaveCampaign()}
+						onFormButtonClick={(buttonName: string) =>
+							onFormButtonClick(buttonName)
+						}
 					/>
 				</Grid>
 			</form>

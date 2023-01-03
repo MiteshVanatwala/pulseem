@@ -1,6 +1,7 @@
 import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 export type smsProps = {
 	testGroups: [];
@@ -14,6 +15,11 @@ export type coreProps = {
 
 export type WhatsappCampaignProps = {
 	classes: ClassesType['classes'];
+};
+
+export type ButtonsProps = {
+	classes: ClassesType['classes'];
+	onFormButtonClick: (buttonName: string) => void;
 };
 
 export type dynamicButtonProps = {
@@ -80,10 +86,38 @@ export type testGroupModalProps = {
 
 export type RightPaneProps = {
 	classes: ClassesType['classes'];
+	handleDatePicker: (updatedDate: MaterialUiPickersDate | null) => void;
+	sendDate: MaterialUiPickersDate | null;
+	handleFromDate: (updatedHandleFromDate: MaterialUiPickersDate | null) => void;
+	sendTime: MaterialUiPickersDate | null;
+	setsendTime: (updatedSendTime: MaterialUiPickersDate | null) => void;
+	handleRadioTime: (updatedRadioTime: MaterialUiPickersDate | null) => void;
+	sendType: string;
+	model: {};
+	handleSendType: (e: BaseSyntheticEvent) => void;
+	toggleA: boolean;
+	toggleB: boolean;
+	handlebef: () => void;
+	handleaf: () => void;
+	timePickerOpen: boolean;
+	handleTimePicker: (updatedTimePicker: MaterialUiPickersDate | null) => void;
+	renderToast: () => void;
+	daysBeforeAfter: string;
+	handleSpecialDayChange: (e: BaseSyntheticEvent) => void;
+	spectialDateFieldID: string;
+	handleSelectChange: (e: BaseSyntheticEvent) => void;
 };
 
 export type LeftPaneProps = {
 	classes: ClassesType['classes'];
+	subAccountAllGroups: testGroupDataProps[];
+	finishedCampaigns: testGroupDataProps[];
+	selectedFilterCampaigns: testGroupDataProps[];
+	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
+	selectedFilterGroups: testGroupDataProps[];
+	setFilterGroups: (updatedFilterGroups: testGroupDataProps[]) => void;
+	selectedGroups: testGroupDataProps[];
+	setSelected: (updatedSelected: testGroupDataProps[]) => void;
 };
 export type WhatsappCampaignSecondProps = {
 	classes: ClassesType['classes'];
@@ -110,6 +144,12 @@ export type FilterRecipientsDialogProps = {
 	classes: ClassesType['classes'];
 	isFilterModal: boolean;
 	onFilterModalClose: () => void;
+	subAccountAllGroups: testGroupDataProps[];
+	finishedCampaigns: testGroupDataProps[];
+	selectedFilterCampaigns: testGroupDataProps[];
+	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
+	selectedFilterGroups: testGroupDataProps[];
+	setFilterGroups: (updatedFilterGroups: testGroupDataProps[]) => void;
 };
 
 export type SummaryModalProps = {
