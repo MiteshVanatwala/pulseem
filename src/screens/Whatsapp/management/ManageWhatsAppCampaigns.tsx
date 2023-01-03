@@ -22,6 +22,7 @@ import {
   SearchIcon,
   GroupsIcon,
   PreviewIcon,
+  CalendarIcon,
 } from "../../../assets/images/managment/index";
 import ManagmentIcon from "./Component/ManagmentIcon";
 import { Title } from "../../../components/managment/Title";
@@ -49,16 +50,18 @@ import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { templatData } from "../Constant";
 import Pagination from "./Component/Pagination";
 import RestoreDeletedModal from "./Popups/RestoreDeletedModal";
-import { DatePicker } from "@material-ui/pickers";
+import { KeyboardDatePicker } from "@material-ui/pickers";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
 import { ManagmentIconProps } from "./Types/Management.types";
 import AlertModal from "../Editor/Popups/AlertModal";
 import WhatsappMobilePreview from "../Editor/Components/WhatsappMobilePreview";
 import { getSavedTemplatesById } from "../../../redux/reducers/whatsappSlice";
 import InfoModal from "./Popups/InfoModal";
+import { useNavigate } from "react-router-dom";
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { t: translator } = useTranslation();
   const { windowSize } = useSelector(
     (state: { core: coreProps }) => state.core
@@ -70,7 +73,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
   const [campaineNameSearch, setCampaineNameSearch] = useState<string>("");
   const [isSearching, setSearching] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(6);
 
   const [isPreviewCampaignOpen, setIsPreviewCampaignOpen] =
     useState<boolean>(false);
@@ -92,6 +95,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
     "Group 1",
     "Group 2",
   ]);
+  const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
+    useState<boolean>(false);
+  const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
   const [restoreIds, setRestoreIds] = useState<string[]>([]);
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -585,6 +591,14 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
     console.log("onRestoreDeleted");
   };
 
+  const onSearch = async () => {
+    console.log("onSearch");
+  };
+
+  const onCreateCamoaign = async () => {
+    navigate("/react/whatsapp/campaign/create/page1");
+  };
+
   return (
     <DefaultScreen
       subPage={"manage"}
@@ -614,37 +628,59 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
             />
           </Grid>
 
-          {windowSize !== "xs" ? (
+          {windowSize !== "xs" && (
             <Grid item>
-              <DatePicker
-                className={classes.whatsappDatePicker}
-                onChange={handleFromDate}
-                value={fromDate}
+              <KeyboardDatePicker
+                inputVariant="outlined"
+                className={clsx(classes.textField)}
+                inputProps={{
+                  className: classes.datePickerInput,
+                }}
+                variant="inline"
+                keyboardIcon={<CalendarIcon />}
                 format={"DD/MM/YYYY"}
                 placeholder={translator(
                   "whatsappManagement.fromDatePlaceholder"
                 )}
+                initialFocusedDate={moment()}
+                value={fromDate}
+                onChange={handleFromDate}
+                onClose={() => setIsFromDatePickerOpen(false)}
+                open={isFromDatePickerOpen}
+                onClick={() => setIsFromDatePickerOpen(true)}
+                autoOk={true}
               />
             </Grid>
-          ) : null}
+          )}
 
-          {windowSize !== "xs" ? (
+          {windowSize !== "xs" && (
             <Grid item>
-              <DatePicker
-                className={classes.whatsappDatePicker}
-                onChange={handleToDate}
-                value={toDate}
+              <KeyboardDatePicker
+                inputVariant="outlined"
+                className={clsx(classes.textField)}
+                inputProps={{
+                  className: classes.datePickerInput,
+                }}
+                variant="inline"
+                keyboardIcon={<CalendarIcon />}
                 format={"DD/MM/YYYY"}
                 placeholder={translator("whatsappManagement.toDatePlaceholder")}
+                initialFocusedDate={moment()}
+                value={toDate}
+                onChange={handleToDate}
+                onClose={() => setIsToDatePickerOpen(false)}
+                open={isToDatePickerOpen}
+                onClick={() => setIsToDatePickerOpen(true)}
+                autoOk={true}
               />
             </Grid>
-          ) : null}
+          )}
 
           <Grid item>
             <Button
               size="large"
               variant="contained"
-              // onClick={handleSearch}
+              onClick={onSearch}
               className={classes.searchButton}
               endIcon={<SearchIcon />}
             >
@@ -672,7 +708,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
           className={classes.manageTemplatesHeaderButtons}
         >
           <div>
-            <Button className={"green"}>
+            <Button className={"green"} onClick={() => onCreateCamoaign()}>
               {translator("whatsappManagement.createCampaign")}
             </Button>
             <Button
@@ -786,7 +822,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
           onRowsPerPageChange={(rowsNumber: number) =>
             setRowsPerPage(rowsNumber)
           }
-          rowsPerPageOptions={[10, 20, 30, 40]}
+          rowsPerPageOptions={[6, 10, 20, 30, 40]}
           page={page}
           onPageChange={(pageNumber: number) => setPage(pageNumber)}
           returnPageOne={false}

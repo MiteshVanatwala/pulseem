@@ -1480,9 +1480,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		borderRadius: '5px',
 		border: '1px solid #bbb',
 		outline: 'none',
-		padding: '3px 11px 3px 2px',
+		padding: '3px 11px 3px 10px',
 		fontSize: '16px',
-		width: 'calc(100% - 15px)',
+		width: 'calc(100% - 23px)',
 		'&::placeholder': {
 			fontSize: '16px',
 		},
@@ -1496,6 +1496,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			transform: 'none',
 			top: '10px',
 			left: '12px',
+		},
+		'& .MuiSelect-select:focus': {
+			backgroundColor: 'transparent',
 		},
 	},
 });

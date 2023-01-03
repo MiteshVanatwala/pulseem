@@ -186,8 +186,8 @@ const WhatsappTemplateEditor = ({
 					<span className={classes.textInfo}>
 						<>
 							{dynamicFieldCount === 1
-								? translator('sms.message')
-								: translator('sms.messages')}
+								? translator('whatsappCampaign.dfield')
+								: translator('whatsappCampaign.dfields')}
 						</>
 					</span>
 				</span>
