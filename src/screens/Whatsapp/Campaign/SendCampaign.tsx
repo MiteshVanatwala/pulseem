@@ -15,6 +15,7 @@ import Buttons from './Components/Buttons';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import moment from 'moment';
 import Toast from '../../../components/Toast/Toast.component';
+import ValidationAlert from './Popups/ValidationAlert';
 
 const SendCampaign = ({
 	classes,
@@ -35,12 +36,18 @@ const SendCampaign = ({
 	const [sendTime, setsendTime] = useState<MaterialUiPickersDate | null>(null);
 	const [sendType, setSendType] = useState<string>('1');
 	const [model, setModel] = useState<{}>({ ID: 0 });
-	const [toggleA, settoggleA] = useState<boolean>(false);
-	const [toggleB, settoggleB] = useState<boolean>(true);
+	const [isSpecialDateBefore, setIsSpecialDateBefore] = useState<boolean>(true);
 	const [timePickerOpen, setTimePickerOpen] = useState<boolean>(false);
 	const [toastMessage, setToastMessage] = useState<string>('');
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
+
+	const [newGroupName, setNewGroupName] = useState<string>('');
+	const [activeTab, setActiveTab] = useState<'group' | 'manual'>('group');
+	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
+		string[]
+	>([]);
 
 	const subAccountAllGroups: testGroupDataProps[] = [
 		{
@@ -183,22 +190,8 @@ const SendCampaign = ({
 		} else if (event.target.value === '3') {
 			setModel({ ...model, SendDate: null });
 			handleFromDate(null);
-			// setTimeInterval(-1);
-			// setPulseAmount(-1);
 		}
 		setSendType(event.target.value);
-	};
-
-	const handlebef = () => {
-		// setafterClick(false);
-		settoggleA(false);
-		settoggleB(true);
-	};
-
-	const handleaf = () => {
-		// setafterClick(true);
-		settoggleA(true);
-		settoggleB(false);
 	};
 
 	const handleTimePicker = (value: MaterialUiPickersDate | null) => {
@@ -238,13 +231,23 @@ const SendCampaign = ({
 	};
 
 	const onFormButtonClick = (buttonName: string) => {
-		console.log(
-			`${buttonName} Clicked`,
-			sendDate,
-			sendTime,
-			daysBeforeAfter,
-			spectialDateFieldID
-		);
+		switch (buttonName) {
+			case 'Delete':
+				console.log('Delete');
+				break;
+			case 'Exit':
+				console.log('Exit');
+				break;
+			case 'Save':
+				console.log('Save');
+				break;
+			case 'Send':
+				console.log('Send');
+				break;
+
+			default:
+				break;
+		}
 	};
 
 	const renderToast = () => {
@@ -255,6 +258,15 @@ const SendCampaign = ({
 			return <Toast data={toastMessage} onClose='' />;
 		}
 		return null;
+	};
+
+	const onNewGroupSave = () => {
+		if (newGroupName?.length > 0) {
+			console.log('onNewGroupSave');
+		} else {
+			setGroupSendValidationErrors(['Group name - required field']);
+			setIsValidationAlert(true);
+		}
 	};
 
 	return (
@@ -283,6 +295,11 @@ const SendCampaign = ({
 								setFilterCampaigns={setFilterCampaigns}
 								selectedFilterGroups={selectedFilterGroups}
 								setFilterGroups={setFilterGroups}
+								onNewGroupChange={setNewGroupName}
+								newGroupName={newGroupName}
+								onNewGroupSave={onNewGroupSave}
+								activeTab={activeTab}
+								setActiveTab={setActiveTab}
 							/>
 						</Grid>
 						<Grid item md={1} xs={12}></Grid>
@@ -291,24 +308,19 @@ const SendCampaign = ({
 								classes={classes}
 								handleDatePicker={handleDatePicker}
 								sendDate={sendDate}
-								handleFromDate={handleFromDate}
 								sendTime={sendTime}
 								setsendTime={setsendTime}
 								handleRadioTime={handleRadioTime}
 								sendType={sendType}
-								model={model}
 								handleSendType={handleSendType}
-								toggleA={toggleA}
-								toggleB={toggleB}
-								handlebef={handlebef}
-								handleaf={handleaf}
 								timePickerOpen={timePickerOpen}
 								handleTimePicker={handleTimePicker}
-								renderToast={renderToast}
 								daysBeforeAfter={daysBeforeAfter}
 								handleSpecialDayChange={handleSpecialDayChange}
 								spectialDateFieldID={spectialDateFieldID}
 								handleSelectChange={handleSelectChange}
+								isSpecialDateBefore={isSpecialDateBefore}
+								setIsSpecialDateBefore={setIsSpecialDateBefore}
 							/>
 						</Grid>
 					</Grid>
@@ -321,6 +333,14 @@ const SendCampaign = ({
 					fromNumber={''}
 					onSummaryModalClose={() => setIsSummaryModal(false)}
 				/>
+				<ValidationAlert
+					classes={classes}
+					isOpen={isValidationAlert}
+					onClose={() => setIsValidationAlert(false)}
+					title={translator('whatsappCampaign.sendValidation')}
+					requiredFields={groupSendValidationErrors}
+				/>
+				{renderToast()}
 			</div>
 		</DefaultScreen>
 	);

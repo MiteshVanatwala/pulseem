@@ -43,7 +43,7 @@ import {
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
-import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
@@ -55,6 +55,7 @@ import {
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import { getSavedTemplatesById } from '../../../redux/reducers/whatsappSlice';
+import { statuses } from '../Constant';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -71,8 +72,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const [isDuplicateCampaignOpen, setIsDuplicateCampaignOpen] =
 		useState<boolean>(false);
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
-	const [campainStatusSearch, setCampainStatusSearch] =
-		useState<string>('Status');
+	const [campainStatusSearch, setCampainStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
 	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -150,15 +150,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 	};
 	const renderStatusCell = (status: number) => {
-		const statuses: statusProps = {
-			1: 'common.Created',
-			2: 'common.Sending',
-			3: 'campaigns.Stopped',
-			4: 'common.Sent',
-			5: 'campaigns.Canceled',
-			6: 'campaigns.Optin',
-			7: 'campaigns.Approve',
-		};
 		return (
 			<>
 				<Typography
@@ -529,14 +520,19 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						<TextField
 							select
 							type='text'
+							label={campainStatusSearch?.length > 0 ? '' : 'Status'}
 							className={classes.whatsappManagementbuttonField}
 							onChange={(e: BaseSyntheticEvent) =>
 								setCampainStatusSearch(e.target.value)
 							}
 							value={campainStatusSearch}>
-							<MenuItem key={'no-data-template'} value={'template.TemplateId'}>
-								<>template.TemplateId</>
-							</MenuItem>
+							{Object.keys(statuses)?.map((status: any) => (
+								<MenuItem
+									key={'no-data-template'}
+									value={status}>
+									<>{translator(statuses[status?.toString()])}</>
+								</MenuItem>
+							))}
 						</TextField>
 					</Grid>
 
@@ -558,7 +554,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 								onClick={clearSearch}
 								className={classes.searchButton}
 								endIcon={<ClearIcon />}>
-								{translator('common.clear')}
+								<>{translator('common.clear')}</>
 							</Button>
 						</Grid>
 					)}

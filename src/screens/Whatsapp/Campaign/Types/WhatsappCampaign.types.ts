@@ -96,24 +96,19 @@ export type RightPaneProps = {
 	classes: ClassesType['classes'];
 	handleDatePicker: (updatedDate: MaterialUiPickersDate | null) => void;
 	sendDate: MaterialUiPickersDate | null;
-	handleFromDate: (updatedHandleFromDate: MaterialUiPickersDate | null) => void;
 	sendTime: MaterialUiPickersDate | null;
 	setsendTime: (updatedSendTime: MaterialUiPickersDate | null) => void;
 	handleRadioTime: (updatedRadioTime: MaterialUiPickersDate | null) => void;
 	sendType: string;
-	model: {};
 	handleSendType: (e: BaseSyntheticEvent) => void;
-	toggleA: boolean;
-	toggleB: boolean;
-	handlebef: () => void;
-	handleaf: () => void;
 	timePickerOpen: boolean;
 	handleTimePicker: (updatedTimePicker: MaterialUiPickersDate | null) => void;
-	renderToast: () => void;
 	daysBeforeAfter: string;
 	handleSpecialDayChange: (e: BaseSyntheticEvent) => void;
 	spectialDateFieldID: string;
 	handleSelectChange: (e: BaseSyntheticEvent) => void;
+	isSpecialDateBefore: boolean;
+	setIsSpecialDateBefore: (value: boolean) => void;
 };
 
 export type LeftPaneProps = {
@@ -126,6 +121,11 @@ export type LeftPaneProps = {
 	setFilterGroups: (updatedFilterGroups: testGroupDataProps[]) => void;
 	selectedGroups: testGroupDataProps[];
 	setSelected: (updatedSelected: testGroupDataProps[]) => void;
+	onNewGroupChange: (value: string) => void;
+	newGroupName: string;
+	onNewGroupSave: () => void;
+	activeTab: string;
+	setActiveTab: (tab: 'group' | 'manual') => void;
 };
 export type WhatsappCampaignSecondProps = {
 	classes: ClassesType['classes'];

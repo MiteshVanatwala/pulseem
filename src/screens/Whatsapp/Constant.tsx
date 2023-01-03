@@ -1,5 +1,6 @@
 import { testGroupDataProps } from './Campaign/Types/WhatsappCampaign.types';
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
+import { statusProps } from './management/Types/Management.types';
 
 export enum fieldIDs {
 	'personalField' = 1,
@@ -1248,7 +1249,7 @@ export const templatData = [
 		AutomationID: 2519,
 		Groups: [],
 		AutomationTriggerInActive: false,
-	},	
+	},
 ];
 export const testGroupData: testGroupDataProps[] = [
 	{
@@ -1318,4 +1319,14 @@ export const resetToastData: toastProps['SUCCESS'] = {
 	color: '',
 	message: '',
 	showAnimtionCheck: false,
+};
+
+export const statuses: statusProps = {
+	1: 'common.Created',
+	2: 'common.Sending',
+	3: 'campaigns.Stopped',
+	4: 'common.Sent',
+	5: 'campaigns.Canceled',
+	6: 'campaigns.Optin',
+	7: 'campaigns.Approve',
 };
