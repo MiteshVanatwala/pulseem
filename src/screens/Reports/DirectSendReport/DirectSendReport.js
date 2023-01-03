@@ -49,6 +49,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
   const [dialogType, setDialog] = useState(null);
+  const priorDate = moment().subtract(30, 'days').utcOffset(0);
 
 
   const defaultsDates = {
@@ -58,7 +59,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
     },
     current: {
-      from: moment({ hour: 0, minute: 0, second: 0 }).startOf('month').format('YYYY-MM-DD HH:mm'),
+      from: priorDate,
       to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
     }
   }
@@ -74,7 +75,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       Default: {
         PageIndex: 1,
         PageSize: rowsPerPage,
-        FromDate: defaultsDates.current.from,
+        FromDate: priorDate,
         ToDate: defaultsDates.current.to
       }
     },
@@ -89,7 +90,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       Default: {
         PageSize: rowsPerPage,
         PageIndex: 1,
-        FromDate: defaultsDates.current.from,
+        FromDate: priorDate,
         ToDate: defaultsDates.current.to,
         ShowContent: showContent
       }
@@ -97,7 +98,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     WHATSAPP: {
       PageSize: rowsPerPage,
       PageIndex: 1,
-      FromDate: defaultsDates.current.from,
+      FromDate: priorDate,
       ToDate: defaultsDates.current.to,
       ShowContent: showContent
     }
