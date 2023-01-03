@@ -73,7 +73,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(6);
 
 	const [isPreviewCampaignOpen, setIsPreviewCampaignOpen] =
 		useState<boolean>(false);
@@ -799,7 +799,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					onRowsPerPageChange={(rowsNumber: number) =>
 						setRowsPerPage(rowsNumber)
 					}
-					rowsPerPageOptions={[10, 20, 30, 40]}
+					rowsPerPageOptions={[6, 10, 20, 30, 40]}
 					page={page}
 					onPageChange={(pageNumber: number) => setPage(pageNumber)}
 					returnPageOne={false}

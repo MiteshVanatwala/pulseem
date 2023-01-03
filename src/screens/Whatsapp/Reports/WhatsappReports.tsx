@@ -11,7 +11,10 @@ import {
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
-import { SearchIcon } from '../../../assets/images/managment/index';
+import {
+	CalendarIcon,
+	SearchIcon,
+} from '../../../assets/images/managment/index';
 import {
 	DateField,
 	TablePagination,
@@ -27,7 +30,7 @@ import { useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from '../management/Component/Pagination';
-import { DatePicker } from '@material-ui/pickers';
+import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
@@ -42,7 +45,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(6);
+
+	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
+		useState<boolean>(false);
+	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
+
 	const rows: any = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
@@ -124,6 +132,11 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 		return sortData?.length > 0 ? sortData : rows;
 	};
+
+	const onSearch = () => {
+		console.log('onSearch');
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -152,35 +165,57 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						/>
 					</Grid>
 
-					{windowSize !== 'xs' ? (
+					{windowSize !== 'xs' && (
 						<Grid item>
-							<DatePicker
-								className={classes.whatsappDatePicker}
-								onChange={handleFromDate}
+							<KeyboardDatePicker
+								inputVariant='outlined'
+								className={clsx(classes.textField)}
+								inputProps={{
+									className: classes.datePickerInput,
+								}}
+								variant='inline'
+								keyboardIcon={<CalendarIcon />}
+								format={'DD/MM/YYYY'}
+								placeholder={'From date'}
+								initialFocusedDate={moment()}
 								value={fromDate}
-								format={'DD/MM/YYYY'}
-								placeholder={'From Date'}
+								onChange={handleFromDate}
+								onClose={() => setIsFromDatePickerOpen(false)}
+								open={isFromDatePickerOpen}
+								onClick={() => setIsFromDatePickerOpen(true)}
+								autoOk={true}
 							/>
 						</Grid>
-					) : null}
+					)}
 
-					{windowSize !== 'xs' ? (
+					{windowSize !== 'xs' && (
 						<Grid item>
-							<DatePicker
-								className={classes.whatsappDatePicker}
-								onChange={handleToDate}
-								value={toDate}
+							<KeyboardDatePicker
+								inputVariant='outlined'
+								className={clsx(classes.textField)}
+								inputProps={{
+									className: classes.datePickerInput,
+								}}
+								variant='inline'
+								keyboardIcon={<CalendarIcon />}
 								format={'DD/MM/YYYY'}
-								placeholder={'To Date'}
+								placeholder={'To date'}
+								initialFocusedDate={moment()}
+								value={toDate}
+								onChange={handleToDate}
+								onClose={() => setIsToDatePickerOpen(false)}
+								open={isToDatePickerOpen}
+								onClick={() => setIsToDatePickerOpen(true)}
+								autoOk={true}
 							/>
 						</Grid>
-					) : null}
+					)}
 
 					<Grid item>
 						<Button
 							size='large'
 							variant='contained'
-							// onClick={handleSearch}
+							onClick={onSearch}
 							className={classes.searchButton}
 							endIcon={<SearchIcon />}>
 							{translator('campaigns.btnSearchResource1.Text')}
@@ -389,7 +424,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					onRowsPerPageChange={(rowsNumber: number) =>
 						setRowsPerPage(rowsNumber)
 					}
-					rowsPerPageOptions={[10, 20, 30, 40]}
+					rowsPerPageOptions={[6, 10, 20, 30, 40]}
 					page={page}
 					onPageChange={(pageNumber: number) => setPage(pageNumber)}
 					returnPageOne={false}

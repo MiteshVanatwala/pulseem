@@ -46,7 +46,7 @@ const LeftPane = ({
 	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
 		useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
-	const [typedData, settypedData] = useState<string[][]>([
+	const [typedData, setTypedData] = useState<string[][]>([
 		['Demo', 'Title', 'Name'],
 	]);
 	const [initialheadstate, setinitialheadstate] = useState<string[]>([
@@ -136,7 +136,7 @@ const LeftPane = ({
 				}
 			}
 		}
-		settypedData(updatedTypedData);
+		setTypedData(updatedTypedData);
 
 		let dummyArr = [];
 		for (let i = 0; i < cols; i++) {
@@ -175,7 +175,7 @@ const LeftPane = ({
 											b.push(a[i].split(','));
 										}
 										b.pop();
-										settypedData(b);
+										setTypedData(b);
 										settotalRecords(b.length);
 										setareaData(b.join('\n'));
 										let dummyArr = [];
@@ -206,7 +206,7 @@ const LeftPane = ({
 											updatedData.push(line?.split(';'));
 										}
 									});
-									settypedData(updatedData);
+									setTypedData(updatedData);
 									settotalRecords(updatedData?.length);
 									setareaData(
 										linesWithoutCommas
@@ -446,7 +446,7 @@ const LeftPane = ({
 									onClick={() => {
 										setareaData('');
 										setContacts([]);
-										settypedData([]);
+										setTypedData([]);
 										settotalRecords(0);
 									}}>
 									{translator('sms.clearList')}

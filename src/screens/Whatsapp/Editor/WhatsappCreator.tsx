@@ -46,6 +46,7 @@ import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
 	getSavedTemplates,
+	getSavedTemplatesById,
 	submitTemplates,
 	uploadMedia,
 } from '../../../redux/reducers/whatsappSlice';
@@ -58,8 +59,11 @@ import {
 	getLastDynamicFieldValue,
 } from '../Common';
 import { resetToastData } from '../Constant';
+import { useParams } from 'react-router-dom';
+import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
+	const { templateID } = useParams();
 	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
@@ -69,6 +73,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
@@ -79,7 +84,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setSavedTemplateList(savedTemplate.payload.Items);
 	};
 	useEffect(() => {
-		getSavedTemplateFields();
+		setIsLoader(true);
+		getSavedTemplateFields().then(() => {
+			if (templateID) {
+				setTemplateById(templateID);
+			} else {
+				setIsLoader(false);
+			}
+		});
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
@@ -379,6 +392,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onSavedTemplateChange = (TemplateId: string) => {
+		console.log('TemplateId::', TemplateId);
 		setSavedTemplate(TemplateId);
 		const savedTemplateData: savedTemplateListProps | undefined =
 			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
@@ -398,6 +412,42 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 		if (templateData?.variables) {
 			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+		}
+	};
+
+	const setTemplateById = async (templateId: string) => {
+		const templateData: savedTemplateAPIProps = await dispatch<any>(
+			getSavedTemplatesById({
+				templateId: templateId
+					? 'HX9ad85444c723a0eaeada2dc20364841b'
+					: 'HX9ad85444c723a0eaeada2dc20364841b',
+			})
+		);
+		setIsLoader(false);
+		if (templateData.payload.Status === 'SUCCESS') {
+			const templates = templateData.payload.Items
+				? templateData.payload.Items
+				: [];
+			if (templates && templates?.length > 0) {
+				const templateData = templates[0]?.Data;
+				const templateName = templates[0]?.TemplateName;
+				if (templateData) {
+					setUpdatedTemplateData(templateData);
+				}
+				setSavedTemplate('HX9ad85444c723a0eaeada2dc20364841b');
+				setTemplateName(templateName || '');
+				setFileData(updatedFileData);
+				setButtonType(updatedButtonType);
+				setTemplateData(updatedTemplateData);
+				if (updatedButtonType === 'quickReply') {
+					setQuickReplyButtons(updatedTemplateData.templateButtons);
+				} else {
+					setCallToActionFieldRows(updatedTemplateData.templateButtons);
+				}
+				if (templateData?.variables) {
+					setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+				}
+			}
 		}
 	};
 
@@ -872,6 +922,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					/>
 				</Box>
 			</AlertModal>
+
+			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
 };

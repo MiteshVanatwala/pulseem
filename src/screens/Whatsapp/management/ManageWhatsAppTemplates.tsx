@@ -56,9 +56,11 @@ import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import { getSavedTemplatesById } from '../../../redux/reducers/whatsappSlice';
 import { statuses } from '../Constant';
+import { useNavigate } from 'react-router-dom';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -75,7 +77,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const [campainStatusSearch, setCampainStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [page, setPage] = useState<number>(1);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+	const [rowsPerPage, setRowsPerPage] = useState<number>(6);
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
 		templateButtons: [],
@@ -488,6 +490,14 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		console.log('onDuplicateCampaign');
 	};
 
+	const onCreateTemplate = async () => {
+		navigate('/react/whatsapp/template/create');
+	};
+
+	const onSearch = async () => {
+		console.log('onSearch');
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -527,9 +537,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							}
 							value={campainStatusSearch}>
 							{Object.keys(statuses)?.map((status: any) => (
-								<MenuItem
-									key={'no-data-template'}
-									value={status}>
+								<MenuItem key={'no-data-template'} value={status}>
 									<>{translator(statuses[status?.toString()])}</>
 								</MenuItem>
 							))}
@@ -540,7 +548,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						<Button
 							size='large'
 							variant='contained'
-							// onClick={handleSearch}
+							onClick={onSearch}
 							className={classes.searchButton}
 							endIcon={<SearchIcon />}>
 							{translator('campaigns.btnSearchResource1.Text')}
@@ -565,7 +573,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					spacing={2}
 					className={classes.manageTemplatesHeaderButtons}>
 					<div>
-						<Button className={'green'}>Create Template</Button>
+						<Button className={'green'} onClick={onCreateTemplate}>Create Template</Button>
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
@@ -661,7 +669,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					onRowsPerPageChange={(rowsNumber: number) =>
 						setRowsPerPage(rowsNumber)
 					}
-					rowsPerPageOptions={[10, 20, 30, 40]}
+					rowsPerPageOptions={[6, 10, 20, 30, 40]}
 					page={page}
 					onPageChange={(pageNumber: number) => setPage(pageNumber)}
 					returnPageOne={false}
