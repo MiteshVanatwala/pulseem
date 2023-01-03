@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles';
 import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { RestoreDeletedModalProps } from '../Types/Management.types';
+import { BaseSyntheticEvent } from 'react';
 
 const RestoreDeletedModal = ({
 	classes,
@@ -19,70 +20,49 @@ const RestoreDeletedModal = ({
 	onClose,
 	onConfirmOrYes,
 	title,
+	deletedCampaigns,
+	restoreIds,
+	setRestoreIds,
 }: RestoreDeletedModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 	const { t: translator } = useTranslation();
 
 	const onCancel = () => {
+		setRestoreIds([]);
 		onClose();
 	};
-
-	const deletedCampaigns: { id: string; campaignName: string }[] = [
-		{
-			id: '21',
-			campaignName: 'demo campaign 1',
-		},
-		{
-			id: '211',
-			campaignName: 'demo campaign 2',
-		},
-		{
-			id: '213',
-			campaignName: 'demo campaign 3',
-		},
-		{
-			id: '21564',
-			campaignName: 'demo campaign 4',
-		},
-		{
-			id: '26781',
-			campaignName: 'demo campaign 5',
-		},
-		{
-			id: '27801',
-			campaignName: 'demo campaign 6',
-		},
-		{
-			id: '23451',
-			campaignName: 'demo campaign 7',
-		},
-		{
-			id: '2231',
-			campaignName: 'demo campaign 8',
-		},
-	];
+	const onRestoreDeletedChange = (restoreId: string, isChecked: boolean) => {
+		const isAvaliable = restoreIds?.find((id: string) => id === restoreId);
+		if (isChecked) {
+			if (!!!isAvaliable) {
+				setRestoreIds([...restoreIds, restoreId]);
+			}
+		} else {
+			if (!!isAvaliable) {
+				const updatedIds = restoreIds?.filter((id: string) => id !== restoreId);
+				setRestoreIds([...updatedIds]);
+			}
+		}
+	};
 
 	return (
 		<>
 			<Dialog
 				fullScreen={fullScreen}
 				open={isOpen}
-				onClose={onClose}
+				onClose={onCancel}
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.alertModal}>
 					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
 						{title}
 					</div>
 					<Box className={classes.alertModalClose}>
-						<Close fontSize={'small'} onClick={onClose} />
+						<Close fontSize={'small'} onClick={onCancel} />
 					</Box>
 					<Box className={classes.alertModalInfoWrapper}>
 						<Box className={classes.alertModalInfo}>
-							<SupervisedUserCircleOutlined
-								fontSize={'small'}
-								onClick={onClose}
-							/>
+							<SupervisedUserCircleOutlined fontSize={'small'} />
 						</Box>
 					</Box>
 					<div className={classes.alertModalContent}>
@@ -100,6 +80,12 @@ const RestoreDeletedModal = ({
 												control={<Checkbox />}
 												label={campaign.campaignName}
 												labelPlacement='end'
+												onChange={(e: BaseSyntheticEvent) =>
+													onRestoreDeletedChange(
+														e.target.value,
+														e.target.checked
+													)
+												}
 											/>
 										)
 									)}

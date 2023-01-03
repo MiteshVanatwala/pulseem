@@ -17,6 +17,9 @@ export type RestoreDeletedModalProps = {
 	onClose: () => void;
 	onConfirmOrYes: () => void;
 	title: string;
+	deletedCampaigns: { id: string; campaignName: string }[];
+	restoreIds: string[];
+	setRestoreIds: (ids: string[]) => void;
 };
 
 export type templateRowDataProps = {

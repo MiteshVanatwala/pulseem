@@ -92,6 +92,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		'Group 1',
 		'Group 2',
 	]);
+	const [restoreIds, setRestoreIds] = useState<string[]>([]);
 
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
@@ -106,6 +107,42 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 	let updatedButtonType: string = '';
 	let updatedFileData: string = '';
+
+	const deletedCampaigns: { id: string; campaignName: string }[] = [
+		{
+			id: '21',
+			campaignName: 'demo campaign 1',
+		},
+		{
+			id: '211',
+			campaignName: 'demo campaign 2',
+		},
+		{
+			id: '213',
+			campaignName: 'demo campaign 3',
+		},
+		{
+			id: '21564',
+			campaignName: 'demo campaign 4',
+		},
+		{
+			id: '26781',
+			campaignName: 'demo campaign 5',
+		},
+		{
+			id: '27801',
+			campaignName: 'demo campaign 6',
+		},
+		{
+			id: '23451',
+			campaignName: 'demo campaign 7',
+		},
+		{
+			id: '2231',
+			campaignName: 'demo campaign 8',
+		},
+	];
+
 	useEffect(() => {
 		if (
 			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
@@ -540,6 +577,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		console.log('onDeleteCampaign');
 	};
 
+	const onRestoreDeleted = async () => {
+		setIsPreviewCampaignOpen(false);
+		console.log('onRestoreDeleted');
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -731,7 +773,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				title={'Select the WhatsApp campaigns you want to restore'}
 				isOpen={isRestoreDeletedModal}
 				onClose={() => setIsRestoreDeletedModal(false)}
-				onConfirmOrYes={() => {}}
+				onConfirmOrYes={() => onRestoreDeleted()}
+				deletedCampaigns={deletedCampaigns}
+				restoreIds={restoreIds}
+				setRestoreIds={(ids: string[]) => setRestoreIds(ids)}
 			/>
 
 			<AlertModal
