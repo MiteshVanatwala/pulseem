@@ -1,0 +1,9 @@
+{
+  "report": "WhatsApp Report",
+  "fromDate": "From Date",
+  "toDate": "To Date",
+  "export": "Export File",
+  "campaigns": "Campaigns",
+  "read": "Read",
+  "failed": "Failed"
+}

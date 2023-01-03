@@ -1,0 +1,21 @@
+{
+  "templateManagement": "ניהול תבניות Whatsapp",
+  "campaignManagement": "ניהול קמפיינים בוואטסאפ",
+  "fromDatePlaceholder": "מתאריך",
+  "toDatePlaceholder": "עד היום",
+  "restore": "שחזור נמחק",
+  "duplicate": "שכפל תבנית",
+  "duplicateCampaign": "קמפיין כפול",
+  "duplicateDesc": "האם ברצונך לשכפל תבנית זו?",
+  "duplicateCampaignDesc": "האם ברצונך לשכפל את הקמפיין הזה?",
+  "createTemplate": "צור תבנית",
+  "deleteTemplate": "מחק תבנית",
+  "createCampaign": "צור מסע פרסום",
+  "campaignGroups": "קבוצות מסע פרסום",
+  "deleteCampaign": "מחק מסע פרסום",
+  "deleteCampaignDesc": "האם ברצונך למחוק את הקמפיין הזה?",
+  "templates": "תבניות",
+  "campaigns": "מסעות פרסום",
+  "submit": "שלח",
+  "preview": "תצוגה מקדימה"
+}
