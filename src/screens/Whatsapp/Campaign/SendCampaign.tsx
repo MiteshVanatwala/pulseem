@@ -1,55 +1,329 @@
-import { ClassesType } from "../../Classes.types";
-import DefaultScreen from "../../DefaultScreen";
-import WizardTitle from "../../../components/Wizard/WizardTitle";
-import { Grid } from "@material-ui/core";
-import { WhatsappCampaignSecondProps } from "./Types/WhatsappCampaign.types";
-import { useTranslation } from "react-i18next";
-import RightPane from "./Components/RightPane";
-import LeftPane from "./Components/LeftPane";
-import { useState } from "react";
-import SummaryModal from "./Popups/SummaryModal";
+import { ClassesType } from '../../Classes.types';
+import DefaultScreen from '../../DefaultScreen';
+import WizardTitle from '../../../components/Wizard/WizardTitle';
+import { Grid } from '@material-ui/core';
+import {
+	testGroupDataProps,
+	WhatsappCampaignSecondProps,
+} from './Types/WhatsappCampaign.types';
+import { useTranslation } from 'react-i18next';
+import RightPane from './Components/RightPane';
+import LeftPane from './Components/LeftPane';
+import { BaseSyntheticEvent, useState } from 'react';
+import SummaryModal from './Popups/SummaryModal';
+import Buttons from './Components/Buttons';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import moment from 'moment';
+import Toast from '../../../components/Toast/Toast.component';
 
 const SendCampaign = ({
-  classes,
+	classes,
 }: ClassesType & WhatsappCampaignSecondProps) => {
-  const { t: translator } = useTranslation();
-  const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
+	const { t: translator } = useTranslation();
+	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
 
-  return (
-    <DefaultScreen
-      subPage={"send2"}
-      currentPage="whatsapp"
-      classes={classes}
-      customPadding={true}
-    >
-      <div>
-        <div>
-          <WizardTitle
-            title={translator("whatsappCampaign.whatsappCampaign")}
-            classes={classes}
-            stepNumber={2}
-            subTitle={translator("mainReport.sendSetting")}
-          />
-          <Grid container style={{ marginBottom: "40px" }}>
-            <Grid item md={7} xs={12}>
-              <LeftPane classes={classes} />
-            </Grid>
-            <Grid item md={1} xs={12}></Grid>
-            <Grid item md={4} xs={12}>
-              <RightPane classes={classes} />
-            </Grid>
-          </Grid>
-        </div>
-        <SummaryModal
-          classes={classes}
-          isOpen={isSummaryModal}
-          campaignName={""}
-          fromNumber={""}
-          onSummaryModalClose={() => setIsSummaryModal(false)}
-        />
-      </div>
-    </DefaultScreen>
-  );
+	const [selectedGroups, setSelected] = useState<testGroupDataProps[]>([]);
+	const [selectedFilterCampaigns, setFilterCampaigns] = useState<
+		testGroupDataProps[]
+	>([]);
+	const [selectedFilterGroups, setFilterGroups] = useState<
+		testGroupDataProps[]
+	>([]);
+	const [sendDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
+		null
+	);
+	const [sendTime, setsendTime] = useState<MaterialUiPickersDate | null>(null);
+	const [sendType, setSendType] = useState<string>('1');
+	const [model, setModel] = useState<{}>({ ID: 0 });
+	const [toggleA, settoggleA] = useState<boolean>(false);
+	const [toggleB, settoggleB] = useState<boolean>(true);
+	const [timePickerOpen, setTimePickerOpen] = useState<boolean>(false);
+	const [toastMessage, setToastMessage] = useState<string>('');
+	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
+	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
+
+	const subAccountAllGroups: testGroupDataProps[] = [
+		{
+			GroupID: 89979,
+			GroupName: 'ccccc (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2017-08-20T11:02:08.933',
+			UpdateDate: '2017-08-20T11:02:08.933',
+			IsTestGroup: false,
+			IsDynamic: false,
+			Recipients: 0,
+		},
+		{
+			GroupID: 89980,
+			GroupName: 'cdgsfsgdf (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2017-08-20T11:02:39.197',
+			UpdateDate: '2017-08-20T12:44:55.69',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 5,
+		},
+		{
+			GroupID: 166670,
+			GroupName: 'left123',
+			SubAccountID: 0,
+			CreationDate: '2022-04-08T14:41:09.493',
+			UpdateDate: '2022-04-17T12:46:45.297',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 1,
+		},
+		{
+			GroupID: 165652,
+			GroupName: 'MeitalTest (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2022-03-10T14:33:53.9',
+			UpdateDate: '2022-03-10T14:33:53.9',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 0,
+		},
+		{
+			GroupID: 81457,
+			GroupName: 'omer (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2022-04-08T14:41:09.493',
+			UpdateDate: '2017-05-21T14:45:34.537',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 0,
+		},
+		{
+			GroupID: 55962,
+			GroupName: 'בדיקה (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2016-01-18T18:24:45.42',
+			UpdateDate: '2016-01-18T18:28:09.06',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 2,
+		},
+	];
+
+	const finishedCampaigns: testGroupDataProps[] = [
+		{
+			GroupID: 899579,
+			GroupName: 'ccccc (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2017-08-20T11:02:08.933',
+			UpdateDate: '2017-08-20T11:02:08.933',
+			IsTestGroup: false,
+			IsDynamic: false,
+			Recipients: 0,
+		},
+		{
+			GroupID: 891980,
+			GroupName: 'cdgsfsgdf (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2017-08-20T11:02:39.197',
+			UpdateDate: '2017-08-20T12:44:55.69',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 5,
+		},
+		{
+			GroupID: 1666780,
+			GroupName: 'left123',
+			SubAccountID: 0,
+			CreationDate: '2022-04-08T14:41:09.493',
+			UpdateDate: '2022-04-17T12:46:45.297',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 1,
+		},
+		{
+			GroupID: 1655652,
+			GroupName: 'MeitalTest (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2022-03-10T14:33:53.9',
+			UpdateDate: '2022-03-10T14:33:53.9',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 0,
+		},
+		{
+			GroupID: 814457,
+			GroupName: 'omer (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2022-04-08T14:41:09.493',
+			UpdateDate: '2017-05-21T14:45:34.537',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 0,
+		},
+		{
+			GroupID: 552962,
+			GroupName: 'בדיקה (Testing)',
+			SubAccountID: 0,
+			CreationDate: '2016-01-18T18:24:45.42',
+			UpdateDate: '2016-01-18T18:28:09.06',
+			IsTestGroup: true,
+			IsDynamic: false,
+			Recipients: 2,
+		},
+	];
+
+	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
+		handleFromDate(value);
+	};
+
+	const handleRadioTime = (value: MaterialUiPickersDate | null) => {
+		setsendTime(value);
+	};
+
+	const handleSendType = (event: BaseSyntheticEvent) => {
+		if (event.target.value === '1') {
+			setModel({ ...model, SendDate: null });
+			handleFromDate(null);
+		} else if (event.target.value === '3') {
+			setModel({ ...model, SendDate: null });
+			handleFromDate(null);
+			// setTimeInterval(-1);
+			// setPulseAmount(-1);
+		}
+		setSendType(event.target.value);
+	};
+
+	const handlebef = () => {
+		// setafterClick(false);
+		settoggleA(false);
+		settoggleB(true);
+	};
+
+	const handleaf = () => {
+		// setafterClick(true);
+		settoggleA(true);
+		settoggleB(false);
+	};
+
+	const handleTimePicker = (value: MaterialUiPickersDate | null) => {
+		var date = moment(sendDate);
+		var time = moment(value, 'HH:mm');
+
+		date.set({
+			hour: time.get('hour'),
+			minute: time.get('minute'),
+		});
+
+		if (date < moment()) {
+			date = moment();
+			setToastMessage('ToastMessages.DATE_PASS');
+		}
+
+		handleFromDate(date);
+		setTimePickerOpen(false);
+	};
+
+	const handleSpecialDayChange = (e: BaseSyntheticEvent) => {
+		const re = /^[0-9\b]+$/;
+		if (
+			(e.target.value === '' || re.test(e.target.value)) &&
+			Number(e.target.value <= 999)
+		) {
+			setdaysBeforeAfter(e.target.value);
+		}
+	};
+
+	const handleSelectChange = (e: BaseSyntheticEvent) => {
+		if (e.target.value === '0') {
+			setDateFieldID('0');
+		} else {
+			setDateFieldID(e.target.value);
+		}
+	};
+
+	const onFormButtonClick = (buttonName: string) => {
+		console.log(
+			`${buttonName} Clicked`,
+			sendDate,
+			sendTime,
+			daysBeforeAfter,
+			spectialDateFieldID
+		);
+	};
+
+	const renderToast = () => {
+		if (toastMessage) {
+			setTimeout(() => {
+				setToastMessage('');
+			}, 4000);
+			return <Toast data={toastMessage} onClose='' />;
+		}
+		return null;
+	};
+
+	return (
+		<DefaultScreen
+			subPage={'send2'}
+			currentPage='whatsapp'
+			classes={classes}
+			customPadding={true}>
+			<div>
+				<div>
+					<WizardTitle
+						title={translator('whatsappCampaign.whatsappCampaign')}
+						classes={classes}
+						stepNumber={2}
+						subTitle={translator('mainReport.sendSetting')}
+					/>
+					<Grid container style={{ marginBottom: '40px' }}>
+						<Grid item md={7} xs={12}>
+							<LeftPane
+								classes={classes}
+								subAccountAllGroups={subAccountAllGroups}
+								finishedCampaigns={finishedCampaigns}
+								selectedGroups={selectedGroups}
+								setSelected={setSelected}
+								selectedFilterCampaigns={selectedFilterCampaigns}
+								setFilterCampaigns={setFilterCampaigns}
+								selectedFilterGroups={selectedFilterGroups}
+								setFilterGroups={setFilterGroups}
+							/>
+						</Grid>
+						<Grid item md={1} xs={12}></Grid>
+						<Grid item md={4} xs={12}>
+							<RightPane
+								classes={classes}
+								handleDatePicker={handleDatePicker}
+								sendDate={sendDate}
+								handleFromDate={handleFromDate}
+								sendTime={sendTime}
+								setsendTime={setsendTime}
+								handleRadioTime={handleRadioTime}
+								sendType={sendType}
+								model={model}
+								handleSendType={handleSendType}
+								toggleA={toggleA}
+								toggleB={toggleB}
+								handlebef={handlebef}
+								handleaf={handleaf}
+								timePickerOpen={timePickerOpen}
+								handleTimePicker={handleTimePicker}
+								renderToast={renderToast}
+								daysBeforeAfter={daysBeforeAfter}
+								handleSpecialDayChange={handleSpecialDayChange}
+								spectialDateFieldID={spectialDateFieldID}
+								handleSelectChange={handleSelectChange}
+							/>
+						</Grid>
+					</Grid>
+					<Buttons classes={classes} onFormButtonClick={onFormButtonClick} />
+				</div>
+				<SummaryModal
+					classes={classes}
+					isOpen={isSummaryModal}
+					campaignName={''}
+					fromNumber={''}
+					onSummaryModalClose={() => setIsSummaryModal(false)}
+				/>
+			</div>
+		</DefaultScreen>
+	);
 };
 
 export default SendCampaign;

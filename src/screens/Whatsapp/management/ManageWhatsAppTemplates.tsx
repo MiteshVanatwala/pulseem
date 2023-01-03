@@ -348,10 +348,30 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		}
 	};
 
+	const onSend = async (templateId: string) => {
+		const templateData: savedTemplateAPIProps = await dispatch<any>(
+			getSavedTemplatesById({
+				templateId: templateId
+					? 'HX7d12be9e2c0cef2863d4adb5e27c40e2'
+					: 'HX7d12be9e2c0cef2863d4adb5e27c40e2',
+			})
+		);
+		if (templateData.payload.Status === 'SUCCESS') {
+			const templates = templateData.payload.Items
+				? templateData.payload.Items
+				: [];
+			if (templates && templates?.length > 0) {
+				const templateData = templates[0]?.Data;
+				onSavedTemplateChange(templateData);
+			}
+			setIsSubmitCampaignOpen(true);
+		}
+	};
+
 	const onRowIconClick = (key: string, templateId: string) => {
 		switch (key) {
 			case 'send':
-				setIsSubmitCampaignOpen(true);
+				onSend(templateId);
 				break;
 			case 'preview':
 				onPreview(templateId);
