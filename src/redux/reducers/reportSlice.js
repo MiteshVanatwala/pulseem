@@ -26,7 +26,7 @@ export const reportSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(GetProductReports.fulfilled, (state, { meta, payload }) => {
       if (!meta?.arg?.IsExport) {
-        state.productsReportDetails = payload?.Data?.Products || [];
+        state.productsReportDetails = payload?.Data || [];
         if (payload?.Data?.Categories?.length > 0) {
           state.productCategories = payload?.Data?.Categories
         }
