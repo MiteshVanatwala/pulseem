@@ -4,6 +4,7 @@
   "fromDatePlaceholder": "From Date",
   "toDatePlaceholder": "To Date",
   "restore": "Restore Deleted",
+  "restoreDeleted": "Select the WhatsApp campaigns you want to restore",
   "duplicate": "Duplicate Template",
   "duplicateCampaign": "Duplicate Campaign",
   "duplicateDesc": "Do you want to duplicate this template?",
@@ -17,5 +18,6 @@
   "templates": "Templates",
   "campaigns": "Campaigns",
   "submit": "Submit",
-  "preview": "Preview"
+  "preview": "Preview",
+  "status": "Status"
 }

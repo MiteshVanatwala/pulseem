@@ -4,6 +4,7 @@
   "fromDatePlaceholder": "מתאריך",
   "toDatePlaceholder": "עד היום",
   "restore": "שחזור נמחק",
+  "restoreDeleted": "בחר את מסעות הפרסום של WhatsApp שברצונך לשחזר",
   "duplicate": "שכפל תבנית",
   "duplicateCampaign": "קמפיין כפול",
   "duplicateDesc": "האם ברצונך לשכפל תבנית זו?",
@@ -17,5 +18,6 @@
   "templates": "תבניות",
   "campaigns": "מסעות פרסום",
   "submit": "שלח",
-  "preview": "תצוגה מקדימה"
+  "preview": "תצוגה מקדימה",
+  "status": "סטָטוּס"
 }
