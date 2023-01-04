@@ -534,7 +534,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
             <TextField
               select
               type="text"
-              label={campainStatusSearch?.length > 0 ? "" : "Status"}
+              label={
+                campainStatusSearch?.length > 0
+                  ? ""
+                  : translator("whatsappManagement.status")
+              }
               className={classes.whatsappManagementbuttonField}
               onChange={(e: BaseSyntheticEvent) =>
                 setCampainStatusSearch(e.target.value)
