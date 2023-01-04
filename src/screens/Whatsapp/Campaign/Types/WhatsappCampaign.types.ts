@@ -298,3 +298,61 @@ export type GroupsSelectAllProps = {
 	onSelectAllGroup: () => void;
 	allSelected: boolean;
 };
+
+export type campaignDataProps = {
+	campaignId: number;
+	campaignName: string;
+	statusId: number;
+	status: string;
+	recipients: number;
+	messages: number;
+	IsAutomation: boolean;
+	updatedDate: string;
+	sendDate: string | null;
+};
+
+export type searchArrayProps = {
+	type: 'name' | 'date';
+	fromDate?: MaterialUiPickersDate | undefined;
+	toDate?: MaterialUiPickersDate | undefined;
+	campaignName?: string;
+};
+
+export type filtersObjectProps = {
+	name: any;
+	date: any;
+};
+
+export type reportDataProps = {
+	waCampaignId: number;
+	statusId: number;
+	status: string;
+	campaignName: string;
+	totalSendPlan: number;
+	totalSent: number;
+	totalRead: number;
+	clicksCount: number;
+	uniqueClicksCount: number;
+	totalFeedback: number;
+	removed: number;
+	failure: number;
+	updatedDate: string | null;
+	sendDate: string | null;
+};
+
+export type exportDataProps = {
+	waCampaignId: number;
+	statusId?: number;
+	status: string;
+	campaignName: string;
+	totalSendPlan: number;
+	totalSent: number;
+	totalRead: number;
+	clicksCount: number;
+	uniqueClicksCount: number;
+	totalFeedback: number;
+	removed: number;
+	failure: number;
+	updatedDate: string | null;
+	sendDate: string | null;
+};
