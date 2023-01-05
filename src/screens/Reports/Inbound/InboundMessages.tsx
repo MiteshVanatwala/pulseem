@@ -53,8 +53,8 @@ const InboundMessages = ({ classes }: ClassesType) => {
                                 })
                             }
                         </TabList>
-                        <Grid item>
-                            {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <CustomTooltip
+                        {/* <Grid item>
+                            {accountFeatures.indexOf('13') === -1 && windowSize !== 'xs' && <CustomTooltip
                                 style={{ fontSize: 14 }}
                                 text={translator('report.ExportLimitation')}
                                 icon={<Button
@@ -74,7 +74,7 @@ const InboundMessages = ({ classes }: ClassesType) => {
 
                             </CustomTooltip>
                             }
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                     <Grid item xs={12} className={classes.lastReportsTabPanels}>
                         <TabPanel value='0' className={classes.p0}>
