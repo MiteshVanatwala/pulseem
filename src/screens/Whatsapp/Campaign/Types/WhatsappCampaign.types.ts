@@ -126,6 +126,9 @@ export type LeftPaneProps = {
 	onNewGroupSave: () => void;
 	activeTab: string;
 	setActiveTab: (tab: 'group' | 'manual') => void;
+	onFilter: () => void;
+	isCreateNewGroup: boolean;
+	setIsCreateNewGroup: (val: boolean) => void;
 };
 export type WhatsappCampaignSecondProps = {
 	classes: ClassesType['classes'];
@@ -158,6 +161,7 @@ export type FilterRecipientsDialogProps = {
 	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
 	selectedFilterGroups: testGroupDataProps[];
 	setFilterGroups: (updatedFilterGroups: testGroupDataProps[]) => void;
+	onConfirmOrYes: () => void;
 };
 
 export type SummaryModalProps = {
@@ -355,4 +359,40 @@ export type exportDataProps = {
 	failure: number;
 	updatedDate: string | null;
 	sendDate: string | null;
+};
+
+export type manualUploadProps = {
+	classes: ClassesType['classes'];
+	highlighted: boolean;
+	areaData: string;
+	setHighlighted: (value: boolean) => void;
+	setAreaData: (areaData: string) => void;
+	setContacts: (contacts: number[]) => void;
+	setTypedData: (typedData: string[][]) => void;
+	setTotalRecords: (totalRecords: number) => void;
+	setInitialHeadState: (headState: string[]) => void;
+	setHeaders: (headState: string[]) => void;
+	setIsColumnAdjustmentModal: (columnAdjustmentModal: boolean) => void;
+	setAlertModalSubtitle: (alertModalSubtitle: string) => void;
+	setIsAlert: (isAlert: boolean) => void;
+	totalRecords: number;
+};
+
+export type groupSelectorProps = {
+	classes: ClassesType['classes'];
+	showTestGroups: boolean;
+	testGroups: [];
+	subAccountAllGroups: testGroupDataProps[];
+	selectedGroups: testGroupDataProps[];
+	bsDot: boolean;
+	isCreateNewGroup: boolean;
+	setIsCreateNewGroup: (isNewGroup: boolean) => void;
+	onNewGroupChange: (groupName: string) => void;
+	newGroupName: string;
+	onNewGroupSave: () => void;
+	setSelected: (selectedGroup: testGroupDataProps[]) => void;
+	allGroupsSelected: boolean;
+	setIsFilterModal: (isFilterModal: boolean) => void;
+	setAllGroupsSelected: (allGroupsSelected: boolean) => void;
+	setShowTestGroups: (showTestGroups: boolean) => void;
 };

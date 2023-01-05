@@ -849,7 +849,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					onRowsPerPageChange={(rowsNumber: number) =>
 						setRowsPerPage(rowsNumber)
 					}
-					rowsPerPageOptions={[6, 10, 20, 30, 40]}
+					rowsPerPageOptions={[6, 10, 20, 50]}
 					page={page}
 					onPageChange={(pageNumber: number) => setPage(pageNumber)}
 					returnPageOne={false}

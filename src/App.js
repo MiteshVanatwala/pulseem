@@ -60,11 +60,11 @@ import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
-import WhatsappCampaign from './screens/Whatsapp/Campaign/WhatsappCampain';
 import SendCampaign from './screens/Whatsapp/Campaign/SendCampaign';
 import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAppTemplates';
 import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
 import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
+import SaveCampain from './screens/Whatsapp/Campaign/SaveCampain';
 
 const renderRoutes = (classes, redirect) => {
 	const transferUrl =
@@ -228,7 +228,7 @@ const renderRoutes = (classes, redirect) => {
 
 			<Route
 				path={`/react/whatsapp/campaign/create/page1`}
-				element={<WhatsappCampaign classes={classes} />}
+				element={<SaveCampain classes={classes} />}
 			/>
 
 			<Route
@@ -258,7 +258,7 @@ const renderRoutes = (classes, redirect) => {
 
 			<Route
 				path={`/react/whatsapp/campaign/edit/page1/:campaignID`}
-				element={<WhatsappCampaign classes={classes} />}
+				element={<SaveCampain classes={classes} />}
 			/>
 
 			<Route

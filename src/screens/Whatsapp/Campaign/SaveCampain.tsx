@@ -79,7 +79,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import { resetToastData } from '../Constant';
 import AlertModal from '../Editor/Popups/AlertModal';
 
-const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
+const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -1019,4 +1019,4 @@ const WhatsappCampaign = ({ classes }: WhatsappCampaignProps) => {
 	);
 };
 
-export default WhatsappCampaign;
+export default SaveCampain;

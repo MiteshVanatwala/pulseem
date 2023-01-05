@@ -36,7 +36,7 @@ const RightPane = ({
 	handleSelectChange,
 	isSpecialDateBefore,
 	setIsSpecialDateBefore,
-  setsendTime
+	setsendTime,
 }: ClassesType & RightPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
