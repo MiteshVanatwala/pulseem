@@ -236,6 +236,12 @@ export const whatsappSlice = createSlice({
 				message: 'whatsapp.submitted',
 				showAnimtionCheck: true,
 			},
+			SAVE_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Template saved succesfully',
+				showAnimtionCheck: true,
+			},
 			ERROR: {
 				severity: 'error',
 				color: 'error',

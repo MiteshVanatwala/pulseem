@@ -519,7 +519,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		return '';
 	};
 
-	const getRequestJSON = () => {
+	const getRequestJSON = (isSave: boolean) => {
 		const generatedTemplatename = getFriendlyTemplateName();
 		const variables = getJSONVariables();
 		const requestJSON: JSONProps = {
@@ -528,6 +528,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					text: {
 						body: templateData.templateText,
@@ -539,6 +540,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					media: {
 						body: templateData.templateText,
@@ -552,6 +554,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					'quick-reply': {
 						body: templateData.templateText,
@@ -564,6 +567,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					'call-to-action': {
 						body: templateData.templateText,
@@ -576,6 +580,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					card: {
 						title: templateData.templateText
@@ -751,9 +756,37 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
+	const saveTemplate = async () => {
+		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+			submitTemplates(getRequestJSON(true))
+		);
+		if (submitTemplate?.payload?.Status === 'Success') {
+			setIsSubmitCampaignOpen(false);
+			setToastMessage(ToastMessages.SAVE_SUCCESS);
+			resetFields();
+		} else if (submitTemplate?.payload?.Status === 'Error') {
+			if (submitTemplate?.payload?.Message?.length > 0) {
+				setToastMessage({
+					...ToastMessages.ERROR,
+					message: submitTemplate?.payload?.Message,
+				});
+			} else {
+				setToastMessage(ToastMessages.ERROR);
+			}
+			setIsSubmitCampaignOpen(false);
+		}
+	};
+
 	const onFormButtonClick = (buttonName: string) => {
-		if (buttonName === 'delete') {
-			setIsDeleteCampaignOpen(true);
+		switch (buttonName) {
+			case 'delete':
+				setIsDeleteCampaignOpen(true);
+				break;
+			case 'save':
+				saveTemplate();
+				break;
+			default:
+				break;
 		}
 	};
 
@@ -764,7 +797,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const onSubmitCampaign = async () => {
 		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
-			submitTemplates(getRequestJSON())
+			submitTemplates(getRequestJSON(false))
 		);
 		if (submitTemplate?.payload?.Status === 'Success') {
 			setIsSubmitCampaignOpen(false);
