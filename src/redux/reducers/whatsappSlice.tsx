@@ -222,6 +222,22 @@ export const deleteTemplate = createAsyncThunk(
 	}
 );
 
+export const getAllTemplates = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppTemplate',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppTemplate`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {

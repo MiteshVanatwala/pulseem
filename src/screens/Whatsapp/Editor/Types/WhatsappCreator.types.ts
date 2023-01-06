@@ -283,3 +283,25 @@ export type submitTemplatePayloadProps = {
 export type submitTemplateAPIProps = {
 	payload: submitTemplatePayloadProps;
 };
+
+export type templateListItemsProps = {
+	CreatedDate: string | null;
+	Data: savedTemplateDataProps;
+	RejectionReason: string;
+	Status: string;
+	StatusUpdatedDate: string;
+	TemplateId: string;
+	TemplateName: string;
+};
+
+export type templateListPayloadProps = {
+	Error: string;
+	Count: number;
+	Message: string;
+	Status: string;
+	Items: saveTemplateItemsProps[];
+};
+
+export type templateListAPIProps = {
+	payload: templateListPayloadProps;
+};

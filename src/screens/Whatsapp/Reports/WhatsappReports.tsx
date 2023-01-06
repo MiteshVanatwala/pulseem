@@ -194,6 +194,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onSearch = () => {
+		setPage(1);
 		setTableData(getSearchedCampaign());
 	};
 
