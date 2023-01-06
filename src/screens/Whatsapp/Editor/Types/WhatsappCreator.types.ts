@@ -216,6 +216,7 @@ export type toastProps = {
 	ERROR: toastKeyProps;
 	QUICK_SEND_SUCCESSS: toastKeyProps;
 	SAVE_CAMPAIGN_SUCCESS: toastKeyProps;
+	DELETE_CAMPAIGN_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -304,4 +305,16 @@ export type templateListPayloadProps = {
 
 export type templateListAPIProps = {
 	payload: templateListPayloadProps;
+};
+
+export type deleteTemplatePayloadProps = {
+	Error: string;
+	Count: number;
+	Message: string;
+	Status: string;
+	Items: saveTemplateItemsProps[];
+};
+
+export type deleteTemplateAPIProps = {
+	payload: deleteTemplatePayloadProps;
 };

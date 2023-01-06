@@ -30,6 +30,7 @@ import {
 	buttonsDataProps,
 	callToActionProps,
 	coreProps,
+	deleteTemplateAPIProps,
 	quickReplyButtonProps,
 	savedTemplateAPIProps,
 	savedTemplateCallToActionProps,
@@ -41,6 +42,7 @@ import {
 	templateDataProps,
 	templateListAPIProps,
 	templateListItemsProps,
+	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
@@ -59,9 +61,10 @@ import {
 	getAllTemplates,
 	getSavedTemplatesById,
 } from '../../../redux/reducers/whatsappSlice';
-import { statuses, statusesByName } from '../Constant';
+import { resetToastData, statusesByName } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
+import Toast from '../../../components/Toast/Toast.component';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -69,6 +72,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
+	);
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
 	);
 	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
 		useState<boolean>(false);
@@ -94,6 +101,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		templateListItemsProps[]
 	>([]);
 	const [tableData, setTableData] = useState<templateListItemsProps[]>([]);
+	const [activeRowId, setActiveRowId] = useState<string>('');
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -387,6 +397,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onRowIconClick = (key: string, templateId: string) => {
+		setActiveRowId(templateId);
 		switch (key) {
 			case 'send':
 				onSend(templateId);
@@ -489,23 +500,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 	const getSearchedTemplate = () => {
 		let searchedData: templateListItemsProps[] = templateListData;
-		console.log('getSearchedTemplate::campaignNameSearch', campaignNameSearch);
-		console.log(
-			'getSearchedTemplate::campainStatusSearch',
-			campainStatusSearch
-		);
 		if (campaignNameSearch && campaignNameSearch?.length > 0) {
 			searchedData = searchedData?.filter((row: templateListItemsProps) =>
 				row.TemplateName?.includes(campaignNameSearch)
 			);
 		}
-		console.log('getSearchedTemplate::searchedData', searchedData);
 		if (campainStatusSearch && campainStatusSearch?.length > 0) {
 			searchedData = searchedData?.filter((row: templateListItemsProps) =>
 				row.Status?.includes(campainStatusSearch)
 			);
 		}
-		console.log('getSearchedTemplate::searchedData', searchedData);
 		return searchedData;
 	};
 
@@ -525,10 +529,20 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDeleteTemplate = async () => {
-		console.log('onDeleteTemplate');
-		const templateData: any = await dispatch<any>(
-			deleteTemplate('HX7d12be9e2c0cef2863d4adb5e27c40e2')
+		const deleteData: deleteTemplateAPIProps = await dispatch<any>(
+			deleteTemplate(activeRowId)
 		);
+		if (deleteData?.payload?.Status === 'Success') {
+			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+			setApiTemplateData();
+		} else {
+			deleteData?.payload?.Error
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Error,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 		console.log('templateData::', templateData);
 	};
 
@@ -545,12 +559,27 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setTableData(getSearchedTemplate());
 	};
 
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} onClose={undefined} />;
+		}
+		return null;
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}>
+			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.templateManagement')}
 				Classes={classes.whatsappTemplateTitle}

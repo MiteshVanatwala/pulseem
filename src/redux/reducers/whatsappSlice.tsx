@@ -270,6 +270,12 @@ export const whatsappSlice = createSlice({
 				message: 'Campaign submitted succesfully',
 				showAnimtionCheck: true,
 			},
+			DELETE_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Template deleted succesfully',
+				showAnimtionCheck: true,
+			},
 		},
 	},
 	reducers: {},
