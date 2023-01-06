@@ -869,7 +869,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
           onRowsPerPageChange={(rowsNumber: number) =>
             setRowsPerPage(rowsNumber)
           }
-          rowsPerPageOptions={[6, 10, 20, 30, 40]}
+          rowsPerPageOptions={[6, 10, 20, 50]}
           page={page}
           onPageChange={(pageNumber: number) => setPage(pageNumber)}
           returnPageOne={false}
@@ -878,7 +878,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
       <RestoreDeletedModal
         classes={classes}
-        title={translator("whatsappManagement.restoreDeleted")}
+        title={"Select the WhatsApp campaigns you want to restore"}
         isOpen={isRestoreDeletedModal}
         onClose={() => setIsRestoreDeletedModal(false)}
         onConfirmOrYes={() => onRestoreDeleted()}

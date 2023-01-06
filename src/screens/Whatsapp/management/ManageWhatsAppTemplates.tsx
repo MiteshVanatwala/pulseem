@@ -54,7 +54,10 @@ import {
 } from "./Types/Management.types";
 import AlertModal from "../Editor/Popups/AlertModal";
 import WhatsappMobilePreview from "../Editor/Components/WhatsappMobilePreview";
-import { getSavedTemplatesById } from "../../../redux/reducers/whatsappSlice";
+import {
+  deleteTemplate,
+  getSavedTemplatesById,
+} from "../../../redux/reducers/whatsappSlice";
 import { statuses } from "../Constant";
 import { useNavigate } from "react-router-dom";
 
@@ -481,16 +484,20 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
     return sortData?.length > 0 ? sortData : rows;
   };
 
-  const onSubmitCampaign = async () => {
-    console.log("onSubmitCampaign");
+  const onSubmitTemplate = async () => {
+    console.log("onSubmitTemplate");
   };
 
-  const onDeleteCampaign = async () => {
-    console.log("onDeleteCampaign");
+  const onDeleteTemplate = async () => {
+    console.log("onDeleteTemplate");
+    const templateData: any = await dispatch<any>(
+      deleteTemplate("HX7d12be9e2c0cef2863d4adb5e27c40e2")
+    );
+    console.log("templateData::", templateData);
   };
 
-  const onDuplicateCampaign = async () => {
-    console.log("onDuplicateCampaign");
+  const onDuplicaTemplate = async () => {
+    console.log("onDuplicaTemplate");
   };
 
   const onCreateTemplate = async () => {
@@ -534,11 +541,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
             <TextField
               select
               type="text"
-              label={
-                campainStatusSearch?.length > 0
-                  ? ""
-                  : translator("whatsappManagement.status")
-              }
+              label={campainStatusSearch?.length > 0 ? "" : "Status"}
               className={classes.whatsappManagementbuttonField}
               onChange={(e: BaseSyntheticEvent) =>
                 setCampainStatusSearch(e.target.value)
@@ -691,7 +694,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
           onRowsPerPageChange={(rowsNumber: number) =>
             setRowsPerPage(rowsNumber)
           }
-          rowsPerPageOptions={[6, 10, 20, 30, 40]}
+          rowsPerPageOptions={[6, 10, 20, 50]}
           page={page}
           onPageChange={(pageNumber: number) => setPage(pageNumber)}
           returnPageOne={false}
@@ -704,7 +707,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         onClose={() => setIsSubmitCampaignOpen(false)}
         title={translator("whatsapp.alertModal.ConfirmText")}
         subtitle={translator("whatsapp.alertModal.ConfirmTitle")}
-        onConfirmOrYes={() => onSubmitCampaign()}
+        onConfirmOrYes={() => onSubmitTemplate()}
         type="submit"
       >
         <Box className={classes.alertModalContentMobile}>
@@ -745,7 +748,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         title={translator("whatsappManagement.deleteTemplate")}
         subtitle={translator("whatsapp.alertModal.DeleteTitle")}
         type="delete"
-        onConfirmOrYes={() => onDeleteCampaign()}
+        onConfirmOrYes={() => onDeleteTemplate()}
       />
 
       <AlertModal
@@ -755,7 +758,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         title={translator("whatsappManagement.duplicate")}
         subtitle={translator("whatsappManagement.duplicateDesc")}
         type="delete"
-        onConfirmOrYes={() => onDuplicateCampaign()}
+        onConfirmOrYes={() => onDuplicaTemplate()}
       />
     </DefaultScreen>
   );

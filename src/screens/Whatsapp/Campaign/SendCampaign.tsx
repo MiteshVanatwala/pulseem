@@ -48,6 +48,7 @@ const SendCampaign = ({
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
+	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
 
 	const subAccountAllGroups: testGroupDataProps[] = [
 		{
@@ -175,6 +176,30 @@ const SendCampaign = ({
 		},
 	];
 
+	console.log('Send_Campaign:: isSummaryModal::', isSummaryModal);
+	console.log('Send_Campaign:: selectedGroups::', selectedGroups);
+	console.log(
+		'Send_Campaign:: selectedFilterCampaigns::',
+		selectedFilterCampaigns
+	);
+	console.log('Send_Campaign:: selectedFilterGroups::', selectedFilterGroups);
+	console.log('Send_Campaign:: sendDate::', sendDate);
+	console.log('Send_Campaign:: sendTime::', sendTime);
+	console.log('Send_Campaign:: sendType::', sendType);
+	console.log('Send_Campaign:: model::', model);
+	console.log('Send_Campaign:: isSpecialDateBefore::', isSpecialDateBefore);
+	console.log('Send_Campaign:: timePickerOpen::', timePickerOpen);
+	console.log('Send_Campaign:: toastMessage::', toastMessage);
+	console.log('Send_Campaign:: daysBeforeAfter::', daysBeforeAfter);
+	console.log('Send_Campaign:: spectialDateFieldID::', spectialDateFieldID);
+	console.log('Send_Campaign:: newGroupName::', newGroupName);
+	console.log('Send_Campaign:: activeTab::', activeTab);
+	console.log('Send_Campaign:: isValidationAlert::', isValidationAlert);
+	console.log(
+		'Send_Campaign:: groupSendValidationErrors::',
+		groupSendValidationErrors
+	);
+
 	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
 		handleFromDate(value);
 	};
@@ -269,6 +294,10 @@ const SendCampaign = ({
 		}
 	};
 
+	const onFilter = () => {
+		console.log('onFilter');
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'send2'}
@@ -300,6 +329,9 @@ const SendCampaign = ({
 								onNewGroupSave={onNewGroupSave}
 								activeTab={activeTab}
 								setActiveTab={setActiveTab}
+								onFilter={onFilter}
+								isCreateNewGroup={isCreateNewGroup}
+								setIsCreateNewGroup={setIsCreateNewGroup}
 							/>
 						</Grid>
 						<Grid item md={1} xs={12}></Grid>

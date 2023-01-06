@@ -207,6 +207,21 @@ export const fromPhoneNumbers = createAsyncThunk(
 	}
 );
 
+export const deleteTemplate = createAsyncThunk(
+	'whatsAppCampaign/DeleteWhatsAppTemplate',
+	async (templateId: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/DeleteWhatsAppTemplate/${templateId}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -219,6 +234,12 @@ export const whatsappSlice = createSlice({
 				severity: 'success',
 				color: 'success',
 				message: 'whatsapp.submitted',
+				showAnimtionCheck: true,
+			},
+			SAVE_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Template saved succesfully',
 				showAnimtionCheck: true,
 			},
 			ERROR: {

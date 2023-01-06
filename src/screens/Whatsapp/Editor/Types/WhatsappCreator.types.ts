@@ -212,6 +212,7 @@ export type savedTemplateListProps = {
 
 export type toastProps = {
 	SUCCESS: toastKeyProps;
+	SAVE_SUCCESS: toastKeyProps;
 	ERROR: toastKeyProps;
 	QUICK_SEND_SUCCESSS: toastKeyProps;
 	SAVE_CAMPAIGN_SUCCESS: toastKeyProps;

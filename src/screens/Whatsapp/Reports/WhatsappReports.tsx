@@ -180,7 +180,6 @@ const WhatsappReports = ({ classes }: ClassesType) => {
         filtersObject[values.type](row, values)
       );
     });
-    console.log("sortData::", sortData);
     return sortData;
   };
 
@@ -377,11 +376,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                     <TableCell classes={cellStyle} align="center">
                       <Grid container justifyContent="space-around">
                         <Grid item>
-                          <>
-                            {translator(
-                              "mainReport.locTotalSendPlan.HeaderText"
-                            )}
-                          </>
+                          <>{"To send"}</>
                         </Grid>
                         <Grid item>
                           <>{translator("common.Sent")}</>
@@ -426,15 +421,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                     <Grid container justifyContent="space-around">
                       <Grid item>
                         {getTableTypographyCells(
-                          translator("mainReport.locTotalSendPlan.HeaderText"),
+                          "To Send",
                           report.totalSendPlan
                         )}
                       </Grid>
                       <Grid item>
-                        {getTableTypographyCells(
-                          translator("common.Sent"),
-                          report.totalSent
-                        )}
+                        {getTableTypographyCells("Sent", report.totalSent)}
                       </Grid>
                     </Grid>
                   </TableCell>
@@ -443,10 +435,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                     align="center"
                     className={clsx(classes.tableCellBody)}
                   >
-                    {getTableTypographyCells(
-                      translator("whatsappReport.read"),
-                      report.totalRead
-                    )}
+                    {getTableTypographyCells("Read", report.totalRead)}
                   </TableCell>
                   <TableCell
                     classes={cellStyle}
@@ -455,14 +444,11 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                   >
                     <Grid container justifyContent="space-around">
                       <Grid item>
-                        {getTableTypographyCells(
-                          translator("common.Clicks"),
-                          report.clicksCount
-                        )}
+                        {getTableTypographyCells("Clicks", report.clicksCount)}
                       </Grid>
                       <Grid item>
                         {getTableTypographyCells(
-                          translator("common.Unique"),
+                          "Unique",
                           report.uniqueClicksCount
                         )}
                       </Grid>
@@ -473,10 +459,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                     align="center"
                     className={clsx(classes.tableCellBody)}
                   >
-                    {getTableTypographyCells(
-                      translator("common.Total"),
-                      report.totalFeedback
-                    )}
+                    {getTableTypographyCells("Total", report.totalFeedback)}
                   </TableCell>
                   <TableCell
                     classes={cellStyle}
@@ -485,16 +468,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
                   >
                     <Grid container justifyContent="space-around">
                       <Grid item>
-                        {getTableTypographyCells(
-                          translator("common.Removed"),
-                          report.removed
-                        )}
+                        {getTableTypographyCells("Removed", report.removed)}
                       </Grid>
                       <Grid item>
-                        {getTableTypographyCells(
-                          translator("common.failedStatus"),
-                          report.failure
-                        )}
+                        {getTableTypographyCells("Failed", report.failure)}
                       </Grid>
                     </Grid>
                   </TableCell>
@@ -517,7 +494,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
           onRowsPerPageChange={(rowsNumber: number) =>
             setRowsPerPage(rowsNumber)
           }
-          rowsPerPageOptions={[6, 10, 20, 30, 40]}
+          rowsPerPageOptions={[6, 10, 20, 50]}
           page={page}
           onPageChange={(pageNumber: number) => setPage(pageNumber)}
           returnPageOne={false}
