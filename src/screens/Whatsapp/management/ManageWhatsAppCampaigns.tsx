@@ -639,6 +639,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
   };
 
   const onSearch = async () => {
+    setPage(1);
     setTableData(getSearchedCampaign());
   };
 

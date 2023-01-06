@@ -38,6 +38,8 @@ export type templateRowDataProps = {
 
 export type statusProps = { [key: number]: string };
 
+export type statusByNameProps = { [key: string]: string };
+
 export type ManagmentIconProps = {
 	classes: ClassesType['classes'];
 	key: string;

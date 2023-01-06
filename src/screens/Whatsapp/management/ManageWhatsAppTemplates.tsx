@@ -35,11 +35,12 @@ import {
   savedTemplateCallToActionProps,
   savedTemplateCardProps,
   savedTemplateDataProps,
-  savedTemplateListProps,
   savedTemplateMediaProps,
   savedTemplateQuickReplyProps,
   savedTemplateTextProps,
   templateDataProps,
+  templateListAPIProps,
+  templateListItemsProps,
 } from "../Editor/Types/WhatsappCreator.types";
 import ClearIcon from "@material-ui/icons/Clear";
 import clsx from "clsx";
@@ -49,17 +50,18 @@ import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import Pagination from "./Component/Pagination";
 import {
   ManagmentIconProps,
-  statusProps,
   templateRowDataProps,
 } from "./Types/Management.types";
 import AlertModal from "../Editor/Popups/AlertModal";
 import WhatsappMobilePreview from "../Editor/Components/WhatsappMobilePreview";
 import {
   deleteTemplate,
+  getAllTemplates,
   getSavedTemplatesById,
 } from "../../../redux/reducers/whatsappSlice";
-import { statuses } from "../Constant";
+import { statuses, statusesByName } from "../Constant";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "../../../components/Loader/Loader";
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
   const dispatch = useDispatch();
@@ -76,7 +78,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
     useState<boolean>(false);
   const [isDuplicateCampaignOpen, setIsDuplicateCampaignOpen] =
     useState<boolean>(false);
-  const [campaineNameSearch, setCampaineNameSearch] = useState<string>("");
+  const [campaignNameSearch, setCampaignNameSearch] = useState<string>("");
   const [campainStatusSearch, setCampainStatusSearch] = useState<string>("");
   const [isSearching, setSearching] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
@@ -87,7 +89,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
   });
   const [buttonType, setButtonType] = useState<string>("");
   const [fileData, setFileData] = useState<string>("");
-  const rows: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  const [isLoader, setIsLoader] = useState<boolean>(false);
+  const [templateListData, setTemplateListData] = useState<
+    templateListItemsProps[]
+  >([]);
+  const [tableData, setTableData] = useState<templateListItemsProps[]>([]);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
     head: classes.tableCellHead,
@@ -101,28 +107,51 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
   };
   let updatedButtonType: string = "";
   let updatedFileData: string = "";
+
   useEffect(() => {
-    if (campainStatusSearch?.length > 0 || campaineNameSearch?.length > 0) {
+    setApiTemplateData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (campainStatusSearch?.length > 0 || campaignNameSearch?.length > 0) {
       setSearching(true);
     }
-  }, [campaineNameSearch, campainStatusSearch]);
+  }, [campaignNameSearch, campainStatusSearch]);
+
+  const setApiTemplateData = async () => {
+    setIsLoader(true);
+    const templateData: templateListAPIProps = await dispatch<any>(
+      getAllTemplates()
+    );
+    if (templateData.payload.Status === "SUCCESS") {
+      setTemplateListData(templateData.payload.Items);
+      setTableData(templateData.payload.Items);
+      setIsLoader(false);
+    } else {
+      setTemplateListData([]);
+      setTableData([]);
+      setIsLoader(false);
+    }
+  };
 
   const handleCampainNameChange = (event: BaseSyntheticEvent) => {
-    setCampaineNameSearch(event.target.value);
+    setCampaignNameSearch(event.target.value);
   };
   const clearSearch = () => {
-    setCampaineNameSearch("");
+    setCampaignNameSearch("");
     setCampainStatusSearch("");
     setSearching(false);
+    setTableData(templateListData);
   };
-  const renderNameCell = (row: templateRowDataProps) => {
+  const renderNameCell = (row: templateListItemsProps) => {
     let date = null;
     let text = "";
-    if (!row.SendDate) {
-      date = moment(row.UpdatedDate, dateFormat);
+    if (!row.CreatedDate) {
+      date = moment(row.StatusUpdatedDate, dateFormat);
       text = translator("common.UpdatedOn");
     } else {
-      date = moment(row.SendDate, dateFormat);
+      date = moment(row.CreatedDate, dateFormat);
       const dateMillis = date.valueOf();
       const currentDateMillis = moment().valueOf();
       text =
@@ -143,8 +172,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
           arrow={true}
           style={{ fontSize: 18, fontWeight: "bold" }}
           placement={"top"}
-          title={<Typography noWrap={false}>{row.Name}</Typography>}
-          text={row.Name}
+          title={<Typography noWrap={false}>{row.TemplateName}</Typography>}
+          text={row.TemplateName}
           children={undefined}
           icon={undefined}
         />
@@ -154,18 +183,19 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
       </>
     );
   };
-  const renderStatusCell = (status: number) => {
+  const renderStatusCell = (status: string) => {
     return (
       <>
         <Typography
           className={clsx(classes.middleText, classes.recipientsStatus, {
-            [classes.recipientsStatusCreated]: status === 1,
-            [classes.recipientsStatusSent]: status === 4,
-            [classes.recipientsStatusSending]: status === 2,
-            [classes.recipientsStatusCanceled]: status === 5,
+            [classes.recipientsStatusCreated]: status === "Created",
+            [classes.recipientsStatusCreated]: status === "Approved",
+            [classes.recipientsStatusSending]: status === "Pending",
+            [classes.recipientsStatusCanceled]: status === "Received",
+            [classes.recipientsStatusCanceled]: status === "Rejected",
           })}
         >
-          {translator(statuses[status])}
+          <>{translator(statusesByName[status])}</>
         </Typography>
       </>
     );
@@ -327,11 +357,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
   const onPreview = async (templateId: string) => {
     const templateData: savedTemplateAPIProps = await dispatch<any>(
-      getSavedTemplatesById({
-        templateId: templateId
-          ? "HX7d12be9e2c0cef2863d4adb5e27c40e2"
-          : "HX7d12be9e2c0cef2863d4adb5e27c40e2",
-      })
+      getSavedTemplatesById({ templateId })
     );
     if (templateData.payload.Status === "SUCCESS") {
       const templates = templateData.payload.Items
@@ -347,11 +373,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
   const onSend = async (templateId: string) => {
     const templateData: savedTemplateAPIProps = await dispatch<any>(
-      getSavedTemplatesById({
-        templateId: templateId
-          ? "HX7d12be9e2c0cef2863d4adb5e27c40e2"
-          : "HX7d12be9e2c0cef2863d4adb5e27c40e2",
-      })
+      getSavedTemplatesById({ templateId })
     );
     if (templateData.payload.Status === "SUCCESS") {
       const templates = templateData.payload.Items
@@ -385,24 +407,20 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
     }
   };
 
-  const renderCellIcons = (row: templateRowDataProps) => {
-    const { Status, AutomationID, AutomationTriggerInActive } = row;
-
+  const renderCellIcons = (row: templateListItemsProps) => {
     const iconsMap: ManagmentIconProps[] = [
       {
         key: "send",
         buttonKey: "send",
         icon: SendGreenIcon,
         lable: translator("whatsappManagement.submit"),
-        remove:
-          Status !== 1 ||
-          (AutomationID !== 0 && AutomationTriggerInActive === false),
+        remove: row.Status !== "Created",
         onClick: (key: string, templateId: string) =>
           onRowIconClick(key, templateId),
         classes: classes,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        id: row.Id.toString(),
+        id: row.TemplateId.toString(),
       },
       {
         key: "preview",
@@ -414,20 +432,20 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
           onRowIconClick(key, templateId),
         classes: classes,
         rootClass: classes.paddingIcon,
-        id: row.Id.toString(),
+        id: row.TemplateId.toString(),
       },
       {
         key: "edit",
         buttonKey: "edit",
         icon: EditIcon,
-        disable: Status !== 1 || AutomationID !== 0,
+        disable: row.Status !== "Created",
         lable: translator("campaigns.Image2Resource1.ToolTip"),
         onClick: (key: string, templateId: string) =>
           onRowIconClick(key, templateId),
         classes: classes,
         rootClass: classes.paddingIcon,
-        href: `/react/whatsapp/template/edit/${"01212"}`,
-        id: row.Id.toString(),
+        href: `/react/whatsapp/template/edit/${row.TemplateId}`,
+        id: row.TemplateId.toString(),
       },
       {
         key: "duplicate",
@@ -438,19 +456,18 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
           onRowIconClick(key, templateId),
         classes: classes,
         rootClass: classes.paddingIcon,
-        id: row.Id.toString(),
+        id: row.TemplateId.toString(),
       },
       {
         key: "delete",
         buttonKey: "delete",
         icon: DeleteIcon,
         lable: translator("campaigns.DeleteResource1.HeaderText"),
-        disable: AutomationID !== 0,
         onClick: (key: string, templateId: string) =>
           onRowIconClick(key, templateId),
         classes: classes,
         rootClass: classes.paddingIcon,
-        id: row.Id?.toString(),
+        id: row.TemplateId?.toString(),
       },
     ];
     return (
@@ -473,15 +490,37 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
     );
   };
 
+  const getSearchedTemplate = () => {
+    let searchedData: templateListItemsProps[] = templateListData;
+    console.log("getSearchedTemplate::campaignNameSearch", campaignNameSearch);
+    console.log(
+      "getSearchedTemplate::campainStatusSearch",
+      campainStatusSearch
+    );
+    if (campaignNameSearch && campaignNameSearch?.length > 0) {
+      searchedData = searchedData?.filter((row: templateListItemsProps) =>
+        row.TemplateName?.includes(campaignNameSearch)
+      );
+    }
+    console.log("getSearchedTemplate::searchedData", searchedData);
+    if (campainStatusSearch && campainStatusSearch?.length > 0) {
+      searchedData = searchedData?.filter((row: templateListItemsProps) =>
+        row.Status?.includes(campainStatusSearch)
+      );
+    }
+    console.log("getSearchedTemplate::searchedData", searchedData);
+    return searchedData;
+  };
+
   const getRows = () => {
-    let sortData = isSearching ? rows : rows;
+    let sortData = tableData;
 
     sortData = sortData.slice(
       (page - 1) * rowsPerPage,
       (page - 1) * rowsPerPage + rowsPerPage
     );
 
-    return sortData?.length > 0 ? sortData : rows;
+    return sortData?.length > 0 ? sortData : [];
   };
 
   const onSubmitTemplate = async () => {
@@ -505,7 +544,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
   };
 
   const onSearch = async () => {
-    console.log("onSearch");
+    setPage(1);
+    setTableData(getSearchedTemplate());
   };
 
   return (
@@ -528,7 +568,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
             <TextField
               variant="outlined"
               size="small"
-              value={campaineNameSearch}
+              value={campaignNameSearch}
               onChange={handleCampainNameChange}
               className={clsx(classes.textField, classes.minWidth252)}
               placeholder={translator(
@@ -548,9 +588,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
               }
               value={campainStatusSearch}
             >
-              {Object.keys(statuses)?.map((status: any) => (
+              {Object.keys(statusesByName)?.map((status: string) => (
                 <MenuItem key={"no-data-template"} value={status}>
-                  <>{translator(statuses[status?.toString()])}</>
+                  <>{translator(statusesByName[status])}</>
                 </MenuItem>
               ))}
             </TextField>
@@ -594,7 +634,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
           </div>
 
           <span className={classes.manageTemplatesCampaignCount}>
-            {rows?.length || 0} {translator("whatsappManagement.templates")}
+            {tableData?.length || 0}{" "}
+            {translator("whatsappManagement.templates")}
           </span>
         </Grid>
 
@@ -632,7 +673,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
                   </TableRow>
                 </TableHead>
               )}
-              {getRows()?.map(() => (
+              {getRows()?.map((row: templateListItemsProps) => (
                 <TableRow
                   key={Math.round(Math.random() * 999999999)}
                   classes={rowStyle}
@@ -642,45 +683,21 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
                     align="center"
                     className={clsx(classes.flex3, classes.tableCellBody)}
                   >
-                    {renderNameCell({
-                      Id: 140831,
-                      Name: "sdsd",
-                      Status: 1,
-                      IsDeleted: false,
-                      UpdatedDate: "2022-11-11 07:18:26",
-                      SendDate: null,
-                      SentCount: 0,
-                      CreditsPerSms: 1,
-                      AutomationID: 0,
-                      Groups: [],
-                      AutomationTriggerInActive: false,
-                    })}
+                    {renderNameCell(row)}
                   </TableCell>
                   <TableCell
                     classes={cellStyle}
                     align="center"
                     className={clsx(classes.flex1, classes.tableCellBody)}
                   >
-                    {renderStatusCell(2)}
+                    {renderStatusCell(row.Status)}
                   </TableCell>
                   <TableCell
                     component="th"
                     scope="row"
                     className={clsx(classes.flex5, classes.tableCellRoot)}
                   >
-                    {renderCellIcons({
-                      Id: 140831,
-                      Name: "sdsd",
-                      Status: 1,
-                      IsDeleted: false,
-                      UpdatedDate: "2022-11-11 07:18:26",
-                      SendDate: null,
-                      SentCount: 0,
-                      CreditsPerSms: 1,
-                      AutomationID: 0,
-                      Groups: [],
-                      AutomationTriggerInActive: false,
-                    })}
+                    {renderCellIcons(row)}
                   </TableCell>
                 </TableRow>
               ))}
@@ -689,7 +706,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         </Grid>
         <Pagination
           classes={classes}
-          rows={rows?.length}
+          rows={tableData?.length}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={(rowsNumber: number) =>
             setRowsPerPage(rowsNumber)
@@ -726,7 +743,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         isOpen={isPreviewCampaignOpen}
         onClose={() => setIsPreviewCampaignOpen(false)}
         title={translator("whatsappManagement.preview")}
-        subtitle={translator("whatsappManagement.preview")}
+        subtitle={""}
         onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
         type="alert"
       >
@@ -760,6 +777,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
         type="delete"
         onConfirmOrYes={() => onDuplicaTemplate()}
       />
+
+      <Loader isOpen={isLoader} showBackdrop={true} />
     </DefaultScreen>
   );
 };

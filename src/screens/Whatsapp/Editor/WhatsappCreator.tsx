@@ -417,11 +417,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const setTemplateById = async (templateId: string) => {
 		const templateData: savedTemplateAPIProps = await dispatch<any>(
-			getSavedTemplatesById({
-				templateId: templateId
-					? 'HX9ad85444c723a0eaeada2dc20364841b'
-					: 'HX9ad85444c723a0eaeada2dc20364841b',
-			})
+			getSavedTemplatesById({ templateId })
 		);
 		setIsLoader(false);
 		if (templateData.payload.Status === 'SUCCESS') {
@@ -434,7 +430,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				if (templateData) {
 					setUpdatedTemplateData(templateData);
 				}
-				setSavedTemplate('HX9ad85444c723a0eaeada2dc20364841b');
+				setSavedTemplate(templateId);
 				setTemplateName(templateName || '');
 				setFileData(updatedFileData);
 				setButtonType(updatedButtonType);

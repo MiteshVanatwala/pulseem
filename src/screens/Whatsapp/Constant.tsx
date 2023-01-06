@@ -4,7 +4,10 @@ import {
 	testGroupDataProps,
 } from './Campaign/Types/WhatsappCampaign.types';
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
-import { statusProps } from './management/Types/Management.types';
+import {
+	statusByNameProps,
+	statusProps,
+} from './management/Types/Management.types';
 
 export enum fieldIDs {
 	'personalField' = 1,
@@ -1333,6 +1336,14 @@ export const statuses: statusProps = {
 	5: 'campaigns.Canceled',
 	6: 'campaigns.Optin',
 	7: 'campaigns.Approve',
+};
+
+export const statusesByName: statusByNameProps = {
+	Created: 'Created',
+	Pending: 'Pending',
+	Rejected: 'Rejected',
+	Approved: 'Approved',
+	Received: 'Received',
 };
 
 export const campaignData: campaignDataProps[] = [
