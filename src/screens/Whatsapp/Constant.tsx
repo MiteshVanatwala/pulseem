@@ -1339,11 +1339,14 @@ export const statuses: statusProps = {
 };
 
 export const statusesByName: statusByNameProps = {
-	Created: 'Created',
-	Pending: 'Pending',
-	Rejected: 'Rejected',
-	Approved: 'Approved',
-	Received: 'Received',
+	Created: 'whatsappManagement.created',
+	Pending: 'whatsappManagement.pending',
+	Rejected: 'whatsappManagement.rejected',
+	Approved: 'whatsappManagement.approved',
+	Received: 'whatsappManagement.received',
+	Finished: 'whatsappManagement.finished',
+	Sending: 'whatsappManagement.sending',
+	Canceled: 'whatsappManagement.canceled',
 };
 
 export const campaignData: campaignDataProps[] = [
