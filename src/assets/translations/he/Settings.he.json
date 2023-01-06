@@ -1,0 +1,30 @@
+{
+  "title": "הגדרות חשבון",
+  "fixedComDetails": {
+    "title": "פרטי חברה קבועים",
+    "fields": {
+      "compName": "שם החברה",
+      "contactName": "איש קשר/אשת קשר",
+      "mobile": "סלולרי",
+      "enableTwoFactorAuth": "הפעלת אימות דו שלבי",
+      "sendMeCode": "שליחת קוד"
+    },
+    "errors": {},
+    "securitySettings": "הגדרות אבטחת חשבון",
+    "btnChangePwd": "שינוי סיסמא",
+    "btnUpdate": "שמירת הגדרות"
+  },
+  "actDetails": {
+    "title": "פרטי חשבון",
+    "fields": {
+      "fromPhoneNumber": "מאת מספר טלפון",
+      "unsubSettings": "אפשרויות הסרת נמענים",
+      "smsUnsubLink": "קישור הסרה SMS",
+      "unsubByEmailOrCell": "הסרה לפי דואר אלקטרוני או סלולרי",
+      "unsubByEmailAndCell": "הסרת דואר אלקטרוני ומספר סלולרי",
+      "regSmsUnsubLink": "קישור הסרה רגיל",
+      "imdSmsUnsubLink": "קישור הסרה מיידי (ללא אימות)"
+    },
+    "btnUpdate": "שמירת פרטים"
+  }
+}

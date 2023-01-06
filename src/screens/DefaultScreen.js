@@ -71,8 +71,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}
       >
         <div className={classes.background}>
-          <Illustration_BG_BL className={'leftSvg'} width={'16.72%'} height={'63.65%'} />
-          <Illustration_BG_BR className={'rightSvg'} width={'19.64%'} height={'39.80%'} />
+          <Illustration_BG_BL className={'leftSvg'} />
+          <Illustration_BG_BR className={'rightSvg'} />
         </div>
         {children}
       </Container>

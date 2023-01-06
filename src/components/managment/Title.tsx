@@ -5,8 +5,9 @@ import clsx from "clsx";
 interface TitleObject {
   classes: any;
   Text: string;
-  ContainerStyle: object;
-  Element: any;
+  ContainerStyle?: object;
+  Element?: any;
+  isIcon?: boolean;
 }
 
 export const Title = ({
@@ -14,6 +15,7 @@ export const Title = ({
   classes,
   ContainerStyle,
   Element = null,
+  isIcon = true,
 }: TitleObject) => {
   return (
     <Box
@@ -24,8 +26,10 @@ export const Title = ({
         classes.mgmtTitleContainer
       )}
     >
-      <ListIcon className={classes.mr15} />
-      <Typography className={classes.managementTitle}>{Text}</Typography>
+      {isIcon && <ListIcon className={classes.mr15} />}
+      <Typography className={clsx(classes.managementTitle, "mgmtTitle")}>
+        {Text}
+      </Typography>
       {Element}
     </Box>
   );

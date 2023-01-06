@@ -17,6 +17,7 @@ import clientReducer from './reducers/clientSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
 import ConnectorsSlice from './reducers/ConnectorsSlice';
+import settingsSlice from './reducers/settingsSlice';
 
 export default configureStore({
   reducer: {
@@ -37,6 +38,7 @@ export default configureStore({
     client: clientReducer,
     group: groupSlice,
     report: reportSlice,
-    connectors: ConnectorsSlice
+    connectors: ConnectorsSlice,
+    settings: settingsSlice
   },
 });

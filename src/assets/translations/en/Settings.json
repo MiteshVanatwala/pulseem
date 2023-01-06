@@ -1,0 +1,30 @@
+{
+    "title": "Account Settings",
+    "fixedComDetails": {
+        "title": "Company Details",
+        "fields": {
+            "compName": "Company Name",
+            "contactName": "Contact Name",
+            "mobile": "Mobile",
+            "enableTwoFactorAuth": "Enable two factor authentication",
+            "sendMeCode": "Send me a code"
+        },
+        "errors": {},
+        "securitySettings": "Security Settings",
+        "btnChangePwd": "Change Password",
+        "btnUpdate": "Update Settings"
+    },
+    "actDetails": {
+        "title": "Account Details",
+        "fields": {
+            "fromPhoneNumber": "From Phone Number",
+            "unsubSettings": "Unsubscribe Settings",
+            "smsUnsubLink": "Sms Unsubscribe link",
+            "unsubByEmailOrCell": "Unsubscribe by email or cellphone",
+            "unsubByEmailAndCell": "Unsubscribe both, email and cellphone",
+            "regSmsUnsubLink": "Regular sms unsubscribe link",
+            "imdSmsUnsubLink": "sms immediate unsubscribe link (no validation)"
+        },
+        "btnUpdate": "Update Account Details"
+    }
+}

@@ -58,6 +58,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   background: {
     position: 'fixed',
     bottom: 0,
+    left: 0,
     width: '100vw',
     height: '100vh',
     zIndex: -1,
@@ -237,6 +238,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dFlex: {
     display: "flex",
+  },
+  justifyContentEnd: {
+    display: 'flex',
+    justifyContent: 'flex-end'
   },
   width_min_content: {
     width: 'min-content'
@@ -799,7 +804,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginLeft: 5,
       color: '#FF0054'
     },
+    '& .MuiButton-startIcon': {
+      marginTop: '-2px'
+    }
   },
+
+  btnNohover: {
+    '&:hover': {
+      background: '#fff',
+      '& svg': {
+        color: '#FF0054'
+      }
+    },
+  },
+
   btnDisabled: {
     opacity: 0.7,
     pointerEvents: 'none'
@@ -1727,6 +1745,112 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: "auto",
     },
   },
+
+  accountSettingsContainer: {
+    marginBottom: 68,
+    background: '#fff',
+    marginTop: 30,
+    '& .head': {
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      '& .mgmtTitle': {
+        fontSize: 20
+      }
+    },
+    '& .containerBody': {
+      position: 'relative',
+      paddingBottom: 48,
+      minHeight: 'calc(100vh - 10em)',
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
+      border: "2px solid #F0F5FF",
+
+      '& .settingsWrapper': {
+        paddingLeft: 31,
+        '& .mgmtTitle': {
+          fontSize: 18
+        },
+        '& .formContainer': {
+          position: 'relative',
+          paddingLeft: isRTL ? 0 : 15,
+          paddingRight: isRTL ? 15 : 0,
+          '& .form': {
+            maxWidth: 900,
+            background: '#fff',
+            zIndex: 100,
+            position: 'relative',
+          },
+          '& .svg_data_analysis': {
+            position: 'absolute',
+            right: isRTL ? 'auto' : 86.44,
+            left: isRTL ? 86.44 : 'auto',
+            top: 49.17,
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .svg_app_settings': {
+            position: 'absolute',
+            top: 121.3,
+            right: isRTL ? 'auto' : 93.14,
+            left: isRTL ? 93.14 : 'auto',
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .subHeading': {
+            marginTop: 39,
+            color: '#000'
+          },
+          '& .subform': {
+            marginTop: 22,
+            '& .selectWrapper': {
+              height: 'auto',
+              '& .MuiTypography-body1': {
+                marginRight: isRTL ? 0 : 12,
+                marginLeft: isRTL ? 12 : 0
+              }
+            },
+            '& .MuiFormControl-root': {
+              maxWidth: 245,
+              '& .MuiSelect-root': {
+                padding: 0,
+                '&:focus': {
+                  background: 'none'
+                },
+                '& input': {
+                  padding: 0
+                }
+              }
+            }
+          },
+          '& .MuiTypography-body1': {
+            color: '#979797'
+          },
+          '& .link': {
+            fontSize: 15,
+            color: '#FF0054',
+            padding: '2px 0',
+            marginTop: 28,
+            marginLeft: 0
+          }
+        }
+      },
+      '& .textBoxWrapper': {
+        paddingTop: 30,
+        '& .MuiTypography-body1': {
+          color: '#979797'
+        },
+        '& .MuiTextField-root': {
+          paddingBottom: 2,
+          maxWidth: 245,
+          '& input': {
+            padding: 0
+          }
+        }
+      }
+      // display: 'grid',
+      // padding: '0 17px 32.8px 17px'
+    }
+  },
+
+
   areaCon: {
     width: "calc(100% - 20px)",
     outline: "none",
