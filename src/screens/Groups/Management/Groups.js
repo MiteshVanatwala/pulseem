@@ -811,7 +811,7 @@ const Groups = ({ classes }) => {
                         className: windowSize === "xs" && classes.dNone,
                     }}
                 >
-                    <Box className='tableBodyContainer'>
+                    <Box className='tableBodyContainer groupsTable'>
                         <TableBody>
                             {groupData.Groups
                                 .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}

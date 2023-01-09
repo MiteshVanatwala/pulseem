@@ -131,6 +131,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     }
   },
   appBar: {
+    maxWidth: 'calc(100vw - 56px)',
     backgroundColor: '#fff',
     height: '45px',
     zIndex: 50000000,

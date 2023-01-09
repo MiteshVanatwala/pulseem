@@ -857,7 +857,7 @@ const NewslettersReport = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <Box className='tableBodyContainer'>
+      <Box className='tableBodyContainer newsLetterReportTable'>
         <TableBody>
           {rowData
             .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}

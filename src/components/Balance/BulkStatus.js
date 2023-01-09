@@ -181,7 +181,7 @@ const BulkStatus = ({ classes }) => {
 
           <Grid
             container
-            item xs={9}
+            item sm={9} md={9} lg={10} xl={9}
             className={clsx(classes.flex, classes.mt2, classes.mb2)}
             justifyContent='space-between'
           >
@@ -191,7 +191,7 @@ const BulkStatus = ({ classes }) => {
             <Box className={clsx(classes.flex2)}>
               <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             </Box>
-            <Box className={clsx(classes.flex2)}>
+            <Box className={clsx(classes.flex2, classes.textCenter)}>
               <Typography className={classes.bulkTitle}>
                 {getBillingTypeText(Newsletters)}
               </Typography>
@@ -208,7 +208,7 @@ const BulkStatus = ({ classes }) => {
 
           <Grid
             container
-            item xs={9}
+            item sm={9} md={9} lg={10} xl={9}
             className={clsx(classes.flex, classes.mt2, classes.mb2)}
             justifyContent='space-between'
           >
@@ -218,7 +218,7 @@ const BulkStatus = ({ classes }) => {
             <Box className={clsx(classes.flex2)}>
               <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             </Box>
-            <Box className={clsx(classes.flex2)}>
+            <Box className={clsx(classes.flex2, classes.textCenter)}>
               <Typography className={classes.bulkTitle}>
                 {getBillingTypeText(Sms)}
               </Typography>
@@ -235,7 +235,7 @@ const BulkStatus = ({ classes }) => {
 
           {Mms.Credits > 0 && <Grid
             container
-            item xs={9}
+            item sm={9} md={9} lg={10} xl={9}
             className={clsx(classes.flex, classes.mt2, classes.mb2)}
             justifyContent='space-between'
           >
@@ -245,7 +245,7 @@ const BulkStatus = ({ classes }) => {
             <Box className={clsx(classes.flex2)}>
               <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
             </Box>
-            <Box className={clsx(classes.flex2)}>
+            <Box className={clsx(classes.flex2, classes.textCenter)}>
               <Typography className={classes.bulkTitle}>
                 {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
               </Typography>
@@ -262,7 +262,7 @@ const BulkStatus = ({ classes }) => {
 
           {Notifications.FeatureExist && <Grid
             container
-            item xs={9}
+            item sm={9} md={9} lg={10} xl={9}
             className={clsx(classes.flex, classes.mt2, classes.mb2)}
             justifyContent='space-between'
           >
@@ -272,7 +272,7 @@ const BulkStatus = ({ classes }) => {
             <Box className={clsx(classes.flex2)}>
               <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             </Box>
-            <Box className={clsx(classes.flex2)}>
+            <Box className={clsx(classes.flex2, classes.textCenter)}>
             </Box>
             <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType(3)}>
               <Button className={clsx(classes.btn, classes.btnRounded, classes.btnDisabled)}>

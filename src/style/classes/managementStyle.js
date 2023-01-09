@@ -58,6 +58,9 @@ const shortcutFontSize = {
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   management: {
     maxWidth: 1500,
+    '&.MuiContainer-root': {
+      marginLeft: 207
+    },
     '& .topSection': {
       marginTop: 37.870,
       border: '2px solid #F0F5FF',
@@ -536,9 +539,64 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tableContainer: {
     width: "100%",
+    background: '#fff',
+    '& .MuiTableHead-root': {
+      '& .MuiTableRow-root': {
+        borderColor: 'transparent',
+        backgroundColor: '#F0F5FF',
+      }
+    },
     '& .tableBodyContainer': {
       display: 'grid',
-      padding: '0 17px 32.8px 17px'
+      padding: '0 17px 32.8px 17px',
+      '&.newsLetterReportTable': {
+        '& .MuiTableBody-root': {
+          '& .MuiTableCell-root': {
+            flexWrap: 'wrap',
+            '& .MuiGrid-container': {
+              flexWrap: 'wrap'
+            },
+            '&:nth-Child(4)': {
+              '& .MuiGrid-item': {
+                '& .MuiBox-root': {
+                  "@media screen and (max-width: 1420px)": {
+                    paddingInline: 5
+                  }
+                }
+              }
+            },
+            '&:nth-Child(5)': {
+              '& .MuiGrid-item': {
+                '& .MuiBox-root': {
+                  "@media screen and (max-width: 1420px)": {
+                    paddingInline: 5
+                  }
+                }
+              }
+            },
+            '&:nth-Child(6)': {
+              '& .MuiGrid-item': {
+                '& .MuiBox-root': {
+                  "@media screen and (max-width: 1420px)": {
+                    paddingInline: 5
+                  }
+                }
+              }
+            },
+          }
+        }
+      },
+      '&.groupsTable': {
+        '& .MuiTableBody-root': {
+          '& .MuiTableCell-root': {
+            '& .MuiGrid-grid-lg-3': {
+              "@media screen and (max-width: 1420px)": {
+                minWidth: '50%'
+              }
+            }
+          }
+        }
+      },
     },
     '& .MuiTableCell-head': {
       fontWeight: 300,

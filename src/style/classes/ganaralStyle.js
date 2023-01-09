@@ -73,6 +73,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       left: 0
     }
   },
+  appBody: {
+    maxWidth: 'calc(100vw - 6px)'
+  },
   sidebar: {
     "&::-webkit-scrollbar": {
       display: "block !important",
