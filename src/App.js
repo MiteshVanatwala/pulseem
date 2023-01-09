@@ -39,6 +39,7 @@ import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
+import AccountSettingsEditor from './screens/AccountSettings/AccountSettingsEditor';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -335,6 +336,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path={`/AccountSettings`}
         component={transferUrl('/Pulseem/AccountSettings.aspx')}
+      />
+      <Route
+        exact
+        path={`/react/AccountSettings`}
+        element={<AccountSettingsEditor classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}
