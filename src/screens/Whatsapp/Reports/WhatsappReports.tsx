@@ -15,10 +15,6 @@ import {
 	CalendarIcon,
 	SearchIcon,
 } from '../../../assets/images/managment/index';
-import {
-	DateField,
-	TablePagination,
-} from '../../../components/managment/index';
 import ExcelImg from '../../../assets/images/excel.png';
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
@@ -30,11 +26,10 @@ import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from '../management/Component/Pagination';
-import { DatePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { reportData } from '../Constant';
 import {
-	campaignDataProps,
 	exportDataProps,
 	filtersObjectProps,
 	reportDataProps,
@@ -62,7 +57,6 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const [tableData, setTableData] = useState<reportDataProps[]>(reportData);
 
-	const rows: any = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
 		head: classes.tableCellHead,
@@ -121,7 +115,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						arrow: classes.fBlack,
 					}}
 					arrow={true}
-					style={{ fontSize: 18, fontWeight: 'bold' }}
+					style={{ fontSize: 16, fontWeight: 'bold' }}
 					placement={'top'}
 					title={<Typography noWrap={false}>{row.campaignName}</Typography>}
 					text={row.campaignName}

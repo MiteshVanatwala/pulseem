@@ -220,8 +220,8 @@ const SendCampaign = ({
 	};
 
 	const handleTimePicker = (value: MaterialUiPickersDate | null) => {
-		var date = moment(sendDate);
-		var time = moment(value, 'HH:mm');
+		let date = moment(sendDate);
+		let time = moment(value, 'HH:mm');
 
 		date.set({
 			hour: time.get('hour'),

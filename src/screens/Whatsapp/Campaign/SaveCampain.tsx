@@ -562,6 +562,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onOkTestSending = () => {
 		if (validateSaveCampaign()) {
+			console.log('onOkTestSending')
+			setIsTestGroupModal(false);
 		} else {
 			setIsTestGroupModal(false);
 			setIsValidationAlert(true);
@@ -810,7 +812,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 										<Typography style={{ fontSize: '18px' }}>
 											<>{translator('whatsappCampaign.tsend')}</>
 										</Typography>
-										<Typography className={classes.descSwitch}>
+										<Typography
+											className={classes.descSwitch}
+											style={{ fontSize: '12px', marginTop: '-4px' }}>
 											<>{translator('whatsappCampaign.tsendDesc')}</>
 										</Typography>
 									</Box>

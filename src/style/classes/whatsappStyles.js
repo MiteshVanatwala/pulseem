@@ -1073,6 +1073,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
 			backgroundColor: '#19762b',
+			opacity: '1',
 		},
 	},
 	whatsappCampaignDynamicFieldTitle: {
@@ -1159,6 +1160,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 			'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
 				backgroundColor: '#2f9d1a',
+				opacity: '1',
 			},
 		},
 		'& .link-input': {
@@ -1249,6 +1251,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		border: '1px solid #009f00',
 		marginRight: isRTL ? '8px !important' : '0px',
 		marginLeft: isRTL ? '0px' : '8px !important',
+		'&:hover': {
+			border: '1px solid #009f00',
+		},
 	},
 	columnAdjustmentModalTableWrapper: {
 		width: '450px',
@@ -1430,6 +1435,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 						textDecoration: 'underline',
 						fontFamily: 'Assistant',
 						fontWeight: '500',
+						fontSize: '16px',
 					},
 				},
 			},

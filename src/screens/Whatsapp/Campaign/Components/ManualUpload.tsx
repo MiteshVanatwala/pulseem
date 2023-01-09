@@ -44,27 +44,27 @@ const ManualUpload = ({
 						if (file.name.toLowerCase().indexOf('xls') > -1) {
 							reader.onload = function (e: ProgressEvent<FileReader>) {
 								if (e?.target?.result) {
-									var data = new Uint8Array(
+									let data = new Uint8Array(
 										e?.target?.result as ArrayBufferLike
 									);
 									setTimeout(() => {
-										var workbook = XLSX.read(data, { type: 'array' });
-										var csv: string = XLSX.utils.sheet_to_csv(
+										let workbook = XLSX.read(data, { type: 'array' });
+										let csv: string = XLSX.utils.sheet_to_csv(
 											workbook.Sheets[workbook.SheetNames[0]]
 										);
 
 										let temp: string = csv;
-										let a: string[] = temp.split('\n');
-										let b: string[][] = [];
-										for (let i = 0; i < a.length; i++) {
-											b.push(a[i].split(','));
+										let splittedAreaData: string[] = temp.split('\n');
+										let rowData: string[][] = [];
+										for (let i = 0; i < splittedAreaData?.length; i++) {
+											rowData.push(splittedAreaData[i].split(','));
 										}
-										b.pop();
-										setTypedData(b);
-										setTotalRecords(b.length);
-										setAreaData(b.join('\n'));
+										rowData.pop();
+										setTypedData(rowData);
+										setTotalRecords(rowData.length);
+										setAreaData(rowData.join('\n'));
 										let dummyArr = [];
-										for (let i = 0; i < b[0].length; i++) {
+										for (let i = 0; i < rowData[0].length; i++) {
 											dummyArr.push(translator('sms.adjustTitle'));
 										}
 										setInitialHeadState(dummyArr);

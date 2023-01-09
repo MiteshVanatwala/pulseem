@@ -20,7 +20,7 @@ export const Pagination = ({
   const [isTyping, setTyping] = useState<boolean>(false);
 
   const handleKeyPress = (event: KeyboardEvent) => {
-    var isNumber = /^[0-9]*$/;
+    let isNumber = /^[0-9]*$/;
     if (!event.key.match(isNumber) || event.key === "e" || event.key === ".") {
       event.preventDefault();
       event.stopPropagation();

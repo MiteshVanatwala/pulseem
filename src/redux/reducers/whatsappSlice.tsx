@@ -238,6 +238,38 @@ export const getAllTemplates = createAsyncThunk(
 	}
 );
 
+export const getAllCampaigns = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppCampaigns',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppCampaigns`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getAllReports = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppReport',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppReport`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {

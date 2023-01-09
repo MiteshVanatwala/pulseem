@@ -198,13 +198,17 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.recipientsStatus, {
-						[classes.recipientsStatusCreated]: status === 'Created',
+						[classes.recipientsStatusCreated]: status === 'Received',
 						[classes.recipientsStatusCreated]: status === 'Approved',
 						[classes.recipientsStatusSending]: status === 'Pending',
 						[classes.recipientsStatusCanceled]: status === 'Received',
 						[classes.recipientsStatusCanceled]: status === 'Rejected',
 					})}>
-					<>{translator(statusesByName[status])}</>
+					<>
+						{statusesByName[status]
+							? translator(statusesByName[status])
+							: status}
+					</>
 				</Typography>
 			</>
 		);
@@ -424,7 +428,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				buttonKey: 'send',
 				icon: SendGreenIcon,
 				lable: translator('whatsappManagement.submit'),
-				remove: row.Status !== 'Created',
+				remove: row.Status !== 'Received',
 				onClick: (key: string, templateId: string) =>
 					onRowIconClick(key, templateId),
 				classes: classes,
@@ -448,7 +452,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				key: 'edit',
 				buttonKey: 'edit',
 				icon: EditIcon,
-				// disable: row.Status !== "Created",
+				disable: row.Status !== "Received",
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				onClick: (key: string, templateId: string) =>
 					onRowIconClick(key, templateId),
@@ -543,7 +547,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				  })
 				: setToastMessage(ToastMessages.ERROR);
 		}
-		console.log('templateData::', templateData);
 	};
 
 	const onDuplicaTemplate = async () => {

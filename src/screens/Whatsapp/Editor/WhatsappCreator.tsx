@@ -17,6 +17,7 @@ import {
 	callToActionProps,
 	callToActionRowProps,
 	coreProps,
+	deleteTemplateAPIProps,
 	fileUploadAPIProps,
 	JSONFreetextVariableProps,
 	quickReplyButtonProps,
@@ -45,6 +46,7 @@ import WhatsappTips from './Components/whatsappTips';
 import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
+	deleteTemplate,
 	getSavedTemplates,
 	getSavedTemplatesById,
 	submitTemplates,
@@ -59,12 +61,13 @@ import {
 	getLastDynamicFieldValue,
 } from '../Common';
 import { resetToastData } from '../Constant';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -392,7 +395,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onSavedTemplateChange = (TemplateId: string) => {
-		console.log('TemplateId::', TemplateId);
 		setSavedTemplate(TemplateId);
 		const savedTemplateData: savedTemplateListProps | undefined =
 			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
@@ -786,9 +788,28 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const onDeleteCampaign = () => {
-		resetFields();
-		setIsDeleteCampaignOpen(false);
+	const onDeleteCampaign = async () => {
+		if (templateID) {
+			const deleteData: deleteTemplateAPIProps = await dispatch<any>(
+				deleteTemplate(templateID)
+			);
+			if (deleteData?.payload?.Status === 'Success') {
+				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+				resetFields();
+				setIsDeleteCampaignOpen(false);
+				navigate('/react/whatsapp/template/create');
+			} else {
+				deleteData?.payload?.Error
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Error,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		} else {
+			resetFields();
+			setIsDeleteCampaignOpen(false);
+		}
 	};
 
 	const onSubmitCampaign = async () => {
