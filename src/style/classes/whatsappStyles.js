@@ -1501,7 +1501,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'& .MuiInputLabel-formControl': {
 			transform: 'none',
 			top: '10px',
-			left: '12px',
+			left: isRTL ? '0px' : '12px',
+			right: isRTL ? '12px' : '0px',
 		},
 		'& .MuiSelect-select:focus': {
 			backgroundColor: 'transparent',
