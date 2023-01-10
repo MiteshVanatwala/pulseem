@@ -3,24 +3,29 @@ import DefaultScreen from '../../DefaultScreen';
 import WizardTitle from '../../../components/Wizard/WizardTitle';
 import { Grid } from '@material-ui/core';
 import {
+	gropListAPIProps,
 	testGroupDataProps,
 	WhatsappCampaignSecondProps,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
 import LeftPane from './Components/LeftPane';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import SummaryModal from './Popups/SummaryModal';
 import Buttons from './Components/Buttons';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import moment from 'moment';
 import Toast from '../../../components/Toast/Toast.component';
 import ValidationAlert from './Popups/ValidationAlert';
+import { getAllGroups } from '../../../redux/reducers/whatsappSlice';
+import { useDispatch } from 'react-redux';
+import { Loader } from '../../../components/Loader/Loader';
 
 const SendCampaign = ({
 	classes,
 }: ClassesType & WhatsappCampaignSecondProps) => {
 	const { t: translator } = useTranslation();
+	const dispatch = useDispatch();
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
 
 	const [selectedGroups, setSelected] = useState<testGroupDataProps[]>([]);
@@ -48,70 +53,10 @@ const SendCampaign = ({
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
 
-	const subAccountAllGroups: testGroupDataProps[] = [
-		{
-			GroupID: 89979,
-			GroupName: 'ccccc (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:08.933',
-			UpdateDate: '2017-08-20T11:02:08.933',
-			IsTestGroup: false,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 89980,
-			GroupName: 'cdgsfsgdf (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:39.197',
-			UpdateDate: '2017-08-20T12:44:55.69',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 5,
-		},
-		{
-			GroupID: 166670,
-			GroupName: 'left123',
-			SubAccountID: 0,
-			CreationDate: '2022-04-08T14:41:09.493',
-			UpdateDate: '2022-04-17T12:46:45.297',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 1,
-		},
-		{
-			GroupID: 165652,
-			GroupName: 'MeitalTest (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2022-03-10T14:33:53.9',
-			UpdateDate: '2022-03-10T14:33:53.9',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 81457,
-			GroupName: 'omer (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2022-04-08T14:41:09.493',
-			UpdateDate: '2017-05-21T14:45:34.537',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 55962,
-			GroupName: 'בדיקה (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2016-01-18T18:24:45.42',
-			UpdateDate: '2016-01-18T18:28:09.06',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 2,
-		},
-	];
+	const [allGroupList, setAllGroupList] = useState<testGroupDataProps[]>([]);
 
 	const finishedCampaigns: testGroupDataProps[] = [
 		{
@@ -176,29 +121,10 @@ const SendCampaign = ({
 		},
 	];
 
-	console.log('Send_Campaign:: isSummaryModal::', isSummaryModal);
-	console.log('Send_Campaign:: selectedGroups::', selectedGroups);
-	console.log(
-		'Send_Campaign:: selectedFilterCampaigns::',
-		selectedFilterCampaigns
-	);
-	console.log('Send_Campaign:: selectedFilterGroups::', selectedFilterGroups);
-	console.log('Send_Campaign:: sendDate::', sendDate);
-	console.log('Send_Campaign:: sendTime::', sendTime);
-	console.log('Send_Campaign:: sendType::', sendType);
-	console.log('Send_Campaign:: model::', model);
-	console.log('Send_Campaign:: isSpecialDateBefore::', isSpecialDateBefore);
-	console.log('Send_Campaign:: timePickerOpen::', timePickerOpen);
-	console.log('Send_Campaign:: toastMessage::', toastMessage);
-	console.log('Send_Campaign:: daysBeforeAfter::', daysBeforeAfter);
-	console.log('Send_Campaign:: spectialDateFieldID::', spectialDateFieldID);
-	console.log('Send_Campaign:: newGroupName::', newGroupName);
-	console.log('Send_Campaign:: activeTab::', activeTab);
-	console.log('Send_Campaign:: isValidationAlert::', isValidationAlert);
-	console.log(
-		'Send_Campaign:: groupSendValidationErrors::',
-		groupSendValidationErrors
-	);
+	useEffect(() => {
+		getApiGroupsData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
 		handleFromDate(value);
@@ -298,6 +224,18 @@ const SendCampaign = ({
 		console.log('onFilter');
 	};
 
+	const getApiGroupsData = async () => {
+		setIsLoader(true);
+		const groupData: gropListAPIProps = await dispatch<any>(getAllGroups());
+		if (groupData.meta?.requestStatus === 'fulfilled') {
+			setAllGroupList(groupData.payload);
+			setIsLoader(false);
+		} else {
+			setAllGroupList([]);
+			setIsLoader(false);
+		}
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'send2'}
@@ -316,7 +254,7 @@ const SendCampaign = ({
 						<Grid item md={7} xs={12}>
 							<LeftPane
 								classes={classes}
-								subAccountAllGroups={subAccountAllGroups}
+								allGroupList={allGroupList}
 								finishedCampaigns={finishedCampaigns}
 								selectedGroups={selectedGroups}
 								setSelected={setSelected}
@@ -373,6 +311,7 @@ const SendCampaign = ({
 					requiredFields={groupSendValidationErrors}
 				/>
 				{renderToast()}
+				<Loader isOpen={isLoader} showBackdrop={true} />
 			</div>
 		</DefaultScreen>
 	);

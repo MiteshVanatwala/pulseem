@@ -10,7 +10,7 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	CalendarIcon,
 	SearchIcon,
@@ -19,7 +19,10 @@ import ExcelImg from '../../../assets/images/excel.png';
 import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import { coreProps } from '../Editor/Types/WhatsappCreator.types';
+import {
+	coreProps,
+	reportListAPIProps,
+} from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
@@ -28,7 +31,6 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from '../management/Component/Pagination';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { reportData } from '../Constant';
 import {
 	exportDataProps,
 	filtersObjectProps,
@@ -36,9 +38,12 @@ import {
 	searchArrayProps,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import { exportAsXLSX } from '../../../helpers/Export/ExportFile';
+import { getAllReports } from '../../../redux/reducers/whatsappSlice';
+import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
+	const dispatch = useDispatch();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
@@ -55,7 +60,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
 
-	const [tableData, setTableData] = useState<reportDataProps[]>(reportData);
+	const [tableData, setTableData] = useState<reportDataProps[]>([]);
+
+	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [reportListData, setReportListData] = useState<reportDataProps[]>([]);
 
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
@@ -64,6 +72,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		root: classes.tableCellRoot,
 	};
 	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
+
+	useEffect(() => {
+		setApiReportData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	useEffect(() => {
 		if (
 			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
@@ -73,6 +87,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			setSearching(true);
 		}
 	}, [fromDate, toDate, campaignNameSearch]);
+
 	const handleFromDateChange = (value: any) => {
 		if (toDate && value > toDate) {
 			handleToDate(null);
@@ -87,7 +102,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		handleFromDate(null);
 		handleToDate(null);
 		setSearching(false);
-		setTableData(reportData);
+		setTableData(reportListData);
 	};
 	const renderNameCell = (row: reportDataProps) => {
 		let date = null;
@@ -168,7 +183,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			},
 		};
 
-		let sortData = reportData;
+		let sortData = reportListData;
 		searchArray.forEach((values: searchArrayProps) => {
 			sortData = sortData.filter((row: reportDataProps) =>
 				filtersObject[values.type](row, values)
@@ -233,6 +248,22 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			}
 		);
 		exportAsXLSX(exportData, header, 'pulseemExport.XLSX', 'Sheet1');
+	};
+
+	const setApiReportData = async () => {
+		setIsLoader(true);
+		const campaignData: reportListAPIProps = await dispatch<any>(
+			getAllReports()
+		);
+		if (campaignData.payload.Status === 'SUCCESS') {
+			setReportListData(campaignData.payload.Items);
+			setTableData(campaignData.payload.Items);
+			setIsLoader(false);
+		} else {
+			setReportListData([]);
+			setTableData([]);
+			setIsLoader(false);
+		}
 	};
 
 	return (
@@ -504,6 +535,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					returnPageOne={false}
 				/>
 			</div>
+			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
 };

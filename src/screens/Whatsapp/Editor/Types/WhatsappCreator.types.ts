@@ -1,5 +1,6 @@
 import { ClassesType } from '../../../Classes.types';
 import { BaseSyntheticEvent, RefObject } from 'react';
+import { campaignDataProps, reportDataProps } from '../../Campaign/Types/WhatsappCampaign.types';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -317,4 +318,28 @@ export type deleteTemplatePayloadProps = {
 
 export type deleteTemplateAPIProps = {
 	payload: deleteTemplatePayloadProps;
+};
+
+export type campaignListPayloadProps = {
+	Error: string;
+	Count: number;
+	Message: string;
+	Status: string;
+	Items: campaignDataProps[];
+};
+
+export type campaignListAPIProps = {
+	payload: campaignListPayloadProps;
+};
+
+export type reportListPayloadProps = {
+	Error: string;
+	Count: number;
+	Message: string;
+	Status: string;
+	Items: reportDataProps[];
+};
+
+export type reportListAPIProps = {
+	payload: reportListPayloadProps;
 };

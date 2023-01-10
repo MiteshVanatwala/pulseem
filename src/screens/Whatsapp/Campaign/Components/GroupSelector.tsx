@@ -1,14 +1,17 @@
 import { Checkbox, Tooltip } from '@material-ui/core';
 import { BaseSyntheticEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { groupSelectorProps, testGroupDataProps } from '../Types/WhatsappCampaign.types';
+import {
+	groupSelectorProps,
+	testGroupDataProps,
+} from '../Types/WhatsappCampaign.types';
 import Groups from './Groups/Groups';
 
 const GroupSelector = ({
 	classes,
 	showTestGroups,
 	testGroups,
-	subAccountAllGroups,
+	allGroupList,
 	selectedGroups,
 	bsDot,
 	isCreateNewGroup,
@@ -16,11 +19,11 @@ const GroupSelector = ({
 	onNewGroupChange,
 	newGroupName,
 	onNewGroupSave,
-    setSelected,
-    allGroupsSelected,
-    setIsFilterModal,
-    setAllGroupsSelected,
-    setShowTestGroups
+	setSelected,
+	allGroupsSelected,
+	setIsFilterModal,
+	setAllGroupsSelected,
+	setShowTestGroups,
 }: groupSelectorProps) => {
 	const { t: translator } = useTranslation();
 
@@ -48,9 +51,11 @@ const GroupSelector = ({
 	const onSelectAll = () => {
 		if (!allGroupsSelected) {
 			if (showTestGroups) {
-				setSelected([...testGroups, ...subAccountAllGroups]);
+				setSelected(
+					allGroupList?.filter((group) => group.IsTestGroup === true)
+				);
 			} else {
-				setSelected([...subAccountAllGroups]);
+				setSelected([...allGroupList]);
 			}
 		} else {
 			setSelected([]);
@@ -59,7 +64,10 @@ const GroupSelector = ({
 	};
 
 	const onShowTestGroup = async (showTestGroups: boolean) => {
-		if (!showTestGroups && testGroups.length > 0) {
+		if (
+			!showTestGroups &&
+			allGroupList?.filter((group) => group.IsTestGroup === true)?.length > 0
+		) {
 			setShowTestGroups(true);
 		} else {
 			setShowTestGroups(false);
@@ -71,8 +79,8 @@ const GroupSelector = ({
 				classes={classes}
 				list={
 					showTestGroups
-						? [...testGroups, ...subAccountAllGroups]
-						: [...subAccountAllGroups]
+						? allGroupList?.filter((group) => group.IsTestGroup === true)
+						: [...allGroupList]
 				}
 				selectedList={selectedGroups}
 				callbackSelectedGroups={onSelectedGroups}

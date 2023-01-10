@@ -270,6 +270,21 @@ export const getAllReports = createAsyncThunk(
 	}
 );
 
+export const getAllGroups = createAsyncThunk(
+	'smsCampaign/GetGroupsBySubAccountId',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`smsCampaign/GetGroupsBySubAccountId`
+			);
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as errorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {

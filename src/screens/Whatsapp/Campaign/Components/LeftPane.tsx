@@ -13,7 +13,7 @@ import GroupSelector from './GroupSelector';
 
 const LeftPane = ({
 	classes,
-	subAccountAllGroups,
+	allGroupList,
 	finishedCampaigns,
 	selectedGroups,
 	setSelected,
@@ -138,7 +138,7 @@ const LeftPane = ({
 						classes={classes}
 						showTestGroups={showTestGroups}
 						testGroups={testGroups}
-						subAccountAllGroups={subAccountAllGroups}
+						allGroupList={allGroupList}
 						selectedGroups={selectedGroups}
 						bsDot={bsDot}
 						isCreateNewGroup={isCreateNewGroup}
@@ -166,7 +166,7 @@ const LeftPane = ({
 				isFilterModal={isFilterModal}
 				onFilterModalClose={() => setIsFilterModal(false)}
 				classes={classes}
-				subAccountAllGroups={subAccountAllGroups}
+				allGroupList={allGroupList}
 				finishedCampaigns={finishedCampaigns}
 				selectedFilterCampaigns={selectedFilterCampaigns}
 				setFilterCampaigns={setFilterCampaigns}

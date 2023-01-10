@@ -1371,6 +1371,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'& table': {
 			'& tr': {
 				'& th': {
+					fontWeight: '500',
 					'&:nth-child(1)': {
 						width: '270px',
 					},

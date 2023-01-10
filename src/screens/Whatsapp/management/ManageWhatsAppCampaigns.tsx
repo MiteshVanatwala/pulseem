@@ -31,6 +31,7 @@ import DefaultScreen from '../../DefaultScreen';
 import {
 	buttonsDataProps,
 	callToActionProps,
+	campaignListAPIProps,
 	coreProps,
 	quickReplyButtonProps,
 	savedTemplateAPIProps,
@@ -47,7 +48,7 @@ import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { campaignData, statusesByName, templatData } from '../Constant';
+import { statusesByName } from '../Constant';
 import Pagination from './Component/Pagination';
 import RestoreDeletedModal from './Popups/RestoreDeletedModal';
 import { KeyboardDatePicker } from '@material-ui/pickers';
@@ -55,7 +56,10 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { ManagmentIconProps } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
-import { getSavedTemplatesById } from '../../../redux/reducers/whatsappSlice';
+import {
+	getAllCampaigns,
+	getSavedTemplatesById,
+} from '../../../redux/reducers/whatsappSlice';
 import InfoModal from './Popups/InfoModal';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -63,6 +67,7 @@ import {
 	filtersObjectProps,
 	searchArrayProps,
 } from '../Campaign/Types/WhatsappCampaign.types';
+import { Loader } from '../../../components/Loader/Loader';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -89,7 +94,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [buttonType, setButtonType] = useState<string>('');
 	const [fileData, setFileData] = useState<string>('');
 
-	const [tableData, setTableData] = useState<campaignDataProps[]>(campaignData);
+	const [tableData, setTableData] = useState<campaignDataProps[]>([]);
 
 	const [isRestoreDeletedModal, setIsRestoreDeletedModal] =
 		useState<boolean>(false);
@@ -106,6 +111,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
 	const [restoreIds, setRestoreIds] = useState<string[]>([]);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
+		[]
+	);
 
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
@@ -157,6 +166,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	];
 
 	useEffect(() => {
+		setApiCampaignData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
 		if (
 			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
 			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
@@ -165,6 +179,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			setSearching(true);
 		}
 	}, [fromDate, toDate, campaineNameSearch]);
+
 	const handleFromDateChange = (value: any) => {
 		if (toDate && value > toDate) {
 			handleToDate(null);
@@ -179,7 +194,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		handleFromDate(null);
 		handleToDate(null);
 		setSearching(false);
-		setTableData(campaignData);
+		setTableData(campaignListData);
 	};
 	const renderNameCell = (row: campaignDataProps) => {
 		let date = null;
@@ -602,7 +617,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			},
 		};
 
-		let sortData = campaignData;
+		let sortData = campaignListData;
 		searchArray.forEach((values) => {
 			sortData = sortData.filter((row) =>
 				filtersObject[values.type](row, values)
@@ -642,6 +657,22 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	const onCreateCamoaign = async () => {
 		navigate('/react/whatsapp/campaign/create/page1');
+	};
+
+	const setApiCampaignData = async () => {
+		setIsLoader(true);
+		const campaignData: campaignListAPIProps = await dispatch<any>(
+			getAllCampaigns()
+		);
+		if (campaignData.payload.Status === 'SUCCESS') {
+			setCampaignListData(campaignData.payload.Items);
+			setTableData(campaignData.payload.Items);
+			setIsLoader(false);
+		} else {
+			setCampaignListData([]);
+			setTableData([]);
+			setIsLoader(false);
+		}
 	};
 
 	return (
@@ -914,6 +945,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				title={translator('whatsappManagement.campaignGroups')}
 				requiredFields={infoModalData}
 			/>
+
+			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
 };

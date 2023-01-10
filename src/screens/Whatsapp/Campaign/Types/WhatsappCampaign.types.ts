@@ -113,7 +113,7 @@ export type RightPaneProps = {
 
 export type LeftPaneProps = {
 	classes: ClassesType['classes'];
-	subAccountAllGroups: testGroupDataProps[];
+	allGroupList: testGroupDataProps[];
 	finishedCampaigns: testGroupDataProps[];
 	selectedFilterCampaigns: testGroupDataProps[];
 	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
@@ -155,7 +155,7 @@ export type FilterRecipientsDialogProps = {
 	classes: ClassesType['classes'];
 	isFilterModal: boolean;
 	onFilterModalClose: () => void;
-	subAccountAllGroups: testGroupDataProps[];
+	allGroupList: testGroupDataProps[];
 	finishedCampaigns: testGroupDataProps[];
 	selectedFilterCampaigns: testGroupDataProps[];
 	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
@@ -382,7 +382,7 @@ export type groupSelectorProps = {
 	classes: ClassesType['classes'];
 	showTestGroups: boolean;
 	testGroups: [];
-	subAccountAllGroups: testGroupDataProps[];
+	allGroupList: testGroupDataProps[];
 	selectedGroups: testGroupDataProps[];
 	bsDot: boolean;
 	isCreateNewGroup: boolean;
@@ -395,4 +395,10 @@ export type groupSelectorProps = {
 	setIsFilterModal: (isFilterModal: boolean) => void;
 	setAllGroupsSelected: (allGroupsSelected: boolean) => void;
 	setShowTestGroups: (showTestGroups: boolean) => void;
+};
+
+export type gropListAPIProps = {
+	meta: { requestStatus: string };
+	type: string;
+	payload: testGroupDataProps[];
 };

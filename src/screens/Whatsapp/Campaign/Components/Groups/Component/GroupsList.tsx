@@ -22,7 +22,6 @@ const GroupsList = ({
 	onSelectGroup,
 }: groupsListProps) => {
 	const { t: translator } = useTranslation();
-	console.log('list::', list);
 	return list
 		.filter((g: testGroupDataProps) => {
 			return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
