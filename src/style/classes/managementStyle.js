@@ -101,7 +101,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "16px 10px!important",
   },
   tableCellBody: {
-    borderInlineEnd: "1px solid #797979",
+    borderInlineEnd: "2px solid #F0F5FF",
     marginBlock: 10,
     borderBottom: 0,
     display: "flex",
@@ -631,7 +631,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           alignItems: 'flex-start'
         },
         '& .MuiTableCell-root': {
-          borderRight: '2px solid #F0F5FF',
+
           marginTop: 0,
           marginBottom: 0,
 
