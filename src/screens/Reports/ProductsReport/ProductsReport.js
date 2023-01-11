@@ -39,7 +39,9 @@ const ProductsReport = ({ classes }) => {
 
     const { t } = useTranslation()
     const [searchData, setSearchData] = useState(DEFAULT_FILTER)
+    const [isSearching, setIsSearching] = useState(true);
     const [filter, setFilter] = useState(false);
+    const [page, setPage] = useState(1)
 
     const dispatch = useDispatch()
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
@@ -57,6 +59,9 @@ const ProductsReport = ({ classes }) => {
 
         const handleClickSort = (order) => {
             setSearchData({ ...searchData, OrderByParameter: key, OrderBY: order })
+            setTimeout(() => {
+                setIsSearching(true)
+            }, 200);
         }
         if (searchData?.OrderBY === 0 && searchData?.OrderByParameter === key) {
             return <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => handleClickSort(1)} />
@@ -76,17 +81,18 @@ const ProductsReport = ({ classes }) => {
         { label: t('report.ProductsReport.revenueFrmProd'), icon: GetSortIcon('TotalRevenue'), classes: cell50wStyle, className: classes.flex2, align: 'center' },
     ]
 
-    const getData = async (customSearch = null) => {
-        setLoader(true);
-        const search = { ...searchData, PageSize: rowsPerPage, ...customSearch };
-        await dispatch(GetProductReports(search));
-        setLoader(false)
-    }
-
     useEffect(() => {
-        let lastSearch = { ...searchData };
-        getData(lastSearch);
-    }, [dispatch, searchData.PageIndex, rowsPerPage, searchData.OrderBY, searchData.OrderByParameter]);
+        const initProducts = async () => {
+            setLoader(true);
+            await dispatch(GetProductReports({ ...searchData, PageSize: rowsPerPage }));
+            setIsSearching(false)
+            setLoader(false)
+        }
+        if (isSearching) {
+            initProducts();
+        }
+    }, [isSearching]);
+
 
     //  HANDLERS  //
     const getHrefs = (id) => ({
@@ -206,6 +212,7 @@ const ProductsReport = ({ classes }) => {
                         variant='contained'
                         onClick={() => {
                             if (searchData.CategoryID.length > 0 || searchData.ProductName) {
+                                setIsSearching(true)
                                 setFilter(true)
                             }
                         }}
@@ -223,6 +230,7 @@ const ProductsReport = ({ classes }) => {
                             variant='contained'
                             onClick={() => {
                                 setSearchData(DEFAULT_FILTER)
+                                setIsSearching(true)
                                 setFilter(false)
                             }}
                             className={classes.searchButton}
@@ -293,8 +301,7 @@ const ProductsReport = ({ classes }) => {
             Abandoned,
             TotalRevenue,
         } = row
-        const hrefs = getHrefs(ProductId);
-        console.log(ProductId);
+        const hrefs = getHrefs(ProductId)
         return (
             <TableRow
                 key={ProductId}
@@ -356,15 +363,16 @@ const ProductsReport = ({ classes }) => {
     }
 
     const handleRowsPerPageSearching = (val) => {
-        dispatch(setRowsPerPage(val))
-        //setSearchData({ ...searchData, PageSize: val });
+        dispatch(setRowsPerPage(val));
+        // setSearchData({ ...searchData, PageSize: val });
+        setIsSearching(true)
     }
     const handlePageChange = (val) => {
         setSearchData({ ...searchData, PageIndex: val });
+        setIsSearching(true)
     }
 
     const renderTableBody = () => {
-        console.log(productsReportDetails?.Products?.length);
         if (productsReportDetails && productsReportDetails?.Products?.length > 0) {
             return (
                 <DataTable
