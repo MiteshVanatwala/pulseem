@@ -322,6 +322,7 @@ const ProductsReport = ({ classes }) => {
                     align='center'
                     className={clsx(classes.flex1)}>
                     <LazyBackground
+                        style={{ 'background-size': 'contain' }}
                         url={ImageURL}
                         title={ProductName}
                         height={'100px'}
