@@ -41,7 +41,7 @@ import GroupsSelectAll from './Component/GroupsSelectAll';
 const Groups = ({
 	classes,
 	list,
-	bsDot,
+	isFilterSelected,
 	selectedList,
 	innerHeight,
 	showSortBy,
@@ -241,7 +241,7 @@ const Groups = ({
 								{windowSize !== 'xs' && (
 									<BsFilter style={{ fontSize: '22px', color: '#1D82B3' }} />
 								)}{' '}
-								{bsDot ? (
+								{isFilterSelected ? (
 									<BsDot
 										style={{
 											position: 'absolute',

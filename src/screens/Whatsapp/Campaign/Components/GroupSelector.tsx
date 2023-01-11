@@ -1,7 +1,10 @@
 import { Checkbox, Tooltip } from '@material-ui/core';
 import { BaseSyntheticEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { groupSelectorProps, testGroupDataProps } from '../Types/WhatsappCampaign.types';
+import {
+	groupSelectorProps,
+	testGroupDataProps,
+} from '../Types/WhatsappCampaign.types';
 import Groups from './Groups/Groups';
 
 const GroupSelector = ({
@@ -10,17 +13,17 @@ const GroupSelector = ({
 	testGroups,
 	subAccountAllGroups,
 	selectedGroups,
-	bsDot,
+	isFilterSelected,
 	isCreateNewGroup,
 	setIsCreateNewGroup,
 	onNewGroupChange,
 	newGroupName,
 	onNewGroupSave,
-    setSelected,
-    allGroupsSelected,
-    setIsFilterModal,
-    setAllGroupsSelected,
-    setShowTestGroups
+	setSelected,
+	allGroupsSelected,
+	setIsFilterModal,
+	setAllGroupsSelected,
+	setShowTestGroups,
 }: groupSelectorProps) => {
 	const { t: translator } = useTranslation();
 
@@ -80,7 +83,7 @@ const GroupSelector = ({
 				callbackSelectAll={onSelectAll}
 				callbackReciFilter={onReciFilter}
 				callbackShowTestGroup={onShowTestGroup}
-				bsDot={bsDot}
+				isFilterSelected={isFilterSelected}
 				uniqueKey={'groups_1'}
 				innerHeight={325}
 				showSortBy={true}
@@ -95,7 +98,7 @@ const GroupSelector = ({
 					}}>
 					<div className={classes.createGroupContainer}>
 						<Checkbox
-							disabled={selectedGroups.length >= 2 ? false : true}
+							disabled={selectedGroups.length <= 2}
 							checked={isCreateNewGroup}
 							color='primary'
 							inputProps={{ 'aria-label': 'secondary checkbox' }}

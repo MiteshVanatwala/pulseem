@@ -10,6 +10,7 @@ import AlertModal from '../../Editor/Popups/AlertModal';
 import FilterRecipientsDialog from '../Popups/FilterRecipientsDialog';
 import ManualUpload from './ManualUpload';
 import GroupSelector from './GroupSelector';
+import { tabs } from '../../Constant';
 
 const LeftPane = ({
 	classes,
@@ -39,7 +40,7 @@ const LeftPane = ({
 	const [contacts, setContacts] = useState<number[]>([]);
 	const [totalRecords, setTotalRecords] = useState<number>(0);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
-	const [bsDot, setbsDot] = useState<boolean>(false);
+	const [isFilterSelected, setIsFilterSelected] = useState<boolean>(false);
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
 	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
 		useState<boolean>(false);
@@ -79,12 +80,12 @@ const LeftPane = ({
 					md={12}
 					xs={12}
 					className={
-						activeTab === 'group'
+						activeTab === tabs.GROUP
 							? clsx(classes.tab1, classes.activeTab)
 							: clsx(classes.tab1)
 					}>
 					<span
-						onClick={() => setActiveTab('group')}
+						onClick={() => setActiveTab(tabs.GROUP)}
 						style={{ cursor: 'pointer' }}>
 						{translator('mainReport.groups')}
 					</span>
@@ -94,14 +95,14 @@ const LeftPane = ({
 					md={12}
 					xs={12}
 					className={
-						activeTab === 'manual'
+						activeTab === tabs.MANUAL
 							? clsx(classes.tab1, classes.activeTab)
 							: clsx(classes.tab1)
 					}>
 					<span
 						style={{ marginInlineEnd: '7px', cursor: 'pointer' }}
 						onClick={() => {
-							setActiveTab('manual');
+							setActiveTab(tabs.MANUAL);
 							setIsCreateNewGroup(false);
 						}}>
 						{translator('mainReport.manual')}
@@ -114,7 +115,7 @@ const LeftPane = ({
 					</Tooltip>
 				</Grid>
 			</Grid>
-			{activeTab === 'manual' && (
+			{activeTab === tabs.MANUAL && (
 				<ManualUpload
 					classes={classes}
 					highlighted={highlighted}
@@ -133,14 +134,14 @@ const LeftPane = ({
 				/>
 			)}
 			<Grid item md={12} xs={12}>
-				{activeTab === 'group' && (
+				{activeTab === tabs.GROUP && (
 					<GroupSelector
 						classes={classes}
 						showTestGroups={showTestGroups}
 						testGroups={testGroups}
 						subAccountAllGroups={subAccountAllGroups}
 						selectedGroups={selectedGroups}
-						bsDot={bsDot}
+						isFilterSelected={isFilterSelected}
 						isCreateNewGroup={isCreateNewGroup}
 						newGroupName={newGroupName}
 						allGroupsSelected={allGroupsSelected}

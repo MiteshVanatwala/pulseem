@@ -192,7 +192,7 @@ export const sendCampaign = createAsyncThunk(
 	}
 );
 
-export const fromPhoneNumbers = createAsyncThunk(
+export const userPhoneNumbers = createAsyncThunk(
 	'whatsAppCampaign/GetPhoneNumbers',
 	async (_data, thunkAPI) => {
 		try {
@@ -276,7 +276,7 @@ export const whatsappSlice = createSlice({
 		savedTemplates: [],
 		submitTemplate: [],
 		saveTemplate: [],
-		fromPhoneNumbers: [],
+		userPhoneNumbers: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -321,8 +321,8 @@ export const whatsappSlice = createSlice({
 		builder.addCase(saveTemplates.fulfilled, (state, { payload }) => {
 			state.saveTemplate = payload;
 		});
-		builder.addCase(fromPhoneNumbers.fulfilled, (state, { payload }) => {
-			state.fromPhoneNumbers = payload;
+		builder.addCase(userPhoneNumbers.fulfilled, (state, { payload }) => {
+			state.userPhoneNumbers = payload;
 		});
 	},
 });

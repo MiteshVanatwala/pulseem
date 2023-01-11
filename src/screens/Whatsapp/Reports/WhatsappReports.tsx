@@ -396,9 +396,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 								</TableHead>
 							)}
 							{getRows()?.map((report: reportDataProps) => (
-								<TableRow
-									key={Math.round(Math.random() * 999999999)}
-									classes={rowStyle}>
+								<TableRow key={report.waCampaignId} classes={rowStyle}>
 									<TableCell
 										classes={cellStyle}
 										align='center'

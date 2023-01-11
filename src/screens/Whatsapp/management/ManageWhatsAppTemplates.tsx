@@ -699,7 +699,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							)}
 							{getRows()?.map((row: templateListItemsProps) => (
 								<TableRow
-									key={Math.round(Math.random() * 999999999)}
+									key={row.TemplateId}
 									classes={rowStyle}>
 									<TableCell
 										classes={cellStyle}

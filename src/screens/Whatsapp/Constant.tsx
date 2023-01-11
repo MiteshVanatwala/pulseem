@@ -17,6 +17,26 @@ export enum fieldIDs {
 	'navigation' = 5,
 }
 
+export enum fieldNames {
+	PERSONALFIELD = 'personalField',
+	TEXT = 'text',
+	LINK = 'link',
+	LANDINGPAGE = 'landingPage',
+	NAVIGATION = 'navigation',
+}
+
+export enum tabs {
+	GROUP = 'group',
+	MANUAL = 'manual',
+}
+
+export enum buttons {
+	DELETE = 'Delete',
+	SAVE = 'Save',
+	EXIT = 'Exit',
+	SEND = 'Send',
+}
+
 export const countryCodes = [
 	'+93 AF',
 	'+355 AL',

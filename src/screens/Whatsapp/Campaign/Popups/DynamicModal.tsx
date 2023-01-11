@@ -17,7 +17,7 @@ import {
 } from '../Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import DynamicModalFields from './DynamicModalFields';
-import { fieldIDs } from '../../Constant';
+import { fieldIDs, fieldNames } from '../../Constant';
 
 const DynamicModal = ({
 	classes,
@@ -94,15 +94,15 @@ const DynamicModal = ({
 
 	const getfieldTypeId = (field: string) => {
 		switch (field) {
-			case 'personalField':
+			case fieldNames.PERSONALFIELD:
 				return fieldIDs['personalField'];
-			case 'text':
+			case fieldNames.TEXT:
 				return fieldIDs['text'];
-			case 'link':
+			case fieldNames.LINK:
 				return fieldIDs['link'];
-			case 'landingPage':
+			case fieldNames.LANDINGPAGE:
 				return fieldIDs['landingPage'];
-			case 'navigation':
+			case fieldNames.NAVIGATION:
 				return fieldIDs['navigation'];
 			default:
 				return 0;

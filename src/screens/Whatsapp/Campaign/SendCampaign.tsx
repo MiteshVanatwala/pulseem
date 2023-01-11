@@ -16,6 +16,7 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import moment from 'moment';
 import Toast from '../../../components/Toast/Toast.component';
 import ValidationAlert from './Popups/ValidationAlert';
+import { buttons, tabs } from '../Constant';
 
 const SendCampaign = ({
 	classes,
@@ -43,7 +44,8 @@ const SendCampaign = ({
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
 
 	const [newGroupName, setNewGroupName] = useState<string>('');
-	const [activeTab, setActiveTab] = useState<'group' | 'manual'>('group');
+
+	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
@@ -176,30 +178,6 @@ const SendCampaign = ({
 		},
 	];
 
-	console.log('Send_Campaign:: isSummaryModal::', isSummaryModal);
-	console.log('Send_Campaign:: selectedGroups::', selectedGroups);
-	console.log(
-		'Send_Campaign:: selectedFilterCampaigns::',
-		selectedFilterCampaigns
-	);
-	console.log('Send_Campaign:: selectedFilterGroups::', selectedFilterGroups);
-	console.log('Send_Campaign:: sendDate::', sendDate);
-	console.log('Send_Campaign:: sendTime::', sendTime);
-	console.log('Send_Campaign:: sendType::', sendType);
-	console.log('Send_Campaign:: model::', model);
-	console.log('Send_Campaign:: isSpecialDateBefore::', isSpecialDateBefore);
-	console.log('Send_Campaign:: timePickerOpen::', timePickerOpen);
-	console.log('Send_Campaign:: toastMessage::', toastMessage);
-	console.log('Send_Campaign:: daysBeforeAfter::', daysBeforeAfter);
-	console.log('Send_Campaign:: spectialDateFieldID::', spectialDateFieldID);
-	console.log('Send_Campaign:: newGroupName::', newGroupName);
-	console.log('Send_Campaign:: activeTab::', activeTab);
-	console.log('Send_Campaign:: isValidationAlert::', isValidationAlert);
-	console.log(
-		'Send_Campaign:: groupSendValidationErrors::',
-		groupSendValidationErrors
-	);
-
 	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
 		handleFromDate(value);
 	};
@@ -257,17 +235,17 @@ const SendCampaign = ({
 
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
-			case 'Delete':
-				console.log('Delete');
+			case buttons.DELETE:
+				console.log(buttons.DELETE);
 				break;
-			case 'Exit':
-				console.log('Exit');
+			case buttons.EXIT:
+				console.log(buttons.EXIT);
 				break;
-			case 'Save':
-				console.log('Save');
+			case buttons.SAVE:
+				console.log(buttons.SAVE);
 				break;
-			case 'Send':
-				console.log('Send');
+			case buttons.SEND:
+				console.log(buttons.SEND);
 				break;
 
 			default:
