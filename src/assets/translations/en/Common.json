@@ -602,5 +602,6 @@
   "delivered": "Delivered",
   "Queued": "Queued",
   "read": "Read",
-  "NoInboundIn24Session": "No inbound"
+  "NoInboundIn24Session": "No inbound",
+  "TemplateVariables": "Template Variables"
 }

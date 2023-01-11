@@ -14,7 +14,7 @@ import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus, WhatsappStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
@@ -23,7 +23,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
-import { getDirectReport } from '../../../redux/reducers/whatsappSlice'
+import { getDirectReport, exportReport } from '../../../redux/reducers/whatsappSlice'
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
@@ -116,19 +116,33 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   }
 
   const handleExportEnable = () => {
-    if (tabValue === 0) {
-      if (Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null) {
-        setExportEnable(directSmsReport.TotalSent > 0 && directSmsReport.TotalSent < MAX_EXPORT_RECORDS)
+    switch (tabValue) {
+      case 0: { // Sms
+        if (Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null) {
+          setExportEnable(directSmsReport.TotalSent > 0 && directSmsReport.TotalSent < MAX_EXPORT_RECORDS)
+        }
+        else {
+          setExportEnable(false);
+        }
+        break;
       }
-      else {
-        setExportEnable(false);
+      case 1: { // Email
+        if (Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null) {
+          setExportEnable(directNewsletterReport.TotalRecords > 0 && directNewsletterReport.TotalRecords < MAX_EXPORT_RECORDS)
+        }
+        else {
+          setExportEnable(false);
+        }
+        break;
       }
-    } else {
-      if (Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null) {
-        setExportEnable(directNewsletterReport.TotalRecords > 0 && directNewsletterReport.TotalRecords < MAX_EXPORT_RECORDS)
-      }
-      else {
-        setExportEnable(false);
+      case 2: { // Whatsapp
+        if (Object.keys(directWhatsappReport.Data).length > 0 && directWhatsappReport.Data !== null) {
+          setExportEnable(parseInt(directWhatsappReport?.Message) > 0 && parseInt(directWhatsappReport?.Message) < MAX_EXPORT_RECORDS)
+        }
+        else {
+          setExportEnable(false);
+        }
+        break;
       }
     }
   }
@@ -194,7 +208,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
     if (key === 'whatsapp') {
       setPageWhatsapp(1);
-      await dispatch(getDirectReport(defaultRequests.WHATSAPP.Default));
+      await dispatch(getDirectReport(defaultRequests.WHATSAPP));
     }
     setLoader(false);
 
@@ -258,127 +272,142 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "ClientStatus": t('report.clientStatus')
     },
     WHATSAPP: {
-      "DATE": t('common.CreationDate'),
-      "MESSAGE": t('common.messageContent'),
-      "FROM": t('common.SentFromNumber'),
-      "TO": t('common.SendTo2'),
-      "REFERENCE": t('report.id'),
-      "STATUS": t('common.Status'),
-      "ERRORCODE": t('report.errorCode'),
-      "TOTALRESPONSES": t('report.totalResponses'),
-      "CHARSCOUNT": t('report.Characters'),
-      "Credits": t('report.Credits'),
+      'ID': t('report.id'),
+      'Schedule': t('common.SendDate'),
+      'FromNumber': t('common.SentFromNumber'),
+      'ToNumber': t('common.SendTo2'),
+      'Status': t('common.Status'),
       "StatusDescription": t('report.StatusDescription'),
-      "ClientStatus": t('report.clientStatus')
+      'ErrorMessage': t('report.errorCode'),
+      // 'Credits': t('report.Credits'), 
+      'Text': t('common.messageContent'),
+      'ReferenceId': t('common.ExternalRef'),
+      // 'TemplateTypeId',
+      'TemplateVariables': t('common.TemplateVariables'),
+      // 'ContentTypeId'
     }
   };
 
   const handleExportFile = async (formatType) => {
+    setDialog(null);
     setLoader(true);
     let response, fileName = null;
 
-    if (tabValue === 0) {
-      searchData.sms.ShowContent = showContent;
-      response = dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
+    switch (tabValue) {
+      case 0: // sms
+        {
+          searchData.sms.ShowContent = showContent;
+          response = dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
 
-      const exportOption = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusToString: false,
-        ConvertStatusDescription: true,
-        Statuses: SmsStatus,
-        ReplaceClientStatus: true,
-        DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
-        Order: Object.keys(excelHeaders.SMS)
-      };
+          const exportOption = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: SmsStatus,
+            ReplaceClientStatus: true,
+            DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
+            Order: Object.keys(excelHeaders.SMS)
+          };
 
-      try {
-        const result = await HandleExportData(response.payload, exportOption);
+          try {
+            const result = await HandleExportData(response.payload, exportOption);
 
-        fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: formatType,
-          fields: excelHeaders.SMS
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
+            fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.SMS
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
+      case 1: // Email
+        {
+          response = dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: EmailStatus,
+            ReplaceClientStatus: true,
+            PropertyToReplace: "Status",
+            PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
+            ReplaceNull: true,
+            DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
+            Order: Object.keys(excelHeaders.EMAIL)
+          };
 
-    }
+          try {
+            const result = await HandleExportData(response.payload, exportOptions);
 
-    if (tabValue === 1) {
-      response = dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-      const exportOptions = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusToString: false,
-        ConvertStatusDescription: true,
-        Statuses: EmailStatus,
-        ReplaceClientStatus: true,
-        PropertyToReplace: "Status",
-        PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
-        ReplaceNull: true,
-        DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
-        Order: Object.keys(excelHeaders.EMAIL)
-      };
+            fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.EMAIL
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
+      case 2: // Whatsapp
+        {
+          const requestPayload = { ...defaultRequests.WHATSAPP };
+          requestPayload.IsExport = true;
+          response = await dispatch(exportReport(requestPayload));
 
-      try {
-        const result = await HandleExportData(response.payload, exportOptions);
+          // finalData = replaceNull(finalData, 'ErrorMessage', '');
+          // finalData = replaceNull(finalData, 'TemplateVariables', '');
+          // finalData = replaceNull(finalData, 'ReferenceId', '');
 
-        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: 'csv',
-          fields: excelHeaders.EMAIL
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
-    }
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: WhatsappStatus,
+            ReplaceClientStatus: true,
+            PropertyToReplace: '',
+            ReplaceNull: true,
+            Order: Object.keys(excelHeaders.WHATSAPP)
+          };
 
-    if (tabValue === 2) {
-      searchData.whatsapp.ShowContent = showContent;
-      response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.whatsapp) : exportSMSDirectReport(searchData.whatsapp));
+          try {
+            let result = await HandleExportData(response.payload?.Data, exportOptions);
+            result = await ReplaceNull(result, 'ErrorMessage','');
+            result = await ReplaceNull(result, 'TemplateVariables','');
+            result = await ReplaceNull(result, 'ReferenceId','');
 
-      const exportOptions = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusToString: false,
-        ConvertStatusDescription: true,
-        Statuses: WhatsappStatus,
-        ReplaceClientStatus: true,
-        PropertyToReplace: "Status",
-        PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
-        ReplaceNull: true,
-        DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
-        Order: Object.keys(excelHeaders.WHATSAPP)
-      };
+            
 
-      try {
-        const result = await HandleExportData(response.payload, exportOptions);
-
-        fileName = isArchive ? "Archive_Whatsapp_DirectReports" : "Whatsapp_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: 'csv',
-          fields: excelHeaders.WHATSAPP
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
+            fileName = "Whatsapp_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.WHATSAPP
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
     }
   }
   const renderTabs = () => {
@@ -400,7 +429,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
               <Tab label={t('master.whatsapp')} classes={{ root: classes.minWidth100 }} value={2} />
             </TabList>
             <Grid item>
-              {!isArchive && <Button
+              {!isArchive && tabValue !== 2 && <Button
                 onClick={() => {
                   window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
                 }}

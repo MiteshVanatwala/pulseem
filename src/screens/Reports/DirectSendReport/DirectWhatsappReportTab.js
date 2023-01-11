@@ -50,19 +50,18 @@ const DirectWhatsappReportTab = ({
     const handleSearch = async () => {
         setLoader(true);
         const { whatsapp = {} } = searchData || {};
-        const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null, ShowContent = false } = whatsapp || {};
+        const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null, ShowContent = false } = whatsapp || {};
         const param = {
             FromDate,
             ToDate,
             Status,
             FromNumber,
             ToNumber,
-            Reference: Reference,
-            ResponseType: ResponseType,
+            ExternalRef,
+            ResponseType,
             PageIndex: page,
             PageSize: rowsPerPage,
-            Text,
-            ShowContent: whatsapp.ShowContent ?? showContent
+            Text
         }
         let searchObjects = {};
         Object.keys(param).map(item => {
@@ -179,7 +178,7 @@ const DirectWhatsappReportTab = ({
 
     const renderAdvanceSearch = () => {
         const { whatsapp = {} } = searchData || {};
-        const { FromNumber = '', Reference = '', Status = '', Text = '', FromDate = null, ToDate = null, ToNumber = '' } = whatsapp || {};
+        const { FromNumber = '', ExternalRef = '', Status = '', Text = '', FromDate = null, ToDate = null, ToNumber = '' } = whatsapp || {};
 
         return (
             <>
@@ -241,8 +240,8 @@ const DirectWhatsappReportTab = ({
                     <TextField
                         variant='outlined'
                         size='small'
-                        value={Reference}
-                        onChange={(e) => handleSearchInput(e.target.value, 'Reference', 'whatsapp')}
+                        value={ExternalRef}
+                        onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'whatsapp')}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={t('report.ExternalRef')}
                     />
