@@ -11,6 +11,16 @@ export const getDirectReport = createAsyncThunk(
     }
   });
 
+export const exportReport = createAsyncThunk(
+  'Whatsapp/GetDirectReport', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`Whatsapp/GetDirectReport`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 
 export const whatsappSlice = createSlice({
   name: 'whatsapp',

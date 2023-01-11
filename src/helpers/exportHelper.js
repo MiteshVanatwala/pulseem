@@ -115,6 +115,9 @@ export const formatDateTime = (arr, t) => {
         if (a.BirthDate) {
             a.BirthDate = moment(a.BirthDate).format("DD/MM/YYYY HH:mm");
         }
+        if (a.Schedule) {
+            a.Schedule = moment(a.Schedule).format("DD/MM/YYYY HH:mm");
+        }
         if (a.SendDate === '') {
             a.SendDate = t('common.notSent');
         }
