@@ -21,6 +21,7 @@ import { preferredOrder } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
+import { renderHtml } from '../../../helpers/functions';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -246,7 +247,7 @@ const ProductsReport = ({ classes }) => {
     const renderManagmentLine = () => {
         const dataLength = productsReportDetails?.TotalProducts;
         return (
-            <Grid container spacing={2} className={classes.linePadding} >
+            <Grid container spacing={2} className={classes.linePadding}>
                 {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         variant='contained'
@@ -364,7 +365,6 @@ const ProductsReport = ({ classes }) => {
 
     const handleRowsPerPageSearching = (val) => {
         dispatch(setRowsPerPage(val));
-        // setSearchData({ ...searchData, PageSize: val });
         setIsSearching(true)
     }
     const handlePageChange = (val) => {
@@ -424,6 +424,9 @@ const ProductsReport = ({ classes }) => {
                 {t('report.ProductsReport.title')}
             </Typography>
             <Divider />
+            <Grid item xs={12}>
+                <Typography>{renderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
+            </Grid>
             {renderFilter()}
             {renderManagmentLine()}
             {renderTableBody()}
