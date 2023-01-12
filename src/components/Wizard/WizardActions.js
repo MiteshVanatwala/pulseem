@@ -56,42 +56,6 @@ const WizardActions = ({
                                 <BsTrash style={{ fontSize: "25" }} />
                             </Button>
                         }
-                        {onShowDocuments &&
-                            <Button
-                                variant='contained'
-                                size='medium'
-                                onClick={() => onShowDocuments()}
-                                style={{ marginInline: 8, paddingInline: 10 }}
-                                className={clsx(classes.actionButton,
-                                    classes.actionButtonOutlinedBlue)}>
-                                <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} />
-                                {t("common.documentGallery")}
-                            </Button>
-                        }
-                        {onShowGallery &&
-                            <Button
-                                variant='contained'
-                                size='medium'
-                                onClick={() => onShowGallery()}
-                                style={{ marginInline: 8, paddingInline: 10 }}
-                                className={clsx(classes.actionButton,
-                                    classes.actionButtonOutlinedBlue)}>
-                                <RiImageAddLine style={{ fontSize: "20", paddingInline: 5 }} />
-                                {t("common.imageGallery")}
-                            </Button>
-                        }
-                        {onTestSend &&
-                            <Button
-                                variant='contained'
-                                size='medium'
-                                onClick={() => onTestSend()}
-                                style={{ marginInline: 8, paddingInline: 10 }}
-                                className={clsx(classes.actionButton,
-                                    classes.actionButtonOutlinedBlue)}>
-                                <RiSendPlaneFill style={{ fontSize: "25" }} />
-                                {t("campaigns.sendTest")}
-                            </Button>
-                        }
                         {onExit &&
                             <Button
                                 onClick={() =>
