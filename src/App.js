@@ -15,7 +15,7 @@ import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
-import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
+import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
@@ -397,18 +397,17 @@ const renderRoutes = (classes, redirect) => {
 const App = ({ screenSize }) => {
   const userName = useRef();
   const dispatch = useDispatch()
-  const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, accountSettings, isClal } = useSelector(state => state.core)
   screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
 
     const initFeatures = async () => {
-      const isClal = getCookie('isClal');
       if (!accountSettings) {
         const settings = await dispatch(getCommonFeatures());
         dispatch(setAccountFeatures(settings.payload));
       }
-      if (isClal === undefined) {
+      if (isClal === null) {
         const response = await dispatch(isClalAccount());
         dispatch(setIsClal(response.payload));
       }
