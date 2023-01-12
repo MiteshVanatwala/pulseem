@@ -20,6 +20,7 @@ import ValidationAlert from './Popups/ValidationAlert';
 import { getAllGroups } from '../../../redux/reducers/whatsappSlice';
 import { useDispatch } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
+import { buttons, tabs } from '../Constant';
 
 const SendCampaign = ({
 	classes,
@@ -48,7 +49,8 @@ const SendCampaign = ({
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
 
 	const [newGroupName, setNewGroupName] = useState<string>('');
-	const [activeTab, setActiveTab] = useState<'group' | 'manual'>('group');
+
+	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
@@ -183,17 +185,17 @@ const SendCampaign = ({
 
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
-			case 'Delete':
-				console.log('Delete');
+			case buttons.DELETE:
+				console.log(buttons.DELETE);
 				break;
-			case 'Exit':
-				console.log('Exit');
+			case buttons.EXIT:
+				console.log(buttons.EXIT);
 				break;
-			case 'Save':
-				console.log('Save');
+			case buttons.SAVE:
+				console.log(buttons.SAVE);
 				break;
-			case 'Send':
-				console.log('Send');
+			case buttons.SEND:
+				console.log(buttons.SEND);
 				break;
 
 			default:

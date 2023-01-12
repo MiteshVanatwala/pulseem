@@ -28,9 +28,9 @@ const FilterRecipientsDialog = ({
 	const [exceptionalDays, setExceptionalDays] = useState<string>('');
 	const [RecipientsBool, setRecipientsBool] = useState<boolean>(false);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
-	const [bsDot, setbsDot] = useState<boolean>(false);
 	const [snackbarRecipients, setsnackbarRecipients] = useState<boolean>(false);
 	const [RecipientsSnackbar, setRecipientsSnackbar] = useState<boolean>(false);
+	const [isFilterSelected, setIsFilterSelected] = useState<boolean>(false);
 
 	const [selectedModalFilterCampaigns, setSelectedModalFilterCampaigns] =
 		useState<testGroupDataProps[]>(selectedFilterCampaigns);
@@ -62,10 +62,10 @@ const FilterRecipientsDialog = ({
 					exceptionalDays !== '' ||
 					selectedModalFilterCampaigns.length !== 0
 				) {
-					setbsDot(true);
+					setIsFilterSelected(true);
 					setsnackbarRecipients(true);
 				} else {
-					setbsDot(false);
+					setIsFilterSelected(false);
 				}
 			}
 		} else {
@@ -75,9 +75,9 @@ const FilterRecipientsDialog = ({
 				selectedModalFilterCampaigns.length !== 0
 			) {
 				setsnackbarRecipients(true);
-				setbsDot(true);
+				setIsFilterSelected(true);
 			} else {
-				setbsDot(false);
+				setIsFilterSelected(false);
 			}
 		}
 	};
@@ -235,7 +235,7 @@ const FilterRecipientsDialog = ({
 									<div>
 										<div className={clsx(classes.sidebar)}>
 											<Groups
-												bsDot={false}
+												isFilterSelected={false}
 												classes={classes}
 												showSortBy={false}
 												showSelectAll={false}
@@ -266,7 +266,7 @@ const FilterRecipientsDialog = ({
 									<div>
 										<div className={clsx(classes.sidebar)}>
 											<Groups
-												bsDot={false}
+												isFilterSelected={false}
 												classes={classes}
 												showSortBy={false}
 												showSelectAll={false}

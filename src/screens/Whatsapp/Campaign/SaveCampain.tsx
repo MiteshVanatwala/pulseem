@@ -59,7 +59,7 @@ import DynamicModal from './Popups/DynamicModal';
 import Buttons from './Components/Buttons';
 import uniqid from 'uniqid';
 import {
-	fromPhoneNumbers,
+	userPhoneNumbers,
 	getSavedTemplates,
 	saveCampaign,
 } from '../../../redux/reducers/whatsappSlice';
@@ -234,7 +234,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const getPhoneNumber = async () => {
 		// const { payload: phoneNumberData }: phoneNumberAPIProps =
-		// 	await dispatch<any>(fromPhoneNumbers());
+		// 	await dispatch<any>(userPhoneNumbers());
 		const phoneNumberData: phoneNumberAPIProps['payload'] = [
 			'91901000001',
 			'91901000002',

@@ -44,18 +44,18 @@ const ManualUpload = ({
 						if (file.name.toLowerCase().indexOf('xls') > -1) {
 							reader.onload = function (e: ProgressEvent<FileReader>) {
 								if (e?.target?.result) {
-									let data = new Uint8Array(
+									const data = new Uint8Array(
 										e?.target?.result as ArrayBufferLike
 									);
 									setTimeout(() => {
-										let workbook = XLSX.read(data, { type: 'array' });
-										let csv: string = XLSX.utils.sheet_to_csv(
+										const workbook = XLSX.read(data, { type: 'array' });
+										const csv: string = XLSX.utils.sheet_to_csv(
 											workbook.Sheets[workbook.SheetNames[0]]
 										);
 
-										let temp: string = csv;
-										let splittedAreaData: string[] = temp.split('\n');
-										let rowData: string[][] = [];
+										const temp: string = csv;
+										const splittedAreaData: string[] = temp.split('\n');
+										const rowData: string[][] = [];
 										for (let i = 0; i < splittedAreaData?.length; i++) {
 											rowData.push(splittedAreaData[i].split(','));
 										}
@@ -63,7 +63,7 @@ const ManualUpload = ({
 										setTypedData(rowData);
 										setTotalRecords(rowData.length);
 										setAreaData(rowData.join('\n'));
-										let dummyArr = [];
+										const dummyArr = [];
 										for (let i = 0; i < rowData[0].length; i++) {
 											dummyArr.push(translator('sms.adjustTitle'));
 										}
@@ -119,15 +119,15 @@ const ManualUpload = ({
 	};
 
 	const handlePasted = () => {
-		let temp = areaData;
-		let splittedAreaData: string[] = temp
+		const temp = areaData;
+		const splittedAreaData: string[] = temp
 			?.split('\n')
 			.filter((empty: string) => empty);
-		let updatedTypedData = [];
+		const updatedTypedData = [];
 		let cols = 0;
 		if (temp?.indexOf('\t') > -1) {
 			for (let i = 0; i < splittedAreaData.length; i++) {
-				let splitted = splittedAreaData[i].split('\t');
+				const splitted = splittedAreaData[i].split('\t');
 				updatedTypedData.push(splitted);
 				if (splitted.length > cols) {
 					cols = splitted.length;
@@ -138,7 +138,7 @@ const ManualUpload = ({
 				return r !== '';
 			});
 			for (let i = 0; i < records.length; i++) {
-				let splitted = splittedAreaData[i].split(',');
+				const splitted = splittedAreaData[i].split(',');
 				updatedTypedData.push(splitted);
 				if (splitted.length > cols) {
 					cols = splitted.length;
@@ -147,7 +147,7 @@ const ManualUpload = ({
 		}
 		setTypedData(updatedTypedData);
 
-		let dummyArr = [];
+		const dummyArr = [];
 		for (let i = 0; i < cols; i++) {
 			dummyArr.push(translator('sms.adjustTitle'));
 		}

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
 import { coreProps } from '../Types/WhatsappCampaign.types';
 import useRedirect from '../../../../helpers/Routes/Redirect';
+import { buttons } from '../../Constant';
 
 const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
@@ -59,7 +60,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 						size='medium'
 						className={clsx(classes.actionButton, classes.actionButtonRed)}
 						style={{ margin: '8px', padding: '9px 0' }}
-						onClick={(e) => onFormButtonClick('Delete')}>
+						onClick={(e) => onFormButtonClick(buttons.DELETE)}>
 						<BsTrash style={{ fontSize: '25' }} />
 					</Button>
 				</Box>
@@ -74,7 +75,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick('Exit')}>
+					onClick={(e) => onFormButtonClick(buttons.EXIT)}>
 					<>{translator('whatsappCampaign.exit')}</>
 				</Button>
 
@@ -88,7 +89,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick('Save')}>
+					onClick={(e) => onFormButtonClick(buttons.SAVE)}>
 					<>{translator('whatsappCampaign.save')}</>
 				</Button>
 
@@ -103,7 +104,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 					)}
 					color='primary'
 					style={{ margin: '8px' }}
-					onClick={(e) => onFormButtonClick('Send')}>
+					onClick={(e) => onFormButtonClick(buttons.SEND)}>
 					{!isFromAutomation ? (
 						<>{translator('whatsappCampaign.send')}</>
 					) : (

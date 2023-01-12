@@ -52,7 +52,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
 import {
 	ManagmentIconProps,
-	templateRowDataProps,
+	apiTemplateRowDataProps,
 } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
@@ -699,7 +699,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							)}
 							{getRows()?.map((row: templateListItemsProps) => (
 								<TableRow
-									key={Math.round(Math.random() * 999999999)}
+									key={row.TemplateId}
 									classes={rowStyle}>
 									<TableCell
 										classes={cellStyle}

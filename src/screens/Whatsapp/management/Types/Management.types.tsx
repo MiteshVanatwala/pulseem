@@ -22,7 +22,7 @@ export type RestoreDeletedModalProps = {
 	setRestoreIds: (ids: string[]) => void;
 };
 
-export type templateRowDataProps = {
+export type apiTemplateRowDataProps = {
 	Id: number;
 	Name: string;
 	Status: number;

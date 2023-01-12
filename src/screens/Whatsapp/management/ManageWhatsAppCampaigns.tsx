@@ -835,39 +835,39 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{getRows()?.map((template: campaignDataProps) => (
+							{getRows()?.map((campaign: campaignDataProps) => (
 								<TableRow
-									key={Math.round(Math.random() * 999999999)}
+									key={campaign.campaignId}
 									classes={rowStyle}>
 									<TableCell
 										classes={cellStyle}
 										align='center'
 										className={clsx(classes.flex3, classes.tableCellBody)}>
-										{renderNameCell(template)}
+										{renderNameCell(campaign)}
 									</TableCell>
 									<TableCell
 										classes={cellStyle}
 										align='center'
 										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderRecipientsCell(template.recipients)}
+										{renderRecipientsCell(campaign.recipients)}
 									</TableCell>
 									<TableCell
 										classes={cellStyle}
 										align='center'
 										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderMessagesCell(template.messages)}
+										{renderMessagesCell(campaign.messages)}
 									</TableCell>
 									<TableCell
 										classes={cellStyle}
 										align='center'
 										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderStatusCell(template.status)}
+										{renderStatusCell(campaign.status)}
 									</TableCell>
 									<TableCell
 										component='th'
 										scope='row'
 										className={clsx(classes.flex5, classes.tableCellRoot)}>
-										{renderCellIcons(template)}
+										{renderCellIcons(campaign)}
 									</TableCell>
 								</TableRow>
 							))}

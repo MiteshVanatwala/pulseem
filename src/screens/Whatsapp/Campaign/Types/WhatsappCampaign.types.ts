@@ -137,7 +137,7 @@ export type WhatsappCampaignSecondProps = {
 export type GroupsProps = {
 	classes: ClassesType['classes'];
 	list: testGroupDataProps[];
-	bsDot: boolean;
+	isFilterSelected: boolean;
 	selectedList: testGroupDataProps[];
 	innerHeight: number;
 	showSortBy: boolean;
@@ -384,7 +384,7 @@ export type groupSelectorProps = {
 	testGroups: [];
 	allGroupList: testGroupDataProps[];
 	selectedGroups: testGroupDataProps[];
-	bsDot: boolean;
+	isFilterSelected: boolean;
 	isCreateNewGroup: boolean;
 	setIsCreateNewGroup: (isNewGroup: boolean) => void;
 	onNewGroupChange: (groupName: string) => void;

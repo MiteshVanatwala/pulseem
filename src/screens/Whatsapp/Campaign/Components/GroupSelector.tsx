@@ -13,7 +13,7 @@ const GroupSelector = ({
 	testGroups,
 	allGroupList,
 	selectedGroups,
-	bsDot,
+	isFilterSelected,
 	isCreateNewGroup,
 	setIsCreateNewGroup,
 	onNewGroupChange,
@@ -88,7 +88,7 @@ const GroupSelector = ({
 				callbackSelectAll={onSelectAll}
 				callbackReciFilter={onReciFilter}
 				callbackShowTestGroup={onShowTestGroup}
-				bsDot={bsDot}
+				isFilterSelected={isFilterSelected}
 				uniqueKey={'groups_1'}
 				innerHeight={325}
 				showSortBy={true}
@@ -103,7 +103,8 @@ const GroupSelector = ({
 					}}>
 					<div className={classes.createGroupContainer}>
 						<Checkbox
-							disabled={selectedGroups.length >= 2 ? false : true}
+							// It will be available when user selects two or more groups.
+							disabled={selectedGroups.length <= 2}
 							checked={isCreateNewGroup}
 							color='primary'
 							inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -113,6 +114,7 @@ const GroupSelector = ({
 						/>
 						<span
 							className={
+								// It will be available when user selects two or more groups.
 								selectedGroups.length >= 2
 									? classes.createGroupSpan
 									: classes.createGroupSpanDisabled
