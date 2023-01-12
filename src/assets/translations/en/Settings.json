@@ -9,7 +9,14 @@
             "enableTwoFactorAuth": "Enable two factor authentication",
             "sendMeCode": "Send me a code"
         },
-        "errors": {},
+        "errors": {
+            "invalidEmail": "Invalid Email",
+            "reqEmail": "Email is required",
+            "invalidMobile": "Invalid Mobile",
+            "reqMobile": "Mobile is required",
+            "reqCompName": "Company name is required",
+            "reqContctName": "Contact name is required"
+        },
         "securitySettings": "Security Settings",
         "btnChangePwd": "Change Password",
         "btnUpdate": "Update Settings"

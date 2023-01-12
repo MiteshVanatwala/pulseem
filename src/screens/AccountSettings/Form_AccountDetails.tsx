@@ -15,17 +15,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { Title } from "../../components/managment/Title";
 import Illustration_app_Settings from "../../assets/images/settings/Illustration_app_Settings";
+import {
+  AccDtlPropTypes,
+  AccountDetailsType,
+} from "../../Models/Settings/AccountDetails";
 
 const Form_AccountDetails = ({
   classes,
   setToastMessage,
   ToastMessages,
-}: any) => {
+}: AccDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
 
-  const [companyDetails, setCompanyDetails] = useState({
+  const [accountDetails, setAccountDetails] = useState<AccountDetailsType>({
     FromEmail: "",
     FromName: "",
     FromPhoneNumber: "",
@@ -33,13 +37,13 @@ const Form_AccountDetails = ({
     SmsUnsubLinkType: "",
   });
 
-  const [errors, setErrors] = useState({
-    FromEmail: "",
-    FromName: "",
-    FromPhoneNumber: "",
-    UnsubType: "",
-    SmsUnsubLinkType: "",
-  });
+  // const [errors, setErrors] = useState<AccDtlErrorsType>({
+  //   FromEmail: "",
+  //   FromName: "",
+  //   FromPhoneNumber: "",
+  //   UnsubType: "",
+  //   SmsUnsubLinkType: "",
+  // });
 
   const isNumber = (event: any) => {
     var NumberRegEx = /^[0-9]*$/;
@@ -55,7 +59,7 @@ const Form_AccountDetails = ({
   };
 
   const isValidPayload = () => {
-    if (!companyDetails.FromEmail) {
+    if (!accountDetails.FromEmail) {
     }
     return true;
   };
@@ -63,8 +67,8 @@ const Form_AccountDetails = ({
   const handleChange = (e: any, name = "") => {
     let actualValue = e?.target?.value;
     let trimValue = e?.target?.value.trim();
-    setCompanyDetails({
-      ...companyDetails,
+    setAccountDetails({
+      ...accountDetails,
       [e?.target?.name]:
         trimValue.length + 1 === actualValue?.length ? actualValue : trimValue,
     });
@@ -122,7 +126,7 @@ const Form_AccountDetails = ({
               variant="outlined"
               size="small"
               name="FromName"
-              value={companyDetails.FromName}
+              value={accountDetails.FromName}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -135,7 +139,7 @@ const Form_AccountDetails = ({
               variant="outlined"
               size="small"
               name="FromEmail"
-              value={companyDetails.FromEmail}
+              value={accountDetails.FromEmail}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -148,7 +152,7 @@ const Form_AccountDetails = ({
               variant="outlined"
               size="small"
               name="FromPhoneNumber"
-              value={companyDetails.FromPhoneNumber}
+              value={accountDetails.FromPhoneNumber}
               onKeyPress={isNumber}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
@@ -164,7 +168,7 @@ const Form_AccountDetails = ({
               <RadioGroup
                 aria-label="quiz"
                 name="UnsubType"
-                value={companyDetails.UnsubType}
+                value={accountDetails.UnsubType}
                 onChange={handleChange}
               >
                 <FormControlLabel
@@ -200,7 +204,7 @@ const Form_AccountDetails = ({
               <RadioGroup
                 aria-label="quiz"
                 name="SmsUnsubLinkType"
-                value={companyDetails.SmsUnsubLinkType}
+                value={accountDetails.SmsUnsubLinkType}
                 onChange={handleChange}
               >
                 <FormControlLabel

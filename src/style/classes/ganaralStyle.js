@@ -2673,7 +2673,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
   textField: {
     '&.MuiTextField-root': {
-
       width: '100%',
       borderBottom: '1px solid #D6D1E6',
       paddingLeft: 5,

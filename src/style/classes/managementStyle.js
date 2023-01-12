@@ -269,7 +269,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   errorText: {
-    color: "red",
+    color: "red !important",
   },
   paddingIcon: {
     padding: "0.8rem 0rem 0.2rem!important",

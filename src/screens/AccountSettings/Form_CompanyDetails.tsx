@@ -19,21 +19,27 @@ import { UnLockIcon } from "../../assets/images/settings";
 import { Title } from "../../components/managment/Title";
 import Illustration_data_Analysis from "../../assets/images/settings/Illustration_data_Analysis";
 import { DateField } from "../../components/managment";
+import { IsValidEmail } from "../../helpers/Utils/Validations";
+import {
+  CompDtlErrorsType,
+  CompDtlPropTypes,
+  CompanyDetailsType,
+} from "../../Models/Settings/CompanyDetails";
 
 const Form_CompanyDetails = ({
   classes,
   setToastMessage,
   ToastMessages,
-}: any) => {
+}: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
 
-  const [companyDetails, setCompanyDetails] = useState({
+  const [companyDetails, setCompanyDetails] = useState<CompanyDetailsType>({
     CompanyName: "",
     ContactName: "",
     BirthDate: null,
-    Telehone: "",
+    Telephone: "",
     Mobile: "",
     Email: "",
     Address: "",
@@ -43,11 +49,11 @@ const Form_CompanyDetails = ({
     SendCodeMethod: "",
   });
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<CompDtlErrorsType>({
     CompanyName: "",
     ContactName: "",
-    BirthDate: null,
-    Telehone: "",
+    BirthDate: "",
+    Telephone: "",
     Mobile: "",
     Email: "",
     Address: "",
@@ -70,12 +76,59 @@ const Form_CompanyDetails = ({
   };
 
   const isValidPayload = () => {
-    if (!companyDetails.CompanyName) {
+    let tempErrors = { ...errors };
+    let isValid = true;
+    if (!companyDetails.Email) {
+      isValid = false;
+      tempErrors = {
+        ...errors,
+        Email: t("accountSettings.fixedComDetails.errors.reqEmail"),
+      };
+    } else if (!IsValidEmail(companyDetails.Email)) {
+      isValid = false;
+      tempErrors = {
+        ...errors,
+        Email: t("accountSettings.fixedComDetails.errors.invalidEmail"),
+      };
     }
-    return true;
+    if (!companyDetails.Mobile) {
+      isValid = false;
+      tempErrors = {
+        ...tempErrors,
+        Mobile: t("accountSettings.fixedComDetails.errors.reqMobile"),
+      };
+    } else if (
+      companyDetails.Mobile.length > 16 ||
+      companyDetails.Mobile.length < 9
+    ) {
+      isValid = false;
+      tempErrors = {
+        ...tempErrors,
+        Mobile: t("accountSettings.fixedComDetails.errors.invalidMobile"),
+      };
+    }
+    if (!companyDetails.CompanyName) {
+      isValid = false;
+      tempErrors = {
+        ...tempErrors,
+        CompanyName: t("accountSettings.fixedComDetails.errors.reqCompName"),
+      };
+    }
+    if (!companyDetails.ContactName) {
+      isValid = false;
+      tempErrors = {
+        ...tempErrors,
+        ContactName: t("accountSettings.fixedComDetails.errors.reqContctName"),
+      };
+    }
+    setErrors({ ...tempErrors });
+
+    return isValid;
   };
 
   const handleChange = (e: any, name = "") => {
+    !!errors?.[e?.target?.name] &&
+      setErrors({ ...errors, [e.target.name]: "" });
     if (name === "TwoFactorAuth") {
       setCompanyDetails({
         ...companyDetails,
@@ -115,7 +168,7 @@ const Form_CompanyDetails = ({
       }
       case 500:
       default: {
-        setToastMessage(ToastMessages.GENERAL_ERROR);
+        setToastMessage(ToastMessages?.GENERAL_ERROR);
       }
     }
   };
@@ -154,7 +207,13 @@ const Form_CompanyDetails = ({
               value={companyDetails.CompanyName}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
+              error={!!errors.CompanyName}
             />
+            {!!errors.CompanyName && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {errors.CompanyName}
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
             <Typography>
@@ -167,7 +226,13 @@ const Form_CompanyDetails = ({
               value={companyDetails.ContactName}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
+              error={!!errors.ContactName}
             />
+            {!!errors.ContactName && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {errors.ContactName}
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
             <Typography>
@@ -188,7 +253,7 @@ const Form_CompanyDetails = ({
               variant="outlined"
               size="small"
               name="Telehone"
-              value={companyDetails.Telehone}
+              value={companyDetails.Telephone}
               onKeyPress={isNumber}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
@@ -206,7 +271,13 @@ const Form_CompanyDetails = ({
               onKeyPress={isNumber}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
+              error={!!errors.Mobile}
             />
+            {!!errors.Mobile && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {errors.Mobile}
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
             <Typography>
@@ -219,7 +290,13 @@ const Form_CompanyDetails = ({
               value={companyDetails.Email}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
+              error={!!errors.Email}
             />
+            {!!errors.Email && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {errors.Email}
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
             <Typography>

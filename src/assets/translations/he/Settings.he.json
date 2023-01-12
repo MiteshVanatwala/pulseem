@@ -9,7 +9,14 @@
       "enableTwoFactorAuth": "הפעלת אימות דו שלבי",
       "sendMeCode": "שליחת קוד"
     },
-    "errors": {},
+    "errors": {
+      "invalidEmail": "אימייל לא תקין",
+      "reqEmail": "אימייל הוא חובה",
+      "invalidMobile": "הנייד לא עובד",
+      "reqMobile": "נייד הוא חובה",
+      "reqCompName": "נדרש שם חברה",
+      "reqContctName": "נדרש שם איש קשר"
+    },
     "securitySettings": "הגדרות אבטחת חשבון",
     "btnChangePwd": "שינוי סיסמא",
     "btnUpdate": "שמירת הגדרות"
