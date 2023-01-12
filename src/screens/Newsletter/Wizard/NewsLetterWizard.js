@@ -46,6 +46,9 @@ const useStyles = makeStyles({
         },
         '& .MuiFormHelperText-contained': {
             marginInline: 0
+        },
+        '& .MuiFormHelperText-root': {
+            fontSize: '1rem'
         }
     },
     autocomplete: {
