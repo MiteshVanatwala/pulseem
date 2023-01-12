@@ -28,7 +28,7 @@ const WizardActions = ({
             <Grid item xs={12}>
                 <Box className={clsx(classes.wizardButtonContainer)} style={{ paddingBottom: 40 }}>
                     {onBack &&
-                        <Button onClick={() => { onBack() }}
+                        <Button onClick={() => { onBack?.callback() }}
                             variant='contained'
                             size='medium'
                             className={clsx(
@@ -39,7 +39,7 @@ const WizardActions = ({
                             startIcon={!isRTL ? <MdOutlineKeyboardArrowLeft /> : <MdOutlineKeyboardArrowRight />}
                             style={{ margin: '8px' }}
                             color="primary"
-                        >{t('notifications.back')}</Button>
+                        >{onBack?.text ?? t('notifications.back')}</Button>
                     }
                     <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
                         {onDelete &&
@@ -54,6 +54,42 @@ const WizardActions = ({
                                 onClick={() => { onDelete() }}
                             >
                                 <BsTrash style={{ fontSize: "25" }} />
+                            </Button>
+                        }
+                        {onShowDocuments &&
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                onClick={() => onShowDocuments()}
+                                style={{ marginInline: 8, paddingInline: 10 }}
+                                className={clsx(classes.actionButton,
+                                    classes.actionButtonOutlinedBlue)}>
+                                <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} />
+                                {t("common.documentGallery")}
+                            </Button>
+                        }
+                        {onShowGallery &&
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                onClick={() => onShowGallery()}
+                                style={{ marginInline: 8, paddingInline: 10 }}
+                                className={clsx(classes.actionButton,
+                                    classes.actionButtonOutlinedBlue)}>
+                                <RiImageAddLine style={{ fontSize: "20", paddingInline: 5 }} />
+                                {t("common.imageGallery")}
+                            </Button>
+                        }
+                        {onTestSend &&
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                onClick={() => onTestSend()}
+                                style={{ marginInline: 8, paddingInline: 10 }}
+                                className={clsx(classes.actionButton,
+                                    classes.actionButtonOutlinedBlue)}>
+                                <RiSendPlaneFill style={{ fontSize: "25" }} />
+                                {t("campaigns.sendTest")}
                             </Button>
                         }
                         {onExit &&
