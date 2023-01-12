@@ -919,13 +919,12 @@ const NewsLetterWizard = ({ classes }) => {
             <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
                 <WizardActions
                     classes={classes}
-                    // onSave={handleSubmit}
-                    onBack={() => { setConfirmExit(true) }}
+                    onBack={{
+                        callback: () => { setConfirmExit(true) }
+                    }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={renderButtons()}
-                >
-
-                </WizardActions>
+                />
             </Box>
             <Dialog
                 classes={classes}

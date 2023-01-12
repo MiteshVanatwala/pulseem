@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import BeePlugin from '@mailupinc/bee-plugin'
-import { Box, Button, Grid } from '@material-ui/core'
+import { Box, Button } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -24,7 +24,8 @@ import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
-import { AiOutlineExclamationCircle, AiOutlineFileAdd } from "react-icons/ai";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
@@ -34,8 +35,6 @@ import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
-import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md'
-import { RiImageAddLine, RiSendPlaneFill } from 'react-icons/ri'
 
 // User input controls
 import { EditRow } from './components/ContentDialogs'
@@ -222,7 +221,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const siteTrackingLogic = () => {
     if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
       const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-      if (campaign.HtmlData.indexOf(domainName) > -1) {
+      if (campaign?.HtmlData?.indexOf(domainName) > -1) {
         setIsSiteTracking(true);
       }
       else {
@@ -618,110 +617,32 @@ const CampaignEditor = ({ classes, ...props }) => {
     const wizardButtons = [];
     if (!isFromAutomation) {
       wizardButtons.push(<>
-        <Grid container style={{ paddingInline: 15 }}>
-          <Grid item xs={12}>
-            <Box className={clsx(classes.wizardButtonContainer)} style={{ paddingBottom: 40 }}>
-              <Box style={isRTL ? { marginLeft: "auto" } : { marginRight: "auto" }}>
-                <Button onClick={() => { onBack() }}
-                  variant='contained'
-                  size='medium'
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightBlue,
-                    classes.backButton
-                  )}
-                  startIcon={!isRTL ? <MdOutlineKeyboardArrowLeft /> : <MdOutlineKeyboardArrowRight />}
-                  style={{ margin: '8px' }}
-                  color="primary"
-                >{t('campaigns.newsletterSetUp')}</Button>
-              </Box>
-              <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
-                <Button
-                  variant='contained'
-                  size='medium'
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonRed
-                  )}
-                  style={{ margin: '8px', padding: '9px 0' }}
-                  onClick={() => { onDelete() }}
-                >
-                  <BsTrash style={{ fontSize: "25" }} />
-                </Button>
-                <Button
-                  variant='contained'
-                  size='medium'
-                  onClick={() => setShowDocuments()}
-                  style={{ marginInline: 8, paddingInline: 10 }}
-                  className={clsx(classes.actionButton,
-                    classes.actionButtonOutlinedBlue)}>
-                  <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} />
-                  {t("common.documentGallery")}
-                </Button>
-                <Button
-                  variant='contained'
-                  size='medium'
-                  onClick={() => setShowGallery(true)}
-                  style={{ marginInline: 8, paddingInline: 10 }}
-                  className={clsx(classes.actionButton,
-                    classes.actionButtonOutlinedBlue)}>
-                  <RiImageAddLine style={{ fontSize: "20", paddingInline: 5 }} />
-                  {t("common.imageGallery")}
-                </Button>
-                <Button
-                  variant='contained'
-                  size='medium'
-                  onClick={() => handleOpenTestSend()}
-                  style={{ marginInline: 8, paddingInline: 10 }}
-                  className={clsx(classes.actionButton,
-                    classes.actionButtonOutlinedBlue)}>
-                  <RiSendPlaneFill style={{ fontSize: "25" }} />
-                  {t("campaigns.sendTest")}
-                </Button>
-                {!isFromAutomation && <Button
-                  onClick={() =>
-                    onExit()}
-                  variant='contained'
-                  size='medium'
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightBlue,
-                    classes.backButton
-                  )}
-                  style={{ margin: '8px' }}
-                  color="primary"
-                >{t("common.exit")}
-                </Button>}
-                <Button
-                  onClick={() =>
-                    saveDesign(false, null, true)}
-                  variant='contained'
-                  size='medium'
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightBlue,
-                    classes.backButton
-                  )}
-                  style={{ margin: '8px' }}
-                  startIcon={<BiSave />}
-                  color="primary"
-                >{t("common.save")}
-                </Button>
-                <Button onClick={saveDesign}
-                  variant='contained'
-                  size='medium'
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightGreen,
-                    classes.backButton
-                  )}
-                  style={{ marginInlineStart: '8px' }}
-                  color="primary"
-                >{t('common.continue')}</Button>
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
+        <Button
+          onClick={() =>
+            saveDesign(false, null, true)}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          style={{ margin: '8px' }}
+          startIcon={<BiSave />}
+          color="primary"
+        >{t("common.save")}
+        </Button>
+        <Button onClick={saveDesign}
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton
+          )}
+          style={{ marginInlineStart: '8px' }}
+          color="primary"
+        >{t('common.continue')}</Button>
       </>)
     }
     else {
@@ -776,13 +697,13 @@ const CampaignEditor = ({ classes, ...props }) => {
         isOpen={dialog === DialogType.NO_CREDITS_LEFT}
       />
       <DemoModal modals={modals} />
-      {campaign?.IsFirstCampaign === false && <TestSend
+      <TestSend
         classes={classes}
         isOpen={dialog === DialogType.TEST_SEND}
         onClose={() => setDialog(null)}
-        onSubmit={handleOpenTestSend}
+        onSubmit={onTestSendSubmit}
         campaignId={campaignId || params?.id}
-      />}
+      />
       <GenericModal
         classes={classes}
         modalData={genericModalData}
@@ -799,7 +720,21 @@ const CampaignEditor = ({ classes, ...props }) => {
       <Box className={classes.containerFullHeight}>
         <div id="bee-plugin-container" className={classes.containerFullHeight}></div>
       </Box>
-      {renderButtons()}
+      <WizardActions
+        campaignId={campaignId}
+        innerStyle={{ paddingInline: 15 }}
+        classes={classes}
+        onExit={!isFromAutomation && onExit}
+        onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
+        onBack={{
+          callback: () => { onBack() },
+          text: t('campaigns.newsletterSetUp')
+        }}
+        onDelete={onDelete}
+        onShowGallery={() => { setShowGallery(true) }}
+        onShowDocuments={() => { setShowDocuments(true) }}
+        additionalButtons={renderButtons()}
+      />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )

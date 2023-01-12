@@ -58,7 +58,7 @@ export const Image = ({
             <Box className="select-image" onClick={onSelectFile(imgSrc, imgKey)}>
                 <Box className="img-container" style={{ border: selectedFile && (selectedFile === imgKey || selectedFile?.indexOf(imgKey) !== -1) ? "1px solid #000" : null }}>
                     {folderType === PulseemFolderType.CLIENT_IMAGES ?
-                        (<LazyBackground url={imgSrc}>
+                        (<LazyBackground url={imgSrc} key={imgKey}>
                             <button
                                 id={`file_${fileIndex}`}
                                 className={clsx(classes.absTopRight)}
@@ -66,7 +66,7 @@ export const Image = ({
                                 onClick={onDelete(imgFile)}
                             >X</button>
                         </LazyBackground>) : (
-                            <LazyBackground url={icons[fileExtension.toLowerCase()]} style={[{ backgroundSize: 'auto !important' }]}>
+                            <LazyBackground url={icons[fileExtension.toLowerCase()]} style={[{ backgroundSize: 'auto !important' }]} key={imgKey}>
                                 <button
                                     id={`file_${fileIndex}`}
                                     className={clsx(classes.absTopRight)}
