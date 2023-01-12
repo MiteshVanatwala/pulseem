@@ -9,19 +9,19 @@ import {
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
 import { saveCampaignDataProps } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
-type errorProps = {
+type apiErrorProps = {
 	message: string;
 };
 
-type getSavedTemplatesDataProps = {
+type apiGetSavedTemplatesDataProps = {
 	templateStatus: number;
 };
 
-type getSavedTemplatesDataByIdProps = {
+type apiGetSavedTemplatesDataByIdProps = {
 	templateId: string;
 };
 
-type submitTemplatesDataProps =
+type apiSubmitTemplatesDataProps =
 	| TextMediaAndButton
 	| QuickReply
 	| CallToAction
@@ -29,7 +29,7 @@ type submitTemplatesDataProps =
 	| JSONPropsText
 	| undefined;
 
-type saveCampaignSettingsDataProps = {
+type apiSaveCampaignSettingsDataProps = {
 	WACampaignID: number;
 	SendTypeID: number;
 	Groups: number[];
@@ -52,13 +52,13 @@ type saveCampaignSettingsDataProps = {
 	FutureDateTime?: string;
 };
 
-type sendCampaignDataProps = {
+type apiSendCampaignDataProps = {
 	WACampaignID: number;
 };
 
 export const getSavedTemplates = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
-	async (data: getSavedTemplatesDataProps, thunkAPI) => {
+	async (data: apiGetSavedTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/GetWhatsAppTemplate`,
@@ -67,7 +67,7 @@ export const getSavedTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -75,7 +75,7 @@ export const getSavedTemplates = createAsyncThunk(
 
 export const getSavedTemplatesById = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
-	async (data: getSavedTemplatesDataByIdProps, thunkAPI) => {
+	async (data: apiGetSavedTemplatesDataByIdProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/GetWhatsAppTemplate`,
@@ -84,7 +84,7 @@ export const getSavedTemplatesById = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -92,7 +92,7 @@ export const getSavedTemplatesById = createAsyncThunk(
 
 export const submitTemplates = createAsyncThunk(
 	'whatsAppCampaign/SubmitWhatsAppTemplate',
-	async (data: submitTemplatesDataProps, thunkAPI) => {
+	async (data: apiSubmitTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SubmitWhatsAppTemplate`,
@@ -101,7 +101,7 @@ export const submitTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -118,7 +118,7 @@ export const uploadMedia = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -126,7 +126,7 @@ export const uploadMedia = createAsyncThunk(
 
 export const saveTemplates = createAsyncThunk(
 	'whatsAppCampaign/SaveWhatsAppTemplate',
-	async (data: submitTemplatesDataProps, thunkAPI) => {
+	async (data: apiSubmitTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SaveWhatsAppTemplate`,
@@ -135,7 +135,7 @@ export const saveTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -152,7 +152,7 @@ export const saveCampaign = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -160,7 +160,7 @@ export const saveCampaign = createAsyncThunk(
 
 export const saveCampaignSettings = createAsyncThunk(
 	'whatsAppCampaign/SaveWACampaignSettings',
-	async (data: saveCampaignSettingsDataProps, thunkAPI) => {
+	async (data: apiSaveCampaignSettingsDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SaveWACampaignSettings`,
@@ -169,7 +169,7 @@ export const saveCampaignSettings = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -177,7 +177,7 @@ export const saveCampaignSettings = createAsyncThunk(
 
 export const sendCampaign = createAsyncThunk(
 	'whatsAppCampaign/Send',
-	async (data: sendCampaignDataProps, thunkAPI) => {
+	async (data: apiSendCampaignDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/Send`,
@@ -186,7 +186,7 @@ export const sendCampaign = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -201,7 +201,7 @@ export const userPhoneNumbers = createAsyncThunk(
 			);
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -216,7 +216,7 @@ export const deleteTemplate = createAsyncThunk(
 			);
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -232,7 +232,7 @@ export const getAllTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -248,7 +248,7 @@ export const getAllCampaigns = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -264,7 +264,7 @@ export const getAllReports = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
