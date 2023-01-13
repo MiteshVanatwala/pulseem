@@ -15,12 +15,14 @@ import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
+import { CgClose } from "react-icons/cg";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
 export const BaseDialog = ({
   childrenPadding = true,
   open = true,
   title = "",
-  icon = <AlertIcon />,
+  icon = "",
   children,
   showDivider = false,
   onClose = () => {},
@@ -60,12 +62,14 @@ export const BaseDialog = ({
     exitButton ?? (
       <Stack
         onClick={onExit}
-        className={clsx(classes.dialogExitButton, {
+        className={clsx(classes.dialogExitButton, classes.f20, {
           [classes.dialogExitButtonRTL]: isRTL,
           [classes.dialogExitButtonLTR]: !isRTL,
         })}
+        justifyContent="center"
+        alignItems="center"
       >
-        x
+        <CgClose />
       </Stack>
     );
 
@@ -90,7 +94,7 @@ export const BaseDialog = ({
     return showDefaultButtons ? (
       <Grid
         container
-        spacing={4}
+        spacing={2}
         className={clsx(
           classes.dialogButtonsContainer,
           isRTL ? classes.rowReverse : null
@@ -102,7 +106,7 @@ export const BaseDialog = ({
             variant="contained"
             size="small"
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
-            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+            className={clsx(classes.btn, classes.btnRounded)}
           >
             <>{t(confirmText)}</>
           </Button>
@@ -117,7 +121,7 @@ export const BaseDialog = ({
               }
               return false;
             }}
-            className={clsx(classes.dialogButton, classes.dialogCancelButton)}
+            className={clsx(classes.btn, classes.btnRounded)}
           >
             <>{t(cancelText)}</>
           </Button>
@@ -129,7 +133,7 @@ export const BaseDialog = ({
   };
 
   const RenderIcon = () => {
-    const alertIcon = <AlertIcon />;
+    const alertIcon = <IoAlertCircleOutline />;
     return (
       <Stack
         className={clsx(classes.dialogIconContainer, {
@@ -138,6 +142,22 @@ export const BaseDialog = ({
         })}
       >
         {icon || alertIcon}
+      </Stack>
+    );
+  };
+
+  const RenderTopBar = () => {
+    return (
+      <Stack
+        className={clsx(classes.dialogTopBar)}
+        direction="row"
+        justifyContent={"space-between"}
+      >
+        <Stack direction={"row"}>
+          {RenderIcon()}
+          <Stack>{renderTitle ? renderTitle() : RenderTitleDefault()}</Stack>
+        </Stack>
+        {RenderExitButton()}
       </Stack>
     );
   };
@@ -167,7 +187,6 @@ export const BaseDialog = ({
         dir={direction[isRTL]}
         className={clsx(classes.dialogContent, contentStyle)}
       >
-        {renderTitle ? renderTitle() : RenderTitleDefault()}
         {RenderChildren()}
 
         {renderButtons ? renderButtons() : RenderButtonsDefault()}
@@ -187,9 +206,8 @@ export const BaseDialog = ({
       }}
     >
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
-        {RenderExitButton()}
+        {RenderTopBar()}
         {RenderContent()}
-        {icon !== "NONE" && RenderIcon()}
       </Paper>
     </Dialog>
   );

@@ -138,6 +138,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
+      borderRadius: 15
     },
   },
   noPadding: {
@@ -152,17 +153,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
   },
   dialogTitle: {
-    fontSize: "1.8rem",
-    fontWeight: "700",
-    color: "#0a74a9",
-    marginInline: 25,
+    fontSize: '1rem',
+    fontWeight: "500",
+    color: "#fff",
     whiteSpace: "pre-line",
   },
   resetDialogTitle: {
     fontSize: "2rem",
     fontWeight: "400",
     color: "#0a74a9",
-    // marginInline: 25,
     whiteSpace: "pre-line",
   },
   reducedTitle: {
@@ -171,7 +170,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   dialogChildren: {
-    // marginInline: 25,
     marginBlock: 20,
     paddingRight: summaryPadding[windowSize],
     paddingLeft: summaryPadding[windowSize],
@@ -2363,26 +2361,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   //#region Dialog
   dialogIconContainer: {
-    paddingTop: 60,
-    paddingBottom: 15,
+    fontSize: 25,
+    marginTop: -2,
     textAlign: "center",
     color: "#fff",
-    borderRadius: 200,
-    backgroundColor: "#0371ad",
-    position: "absolute",
     justifyContent: "center",
     alignItems: "center",
-    top: -50,
   },
   dialogIconContainerRTL: {
-    right: -50,
-    paddingInlineEnd: 60,
-    paddingInlineStart: 15,
+    paddingInlineStart: 10,
   },
   dialogIconContainerLTR: {
-    left: -50,
-    paddingInlineEnd: 15,
-    paddingInlineStart: 60,
+    paddingInlineEnd: 10,
   },
   solidDialogExitButton: {
     fontSize: 30,
@@ -2394,23 +2384,32 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "0.5rem",
     cursor: "pointer"
   },
+  dialogTopBar: {
+    height: "auto",
+    padding: "2px 0px 0 6px",
+    color: "#fff",
+    fontWeight: 600,
+    textTransform: "capitalize",
+
+    height: 'auto',
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)'
+  },
   dialogExitButton: {
-    width: 25,
-    height: 25,
+    width: 27,
+    height: 27,
     textAlign: "center",
     color: "#fff",
-    borderRadius: 25,
     fontWeight: "700",
-    backgroundColor: "#0371ad",
-    position: "absolute",
-    top: "0.5rem",
+    top: "-0.2rem",
     cursor: "pointer",
+    borderBottomLeftRadius: 17,
+    fontSize: 18
   },
   dialogExitButtonRTL: {
-    left: "0.5rem",
+    left: "-0.1rem",
   },
   dialogExitButtonLTR: {
-    right: "0.5rem",
+    right: "-0.1rem",
   },
   solidDialog: {
     display: "flex",
@@ -2431,10 +2430,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContent: {
     display: "flex",
     flexDirection: "column",
-    border: "3px solid #0371ad",
     borderRadius: 5,
     margin: "1rem",
     padding: "1rem",
+    paddingBottom: 0,
     minWidth: dialogWidth[windowSize],
     "& $notification": {
       "& $iconWrapper": {

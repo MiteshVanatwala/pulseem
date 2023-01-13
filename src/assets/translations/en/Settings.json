@@ -19,7 +19,9 @@
         },
         "securitySettings": "Security Settings",
         "btnChangePwd": "Change Password",
-        "btnUpdate": "Update Settings"
+        "btnUpdate": "Update Settings",
+        "btnVerifyEmail": "Verification of email to send",
+        "btnVerifyNumber": "Verification of number to send"
     },
     "actDetails": {
         "title": "Account Details",

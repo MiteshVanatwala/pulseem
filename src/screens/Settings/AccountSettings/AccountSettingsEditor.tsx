@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Title } from "../../components/managment/Title";
-import DefaultScreen from "../DefaultScreen";
+import { Title } from "../../../components/managment/Title";
+import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { useSelector } from "react-redux";
 import Form_CompanyDetails from "./Form_CompanyDetails";
 import Form_AccountDetails from "./Form_AccountDetails";
-import Toast from "../../components/Toast/Toast.component";
+import Toast from "../../../components/Toast/Toast.component";
 
 const AccountSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();

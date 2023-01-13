@@ -13,12 +13,12 @@ import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-import { Title } from "../../components/managment/Title";
-import Illustration_app_Settings from "../../assets/images/settings/Illustration_app_Settings";
+import { Title } from "../../../components/managment/Title";
+import Illustration_app_Settings from "../../../assets/images/settings/Illustration_app_Settings";
 import {
   AccDtlPropTypes,
   AccountDetailsType,
-} from "../../Models/Settings/AccountDetails";
+} from "../../../Models/Settings/AccountDetails";
 
 const Form_AccountDetails = ({
   classes,

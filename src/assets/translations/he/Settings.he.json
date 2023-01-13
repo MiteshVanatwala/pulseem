@@ -19,7 +19,9 @@
     },
     "securitySettings": "הגדרות אבטחת חשבון",
     "btnChangePwd": "שינוי סיסמא",
-    "btnUpdate": "שמירת הגדרות"
+    "btnUpdate": "שמירת הגדרות",
+    "btnVerifyEmail": "Verification of email to send",
+    "btnVerifyNumber": "Verification of number to send"
   },
   "actDetails": {
     "title": "פרטי חשבון",
