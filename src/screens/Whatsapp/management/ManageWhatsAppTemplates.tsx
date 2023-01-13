@@ -452,7 +452,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				key: 'edit',
 				buttonKey: 'edit',
 				icon: EditIcon,
-				disable: row.Status !== "Received",
+				disable: row.Status !== 'Received',
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				onClick: (key: string, templateId: string) =>
 					onRowIconClick(key, templateId),
@@ -697,30 +697,40 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{getRows()?.map((row: templateListItemsProps) => (
-								<TableRow
-									key={row.TemplateId}
-									classes={rowStyle}>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex3, classes.tableCellBody)}>
-										{renderNameCell(row)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderStatusCell(row.Status)}
-									</TableCell>
-									<TableCell
-										component='th'
-										scope='row'
-										className={clsx(classes.flex5, classes.tableCellRoot)}>
-										{renderCellIcons(row)}
-									</TableCell>
-								</TableRow>
-							))}
+							{getRows()?.length === 0 ? (
+								<Box
+									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
+									style={{ height: 50 }}>
+									<Typography>
+										{translator('common.NoDataTryFilter')}
+									</Typography>
+								</Box>
+							) : (
+								<>
+									{getRows()?.map((row: templateListItemsProps) => (
+										<TableRow key={row.TemplateId} classes={rowStyle}>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex3, classes.tableCellBody)}>
+												{renderNameCell(row)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderStatusCell(row.Status)}
+											</TableCell>
+											<TableCell
+												component='th'
+												scope='row'
+												className={clsx(classes.flex5, classes.tableCellRoot)}>
+												{renderCellIcons(row)}
+											</TableCell>
+										</TableRow>
+									))}
+								</>
+							)}
 						</Table>
 					</TableContainer>
 				</Grid>

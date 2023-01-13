@@ -10,7 +10,7 @@ import Groups from './Groups/Groups';
 const GroupSelector = ({
 	classes,
 	showTestGroups,
-	testGroups,
+	testGroupList,
 	allGroupList,
 	selectedGroups,
 	isFilterSelected,
@@ -51,9 +51,7 @@ const GroupSelector = ({
 	const onSelectAll = () => {
 		if (!allGroupsSelected) {
 			if (showTestGroups) {
-				setSelected(
-					allGroupList?.filter((group) => group.IsTestGroup === true)
-				);
+				setSelected(testGroupList);
 			} else {
 				setSelected([...allGroupList]);
 			}
@@ -62,12 +60,10 @@ const GroupSelector = ({
 		}
 		setAllGroupsSelected(!allGroupsSelected);
 	};
+	console.log(showTestGroups)
 
 	const onShowTestGroup = async (showTestGroups: boolean) => {
-		if (
-			!showTestGroups &&
-			allGroupList?.filter((group) => group.IsTestGroup === true)?.length > 0
-		) {
+		if (!showTestGroups && testGroupList?.length > 0) {
 			setShowTestGroups(true);
 		} else {
 			setShowTestGroups(false);
@@ -79,7 +75,7 @@ const GroupSelector = ({
 				classes={classes}
 				list={
 					showTestGroups
-						? allGroupList?.filter((group) => group.IsTestGroup === true)
+						? [...allGroupList, ...testGroupList]
 						: [...allGroupList]
 				}
 				selectedList={selectedGroups}

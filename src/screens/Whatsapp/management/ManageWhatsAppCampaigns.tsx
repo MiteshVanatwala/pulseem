@@ -180,8 +180,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		}
 	}, [fromDate, toDate, campaineNameSearch]);
 
-	const handleFromDateChange = (value: any) => {
-		if (toDate && value > toDate) {
+	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
+		if (toDate && value && value > toDate) {
 			handleToDate(null);
 		}
 		handleFromDate(value);
@@ -719,7 +719,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 								)}
 								initialFocusedDate={moment()}
 								value={fromDate}
-								onChange={handleFromDate}
+								onChange={handleFromDateChange}
 								onClose={() => setIsFromDatePickerOpen(false)}
 								open={isFromDatePickerOpen}
 								onClick={() => setIsFromDatePickerOpen(true)}
@@ -741,6 +741,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 								format={'DD/MM/YYYY'}
 								placeholder={translator('whatsappManagement.toDatePlaceholder')}
 								initialFocusedDate={moment()}
+								minDate={moment(fromDate)}
 								value={toDate}
 								onChange={handleToDate}
 								onClose={() => setIsToDatePickerOpen(false)}
@@ -835,42 +836,52 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{getRows()?.map((campaign: campaignDataProps) => (
-								<TableRow
-									key={campaign.campaignId}
-									classes={rowStyle}>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex3, classes.tableCellBody)}>
-										{renderNameCell(campaign)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderRecipientsCell(campaign.recipients)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderMessagesCell(campaign.messages)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderStatusCell(campaign.status)}
-									</TableCell>
-									<TableCell
-										component='th'
-										scope='row'
-										className={clsx(classes.flex5, classes.tableCellRoot)}>
-										{renderCellIcons(campaign)}
-									</TableCell>
-								</TableRow>
-							))}
+							{getRows()?.length === 0 ? (
+								<Box
+									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
+									style={{ height: 50 }}>
+									<Typography>
+										{translator('common.NoDataTryFilter')}
+									</Typography>
+								</Box>
+							) : (
+								<>
+									{getRows()?.map((campaign: campaignDataProps) => (
+										<TableRow key={campaign.campaignId} classes={rowStyle}>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex3, classes.tableCellBody)}>
+												{renderNameCell(campaign)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderRecipientsCell(campaign.recipients)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderMessagesCell(campaign.messages)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderStatusCell(campaign.status)}
+											</TableCell>
+											<TableCell
+												component='th'
+												scope='row'
+												className={clsx(classes.flex5, classes.tableCellRoot)}>
+												{renderCellIcons(campaign)}
+											</TableCell>
+										</TableRow>
+									))}
+								</>
+							)}
 						</Table>
 					</TableContainer>
 				</Grid>

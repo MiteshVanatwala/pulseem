@@ -56,6 +56,12 @@ type apiSendCampaignDataProps = {
 	WACampaignID: number;
 };
 
+type apiCombineGroupProps = {
+	GroupIds: number[];
+	GroupName: string;
+	SubAccountID: number;
+};
+
 export const getSavedTemplates = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
 	async (data: apiGetSavedTemplatesDataProps, thunkAPI) => {
@@ -278,6 +284,23 @@ export const getAllGroups = createAsyncThunk(
 				`smsCampaign/GetGroupsBySubAccountId`
 			);
 			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as apiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const createCombinedGroup = createAsyncThunk(
+	'smsCampaign/CreateCombinedGroup',
+	async (groupsData: apiCombineGroupProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`smsCampaign/CreateCombinedGroup`,
+				groupsData
+			);
+
+			return response.data;
 		} catch (error) {
 			const err = error as apiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });

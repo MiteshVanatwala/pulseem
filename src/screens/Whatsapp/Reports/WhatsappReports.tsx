@@ -1,4 +1,5 @@
 import {
+	Box,
 	Button,
 	Grid,
 	Table,
@@ -40,10 +41,15 @@ import {
 import { exportAsXLSX } from '../../../helpers/Export/ExportFile';
 import { getAllReports } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
+import { reportCellNames, reportData } from '../Constant';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { useNavigate } from 'react-router-dom';
+import { GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
@@ -88,8 +94,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		}
 	}, [fromDate, toDate, campaignNameSearch]);
 
-	const handleFromDateChange = (value: any) => {
-		if (toDate && value > toDate) {
+	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
+		if (toDate && value && value > toDate) {
 			handleToDate(null);
 		}
 		handleFromDate(value);
@@ -207,11 +213,37 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		setTableData(getSearchedCampaign());
 	};
 
-	const getTableTypographyCells = (title: string, value: string | number) => {
+	const onTableCellClick = (cellName: string, campaignId: number) => {
+		navigate(CLIENT_CONSTANTS.BASEURL, {
+			state: {
+				...CLIENT_CONSTANTS.QUERY_PARAMS,
+				CampaignID: '537500',
+				ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+				PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
+				ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
+				PageProperty: GetPageNyName('reports/NewsletterReports'),
+			},
+		});
+	};
+
+	const getTableTypographyCells = (
+		title: string,
+		value: string | number,
+		cellName: string,
+		row: reportDataProps
+	) => {
 		return (
 			<>
-				<Typography className={classes.middleText}>{value}</Typography>
-				<Typography className={classes.middleText}>{title}</Typography>
+				<Typography
+					onClick={() => onTableCellClick(cellName, row.waCampaignId)}
+					className={classes.middleText}>
+					{value}
+				</Typography>
+				<Typography
+					onClick={() => onTableCellClick(cellName, row.waCampaignId)}
+					className={classes.middleText}>
+					{title}
+				</Typography>
 			</>
 		);
 	};
@@ -260,8 +292,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			setTableData(campaignData.payload.Items);
 			setIsLoader(false);
 		} else {
-			setReportListData([]);
-			setTableData([]);
+			setReportListData(reportData);
+			setTableData(reportData);
 			setIsLoader(false);
 		}
 	};
@@ -308,7 +340,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 								placeholder={translator('whatsappReport.fromDate')}
 								initialFocusedDate={moment()}
 								value={fromDate}
-								onChange={handleFromDate}
+								onChange={handleFromDateChange}
 								onClose={() => setIsFromDatePickerOpen(false)}
 								open={isFromDatePickerOpen}
 								onClick={() => setIsFromDatePickerOpen(true)}
@@ -330,6 +362,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 								format={'DD/MM/YYYY'}
 								placeholder={translator('whatsappReport.toDate')}
 								initialFocusedDate={moment()}
+								minDate={moment(fromDate)}
 								value={toDate}
 								onChange={handleToDate}
 								onClose={() => setIsToDatePickerOpen(false)}
@@ -426,97 +459,125 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{getRows()?.map((report: reportDataProps) => (
-								<TableRow key={report.waCampaignId} classes={rowStyle}>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.tableCellBody)}>
-										{renderNameCell(report)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.tableCellBody)}>
-										<Grid container justifyContent='space-around'>
-											<Grid item>
+							{getRows()?.length === 0 ? (
+								<Box
+									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
+									style={{ height: 50 }}>
+									<Typography>{translator('common.NoDataTryFilter')}</Typography>
+								</Box>
+							) : (
+								<>
+									{getRows()?.map((report: reportDataProps) => (
+										<TableRow key={report.waCampaignId} classes={rowStyle}>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.tableCellBody)}>
+												{renderNameCell(report)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.tableCellBody)}>
+												<Grid container justifyContent='space-around'>
+													<Grid item>
+														{getTableTypographyCells(
+															translator(
+																'mainReport.locTotalSendPlan.HeaderText'
+															),
+															report.totalSendPlan,
+															reportCellNames.TOSEND,
+															report
+														)}
+													</Grid>
+													<Grid item>
+														{getTableTypographyCells(
+															translator('common.Sent'),
+															report.totalSent,
+															reportCellNames.SENT,
+															report
+														)}
+													</Grid>
+												</Grid>
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.tableCellBody)}>
 												{getTableTypographyCells(
-													translator('mainReport.locTotalSendPlan.HeaderText'),
-													report.totalSendPlan
+													translator('whatsappReport.read'),
+													report.totalRead,
+													reportCellNames.READ,
+													report
 												)}
-											</Grid>
-											<Grid item>
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.tableCellBody)}>
+												<Grid container justifyContent='space-around'>
+													<Grid item>
+														{getTableTypographyCells(
+															translator('common.Clicks'),
+															report.clicksCount,
+															reportCellNames.CLICKS,
+															report
+														)}
+													</Grid>
+													<Grid item>
+														{getTableTypographyCells(
+															translator('common.Unique'),
+															report.uniqueClicksCount,
+															reportCellNames.UNIQUE,
+															report
+														)}
+													</Grid>
+												</Grid>
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.tableCellBody)}>
 												{getTableTypographyCells(
-													translator('common.Sent'),
-													report.totalSent
+													translator('common.Total'),
+													report.totalFeedback,
+													reportCellNames.FEEDBACK,
+													report
 												)}
-											</Grid>
-										</Grid>
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.tableCellBody)}>
-										{getTableTypographyCells(
-											translator('whatsappReport.read'),
-											report.totalRead
-										)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.tableCellBody)}>
-										<Grid container justifyContent='space-around'>
-											<Grid item>
-												{getTableTypographyCells(
-													translator('common.Clicks'),
-													report.clicksCount
-												)}
-											</Grid>
-											<Grid item>
-												{getTableTypographyCells(
-													translator('common.Unique'),
-													report.uniqueClicksCount
-												)}
-											</Grid>
-										</Grid>
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.tableCellBody)}>
-										{getTableTypographyCells(
-											translator('common.Total'),
-											report.totalFeedback
-										)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.tableCellBody)}>
-										<Grid container justifyContent='space-around'>
-											<Grid item>
-												{getTableTypographyCells(
-													translator('common.Removed'),
-													report.removed
-												)}
-											</Grid>
-											<Grid item>
-												{getTableTypographyCells(
-													translator('common.failedStatus'),
-													report.failure
-												)}
-											</Grid>
-										</Grid>
-									</TableCell>
-									<TableCell
-										component='th'
-										scope='row'
-										className={clsx(classes.tableCellRoot)}>
-										{/* {'Revenue'} */}
-									</TableCell>
-								</TableRow>
-							))}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.tableCellBody)}>
+												<Grid container justifyContent='space-around'>
+													<Grid item>
+														{getTableTypographyCells(
+															translator('common.Removed'),
+															report.removed,
+															reportCellNames.REMOVED,
+															report
+														)}
+													</Grid>
+													<Grid item>
+														{getTableTypographyCells(
+															translator('common.failedStatus'),
+															report.failure,
+															reportCellNames.FAILED,
+															report
+														)}
+													</Grid>
+												</Grid>
+											</TableCell>
+											<TableCell
+												component='th'
+												scope='row'
+												className={clsx(classes.tableCellRoot)}>
+												{/* {'Revenue'} */}
+											</TableCell>
+										</TableRow>
+									))}
+								</>
+							)}
 						</Table>
 					</TableContainer>
 				</Grid>

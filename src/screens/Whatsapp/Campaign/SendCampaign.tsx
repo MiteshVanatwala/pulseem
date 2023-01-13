@@ -4,6 +4,7 @@ import WizardTitle from '../../../components/Wizard/WizardTitle';
 import { Grid } from '@material-ui/core';
 import {
 	gropListAPIProps,
+	smsReducerProps,
 	testGroupDataProps,
 	WhatsappCampaignSecondProps,
 } from './Types/WhatsappCampaign.types';
@@ -17,16 +18,23 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import moment from 'moment';
 import Toast from '../../../components/Toast/Toast.component';
 import ValidationAlert from './Popups/ValidationAlert';
-import { getAllGroups } from '../../../redux/reducers/whatsappSlice';
-import { useDispatch } from 'react-redux';
+import {
+	createCombinedGroup,
+	getAllGroups,
+} from '../../../redux/reducers/whatsappSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { buttons, tabs } from '../Constant';
+import { getTestGroups } from '../../../redux/reducers/smsSlice';
 
 const SendCampaign = ({
 	classes,
 }: ClassesType & WhatsappCampaignSecondProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
+	const { testGroups: testGroupList } = useSelector(
+		(state: { sms: smsReducerProps }) => state.sms
+	);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
 
 	const [selectedGroups, setSelected] = useState<testGroupDataProps[]>([]);
@@ -124,6 +132,9 @@ const SendCampaign = ({
 	];
 
 	useEffect(() => {
+		if (!testGroupList || testGroupList?.length === 0) {
+			dispatch(getTestGroups());
+		}
 		getApiGroupsData();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -213,9 +224,17 @@ const SendCampaign = ({
 		return null;
 	};
 
-	const onNewGroupSave = () => {
+	const onNewGroupSave = async () => {
 		if (newGroupName?.length > 0) {
 			console.log('onNewGroupSave');
+			const combinedGroupPayload = {
+				SubAccountID: 1,
+				GroupName: newGroupName,
+				GroupIds: selectedGroups?.map(
+					(group: testGroupDataProps) => group.GroupID
+				),
+			};
+			await dispatch(createCombinedGroup(combinedGroupPayload));
 		} else {
 			setGroupSendValidationErrors(['Group name - required field']);
 			setIsValidationAlert(true);
@@ -257,6 +276,7 @@ const SendCampaign = ({
 							<LeftPane
 								classes={classes}
 								allGroupList={allGroupList}
+								testGroupList={testGroupList}
 								finishedCampaigns={finishedCampaigns}
 								selectedGroups={selectedGroups}
 								setSelected={setSelected}

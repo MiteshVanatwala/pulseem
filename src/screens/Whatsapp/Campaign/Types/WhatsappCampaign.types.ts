@@ -114,6 +114,7 @@ export type RightPaneProps = {
 export type LeftPaneProps = {
 	classes: ClassesType['classes'];
 	allGroupList: testGroupDataProps[];
+	testGroupList: testGroupsProps[];
 	finishedCampaigns: testGroupDataProps[];
 	selectedFilterCampaigns: testGroupDataProps[];
 	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
@@ -381,7 +382,7 @@ export type manualUploadProps = {
 export type groupSelectorProps = {
 	classes: ClassesType['classes'];
 	showTestGroups: boolean;
-	testGroups: [];
+	testGroupList: testGroupsProps[];
 	allGroupList: testGroupDataProps[];
 	selectedGroups: testGroupDataProps[];
 	isFilterSelected: boolean;

@@ -37,6 +37,17 @@ export enum buttons {
 	SEND = 'Send',
 }
 
+export enum reportCellNames {
+	TOSEND = 'To Send',
+	SENT = 'Sent',
+	READ = 'Read',
+	CLICKS = 'Clicks',
+	UNIQUE = 'Unique',
+	FEEDBACK = 'Feedback',
+	REMOVED = 'Removed',
+	FAILED = 'Failed',
+}
+
 export const countryCodes = [
 	'+93 AF',
 	'+355 AL',
