@@ -9,7 +9,6 @@ export type AccountDetailsType = {
 };
 
 export type AccDtlPropTypes = {
-  classes: any;
   setToastMessage: React.Dispatch<React.SetStateAction<null>>;
   ToastMessages: {
     [key: string]: any;

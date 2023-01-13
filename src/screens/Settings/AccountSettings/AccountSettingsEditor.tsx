@@ -8,9 +8,11 @@ import { useSelector } from "react-redux";
 import Form_CompanyDetails from "./Form_CompanyDetails";
 import Form_AccountDetails from "./Form_AccountDetails";
 import Toast from "../../../components/Toast/Toast.component";
+import useCore from "../../../helpers/hooks/Core";
 
-const AccountSettingsEditor = ({ classes }: any) => {
+const AccountSettingsEditor = () => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   const { ToastMessages } = useSelector((state: any) => state?.settings);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -29,18 +31,16 @@ const AccountSettingsEditor = ({ classes }: any) => {
       containerClass={classes.management}
     >
       {toastMessage && renderToast()}
-      <Box className={clsx(classes.accountSettingsContainer)}>
+      <Box className={clsx(classes.settingsContainer)}>
         <Box className="head">
-          <Title Text={t("accountSettings.title")} classes={classes} />
+          <Title Text={t("settings.accountSettings.title")} classes={classes} />
         </Box>
         <Box className={"containerBody"}>
           <Form_CompanyDetails
-            classes={classes}
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
           />
           <Form_AccountDetails
-            classes={classes}
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
           />

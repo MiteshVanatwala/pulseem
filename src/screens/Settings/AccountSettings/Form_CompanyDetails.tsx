@@ -31,13 +31,14 @@ import {
   CompanyDetailsType,
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import useCore from "../../../helpers/hooks/Core";
 
 const Form_CompanyDetails = ({
-  classes,
   setToastMessage,
   ToastMessages,
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
 
@@ -93,20 +94,22 @@ const Form_CompanyDetails = ({
       isValid = false;
       tempErrors = {
         ...errors,
-        Email: t("accountSettings.fixedComDetails.errors.reqEmail"),
+        Email: t("settings.accountSettings.fixedComDetails.errors.reqEmail"),
       };
     } else if (!IsValidEmail(companyDetails.Email)) {
       isValid = false;
       tempErrors = {
         ...errors,
-        Email: t("accountSettings.fixedComDetails.errors.invalidEmail"),
+        Email: t(
+          "settings.accountSettings.fixedComDetails.errors.invalidEmail"
+        ),
       };
     }
     if (!companyDetails.Mobile) {
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        Mobile: t("accountSettings.fixedComDetails.errors.reqMobile"),
+        Mobile: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
       };
     } else if (
       companyDetails.Mobile.length > 16 ||
@@ -115,21 +118,27 @@ const Form_CompanyDetails = ({
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        Mobile: t("accountSettings.fixedComDetails.errors.invalidMobile"),
+        Mobile: t(
+          "settings.accountSettings.fixedComDetails.errors.invalidMobile"
+        ),
       };
     }
     if (!companyDetails.CompanyName) {
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        CompanyName: t("accountSettings.fixedComDetails.errors.reqCompName"),
+        CompanyName: t(
+          "settings.accountSettings.fixedComDetails.errors.reqCompName"
+        ),
       };
     }
     if (!companyDetails.ContactName) {
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        ContactName: t("accountSettings.fixedComDetails.errors.reqContctName"),
+        ContactName: t(
+          "settings.accountSettings.fixedComDetails.errors.reqContctName"
+        ),
       };
     }
     setErrors({ ...tempErrors });
@@ -199,7 +208,7 @@ const Form_CompanyDetails = ({
       verifyPhone: {},
       verifyEmail: {},
     };
-    const currentDialog = dialogContent[type] || {};
+    const currentDialog: any = dialogContent[type] || {};
     return (
       <BaseDialog
         title={data.title}
@@ -224,7 +233,7 @@ const Form_CompanyDetails = ({
         className={"settingsWrapper"}
       >
         <Title
-          Text={t("accountSettings.fixedComDetails.title")}
+          Text={t("settings.accountSettings.fixedComDetails.title")}
           classes={classes}
           isIcon={false}
           ContainerStyle={{
@@ -238,7 +247,11 @@ const Form_CompanyDetails = ({
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
-                <>{t("accountSettings.fixedComDetails.fields.compName")}</>
+                <>
+                  {t(
+                    "settings.accountSettings.fixedComDetails.fields.compName"
+                  )}
+                </>
               </Typography>
               <TextField
                 variant="outlined"
@@ -257,7 +270,11 @@ const Form_CompanyDetails = ({
             </Grid>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
-                <>{t("accountSettings.fixedComDetails.fields.contactName")}</>
+                <>
+                  {t(
+                    "settings.accountSettings.fixedComDetails.fields.contactName"
+                  )}
+                </>
               </Typography>
               <TextField
                 variant="outlined"
@@ -301,7 +318,9 @@ const Form_CompanyDetails = ({
             </Grid>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
-                <>{t("accountSettings.fixedComDetails.fields.mobile")}</>
+                <>
+                  {t("settings.accountSettings.fixedComDetails.fields.mobile")}
+                </>
               </Typography>
               <TextField
                 variant="outlined"
@@ -378,11 +397,11 @@ const Form_CompanyDetails = ({
                 className={clsx(classes.textField, classes.minWidth252)}
               />
             </Grid>
-            {/* <Grid item xs={12}> */}
             <Typography className="subHeading">
-              <>{t("accountSettings.fixedComDetails.securitySettings")}</>
+              <>
+                {t("settings.accountSettings.fixedComDetails.securitySettings")}
+              </>
             </Typography>
-            {/* </Grid> */}
 
             <Grid container className={"subform"}>
               <Grid item xs={12} sm={6} md={4}>
@@ -406,7 +425,7 @@ const Form_CompanyDetails = ({
                   label={
                     <>
                       {t(
-                        "accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
+                        "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
                       )}
                     </>
                   }
@@ -417,10 +436,15 @@ const Form_CompanyDetails = ({
                 xs={12}
                 sm={6}
                 md={6}
-                className={clsx(classes.flex, "selectWrapper")}
+                className={clsx(classes.dFlex, "selectWrapper")}
+                alignItems="center"
               >
                 <Typography>
-                  <>{t("accountSettings.fixedComDetails.fields.sendMeCode")}</>
+                  <>
+                    {t(
+                      "settings.accountSettings.fixedComDetails.fields.sendMeCode"
+                    )}
+                  </>
                 </Typography>
                 <FormControl
                   className={classes.formControl}
@@ -484,7 +508,7 @@ const Form_CompanyDetails = ({
                       type: "changePwd",
                       data: {
                         title: t(
-                          "accountSettings.fixedComDetails.btnChangePwd"
+                          "settings.accountSettings.fixedComDetails.btnChangePwd"
                         ),
                       },
                     })
@@ -492,7 +516,9 @@ const Form_CompanyDetails = ({
                   startIcon={<UnLockIcon />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
-                  <>{t("accountSettings.fixedComDetails.btnChangePwd")}</>
+                  <>
+                    {t("settings.accountSettings.fixedComDetails.btnChangePwd")}
+                  </>
                 </Button>
                 <Button
                   className={clsx(
@@ -508,7 +534,7 @@ const Form_CompanyDetails = ({
                       type: "verifyPhone",
                       data: {
                         title: t(
-                          "accountSettings.fixedComDetails.btnVerifyNumber"
+                          "settings.accountSettings.fixedComDetails.btnVerifyNumber"
                         ),
                       },
                     })
@@ -516,7 +542,11 @@ const Form_CompanyDetails = ({
                   startIcon={<MdMobileFriendly />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
-                  <>{t("accountSettings.fixedComDetails.btnVerifyNumber")}</>
+                  <>
+                    {t(
+                      "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                    )}
+                  </>
                 </Button>
                 <Button
                   className={clsx(
@@ -532,7 +562,7 @@ const Form_CompanyDetails = ({
                       type: "verifyEmail",
                       data: {
                         title: t(
-                          "accountSettings.fixedComDetails.btnVerifyEmail"
+                          "settings.accountSettings.fixedComDetails.btnVerifyEmail"
                         ),
                       },
                     })
@@ -540,7 +570,11 @@ const Form_CompanyDetails = ({
                   startIcon={<MdOutlineMarkEmailRead />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
-                  <>{t("accountSettings.fixedComDetails.btnVerifyEmail")}</>
+                  <>
+                    {t(
+                      "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                    )}
+                  </>
                 </Button>
               </Grid>
               <Grid item xs={12} className={classes.justifyContentEnd}>
@@ -554,7 +588,7 @@ const Form_CompanyDetails = ({
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                   onClick={handleSave}
                 >
-                  <>{t("accountSettings.fixedComDetails.btnUpdate")}</>
+                  <>{t("settings.accountSettings.fixedComDetails.btnUpdate")}</>
                 </Button>
               </Grid>
             </Grid>

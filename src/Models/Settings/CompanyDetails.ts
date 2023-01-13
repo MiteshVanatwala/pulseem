@@ -30,7 +30,6 @@ export type CompanyDetailsType = {
 };
 
 export type CompDtlPropTypes = {
-  classes: any;
   setToastMessage: React.Dispatch<React.SetStateAction<null>>;
   ToastMessages: {
     [key: string]: any;

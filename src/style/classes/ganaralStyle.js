@@ -1747,10 +1747,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
 
-  accountSettingsContainer: {
+  settingsContainer: {
     marginBottom: 68,
     background: '#fff',
     marginTop: 30,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
     '& .head': {
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
@@ -1761,7 +1763,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .containerBody': {
       position: 'relative',
       paddingBottom: 48,
-      minHeight: 'calc(100vh - 10em)',
+      // minHeight: 'calc(100vh - 10em)',
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,
       border: "2px solid #F0F5FF",
@@ -1799,26 +1801,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             marginTop: 39,
             color: '#000'
           },
-          '& .subform': {
-            marginTop: 22,
-            '& .selectWrapper': {
-              height: 'auto',
-              '& .MuiTypography-body1': {
-                marginRight: isRTL ? 0 : 12,
-                marginLeft: isRTL ? 12 : 0
+          '& .MuiFormControl-root': {
+            maxWidth: 245,
+            '& .MuiSelect-root': {
+              padding: 0,
+              '&:focus': {
+                background: 'none'
+              },
+              '& input': {
+                padding: 0
               }
             },
-            '& .MuiFormControl-root': {
-              maxWidth: 245,
-              '& .MuiSelect-root': {
-                padding: 0,
-                '&:focus': {
-                  background: 'none'
-                },
-                '& input': {
-                  padding: 0
+            '& .subform': {
+              marginTop: 22,
+              '& .selectWrapper': {
+                height: 'auto',
+                '& .MuiTypography-body1': {
+                  marginRight: isRTL ? 0 : 12,
+                  marginLeft: isRTL ? 12 : 0
                 }
-              }
+              },
+
             }
           },
           '& .MuiTypography-body1': {
@@ -1846,11 +1849,48 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           }
         }
       }
+
       // display: 'grid',
       // padding: '0 17px 32.8px 17px'
     }
   },
 
+  addCardForm: {
+    maxWidth: 470,
+    margin: 0,
+    '& .textBoxWrapper': {
+      maxWidth: '100%'
+    },
+    '& .MuiFormControl-root': {
+      maxWidth: '100%',
+      '& .MuiSelect-root': {
+        maxHeight: 29,
+        overflow: "hidden",
+        padding: '3px 0 7px 0',
+
+        '&:focus': {
+          background: 'none'
+        },
+        '& input': {
+          padding: 0
+        }
+      },
+      '& .MuiSelect-icon': {
+        display: 'none'
+      },
+    },
+    '& .MuiOutlinedInput-adornedEnd': {
+      paddingRight: 0
+    },
+    '& .MuiInputAdornment-root': {
+      color: '#ff104b',
+      '& svg': {
+        '& path': {
+          fill: '#ff104b !important'
+        }
+      }
+    }
+  },
 
   areaCon: {
     width: "calc(100% - 20px)",

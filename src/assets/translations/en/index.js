@@ -20,7 +20,7 @@ import recipient from './Recipient.json'
 import group from './group.json'
 import mmsreport from './MMSReport.json'
 import whatsapp from './whatsapp.json'
-import accountSettings from './Settings.json'
+import settings from './Settings.json'
 
 export const en = {
   automations,
@@ -45,5 +45,5 @@ export const en = {
   group,
   mmsreport,
   whatsapp,
-  accountSettings
+  settings
 }

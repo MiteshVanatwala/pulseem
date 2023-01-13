@@ -19,13 +19,14 @@ import {
   AccDtlPropTypes,
   AccountDetailsType,
 } from "../../../Models/Settings/AccountDetails";
+import useCore from "../../../helpers/hooks/Core";
 
 const Form_AccountDetails = ({
-  classes,
   setToastMessage,
   ToastMessages,
 }: AccDtlPropTypes) => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
 
@@ -108,7 +109,7 @@ const Form_AccountDetails = ({
       className={"settingsWrapper"}
     >
       <Title
-        Text={t("accountSettings.actDetails.title")}
+        Text={t("settings.accountSettings.actDetails.title")}
         classes={classes}
         isIcon={false}
         ContainerStyle={{
@@ -146,7 +147,11 @@ const Form_AccountDetails = ({
           </Grid>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
             <Typography>
-              <>{t("accountSettings.actDetails.fields.fromPhoneNumber")}</>
+              <>
+                {t(
+                  "settings.accountSettings.actDetails.fields.fromPhoneNumber"
+                )}
+              </>
             </Typography>
             <TextField
               variant="outlined"
@@ -161,7 +166,11 @@ const Form_AccountDetails = ({
           <Grid container>
             <Grid item xs={12} sm={6} md={3} className={"textBoxWrapper"}>
               <Typography>
-                <>{t("accountSettings.actDetails.fields.unsubSettings")}</>
+                <>
+                  {t(
+                    "settings.accountSettings.actDetails.fields.unsubSettings"
+                  )}
+                </>
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={"textBoxWrapper"}>
@@ -177,7 +186,7 @@ const Form_AccountDetails = ({
                   label={
                     <>
                       {t(
-                        "accountSettings.actDetails.fields.unsubByEmailOrCell"
+                        "settings.accountSettings.actDetails.fields.unsubByEmailOrCell"
                       )}
                     </>
                   }
@@ -188,7 +197,7 @@ const Form_AccountDetails = ({
                   label={
                     <>
                       {t(
-                        "accountSettings.actDetails.fields.unsubByEmailAndCell"
+                        "settings.accountSettings.actDetails.fields.unsubByEmailAndCell"
                       )}
                     </>
                   }
@@ -197,7 +206,9 @@ const Form_AccountDetails = ({
             </Grid>
             <Grid item xs={12} sm={6} md={3} className={"textBoxWrapper"}>
               <Typography>
-                <>{t("accountSettings.actDetails.fields.smsUnsubLink")}</>
+                <>
+                  {t("settings.accountSettings.actDetails.fields.smsUnsubLink")}
+                </>
               </Typography>
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={"textBoxWrapper"}>
@@ -212,7 +223,9 @@ const Form_AccountDetails = ({
                   control={<Radio />}
                   label={
                     <>
-                      {t("accountSettings.actDetails.fields.regSmsUnsubLink")}
+                      {t(
+                        "settings.accountSettings.actDetails.fields.regSmsUnsubLink"
+                      )}
                     </>
                   }
                 />
@@ -221,7 +234,9 @@ const Form_AccountDetails = ({
                   control={<Radio />}
                   label={
                     <>
-                      {t("accountSettings.actDetails.fields.imdSmsUnsubLink")}
+                      {t(
+                        "settings.accountSettings.actDetails.fields.imdSmsUnsubLink"
+                      )}
                     </>
                   }
                 />
@@ -237,7 +252,7 @@ const Form_AccountDetails = ({
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 onClick={handleSave}
               >
-                <>{t("accountSettings.actDetails.btnUpdate")}</>
+                <>{t("settings.accountSettings.actDetails.btnUpdate")}</>
               </Button>
             </Grid>
           </Grid>
