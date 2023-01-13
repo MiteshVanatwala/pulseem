@@ -264,6 +264,12 @@ export const getRoutes = (
 				href: '/react/whatsapp/reports',
 				isShow: true,
 			},
+			{
+				key: 'chat',
+				title: 'Whatsapp Chat',
+				href: '/react/whatsapp/chat',
+				isShow: true,
+			},
 		],
 	},
 	{

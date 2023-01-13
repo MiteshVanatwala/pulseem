@@ -65,6 +65,7 @@ import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAp
 import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
 import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
 import SaveCampain from './screens/Whatsapp/Campaign/SaveCampain';
+import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 
 const renderRoutes = (classes, redirect) => {
 	const transferUrl =
@@ -264,6 +265,11 @@ const renderRoutes = (classes, redirect) => {
 			<Route
 				path={`/react/whatsapp/campaign/edit/page2/:campaignID`}
 				element={<SendCampaign classes={classes} />}
+			/>
+
+			<Route
+				path={`/react/whatsapp/chat`}
+				element={<WhatsappChat classes={classes} />}
 			/>
 
 			{/* MMS */}
