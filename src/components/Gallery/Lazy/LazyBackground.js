@@ -25,7 +25,9 @@ const LazyBackground = (props) => {
 
     const bgObject = { backgroundImage: `url('${props.url}')` }
     if (props?.style) {
-        Object.assign(bgObject, ...props?.style);
+        Object.keys(props.style)?.forEach((key) => {
+            bgObject[key] = props?.style[key];
+        });
     }
     else {
         bgObject["background-size"] = "cover";
