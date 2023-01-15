@@ -13,6 +13,7 @@ import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 
 const LatestReports = ({ classes, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
+  const { windowSize } = useSelector(state => state.core);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
   const dateTimeFormat = 'DD/MM/YY, HH:mm';
