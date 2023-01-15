@@ -186,6 +186,7 @@ const NotificationEditor = ({ classes, ...props }) => {
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
   const params = useParams();
+  const [isSending, setIsSending] = useState(false);
 
 
   const toastMessages = {
@@ -357,6 +358,7 @@ const NotificationEditor = ({ classes, ...props }) => {
     if (result && result.payload === true) {
       setSummary(null);
       setCampaignSent(true);
+      setIsSending(false);
     }
   }
   const getData = async () => {
@@ -1145,10 +1147,14 @@ const NotificationEditor = ({ classes, ...props }) => {
             <Button
               variant='contained'
               size='small'
-              onClick={insertNotificationForSend}
+              onClick={(e) => {
+                setIsSending(true);
+                insertNotificationForSend(e)
+              }}
               className={clsx(
                 classes.dialogButton,
-                classes.dialogConfirmButton
+                classes.dialogConfirmButton,
+                isSending ? classes.disabled : null
               )}>
               {t('common.Send1')}
             </Button>
