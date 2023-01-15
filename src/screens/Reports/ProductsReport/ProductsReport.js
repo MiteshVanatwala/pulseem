@@ -21,7 +21,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
-import { renderHtml } from '../../../helpers/functions';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -437,7 +437,7 @@ const ProductsReport = ({ classes }) => {
             </Typography>
             <Divider />
             <Grid item xs={12}>
-                <Typography>{renderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
+                <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
             </Grid>
             {renderFilter()}
             {renderManagmentLine()}

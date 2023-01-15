@@ -50,7 +50,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, FlatObject, FormatDate, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
+import { HandleExportData, FlatObject, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
 import { ClientStatus, SmsStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -361,9 +361,9 @@ const ClientSearchResult = ({ props, classes }) => {
           client.SmsStatus = t(tempSmsStatus.value);
           return client;
         }, []);
-        orderList = orderList.map((ol) => { return flatObject(ol) });
+        orderList = orderList.map((ol) => { return FlatObject(ol) });
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+          orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
@@ -1279,7 +1279,7 @@ const ClientSearchResult = ({ props, classes }) => {
             const clientToEdit = recipientRequest?.payload?.Data[0];
             //const existsClient = data.find((c) => { return c.ClientID === ClientID });
             const tempData = data.filter((c) => { return c.ClientID !== ClientID });
-            setData([ ...tempData, clientToEdit ])
+            setData([...tempData, clientToEdit])
             setClientToEdit(clientToEdit);
             setDialog(DialogType.EDIT_RECIPIENT);
             setLoader(false);
