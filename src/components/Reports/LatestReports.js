@@ -198,7 +198,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
                   <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
-                    <Grid item lg={12} xs={12}>
+                    <Grid item lg={12} xs={12} style={{ paddingInline: windowSize === 'xs' ? 15 : null }}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
                           <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText, classes.graphCampaignName)}>
