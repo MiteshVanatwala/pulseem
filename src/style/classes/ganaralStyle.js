@@ -2580,5 +2580,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   buttonMinWidth: {
     minWidth: 167
+  },
+  textRed: {
+    color: '#c9302c'
   }
 });
