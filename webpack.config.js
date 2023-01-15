@@ -24,10 +24,5 @@ module.exports = {
         minimizer: [new TerserPlugin({
             extractComments: false,
         })],
-    },
-    externals: {
-        'react': 'window.unlayer.React',
-        'react-dom': 'window.unlayer.ReactDOM',
-        'react-dnd': 'window.unlayer.ReactDND'
     }
 };
