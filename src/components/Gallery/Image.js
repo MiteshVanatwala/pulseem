@@ -66,7 +66,7 @@ export const Image = ({
                                 onClick={onDelete(imgFile)}
                             >X</button>
                         </LazyBackground>) : (
-                            <LazyBackground url={icons[fileExtension.toLowerCase()]} style={[{ backgroundSize: 'auto !important' }]} key={imgKey}>
+                            <LazyBackground url={icons[fileExtension.toLowerCase()]} style={{ backgroundSize: 'auto !important' }} key={imgKey}>
                                 <button
                                     id={`file_${fileIndex}`}
                                     className={clsx(classes.absTopRight)}
