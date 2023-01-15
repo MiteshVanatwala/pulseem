@@ -901,18 +901,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             </Stack>
                         </Stack>
                         <Stack justifyContent="center" >
-                            {activeTab === 0 &&
+                            {activeTab === 0 && groupData?.Groups &&
                                 <Groups
                                     classes={classes}
-                                    list={showTestGroups ? [...testGroups.concat(groupData?.Groups)] : groupData?.Groups}
-                                    // list={groupData?.Groups}
+                                    list={showTestGroups ? [...testGroups.concat(groupData?.Groups)] : [...groupData?.Groups]}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}
                                     callbackUpdateGroups={callbackUpdateGroups}
                                     callbackSelectAll={callbackSelectAll}
-                                    //callbackReciFilter={() => setDialogType({ type: "filterRecipients" })}
                                     callbackShowTestGroup={callbackShowTextGroups}
-                                    // () => setShowTestGroups(!showTestGroups)}
                                     showFilter={false}
                                     isSms={true}
                                     uniqueKey={'groups_2'}
