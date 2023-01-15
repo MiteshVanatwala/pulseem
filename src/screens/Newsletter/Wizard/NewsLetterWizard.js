@@ -575,7 +575,7 @@ const NewsLetterWizard = ({ classes }) => {
                                             </Select>
                                             <FormHelperText style={{ fontSize: '1rem' }}>
                                                 {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
-                                                <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                                                <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
                                             </FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }
