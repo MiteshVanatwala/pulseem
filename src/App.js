@@ -103,10 +103,6 @@ const renderRoutes = (classes, history) => {
         path={`/homepage`}
         element={transferUrl('/Pulseem/homepage.aspx')}
       />
-      {/* <Route
-        path={`/Groups`}
-        element={transferUrl('/Pulseem/Groups.aspx')}
-      /> */}
       <Route
         path={'/Groups'}
         element={<Groups classes={classes} />}

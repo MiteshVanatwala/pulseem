@@ -20,6 +20,8 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { preferredOrder } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
+import { renderHtml } from '../../../helpers/functions';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -37,7 +39,7 @@ const ProductsReport = ({ classes }) => {
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
 
     const { t } = useTranslation()
-    const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
+    const [searchData, setSearchData] = useState(DEFAULT_FILTER)
     const [isSearching, setIsSearching] = useState(true);
     const [filter, setFilter] = useState(false);
     const [page, setPage] = useState(1)
@@ -50,20 +52,19 @@ const ProductsReport = ({ classes }) => {
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const [showLoader, setLoader] = useState(true);
     const [dialogType, setDialogType] = useState(null);
+    const rowsOptions = [6, 10, 20, 50];
 
     moment.locale(language)
 
     const GetSortIcon = (key) => {
 
         const handleClickSort = (order) => {
-            setFilterValues({ ...filterValues, OrderByParameter: key, OrderBY: order })
+            setSearchData({ ...searchData, OrderByParameter: key, OrderBY: order })
             setTimeout(() => {
                 setIsSearching(true)
             }, 200);
         }
-
-
-        if (filterValues?.OrderBY === 0 && filterValues?.OrderByParameter === key) {
+        if (searchData?.OrderBY === 0 && searchData?.OrderByParameter === key) {
             return <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => handleClickSort(1)} />
         }
         else {
@@ -84,7 +85,7 @@ const ProductsReport = ({ classes }) => {
     useEffect(() => {
         const initProducts = async () => {
             setLoader(true);
-            await dispatch(GetProductReports({ ...filterValues, PageSize: rowsPerPage }));
+            await dispatch(GetProductReports({ ...searchData, PageSize: rowsPerPage }));
             setIsSearching(false)
             setLoader(false)
         }
@@ -103,7 +104,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
+                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
                 }
             }),
         },
@@ -114,7 +115,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    ReportType: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
+                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
                 }
             }),
         },
@@ -146,14 +147,6 @@ const ProductsReport = ({ classes }) => {
         });
         setLoader(false);
     }
-
-    const handleRowsPerPageSearching = (val) => {
-        dispatch(setRowsPerPage(val))
-    }
-    const handlePageChange = (val) => {
-        setPage(val);
-    }
-
     //  COMPONENTS  //
     const renderFilter = () => {
 
@@ -166,8 +159,8 @@ const ProductsReport = ({ classes }) => {
                     <TextField
                         variant='outlined'
                         size='small'
-                        value={filterValues.ProductName}
-                        onChange={(e) => setFilterValues({ ...filterValues, ProductName: e.target.value })}
+                        value={searchData.ProductName}
+                        onChange={(e) => setSearchData({ ...searchData, ProductName: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={t('report.ProductsReport.prodName')}
                     />
@@ -184,10 +177,10 @@ const ProductsReport = ({ classes }) => {
                             labelId="category"
                             id="category"
                             multiple
-                            value={filterValues.CategoryID}
+                            value={searchData.CategoryID}
                             inputProps={{
                                 placeholder: t('report.ProductsReport.category'),
-                                class: filterValues.CategoryID.length === 0 ? classes.selectPlaceholderInput : classes.dNone
+                                class: searchData.CategoryID.length === 0 ? classes.selectPlaceholderInput : classes.dNone
 
                             }}
 
@@ -198,14 +191,14 @@ const ProductsReport = ({ classes }) => {
                                 }
                             }}
                             renderValue={(selected) => productCategories.reduce((prev, next) => selected.indexOf(next.CategoryId) > -1 ? [...prev, next.CategoryName] : prev, []).join(', ')}
-                            onChange={(e) => setFilterValues({ ...filterValues, CategoryID: typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value })}
+                            onChange={(e) => setSearchData({ ...searchData, CategoryID: typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value })}
                         >
                             {
                                 productCategories.map((obj, idx) =>
                                     <MenuItem key={`op${obj.CategoryId}`} value={obj.CategoryId}
                                         style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                                     >
-                                        <Checkbox size="small" color="primary" checked={filterValues.CategoryID.indexOf(obj.CategoryId) > -1} />
+                                        <Checkbox size="small" color="primary" checked={searchData.CategoryID.indexOf(obj.CategoryId) > -1} />
                                         <ListItemText primary={t(obj.CategoryName)} />
                                     </MenuItem>
                                 )
@@ -219,7 +212,7 @@ const ProductsReport = ({ classes }) => {
                         size='large'
                         variant='contained'
                         onClick={() => {
-                            if (filterValues.CategoryID.length > 0 || filterValues.ProductName) {
+                            if (searchData.CategoryID.length > 0 || searchData.ProductName) {
                                 setIsSearching(true)
                                 setFilter(true)
                             }
@@ -237,11 +230,9 @@ const ProductsReport = ({ classes }) => {
                             size='large'
                             variant='contained'
                             onClick={() => {
-                                setFilterValues(DEFAULT_FILTER)
-                                setTimeout(() => {
-                                    setIsSearching(true)
-                                    setFilter(false)
-                                }, 200);
+                                setSearchData(DEFAULT_FILTER)
+                                setIsSearching(true)
+                                setFilter(false)
                             }}
                             className={classes.searchButton}
                             endIcon={<ClearIcon />}>
@@ -254,9 +245,9 @@ const ProductsReport = ({ classes }) => {
     }
 
     const renderManagmentLine = () => {
-        const dataLength = productsReportDetails.length;
+        const dataLength = productsReportDetails?.TotalProducts;
         return (
-            <Grid container spacing={2} className={classes.linePadding} >
+            <Grid container spacing={2} className={classes.linePadding}>
                 {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         variant='contained'
@@ -266,7 +257,7 @@ const ProductsReport = ({ classes }) => {
                             classes.actionButtonGreen,
                         )}
                         onClick={() => {
-                            dispatch(GetProductReports({ ...filterValues, IsExport: true }))
+                            dispatch(GetProductReports({ ...searchData, IsExport: true }))
                             setDialogType('exportFormat')
                         }}
                         startIcon={<ExportIcon />}
@@ -320,7 +311,13 @@ const ProductsReport = ({ classes }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={clsx(classes.flex1)}>
-                    <img src={ImageURL} alt={ProductName} className={classes.imgFluid} />
+                    <LazyBackground
+                        style={{ 'background-size': 'contain' }}
+                        url={ImageURL}
+                        title={ProductName}
+                        height={'100px'}
+                    />
+                    {/* <img src={ImageURL} alt={ProductName} className={classes.imgFluid} /> */}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
@@ -344,13 +341,13 @@ const ProductsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(Purchased, hrefs.Purchased)}
+                    {renderIntData(Purchased, Purchased > 0 && hrefs.Purchased)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(Abandoned, hrefs.Abandoned)}
+                    {renderIntData(Abandoned, Abandoned > 0 && hrefs.Abandoned)}
                 </TableCell>
                 <TableCell
                     classes={noBorderCellStyle}
@@ -366,25 +363,56 @@ const ProductsReport = ({ classes }) => {
         return <></>
     }
 
+    const handleRowsPerPageSearching = (val) => {
+        dispatch(setRowsPerPage(val));
+        setIsSearching(true)
+    }
+    const handlePageChange = (val) => {
+        setSearchData({ ...searchData, PageIndex: val });
+        setIsSearching(true)
+    }
+
     const renderTableBody = () => {
-        let rowData = productsReportDetails;
-
-        if (rowData.length > 0) {
-            let rpp = parseInt(rowsPerPage)
-            rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-
+        if (productsReportDetails && productsReportDetails?.Products?.length > 0) {
             return (
-                <TableBody>
-                    {rowData
-                        .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-                </TableBody>
-            )
+                <DataTable
+                    tableContainer={{
+                        className:
+                            windowSize === "xs"
+                                ? clsx(classes.mt3, classes.tableStyle)
+                                : classes.tableStyle,
+                    }}
+                    table={{ className: classes.tableContainer }}
+                    tableHead={{
+                        tableHeadCells: TABLE_HEAD,
+                        classes: rowStyle,
+                        className: windowSize === "xs" && classes.dNone,
+                    }}
+                >
+                    <TableBody>
+                        {productsReportDetails?.Products
+                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                    </TableBody>
+                </DataTable>)
         }
         return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
             <Typography>{t("common.NoDataTryFilter")}</Typography>
         </Box>
     }
 
+    const renderTablePagination = () => {
+        return (
+            <TablePagination
+                classes={classes}
+                rows={productsReportDetails?.TotalProducts ? productsReportDetails?.TotalProducts : 0}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleRowsPerPageSearching}
+                rowsPerPageOptions={rowsOptions}
+                page={searchData.PageIndex}
+                onPageChange={handlePageChange}
+            />
+        )
+    }
 
     return (
         <DefaultScreen
@@ -396,25 +424,13 @@ const ProductsReport = ({ classes }) => {
                 {t('report.ProductsReport.title')}
             </Typography>
             <Divider />
+            <Grid item xs={12}>
+                <Typography>{renderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
+            </Grid>
             {renderFilter()}
             {renderManagmentLine()}
-            <DataTable
-                tableContainer={{ className: classes.tableStyle }}
-                table={{ className: classes.tableContainer }}
-                tableHead={{ tableHeadCells: TABLE_HEAD, classes: rowStyle, className: windowSize === 'xs' && classes.dNone }}
-            >
-                {renderTableBody()}
-            </DataTable>
-            <TablePagination
-                classes={classes}
-                rows={productsReportDetails?.length ?? 0}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleRowsPerPageSearching}
-                rowsPerPageOptions={[6, 10, 20, 50]}
-                page={page}
-                onPageChange={handlePageChange}
-            />
-
+            {renderTableBody()}
+            {renderTablePagination()}
             <ConfirmRadioDialog
                 classes={classes}
                 isOpen={dialogType === 'exportFormat'}
