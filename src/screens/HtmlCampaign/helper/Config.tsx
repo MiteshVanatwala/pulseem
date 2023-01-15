@@ -47,7 +47,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: false,
         autosave: 60,
-        translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
+        // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,

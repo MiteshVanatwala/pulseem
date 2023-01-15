@@ -27,5 +27,5 @@ module.exports = {
         minimizer: [new TerserPlugin({
             extractComments: false,
         })],
-    },
+    }
 };

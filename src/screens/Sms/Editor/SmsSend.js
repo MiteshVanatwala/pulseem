@@ -1422,11 +1422,7 @@ const SmsSend = ({ classes, ...props }) => {
     if (
       pulseType === 2
     ) {
-      addTime =
-        ((summary.FinalCount -
-          pulseAmount) *
-          timeInterval) /
-        pulseAmount;
+      addTime = (Math.ceil(((summary.FinalCount - pulseAmount) / pulseAmount))) * timeInterval
     } else {
       let recipientPercents =
         (summary.FinalCount *
@@ -1440,8 +1436,8 @@ const SmsSend = ({ classes, ...props }) => {
 
     return moment(date)
       .add(
-        Math.round(addTime),
-        timeType === 1
+        addTime,
+        timeType === 1 || timeType === '1'
           ? "m"
           : "h"
       )

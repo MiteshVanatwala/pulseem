@@ -259,7 +259,7 @@ const ClientSearchResult = ({ props, classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
       if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -354,10 +354,16 @@ const ClientSearchResult = ({ props, classes }) => {
       const data = response.payload;
       const promiseArray = [];
       if (data.StatusCode === 201) {
-        let orderList = [];
-        orderList = data.Clients.map((ol) => { return FlatObject(ol) });
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
+        let orderList = await data.Clients.map((client) => {
+          let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
+          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+          client.Status = t(tempStatus.value);
+          client.SmsStatus = t(tempSmsStatus.value);
+          return client;
+        }, []);
+        orderList = orderList.map((ol) => { return flatObject(ol) });
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {

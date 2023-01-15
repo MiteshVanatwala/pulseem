@@ -44,6 +44,9 @@ const useStyles = makeStyles({
         },
         '& .MuiFormHelperText-contained': {
             marginInline: 0
+        },
+        '& .MuiFormHelperText-root': {
+            fontSize: '1rem'
         }
     },
     autocomplete: {
@@ -568,7 +571,7 @@ const NewsLetterInfo = ({ classes }) => {
                                                 }
                                                 )}
                                             </Select>
-                                            <FormHelperText>
+                                            <FormHelperText style={{ fontSize: '1rem' }}>
                                                 {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
                                                 <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
                                             </FormHelperText>
@@ -910,13 +913,12 @@ const NewsLetterInfo = ({ classes }) => {
             <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
                 <WizardActions
                     classes={classes}
-                    // onSave={handleSubmit}
-                    onBack={() => { setConfirmExit(true) }}
+                    onBack={{
+                        callback: () => { setConfirmExit(true) }
+                    }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={renderButtons()}
-                >
-
-                </WizardActions>
+                />
             </Box>
             <BaseDialog
                 classes={classes}

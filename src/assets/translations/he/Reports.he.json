@@ -102,7 +102,8 @@
     "purchased": "נמענים שרכשו",
     "abandoned": "נמענים שנטשו",
     "revenueFrmProd": "סך ההכנסות מהמוצר",
-    "productId": "מוצר מספר"
+    "productId": "מוצר מספר",
+    "registrationGuide": "חברו את החנות האינטרנטית שלכם לפולסים בעזרת ה-API שלנו או באמצעות התוספים ל-Wix ו-WooCommerce<br/>לתמיכה: <a href='tel:035240290'>035240290</a> / <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
   },
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
   "Reactivate": "Reactivate / בטל הסרה",

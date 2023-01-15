@@ -710,7 +710,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         classes={classes}
         onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
-        onBack={onBack}
+        onBack={{
+          callback: () => { onBack() },
+          text: t('campaigns.newsletterSetUp')
+        }}
         onDelete={onDelete}
         onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
