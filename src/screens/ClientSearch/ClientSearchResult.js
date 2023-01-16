@@ -608,7 +608,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [Min, Max]
+      // filterComponents: [Min, Max]
     },
   }
   const TABLE_HEAD = [
