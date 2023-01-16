@@ -2041,10 +2041,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.chat__input': {
 			background: 'white',
 			color: 'rgb(74, 74, 74)',
-			padding: '20px 10px',
+			padding: '11px 10px',
 			borderRadius: '22px',
 			flex: '1',
 			height: '100%',
+			resize: 'none',
 		},
 		'&.chat__input::placeholder': {
 			color: 'rgb(153, 153, 153)',
@@ -2388,6 +2389,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	chatTemplateModalTemplateDataWrapper: {
 		flexWrap: 'unset',
-		alignItems: 'flex-end'
+		alignItems: 'flex-end',
+		justifyContent: 'space-between',
 	},
 });

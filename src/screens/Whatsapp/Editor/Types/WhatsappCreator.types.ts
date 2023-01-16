@@ -303,12 +303,18 @@ export type templateListItemsProps = {
 	TemplateName: string;
 };
 
-export type templateListPayloadProps = {
+export type templateListDataProps = {
 	Error: string;
 	Count: number;
 	Message: string;
-	Status: string;
+	Status: number;
 	Items: saveTemplateItemsProps[];
+};
+
+export type templateListPayloadProps = {
+	Message: string;
+	Status: number;
+	Data: templateListDataProps;
 };
 
 export type templateListAPIProps = {

@@ -52,7 +52,6 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
 import {
 	ManagmentIconProps,
-	apiTemplateRowDataProps,
 } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
@@ -134,9 +133,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: templateListAPIProps = await dispatch<any>(
 			getAllTemplates()
 		);
-		if (templateData.payload.Status === 'SUCCESS') {
-			setTemplateListData(templateData.payload.Items);
-			setTableData(templateData.payload.Items);
+		if (templateData.payload.Message === 'Success') {
+			setTemplateListData(templateData.payload?.Data?.Items);
+			setTableData(templateData.payload?.Data?.Items);
 			setIsLoader(false);
 		} else {
 			setTemplateListData([]);
@@ -198,10 +197,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.recipientsStatus, {
-						[classes.recipientsStatusCreated]: status === 'Received',
+						[classes.recipientsStatusStopped]: status === 'CreatedOnlyforPulseem',
 						[classes.recipientsStatusCreated]: status === 'Approved',
 						[classes.recipientsStatusSending]: status === 'Pending',
-						[classes.recipientsStatusCanceled]: status === 'Received',
+						[classes.recipientsStatusSent]: status === 'Received',
 						[classes.recipientsStatusCanceled]: status === 'Rejected',
 					})}>
 					<>
@@ -372,7 +371,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplatesById({ templateId })
 		);
-		if (templateData.payload.Status === 'Success') {
+		if (templateData.payload.Message === 'Success') {
 			const templates = templateData.payload?.Data?.Items
 				? templateData.payload?.Data?.Items
 				: [];
@@ -388,7 +387,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplatesById({ templateId })
 		);
-		if (templateData.payload.Status === 'Success') {
+		if (templateData.payload.Message === 'Success') {
 			const templates = templateData.payload?.Data?.Items
 				? templateData.payload?.Data?.Items
 				: [];
@@ -511,7 +510,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		}
 		if (campainStatusSearch && campainStatusSearch?.length > 0) {
 			searchedData = searchedData?.filter((row: templateListItemsProps) =>
-				row.Status?.includes(campainStatusSearch)
+				row.Status?.includes(campainStatusSearch.trim())
 			);
 		}
 		return searchedData;
@@ -520,7 +519,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const getRows = () => {
 		let sortData = tableData;
 
-		sortData = sortData.slice(
+		sortData = sortData?.slice(
 			(page - 1) * rowsPerPage,
 			(page - 1) * rowsPerPage + rowsPerPage
 		);
@@ -536,7 +535,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 			deleteTemplate(activeRowId)
 		);
-		if (deleteData?.payload?.Status === 'Success') {
+		if (deleteData?.payload?.Message === 'Success') {
 			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {

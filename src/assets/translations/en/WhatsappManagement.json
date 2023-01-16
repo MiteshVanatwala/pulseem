@@ -27,5 +27,6 @@
 	"rejected": "Rejected",
 	"finished": "Finished",
 	"sending": "Sending",
-	"canceled": "Canceled"
+	"canceled": "Canceled",
+	"CreatedOnlyforPulseem": "Created Only for Pulseem"
 }

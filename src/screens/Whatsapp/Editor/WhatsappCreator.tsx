@@ -84,7 +84,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
-		console.log('savedTemplate::', savedTemplate);
 		setSavedTemplateList(savedTemplate.payload.Data.Items);
 	};
 	useEffect(() => {
@@ -423,7 +422,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			getSavedTemplatesById({ templateId })
 		);
 		setIsLoader(false);
-		if (templateData.payload.Status === 'Success') {
+		if (templateData.payload.Message === 'Success') {
 			const templates = templateData.payload?.Data?.Items
 				? templateData.payload?.Data?.Items
 				: [];
@@ -759,11 +758,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
 			submitTemplates(getRequestJSON(true))
 		);
-		if (submitTemplate?.payload?.Status === 'Success') {
+		if (submitTemplate?.payload?.Message === 'Success') {
 			setIsSubmitCampaignOpen(false);
 			setToastMessage(ToastMessages.SAVE_SUCCESS);
 			resetFields();
-		} else if (submitTemplate?.payload?.Status === 'Error') {
+		} else if (submitTemplate?.payload?.Message === 'Error') {
 			if (submitTemplate?.payload?.Message?.length > 0) {
 				setToastMessage({
 					...ToastMessages.ERROR,
@@ -794,7 +793,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 				deleteTemplate(templateID)
 			);
-			if (deleteData?.payload?.Status === 'Success') {
+			if (deleteData?.payload?.Message === 'Success') {
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 				resetFields();
 				setIsDeleteCampaignOpen(false);
@@ -817,11 +816,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
 			submitTemplates(getRequestJSON(false))
 		);
-		if (submitTemplate?.payload?.Status === 'Success') {
+		if (submitTemplate?.payload?.Message === 'Success') {
 			setIsSubmitCampaignOpen(false);
 			setToastMessage(ToastMessages.SUCCESS);
 			resetFields();
-		} else if (submitTemplate?.payload?.Status === 'Error') {
+		} else if (submitTemplate?.payload?.Message === 'Error') {
 			if (submitTemplate?.payload?.Message?.length > 0) {
 				setToastMessage({
 					...ToastMessages.ERROR,

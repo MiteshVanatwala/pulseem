@@ -7,18 +7,67 @@ import { Grid, IconButton } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
+import Highlighter from 'react-highlight-words';
+import {
+	tagDataProps,
+	updatedVariableProps,
+} from '../../Campaign/Types/WhatsappCampaign.types';
+import clsx from 'clsx';
 
 const ChatUi = ({
 	classes,
 	setIsMobileSideBar,
 	isMobileSideBar,
+	savedTemplateList,
+	onChoose,
+	newMessage,
+	setNewMessage,
+	isTemplateModal,
+	setIsTemplateModal,
 }: WhatsappChatUiProps) => {
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
-	const [newMessage, setNewMessage] = useState<string>('');
-	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
+	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
+	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
+	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
+		updatedVariableProps[]
+	>([]);
 	const formatTime = (timeString: string) => {
 		let splitTimeString = timeString.split(':');
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
+	};
+	const isUpdatedVaraiable = (variable: string) => {
+		let updatedVariable = variable?.replace(/[{}]/g, '');
+		const isAvaliable = updatedDynamicVariable?.find(
+			(dynamicVariable: updatedVariableProps) =>
+				dynamicVariable.VariableIndex === Number(updatedVariable)
+		);
+		return !!isAvaliable;
+	};
+	const openDynamcFieldModal = async (variable: string) => {
+		setIsDynamcFieldModal(true);
+	};
+	const getUpdatedVariableValue = (variable: string) => {
+		let updatedVariable = variable?.replace(/[{}]/g, '');
+		const variableValue = updatedDynamicVariable?.find(
+			(dynamicVariable: updatedVariableProps) =>
+				dynamicVariable.VariableIndex === Number(updatedVariable)
+		)?.VariableValue;
+		return variableValue ? variableValue : variable;
+	};
+	const highlightText = (tagData: tagDataProps) => {
+		const isUpdated = isUpdatedVaraiable(tagData?.children);
+		return (
+			<strong
+				className={clsx(
+					classes.whatsappCampainHighlightText,
+					`${isUpdated && 'updated'}`
+				)}
+				onClick={() => openDynamcFieldModal(tagData?.children)}>
+				{isUpdated
+					? getUpdatedVariableValue(tagData?.children)
+					: tagData?.children}
+			</strong>
+		);
 	};
 	const onEmojiClick = (emoji: EmojiClickData, event: MouseEvent) => {
 		setNewMessage(`${newMessage} ${emoji.emoji}`);
@@ -262,12 +311,20 @@ const ChatUi = ({
 									<EmojiPicker onEmojiClick={onEmojiClick} />
 								</Grid>
 							)}
-							<input
+							<textarea
 								className={`${classes.whatsappChat} chat__input`}
 								placeholder='Type a message'
 								value={newMessage}
-								onChange={(e) => setNewMessage(e.target.value)}
-							/>
+								onChange={(e) => setNewMessage(e.target.value)}>
+								<Highlighter
+									searchWords={dynamicVariable}
+									autoEscape={true}
+									textToHighlight={newMessage}
+									highlightTag={(tagData: tagDataProps) =>
+										highlightText(tagData)
+									}
+								/>
+							</textarea>
 							<button aria-label='Send message'>
 								<Icon
 									id='send'
@@ -281,6 +338,10 @@ const ChatUi = ({
 					classes={classes}
 					isOpen={isTemplateModal}
 					onClose={() => setIsTemplateModal(false)}
+					savedTemplateList={savedTemplateList}
+					onChoose={(template, templateText) =>
+						onChoose(template, templateText)
+					}
 				/>
 			</div>
 		</>

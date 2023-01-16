@@ -48,6 +48,11 @@ export enum reportCellNames {
 	FAILED = 'Failed',
 }
 
+export enum APIStatuses {
+	SUCCESS = 'Success',
+	ERROR = 'Error',
+}
+
 export const countryCodes = [
 	'+93 AF',
 	'+355 AL',
@@ -1370,14 +1375,11 @@ export const statuses: statusProps = {
 };
 
 export const statusesByName: statusByNameProps = {
-	Created: 'whatsappManagement.created',
 	Pending: 'whatsappManagement.pending',
 	Rejected: 'whatsappManagement.rejected',
 	Approved: 'whatsappManagement.approved',
 	Received: 'whatsappManagement.received',
-	Finished: 'whatsappManagement.finished',
-	Sending: 'whatsappManagement.sending',
-	Canceled: 'whatsappManagement.canceled',
+	ForPulseem: 'whatsappManagement.CreatedOnlyforPulseem'
 };
 
 export const campaignData: campaignDataProps[] = [
