@@ -1,6 +1,9 @@
 import { ClassesType } from '../../../Classes.types';
 import { BaseSyntheticEvent, RefObject } from 'react';
-import { campaignDataProps, reportDataProps } from '../../Campaign/Types/WhatsappCampaign.types';
+import {
+	campaignDataProps,
+	reportDataProps,
+} from '../../Campaign/Types/WhatsappCampaign.types';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -258,12 +261,16 @@ export type saveTemplateItemsProps = {
 	TemplateName: string;
 };
 
-export type saveTemplatePayloadProps = {
+export type saveTemplateDataProps = {
 	Error: string;
 	Count: number;
+	Items: saveTemplateItemsProps[];
+};
+
+export type saveTemplatePayloadProps = {
+	Data: saveTemplateDataProps;
 	Message: string;
 	Status: string;
-	Items: saveTemplateItemsProps[];
 };
 
 export type savedTemplateAPIProps = {

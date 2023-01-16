@@ -63,11 +63,11 @@ type apiCombineGroupProps = {
 };
 
 export const getSavedTemplates = createAsyncThunk(
-	'whatsAppCampaign/GetWhatsAppTemplate',
+	'WhatsAppTemplate/GetWhatsAppTemplate',
 	async (data: apiGetSavedTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/GetWhatsAppTemplate`,
+				`WhatsAppTemplate/GetWhatsAppTemplate`,
 				data
 			);
 
@@ -80,11 +80,11 @@ export const getSavedTemplates = createAsyncThunk(
 );
 
 export const getSavedTemplatesById = createAsyncThunk(
-	'whatsAppCampaign/GetWhatsAppTemplate',
+	'WhatsAppTemplate/GetWhatsAppTemplate',
 	async (data: apiGetSavedTemplatesDataByIdProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/GetWhatsAppTemplate`,
+				`WhatsAppTemplate/GetWhatsAppTemplate`,
 				data
 			);
 
@@ -97,11 +97,11 @@ export const getSavedTemplatesById = createAsyncThunk(
 );
 
 export const submitTemplates = createAsyncThunk(
-	'whatsAppCampaign/SubmitWhatsAppTemplate',
+	'WhatsAppTemplate/SubmitWhatsAppTemplate',
 	async (data: apiSubmitTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/SubmitWhatsAppTemplate`,
+				`WhatsAppTemplate/SubmitWhatsAppTemplate`,
 				data
 			);
 
@@ -214,11 +214,11 @@ export const userPhoneNumbers = createAsyncThunk(
 );
 
 export const deleteTemplate = createAsyncThunk(
-	'whatsAppCampaign/DeleteWhatsAppTemplate',
+	'WhatsAppTemplate/DeleteWhatsAppTemplate',
 	async (templateId: string, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.get(
-				`whatsAppCampaign/DeleteWhatsAppTemplate/${templateId}`
+				`WhatsAppTemplate/DeleteWhatsAppTemplate/${templateId}`
 			);
 			return response.data;
 		} catch (error) {
@@ -229,11 +229,11 @@ export const deleteTemplate = createAsyncThunk(
 );
 
 export const getAllTemplates = createAsyncThunk(
-	'whatsAppCampaign/GetWhatsAppTemplate',
+	'WhatsAppTemplate/GetWhatsAppTemplate',
 	async (_data, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/GetWhatsAppTemplate`
+				`WhatsAppTemplate/GetWhatsAppTemplate`
 			);
 
 			return response.data;

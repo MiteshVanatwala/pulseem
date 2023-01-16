@@ -216,7 +216,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
-		setSavedTemplateList(savedTemplate.payload.Items);
+		setSavedTemplateList(savedTemplate.payload?.Data?.Items);
 	};
 
 	useEffect(() => {
@@ -562,7 +562,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onOkTestSending = () => {
 		if (validateSaveCampaign()) {
-			console.log('onOkTestSending')
+			console.log('onOkTestSending');
 			setIsTestGroupModal(false);
 		} else {
 			setIsTestGroupModal(false);

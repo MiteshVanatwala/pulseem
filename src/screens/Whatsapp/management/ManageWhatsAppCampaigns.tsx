@@ -438,9 +438,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					: 'HX7d12be9e2c0cef2863d4adb5e27c40e2',
 			})
 		);
-		if (templateData.payload.Status === 'SUCCESS') {
-			const templates = templateData.payload.Items
-				? templateData.payload.Items
+		if (templateData.payload.Status === 'Success') {
+			const templates = templateData.payload?.Data?.Items
+				? templateData.payload?.Data?.Items
 				: [];
 			if (templates && templates?.length > 0) {
 				const templateData = templates[0]?.Data;
@@ -664,7 +664,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const campaignData: campaignListAPIProps = await dispatch<any>(
 			getAllCampaigns()
 		);
-		if (campaignData.payload.Status === 'SUCCESS') {
+		if (campaignData.payload.Status === 'Success') {
 			setCampaignListData(campaignData.payload.Items);
 			setTableData(campaignData.payload.Items);
 			setIsLoader(false);

@@ -372,9 +372,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplatesById({ templateId })
 		);
-		if (templateData.payload.Status === 'SUCCESS') {
-			const templates = templateData.payload.Items
-				? templateData.payload.Items
+		if (templateData.payload.Status === 'Success') {
+			const templates = templateData.payload?.Data?.Items
+				? templateData.payload?.Data?.Items
 				: [];
 			if (templates && templates?.length > 0) {
 				const templateData = templates[0]?.Data;
@@ -388,9 +388,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplatesById({ templateId })
 		);
-		if (templateData.payload.Status === 'SUCCESS') {
-			const templates = templateData.payload.Items
-				? templateData.payload.Items
+		if (templateData.payload.Status === 'Success') {
+			const templates = templateData.payload?.Data?.Items
+				? templateData.payload?.Data?.Items
 				: [];
 			if (templates && templates?.length > 0) {
 				const templateData = templates[0]?.Data;

@@ -6,6 +6,7 @@ import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
 import { Grid, IconButton } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+import ChatTemplateModal from '../Popups/ChatTemplateModal';
 
 const ChatUi = ({
 	classes,
@@ -14,6 +15,7 @@ const ChatUi = ({
 }: WhatsappChatUiProps) => {
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
 	const [newMessage, setNewMessage] = useState<string>('');
+	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
 	const formatTime = (timeString: string) => {
 		let splitTimeString = timeString.split(':');
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
@@ -241,6 +243,18 @@ const ChatUi = ({
 									}`}
 								/>
 							</button>
+							<button
+								aria-label='chat'
+								onClick={() => setIsTemplateModal(true)}>
+								<Icon
+									id='chat'
+									className={`${classes.whatsappChat} chat__input-icon ${
+										showEmojis
+											? `${classes.whatsappChat} chat__input-icon--highlight`
+											: ''
+									}`}
+								/>
+							</button>
 							{showEmojis && (
 								<Grid
 									container
@@ -263,6 +277,11 @@ const ChatUi = ({
 						</div>
 					</footer>
 				</div>
+				<ChatTemplateModal
+					classes={classes}
+					isOpen={isTemplateModal}
+					onClose={() => setIsTemplateModal(false)}
+				/>
 			</div>
 		</>
 	);

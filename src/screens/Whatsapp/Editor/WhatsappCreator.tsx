@@ -84,7 +84,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
-		setSavedTemplateList(savedTemplate.payload.Items);
+		console.log('savedTemplate::', savedTemplate);
+		setSavedTemplateList(savedTemplate.payload.Data.Items);
 	};
 	useEffect(() => {
 		setIsLoader(true);
@@ -422,9 +423,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			getSavedTemplatesById({ templateId })
 		);
 		setIsLoader(false);
-		if (templateData.payload.Status === 'SUCCESS') {
-			const templates = templateData.payload.Items
-				? templateData.payload.Items
+		if (templateData.payload.Status === 'Success') {
+			const templates = templateData.payload?.Data?.Items
+				? templateData.payload?.Data?.Items
 				: [];
 			if (templates && templates?.length > 0) {
 				const templateData = templates[0]?.Data;

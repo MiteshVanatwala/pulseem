@@ -2386,4 +2386,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		position: 'absolute',
 		bottom: '3px',
 	},
+	chatTemplateModalTemplateDataWrapper: {
+		flexWrap: 'unset',
+		alignItems: 'flex-end'
+	},
 });
