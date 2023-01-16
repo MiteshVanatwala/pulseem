@@ -24,7 +24,7 @@ const LazyBackground = (props) => {
         });
     }
     else {
-        bgObject["background-size"] = "cover";
+        bgObject.backgroundSize = "cover";
     }
 
     return imageLoaded ? (
