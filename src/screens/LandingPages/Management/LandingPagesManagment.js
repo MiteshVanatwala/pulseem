@@ -731,7 +731,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='landingPages'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

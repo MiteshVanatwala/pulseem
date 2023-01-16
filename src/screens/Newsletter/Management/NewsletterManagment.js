@@ -812,7 +812,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='newsletter'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

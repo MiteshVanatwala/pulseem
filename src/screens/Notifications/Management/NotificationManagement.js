@@ -1285,7 +1285,8 @@ const NotificationManagement = ({ classes }) => {
     <DefaultScreen
       currentPage='notifications'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}
+    >
       {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}

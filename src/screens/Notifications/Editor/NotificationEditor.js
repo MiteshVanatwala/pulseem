@@ -1114,7 +1114,7 @@ const NotificationEditor = ({ classes, ...props }) => {
           </Grid>}
           <Grid item xs={12} style={{ paddingTop: 0 }}>
             {showDetails && <div>
-              <h3 style={{ cursor: 'pointer', marginBotton: 0 }} onClick={() => setShowGroupsList(!showGroupsList)}>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
+              <h3 style={{ cursor: 'pointer', marginBottom: 0 }} onClick={() => setShowGroupsList(!showGroupsList)}>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
               <Divider />
               {showGroupsList && <ul>
                 {selectedGroups.map((g, index) => {
@@ -1463,7 +1463,7 @@ const NotificationEditor = ({ classes, ...props }) => {
       subPage='create'
       customPadding={true}
       classes={classes}
-      containerClass={classes.editor}>
+      containerClass={clsx(classes.editor, classes.mb50)}>
       <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}

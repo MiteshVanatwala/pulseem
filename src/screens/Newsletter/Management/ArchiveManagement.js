@@ -594,7 +594,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       currentPage="newsletter"
       subPage='archiveManagement'
       classes={classes}
-      containerClass={classes.managmentNarrow}>
+      containerClass={clsx(classes.managmentNarrow, classes.mb50)}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}
