@@ -221,7 +221,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const siteTrackingLogic = () => {
     if (accountSettings?.SubAccountSettings.DomainAddress && accountSettings?.SubAccountSettings.DomainAddress !== '') {
       const domainName = accountSettings?.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
-      if (campaign.HtmlData.indexOf(domainName) > -1) {
+      if (campaign?.HtmlData?.indexOf(domainName) > -1) {
         setIsSiteTracking(true);
       }
       else {
@@ -726,7 +726,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         classes={classes}
         onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
-        onBack={onBack}
+        onBack={{
+          callback: () => { onBack() },
+          text: t('campaigns.newsletterSetUp')
+        }}
         onDelete={onDelete}
         onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}

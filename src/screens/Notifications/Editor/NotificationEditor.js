@@ -186,6 +186,7 @@ const NotificationEditor = ({ classes, ...props }) => {
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
   const params = useParams();
+  const [isSending, setIsSending] = useState(false);
 
 
   const toastMessages = {
@@ -357,6 +358,7 @@ const NotificationEditor = ({ classes, ...props }) => {
     if (result && result.payload === true) {
       setSummary(null);
       setCampaignSent(true);
+      setIsSending(false);
     }
   }
   const getData = async () => {
@@ -1112,7 +1114,7 @@ const NotificationEditor = ({ classes, ...props }) => {
           </Grid>}
           <Grid item xs={12} style={{ paddingTop: 0 }}>
             {showDetails && <div>
-              <h3 style={{ cursor: 'pointer', marginBotton: 0 }} onClick={() => setShowGroupsList(!showGroupsList)}>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
+              <h3 style={{ cursor: 'pointer', marginBottom: 0 }} onClick={() => setShowGroupsList(!showGroupsList)}>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
               <Divider />
               {showGroupsList && <ul>
                 {selectedGroups.map((g, index) => {
@@ -1145,10 +1147,14 @@ const NotificationEditor = ({ classes, ...props }) => {
             <Button
               variant='contained'
               size='small'
-              onClick={insertNotificationForSend}
+              onClick={(e) => {
+                setIsSending(true);
+                insertNotificationForSend(e)
+              }}
               className={clsx(
                 classes.dialogButton,
-                classes.dialogConfirmButton
+                classes.dialogConfirmButton,
+                isSending ? classes.disabled : null
               )}>
               {t('common.Send1')}
             </Button>
@@ -1457,7 +1463,7 @@ const NotificationEditor = ({ classes, ...props }) => {
       subPage='create'
       customPadding={true}
       classes={classes}
-      containerClass={classes.editor}>
+      containerClass={clsx(classes.editor, classes.mb50)}>
       <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}

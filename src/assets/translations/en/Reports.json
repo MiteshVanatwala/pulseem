@@ -92,6 +92,19 @@
       "activeNoResponse": "responses active - no responses"
     }
   },
+  "ProductsReport": {
+    "title": "Products Report",
+    "products": "Products",
+    "photo": "Photo",
+    "prodName": "Product name",
+    "category": "Category",
+    "price": "Price",
+    "purchased": "Purchased",
+    "abandoned": "Abandoned",
+    "revenueFrmProd": "Revenue From Product",
+    "productId": "Product Id",
+    "registrationGuide": "Connect your store to your Pulseem by using our API or using our plugins for Wix / WooCommerce<br/>For support: <a href='tel:035240290'>035240290</a> / <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+  },
   "ArchiveDirectSendReport": "DirectSend Report Archive",
   "Reactivate": "Reactivate / Cancel removal",
   "ExportLimitation": "Exported docs cannot contain more than 600K results",

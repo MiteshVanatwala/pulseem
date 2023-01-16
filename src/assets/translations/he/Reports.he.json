@@ -59,7 +59,7 @@
   "SMSCredits": "SMS שנותרו בחבילה",
   "BulkEmails": "אימיילים שנותרו בחבילה",
   "MmsCredits": "MMS שנותרו בחבילה",
-  "TotalRecords":"סה\"כ רשומות",
+  "TotalRecords": "סה\"כ רשומות",
   "smsReport": {
     "statuses": {
       "other": "אחר",
@@ -91,6 +91,19 @@
       "activeHasResponse": "עם אפשרות למשובים - ויש משובים",
       "activeNoResponse": "עם אפשרות למשובים - ואין משובים"
     }
+  },
+  "ProductsReport": {
+    "title": "דו”ח מוצרים",
+    "products": "מוצרים",
+    "photo": "תמונה",
+    "prodName": "שם מוצר",
+    "category": "קטגוריה",
+    "price": "מחיר",
+    "purchased": "נמענים שרכשו",
+    "abandoned": "נמענים שנטשו",
+    "revenueFrmProd": "סך ההכנסות מהמוצר",
+    "productId": "מוצר מספר",
+    "registrationGuide": "חברו את החנות האינטרנטית שלכם לפולסים בעזרת ה-API שלנו או באמצעות התוספים ל-Wix ו-WooCommerce<br/>לתמיכה: <a href='tel:035240290'>035240290</a> / <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
   },
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
   "Reactivate": "Reactivate / בטל הסרה",

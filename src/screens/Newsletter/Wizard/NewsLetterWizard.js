@@ -46,6 +46,9 @@ const useStyles = makeStyles({
         },
         '& .MuiFormHelperText-contained': {
             marginInline: 0
+        },
+        '& .MuiFormHelperText-root': {
+            fontSize: '1rem'
         }
     },
     autocomplete: {
@@ -570,9 +573,9 @@ const NewsLetterWizard = ({ classes }) => {
                                                 }
                                                 )}
                                             </Select>
-                                            <FormHelperText>
+                                            <FormHelperText style={{ fontSize: '1rem' }}>
                                                 {errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail + ' '}
-                                                <strong className={classes.link} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
+                                                <strong className={clsx(classes.link, classes.textRed)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</strong>
                                             </FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }
@@ -916,13 +919,12 @@ const NewsLetterWizard = ({ classes }) => {
             <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
                 <WizardActions
                     classes={classes}
-                    // onSave={handleSubmit}
-                    onBack={() => { setConfirmExit(true) }}
+                    onBack={{
+                        callback: () => { setConfirmExit(true) }
+                    }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={renderButtons()}
-                >
-
-                </WizardActions>
+                />
             </Box>
             <Dialog
                 classes={classes}

@@ -756,7 +756,7 @@ const MmsManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='mms'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

@@ -1059,7 +1059,7 @@ const SmsManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='sms'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

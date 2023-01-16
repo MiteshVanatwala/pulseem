@@ -257,7 +257,7 @@ const ClientSearchResult = ({ props, classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
       if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -358,7 +358,7 @@ const ClientSearchResult = ({ props, classes }) => {
           return client;
         }, []);
         orderList = orderList.map((ol) => { return flatObject(ol) });
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
           orderList = deletePropertyFromArrayObject(orderList, "Revenue");
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
@@ -589,6 +589,26 @@ const ClientSearchResult = ({ props, classes }) => {
         )
       },
       filterComponents: [Min, Max]
+    },
+    '17': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      component: {
+        mobile: ({ Revenue = 0, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.campaignRevenue")}
+          </Typography>
+          <Typography>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </>),
+        web: ({ Revenue = 0, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        )
+      },
+      // filterComponents: [Min, Max]
     },
   }
   const TABLE_HEAD = [

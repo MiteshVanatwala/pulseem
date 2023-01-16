@@ -396,7 +396,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       subPage={isArchive ? 'directSendReportArchive' : 'directSendReport'}
       currentPage='reports'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       {renderHeader()}
       {renderTabs()}
       <ConfirmRadioDialog
