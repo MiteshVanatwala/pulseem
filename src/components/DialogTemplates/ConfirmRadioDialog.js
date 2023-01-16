@@ -50,8 +50,8 @@ const ConfirmRadioDialog = ({
                             value={value}
                         >
                             {
-                                options.map((option) => {
-                                    return (<Box>
+                                options.map((option, idx) => {
+                                    return (<Box key={idx}>
                                         <FormControlLabel
                                             value={option?.value}
                                             control={<Radio color="primary" />}

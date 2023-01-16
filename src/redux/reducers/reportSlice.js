@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { instence } from '../../helpers/api';
+import { v4 as uuidv4 } from 'uuid';
 
 export const GetProductReports = createAsyncThunk(
   'ProductReport/Get', async (data, thunkAPI) => {
@@ -28,6 +29,9 @@ export const reportSlice = createSlice({
     builder.addCase(GetProductReports.fulfilled, (state, { meta, payload }) => {
       if (!meta?.arg?.IsExport) {
         state.productsReportDetails = payload?.Data || [];
+        state.productsReportDetails?.Products?.forEach((product) => {
+          product.uniqueKey = uuidv4();
+        });
         if (payload?.Data?.Categories?.length > 0) {
           state.productCategories = payload?.Data?.Categories
         }
