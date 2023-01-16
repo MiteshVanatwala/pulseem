@@ -14,10 +14,10 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
-import WizardTitle from "../../../components/Wizard/WizardTitle";
-import OTP from "./OTP";
-import { FaExclamationCircle } from "react-icons/fa";
-import { useLocation, useNavigate, useParams } from "react-router";
+import WizardTitle from '../../../components/Wizard/WizardTitle'
+import OTP from './OTP';
+import { FaExclamationCircle } from 'react-icons/fa'
+import { useLocation, useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,

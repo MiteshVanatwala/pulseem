@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import clsx from "clsx";
 import {
   Box,
@@ -120,6 +120,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
   const [clientToEdit, setClientToEdit] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -209,6 +210,25 @@ const ClientSearchResult = ({ props, classes }) => {
         }
       }
 
+      if (overwriteObject === null) {
+        overwriteObject = {
+          PageIndex: searchParams.get("PageIndex") ? parseInt(searchParams.get("PageIndex")) : null,
+          SearchTerm: searchParams.get("SearchTerm") ?? '',
+          Status: searchParams.get("Status") ? parseInt(searchParams.get("Status")) : null,
+          PageType: searchParams.get("PageType") ? parseInt(searchParams.get("PageType")) : null,
+          ReportType: searchParams.get("ReportType") ? parseInt(searchParams.get("ReportType")) : null,
+          TestStatusOfEmailElseSms: searchParams.get("TestStatusOfEmailElseSms") ? parseInt(searchParams.get("TestStatusOfEmailElseSms")) : null, // 0 or null = sms, 1 = email
+          Switch: searchParams.get("Switch"), // Not in use for now.
+          CountryOrRegion: searchParams.get("CountryOrRegion"),// Not in use for now.
+          GroupIds: searchParams.get("GroupIds").split(',').map((g) => { return parseInt(g) }), // List of 1 groupId
+          NodeID: searchParams.get("NodeID") ?? "", // Not in use for now
+          CampaignID: searchParams.get("CampaignID") ? parseInt(searchParams.get("CampaignID")) : null,
+          FromDate: searchParams.get("FromDate"),
+          ToDate: searchParams.get("ToDate"),
+          ResultTitle: searchParams.get("ResultTitle")
+        }
+      }
+
       let isSmsReport = false;
 
       if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -222,10 +242,10 @@ const ClientSearchResult = ({ props, classes }) => {
         PageSize: rowsPerPage,
         PageIndex: page,
         SearchTerm: "",
-        Status: location?.state?.Status ?? null,
-        PageType: location?.state?.PageType ?? null,
+        Status: location?.state?.Status ?? overwriteObject?.Status ?? null,
+        PageType: location?.state?.PageType ?? overwriteObject?.PageType ?? null,
         ReportType: isSmsReport ? 20 : 10,
-        TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
+        TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? overwriteObject?.TestStatusOfEmailElseSms ?? null,
         CampaignID: id,
         Switch: "",
         CountryOrRegion: "",
@@ -244,7 +264,7 @@ const ClientSearchResult = ({ props, classes }) => {
       let updatingObject = {
         "Status": t('common.Status'),
         "SmsStatus": t('common.smsStatus'),
-        "CreationDate": location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
+        "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
         "Email": t("common.Mail"),
@@ -259,17 +279,18 @@ const ClientSearchResult = ({ props, classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ||
+      || (searchData?.PageType ?? searchData?.PageType) === location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
         updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
       }
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
         updatingObject["snt_OpeningDate"] = t('common.OpenTime');
       }
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
-        location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
+        (searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
         updatingObject["SentDate"] = t('sms.sendingTime');
       }
       updatingObject = {
@@ -371,7 +392,7 @@ const ClientSearchResult = ({ props, classes }) => {
         }
 
         Promise.all(promiseArray).then(() => {
-          const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+          const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
           const exportOptions = {
             OrderItems: true,
             FormatDate: true,
@@ -462,7 +483,7 @@ const ClientSearchResult = ({ props, classes }) => {
       type="number"
     />
   </Grid>
-  const FromDate = () => windowSize !== 'xs' ?
+  const EL_FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
         toolbarDisabled={false}
@@ -473,7 +494,7 @@ const ClientSearchResult = ({ props, classes }) => {
       />
     </Grid>
     : null
-  const ToDate = () => windowSize !== 'xs' ?
+  const EL_ToDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
         toolbarDisabled={false}
@@ -504,7 +525,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '4': {
       title: t("common.SendDate"),
@@ -524,7 +545,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '3': {
       title: t("client.subscribedOn"),
@@ -544,7 +565,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '8': {
       title: t("common.SendDate"),
@@ -564,7 +585,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '10': {
       title: t("common.ErrorEmail"),
@@ -808,7 +829,6 @@ const ClientSearchResult = ({ props, classes }) => {
           message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
             getData();
-            //navigate(-1)
           }
         },
         'S_401': {
@@ -983,11 +1003,11 @@ const ClientSearchResult = ({ props, classes }) => {
       <>
         <Box className={clsx(classes.flex, classes.spaceBetween)}>
           <Typography className={classes.managementTitle}>
-            {t("client.logPageHeaderResource1.Text")} {location?.state && location?.state?.ResultTitle ? " - " : ""} {location?.state?.ResultTitle}
+            {t("client.logPageHeaderResource1.Text")} {searchData?.ResultTitle ? " - " : ""} {searchData?.ResultTitle}
           </Typography>
-          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
-            if (location?.state && location?.state.PageProperty) {
-              navigate(`/react/${location?.state.PageProperty.PageName}`, {
+          {window.history.state && <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
+            if (searchData?.PageProperty || searchData?.PageName) {
+              navigate(`/react/${searchData?.PageProperty?.PageName ?? searchData?.PageName}`, {
                 state: {
                   from: 'clientsearchresult'
                 }
@@ -999,6 +1019,7 @@ const ClientSearchResult = ({ props, classes }) => {
             }
           }
           }> {t("common.back")}</Typography>
+          }
         </Box>
         <Divider />
       </>
@@ -1151,7 +1172,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Grid>
         }
 
-        {location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
@@ -1160,12 +1181,13 @@ const ClientSearchResult = ({ props, classes }) => {
             </Box>
           </Grid>
         }
-        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
-          {revenueSummary && <SummaryRow
-            data={revenueSummary}
-            classes={classes} />
-          }
-        </Grid>}
+        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+          <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+            {revenueSummary && <SummaryRow
+              data={revenueSummary}
+              classes={classes} />
+            }
+          </Grid>}
       </Grid>
     );
   };
@@ -1276,11 +1298,11 @@ const ClientSearchResult = ({ props, classes }) => {
             setLoader(true);
             setSelectedClients([ClientID]);
             const recipientRequest = await dispatch(getClientsById([ClientID]));
-            const clientToEdit = recipientRequest?.payload?.Data[0];
+            const cte = recipientRequest?.payload?.Data[0];
             //const existsClient = data.find((c) => { return c.ClientID === ClientID });
             const tempData = data.filter((c) => { return c.ClientID !== ClientID });
-            setData([...tempData, clientToEdit])
-            setClientToEdit(clientToEdit);
+            setData([...tempData, cte])
+            setClientToEdit(cte);
             setDialog(DialogType.EDIT_RECIPIENT);
             setLoader(false);
           }
@@ -1576,7 +1598,7 @@ const ClientSearchResult = ({ props, classes }) => {
     let sortedData = data ?? null; // data : [];
     let rpp = parseInt(rowsPerPage)
     if (sortedData && sortData.length > 0) {
-      sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
+      sortedData = (searchData?.PageType) === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
     }
     if (PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title) {
       TABLE_HEAD.splice(2, 0, {
@@ -1691,7 +1713,6 @@ const ClientSearchResult = ({ props, classes }) => {
             });
           }
           else if (searchData?.GroupIds && searchData?.GroupIds?.length > 0) {
-            // mappedGroups = searchData?.GroupIds?.split(',')?.map(function (x) {
             mappedGroups = searchData?.GroupIds?.map(function (x) {
               return parseInt(x, 10);
             })

@@ -6,3 +6,11 @@ export const RenderHtml = (html: any) => {
         <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
 }
+
+export const ConvertObjectToQueryString = (object: any) => {
+    let queryString = '?';
+    Object.keys(object).forEach((o, idx) => {
+        queryString += `${idx > 0 ? '&' : ''}${o}=${Object.values(object)[idx]}`
+    });
+    return queryString;
+}

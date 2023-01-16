@@ -345,7 +345,12 @@ const NotificationManagement = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => Redirect({ url: '/react/Notification/create' })}
+            component="a"
+            href='/react/Notification/create'
+            onClick={(e) => {
+              e.preventDefault()
+              Redirect({ url: '/react/Notification/create' })
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen

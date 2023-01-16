@@ -10,7 +10,7 @@ import Toast from '../Toast/Toast.component';
 import Waze from "../../assets/images/waze.png";
 import { BsArrowClockwise } from "react-icons/bs";
 import { FaExclamationCircle } from 'react-icons/fa'
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import {
     getPreviousCampaignData,
     getPreviousLandingData,

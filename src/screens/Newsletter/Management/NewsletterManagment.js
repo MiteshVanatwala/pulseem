@@ -234,7 +234,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => {
+            component="a"
+            href='/react/Campaigns/Create'
+            onClick={(e) => {
+              e.preventDefault();
               navigate('/react/Campaigns/Create');
             }}
             className={clsx(
@@ -267,7 +270,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={() => { navigate('/react/Campaigns/Archive') }}
+            component="a"
+            href='/react/Campaigns/Archive'
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/react/Campaigns/Archive')
+            }}
           >
             {t('master.redirectToArchive')}
           </Button>
