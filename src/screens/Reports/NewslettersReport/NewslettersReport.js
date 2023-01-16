@@ -1032,7 +1032,7 @@ const NewslettersReport = ({ classes }) => {
     <DefaultScreen
       currentPage='reports'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}
