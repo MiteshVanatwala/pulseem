@@ -279,8 +279,8 @@ const ClientSearchResult = ({ props, classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ||
-      || (searchData?.PageType ?? searchData?.PageType) === location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+      if (searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ||
+        searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
