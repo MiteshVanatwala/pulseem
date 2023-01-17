@@ -1,4 +1,5 @@
 import { ClassesType } from '../../../Classes.types';
+import { updatedVariableProps } from '../../Campaign/Types/WhatsappCampaign.types';
 import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
 
 export type WhatsappChatProps = {
@@ -19,6 +20,11 @@ export type WhatsappChatUiProps = {
 	setNewMessage: (newMessage: string) => void;
 	isTemplateModal: boolean;
 	setIsTemplateModal: (isTemplateModal: boolean) => void;
+	dynamicVariable: string[];
+	updatedDynamicVariable: updatedVariableProps[];
+	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
+	setDynamicModalVariable: (dynamicModalVariable: number) => void;
+	savedTemplate: string;
 };
 
 export type WhatsappChatSideBarProps = {

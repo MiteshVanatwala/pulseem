@@ -1,9 +1,9 @@
 import Icon from './Icon';
 import { allMessages, dates, user } from './data';
 import profile from '../../../../assets/images/profile.jpeg';
-import { useState } from 'react';
+import { BaseSyntheticEvent, KeyboardEvent, useState } from 'react';
 import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
-import { Grid, IconButton } from '@material-ui/core';
+import { Button, Grid, IconButton, Typography } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
@@ -13,6 +13,7 @@ import {
 	updatedVariableProps,
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import clsx from 'clsx';
+import { Stack } from '@mui/material';
 
 const ChatUi = ({
 	classes,
@@ -24,13 +25,13 @@ const ChatUi = ({
 	setNewMessage,
 	isTemplateModal,
 	setIsTemplateModal,
+	dynamicVariable,
+	updatedDynamicVariable,
+	setIsDynamcFieldModal,
+	setDynamicModalVariable,
+	savedTemplate,
 }: WhatsappChatUiProps) => {
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
-	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
-	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
-	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
-		updatedVariableProps[]
-	>([]);
 	const formatTime = (timeString: string) => {
 		let splitTimeString = timeString.split(':');
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
@@ -44,6 +45,7 @@ const ChatUi = ({
 		return !!isAvaliable;
 	};
 	const openDynamcFieldModal = async (variable: string) => {
+		setDynamicModalVariable(Number(variable?.replace(/[{}]/g, '')));
 		setIsDynamcFieldModal(true);
 	};
 	const getUpdatedVariableValue = (variable: string) => {
@@ -71,6 +73,10 @@ const ChatUi = ({
 	};
 	const onEmojiClick = (emoji: EmojiClickData, event: MouseEvent) => {
 		setNewMessage(`${newMessage} ${emoji.emoji}`);
+	};
+
+	const onEditableDivChange = (e: BaseSyntheticEvent) => {
+		setNewMessage(e.target.value);
 	};
 
 	return (
@@ -107,16 +113,6 @@ const ChatUi = ({
 								{user.typing ? 'typing...' : 'online'}
 							</p>
 						</div>
-						{/* <div className={`${classes.whatsappChat} chat__actions`}>
-							<button
-								className={`${classes.whatsappChat} chat__action`}
-								aria-label='Search'>
-								<Icon
-									id='search'
-									className={`${classes.whatsappChat} chat__action-icon chat__action-icon--search`}
-								/>
-							</button>
-						</div> */}
 					</header>
 
 					{/* Convo */}
@@ -311,11 +307,13 @@ const ChatUi = ({
 									<EmojiPicker onEmojiClick={onEmojiClick} />
 								</Grid>
 							)}
-							<textarea
+							<div
 								className={`${classes.whatsappChat} chat__input`}
-								placeholder='Type a message'
-								value={newMessage}
-								onChange={(e) => setNewMessage(e.target.value)}>
+								contentEditable={savedTemplate?.length === 0 ? true : false}
+								suppressContentEditableWarning={
+									savedTemplate?.length === 0 ? true : false
+								}
+								onKeyUp={onEditableDivChange}>
 								<Highlighter
 									searchWords={dynamicVariable}
 									autoEscape={true}
@@ -324,11 +322,37 @@ const ChatUi = ({
 										highlightText(tagData)
 									}
 								/>
-							</textarea>
+							</div>
+							<div style={{ padding: '2px', marginLeft: '12px' }}>
+								<Stack
+									direction='row'
+									justifyContent='center'
+									alignItems='center'
+									spacing={2}>
+									<Typography color='textSecondary'>
+										<label style={{ fontSize: '20px' }}>
+											Conversation is closed.
+										</label>
+										<br />
+										<label style={{ fontSize: '15px' }}>
+											You can not send messages in closed conversation.
+										</label>
+									</Typography>
+
+									<Grid className={classes.manageTemplatesHeaderButtons}>
+										<Button
+											size='small'
+											className={'green'}
+											onClick={() => setIsTemplateModal(true)}>
+											Send Template
+										</Button>
+									</Grid>
+								</Stack>
+							</div>
 							<button aria-label='Send message'>
 								<Icon
 									id='send'
-									className={`${classes.whatsappChat} chat__input-icon`}
+									className={`${classes.whatsappChat} chat__send-icon`}
 								/>
 							</button>
 						</div>

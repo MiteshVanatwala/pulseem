@@ -2015,6 +2015,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			padding: '3px',
 			borderRadius: '50%',
 		},
+		'&.chat__send-icon': {
+			color: '#919191',
+			marginLeft: '8px',
+			marginRight: '8px',
+			width: '28px',
+			height: '28px',
+			padding: '3px',
+			borderRadius: '50%',
+			transform: isRTL ? 'rotate(180deg)' : 'rotate(0deg)',
+		},
 		'&.chat__input-icon--highlight': { color: 'teal' },
 		'&.chat__attach': {
 			display: 'flex',
@@ -2301,7 +2311,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.sidebar-contact__avatar-wrapper': {
 			width: '50px',
 			height: '50px',
-			marginRight: '10px',
+			marginRight: isRTL ? 'unset' : '10px',
+			marginLeft: isRTL ? '10px' : 'unset',
 		},
 		'&.sidebar-contact__content': { overflow: 'hidden', flex: '1' },
 		'&.sidebar-contact__top-content, .sidebar-contact__bottom-content, .sidebar-contact__message-wrapper':
@@ -2391,5 +2402,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		flexWrap: 'unset',
 		alignItems: 'flex-end',
 		justifyContent: 'space-between',
+	},
+	chooseTemplateModalUl: {
+		// maxHeight: '400px',
+		overflowY: 'auto',
 	},
 });

@@ -4,7 +4,6 @@ import { useTheme } from '@mui/material/styles';
 import { Close, InfoOutlined } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
 import '../css/ChatTemplate.css';
-import { useState } from 'react';
 import { FaChevronRight } from 'react-icons/fa';
 import { chatModalProps } from '../Types/WhatsappChat.type';
 import {
@@ -61,7 +60,6 @@ const ChatTemplateModal = ({
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.alertModal}>
 					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-						{/* {title} */}
 						Choose Template
 					</div>
 					<Box className={classes.alertModalClose}>
@@ -73,12 +71,7 @@ const ChatTemplateModal = ({
 						</Box>
 					</Box>
 					<div className={classes.alertModalContent}>
-						<ul className={classes.validationAlertModalUl}>
-							{/* {requiredFields?.map((requiredField: string, index: number) => (
-								<li key={index} className={classes.infoAlertModalLi}>
-									{requiredField}
-								</li>
-							))} */}
+						<ul className={classes.chooseTemplateModalUl}>
 							{savedTemplateList?.map((template: savedTemplateListProps) => (
 								<section className='accordion' key={template.TemplateId}>
 									<input
@@ -112,26 +105,40 @@ const ChatTemplateModal = ({
 													variant='contained'
 													color='primary'
 													autoFocus
-													onClick={() => onChoose(template, getTemplateText(template))}>
+													onClick={() =>
+														onChoose(template, getTemplateText(template))
+													}>
 													<>Choose</>
 												</Button>
 											</Grid>
+										</Grid>
+										<Grid
+											item
+											style={{ paddingTop: '8px', marginLeft: '-8px' }}>
+											<Box className={classes.whatsappActionButtonsBox}>
+												<Button className={classes.whatsappActionButtons}>
+													<i
+														className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
+													<span className={classes.callToActionButtonText}>
+														Visit Us
+													</span>
+												</Button>
+											</Box>
+											<Box className={classes.whatsappActionButtonsBox}>
+												<Button className={classes.whatsappActionButtons}>
+													<i
+														className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
+													<span className={classes.callToActionButtonText}>
+														Call Us
+													</span>
+												</Button>
+											</Box>
 										</Grid>
 									</div>
 								</section>
 							))}
 						</ul>
 					</div>
-					{/* <Grid container className={classes.alertModalAction}>
-						<Button
-							className='ok-button'
-							variant='contained'
-							color='primary'
-							autoFocus
-							onClick={onClose}>
-							<>{translator('whatsapp.alertModal.okButtonText')}</>
-						</Button>
-					</Grid> */}
 				</div>
 			</Dialog>
 		</>

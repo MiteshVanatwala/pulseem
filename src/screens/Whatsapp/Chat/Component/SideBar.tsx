@@ -3,10 +3,25 @@ import Icon from './Icon';
 import { contacts, lastMessage } from './data';
 import { WhatsappChatSideBarProps } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { IconButton } from '@material-ui/core';
+import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
+import { BaseSyntheticEvent, useState } from 'react';
 
-const SideBar = ({ classes, isMobileSideBar, setIsMobileSideBar }: WhatsappChatSideBarProps) => {
+const SideBar = ({
+	classes,
+	isMobileSideBar,
+	setIsMobileSideBar,
+}: WhatsappChatSideBarProps) => {
+	const useStyles = makeStyles(() => ({
+		selectRoot: {
+			fontSize: '18px',
+			'&:focus': {
+				backgroundColor: 'rgba(0,0,0,0)',
+			},
+		},
+	}));
+	const muiclasses = useStyles();
+	const [activeUser, setActiveUser] = useState<string>('8123591159');
 	const formatTime = (timeString: string) => {
 		let splitTimeString = timeString.split(':');
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
@@ -26,6 +41,20 @@ const SideBar = ({ classes, isMobileSideBar, setIsMobileSideBar }: WhatsappChatS
 							className={`${classes.whatsappChat} avatar`}
 						/>
 					</div>
+					<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
+						&emsp;
+						<Select
+							classes={{ root: muiclasses.selectRoot }}
+							autoWidth
+							value={activeUser}
+							onChange={(e: BaseSyntheticEvent) =>
+								setActiveUser(e.target.value)
+							}>
+							<MenuItem value={8123591159}>8123591159</MenuItem>
+							<MenuItem value={6295236652}>6295236652</MenuItem>
+							<MenuItem value={1234567890}>1234567890</MenuItem>
+						</Select>
+					</div>
 					<div className={`${classes.whatsappChat} sidebar__actions`}>
 						<IconButton
 							className={classes.whatsappChatBarButton}
@@ -43,6 +72,13 @@ const SideBar = ({ classes, isMobileSideBar, setIsMobileSideBar }: WhatsappChatS
 						<button className={`${classes.whatsappChat} search__back-btn`}>
 							<Icon id='back' />
 						</button>
+					</div>
+					<div className={`${classes.whatsappChat} sidebar__actions`}>
+						<IconButton
+							className={classes.whatsappChatBarButton}
+							onClick={setIsMobileSideBar}>
+							<FaBars />
+						</IconButton>
 					</div>
 					<input
 						className={`${classes.whatsappChat} search`}
