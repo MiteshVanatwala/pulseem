@@ -5,6 +5,7 @@ import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControl
 import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
 import { setCookie, getCookie } from '../../helpers/cookies';
+import { voidFunction } from '../../helpers/utils';
 
 const ConfirmRadioDialog = ({
     classes,
@@ -13,10 +14,10 @@ const ConfirmRadioDialog = ({
     radioTitle = '',
     options = null,
     isOpen = false,
-    onCancel = () => null,
-    onConfirm = () => null,
+    onCancel,
+    onConfirm,
     defaultValue = "",
-    cookieName = null
+    cookieName = ""
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);

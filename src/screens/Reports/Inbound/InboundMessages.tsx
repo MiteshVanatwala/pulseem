@@ -12,6 +12,7 @@ import ConfirmRadioDialog from "../../../components/DialogTemplates/ConfirmRadio
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import clsx from 'clsx';
 import { ExportIcon } from "../../../assets/images/managment";
+import SmsInbound from "./Sms/SmsInbound";
 
 const InboundMessages = ({ classes }: ClassesType) => {
     const params = useParams();
@@ -78,31 +79,11 @@ const InboundMessages = ({ classes }: ClassesType) => {
                     </Grid>
                     <Grid item xs={12} className={classes.lastReportsTabPanels}>
                         <TabPanel value='0' className={classes.p0}>
-                            SMS TAB
-                            {/* <DirectSMSReportTab
+                            <SmsInbound
                                 classes={classes}
-                                dispatch={dispatch}
-                                windowSize={windowSize}
-                                isRTL={isRTL}
-                                handleSearchInput={handleSearchInput}
-                                handleSearching={handleSearching}
-                                handlePageChange={setPageSms}
-                                handleAdvanceSearch={setAdvanceSearch}
-                                clearSearch={clearSearch}
-                                page={pageSms}
-                                rowsPerPage={rowsPerPage}
-                                searchData={searchData}
-                                isSearching={isSearching}
-                                directSmsReport={directSmsReport}
-                                advanceSearch={advanceSearch}
-                                setLoader={setLoader}
-                                rowsOptions={rowsOptions}
-                                isArchive={isArchive}
-                            /> */}
-
+                            />
                         </TabPanel>
                         <TabPanel value='1' className={classes.p0}>
-                            WHATSAPP TAB
                             {/* <DirectWhatsappReportTab
                                 classes={classes}
                                 dispatch={dispatch}
@@ -135,17 +116,17 @@ const InboundMessages = ({ classes }: ClassesType) => {
         currentPage='reports'
         classes={classes}
         containerClass={classes.management}>
-        <ConfirmRadioDialog
+        {/* <ConfirmRadioDialog
             classes={classes}
             isOpen={dialogType === 'exportFormat'}
             title={translator('campaigns.exportFile')}
             radioTitle={translator('common.SelectFormat')}
-            // onConfirm={(e) => handleExportFile(e)}
-            // onCancel={() => setDialog(null)}
-            // cookieName={'exportFormat'}
+            //onConfirm={(e) => handleExportFile(e)}
+            onCancel={() => setDialog(null)}
+            cookieName={'exportFormat'}
             defaultValue="xls"
-        // options={ExportFileTypes}
-        />
+            options={ExportFileTypes}
+        /> */}
         {renderTabs()}
     </DefaultScreen>
 
