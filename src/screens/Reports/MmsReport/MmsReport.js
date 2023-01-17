@@ -633,7 +633,7 @@ const MmsReport = ({ classes }) => {
     return (
         <DefaultScreen
             classes={classes}
-            containerClass={classes.management}
+            containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
             <Title Text={t('common.MMSReports')} Classes={classes.managementTitle} />

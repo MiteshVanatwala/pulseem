@@ -2636,5 +2636,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center"
+  },
+  textRed: {
+    color: '#c9302c'
   }
 });

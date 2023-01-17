@@ -972,7 +972,7 @@ const NotificationEdit = ({ classes }) => {
       subPage='create'
       customPadding={true}
       classes={classes}
-      containerClass={classes.editor}>
+      containerClass={clsx(classes.editor, classes.mb50)}>
       <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}

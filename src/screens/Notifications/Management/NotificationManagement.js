@@ -1275,7 +1275,8 @@ const NotificationManagement = ({ classes }) => {
     <DefaultScreen
       currentPage='notifications'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}
+    >
       <Title
         Text={t('notifications.notificationManagement')} Classes={classes.managementTitle}
         ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}

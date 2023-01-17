@@ -387,11 +387,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
           try {
             let result = await HandleExportData(response.payload?.Data, exportOptions);
-            result = await ReplaceNull(result, 'ErrorMessage','');
-            result = await ReplaceNull(result, 'TemplateVariables','');
-            result = await ReplaceNull(result, 'ReferenceId','');
+            result = await ReplaceNull(result, 'ErrorMessage', '');
+            result = await ReplaceNull(result, 'TemplateVariables', '');
+            result = await ReplaceNull(result, 'ReferenceId', '');
 
-            
+
 
             fileName = "Whatsapp_DirectReports";
             ExportFile({
@@ -542,7 +542,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       subPage={isArchive ? 'directSendReportArchive' : 'directSendReport'}
       currentPage='reports'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes.managementTitle} />
       {renderTabs()}
       <ConfirmRadioDialog

@@ -872,7 +872,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='newsletter'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Title Text={t('campaigns.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}

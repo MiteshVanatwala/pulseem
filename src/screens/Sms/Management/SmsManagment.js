@@ -1043,7 +1043,7 @@ const SmsManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='sms'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Title Text={t('sms.PageResource1.Title')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}

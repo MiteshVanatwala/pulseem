@@ -173,7 +173,7 @@ const ProductsReport = ({ classes }) => {
                     <TextField
                         variant='outlined'
                         size='small'
-                        value={searchData.ProductName}
+                        value={searchData.ProductName ?? ''}
                         onChange={(e) => setSearchData({ ...searchData, ProductName: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={t('report.ProductsReport.prodName')}
@@ -184,7 +184,9 @@ const ProductsReport = ({ classes }) => {
                     <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }} >
                         <Select
                             style={{
-                                height: 40
+                                height: 40,
+                                paddingInlineStart: 10,
+                                paddingInlineEnd: 20
                             }}
                             placeholder={t('report.ProductsReport.category')}
                             className={clsx(classes.select, 'outerborder')}
@@ -313,18 +315,19 @@ const ProductsReport = ({ classes }) => {
             Purchased,
             Abandoned,
             TotalRevenue,
+            uniqueKey
         } = row
         const hrefs = getHrefs(ProductId)
         return (
             <TableRow
-                key={ProductId}
+                key={uniqueKey}
                 classes={rowStyle}>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
                     className={clsx(classes.flex1)}>
                     <LazyBackground
-                        style={{ 'background-size': 'contain' }}
+                        style={{ backgroundSize: 'contain' }}
                         url={ImageURL}
                         title={ProductName}
                         height={'100px'}
@@ -429,7 +432,7 @@ const ProductsReport = ({ classes }) => {
     return (
         <DefaultScreen
             classes={classes}
-            containerClass={classes.management}
+            containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="productsReport">
             <Typography className={classes.managementTitle}>
