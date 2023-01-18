@@ -65,6 +65,7 @@ import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAp
 import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
 import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
 import SaveCampain from './screens/Whatsapp/Campaign/SaveCampain';
+import { whatsappRoutes } from './screens/Whatsapp/Constant';
 
 const renderRoutes = (classes, redirect) => {
 	const transferUrl =
@@ -222,47 +223,47 @@ const renderRoutes = (classes, redirect) => {
 			{/* Whatsapp */}
 
 			<Route
-				path={`/react/whatsapp/template/create`}
+				path={whatsappRoutes.CREATE_TEMPLATE}
 				element={<WhatsappCreator classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/campaign/create/page1`}
+				path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
 				element={<SaveCampain classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/campaign/create/page2`}
+				path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
 				element={<SendCampaign classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/templatemanagement`}
+				path={whatsappRoutes.TEMPLATE_MANAGEMENT}
 				element={<ManageWhatsAppTemplates classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/reports`}
+				path={whatsappRoutes.REPORTS}
 				element={<WhatsappReports classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/campaignmanagement`}
+				path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
 				element={<ManageWhatsAppCampaigns classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/template/edit/:templateID`}
+				path={whatsappRoutes.EDIT_TEMPLATE}
 				element={<WhatsappCreator classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/campaign/edit/page1/:campaignID`}
+				path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
 				element={<SaveCampain classes={classes} />}
 			/>
 
 			<Route
-				path={`/react/whatsapp/campaign/edit/page2/:campaignID`}
+				path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
 				element={<SendCampaign classes={classes} />}
 			/>
 
