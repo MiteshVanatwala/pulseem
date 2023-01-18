@@ -731,7 +731,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           text: t('campaigns.newsletterSetUp')
         }}
         onDelete={onDelete}
-        onShowGallery={() => { setShowGallery(true) }}
+        // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
       />
