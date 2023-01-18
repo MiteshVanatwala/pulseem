@@ -11,32 +11,36 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { BaseSyntheticEvent, useState } from 'react';
+import { useState } from 'react';
+// import { DateField } from "./DateField/DateField";
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import { RightPaneProps, coreProps } from '../Types/WhatsappCampaign.types';
 import { FiClock } from 'react-icons/fi';
 import { CalendarIcon } from '../../../../assets/images/managment/index';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
-const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
+const RightPane = ({
+	classes,
+	handleDatePicker,
+	sendDate,
+	sendTime,
+	handleRadioTime,
+	sendType,
+	handleSendType,
+	timePickerOpen,
+	handleTimePicker,
+	daysBeforeAfter,
+	handleSpecialDayChange,
+	spectialDateFieldID,
+	handleSelectChange,
+	isSpecialDateBefore,
+	setIsSpecialDateBefore,
+	setsendTime,
+}: ClassesType & RightPaneProps) => {
 	const { t: translator } = useTranslation();
-	const [sendType, setSendType] = useState<string>('1');
-	const [sendDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
-		null
-	);
-	const [sendTime, setsendTime] = useState<MaterialUiPickersDate | null>(null);
-
-	const [timePickerOpen, setTimePickerOpen] = useState<boolean>(false);
-	const [toggleB, settoggleB] = useState<boolean>(true);
-	const [toggleA, settoggleA] = useState<boolean>(false);
-	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
-	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
-	const [model, setModel] = useState<{}>({ ID: 0 });
 	const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
 	const [isTimePickerOpen, setIsTimePickerOpen] = useState<boolean>(false);
-	const [toastMessage, setToastMessage] = useState<string>('');
 
 	const { windowSize, isRTL, language } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -47,90 +51,8 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 		false: 'ltr',
 	};
 
-	const handleSendType = (event: BaseSyntheticEvent) => {
-		if (event.target.value === '1') {
-			setModel({ ...model, SendDate: null });
-			handleFromDate(null);
-		} else if (event.target.value === '3') {
-			setModel({ ...model, SendDate: null });
-			handleFromDate(null);
-			// setTimeInterval(-1);
-			// setPulseAmount(-1);
-		}
-		setSendType(event.target.value);
-	};
-
-	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
-		handleFromDate(value);
-	};
-
-	const handleTimePicker = (value: MaterialUiPickersDate | null) => {
-		var date = moment(sendDate);
-		var time = moment(value, 'HH:mm');
-
-		date.set({
-			hour: time.get('hour'),
-			minute: time.get('minute'),
-		});
-
-		if (date < moment()) {
-			date = moment();
-			setToastMessage('ToastMessages.DATE_PASS');
-		}
-
-		// handleFromDate(date);
-		setTimePickerOpen(false);
-	};
-
-	const handlePulseDialog = () => {};
-
-	const handlebef = () => {
-		// setafterClick(false);
-		settoggleA(false);
-		settoggleB(true);
-	};
-
-	const handleaf = () => {
-		// setafterClick(true);
-		settoggleA(true);
-		settoggleB(false);
-	};
-
-	const handleSpecialDayChange = (e: BaseSyntheticEvent) => {
-		const re = /^[0-9\b]+$/;
-		if (
-			(e.target.value === '' || re.test(e.target.value)) &&
-			Number(e.target.value <= 999)
-		) {
-			setdaysBeforeAfter(e.target.value);
-		}
-	};
-
-	const handleRadioTime = (value: MaterialUiPickersDate | null) => {
-		setsendTime(value);
-	};
-
-	const handleSelectChange = (e: BaseSyntheticEvent) => {
-		if (e.target.value === '0') {
-			//   setDateFieldID("0");
-		} else {
-			//   setDateFieldID(e.target.value);
-		}
-	};
-
-	const renderToast = () => {
-		if (toastMessage) {
-			setTimeout(() => {
-				setToastMessage('');
-			}, 4000);
-			return 'Error';
-		}
-		return null;
-	};
-
 	return (
 		<div>
-			{renderToast()}
 			<Grid item md={10} xs={12}>
 				<h2
 					className={classes.sectionTitle}
@@ -244,7 +166,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 								margin='none'
 								placeholder={translator('notifications.hour')}
 								initialFocusedDate={moment().hours(0).minutes(0)}
-								value={sendType === '2' ? sendDate : null}
+								value={sendType === '2' ? sendTime : null}
 								keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
 								onChange={(date) => handleTimePicker(date)}
 								KeyboardButtonProps={{
@@ -259,12 +181,7 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 								onClose={() => setIsTimePickerOpen(false)}
 								open={isTimePickerOpen || timePickerOpen}
 								onClick={() => setIsTimePickerOpen(true)}
-								// InputProps={{
-								//   readOnly: true,
-								//   style: { borderRadius: isRoundedOnMobile === true ? 50 : "" },
-								// }}
 								autoOk={false}
-								// style={{ borderRadius: isRoundedOnMobile === true ? 50 : "" }}
 							/>
 						</Box>
 						<FormControlLabel
@@ -350,27 +267,23 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									<span
 										className={
 											sendType === '3'
-												? toggleB
+												? isSpecialDateBefore
 													? clsx(classes.afterActive)
 													: clsx(classes.after)
 												: classes.disabledAfter
 										}
-										onClick={() => {
-											handlebef();
-										}}>
+										onClick={() => setIsSpecialDateBefore(true)}>
 										{translator('mainReport.before')}
 									</span>
 									<span
 										className={
 											sendType === '3'
-												? toggleA
+												? !isSpecialDateBefore
 													? classes.beforeActive
 													: classes.before
 												: classes.disabledBefore
 										}
-										onClick={() => {
-											handleaf();
-										}}>
+										onClick={() => setIsSpecialDateBefore(false)}>
 										{translator('mainReport.after')}
 									</span>
 								</div>
@@ -379,27 +292,23 @@ const RightPane = ({ classes }: ClassesType & RightPaneProps) => {
 									<span
 										className={
 											sendType === '3'
-												? toggleB
+												? isSpecialDateBefore
 													? classes.beforeActive
 													: classes.before
 												: classes.disabledBefore
 										}
-										onClick={() => {
-											handlebef();
-										}}>
+										onClick={() => setIsSpecialDateBefore(true)}>
 										{translator('mainReport.before')}
 									</span>
 									<span
 										className={
 											sendType === '3'
-												? toggleA
+												? !isSpecialDateBefore
 													? clsx(classes.afterActive)
 													: clsx(classes.after)
 												: classes.disabledAfter
 										}
-										onClick={() => {
-											handleaf();
-										}}>
+										onClick={() => setIsSpecialDateBefore(false)}>
 										{translator('mainReport.after')}
 									</span>
 								</div>

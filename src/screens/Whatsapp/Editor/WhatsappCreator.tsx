@@ -17,6 +17,7 @@ import {
 	callToActionProps,
 	callToActionRowProps,
 	coreProps,
+	deleteTemplateAPIProps,
 	fileUploadAPIProps,
 	JSONFreetextVariableProps,
 	quickReplyButtonProps,
@@ -45,15 +46,28 @@ import WhatsappTips from './Components/whatsappTips';
 import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
+	deleteTemplate,
 	getSavedTemplates,
+	getSavedTemplatesById,
 	submitTemplates,
 	uploadMedia,
 } from '../../../redux/reducers/whatsappSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
+import {
+	getDynamicFieldIndex,
+	getDynamicFields,
+	getLastDynamicFieldByValue,
+	getLastDynamicFieldValue,
+} from '../Common';
+import { resetToastData } from '../Constant';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
+	const { templateID } = useParams();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -62,6 +76,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
@@ -72,7 +87,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setSavedTemplateList(savedTemplate.payload.Items);
 	};
 	useEffect(() => {
-		getSavedTemplateFields();
+		setIsLoader(true);
+		getSavedTemplateFields().then(() => {
+			if (templateID) {
+				setTemplateById(templateID);
+			} else {
+				setIsLoader(false);
+			}
+		});
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
@@ -94,12 +117,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			],
 		},
 	];
-	const [toastMessage, setToastMessage] = useState<toastProps['SUCCESS']>({
-		severity: '',
-		color: '',
-		message: '',
-		showAnimtionCheck: false,
-	});
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 	const [templateName, setTemplateName] = useState<string>('');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
@@ -113,8 +132,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
-	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] = useState(false);
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] =
+		useState<boolean>(false);
+	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
+		useState<boolean>(false);
 	const [linkCount, setlinkCount] = useState<number>(0);
 	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
 
@@ -197,12 +218,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const resetToast = () => {
-		setToastMessage({
-			severity: '',
-			color: '',
-			message: '',
-			showAnimtionCheck: false,
-		});
+		setToastMessage(resetToastData);
 	};
 
 	const renderToast = () => {
@@ -401,6 +417,38 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
+	const setTemplateById = async (templateId: string) => {
+		const templateData: savedTemplateAPIProps = await dispatch<any>(
+			getSavedTemplatesById({ templateId })
+		);
+		setIsLoader(false);
+		if (templateData.payload.Status === 'SUCCESS') {
+			const templates = templateData.payload.Items
+				? templateData.payload.Items
+				: [];
+			if (templates && templates?.length > 0) {
+				const templateData = templates[0]?.Data;
+				const templateName = templates[0]?.TemplateName;
+				if (templateData) {
+					setUpdatedTemplateData(templateData);
+				}
+				setSavedTemplate(templateId);
+				setTemplateName(templateName || '');
+				setFileData(updatedFileData);
+				setButtonType(updatedButtonType);
+				setTemplateData(updatedTemplateData);
+				if (updatedButtonType === 'quickReply') {
+					setQuickReplyButtons(updatedTemplateData.templateButtons);
+				} else {
+					setCallToActionFieldRows(updatedTemplateData.templateButtons);
+				}
+				if (templateData?.variables) {
+					setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+				}
+			}
+		}
+	};
+
 	const getQuickReplyActions = () => {
 		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
 			return {
@@ -469,7 +517,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		return '';
 	};
 
-	const getRequestJSON = () => {
+	const getRequestJSON = (isSave: boolean) => {
 		const generatedTemplatename = getFriendlyTemplateName();
 		const variables = getJSONVariables();
 		const requestJSON: JSONProps = {
@@ -478,6 +526,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					text: {
 						body: templateData.templateText,
@@ -489,6 +538,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					media: {
 						body: templateData.templateText,
@@ -502,6 +552,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					'quick-reply': {
 						body: templateData.templateText,
@@ -514,6 +565,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					'call-to-action': {
 						body: templateData.templateText,
@@ -526,6 +578,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					card: {
 						title: templateData.templateText
@@ -589,49 +642,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 
 		return updatedTemplateText;
-	};
-
-	const getDynamicFieldIndex = (text: string) => {
-		let indices = [];
-		for (let i = 0; i < text.length; i++) {
-			if (
-				dynamicFieldL5.test(text.slice(i, i + 5)) ||
-				dynamicFieldL6.test(text.slice(i, i + 6))
-			) {
-				indices.push(i);
-			}
-		}
-		return indices;
-	};
-
-	const getDynamicFields = (text: string) => {
-		let indices = [];
-		for (let i = 0; i < text.length; i++) {
-			if (dynamicFieldL5.test(text.slice(i, i + 5))) {
-				indices.push(text.slice(i, i + 5));
-			}
-			if (dynamicFieldL6.test(text.slice(i, i + 6))) {
-				indices.push(text.slice(i, i + 6));
-			}
-		}
-		return indices;
-	};
-
-	const getLastDynamicFieldValue = (text: string) => {
-		let str = text;
-		let indices: string[] = [];
-		for (let i = 0; i < str.length; i++) {
-			if (dynamicFieldL5.test(str.slice(i, i + 5))) {
-				indices.push(str.slice(i, i + 5).replace(/[{}]/g, ''));
-			} else if (dynamicFieldL6.test(str.slice(i, i + 6))) {
-				indices.push(str.slice(i, i + 6).replace(/[{}]/g, ''));
-			}
-		}
-		return indices?.length > 0 ? indices[indices?.length - 1] : '0';
-	};
-
-	const getLastDynamicFieldByValue = (value: string) => {
-		return `{{${(Number(value) + 1).toString()}}}`;
 	};
 
 	const reOrderDynamicFieldValue = (text: string) => {
@@ -744,20 +754,67 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
-	const onFormButtonClick = (buttonName: string) => {
-		if (buttonName === 'delete') {
-			setIsDeleteCampaignOpen(true);
+	const saveTemplate = async () => {
+		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+			submitTemplates(getRequestJSON(true))
+		);
+		if (submitTemplate?.payload?.Status === 'Success') {
+			setIsSubmitCampaignOpen(false);
+			setToastMessage(ToastMessages.SAVE_SUCCESS);
+			resetFields();
+		} else if (submitTemplate?.payload?.Status === 'Error') {
+			if (submitTemplate?.payload?.Message?.length > 0) {
+				setToastMessage({
+					...ToastMessages.ERROR,
+					message: submitTemplate?.payload?.Message,
+				});
+			} else {
+				setToastMessage(ToastMessages.ERROR);
+			}
+			setIsSubmitCampaignOpen(false);
 		}
 	};
 
-	const onDeleteCampaign = () => {
-		resetFields();
-		setIsDeleteCampaignOpen(false);
+	const onFormButtonClick = (buttonName: string) => {
+		switch (buttonName) {
+			case 'delete':
+				setIsDeleteCampaignOpen(true);
+				break;
+			case 'save':
+				saveTemplate();
+				break;
+			default:
+				break;
+		}
+	};
+
+	const onDeleteCampaign = async () => {
+		if (templateID) {
+			const deleteData: deleteTemplateAPIProps = await dispatch<any>(
+				deleteTemplate(templateID)
+			);
+			if (deleteData?.payload?.Status === 'Success') {
+				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+				resetFields();
+				setIsDeleteCampaignOpen(false);
+				navigate('/react/whatsapp/template/create');
+			} else {
+				deleteData?.payload?.Error
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Error,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		} else {
+			resetFields();
+			setIsDeleteCampaignOpen(false);
+		}
 	};
 
 	const onSubmitCampaign = async () => {
 		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
-			submitTemplates(getRequestJSON())
+			submitTemplates(getRequestJSON(false))
 		);
 		if (submitTemplate?.payload?.Status === 'Success') {
 			setIsSubmitCampaignOpen(false);
@@ -915,6 +972,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					/>
 				</Box>
 			</AlertModal>
+
+			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
 };

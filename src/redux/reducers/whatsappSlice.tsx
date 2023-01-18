@@ -7,16 +7,21 @@ import {
 	TextMedia,
 	TextMediaAndButton,
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
+import { saveCampaignDataProps } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
-type errorProps = {
+type ApiErrorProps = {
 	message: string;
 };
 
-type getSavedTemplatesDataProps = {
+type ApiGetSavedTemplatesDataProps = {
 	templateStatus: number;
 };
 
-type submitTemplatesDataProps =
+type ApiGetSavedTemplatesDataByIdProps = {
+	templateId: string;
+};
+
+type ApiSubmitTemplatesDataProps =
 	| TextMediaAndButton
 	| QuickReply
 	| CallToAction
@@ -24,9 +29,42 @@ type submitTemplatesDataProps =
 	| JSONPropsText
 	| undefined;
 
+type ApiSaveCampaignSettingsDataProps = {
+	WACampaignID: number;
+	SendTypeID: number;
+	Groups: number[];
+	SendExeptional?: {
+		/**
+		 * To Send Campaign on particlar occation with dates and groups.
+		 * (for example, If you want to send campaign on particular date
+		 * and you have selected groups but you don't want to send last
+		 * campaign recipients then you can add here)
+		 **/
+		IsExceptionalroups?: boolean;
+		Groups?: number[];
+		IsExceptionSmsCampaigns?: boolean;
+		Campaigns?: number[];
+		ExceptionalDays?: number;
+	};
+	RandomSettings?: {
+		RandomAmount?: number;
+	};
+	specialsettings?: {
+		datefieldid?: number;
+		day?: number;
+		intervaltypeid?: number;
+		sendhour?: string;
+	};
+	FutureDateTime?: string;
+};
+
+type ApiSendCampaignDataProps = {
+	WACampaignID: number;
+};
+
 export const getSavedTemplates = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppTemplate',
-	async (data: getSavedTemplatesDataProps, thunkAPI) => {
+	async (data: ApiGetSavedTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/GetWhatsAppTemplate`,
@@ -35,7 +73,24 @@ export const getSavedTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getSavedTemplatesById = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppTemplate',
+	async (data: ApiGetSavedTemplatesDataByIdProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppTemplate`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -43,7 +98,7 @@ export const getSavedTemplates = createAsyncThunk(
 
 export const submitTemplates = createAsyncThunk(
 	'whatsAppCampaign/SubmitWhatsAppTemplate',
-	async (data: submitTemplatesDataProps, thunkAPI) => {
+	async (data: ApiSubmitTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SubmitWhatsAppTemplate`,
@@ -52,7 +107,7 @@ export const submitTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as ApiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -69,7 +124,7 @@ export const uploadMedia = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as ApiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -77,7 +132,7 @@ export const uploadMedia = createAsyncThunk(
 
 export const saveTemplates = createAsyncThunk(
 	'whatsAppCampaign/SaveWhatsAppTemplate',
-	async (data: submitTemplatesDataProps, thunkAPI) => {
+	async (data: ApiSubmitTemplatesDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SaveWhatsAppTemplate`,
@@ -86,7 +141,136 @@ export const saveTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as errorProps;
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const saveCampaign = createAsyncThunk(
+	'whatsAppCampaign/SaveWhatsappCampaign',
+	async (data: saveCampaignDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/SaveWhatsappCampaign`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const saveCampaignSettings = createAsyncThunk(
+	'whatsAppCampaign/SaveWACampaignSettings',
+	async (data: ApiSaveCampaignSettingsDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/SaveWACampaignSettings`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const sendCampaign = createAsyncThunk(
+	'whatsAppCampaign/Send',
+	async (data: ApiSendCampaignDataProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/Send`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const userPhoneNumbers = createAsyncThunk(
+	'whatsAppCampaign/GetPhoneNumbers',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetPhoneNumbers`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const deleteTemplate = createAsyncThunk(
+	'whatsAppCampaign/DeleteWhatsAppTemplate',
+	async (templateId: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/DeleteWhatsAppTemplate/${templateId}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getAllTemplates = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppTemplate',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppTemplate`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getAllCampaigns = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppCampaigns',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppCampaigns`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getAllReports = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppReport',
+	async (_data, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/GetWhatsAppReport`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -98,6 +282,7 @@ export const whatsappSlice = createSlice({
 		savedTemplates: [],
 		submitTemplate: [],
 		saveTemplate: [],
+		userPhoneNumbers: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -105,10 +290,28 @@ export const whatsappSlice = createSlice({
 				message: 'whatsapp.submitted',
 				showAnimtionCheck: true,
 			},
+			SAVE_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Template saved succesfully',
+				showAnimtionCheck: true,
+			},
 			ERROR: {
 				severity: 'error',
 				color: 'error',
 				message: 'whatsapp.error',
+				showAnimtionCheck: true,
+			},
+			SAVE_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign submitted succesfully',
+				showAnimtionCheck: true,
+			},
+			DELETE_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Template deleted succesfully',
 				showAnimtionCheck: true,
 			},
 		},
@@ -123,6 +326,9 @@ export const whatsappSlice = createSlice({
 		});
 		builder.addCase(saveTemplates.fulfilled, (state, { payload }) => {
 			state.saveTemplate = payload;
+		});
+		builder.addCase(userPhoneNumbers.fulfilled, (state, { payload }) => {
+			state.userPhoneNumbers = payload;
 		});
 	},
 });

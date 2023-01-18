@@ -48,5 +48,9 @@
   "sendButton": "SEND",
   "checkLimit": "Check your limit",
   "here": "here",
-  "whatsappCampaign": "Create New WhatsApp Campaign"
+  "whatsappCampaign": "Create New WhatsApp Campaign",
+  "back": "Back",
+  "exit": "Exit",
+  "save": "Save",
+  "send": "Send"
 }

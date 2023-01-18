@@ -23,6 +23,7 @@ export type CallToAction = {
 	variables: { [key: string]: string };
 	language: string;
 	types: CallToActionTypes;
+	isSaveOnly?: boolean;
 };
 
 export type CallToActionTypes = {
@@ -45,6 +46,7 @@ export type QuickReply = {
 	variables: { [key: string]: string };
 	language: string;
 	types: QuickReplyTypes;
+	isSaveOnly?: boolean;
 };
 
 export type QuickReplyTypes = {
@@ -57,6 +59,7 @@ export type JSONPropsText = {
 	variables: { [key: string]: string };
 	language: string;
 	types: TextTypes;
+	isSaveOnly?: boolean;
 };
 
 export type TextTypes = {
@@ -73,6 +76,7 @@ export type TextMedia = {
 	variables: { [key: string]: string };
 	language: string;
 	types: TextMediaTypes;
+	isSaveOnly?: boolean;
 };
 
 export type TextMediaTypes = {
@@ -91,6 +95,7 @@ export type TextMediaAndButton = {
 	variables: { [key: string]: string };
 	language: string;
 	types: TextMediaAndButtonTypes;
+	isSaveOnly?: boolean;
 };
 
 export type TextMediaAndButtonTypes = {

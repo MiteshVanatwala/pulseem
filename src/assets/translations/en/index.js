@@ -21,6 +21,8 @@ import group from "./group.json";
 import mmsreport from "./MMSReport.json";
 import whatsapp from "./WhatsappCreator.json";
 import whatsappCampaign from "./WhatsappCampaign.json";
+import whatsappManagement from "./WhatsappManagement.json";
+import whatsappReport from "./WhatsappReport.json";
 
 export const en = {
   automations,
@@ -46,4 +48,6 @@ export const en = {
   mmsreport,
   whatsapp,
   whatsappCampaign,
+  whatsappManagement,
+  whatsappReport,
 };

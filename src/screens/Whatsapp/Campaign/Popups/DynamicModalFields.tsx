@@ -9,12 +9,13 @@ import {
 	TextField,
 	Typography,
 } from '@material-ui/core';
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
 	DynamicModalFieldsProps,
 	coreProps,
+	landingPageDataProps,
 } from '../Types/WhatsappCampaign.types';
 import { useSelector } from 'react-redux';
 
@@ -34,6 +35,10 @@ const DynamicModalFields = ({
 	setLandPage,
 	setNavApp,
 	setNavAddress,
+	personalFields,
+	landingPageData,
+	isTrackLink,
+	setIsTrackLink,
 }: DynamicModalFieldsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -54,8 +59,13 @@ const DynamicModalFields = ({
 					onChange={(e: BaseSyntheticEvent) =>
 						setPersonalField(e.target.value)
 					}>
-					<MenuItem value='booking'>Booking</MenuItem>
-					<MenuItem value='confirmed'>Confirmed</MenuItem>
+					{Object.keys(personalFields)?.map(
+						(personalFieldKey: string, index: number) => (
+							<MenuItem key={index} value={personalFieldKey}>
+								{personalFieldKey}
+							</MenuItem>
+						)
+					)}
 				</Select>
 			)}
 
@@ -87,7 +97,9 @@ const DynamicModalFields = ({
 												'dynamic-link-switch'
 										  )
 								}
-								checked={true}
+								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
+								checked={isTrackLink}
+								onChange={() => setIsTrackLink()}
 							/>
 						</FormGroup>
 						<Box>
@@ -105,7 +117,10 @@ const DynamicModalFields = ({
 						variant='outlined'
 						placeholder={translator('whatsappCampaign.linkPlaceholder')}
 						className='link-input'
-						onChange={(e: BaseSyntheticEvent) => setLinkInput(e.target.value)}
+						onChange={(e: BaseSyntheticEvent) =>
+							setLinkInput(e.target.value, isTrackLink)
+						}
+						disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
 						value={linkInput}
 					/>
 					<Button
@@ -113,7 +128,7 @@ const DynamicModalFields = ({
 						color='primary'
 						size='small'
 						className={classes.whatsappCampaignDynamicFieldLinkRemoval}
-						onClick={() => onAddRemovalLink()}>
+						onClick={() => onAddRemovalLink(isTrackLink)}>
 						Add removal link
 					</Button>
 				</div>
@@ -132,8 +147,13 @@ const DynamicModalFields = ({
 							: () => <>{translator('whatsappCampaign.lPagePlaceholder')}</>
 					}
 					onChange={(e: BaseSyntheticEvent) => setLandPage(e.target.value)}>
-					<MenuItem value='Landing page 1'>Landing page 1</MenuItem>
-					<MenuItem value='Landing page 2'>Landing page 2</MenuItem>
+					{landingPageData?.map((landingPage: landingPageDataProps) => (
+						<MenuItem
+							key={landingPage.CampaignID}
+							value={landingPage.CampaignName}>
+							{landingPage.CampaignName}
+						</MenuItem>
+					))}
 				</Select>
 			)}
 

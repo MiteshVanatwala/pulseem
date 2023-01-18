@@ -75,6 +75,12 @@ export type ButtonsProps = {
 	onFormButtonClick: (buttonName: string) => void;
 };
 
+export type campaignPage1ButtonsProps = {
+	classes: ClassesType['classes'];
+	onDeleteCampaign: () => void;
+	onSaveCampaign: () => void;
+};
+
 export type coreProps = {
 	windowSize: string;
 	isRTL: boolean;
@@ -206,8 +212,11 @@ export type savedTemplateListProps = {
 
 export type toastProps = {
 	SUCCESS: toastKeyProps;
+	SAVE_SUCCESS: toastKeyProps;
 	ERROR: toastKeyProps;
 	QUICK_SEND_SUCCESSS: toastKeyProps;
+	SAVE_CAMPAIGN_SUCCESS: toastKeyProps;
+	DELETE_CAMPAIGN_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -274,4 +283,38 @@ export type submitTemplatePayloadProps = {
 
 export type submitTemplateAPIProps = {
 	payload: submitTemplatePayloadProps;
+};
+
+export type templateListItemsProps = {
+	CreatedDate: string | null;
+	Data: savedTemplateDataProps;
+	RejectionReason: string;
+	Status: string;
+	StatusUpdatedDate: string;
+	TemplateId: string;
+	TemplateName: string;
+};
+
+export type templateListPayloadProps = {
+	Error: string;
+	Count: number;
+	Message: string;
+	Status: string;
+	Items: saveTemplateItemsProps[];
+};
+
+export type templateListAPIProps = {
+	payload: templateListPayloadProps;
+};
+
+export type deleteTemplatePayloadProps = {
+	Error: string;
+	Count: number;
+	Message: string;
+	Status: string;
+	Items: saveTemplateItemsProps[];
+};
+
+export type deleteTemplateAPIProps = {
+	payload: deleteTemplatePayloadProps;
 };

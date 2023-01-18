@@ -1007,6 +1007,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '2px 0px 0px 0px',
 		color: '#ff0000',
 	},
+	infoAlertModalLi: {
+		padding: '2px 0px 0px 0px',
+	},
 
 	/* Send Campaign */
 
@@ -1019,12 +1022,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginTop: 20,
 		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
 	},
-	WhatsappCampainP1: {},
+	WhatsappCampainP1: {
+		'@media screen and (max-width: 786px)': {
+			flexDirection: 'column',
+		},
+	},
 	WhatsappCampainP1Left: {
 		padding: '0px 8px 0px 8px',
 	},
 	WhatsappCampainP1Right: {
 		padding: '0px 108px 0px 204px',
+		'@media screen and (max-width: 1325px)': {
+			padding: '0px 82px 0px 186px',
+		},
+		'@media screen and (max-width: 1279px)': {
+			marginTop: '24px',
+		},
 		'@media screen and (max-width: 768px)': {
 			padding: '0px',
 		},
@@ -1033,11 +1046,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
 		color: '#959595',
+		'&.red': {
+			color: '#ca332f',
+		},
 	},
 	WhatsappCampainFields: {
 		marginBottom: '18px',
 	},
-	WhatsappCampainTextarea: {},
+	WhatsappCampainTextarea: {
+		'@media screen and (max-width: 959px)': {
+			width: '100%',
+		},
+	},
 	WhatsappCampainRadioButton: {
 		color: '#0677fa',
 		'&.Mui-checked': {
@@ -1053,6 +1073,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
 			backgroundColor: '#19762b',
+			opacity: '1',
 		},
 	},
 	whatsappCampaignDynamicFieldTitle: {
@@ -1139,6 +1160,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 			'& .MuiSwitch-colorSecondary.Mui-checked + .MuiSwitch-track': {
 				backgroundColor: '#2f9d1a',
+				opacity: '1',
 			},
 		},
 		'& .link-input': {
@@ -1229,6 +1251,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		border: '1px solid #009f00',
 		marginRight: isRTL ? '8px !important' : '0px',
 		marginLeft: isRTL ? '0px' : '8px !important',
+		'&:hover': {
+			border: '1px solid #009f00',
+		},
 	},
 	columnAdjustmentModalTableWrapper: {
 		width: '450px',
@@ -1266,6 +1291,156 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textAlign: 'center',
 		color: '#DC3D1B',
 	},
+
+	/* Management and report pages */
+
+	manageWhatsappTemplates: {},
+	manageTemplatesHeaderButtons: {
+		marginTop: '18px',
+		justifyContent: 'space-between',
+		'& button': {
+			background: 'blue',
+			color: 'white',
+			margin: '4px 8px',
+			textTransform: 'none',
+			fontSize: '16px',
+		},
+		'& .green': {
+			background: '#27AE60',
+		},
+		'& .blue': {
+			background: '#3498DB',
+		},
+	},
+	manageTemplatesCampaignCount: {
+		marginTop: '25px',
+		fontSize: '14px',
+		marginRight: '10px',
+	},
+	manageTemplatesTableWrapper: {
+		marginTop: '17px',
+		padding: '0 8px',
+	},
+	manageTemplatesTableWrapperPadding: {
+		padding: '0px 220px',
+		'@media screen and (max-width: 1264px)': {
+			padding: '0px 160px',
+		},
+		'@media screen and (max-width: 1170px)': {
+			padding: '0 8px',
+		},
+	},
+
+	whatsappReportHeaderButtons: {
+		marginTop: '18px',
+		justifyContent: 'space-between',
+		'& button': {
+			background: 'blue',
+			color: 'white',
+			margin: '4px 8px',
+			textTransform: 'none',
+			fontSize: '16px',
+		},
+		'& .green': {
+			background: '#27AE60',
+		},
+		'& .blue': {
+			background: '#3498DB',
+		},
+	},
+	whatsappReportHeaderExportButton: {
+		'& img': {
+			width: '24px',
+			height: '24px',
+		},
+		'& button': {
+			background: '#1d683f',
+			'&:hover': {
+				background: '#1d683f',
+			},
+		},
+	},
+	whatsappReportCampaignCount: {
+		marginTop: '25px',
+		fontSize: '14px',
+		marginRight: '10px',
+	},
+	whatsappReportTableWrapper: {
+		marginTop: '17px',
+		padding: '0 8px',
+		'& table': {
+			'& tr': {
+				'& th': {
+					'&:nth-child(1)': {
+						width: '270px',
+					},
+					'&:nth-child(2)': {
+						width: '160px',
+					},
+					'&:nth-child(3)': {
+						width: '70px',
+						color: '#26BE35',
+					},
+					'&:nth-child(4)': {
+						width: '140px',
+					},
+					'&:nth-child(5)': {
+						width: '70px',
+					},
+					'&:nth-child(6)': {
+						width: '160px',
+					},
+					'&:nth-child(7)': {
+						width: '160px',
+					},
+				},
+				'& td': {
+					'&:nth-child(1)': {
+						width: '270px',
+						'& p': {
+							textDecoration: 'none',
+						},
+					},
+					'&:nth-child(2)': {
+						width: '160px',
+					},
+					'&:nth-child(3)': {
+						width: '70px',
+						'& p': {
+							color: '#26BE35',
+						},
+					},
+					'&:nth-child(4)': {
+						width: '140px',
+						'& p': {
+							color: '#6464FF',
+						},
+					},
+					'&:nth-child(5)': {
+						width: '70px',
+						'& p': {
+							color: '#6464FF',
+						},
+					},
+					'&:nth-child(6)': {
+						width: '160px',
+						'& p': {
+							color: 'red',
+						},
+					},
+					'&:nth-child(7)': {
+						width: '160px',
+					},
+					'& p': {
+						textDecoration: 'underline',
+						fontFamily: 'Assistant',
+						fontWeight: '500',
+						fontSize: '16px',
+					},
+				},
+			},
+		},
+	},
 	whatsappCampaignDynamicFieldLinkRemoval: {
 		textTransform: 'capitalize',
 		fontSize: '14px',
@@ -1282,9 +1457,55 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			color: '#ffffff',
 		},
 	},
+	restoreDeletedModalFormGroup: {
+		maxHeight: '216px',
+		overflowX: 'auto',
+		display: 'grid',
+	},
+	restoreDeletedModalFormLabel: {
+		margin: '0px',
+		'& span': {
+			padding: '2px',
+			'& svg': {
+				color: '#0371ad',
+			},
+		},
+	},
 	groupListRow: {
 		'&:hover': {
 			backgroundColor: '#f1f1f1',
+		},
+	},
+	whatsappDatePicker: {
+		border: '1px solid #0000003b',
+		borderRadius: '4px',
+		padding: '3px 0px 2px 10px',
+		background: 'url(../../../../assets/images/managment/calendar.svg)',
+	},
+	whatsappManagementbuttonField: {
+		borderRadius: '5px',
+		border: '1px solid #bbb',
+		outline: 'none',
+		padding: '3px 11px 3px 10px',
+		fontSize: '16px',
+		width: 'calc(100% - 23px)',
+		'&::placeholder': {
+			fontSize: '16px',
+		},
+		'& label': {
+			marginTop: '0px',
+		},
+		'& label + .MuiInput-formControl': {
+			marginTop: '0px',
+		},
+		'& .MuiInputLabel-formControl': {
+			transform: 'none',
+			top: '10px',
+			left: isRTL ? '0px' : '12px',
+			right: isRTL ? '12px' : '0px',
+		},
+		'& .MuiSelect-select:focus': {
+			backgroundColor: 'transparent',
 		},
 	},
 });
