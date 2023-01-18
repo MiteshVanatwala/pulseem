@@ -21,6 +21,10 @@ export const whatsappRoutes = {
 	EDIT_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/edit/page2/:campaignID',
 };
 
+export const apiStatus = {
+	SUCCESS: 'Success',
+};
+
 export enum fieldIDs {
 	'personalField' = 1,
 	'text' = 2,
