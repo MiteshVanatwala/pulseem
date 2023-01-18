@@ -20,6 +20,7 @@ import {
 import { FaBinoculars } from 'react-icons/fa';
 import SettingsLogo from '../../assets/images/settings-white.png';
 import { FaHome } from 'react-icons/fa';
+import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 
 export const getSettingsItem = (
 	t: (text: string) => null | VoidFunction = () => null,
@@ -237,37 +238,31 @@ export const getRoutes = (
 			{
 				key: 'create',
 				title: t('whatsapp.NewWhatsappCampaign'),
-				href: '/react/whatsapp/template/create',
+				href: whatsappRoutes.CREATE_TEMPLATE,
 				isShow: true,
 			},
 			{
 				key: 'send',
-				title: t('whatsapp.header'),
-				href: '/react/whatsapp/campaign/create/page1',
+				title: 'Send Whatsapp Campaign',
+				href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
 				isShow: true,
 			},
 			{
 				key: 'templatemanagement',
-				title: t('whatsappManagement.templateManagement'),
-				href: '/react/whatsapp/templatemanagement',
+				title: 'Whatsapp Template Management',
+				href: whatsappRoutes.TEMPLATE_MANAGEMENT,
 				isShow: true,
 			},
 			{
 				key: 'campaignmanagement',
-				title: t('whatsappManagement.campaignManagement'),
-				href: '/react/whatsapp/campaignmanagement',
+				title: 'Whatsapp Campaign Management',
+				href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
 				isShow: true,
 			},
 			{
 				key: 'reports',
-				title: t('whatsappReport.report'),
-				href: '/react/whatsapp/reports',
-				isShow: true,
-			},
-			{
-				key: 'chat',
-				title: 'Whatsapp Chat',
-				href: '/react/whatsapp/chat',
+				title: 'Whatsapp Reports',
+				href: whatsappRoutes.REPORTS,
 				isShow: true,
 			},
 		],
