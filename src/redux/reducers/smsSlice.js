@@ -376,11 +376,20 @@ export const IsOTPPassed = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-export const getSmsReplies = createAsyncThunk(
+export const getSmsRepliesById = createAsyncThunk(
   'report/SmsReplies', async (id, thunkAPI) => {
     try {
       const response = await instence.get(`report/SmsReplies/${id}`);
       return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const getSmsReplies = createAsyncThunk(
+  'SmsReplies/get', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`SmsReplies/get`, data);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -422,7 +431,7 @@ export const smsSlice = createSlice({
     smsCampaignSettings: [],
     smsSendResult: -1,
     OTPPassed: null,
-    smsReplies: [],
+    smsReplies: null,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'sms.saved', showAnimtionCheck: true },
       QUICK_SEND_SUCCESSS: { severity: 'success', color: 'success', message: 'sms.quickSend', showAnimtionCheck: true },
