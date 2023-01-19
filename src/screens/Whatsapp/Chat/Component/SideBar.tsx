@@ -7,6 +7,7 @@ import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SideBar = ({
 	classes,
@@ -14,6 +15,7 @@ const SideBar = ({
 	setIsMobileSideBar,
 	handleChatId,
 }: WhatsappChatSideBarProps) => {
+	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
 		selectRoot: {
 			fontSize: '18px',
@@ -84,7 +86,7 @@ const SideBar = ({
 					</div>
 					<input
 						className={`${classes.whatsappChat} search`}
-						placeholder='Search or start a new chat'
+						placeholder={translator('whatsappChat.searchPlaceholder')}
 					/>
 				</div>
 				<div className={`${classes.whatsappChat} sidebar__contacts`}>

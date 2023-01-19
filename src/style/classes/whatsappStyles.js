@@ -1901,7 +1901,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.chat__msg-options': {
 			opacity: '0',
 			position: 'absolute',
-			right: '5px',
+			right: isRTL ? 'unset' : '5px',
+			left: isRTL ? '5px' : 'unset',
 			top: '3px',
 			pointerEvents: 'none',
 			transition: 'all 0.2s',
