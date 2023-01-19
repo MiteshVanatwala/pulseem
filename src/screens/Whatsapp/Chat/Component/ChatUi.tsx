@@ -1,6 +1,8 @@
 import Icon from './Icon';
 import { allMessages, dates, user } from './data';
+// import { user } from './UserChat.json';
 import profile from '../../../../assets/images/profile.jpeg';
+import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { BaseSyntheticEvent, useState } from 'react';
 import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
 import { Button, Grid, IconButton, Typography } from '@material-ui/core';
@@ -14,6 +16,7 @@ import {
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { Stack } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const ChatUi = ({
 	classes,
@@ -31,6 +34,7 @@ const ChatUi = ({
 	setDynamicModalVariable,
 	savedTemplate,
 }: WhatsappChatUiProps) => {
+	const { t: translator } = useTranslation();
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
 	const formatTime = (timeString: string) => {
 		let splitTimeString = timeString.split(':');
@@ -106,7 +110,7 @@ const ChatUi = ({
 						</IconButton>
 						<div className={`${classes.whatsappChat} chat__avatar-wrapper`}>
 							<img
-								src={profile}
+								src={AccountUser}
 								width='40px'
 								alt={'name'}
 								className={`${classes.whatsappChat} avatar`}
@@ -119,12 +123,15 @@ const ChatUi = ({
 								{user?.name}
 							</h2>
 							<p className={`${classes.whatsappChat} chat__contact-desc`}>
-								{user.typing ? 'typing...' : 'online'}
+								{user.typing
+									? translator('whatsappChat.type')
+									: translator('whatsappChat.online')}
 							</p>
 						</div>
 
-						<div className='chat__actions'>
-							<div className='chat__action-icon chat__action-icon--search'>
+						<div className={`${classes.whatsappChat} chat__actions`}>
+							<div
+								className={`${classes.whatsappChat} chat__action chat__action-icon`}>
 								{chatTimer}
 							</div>
 						</div>
@@ -179,7 +186,7 @@ const ChatUi = ({
 																className={`${classes.whatsappChat} chat__img`}
 															/> */}
 															<img
-																src={profile}
+																src={AccountUser}
 																alt=''
 																className={`${classes.whatsappChat} chat__img`}
 															/>
@@ -324,6 +331,7 @@ const ChatUi = ({
 							)}
 							<div
 								className={`${classes.whatsappChat} chat__input`}
+								data-text='Type a message'
 								contentEditable={savedTemplate?.length === 0 ? true : false}
 								suppressContentEditableWarning={
 									savedTemplate?.length === 0 ? true : false
@@ -346,11 +354,11 @@ const ChatUi = ({
 									spacing={2}>
 									<Typography color='textSecondary'>
 										<label style={{ fontSize: '20px' }}>
-											Conversation is closed.
+											{translator('whatsappChat.conversation')}
 										</label>
 										<br />
 										<label style={{ fontSize: '15px' }}>
-											You can not send messages in closed conversation.
+											{translator('whatsappChat.cantSend')}
 										</label>
 									</Typography>
 
@@ -359,7 +367,7 @@ const ChatUi = ({
 											size='small'
 											className={'green'}
 											onClick={() => setIsTemplateModal(true)}>
-											Send Template
+											{translator('whatsappChat.send')}
 										</Button>
 									</Grid>
 								</Stack>

@@ -31,6 +31,7 @@ export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
+	handleChatId: (chatId: number) => void;
 };
 
 export type chatModalProps = {

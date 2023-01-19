@@ -332,6 +332,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setUpdatedDynamicVariable(updatedDynamicVariable);
 		setIsDynamcFieldModal(false);
 	};
+
+	const handleChatId = (id: number) => {
+		console.log('Chat Id', id);
+	};
 	return (
 		<>
 			<DefaultScreen
@@ -345,6 +349,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							isMobileSideBar={isMobileSideBar}
 							classes={classes}
 							setIsMobileSideBar={() => setIsMobileSideBar(!isMobileSideBar)}
+							handleChatId={handleChatId}
 						/>
 						<ChatUi
 							isMobileSideBar={isMobileSideBar}

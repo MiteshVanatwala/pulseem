@@ -1,17 +1,21 @@
 import { Link } from 'react-router-dom';
 import Icon from './Icon';
 import { contacts, lastMessage } from './data';
+// import { contacts, lastMessage } from './Contacts.json';
 import { WhatsappChatSideBarProps } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SideBar = ({
 	classes,
 	isMobileSideBar,
 	setIsMobileSideBar,
+	handleChatId,
 }: WhatsappChatSideBarProps) => {
+	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
 		selectRoot: {
 			fontSize: '18px',
@@ -82,14 +86,15 @@ const SideBar = ({
 					</div>
 					<input
 						className={`${classes.whatsappChat} search`}
-						placeholder='Search or start a new chat'
+						placeholder={translator('whatsappChat.searchPlaceholder')}
 					/>
 				</div>
 				<div className={`${classes.whatsappChat} sidebar__contacts`}>
 					{contacts.map((contact: any) => (
 						<Link
 							className={`${classes.whatsappChat} sidebar-contact`}
-							to={`/chat/${contact.id}`}>
+							to={`/chat/${contact.id}`}
+							onClick={(e) => handleChatId(contact.id)}>
 							<div
 								className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}>
 								{/* <img
