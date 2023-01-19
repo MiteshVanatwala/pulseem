@@ -2,7 +2,7 @@ export const contacts: any = [
 	{
 		id: 1,
 		profile_picture: '/static/media/profile-picture-girl-3.6f306e62.jpeg',
-		name: 'Love of my life ❤️💜',
+		name: 'pulseem',
 		phone_number: '+2348123456789',
 		whatsapp_name: 'Beyonce',
 		unread: 3,
@@ -841,7 +841,7 @@ export const lastMessage: any = {
 export const user: any = {
 	id: 1,
 	profile_picture: '/static/media/profile-picture-girl-3.6f306e62.jpeg',
-	name: 'Love of my life ❤️💜',
+	name: 'pulseem',
 	phone_number: '+2348123456789',
 	whatsapp_name: 'Beyonce',
 	unread: 0,

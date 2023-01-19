@@ -269,7 +269,7 @@ const renderRoutes = (classes, redirect) => {
 			/>
 
 			<Route
-				path={`/react/whatsapp/chat`}
+				path={whatsappRoutes.CHAT}
 				element={<WhatsappChat classes={classes} />}
 			/>
 
