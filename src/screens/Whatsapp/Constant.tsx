@@ -22,6 +22,10 @@ export const whatsappRoutes = {
 	CHAT: '/react/whatsapp/chat',
 };
 
+export const apiStatus = {
+	SUCCESS: 'Success',
+};
+
 export enum fieldIDs {
 	'personalField' = 1,
 	'text' = 2,

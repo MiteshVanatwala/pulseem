@@ -99,7 +99,7 @@ const GroupSelector = ({
 					}}>
 					<div className={classes.createGroupContainer}>
 						<Checkbox
-							// It will be available when user selects two or more groups.
+							// It will be available when user selects two or more groups.(it is for creating new group combining two or more groups)
 							disabled={selectedGroups.length <= 2}
 							checked={isCreateNewGroup}
 							color='primary'
@@ -110,7 +110,7 @@ const GroupSelector = ({
 						/>
 						<span
 							className={
-								// It will be available when user selects two or more groups.
+								// It will be available when user selects two or more groups.(it is for creating new group combining two or more groups)
 								selectedGroups.length >= 2
 									? classes.createGroupSpan
 									: classes.createGroupSpanDisabled
