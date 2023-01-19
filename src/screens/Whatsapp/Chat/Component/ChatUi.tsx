@@ -1,7 +1,7 @@
 import Icon from './Icon';
 import { allMessages, dates, user } from './data';
 import profile from '../../../../assets/images/profile.jpeg';
-import { BaseSyntheticEvent, KeyboardEvent, useState } from 'react';
+import { BaseSyntheticEvent, useState } from 'react';
 import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
 import { Button, Grid, IconButton, Typography } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
@@ -36,6 +36,15 @@ const ChatUi = ({
 		let splitTimeString = timeString.split(':');
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
 	};
+	const time = new Date().toLocaleTimeString('en-US');
+	const [chatTimer, setChatTimer] = useState<string>(time);
+	const setUpdateTime = () => {
+		let time = new Date().toLocaleTimeString('en-US');
+		// .replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, '$1$3');
+		setChatTimer(time);
+	};
+
+	setInterval(setUpdateTime, 1000);
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
 		const isAvaliable = updatedDynamicVariable?.find(
@@ -112,6 +121,12 @@ const ChatUi = ({
 							<p className={`${classes.whatsappChat} chat__contact-desc`}>
 								{user.typing ? 'typing...' : 'online'}
 							</p>
+						</div>
+
+						<div className='chat__actions'>
+							<div className='chat__action-icon chat__action-icon--search'>
+								{chatTimer}
+							</div>
 						</div>
 					</header>
 

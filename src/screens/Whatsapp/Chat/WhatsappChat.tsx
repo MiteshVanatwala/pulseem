@@ -157,7 +157,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
-		setSavedTemplateList(savedTemplate.payload.Data.Items);
+		setSavedTemplateList(savedTemplate?.payload?.Data?.Items);
 	};
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];

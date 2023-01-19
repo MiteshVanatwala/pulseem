@@ -19,6 +19,7 @@ export const whatsappRoutes = {
 	EDIT_TEMPLATE: '/react/whatsapp/template/edit/:templateID',
 	EDIT_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/edit/page1/:campaignID',
 	EDIT_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/edit/page2/:campaignID',
+	CHAT: '/react/whatsapp/chat',
 };
 
 export enum fieldIDs {
@@ -1391,7 +1392,7 @@ export const statusesByName: statusByNameProps = {
 	Rejected: 'whatsappManagement.rejected',
 	Approved: 'whatsappManagement.approved',
 	Received: 'whatsappManagement.received',
-	ForPulseem: 'whatsappManagement.CreatedOnlyforPulseem'
+	ForPulseem: 'whatsappManagement.CreatedOnlyforPulseem',
 };
 
 export const campaignData: campaignDataProps[] = [
