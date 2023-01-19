@@ -1,5 +1,6 @@
 import Icon from './Icon';
 import { allMessages, dates, user } from './data';
+// import { user } from './UserChat.json';
 import profile from '../../../../assets/images/profile.jpeg';
 import { BaseSyntheticEvent, KeyboardEvent, useState } from 'react';
 import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
@@ -14,6 +15,7 @@ import {
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { Stack } from '@mui/material';
+import { useParams } from 'react-router-dom';
 
 const ChatUi = ({
 	classes,

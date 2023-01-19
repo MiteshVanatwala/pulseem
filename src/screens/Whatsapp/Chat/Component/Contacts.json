@@ -1,0 +1,25 @@
+{
+	"contacts": [
+		{
+			"phonenumber": "8123591159",
+			"msgs": "First Number",
+			"status": null
+		},
+		{
+			"phonenumber": "6295236652",
+			"msgs": "Second Number",
+			"status": "read"
+		},
+		{
+			"phonenumber": "1234567890",
+			"msgs": "Thrid Number",
+			"status": null
+		}
+	],
+	"lastMessage": {
+		"content": "The green tea and avocado smoothie turned out exactly as would be expected.",
+		"sender": 2,
+		"time": "09:11:26",
+		"status": null
+	}
+}
