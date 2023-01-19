@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { Grid, Tab } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import { ClassesType } from "../../Classes.types";
@@ -82,7 +83,8 @@ const InboundMessages = ({ classes }: ClassesType) => {
         subPage={'inboundMessages'}
         currentPage='reports'
         classes={classes}
-        containerClass={classes.management}>
+        containerClass={clsx(classes.management, classes.mb50)}
+    >
         {renderTabs()}
     </DefaultScreen>
 

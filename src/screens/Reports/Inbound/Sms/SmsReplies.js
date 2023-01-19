@@ -2,26 +2,23 @@ import clsx from 'clsx';
 import 'moment/locale/he';
 import moment from 'moment';
 import { useState, useEffect } from 'react';
-import { FiPhoneOff } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ClearIcon from '@material-ui/icons/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
-import { Dialog } from "../../../../components/managment/index";
 import { exportFile } from '../../../../helpers/exportFromJson';
 import { ClientStatus } from '../../../../helpers/PulseemArrays';
-import { EditIcon } from '../../../../assets/images/managment/index';
-import { ExportIcon } from '../../../../assets/images/managment/index';
+import { EditIcon, ExportIcon, SearchIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import { getGroupsBySubAccountId } from "../../../../redux/reducers/groupSlice";
-import { AiOutlineUserDelete, AiOutlineUsergroupDelete } from 'react-icons/ai';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
-import { TablePagination, ManagmentIcon } from '../../../../components/managment/index';
+import { Dialog, TablePagination, ManagmentIcon, DateField } from '../../../../components/managment/index';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { deleteFromGroups, removeEmailClient, removeSmsClient, getClientsById } from "../../../../redux/reducers/clientSlice";
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../../helpers/exportHelper';
-import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
+import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 
 
 const SmsReplies = ({ classes, ...other }) => {
@@ -34,6 +31,8 @@ const SmsReplies = ({ classes, ...other }) => {
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [clientToEdit, setClientToEdit] = useState(null);
+    const [isSearching, setIsSearching] = useState(false);
+    const [advanceSearch, setAdvanceSearch] = useState(false);
     const [selectedClients, setSelectedClients] = useState([]);
     const { smsReplies } = useSelector(state => state.sms);
     const { ToastMessages } = useSelector(state => state.client);
@@ -44,17 +43,19 @@ const SmsReplies = ({ classes, ...other }) => {
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const { id } = useParams();
-    const [request, setRequest] = useState({
+    const defaultRequest = {
         FromDate: null,
         ToDate: null,
         FromNumber: null,
         ToNumber: null,
         Text: null,
         CampaignID: null,
-        PageIndex: page ?? 1,
+        PageIndex: 1,
         PageSize: rowsPerPage,
         IsExport: false
-    });
+    };
+    const [request, setRequest] = useState(defaultRequest);
+    const [searchRequest, setSearchRequest] = useState(defaultRequest)
 
     const DialogType = {
         EDIT_RECIPIENT: "EDIT_RECIPIENT",
@@ -74,16 +75,6 @@ const SmsReplies = ({ classes, ...other }) => {
         await dispatch(getSmsRepliesById(id));
     }
 
-    const getData = async () => {
-        if (id && id > 0) {
-            getRepliesById(id);
-        }
-        else {
-            getReplies();
-        }
-        setShowLoader(false);
-    }
-
     useEffect(() => {
         const initExtraFields = async () => {
             dispatch(getAccountExtraData());
@@ -92,16 +83,21 @@ const SmsReplies = ({ classes, ...other }) => {
             }
         }
         initExtraFields();
-        getData();
     }, [dispatch]);
 
     useEffect(() => {
-        getReplies();
+        if (id && id > 0) {
+            getRepliesById(id);
+        }
+        else {
+            getReplies();
+        }
+        setShowLoader(false);
     }, [request, page, rowsPerPage])
 
     const handlePageChange = (val) => {
-        setPage(val);
-        setRequest({ ...request, PageIndex: val });
+        setRowsPerPage(val);
+        setRequest({ ...request, PageSize: val });
     }
 
     const renderHeader = () => {
@@ -176,6 +172,169 @@ const SmsReplies = ({ classes, ...other }) => {
         setShowLoader(false)
     }
 
+    const renderDateFields = () => {
+        const handleFromDate = (val) => {
+            if (val) {
+                let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
+                setSearchRequest({ ...searchRequest, FromDate: dateVal });
+            }
+        }
+
+        const handleToDate = (val) => {
+            if (val) {
+                let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
+                setSearchRequest({ ...searchRequest, ToDate: dateVal });
+            }
+        }
+
+        return (
+            <>
+                <Grid item>
+                    <DateField
+                        classes={classes}
+                        value={searchRequest.FromDate}
+                        onChange={(v) => handleFromDate(v)}
+                        placeholder={t('mms.locFromDateResource1.Text')}
+                        rootStyle={classes.maxWidth190}
+                        toolbarDisabled={false}
+                        minDate={'2000-01-01'}
+                        isRoundedOnMobile={windowSize === 'xs'}
+                    />
+                </Grid>
+                <Grid item>
+                    <DateField
+                        classes={classes}
+                        value={searchRequest.ToDate}
+                        onChange={(v) => handleToDate(v)}
+                        placeholder={t('mms.locToDateResource1.Text')}
+                        minDate={searchRequest.FromDate ? searchRequest.FromDate : moment.now()}
+                        toolbarDisabled={false}
+                        rootStyle={classes.maxWidth190}
+                        isRoundedOnMobile={windowSize === 'xs'}
+                    />
+                </Grid>
+                {windowSize !== 'xs' && <Grid item>
+                    <TextField
+                        type='tel'
+                        variant='outlined'
+                        size='small'
+                        value={searchRequest.FromNumber}
+                        onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
+                        className={clsx(classes.textField, classes.minWidth252)}
+                        placeholder={t('common.FrmNumber')}
+                    />
+                </Grid>
+                }
+            </>
+        )
+    }
+    const renderAdvanceSearch = () => {
+        return (
+            <>
+                <Grid item>
+                    <TextField
+                        type='tel'
+                        variant='outlined'
+                        size='small'
+                        value={searchRequest.FromNumber}
+                        onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
+                        className={clsx(classes.textField, classes.minWidth252)}
+                        placeholder={t('common.FrmNumber')}
+                    />
+                </Grid>
+                <Grid item>
+                    <TextField
+                        type='tel'
+                        variant='outlined'
+                        size='small'
+                        value={searchRequest.ToNumber}
+                        onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
+                        className={clsx(classes.textField, classes.minWidth252)}
+                        placeholder={t('common.ToNumber')}
+                    />
+                </Grid>
+                <Grid item>
+                    <DateField
+                        classes={classes}
+                        value={searchRequest.FromDate}
+                        onChange={(e) => setSearchRequest({ ...searchRequest, FromDate: e.target.value })}
+                        placeholder={t('mms.locFromDateResource1.Text')}
+                        rootStyle={classes.maxWidth190}
+                        toolbarDisabled={false}
+                        minDate={'2000-01-01'}
+                    />
+                </Grid>
+                <Grid item>
+                    <DateField
+                        classes={classes}
+                        value={searchRequest.ToDate}
+                        onChange={(e) => setSearchRequest({ ...searchRequest, ToDate: e.target.value })}
+                        placeholder={t('mms.locToDateResource1.Text')}
+                        minDate={searchRequest.FromDate ? searchRequest.FromDate : '2000-01-01'}
+                        toolbarDisabled={false}
+                        rootStyle={classes.maxWidth190}
+                    />
+                </Grid>
+                <Grid item>
+                    <TextField
+                        variant='outlined'
+                        size='small'
+                        value={searchRequest.Text}
+                        onChange={(e) => setSearchRequest({ ...searchRequest, Text: e.target.value })}
+                        className={clsx(classes.textField, classes.minWidth252)}
+                        placeholder={t('common.messageContent')}
+                    />
+                </Grid>
+            </>
+        )
+    }
+    const handleSearch = () => {
+        setIsSearching(true);
+        setPage(1);
+        setRequest({ ...request, ...searchRequest });
+    }
+    const renderSearchLine = () => {
+        const { sms = false } = isSearching || {};
+        return (
+            <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb50)}>
+                {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
+                <Grid item>
+                    <Button
+                        size='large'
+                        variant='contained'
+                        onClick={handleSearch}
+                        className={classes.searchButton}
+                        endIcon={<SearchIcon />}>
+                        {t('campaigns.btnSearchResource1.Text')}
+                    </Button>
+                    {windowSize !== 'xs' && <Link
+                        color='initial'
+                        component='button'
+                        underline='none'
+                        onClick={() => setAdvanceSearch(!advanceSearch)}
+                        className={clsx(classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
+                        {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+                    </Link>
+                    }
+                </Grid>
+                {isSearching && <Grid item>
+                    <Button
+                        size='large'
+                        variant='contained'
+                        onClick={() => {
+                            setRequest(defaultRequest)
+                            setIsSearching(false);
+                        }}
+                        className={classes.searchButton}
+                        endIcon={<ClearIcon />}>
+                        {t('common.clear')}
+                    </Button>
+                </Grid>
+                }
+            </Grid>
+        )
+    }
+
     const renderTable = () => {
         return (
             <TableContainer className={classes.tableStyle}>
@@ -191,12 +350,13 @@ const SmsReplies = ({ classes, ...other }) => {
         return (
             <TableHead>
                 <TableRow classes={rowStyle}>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('common.SentFromNumber')}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.clientName')}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.smsStatus")}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.emailStatus")}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.smsStatus")}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.emailStatus")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.ReplyDate")}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex1} align='center' >{t("common.messageContent")}</TableCell>
-                    <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex6} ></TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex5} align='center' >{t("common.messageContent")}</TableCell>
+                    {/* <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex1} ></TableCell> */}
                 </TableRow>
             </TableHead>
         )
@@ -239,7 +399,8 @@ const SmsReplies = ({ classes, ...other }) => {
             SmsStatus,
             Status,
             ReplyDate,
-            ReplyText
+            ReplyText,
+            VirtualNumber
         } = row;
 
         let creation = moment(CreationDate, dateFormat);
@@ -251,20 +412,59 @@ const SmsReplies = ({ classes, ...other }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={clsx(classes.flex2, classes.ellipsisText)}>
-                    <Typography className={classes.font18}>{CellPhone}</Typography>
-                    <Typography className={classes.font13}>{FirstName} {LastName}</Typography>
+                    className={classes.flex2}>
+                    <Typography className={classes.font18}>{VirtualNumber}</Typography>
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={classes.flex1}>
+                    className={clsx(classes.flex2, classes.ellipsisText)}>
+                    <Grid
+                        key={'edit'}
+                        style={{ maxWidth: 100 }}
+                        item>
+                        <Box className={classes.dFlex}>
+                            <Box>
+                                <Typography className={classes.font18}>{CellPhone}</Typography>
+                                <Typography className={clsx(classes.font13, classes.ellipsisText)}
+                                    style={{ maxWidth: 80 }}
+                                    title={`${FirstName} ${LastName}`}
+                                >{FirstName} {LastName}</Typography>
+                            </Box>
+                            <Box>
+                                <ManagmentIcon
+                                    key='edit'
+                                    classes={classes}
+                                    icon={EditIcon}
+                                    iconClass={clsx(
+                                        classes.smallIcon,
+                                        ClientID > 0 ? null : classes.disabled)
+                                    }
+                                    rootClass={classes.paddingIcon}
+                                    onClick={async () => {
+                                        setShowLoader(true);
+                                        setSelectedClients([row.ClientID]);
+                                        const recipientRequest = await dispatch(getClientsById([row.ClientID]));
+                                        const clientToEdit = recipientRequest?.payload?.Data[0];
+                                        setClientToEdit(clientToEdit);
+                                        setDialog(DialogType.EDIT_RECIPIENT);
+                                        setShowLoader(false);
+                                    }}
+                                />
+                            </Box>
+                        </Box>
+                    </Grid>
+                </TableCell>
+                <TableCell
+                    classes={cellBodyStyle}
+                    align='center'
+                    className={classes.flex2}>
                     {statusToText(SmsStatus, 'sms')}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={classes.flex1}>
+                    className={classes.flex2}>
                     {statusToText(Status, 'email')}
                 </TableCell>
                 <TableCell
@@ -274,96 +474,17 @@ const SmsReplies = ({ classes, ...other }) => {
                     {reply.format('DD/MM/YYYY')} {reply.format('HH:mm:ss')}
                 </TableCell>
                 <TableCell
-                    classes={cellBodyStyle}
+                    classes={{ root: classes.tableCellRoot }}
                     align='center'
-                    className={classes.flex1}>
+                    className={classes.flex5}>
                     {ReplyText}
                 </TableCell>
-                <TableCell
-                    component="th"
-                    scope="row"
-                    classes={{ root: classes.tableCellRoot }}
-                    className={classes.flex6}>
-                    {renderCellIcons(row)}
-
-                </TableCell>
-            </TableRow>
+            </TableRow >
         )
     }
 
     const renderPhoneRow = (row) => {
         return <></>
-    }
-
-    const renderCellIcons = (row) => {
-        const iconsMap = [
-            {
-                key: 'edit',
-                icon: EditIcon,
-                lable: t('campaigns.Image2Resource1.ToolTip'),
-                rootClass: classes.paddingIcon,
-                onClick: async () => {
-                    setShowLoader(true);
-                    setSelectedClients([row.ClientID]);
-                    const recipientRequest = await dispatch(getClientsById([row.ClientID]));
-                    const clientToEdit = recipientRequest?.payload?.Data[0];
-                    //const tempData = data.filter((c) => { return c.ClientID !== ClientID });
-                    // setData([...tempData, clientToEdit])
-                    setClientToEdit(clientToEdit);
-                    setDialog(DialogType.EDIT_RECIPIENT);
-                    setShowLoader(false);
-                }
-            },
-            {
-                key: 'removeFromGroups',
-                uIcon: <AiOutlineUsergroupDelete style={{ fontSize: 25, alignSelf: 'center' }} />,
-                lable: t('common.deleteFromAllGroups'),
-                rootClass: classes.paddingIcon,
-                onClick: () => {
-                    setSelectedClients([row.ClientID]);
-                    setDialog(DialogType.CONFIRM_DELETE_FROM_GROUPS)
-                }
-            },
-            {
-                key: 'removeFromAccount',
-                uIcon: <AiOutlineUserDelete style={{ fontSize: 25, alignSelf: 'center' }} />,
-                lable: t('common.removeFromAccount'),
-                rootClass: classes.paddingIcon,
-                onClick: () => {
-                    setSelectedClients([row.ClientID]);
-                    setDialog(DialogType.CONFIRM_REMOVE_EMAIL)
-                }
-            },
-            {
-                key: 'removeSmsClient',
-                uIcon: <FiPhoneOff style={{ fontSize: 25, alignSelf: 'center' }} />,
-                lable: t('common.removeSmsClient'),
-                onClick: () => {
-                    setSelectedClients([row.ClientID]);
-                    setDialog(DialogType.CONFIRM_REMOVE_PHONE)
-                },
-                rootClass: classes.paddingIcon,
-            }
-        ]
-        return (
-            <Grid
-                container
-                direction='row'
-                justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
-                {iconsMap.map(icon => (
-                    <Grid
-                        className={icon.disable && classes.disabledCursor}
-                        key={icon.key}
-                        style={{ maxWidth: 100 }}
-                        item >
-                        <ManagmentIcon
-                            classes={classes}
-                            {...icon}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
-        )
     }
 
     const renderTablePagination = () => {
@@ -400,7 +521,6 @@ const SmsReplies = ({ classes, ...other }) => {
                         handleResponses={(response, actions) => { handleResponses(response, actions); }}
                         onAddRecipient={(closeDialog = true) => {
                             closeDialog && setDialog(null);
-                            getData();
                         }}
                         recipientData={clientToEdit}
                     />
@@ -481,7 +601,6 @@ const SmsReplies = ({ classes, ...other }) => {
         const response = await dispatch(deleteFromGroups(selectedClients[0]))
         if (response && response.payload === 'true') {
             setToastMessage(ToastMessages.RECIPIENT_DELETED_FROM_GROUP);
-            getData();
         }
         setShowLoader(false);
     }
@@ -519,7 +638,6 @@ const SmsReplies = ({ classes, ...other }) => {
                     },
                 }
             );
-            getData();
             setDialog(null);
         }
         setShowLoader(false);
@@ -559,7 +677,6 @@ const SmsReplies = ({ classes, ...other }) => {
                     },
                 }
             );
-            getData()
             setDialog(null);
         }
         setShowLoader(false);
@@ -573,7 +690,7 @@ const SmsReplies = ({ classes, ...other }) => {
         'S_201': {
             code: 201,
             message: '',
-            Func: () => getData()
+            Func: () => id ? getRepliesById() : getReplies()
         },
         'S_400': {
             code: 400,
@@ -676,6 +793,7 @@ const SmsReplies = ({ classes, ...other }) => {
     return (
         <Box>
             {renderHeader()}
+            {renderSearchLine()}
             {renderTable()}
             {renderTablePagination()}
             {showDialog()}

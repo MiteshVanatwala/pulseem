@@ -1824,5 +1824,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         }
       }
     },
+  },
+  smallIcon: {
+    width: 12
   }
 });
