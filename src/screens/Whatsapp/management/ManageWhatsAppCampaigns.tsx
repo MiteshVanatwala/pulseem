@@ -32,9 +32,10 @@ import {
 	buttonsDataProps,
 	callToActionProps,
 	campaignListAPIProps,
+	commonAPIResponseProps,
 	coreProps,
+	getTemplateByIdAPIProps,
 	quickReplyButtonProps,
-	savedTemplateAPIProps,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -42,13 +43,14 @@ import {
 	savedTemplateQuickReplyProps,
 	savedTemplateTextProps,
 	templateDataProps,
+	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { statusesByName } from '../Constant';
+import { apiStatus, campaignStatus, resetToastData } from '../Constant';
 import Pagination from './Component/Pagination';
 import RestoreDeletedModal from './Popups/RestoreDeletedModal';
 import { KeyboardDatePicker } from '@material-ui/pickers';
@@ -57,6 +59,8 @@ import { ManagmentIconProps } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
+	deleteCampaign,
+	duplicateCampaign,
 	getAllCampaigns,
 	getSavedTemplatesById,
 } from '../../../redux/reducers/whatsappSlice';
@@ -68,6 +72,7 @@ import {
 	searchArrayProps,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import { Loader } from '../../../components/Loader/Loader';
+import Toast from '../../../components/Toast/Toast.component';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -76,9 +81,14 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);
+	const [activeRowId, setActiveRowId] = useState<string>('');
 	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
 	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
@@ -115,6 +125,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
 		[]
 	);
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 
 	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
 	const cellStyle = {
@@ -199,11 +211,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const renderNameCell = (row: campaignDataProps) => {
 		let date = null;
 		let text = '';
-		if (!row?.sendDate) {
-			date = moment(row.updatedDate, dateFormat);
+		if (!row?.SendDate) {
+			date = moment(row.UpdateDate, dateFormat);
 			text = translator('common.UpdatedOn');
 		} else {
-			date = moment(row.sendDate, dateFormat);
+			date = moment(row.SendDate, dateFormat);
 			const dateMillis = date.valueOf();
 			const currentDateMillis = moment().valueOf();
 			text =
@@ -224,8 +236,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					arrow={true}
 					style={{ fontSize: 18, fontWeight: 'bold' }}
 					placement={'top'}
-					title={<Typography noWrap={false}>{row.campaignName}</Typography>}
-					text={row.campaignName}
+					title={<Typography noWrap={false}>{row.Name}</Typography>}
+					text={row.Name}
 					children={undefined}
 					icon={undefined}
 				/>
@@ -239,7 +251,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		return (
 			<>
 				<Typography className={classes.middleText}>
-					{recipients.toLocaleString()}
+					{recipients?.toLocaleString()}
 				</Typography>
 				<Typography className={classes.middleText}>
 					{translator('campaigns.recipients')}
@@ -260,17 +272,20 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			</>
 		);
 	};
-	const renderStatusCell = (status: string) => {
+	const renderStatusCell = (status: number) => {
 		return (
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.recipientsStatus, {
-						[classes.recipientsStatusCreated]: status === 'Created',
-						[classes.recipientsStatusSent]: status === 'Finished',
-						[classes.recipientsStatusSending]: status === 'Sending',
-						[classes.recipientsStatusCanceled]: status === 'Canceled',
+						[classes.recipientsStatusCreated]: status === 1,
+						[classes.recipientsStatusSent]: status === 4,
+						[classes.recipientsStatusSending]: status === 2,
+						[classes.recipientsStatusStopped]: status === 3,
+						[classes.recipientsStatusCanceled]: status === 5,
 					})}>
-					{translator(statusesByName[status])}
+					{translator(
+						`whatsappManagement.${campaignStatus[status]?.toLocaleLowerCase()}`
+					)}
 				</Typography>
 			</>
 		);
@@ -431,29 +446,31 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onPreview = async (templateId: string) => {
-		const templateData: savedTemplateAPIProps = await dispatch<any>(
-			getSavedTemplatesById({
-				templateId: templateId
-					? 'HX7d12be9e2c0cef2863d4adb5e27c40e2'
-					: 'HX7d12be9e2c0cef2863d4adb5e27c40e2',
-			})
+		const templateData: getTemplateByIdAPIProps = await dispatch<any>(
+			getSavedTemplatesById(templateId)
 		);
-		if (templateData.payload.Status === 'Success') {
-			const templates = templateData.payload?.Data?.Items
-				? templateData.payload?.Data?.Items
-				: [];
-			if (templates && templates?.length > 0) {
-				const templateData = templates[0]?.Data;
+		if (templateData.payload.Status === apiStatus.SUCCESS) {
+			const templates = templateData.payload?.Data;
+			if (templates) {
+				const templateData = templates?.Data;
 				onSavedTemplateChange(templateData);
 			}
 			setIsPreviewCampaignOpen(true);
+		} else {
+			templateData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: templateData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
-	const onRowIconClick = (key: string, templateId: string) => {
+	const onRowIconClick = (key: string, campaignId: string) => {
+		setActiveRowId(campaignId);
 		switch (key) {
 			case 'preview':
-				onPreview(templateId);
+				onPreview(campaignId);
 				break;
 			case 'duplicate':
 				setIsDuplicateCampaignOpen(true);
@@ -474,7 +491,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const renderCellIcons = (row: campaignDataProps) => {
-		const { status, IsAutomation } = row;
+		const { Status, AutomationID } = row;
 		const groups: string[] = [];
 
 		const iconsMap: ManagmentIconProps[] = [
@@ -483,13 +500,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				buttonKey: 'send',
 				icon: SendGreenIcon,
 				lable: translator('campaigns.imgSendResource1.ToolTip'),
-				remove: status !== 'Created' || IsAutomation === true,
+				remove: Status !== 1 || AutomationID !== 0,
 				rootClass: classes.sendIcon,
 				textClass: classes.sendIconText,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
-				id: row.campaignId.toString(),
-				href: `/react/whatsapp/campaign/edit/page2/${row.campaignId}`,
+				id: row.WACampaignID.toString(),
+				href: `/react/whatsapp/campaign/edit/page2/${row.WACampaignID}`,
 			},
 			{
 				key: 'preview',
@@ -500,19 +517,19 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				rootClass: classes.paddingIcon,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
-				id: row.campaignId.toString(),
+				id: row.WACampaignID.toString(),
 			},
 			{
 				key: 'edit',
 				buttonKey: 'edit',
 				icon: EditIcon,
-				disable: status !== 'Created' || IsAutomation === true,
+				disable: Status !== 1 || AutomationID !== 0,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
 				rootClass: classes.paddingIcon,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
-				id: row.campaignId.toString(),
-				href: `/react/whatsapp/campaign/edit/page1/${row.campaignId}`,
+				id: row.WACampaignID.toString(),
+				href: `/react/whatsapp/campaign/edit/page1/${row.WACampaignID}`,
 			},
 			{
 				key: 'duplicate',
@@ -522,42 +539,42 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				rootClass: classes.paddingIcon,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
-				id: row.campaignId.toString(),
+				id: row.WACampaignID.toString(),
 			},
 			{
 				key: 'groups',
 				buttonKey: 'groups',
 				icon: GroupsIcon,
-				disable: groups && groups.length === 0,
+				disable: groups?.length === 0,
 				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
-				id: row.campaignId.toString(),
+				id: row.WACampaignID.toString(),
 			},
 			{
 				key: 'automation',
 				buttonKey: 'automation',
 				icon: AutomationIcon,
-				disable: IsAutomation === false,
+				disable: AutomationID === 0,
 				remove: windowSize === 'xs',
 				lable: translator('campaigns.automation'),
 				rootClass: classes.paddingIcon,
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
-				id: row.campaignId.toString(),
+				id: row.WACampaignID.toString(),
 			},
 			{
 				key: 'delete',
 				buttonKey: 'delete',
 				icon: DeleteIcon,
-				disable: IsAutomation === true,
+				disable: AutomationID !== 0,
 				rootClass: classes.paddingIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
 				onClick: (key: string, id: string) => onRowIconClick(key, id),
 				classes: classes,
-				id: row.campaignId.toString(),
+				id: row.WACampaignID.toString(),
 			},
 		];
 		return (
@@ -592,15 +609,15 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		];
 		const filtersObject: filtersObjectProps = {
 			name: (row: campaignDataProps) => {
-				return String(row.campaignName.toLowerCase()).includes(
+				return String(row.Name.toLowerCase()).includes(
 					campaineNameSearch.toLowerCase()
 				);
 			},
 			date: (row: campaignDataProps, values: searchArrayProps) => {
-				const { updatedDate, sendDate } = row;
-				const lastUpdate = sendDate
-					? moment(sendDate, dateFormat).valueOf()
-					: moment(updatedDate, dateFormat).valueOf();
+				const { UpdateDate, SendDate } = row;
+				const lastUpdate = SendDate
+					? moment(SendDate, dateFormat).valueOf()
+					: moment(UpdateDate, dateFormat).valueOf();
 				const startFromDate =
 					(values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ||
 					null;
@@ -629,7 +646,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	const getRows = () => {
 		let sortData = tableData;
-		sortData = sortData.slice(
+		sortData = sortData?.slice(
 			(page - 1) * rowsPerPage,
 			(page - 1) * rowsPerPage + rowsPerPage
 		);
@@ -638,11 +655,39 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicateCampaign = async () => {
-		console.log('onDuplicateCampaign');
+		const deleteData: commonAPIResponseProps = await dispatch<any>(
+			duplicateCampaign(activeRowId)
+		);
+		setIsDuplicateCampaignOpen(false);
+		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.DUPLICATE_CAMPAIGN_SUCCESS);
+			setApiCampaignData();
+		} else {
+			deleteData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	const onDeleteCampaign = async () => {
-		console.log('onDeleteCampaign');
+		const deleteData: commonAPIResponseProps = await dispatch<any>(
+			deleteCampaign(activeRowId)
+		);
+		setIsDeleteCampaignOpen(false);
+		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+			setApiCampaignData();
+		} else {
+			deleteData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	const onRestoreDeleted = async () => {
@@ -665,8 +710,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			getAllCampaigns()
 		);
 		if (campaignData.payload.Status === 'Success') {
-			setCampaignListData(campaignData.payload.Items);
-			setTableData(campaignData.payload.Items);
+			setCampaignListData(campaignData.payload?.Data?.Items);
+			setTableData(campaignData.payload?.Data?.Items);
 			setIsLoader(false);
 		} else {
 			setCampaignListData([]);
@@ -675,12 +720,27 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		}
 	};
 
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} onClose={undefined} />;
+		}
+		return null;
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
 			currentPage='whatsapp'
 			classes={classes}
 			customPadding={true}>
+			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.campaignManagement')}
 				Classes={classes.whatsappTemplateTitle}
@@ -847,7 +907,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							) : (
 								<>
 									{getRows()?.map((campaign: campaignDataProps) => (
-										<TableRow key={campaign.campaignId} classes={rowStyle}>
+										<TableRow key={campaign.WACampaignID} classes={rowStyle}>
 											<TableCell
 												classes={cellStyle}
 												align='center'
@@ -858,19 +918,19 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 												classes={cellStyle}
 												align='center'
 												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderRecipientsCell(campaign.recipients)}
+												{renderRecipientsCell(campaign.TotalSendPlan)}
 											</TableCell>
 											<TableCell
 												classes={cellStyle}
 												align='center'
 												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderMessagesCell(campaign.messages)}
+												{renderMessagesCell(campaign.TotalSendPlan)}
 											</TableCell>
 											<TableCell
 												classes={cellStyle}
 												align='center'
 												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderStatusCell(campaign.status)}
+												{renderStatusCell(campaign.Status)}
 											</TableCell>
 											<TableCell
 												component='th'

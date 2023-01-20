@@ -305,15 +305,18 @@ export type GroupsSelectAllProps = {
 };
 
 export type campaignDataProps = {
-	campaignId: number;
-	campaignName: string;
-	statusId: number;
-	status: string;
-	recipients: number;
-	messages: number;
-	IsAutomation: boolean;
-	updatedDate: string;
-	sendDate: string | null;
+	AutomationID: number;
+	AutomationTriggerInActive: boolean;
+	CreateDate: string;
+	CreditsPerSms: number;
+	Groups: string | null;
+	IsDeleted: boolean;
+	Name: string;
+	SendDate: string | null;
+	Status: number;
+	TotalSendPlan: number;
+	UpdateDate: string;
+	WACampaignID: number;
 };
 
 export type searchArrayProps = {
@@ -329,37 +332,40 @@ export type filtersObjectProps = {
 };
 
 export type reportDataProps = {
-	waCampaignId: number;
+	WACampaignID: number;
 	statusId: number;
-	status: string;
-	campaignName: string;
-	totalSendPlan: number;
-	totalSent: number;
-	totalRead: number;
-	clicksCount: number;
-	uniqueClicksCount: number;
-	totalFeedback: number;
-	removed: number;
-	failure: number;
-	updatedDate: string | null;
-	sendDate: string | null;
+	Status: number;
+	Name: string;
+	ToSend: number;
+	Sent: number;
+	Read: number;
+	ClicksCount: number;
+	UniqueClicksCount: number;
+	FeedBack: number;
+	Removed: number;
+	Failed: number;
+	CreateDate: string;
+	UpdateDate: string;
+	FromNumber: string;
+	TemplateID: string;
 };
 
 export type exportDataProps = {
-	waCampaignId: number;
+	WACampaignID: number;
 	statusId?: number;
-	status: string;
-	campaignName: string;
-	totalSendPlan: number;
-	totalSent: number;
-	totalRead: number;
-	clicksCount: number;
-	uniqueClicksCount: number;
-	totalFeedback: number;
-	removed: number;
-	failure: number;
-	updatedDate: string | null;
-	sendDate: string | null;
+	Status: string;
+	Name: string;
+	ToSend: number;
+	Sent: number;
+	Read: number;
+	ClicksCount: number;
+	UniqueClicksCount: number;
+	FeedBack: number;
+	Removed: number;
+	Failed: number;
+	CreateDate: string;
+	FromNumber: string;
+	TemplateID?: string;
 };
 
 export type manualUploadProps = {

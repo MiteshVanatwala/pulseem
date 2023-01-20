@@ -17,10 +17,6 @@ type ApiGetSavedTemplatesDataProps = {
 	templateStatus: number;
 };
 
-type ApiGetSavedTemplatesDataByIdProps = {
-	templateId: string;
-};
-
 type ApiSubmitTemplatesDataProps =
 	| TextMediaAndButton
 	| QuickReply
@@ -86,12 +82,11 @@ export const getSavedTemplates = createAsyncThunk(
 );
 
 export const getSavedTemplatesById = createAsyncThunk(
-	'WhatsAppTemplate/GetWhatsAppTemplate',
-	async (data: ApiGetSavedTemplatesDataByIdProps, thunkAPI) => {
+	'WhatsAppTemplate/GetWhatsAppTemplateById',
+	async (id: string, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`WhatsAppTemplate/GetWhatsAppTemplate`,
-				data
+			const response = await PulseemReactInstance.get(
+				`WhatsAppTemplate/GetWhatsAppTemplateById/${id}`
 			);
 
 			return response.data;
@@ -223,8 +218,23 @@ export const deleteTemplate = createAsyncThunk(
 	'WhatsAppTemplate/DeleteWhatsAppTemplate',
 	async (templateId: string, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
+			const response = await PulseemReactInstance.delete(
 				`WhatsAppTemplate/DeleteWhatsAppTemplate/${templateId}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const duplicateTemplate = createAsyncThunk(
+	'WhatsAppTemplate/CloneWhatsAppTemplate',
+	async (templateId: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(
+				`WhatsAppTemplate/CloneWhatsAppTemplate/${templateId}`
 			);
 			return response.data;
 		} catch (error) {
@@ -240,6 +250,23 @@ export const getAllTemplates = createAsyncThunk(
 		try {
 			const response = await PulseemReactInstance.post(
 				`WhatsAppTemplate/GetWhatsAppTemplate`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const submitTemplateDirect = createAsyncThunk(
+	'WhatsAppTemplate/SubmitWhatsAppTemplateDirect',
+	async (data: { id: string }, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppTemplate/SubmitWhatsAppTemplateDirect`,
+				data
 			);
 
 			return response.data;
@@ -266,12 +293,42 @@ export const getAllCampaigns = createAsyncThunk(
 	}
 );
 
+export const deleteCampaign = createAsyncThunk(
+	'whatsAppCampaign/DeleteCampaign',
+	async (campaignId: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.delete(
+				`whatsAppCampaign/DeleteCampaign/${campaignId}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const duplicateCampaign = createAsyncThunk(
+	'whatsAppCampaign/CloneWhatsAppCampaign',
+	async (templateId: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(
+				`whatsAppCampaign/CloneWhatsAppCampaign/${templateId}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const getAllReports = createAsyncThunk(
-	'whatsAppCampaign/GetWhatsAppReport',
+	'WhatsAppReport/GetWhatsAppReport',
 	async (_data, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/GetWhatsAppReport`
+				`WhatsAppReport/GetWhatsAppReport`
 			);
 
 			return response.data;
@@ -343,6 +400,12 @@ export const whatsappSlice = createSlice({
 			SAVE_CAMPAIGN_SUCCESS: {
 				severity: 'success',
 				color: 'success',
+				message: 'Campaign saved succesfully',
+				showAnimtionCheck: true,
+			},
+			SUBMIT_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
 				message: 'Campaign submitted succesfully',
 				showAnimtionCheck: true,
 			},
@@ -350,6 +413,18 @@ export const whatsappSlice = createSlice({
 				severity: 'success',
 				color: 'success',
 				message: 'Template deleted succesfully',
+				showAnimtionCheck: true,
+			},
+			DELETE_TEMPLATE_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Template created succesfully',
+				showAnimtionCheck: true,
+			},
+			DUPLICATE_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign cloned succesfully',
 				showAnimtionCheck: true,
 			},
 		},

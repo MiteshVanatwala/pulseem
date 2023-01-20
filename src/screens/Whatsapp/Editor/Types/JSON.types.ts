@@ -24,6 +24,7 @@ export type CallToAction = {
 	language: string;
 	types: CallToActionTypes;
 	isSaveOnly?: boolean;
+	id?: number;
 };
 
 export type CallToActionTypes = {
@@ -47,6 +48,7 @@ export type QuickReply = {
 	language: string;
 	types: QuickReplyTypes;
 	isSaveOnly?: boolean;
+	id?: number;
 };
 
 export type QuickReplyTypes = {
@@ -60,6 +62,7 @@ export type JSONPropsText = {
 	language: string;
 	types: TextTypes;
 	isSaveOnly?: boolean;
+	id?: number;
 };
 
 export type TextTypes = {
@@ -77,6 +80,7 @@ export type TextMedia = {
 	language: string;
 	types: TextMediaTypes;
 	isSaveOnly?: boolean;
+	id?: number;
 };
 
 export type TextMediaTypes = {
@@ -96,6 +100,7 @@ export type TextMediaAndButton = {
 	language: string;
 	types: TextMediaAndButtonTypes;
 	isSaveOnly?: boolean;
+	id?: number;
 };
 
 export type TextMediaAndButtonTypes = {

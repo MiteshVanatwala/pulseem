@@ -40,6 +40,8 @@ export type statusProps = { [key: number]: string };
 
 export type statusByNameProps = { [key: string]: string };
 
+export type campaignStatusProps = { [key: number]: string };
+
 export type ManagmentIconProps = {
 	classes: ClassesType['classes'];
 	key: string;
@@ -50,7 +52,7 @@ export type ManagmentIconProps = {
 	hide?: boolean;
 	openNewTab?: boolean;
 	href?: string;
-	onClick: (key: string, templateId: string) => void;
+	onClick: (key: string, Id: string) => void;
 	remove?: boolean;
 	rootClass?: any;
 	textClass?: any;
