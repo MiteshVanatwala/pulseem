@@ -603,5 +603,6 @@
   "Queued": "Queued",
   "read": "Read",
   "NoInboundIn24Session": "No inbound",
-  "TemplateVariables": "Template Variables"
+  "TemplateVariables": "Template Variables",
+  "files": "[Files]:"
 }
