@@ -587,5 +587,6 @@
   "filesUploaded": "קבצים עלו בהצלחה",
   "filesNotUploaded": "קבצים נכשלו: ",
   "saveAndContinue": "שמור והמשך",
-  "backToAutomation": "חזור לאוטומציה"
+  "backToAutomation": "חזור לאוטומציה",
+  "files": "[קבצים]:"
 }

@@ -94,7 +94,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
             const gallery = response.payload;
             const specialLinksFiles = items;
-            const folderExtName = t('common.folder');
+            const folderExtName = t('common.files');
 
             gallery?.Files?.forEach((file) => {
               let folderName = file.FolderName === 'main' ? t('common.main') : file.FolderName;
