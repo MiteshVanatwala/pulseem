@@ -94,7 +94,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           dispatch(getFileGallery(PulseemFolderType.DOCUMENT)).then((response) => {
             const gallery = response.payload;
             const specialLinksFiles = items;
-            const folderExtName = t('common.folder');
+            const folderExtName = t('common.files');
 
             gallery?.Files?.forEach((file) => {
               let folderName = file.FolderName === 'main' ? t('common.main') : file.FolderName;
@@ -731,7 +731,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           text: t('campaigns.newsletterSetUp')
         }}
         onDelete={onDelete}
-        onShowGallery={() => { setShowGallery(true) }}
+        // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
       />

@@ -170,7 +170,9 @@ const ProductsReport = ({ classes }) => {
                     <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }} >
                         <Select
                             style={{
-                                height: 40
+                                height: 40,
+                                paddingInlineStart: 10,
+                                paddingInlineEnd: 20
                             }}
                             placeholder={t('report.ProductsReport.category')}
                             className={clsx(classes.select, 'outerborder')}
