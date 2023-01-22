@@ -11,12 +11,11 @@ import { exportFile } from '../../../../helpers/exportFromJson';
 import { ClientStatus } from '../../../../helpers/PulseemArrays';
 import { EditIcon, ExportIcon, SearchIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
-import { getGroupsBySubAccountId } from "../../../../redux/reducers/groupSlice";
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
-import { Dialog, TablePagination, ManagmentIcon, DateField } from '../../../../components/managment/index';
+import { TablePagination, ManagmentIcon, DateField } from '../../../../components/managment/index';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
-import { deleteFromGroups, removeEmailClient, removeSmsClient, getClientsById } from "../../../../redux/reducers/clientSlice";
+import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../../helpers/exportHelper';
 import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 
@@ -34,7 +33,7 @@ const SmsReplies = ({ classes, ...other }) => {
     const [isSearching, setIsSearching] = useState(false);
     const [advanceSearch, setAdvanceSearch] = useState(false);
     const [selectedClients, setSelectedClients] = useState([]);
-    const { smsReplies } = useSelector(state => state.sms);
+    const { smsReplies, extraData } = useSelector(state => state.sms);
     const { ToastMessages } = useSelector(state => state.client);
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { accountFeatures, windowSize } = useSelector(state => state.core);
@@ -77,10 +76,8 @@ const SmsReplies = ({ classes, ...other }) => {
 
     useEffect(() => {
         const initExtraFields = async () => {
-            dispatch(getAccountExtraData());
-            if (subAccountAllGroups.length === 0) {
-                dispatch(getGroupsBySubAccountId());
-            }
+            if (!extraData || extraData.length === 0)
+                dispatch(getAccountExtraData());
         }
         initExtraFields();
     }, [dispatch]);
@@ -119,11 +116,6 @@ const SmsReplies = ({ classes, ...other }) => {
                             {t('campaigns.exportFile')}
                         </Button>
                     </Grid>}
-                    <Grid item className={classes.groupsLableContainer} >
-                        <Typography className={classes.groupsLable}>
-                            {`${smsReplies?.Message} ${t('common.Clients')}`}
-                        </Typography>
-                    </Grid>
                 </Grid>
             </>
         )
@@ -296,7 +288,7 @@ const SmsReplies = ({ classes, ...other }) => {
     const renderSearchLine = () => {
         const { sms = false } = isSearching || {};
         return (
-            <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb50)}>
+            <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb15)}>
                 {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
                 <Grid item>
                     <Button
@@ -337,12 +329,19 @@ const SmsReplies = ({ classes, ...other }) => {
 
     const renderTable = () => {
         return (
-            <TableContainer className={classes.tableStyle}>
-                <Table className={classes.tableContainer}>
-                    {windowSize !== 'xs' && renderTableHead()}
-                    {renderTableBody()}
-                </Table>
-            </TableContainer>
+            <>
+                <Grid item className={clsx(classes.groupsLableContainer, classes.mb15)} >
+                    <Typography className={classes.groupsLable}>
+                        {`${smsReplies?.Message} ${t('common.Clients')}`}
+                    </Typography>
+                </Grid>
+                <TableContainer className={classes.tableStyle}>
+                    <Table className={classes.tableContainer}>
+                        {windowSize !== 'xs' && renderTableHead()}
+                        {renderTableBody()}
+                    </Table>
+                </TableContainer>
+            </>
         )
     }
 
@@ -364,8 +363,10 @@ const SmsReplies = ({ classes, ...other }) => {
     const renderTableBody = () => {
         let rowData = smsReplies?.Data;
 
-        if (!rowData) {
-            return <></>
+        if (!rowData || rowData?.length === 0) {
+            return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+                <Typography>{t("common.NoDataTryFilter")}</Typography>
+            </Box>
         }
 
         return (
@@ -433,6 +434,7 @@ const SmsReplies = ({ classes, ...other }) => {
                             </Box>
                             <Box>
                                 <ManagmentIcon
+                                    disableHover={true}
                                     key='edit'
                                     classes={classes}
                                     icon={EditIcon}
@@ -525,161 +527,12 @@ const SmsReplies = ({ classes, ...other }) => {
                         recipientData={clientToEdit}
                     />
                 }
-                // case DialogType.CONFIRM_INVALID:
-                case DialogType.CONFIRM_DELETE_FROM_GROUPS:
-                case DialogType.CONFIRM_REMOVE_EMAIL:
-                case DialogType.CONFIRM_REMOVE_PHONE:
-                    {
-                        return ConfirmDialog()
-                    }
                 default: {
                     return <></>
                 }
             }
         }
         return <></>;
-    }
-    const ConfirmDialog = () => {
-        const DialogObject = {
-            // "CONFIRM_INVALID": {
-            //     title: t("client.confirmMakeInvalidTitle"),
-            //     bodyText: t("client.confirmMakeInvalidText"),
-            //     onClose: () => setDialog(null),
-            //     onConfirm: makeInvalid,
-            // },
-            "CONFIRM_DELETE_FROM_GROUPS": {
-                title: t('recipient.deleteRecipientFromGroup'),
-                bodyText: t('client.confirmDeleteFromAllGroups'),
-                onClose: () => setDialog(null),
-                onConfirm: removeRecipientFromAllGroups,
-            },
-            "CONFIRM_REMOVE_EMAIL": {
-                title: t('recipient.removeRecipientEmail'),
-                bodyText: t('client.confirmRemoveEmail'),
-                onClose: () => setDialog(null),
-                onConfirm: removeEmailRecipient,
-            },
-            "CONFIRM_REMOVE_PHONE": {
-                title: t('recipient.removeRecipientPhone'),
-                bodyText: t('client.confirmRemovePhone'),
-                onClose: () => setDialog(null),
-                onConfirm: removeSMSRecipient,
-            },
-        };
-        return (
-            <Dialog
-                classes={classes}
-                open={
-                    dialog === DialogType.CONFIRM_INVALID ||
-                    dialog === DialogType.CONFIRM_DELETE_FROM_GROUPS ||
-                    dialog === DialogType.CONFIRM_REMOVE_EMAIL ||
-                    dialog === DialogType.CONFIRM_REMOVE_PHONE
-                }
-                // title={t("group.delete")}
-                title={DialogObject[dialog]?.title || ''}
-                icon={<Box className={classes.dialogAlertIcon}>
-                    !
-                </Box>}
-                showDivider={true}
-                onClose={DialogObject[dialog]?.onClose || ''}
-                onCancel={DialogObject[dialog]?.onClose || ''}
-                onConfirm={DialogObject[dialog]?.onConfirm || null}
-                cancelText="common.Cancel"
-                confirmText="common.Ok"
-            >
-                <Box>
-                    <Typography variant="subtitle1">
-                        {DialogObject[dialog]?.bodyText || ''}
-                    </Typography>
-                </Box>
-            </Dialog>
-        )
-    }
-    const removeRecipientFromAllGroups = async () => {
-        setDialog(null);
-        setShowLoader(true);
-        const response = await dispatch(deleteFromGroups(selectedClients[0]))
-        if (response && response.payload === 'true') {
-            setToastMessage(ToastMessages.RECIPIENT_DELETED_FROM_GROUP);
-        }
-        setShowLoader(false);
-    }
-    const removeEmailRecipient = async () => {
-        setDialog(null);
-        setShowLoader(true);
-        const response = await dispatch(removeEmailClient(selectedClients[0]))
-        if (response) {
-            handleResponses(response,
-                {
-                    S_201: {
-                        code: 201,
-                        message: ToastMessages.SUCCESS,
-                        Func: () => null
-                    },
-                    S_400: {
-                        code: 400,
-                        message: ToastMessages.SOMETHING_WENT_WRONG,
-                        Func: () => null
-                    },
-                    'S_401': {
-                        code: 401,
-                        message: ToastMessages.GROUP_INVALID_API,
-                        Func: () => null
-                    },
-                    'S_404': {
-                        code: 404,
-                        message: ToastMessages.NO_CLIENTS_FOUND,
-                        Func: () => null
-                    },
-                    'S_500': {
-                        code: 500,
-                        message: ToastMessages.GROUP_ERROR,
-                        Func: () => null
-                    },
-                }
-            );
-            setDialog(null);
-        }
-        setShowLoader(false);
-    }
-    const removeSMSRecipient = async () => {
-        setDialog(null);
-        setShowLoader(true);
-        const response = await dispatch(removeSmsClient(selectedClients[0]))
-        if (response) {
-            //TODO: show delete success message
-            handleResponses(response,
-                {
-                    S_201: {
-                        code: 201,
-                        message: ToastMessages.SUCCESS,
-                        Func: () => null
-                    },
-                    S_400: {
-                        code: 400,
-                        message: ToastMessages.SOMETHING_WENT_WRONG,
-                        Func: () => null
-                    },
-                    'S_401': {
-                        code: 401,
-                        message: ToastMessages.GROUP_INVALID_API,
-                        Func: () => null
-                    },
-                    'S_404': {
-                        code: 404,
-                        message: ToastMessages.NO_CLIENTS_FOUND,
-                        Func: () => null
-                    },
-                    'S_500': {
-                        code: 500,
-                        message: ToastMessages.GROUP_ERROR,
-                        Func: () => null
-                    },
-                }
-            );
-            setDialog(null);
-        }
-        setShowLoader(false);
     }
     const handleResponses = (response, actions = {
         'S_200': {
