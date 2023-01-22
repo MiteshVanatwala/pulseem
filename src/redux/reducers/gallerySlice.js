@@ -5,7 +5,7 @@ export const getFileGallery = createAsyncThunk(
     '/Gallery/GetFiles', async (folderType, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`/Gallery/GetFiles/${folderType}`);
-            return JSON.parse(response.data)
+            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
