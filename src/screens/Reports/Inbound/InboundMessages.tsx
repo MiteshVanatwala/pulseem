@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import SmsReplies from "./Sms/SmsReplies";
+import Title from '../../../components/Wizard/Title';
+import WhatsappInbound from './Whatsapp/WhatsappInbound';
 
 const InboundMessages = ({ classes }: ClassesType) => {
     const params = useParams();
@@ -52,25 +54,7 @@ const InboundMessages = ({ classes }: ClassesType) => {
                             <SmsReplies classes={classes} />
                         </TabPanel>
                         <TabPanel value='1' className={classes.p0}>
-                            {/* <DirectWhatsappReportTab
-                                classes={classes}
-                                dispatch={dispatch}
-                                windowSize={windowSize}
-                                isRTL={isRTL}
-                                handleSearchInput={handleSearchInput}
-                                handleSearching={handleSearching}
-                                handlePageChange={setPageWhatsapp}
-                                handleAdvanceSearch={setAdvanceSearch}
-                                clearSearch={clearSearch}
-                                page={pageWhatsapp}
-                                rowsPerPage={rowsPerPage}
-                                searchData={searchData}
-                                isSearching={isSearching}
-                                directWhatsappReport={directWhatsappReport ?? null}
-                                advanceSearch={advanceSearch}
-                                setLoader={setLoader}
-                                rowsOptions={rowsOptions}
-                            /> */}
+                            <WhatsappInbound classes={classes} />
                         </TabPanel>
                     </Grid>
                 </TabContext>
@@ -85,6 +69,15 @@ const InboundMessages = ({ classes }: ClassesType) => {
         classes={classes}
         containerClass={clsx(classes.management, classes.mb50)}
     >
+        <Title
+            classes={classes}
+            stepNumber={null}
+            subTitle={null}
+            title={translator('master.smsReplies')}
+            key="Inbound_reports"
+            tooltip={null}
+            topZero={undefined}
+        />
         {renderTabs()}
     </DefaultScreen>
 
