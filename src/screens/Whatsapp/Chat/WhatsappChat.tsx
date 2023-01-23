@@ -1,7 +1,6 @@
 import ChatUi from './Component/ChatUi';
 import SideBar from './Component/SideBar';
 import './css/index.css';
-// import './css/App.css';
 import DefaultScreen from '../../DefaultScreen';
 import { WhatsappChatProps } from './Types/WhatsappChat.type';
 import { useEffect, useMemo, useState } from 'react';
@@ -37,6 +36,7 @@ import {
 	getAccountExtraData,
 	getPreviousLandingData,
 } from '../../../redux/reducers/smsSlice';
+import { buttonTypes } from '../Constant';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const { t: translator } = useTranslation();
@@ -162,7 +162,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
 		switch (buttonType) {
-			case 'quickReply':
+			case buttonTypes.QUICK_REPLY:
 				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
@@ -180,7 +180,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					};
 				});
 				return buttonData ? buttonData : [];
-			case 'callToAction':
+			case buttonTypes.CALL_TO_ACTION:
 				buttonData = data?.map((button: buttonsDataProps) => {
 					if (button?.type === 'PHONE') {
 						return {
@@ -238,8 +238,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
 		const quickReplyData: savedTemplateQuickReplyProps =
 			templateData?.types['quick-reply'];
-		updatedButtonType = 'quickReply';
-		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		updatedButtonType = buttonTypes.QUICK_REPLY;
+		const buttonData = setButtonsData(
+			buttonTypes.QUICK_REPLY,
+			quickReplyData?.actions
+		);
 		updatedTemplateData.templateText = quickReplyData?.body;
 		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 	};
@@ -261,12 +264,18 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		updatedTemplateData.templateText = cardData?.title;
 		if (cardData?.actions?.length > 0) {
 			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-				updatedButtonType = 'callToAction';
-				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				updatedButtonType = buttonTypes.CALL_TO_ACTION;
+				const buttonData = setButtonsData(
+					buttonTypes.CALL_TO_ACTION,
+					cardData?.actions
+				);
 				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			} else {
-				updatedButtonType = 'quickReply';
-				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				updatedButtonType = buttonTypes.QUICK_REPLY;
+				const buttonData = setButtonsData(
+					buttonTypes.QUICK_REPLY,
+					cardData?.actions
+				);
 				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			}
 		}
@@ -317,7 +326,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setButtonType(updatedButtonType);
 		setTemplateData(updatedTemplateData);
 		setDynamicVariable(getDynamicFields(updatedTemplateData.templateText));
-		if (updatedButtonType === 'quickReply') {
+		if (updatedButtonType === buttonTypes.QUICK_REPLY) {
 			setQuickReplyButtons(updatedTemplateData.templateButtons);
 		} else {
 			setCallToActionFieldRows(updatedTemplateData.templateButtons);

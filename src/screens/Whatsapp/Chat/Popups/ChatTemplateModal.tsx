@@ -14,6 +14,7 @@ import {
 	savedTemplateQuickReplyProps,
 	savedTemplateTextProps,
 } from '../../Editor/Types/WhatsappCreator.types';
+import { templateTypes } from '../../Constant';
 
 const ChatTemplateModal = ({
 	classes,
@@ -28,24 +29,26 @@ const ChatTemplateModal = ({
 
 	const getTemplateText = (template: savedTemplateListProps) => {
 		if (template && template?.Data && template?.Data?.types) {
-			if ('quick-reply' in template?.Data?.types) {
+			if (templateTypes.QUICK_REPLY in template?.Data?.types) {
 				const quickReplyData: savedTemplateQuickReplyProps =
-					template?.Data?.types['quick-reply'];
+					template?.Data?.types[templateTypes.QUICK_REPLY];
 				return quickReplyData?.body;
 			}
-			if ('call-to-action' in template?.Data?.types) {
+			if (templateTypes.CALL_TO_ACTION in template?.Data?.types) {
 				const callToActionData: savedTemplateCallToActionProps =
-					template?.Data?.types['call-to-action'];
+					template?.Data?.types[templateTypes.CALL_TO_ACTION];
 				return callToActionData?.body;
-			} else if ('card' in template?.Data?.types) {
-				const cardData: savedTemplateCardProps = template?.Data?.types['card'];
+			} else if (templateTypes.CARD in template?.Data?.types) {
+				const cardData: savedTemplateCardProps =
+					template?.Data?.types[templateTypes.CARD];
 				return cardData?.title;
-			} else if ('media' in template?.Data?.types) {
+			} else if (templateTypes.CARD in template?.Data?.types) {
 				const mediaData: savedTemplateMediaProps =
-					template?.Data?.types['media'];
+					template?.Data?.types[templateTypes.CARD];
 				return mediaData?.body;
-			} else if ('text' in template?.Data?.types) {
-				const textData: savedTemplateTextProps = template?.Data?.types['text'];
+			} else if (templateTypes.CARD in template?.Data?.types) {
+				const textData: savedTemplateTextProps =
+					template?.Data?.types[templateTypes.CARD];
 				return textData?.body;
 			}
 		}

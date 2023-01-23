@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import Icon from './Icon';
 import { contacts, lastMessage } from './data';
-// import { contacts, lastMessage } from './Contacts.json';
 import { WhatsappChatSideBarProps } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
@@ -97,11 +96,6 @@ const SideBar = ({
 							onClick={(e) => handleChatId(contact.id)}>
 							<div
 								className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}>
-								{/* <img
-									src={light}
-									alt={'profile_picture'}
-									className={`${classes.whatsappChat} avatar`}
-								/> */}
 								<img
 									src={AccountUser}
 									alt={'profile_picture'}

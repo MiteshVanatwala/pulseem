@@ -2411,4 +2411,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		// maxHeight: '400px',
 		overflowY: 'auto',
 	},
+	noDataRow: {
+		height: 50,
+	},
 });

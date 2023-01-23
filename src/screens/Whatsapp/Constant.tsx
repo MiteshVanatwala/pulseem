@@ -44,6 +44,19 @@ export enum tabs {
 	MANUAL = 'manual',
 }
 
+export enum buttonTypes {
+	QUICK_REPLY = 'quickReply',
+	CALL_TO_ACTION = 'callToAction',
+}
+
+export enum templateTypes {
+	QUICK_REPLY = 'quick-reply',
+	CALL_TO_ACTION = 'call-to-action',
+	CARD = 'card',
+	MEDIA = 'media',
+	TEXT = 'text',
+}
+
 export enum buttons {
 	DELETE = 'Delete',
 	SAVE = 'Save',

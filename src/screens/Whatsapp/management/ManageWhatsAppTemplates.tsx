@@ -739,8 +739,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							)}
 							{getRows()?.length === 0 ? (
 								<Box
-									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
-									style={{ height: 50 }}>
+									className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.noDataRow)}>
 									<Typography>
 										{translator('common.NoDataTryFilter')}
 									</Typography>
