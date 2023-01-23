@@ -1,7 +1,6 @@
 import ChatUi from './Component/ChatUi';
 import SideBar from './Component/SideBar';
 import './css/index.css';
-// import './css/App.css';
 import DefaultScreen from '../../DefaultScreen';
 import { WhatsappChatProps } from './Types/WhatsappChat.type';
 import { useEffect, useMemo, useState } from 'react';
