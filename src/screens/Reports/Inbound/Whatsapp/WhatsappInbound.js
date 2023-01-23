@@ -12,10 +12,11 @@ import { ClientStatus } from '../../../../helpers/PulseemArrays';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import { getInboundReport } from '../../../../redux/reducers/whatsappSlice';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
-import { ExportIcon, SearchIcon } from '../../../../assets/images/managment/index';
-import { TablePagination, DateField } from '../../../../components/managment/index';
+import { ExportIcon } from '../../../../assets/images/managment/index';
+import { TablePagination } from '../../../../components/managment/index';
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../../helpers/exportHelper';
-import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
+import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
+import SearchLine from '../SearchLine';
 
 const WhatsappInbound = ({ classes }) => {
     const dispatch = useDispatch();
@@ -26,7 +27,6 @@ const WhatsappInbound = ({ classes }) => {
     const [dialog, setDialog] = useState(null);
     const [showLoader, setShowLoader] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
-    const [advanceSearch, setAdvanceSearch] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { inboundWhatsappReport } = useSelector(state => state.whatsapp);
     const { accountFeatures, windowSize } = useSelector(state => state.core);
@@ -38,9 +38,9 @@ const WhatsappInbound = ({ classes }) => {
     const defaultRequest = {
         FromDate: null,
         ToDate: null,
-        FromNumber: null,
-        ToNumber: null,
-        MessageText: null,
+        FromNumber: '',
+        ToNumber: '',
+        MessageText: '',
         PageIndex: 1,
         PageSize: rowsPerPage,
         IsExport: false
@@ -95,6 +95,7 @@ const WhatsappInbound = ({ classes }) => {
             </>
         )
     }
+    //TODO: add from / to number
     const exportColumnHeader = {
         "ClientID": t('client.ClientId'),
         "FirstName": t('smsReport.firstName'),
@@ -104,19 +105,6 @@ const WhatsappInbound = ({ classes }) => {
         "CreationDate": t('common.CreationDate'),
         "SmsStatus": t('common.smsStatus'),
         "Status": t('common.Status'),
-        "ExtraField1": t('common.ExtraField1'),
-        "ExtraField2": t('common.ExtraField2'),
-        "ExtraField3": t('common.ExtraField3'),
-        "ExtraField4": t('common.ExtraField4'),
-        "ExtraField5": t('common.ExtraField5'),
-        "ExtraField6": t('common.ExtraField6'),
-        "ExtraField7": t('common.ExtraField7'),
-        "ExtraField8": t('common.ExtraField8'),
-        "ExtraField9": t('common.ExtraField9'),
-        "ExtraField10": t('common.ExtraField10'),
-        "ExtraField11": t('common.ExtraField11'),
-        "ExtraField12": t('common.ExtraField12'),
-        "ExtraField13": t('common.ExtraField13'),
         "ReplyDate": t('common.ReplyDate'),
         "ReplyText": t('common.ReplyText'),
 
@@ -138,171 +126,6 @@ const WhatsappInbound = ({ classes }) => {
         setShowLoader(false)
     }
 
-    const renderDateFields = () => {
-        const handleFromDate = (val) => {
-            if (val) {
-                let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
-                setSearchRequest({ ...searchRequest, FromDate: dateVal });
-            }
-        }
-
-        const handleToDate = (val) => {
-            if (val) {
-                let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
-                setSearchRequest({ ...searchRequest, ToDate: dateVal });
-            }
-        }
-
-        return (
-            <>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.FromDate}
-                        onChange={(v) => handleFromDate(v)}
-                        placeholder={t('mms.locFromDateResource1.Text')}
-                        rootStyle={classes.maxWidth190}
-                        toolbarDisabled={false}
-                        minDate={'2000-01-01'}
-                        isRoundedOnMobile={windowSize === 'xs'}
-                    />
-                </Grid>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.ToDate}
-                        onChange={(v) => handleToDate(v)}
-                        placeholder={t('mms.locToDateResource1.Text')}
-                        minDate={searchRequest.FromDate ? searchRequest.FromDate : moment.now()}
-                        toolbarDisabled={false}
-                        rootStyle={classes.maxWidth190}
-                        isRoundedOnMobile={windowSize === 'xs'}
-                    />
-                </Grid>
-                {windowSize !== 'xs' && <Grid item>
-                    <TextField
-                        type="tel"
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.FromNumber}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
-                    />
-                </Grid>
-                }
-            </>
-        )
-    }
-    const renderAdvanceSearch = () => {
-        return (
-            <>
-                <Grid item>
-                    <TextField
-                        type="tel"
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.FromNumber}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextField
-                        type="tel"
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.ToNumber}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.ToNumber')}
-                    />
-                </Grid>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.FromDate}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, FromDate: e.target.value })}
-                        placeholder={t('mms.locFromDateResource1.Text')}
-                        rootStyle={classes.maxWidth190}
-                        toolbarDisabled={false}
-                        minDate={'2000-01-01'}
-                    />
-                </Grid>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.ToDate}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, ToDate: e.target.value })}
-                        placeholder={t('mms.locToDateResource1.Text')}
-                        minDate={searchRequest.FromDate ? searchRequest.FromDate : '2000-01-01'}
-                        toolbarDisabled={false}
-                        rootStyle={classes.maxWidth190}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextField
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.MessageText}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, MessageText: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.messageContent')}
-                    />
-                </Grid>
-            </>
-        )
-    }
-    const handleSearch = () => {
-        setIsSearching(true);
-        setPage(1);
-        setRequest({ ...request, ...searchRequest });
-    }
-    const handleClearSearchForm = (e) => {
-        e.preventDefault();
-        setRequest(defaultRequest);
-        setIsSearching(false);
-    }
-    const renderSearchLine = () => {
-        return (
-            <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb15)}>
-                {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
-                <Grid item>
-                    <Button
-                        size='large'
-                        variant='contained'
-                        onClick={handleSearch}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}>
-                        {t('campaigns.btnSearchResource1.Text')}
-                    </Button>
-                    {windowSize !== 'xs' && <Link
-                        color='initial'
-                        component='button'
-                        underline='none'
-                        onClick={() => setAdvanceSearch(!advanceSearch)}
-                        className={clsx(classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-                        {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
-                    </Link>
-                    }
-                </Grid>
-                {isSearching && <Grid item>
-                    <Button
-                        size='large'
-                        variant='contained'
-                        onClick={(e) => {
-                            handleClearSearchForm(e);
-                        }}
-                        className={classes.searchButton}
-                        endIcon={<ClearIcon />}>
-                        {t('common.clear')}
-                    </Button>
-                </Grid>
-                }
-            </Grid>
-        )
-    }
     const renderTable = () => {
         return (
             <>
@@ -415,7 +238,12 @@ const WhatsappInbound = ({ classes }) => {
     }
     return <Box>
         {renderHeader()}
-        {renderSearchLine()}
+        <SearchLine
+            classes={classes}
+            onSetPage={(val) => setPage(val)}
+            onFilterRequest={(val) => setRequest(val)}
+            onSetIsSearching={(val) => setIsSearching(val)}
+        />
         {renderTable()}
         {renderTablePagination()}
         <ConfirmRadioDialog

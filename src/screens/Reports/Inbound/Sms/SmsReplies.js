@@ -18,7 +18,7 @@ import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../../helpers/exportHelper';
 import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
-
+import SearchLine from '../SearchLine';
 
 const SmsReplies = ({ classes, ...other }) => {
     const dispatch = useDispatch();
@@ -31,7 +31,6 @@ const SmsReplies = ({ classes, ...other }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [clientToEdit, setClientToEdit] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
-    const [advanceSearch, setAdvanceSearch] = useState(false);
     const [selectedClients, setSelectedClients] = useState([]);
     const { smsReplies, extraData } = useSelector(state => state.sms);
     const { ToastMessages } = useSelector(state => state.client);
@@ -45,9 +44,9 @@ const SmsReplies = ({ classes, ...other }) => {
     const defaultRequest = {
         FromDate: null,
         ToDate: null,
-        FromNumber: null,
-        ToNumber: null,
-        Text: null,
+        FromNumber: '',
+        ToNumber: '',
+        Text: '',
         CampaignID: null,
         PageIndex: 1,
         PageSize: rowsPerPage,
@@ -83,6 +82,12 @@ const SmsReplies = ({ classes, ...other }) => {
         }
         setShowLoader(false);
     }, [request, page, rowsPerPage])
+
+    useEffect(() => {
+        if (!isSearching) {
+            setSearchRequest(defaultRequest);
+        }
+    }, [isSearching]);
 
     const handlePageChange = (val) => {
         setRowsPerPage(val);
@@ -156,169 +161,6 @@ const SmsReplies = ({ classes, ...other }) => {
         setShowLoader(false)
     }
 
-    const renderDateFields = () => {
-        const handleFromDate = (val) => {
-            if (val) {
-                let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
-                setSearchRequest({ ...searchRequest, FromDate: dateVal });
-            }
-        }
-
-        const handleToDate = (val) => {
-            if (val) {
-                let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
-                setSearchRequest({ ...searchRequest, ToDate: dateVal });
-            }
-        }
-
-        return (
-            <>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.FromDate}
-                        onChange={(v) => handleFromDate(v)}
-                        placeholder={t('mms.locFromDateResource1.Text')}
-                        rootStyle={classes.maxWidth190}
-                        toolbarDisabled={false}
-                        minDate={'2000-01-01'}
-                        isRoundedOnMobile={windowSize === 'xs'}
-                    />
-                </Grid>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.ToDate}
-                        onChange={(v) => handleToDate(v)}
-                        placeholder={t('mms.locToDateResource1.Text')}
-                        minDate={searchRequest.FromDate ? searchRequest.FromDate : moment.now()}
-                        toolbarDisabled={false}
-                        rootStyle={classes.maxWidth190}
-                        isRoundedOnMobile={windowSize === 'xs'}
-                    />
-                </Grid>
-                {windowSize !== 'xs' && <Grid item>
-                    <TextField
-                        type='tel'
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.FromNumber}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
-                    />
-                </Grid>
-                }
-            </>
-        )
-    }
-    const renderAdvanceSearch = () => {
-        return (
-            <>
-                <Grid item>
-                    <TextField
-                        type='tel'
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.FromNumber}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextField
-                        type='tel'
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.ToNumber}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.ToNumber')}
-                    />
-                </Grid>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.FromDate}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, FromDate: e.target.value })}
-                        placeholder={t('mms.locFromDateResource1.Text')}
-                        rootStyle={classes.maxWidth190}
-                        toolbarDisabled={false}
-                        minDate={'2000-01-01'}
-                    />
-                </Grid>
-                <Grid item>
-                    <DateField
-                        classes={classes}
-                        value={searchRequest.ToDate}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, ToDate: e.target.value })}
-                        placeholder={t('mms.locToDateResource1.Text')}
-                        minDate={searchRequest.FromDate ? searchRequest.FromDate : '2000-01-01'}
-                        toolbarDisabled={false}
-                        rootStyle={classes.maxWidth190}
-                    />
-                </Grid>
-                <Grid item>
-                    <TextField
-                        variant='outlined'
-                        size='small'
-                        value={searchRequest.Text}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, Text: e.target.value })}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.messageContent')}
-                    />
-                </Grid>
-            </>
-        )
-    }
-    const handleSearch = () => {
-        setIsSearching(true);
-        setPage(1);
-        setRequest({ ...request, ...searchRequest });
-    }
-    const renderSearchLine = () => {
-        const { sms = false } = isSearching || {};
-        return (
-            <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb15)}>
-                {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
-                <Grid item>
-                    <Button
-                        size='large'
-                        variant='contained'
-                        onClick={handleSearch}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}>
-                        {t('campaigns.btnSearchResource1.Text')}
-                    </Button>
-                    {windowSize !== 'xs' && <Link
-                        color='initial'
-                        component='button'
-                        underline='none'
-                        onClick={() => setAdvanceSearch(!advanceSearch)}
-                        className={clsx(classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-                        {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
-                    </Link>
-                    }
-                </Grid>
-                {isSearching && <Grid item>
-                    <Button
-                        size='large'
-                        variant='contained'
-                        onClick={() => {
-                            setRequest(defaultRequest)
-                            setIsSearching(false);
-                        }}
-                        className={classes.searchButton}
-                        endIcon={<ClearIcon />}>
-                        {t('common.clear')}
-                    </Button>
-                </Grid>
-                }
-            </Grid>
-        )
-    }
-
     const renderTable = () => {
         return (
             <>
@@ -347,7 +189,6 @@ const SmsReplies = ({ classes, ...other }) => {
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.emailStatus")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.ReplyDate")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex5} align='center' >{t("common.messageContent")}</TableCell>
-                    {/* <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex1} ></TableCell> */}
                 </TableRow>
             </TableHead>
         )
@@ -396,7 +237,6 @@ const SmsReplies = ({ classes, ...other }) => {
             VirtualNumber
         } = row;
 
-        let creation = moment(CreationDate, dateFormat);
         let reply = moment(ReplyDate, dateFormat);
         return (
             <TableRow
@@ -638,7 +478,12 @@ const SmsReplies = ({ classes, ...other }) => {
     return (
         <Box>
             {renderHeader()}
-            {renderSearchLine()}
+            <SearchLine
+                classes={classes}
+                onSetPage={(val) => setPage(val)}
+                onFilterRequest={(val) => setRequest(val)}
+                onSetIsSearching={(val) => setIsSearching(val)}
+            />
             {renderTable()}
             {renderTablePagination()}
             {showDialog()}
