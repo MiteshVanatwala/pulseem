@@ -1,10 +1,13 @@
 import Icons from '../assets/icons';
-console.log(Icons)
-const allIcons: any = Icons;
+import {
+	AllIconComponentProps,
+	AllIconProps,
+} from '../Types/WhatsappChat.type';
+const allIcons: AllIconProps = Icons;
 
-const Icon = ({ id, ...props }: any) => {
-	const selectedIcon: any = allIcons[id];
-	return selectedIcon ? selectedIcon(props) : null;
+const Icon = ({ id, className }: AllIconComponentProps) => {
+	const selectedIcon = allIcons[id];
+	return selectedIcon ? selectedIcon({ id, className }) : null;
 };
 
 export default Icon;
