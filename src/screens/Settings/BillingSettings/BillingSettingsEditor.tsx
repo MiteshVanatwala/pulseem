@@ -27,6 +27,8 @@ import {
   BillingInfoValuesTypes,
   CardDetailsTypes,
 } from "../../../Models/Settings/BillingSettings";
+import { ERROR_TYPE } from "../../../helpers/Types/common";
+import { IsNumberField } from "../../../helpers/Utils/Validations";
 
 const BillingSettingsEditor = () => {
   const { classes } = useCore();
@@ -75,7 +77,7 @@ const BillingSettingsEditor = () => {
 
   const [addCardDialog, setAddCardDialog] = useState<boolean>(false);
 
-  const [toastMessage, setToastMessage] = useState(null);
+  const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
 
   const handleChange = (e: any) => {
     setBillingInfoValues({
@@ -102,19 +104,6 @@ const BillingSettingsEditor = () => {
   const handleSaveBillingInfo = () => {
     if (isValidBillingPayload()) {
       //saveBillingInfoAPICall
-    }
-  };
-
-  const isNumber = (event: any) => {
-    var NumberRegEx = /^[0-9]*$/;
-    if (
-      !event.key.match(NumberRegEx) ||
-      event.key === "e" ||
-      event.key === "."
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
     }
   };
 
@@ -273,7 +262,7 @@ const BillingSettingsEditor = () => {
               size="small"
               name="Zip"
               value={billingInfoValues.Zip}
-              onKeyPress={isNumber}
+              onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -287,7 +276,7 @@ const BillingSettingsEditor = () => {
               size="small"
               name="Country"
               value={billingInfoValues.Country}
-              // onKeyPress={isNumber}
+              // onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -301,7 +290,7 @@ const BillingSettingsEditor = () => {
               size="small"
               name="Cellphone"
               value={billingInfoValues.Cellphone}
-              onKeyPress={isNumber}
+              onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -315,7 +304,7 @@ const BillingSettingsEditor = () => {
               size="small"
               name="Phone"
               value={billingInfoValues.Phone}
-              onKeyPress={isNumber}
+              onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
               error={!!errors.Phone}
@@ -335,7 +324,7 @@ const BillingSettingsEditor = () => {
               size="small"
               name="CompRegNumber"
               value={billingInfoValues.CompRegNumber}
-              onKeyPress={isNumber}
+              onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
               error={!!errors.CompRegNumber}

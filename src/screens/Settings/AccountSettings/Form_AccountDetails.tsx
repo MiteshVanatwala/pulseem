@@ -20,6 +20,7 @@ import {
   AccountDetailsType,
 } from "../../../Models/Settings/AccountDetails";
 import useCore from "../../../helpers/hooks/Core";
+import { IsNumberField } from "../../../helpers/Utils/Validations";
 
 const Form_AccountDetails = ({
   setToastMessage,
@@ -45,19 +46,6 @@ const Form_AccountDetails = ({
   //   UnsubType: "",
   //   SmsUnsubLinkType: "",
   // });
-
-  const isNumber = (event: any) => {
-    var NumberRegEx = /^[0-9]*$/;
-    if (
-      !event.key.match(NumberRegEx) ||
-      event.key === "e" ||
-      event.key === "."
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
-    }
-  };
 
   const isValidPayload = () => {
     if (!accountDetails.FromEmail) {
@@ -158,7 +146,7 @@ const Form_AccountDetails = ({
               size="small"
               name="FromPhoneNumber"
               value={accountDetails.FromPhoneNumber}
-              onKeyPress={isNumber}
+              onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />

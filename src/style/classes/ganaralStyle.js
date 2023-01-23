@@ -77,6 +77,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 'calc(100vw - 6px)'
   },
   sidebar: {
+    paddingRight: '0 !important',
     "&::-webkit-scrollbar": {
       display: "block !important",
       width: 6,
@@ -1775,8 +1776,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         },
         '& .formContainer': {
           position: 'relative',
-          paddingLeft: isRTL ? 0 : 15,
-          paddingRight: isRTL ? 15 : 0,
+          paddingLeft: 15,
+          // paddingLeft: isRTL ? 0 : 15,
+          // paddingRight: isRTL ? 15 : 0,
           '& .form': {
             maxWidth: 900,
             background: '#fff',
@@ -1785,16 +1787,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           },
           '& .svg_data_analysis': {
             position: 'absolute',
-            right: isRTL ? 'auto' : 86.44,
-            left: isRTL ? 86.44 : 'auto',
+            right: 86.44,
+            left: 'auto',
+            // right: isRTL ? 'auto' : 86.44,
+            // left: isRTL ? 86.44 : 'auto',
             top: 49.17,
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
           },
           '& .svg_app_settings': {
             position: 'absolute',
             top: 121.3,
-            right: isRTL ? 'auto' : 93.14,
-            left: isRTL ? 93.14 : 'auto',
+            right: 93.14,
+            left: 'auto',
+            // right: isRTL ? 'auto' : 93.14,
+            // left: isRTL ? 93.14 : 'auto',
             transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
           },
           '& .subHeading': {
@@ -1817,8 +1823,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
               '& .selectWrapper': {
                 height: 'auto',
                 '& .MuiTypography-body1': {
-                  marginRight: isRTL ? 0 : 12,
                   marginLeft: isRTL ? 12 : 0
+                  // marginRight: isRTL ? 0 : 12,
+                  // marginLeft: isRTL ? 12 : 0
                 }
               },
 
@@ -1885,6 +1892,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .MuiInputAdornment-root': {
       color: '#ff104b',
       '& svg': {
+        cursor: 'pointer',
+        // '&:hover':{
+
+        // },
         '& path': {
           fill: '#ff104b !important'
         }

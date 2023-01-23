@@ -24,7 +24,10 @@ import { UnLockIcon } from "../../../assets/images/settings";
 import { Title } from "../../../components/managment/Title";
 import Illustration_data_Analysis from "../../../assets/images/settings/Illustration_data_Analysis";
 import { DateField } from "../../../components/managment";
-import { IsValidEmail } from "../../../helpers/Utils/Validations";
+import {
+  IsNumberField,
+  IsValidEmail,
+} from "../../../helpers/Utils/Validations";
 import {
   CompDtlErrorsType,
   CompDtlPropTypes,
@@ -73,19 +76,6 @@ const Form_CompanyDetails = ({
     Zip: "",
     SendCodeMethod: "",
   });
-
-  const isNumber = (event: any) => {
-    var NumberRegEx = /^[0-9]*$/;
-    if (
-      !event.key.match(NumberRegEx) ||
-      event.key === "e" ||
-      event.key === "."
-    ) {
-      event.preventDefault();
-      event.stopPropagation();
-      return false;
-    }
-  };
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -311,7 +301,7 @@ const Form_CompanyDetails = ({
                 size="small"
                 name="Telehone"
                 value={companyDetails.Telephone}
-                onKeyPress={isNumber}
+                onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
               />
@@ -327,7 +317,7 @@ const Form_CompanyDetails = ({
                 size="small"
                 name="Mobile"
                 value={companyDetails.Mobile}
-                onKeyPress={isNumber}
+                onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
                 error={!!errors.Mobile}
@@ -392,7 +382,7 @@ const Form_CompanyDetails = ({
                 size="small"
                 name="Zip"
                 value={companyDetails.Zip}
-                onKeyPress={isNumber}
+                onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
               />

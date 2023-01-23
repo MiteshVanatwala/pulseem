@@ -117,13 +117,13 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
     borderRadius: 0,
     height: '100%',
-    '&.logoRTL': {
-      padding: '15px 15px 15px 0px',
-      marginRight: '-24px',
-      borderBottomRightRadius: 40
-      // borderRadius: '0% 0% 25% 0% / 0% 0% 60% 0%'
-    },
-    '&.logoLTR': {
+    // '&.logoRTL': {
+    //   padding: '15px 15px 15px 0px',
+    //   marginRight: '-24px',
+    //   borderBottomRightRadius: 40
+    //   // borderRadius: '0% 0% 25% 0% / 0% 0% 60% 0%'
+    // },
+    '&.logo': {
       padding: '15px 0px 15px 15px',
       marginLeft: '-24px',
       borderBottomLeftRadius: 40,

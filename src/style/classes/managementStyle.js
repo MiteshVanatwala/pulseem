@@ -77,7 +77,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   mgmtTitleContainer: {
     width: 'auto !important',
     background: '#F0F5FF',
-    padding: `11px ${isRTL ? '31.69px' : 0} 8px ${isRTL ? 0 : '31.69px'}`,
+    padding: `11px 0 8px 31.69px`,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10
   },

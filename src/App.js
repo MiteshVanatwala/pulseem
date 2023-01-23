@@ -39,7 +39,8 @@ import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
-import AccountSettingsEditor from './screens/AccountSettings/AccountSettingsEditor';
+import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
+import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -343,6 +344,11 @@ const renderRoutes = (classes, redirect) => {
         element={<AccountSettingsEditor classes={classes} />}
       />
       <Route
+        exact
+        path={`/react/BillingSettings`}
+        element={<BillingSettingsEditor classes={classes} />}
+      />
+      <Route
         path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
@@ -461,7 +467,7 @@ const App = ({ screenSize }) => {
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
-        <div dir={isRTL ? 'rtl' : 'ltr'}>
+        <div dir={isRTL ? 'rtl' : 'ltr'} className={classes.appBody}>
           <Routes>
             {renderRoutes(classes, redirect)}
           </Routes>

@@ -104,6 +104,11 @@ export const DateField = ({
       initialFocusedDate={moment()}
       value={value}
       onChange={onChange}
+      InputAdornmentProps={{
+        style: {
+          maxWidth: isRTL ? 10 : 'auto'
+        }
+      }}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton

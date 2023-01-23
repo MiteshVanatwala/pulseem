@@ -387,7 +387,8 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           <Button
             // style={{ padding: 0, matgin: 0 }}
             onClick={() => Redirect({ url: routes[0].href })}
-            className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
+            // className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
+            className={clsx(classes.pulseemAppBarLogo, 'logo')}
           >
             <Box
               component='img'
