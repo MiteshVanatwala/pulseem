@@ -1,5 +1,5 @@
 import Icons from '../assets/icons';
-
+console.log(Icons)
 const allIcons: any = Icons;
 
 const Icon = ({ id, ...props }: any) => {

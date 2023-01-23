@@ -1,7 +1,5 @@
 import Icon from './Icon';
 import { allMessages, dates, user } from './data';
-// import { user } from './UserChat.json';
-import profile from '../../../../assets/images/profile.jpeg';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { BaseSyntheticEvent, useState } from 'react';
 import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
@@ -17,6 +15,7 @@ import {
 import clsx from 'clsx';
 import { Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { getVariableValue } from '../../Common';
 
 const ChatUi = ({
 	classes,
@@ -50,7 +49,7 @@ const ChatUi = ({
 
 	setInterval(setUpdateTime, 1000);
 	const isUpdatedVaraiable = (variable: string) => {
-		let updatedVariable = variable?.replace(/[{}]/g, '');
+		let updatedVariable = getVariableValue(variable);
 		const isAvaliable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariableProps) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
@@ -62,7 +61,7 @@ const ChatUi = ({
 		setIsDynamcFieldModal(true);
 	};
 	const getUpdatedVariableValue = (variable: string) => {
-		let updatedVariable = variable?.replace(/[{}]/g, '');
+		let updatedVariable = getVariableValue(variable);
 		const variableValue = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariableProps) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
