@@ -4,14 +4,13 @@ import clsx from 'clsx';
 import {
     Box, Button, Grid, Table, TableContainer,
     TableCell, Link, FormControl, Select, MenuItem,
-    TableHead, TableRow, TextField, Typography, TableBody, InputLabel
+    TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
 import {
     TablePagination, DateField
 } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
-import Switch from "react-switch";
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';

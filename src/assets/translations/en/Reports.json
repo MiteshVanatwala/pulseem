@@ -111,5 +111,6 @@
   "clientName": "Client Name",
   "filterSearch": "Apply filter",
   "closeFilterSearch": "Close filter",
-  "errorReason": "Error reason"
+  "errorReason": "Error reason",
+  "smsReplies": "SMS Incoming report"
 }

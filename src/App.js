@@ -33,7 +33,7 @@ import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
-import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+import SmsReplies from './screens/Reports/Inbound/Sms/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterInfo from './screens/Newsletter/Wizard/NewsLetterInfo';
@@ -43,6 +43,7 @@ import WhatsappCreator from "./screens/Whatsapp/Editor/WhatsappCreator";
 import PageNotFound from './screens/404';
 import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
+import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -434,6 +435,21 @@ const renderRoutes = (classes, redirect) => {
         element={<SiteTrackingEditor classes={classes} />}
       />
       <Route path="*" element={<PageNotFound classes={classes} />} />
+      <Route
+        exact
+        path={'/react/Inbound'}
+        element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/react/Inbound/:type'}
+        element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/react/Inbound/:type/:id'}
+        element={<InboundMessages classes={classes} />}
+      />
     </Routes>
   );
 };

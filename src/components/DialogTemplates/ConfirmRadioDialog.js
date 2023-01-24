@@ -13,10 +13,10 @@ const ConfirmRadioDialog = ({
     radioTitle = '',
     options = null,
     isOpen = false,
-    onCancel = () => null,
-    onConfirm = () => null,
+    onCancel,
+    onConfirm,
     defaultValue = "",
-    cookieName = null
+    cookieName = ""
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);

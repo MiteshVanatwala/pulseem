@@ -111,5 +111,6 @@
   "clientName": "שם לקוח",
   "filterSearch": "החל סינון",
   "closeFilterSearch": "סגור סינון",
-  "errorReason": "סיבת השגיאה"
+  "errorReason": "סיבת השגיאה",
+  "smsReplies": "דו\"ח SMS נכנסים"
 }

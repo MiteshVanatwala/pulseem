@@ -438,6 +438,12 @@ export const getRoutes = (
           href: "/react/reports/SmsReplies",
           isShow: false,
         },
+        {
+          key: 'inboundMessages',
+          title: t('master.smsReplies'),
+          href: '/react/Inbound/',
+          isShow: true
+        },
       ],
     },
   ];

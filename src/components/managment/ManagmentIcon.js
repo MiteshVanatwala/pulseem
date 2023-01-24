@@ -19,7 +19,8 @@ export const ManagmentIcon = ({
   href = '',
   type = '',
   text = '',
-  style= {},
+  style = {},
+  disableHover = false,
   onClick = () => null }) => {
   const buttonRef = useRef();
   const Redirect = useRedirect();
@@ -33,6 +34,7 @@ export const ManagmentIcon = ({
         ref={buttonRef}
         disabled={!!disable || !!hide}
         size='small'
+        style={{ backgroundColor: disableHover ? 'transparent' : null }}
         onClick={() => {
           if (href) {
             Redirect({ url: href });

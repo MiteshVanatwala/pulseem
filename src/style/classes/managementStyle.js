@@ -1835,5 +1835,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   imgFluid: {
     maxWidth: '100%',
     height: '100%'
+  },
+  smallIcon: {
+    width: 12
   }
 });
