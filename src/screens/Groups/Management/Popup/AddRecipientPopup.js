@@ -94,9 +94,7 @@ const AddRecipientPopup = ({ classes,
     ToastMessages,
     onAddRecipient = () => null,
     onRecipientAdded = () => null,
-    onAnotherRecipientAdded = () => null,
     handleResponses = (response, actions) => null,
-    setDialog = () => null,
     recipientData = null
 }) => {
     const { t } = useTranslation();
