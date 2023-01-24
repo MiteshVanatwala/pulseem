@@ -94,9 +94,7 @@ const AddRecipientPopup = ({ classes,
     ToastMessages,
     onAddRecipient = () => null,
     onRecipientAdded = () => null,
-    onAnotherRecipientAdded = () => null,
     handleResponses = (response, actions) => null,
-    setDialog = () => null,
     recipientData = null
 }) => {
     const { t } = useTranslation();
@@ -1103,7 +1101,7 @@ const AddRecipientPopup = ({ classes,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
                     onAddRecipient(false);
-                    //setDialog('EDIT_RECIPIENT');
+                    setAddRecipientData({ ...addRecipientData, Status: val })
                 }
             },
             S_400: {
@@ -1143,7 +1141,7 @@ const AddRecipientPopup = ({ classes,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
                     onAddRecipient(false);
-                    //setDialog('EDIT_RECIPIENT');
+                    setAddRecipientData({ ...addRecipientData, SmsStatus: val })
                 }
             },
             S_400: {
@@ -1171,64 +1169,42 @@ const AddRecipientPopup = ({ classes,
     }
 
     const STATUS_FORM = () => (
-        <SimpleGrid
-            spacing={3}
-            gridArr={[
-                {
-                    content: <SimpleGrid
-                        spacing={3}
-                        gridArr={[
-                            {
-
-                                content: <Typography title={t("common.first_name")} className={classes.alignDir}>{t('common.emailStatus')}</Typography>,
-                                gridSize: { xs: 12, sm: 3 }
-
-                            },
-                            {
-
-                                content: StatusDropdown({
-                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
-                                    onSelect: (val) => {
-                                        handleEmailStatus(val)
-                                    },
-                                    value: addRecipientData.Status ?? CLIENT_CONSTANTS.STATUSES.active.status,
-                                    label: t('common.emailStatus')
-                                }),
-                                gridSize: { xs: 12, sm: 9 }
-
-                            }
-                        ]}
-                    />,
-                    gridSize: { xs: 12, sm: 6 }
-                },
-                {
-                    content: <SimpleGrid
-                        spacing={3}
-                        gridArr={[
-                            {
-
-                                content: <Typography title={t("common.first_name")} className={classes.alignDir}>{t('common.smsStatus')}</Typography>,
-                                gridSize: { xs: 12, sm: 3 },
-
-                            },
-                            {
-                                content: StatusDropdown({
-                                    data: Object.values(CLIENT_CONSTANTS.SMS_STATUSES).map((obj) => obj),
-                                    onSelect: (val) => {
-                                        handleSmsStatus(val)
-
-                                    },
-                                    value: addRecipientData.SmsStatus ?? CLIENT_CONSTANTS.SMS_STATUSES.noStatus.status,
-                                    label: t('common.smsStatus'),
-                                }),
-                                gridSize: { xs: 12, sm: 6 }
-                            }
-                        ]}
-                    />,
-                    gridSize: { xs: 12, sm: 6 }
-                },
-            ]}
-        />
+        <Grid container direction='row' spacing={3}>
+            <Grid item xs="12" sm="6">
+                <Grid container direction='row' spacing={3}>
+                    <Grid item xs="12" sm="3">
+                        <Typography title={t("common.emailStatus")} className={classes.alignDir}>{t('common.emailStatus')}</Typography>
+                    </Grid>
+                    <Grid item xs="12" sm="9">
+                        <StatusDropdown
+                            data={Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj)}
+                            onSelect={(val) => {
+                                handleEmailStatus(val)
+                            }}
+                            value={addRecipientData.Status}
+                            label={t('common.emailStatus')}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs="12" sm="6">
+                <Grid container direction='row' spacing={3}>
+                    <Grid item xs="12" sm="3">
+                        <Typography title={t("common.smsStatus")} className={classes.alignDir}>{t('common.smsStatus')}</Typography>
+                    </Grid>
+                    <Grid item xs="12" sm="9">
+                        <StatusDropdown
+                            data={Object.values(CLIENT_CONSTANTS.SMS_STATUSES).map((obj) => obj)}
+                            onSelect={(val) => {
+                                handleSmsStatus(val)
+                            }}
+                            value={addRecipientData.SmsStatus ?? CLIENT_CONSTANTS.SMS_STATUSES.noStatus.status}
+                            label={t('common.smsStatus')}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
     )
 
     const ActiveForm = (label, index) => {
