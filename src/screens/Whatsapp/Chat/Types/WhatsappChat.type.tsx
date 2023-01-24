@@ -44,3 +44,12 @@ export type chatModalProps = {
 		templateText: string | null
 	) => void;
 };
+
+export type AllIconComponentProps = {
+	id: string;
+	className?: string;
+};
+
+export type AllIconProps = {
+	[key: string]: (props: AllIconComponentProps) => JSX.Element;
+};
