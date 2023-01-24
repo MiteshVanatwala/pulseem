@@ -16,7 +16,7 @@ import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, e
 import { preferredOrder, switchStatusDescription, formatDateTime, replaceNull, replaceClientStatus, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
-import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
+import { EmailStatus, SmsStatus, WhatsappStatus } from '../../../helpers/PulseemArrays';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
@@ -114,20 +114,13 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   }
 
   const handleExportEnable = () => {
-    if (tabValue === 0) {
-      if (Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null) {
-        setExportEnable(directSmsReport.TotalSent > 0 && directSmsReport.TotalSent < MAX_EXPORT_RECORDS)
-      }
-      else {
-        setExportEnable(false);
-      }
-    } else {
-      if (Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null) {
-        setExportEnable(directNewsletterReport.TotalRecords > 0 && directNewsletterReport.TotalRecords < MAX_EXPORT_RECORDS)
-      }
-      else {
-        setExportEnable(false);
-      }
+    let reportObject = [directSmsReport?.DirectReport ?? null, directNewsletterReport?.DirectReport ?? null, directWhatsappReport?.Data ?? null];
+
+    if (reportObject[tabValue] && Object.keys(reportObject[tabValue])?.length > 0 && reportObject[tabValue] !== null) {
+      setExportEnable(true);
+    }
+    else {
+      setExportEnable(false);
     }
   }
 
@@ -268,22 +261,19 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "ClientStatus": t('report.clientStatus')
     },
     WHATSAPP: {
-      "DATE": t('common.CreationDate'),
-      "MESSAGE": t('common.messageContent'),
-      "FROM": t('common.SentFromNumber'),
-      "TO": t('common.SendTo2'),
-      "REFERENCE": t('report.id'),
-      "STATUS": t('common.Status'),
-      "ERRORCODE": t('report.errorCode'),
-      "TOTALRESPONSES": t('report.totalResponses'),
-      "CHARSCOUNT": t('report.Characters'),
-      "Credits": t('report.Credits'),
+      "Schedule": t('common.SendDate'),
+      "FromNumber": t('common.FrmNumber'),
+      "ToNumber": t('common.ToNumber'),
+      "Status": t('common.Status'),
       "StatusDescription": t('report.StatusDescription'),
-      "ClientStatus": t('report.clientStatus')
+      "Text": t('common.messageContent'),
+      "ErrorMessage": t('report.failure'),
+      "ReferenceId": t('common.templateId'),
     }
   };
 
   const handleExportFile = async (formatType) => {
+    setDialog(false);
     setLoader(true);
     let response, finalData, headers, fileName = null;
 
@@ -321,17 +311,14 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     }
 
     if (tabValue === 2) {
-      searchData.whatsapp.ShowContent = showContent;
-      response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.whatsapp) : exportSMSDirectReport(searchData.whatsapp));
-      finalData = preferredOrder(response.payload, Object.keys(excelHeaders.WHATSAPP));
-      finalData = switchStatusDescription(finalData, SmsStatus);
+      searchData.whatsapp.IsExport = true;
+      response = await dispatch(getDirectReport(searchData.whatsapp));
+      finalData = preferredOrder(response.payload.Data, Object.keys(excelHeaders.WHATSAPP));
+      finalData = switchStatusDescription(finalData, WhatsappStatus);
+      finalData = replaceNull(finalData, 'ErrorMessage', '');
+      finalData = replaceNull(finalData, 'ReferenceId', '');
       finalData = await formatDateTime(finalData, t);
-      finalData = replaceClientStatus(finalData);
-      if (showContent === false) {
-        finalData.forEach((fd) => {
-          delete fd.MESSAGE;
-        })
-      }
+      finalData = deletePropertyFromArrayObject(finalData, 'Status');
       headers = excelHeaders.WHATSAPP;
       fileName = "Whatsapp_DirectReports";
     }

@@ -3,8 +3,7 @@ import 'moment/locale/he';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { exportFile } from '../../../../helpers/exportFromJson';
@@ -97,25 +96,18 @@ const WhatsappInbound = ({ classes }) => {
     }
     //TODO: add from / to number
     const exportColumnHeader = {
-        "ClientID": t('client.ClientId'),
-        "FirstName": t('smsReport.firstName'),
-        "LastName": t('smsReport.lastName'),
-        "Email": t('common.Email'),
-        "Cellphone": t('common.cellphone'),
-        "CreationDate": t('common.CreationDate'),
-        "SmsStatus": t('common.smsStatus'),
-        "Status": t('common.Status'),
-        "ReplyDate": t('common.ReplyDate'),
-        "ReplyText": t('common.ReplyText'),
-
+        "SendDate": t('common.ReplyDate'),
+        "FromNumber": t('common.FrmNumber'),
+        "ToNumber": t('common.ToNumber'),
+        "TextMessage": t('common.messageContent')
     }
 
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setShowLoader(true);
-        let orderList = preferredOrder(inboundWhatsappReport?.Data, Object.keys(exportColumnHeader));
-        orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
-        orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
+        request.IsExport = true;
+        const response = await dispatch(getInboundReport(request));
+        let orderList = preferredOrder(response?.payload?.Data, Object.keys(exportColumnHeader));
         orderList = await formatDateTime(orderList);
         exportFile({
             data: orderList,

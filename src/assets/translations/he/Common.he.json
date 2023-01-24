@@ -593,5 +593,6 @@
   "delivered": "הועבר",
   "Queued": "בתור",
   "read": "נקרא",
-  "NoInboundIn24Session": "לא התקבלה תשובה"
+  "NoInboundIn24Session": "לא התקבלה תשובה",
+  "templateId": "מזהה תבנית"
 }

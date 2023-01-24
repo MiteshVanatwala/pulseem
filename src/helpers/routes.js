@@ -195,7 +195,7 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
       { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: '/react/Reports/DirectSendReport/Archive', isShow: true },
       { title: t('master.OpenedClickedReport'), href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
       { key: 'smsResponse', title: t('master.smsReplies'), href: '/react/reports/SmsReplies', isShow: false },
-      { key: 'inboundMessages', title: t('master.smsReplies'), href: '/react/Inbound', isShow: false },
+      { key: 'inboundMessages', title: t('master.smsReplies'), href: '/react/Inbound', isShow: true },
     ]
   }
 ]

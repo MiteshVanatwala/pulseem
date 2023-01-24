@@ -365,7 +365,7 @@ const DirectWhatsappReportTab = ({
                         className={classes.flex1}
                         style={{ inlineSize: 90 }}
                         align='center'>
-                        {t('report.id')}
+                        {t('common.templateId')}
                     </TableCell>
                     {/* <TableCell
                         classes={cellStyle}
