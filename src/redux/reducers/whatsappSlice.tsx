@@ -97,6 +97,23 @@ export const getSavedTemplatesById = createAsyncThunk(
 	}
 );
 
+export const getSavedTemplatesPreviewById = createAsyncThunk(
+	'WhatsAppTemplate/GetWhatsAppTemplate',
+	async (data: { templateId: string }, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppTemplate/GetWhatsAppTemplate`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const submitTemplates = createAsyncThunk(
 	'WhatsAppTemplate/SubmitWhatsAppTemplate',
 	async (data: ApiSubmitTemplatesDataProps, thunkAPI) => {

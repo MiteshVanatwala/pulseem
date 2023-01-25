@@ -49,7 +49,6 @@ export type campaignFielsProps = {
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
 	onCampaignNameChange: (campaignName: string) => void;
 	onFromChange: (from: string) => void;
-	onCampaignFromRestore: () => void;
 	showValidation: boolean;
 	phoneNumbersList: string[];
 };
@@ -309,7 +308,7 @@ export type campaignDataProps = {
 	AutomationTriggerInActive: boolean;
 	CreateDate: string;
 	CreditsPerSms: number;
-	Groups: string | null;
+	Groups: string[] | string | null;
 	IsDeleted: boolean;
 	Name: string;
 	SendDate: string | null;
@@ -317,6 +316,7 @@ export type campaignDataProps = {
 	TotalSendPlan: number;
 	UpdateDate: string;
 	WACampaignID: number;
+	TemplateId: string;
 };
 
 export type searchArrayProps = {

@@ -34,7 +34,6 @@ import {
 	campaignListAPIProps,
 	commonAPIResponseProps,
 	coreProps,
-	getTemplateByIdAPIProps,
 	quickReplyButtonProps,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
@@ -43,6 +42,7 @@ import {
 	savedTemplateQuickReplyProps,
 	savedTemplateTextProps,
 	templateDataProps,
+	templateListAPIProps,
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -62,7 +62,7 @@ import {
 	deleteCampaign,
 	duplicateCampaign,
 	getAllCampaigns,
-	getSavedTemplatesById,
+	getSavedTemplatesPreviewById,
 } from '../../../redux/reducers/whatsappSlice';
 import InfoModal from './Popups/InfoModal';
 import { useNavigate } from 'react-router-dom';
@@ -445,24 +445,53 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		setTemplateData(updatedTemplateData);
 	};
 
-	const onPreview = async (templateId: string) => {
-		const templateData: getTemplateByIdAPIProps = await dispatch<any>(
-			getSavedTemplatesById(templateId)
-		);
-		if (templateData.payload.Status === apiStatus.SUCCESS) {
-			const templates = templateData.payload?.Data;
-			if (templates) {
-				const templateData = templates?.Data;
-				onSavedTemplateChange(templateData);
+	const getTemplateIdFromId = (id: string) => {
+		return campaignListData?.find(
+			(campaign: campaignDataProps) => id === campaign.WACampaignID?.toString()
+		)?.TemplateId;
+	};
+
+	const onPreview = async (campaignId: string) => {
+		const previewTemplateId = getTemplateIdFromId(campaignId);
+		if (previewTemplateId) {
+			const templateData: templateListAPIProps = await dispatch<any>(
+				getSavedTemplatesPreviewById({
+					templateId: previewTemplateId,
+				})
+			);
+			if (templateData.payload.Status === apiStatus.SUCCESS) {
+				const templates = templateData.payload?.Data?.Items;
+				if (templates && templates?.length > 0) {
+					const templateData = templates[0];
+					onSavedTemplateChange(templateData?.Data);
+				}
+				setIsPreviewCampaignOpen(true);
+			} else {
+				templateData?.payload?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: templateData?.payload?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
 			}
-			setIsPreviewCampaignOpen(true);
-		} else {
-			templateData?.payload?.Message
-				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: templateData?.payload?.Message,
-				  })
-				: setToastMessage(ToastMessages.ERROR);
+		}
+	};
+
+	const onGroups = (campaignId: string) => {
+		let modalData: string[] = [];
+		setIsInfoModalOpen(true);
+		const campaign = campaignListData?.find(
+			(campaign: campaignDataProps) =>
+				campaignId === campaign.WACampaignID?.toString()
+		);
+		if (campaign && campaign?.Groups) {
+			if (typeof campaign?.Groups === 'string') {
+				modalData.push(campaign.Groups?.toString());
+				setInfoModalData(modalData);
+			} else {
+				modalData = [...campaign.Groups];
+				setInfoModalData(modalData);
+			}
 		}
 	};
 
@@ -476,7 +505,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				setIsDuplicateCampaignOpen(true);
 				break;
 			case 'groups':
-				setIsInfoModalOpen(true);
+				onGroups(campaignId);
 				break;
 			case 'automation':
 				// setIsDuplicateCampaignOpen(true);
@@ -491,8 +520,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const renderCellIcons = (row: campaignDataProps) => {
-		const { Status, AutomationID } = row;
-		const groups: string[] = [];
+		const { Status, AutomationID, Groups } = row;
 
 		const iconsMap: ManagmentIconProps[] = [
 			{
@@ -545,7 +573,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				key: 'groups',
 				buttonKey: 'groups',
 				icon: GroupsIcon,
-				disable: groups?.length === 0,
+				disable: Groups?.length !== 0,
 				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
@@ -924,7 +952,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 												classes={cellStyle}
 												align='center'
 												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderMessagesCell(campaign.TotalSendPlan)}
+												{renderMessagesCell(1)}
 											</TableCell>
 											<TableCell
 												classes={cellStyle}

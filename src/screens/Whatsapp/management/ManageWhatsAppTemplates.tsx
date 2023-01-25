@@ -60,6 +60,7 @@ import {
 	duplicateTemplate,
 	getAllTemplates,
 	getSavedTemplatesById,
+	getSavedTemplatesPreviewById,
 	submitTemplateDirect,
 } from '../../../redux/reducers/whatsappSlice';
 import { apiStatus, resetToastData, statusesByName } from '../Constant';
@@ -370,24 +371,35 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setTemplateData(updatedTemplateData);
 	};
 
+	const getTemplateIdFromId = (id: string) => {
+		return templateListData?.find(
+			(template: templateListItemsProps) => id === template.Id?.toString()
+		)?.TemplateId;
+	};
+
 	const onPreview = async (templateId: string) => {
-		const templateData: getTemplateByIdAPIProps = await dispatch<any>(
-			getSavedTemplatesById(templateId)
-		);
-		if (templateData.payload.Status === apiStatus.SUCCESS) {
-			const templates = templateData.payload?.Data;
-			if (templates) {
-				const templateData = templates?.Data;
-				onSavedTemplateChange(templateData);
+		const previewTemplateId = getTemplateIdFromId(templateId);
+		if (previewTemplateId) {
+			const templateData: templateListAPIProps = await dispatch<any>(
+				getSavedTemplatesPreviewById({
+					templateId: previewTemplateId,
+				})
+			);
+			if (templateData.payload.Status === apiStatus.SUCCESS) {
+				const templates = templateData.payload?.Data?.Items;
+				if (templates && templates?.length > 0) {
+					const templateData = templates[0];
+					onSavedTemplateChange(templateData?.Data);
+				}
+				setIsPreviewTemplateOpen(true);
+			} else {
+				templateData?.payload?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: templateData?.payload?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
 			}
-			setIsPreviewTemplateOpen(true);
-		} else {
-			templateData?.payload?.Message
-				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: templateData?.payload?.Message,
-				  })
-				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
@@ -739,7 +751,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							)}
 							{getRows()?.length === 0 ? (
 								<Box
-									className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.noDataRow)}>
+									className={clsx(
+										classes.flex,
+										classes.justifyCenterOfCenter,
+										classes.noDataRow
+									)}>
 									<Typography>
 										{translator('common.NoDataTryFilter')}
 									</Typography>
