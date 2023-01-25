@@ -3,11 +3,10 @@ import 'moment/locale/he';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
-import { ClientStatus } from '../../../../helpers/Constants';
+import { ClientStatus, WhatsappStatus } from '../../../../helpers/Constants';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import { getInboundReport } from '../../../../redux/reducers/whatsappSlice';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
@@ -88,17 +87,10 @@ const WhatsappInbound = ({ classes }) => {
     }
     //TODO: add from / to number
     const exportColumnHeader = {
-        "ClientID": t('client.ClientId'),
-        "FirstName": t('smsReport.firstName'),
-        "LastName": t('smsReport.lastName'),
-        "Email": t('common.Email'),
-        "Cellphone": t('common.cellphone'),
-        "CreationDate": t('common.CreationDate'),
-        "SmsStatus": t('common.smsStatus'),
-        "Status": t('common.Status'),
-        "ReplyDate": t('common.ReplyDate'),
-        "ReplyText": t('common.ReplyText'),
-
+        "SendDate": t('common.ReplyDate'),
+        "FromNumber": t('common.FrmNumber'),
+        "ToNumber": t('common.ToNumber'),
+        "TextMessage": t('common.messageContent')
     }
 
     const handleDownloadCsv = async (formatType) => {
@@ -107,21 +99,14 @@ const WhatsappInbound = ({ classes }) => {
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
-            BooleanToNumber: true,
-            ConvertStatusToString: true,
-            Statuses: ClientStatus,
             Order: Object.keys(exportColumnHeader)
         };
         try {
-            let result = await HandleExportData(inboundWhatsappReport?.Data, exportOptions)
+            request.IsExport = true;
+            searchData.whatsapp.IsExport = true;
+            response = await dispatch(getInboundReport(request));
+            let result = await HandleExportData(response?.Data, exportOptions)
 
-            result = result.reduce(
-                (previousValue, currentValue) => {
-                    currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
-                    return [...previousValue, currentValue]
-                },
-                []
-            );
             ExportFile({
                 data: result,
                 fileName: `ResponsesReport${id ? '_' + id : ''}`,

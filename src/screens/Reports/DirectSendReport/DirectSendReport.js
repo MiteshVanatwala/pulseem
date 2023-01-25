@@ -116,34 +116,13 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   }
 
   const handleExportEnable = () => {
-    switch (tabValue) {
-      case 0: { // Sms
-        if (Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null) {
-          setExportEnable(directSmsReport.TotalSent > 0 && directSmsReport.TotalSent < MAX_EXPORT_RECORDS)
-        }
-        else {
-          setExportEnable(false);
-        }
-        break;
-      }
-      case 1: { // Email
-        if (Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null) {
-          setExportEnable(directNewsletterReport.TotalRecords > 0 && directNewsletterReport.TotalRecords < MAX_EXPORT_RECORDS)
-        }
-        else {
-          setExportEnable(false);
-        }
-        break;
-      }
-      case 2: { // Whatsapp
-        if (Object.keys(directWhatsappReport.Data).length > 0 && directWhatsappReport.Data !== null) {
-          setExportEnable(parseInt(directWhatsappReport?.Message) > 0 && parseInt(directWhatsappReport?.Message) < MAX_EXPORT_RECORDS)
-        }
-        else {
-          setExportEnable(false);
-        }
-        break;
-      }
+    let reportObject = [directSmsReport?.DirectReport ?? null, directNewsletterReport?.DirectReport ?? null, directWhatsappReport?.Data ?? null];
+
+    if (reportObject[tabValue] && Object.keys(reportObject[tabValue])?.length > 0 && reportObject[tabValue] !== null) {
+      setExportEnable(true);
+    }
+    else {
+      setExportEnable(false);
     }
   }
 
@@ -272,19 +251,12 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "ClientStatus": t('report.clientStatus')
     },
     WHATSAPP: {
-      'ID': t('report.id'),
-      'Schedule': t('common.SendDate'),
-      'FromNumber': t('common.SentFromNumber'),
-      'ToNumber': t('common.SendTo2'),
-      'Status': t('common.Status'),
+      "Schedule": t('common.SendDate'),
+      "FromNumber": t('common.FrmNumber'),
+      "ToNumber": t('common.ToNumber'),
+      "Status": t('common.Status'),
       "StatusDescription": t('report.StatusDescription'),
-      'ErrorMessage': t('report.errorCode'),
-      // 'Credits': t('report.Credits'), 
-      'Text': t('common.messageContent'),
-      'ReferenceId': t('common.ExternalRef'),
-      // 'TemplateTypeId',
-      'TemplateVariables': t('common.TemplateVariables'),
-      // 'ContentTypeId'
+      "ClientStatus": t('report.clientStatus')
     }
   };
 
@@ -365,6 +337,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         }
       case 2: // Whatsapp
         {
+
+          
           const requestPayload = { ...defaultRequests.WHATSAPP };
           requestPayload.IsExport = true;
           response = await dispatch(exportReport(requestPayload));

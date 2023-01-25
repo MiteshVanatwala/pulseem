@@ -599,5 +599,6 @@
   "read": "נקרא",
   "NoInboundIn24Session": "לא התקבלה תשובה",
   "TemplateVariables": "משתנים בתבנית",
-  "files": "[קבצים]:"
+  "files": "[קבצים]:",
+  "templateId": "מזהה תבנית"
 }

@@ -604,5 +604,6 @@
   "read": "Read",
   "NoInboundIn24Session": "No inbound",
   "TemplateVariables": "Template Variables",
-  "files": "[Files]:"
+  "files": "[Files]:",
+  "templateId": "Template ID"
 }

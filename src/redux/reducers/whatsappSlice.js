@@ -6,6 +6,7 @@ export const getDirectReport = createAsyncThunk(
   'Whatsapp/GetDirectReport', async (data, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`Whatsapp/GetDirectReport`, data);
+      response.data.IsExport = data.IsExport;
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -27,6 +28,7 @@ export const getInboundReport = createAsyncThunk(
   async (requestData, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`Whatsapp/GetInboundMessages`, requestData);
+      response.data.IsExport = data.IsExport;
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -41,10 +43,12 @@ export const whatsappSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(getDirectReport.fulfilled, (state, { payload }) => {
-      state.directWhatsappReport = payload;
+      if (!payload.IsExport)
+        state.directWhatsappReport = payload;
     })
     builder.addCase(getInboundReport.fulfilled, (state, { payload }) => {
-      state.inboundWhatsappReport = payload;
+      if (!payload.IsExport)
+        state.inboundWhatsappReport = payload;
     })
   }
 })
