@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getSmsData = createAsyncThunk(
   'smsCampaign/getAllSmsCampaigns', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/getAllSmsCampaigns`);
+      const response = await PulseemReactInstance.get(`smsCampaign/getAllSmsCampaigns`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,7 +14,7 @@ export const getSmsData = createAsyncThunk(
 export const getSMSVirtualNumber = createAsyncThunk(
   'smsCampaign/GetAccountVirtualNumber', async (number, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -25,7 +25,7 @@ export const getSMSVirtualNumber = createAsyncThunk(
 export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
+      const response = await PulseemReactInstance.get(`GetSubAccountWithFeatureAndSettings`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -34,7 +34,7 @@ export const getCommonFeatures = createAsyncThunk(
 export const getTestGroups = createAsyncThunk(
   'smsCampaign/GetTestGroups', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetTestGroups`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetTestGroups`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -43,7 +43,7 @@ export const getTestGroups = createAsyncThunk(
 export const getPreviousLandingData = createAsyncThunk(
   'smsCampaign/GetLastLandingPages', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetLastLandingPages`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetLastLandingPages`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -52,7 +52,7 @@ export const getPreviousLandingData = createAsyncThunk(
 export const getPreviousCampaignData = createAsyncThunk(
   'smsCampaign/GetLastCampaings', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetLastCampaings`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetLastCampaings`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -61,7 +61,7 @@ export const getPreviousCampaignData = createAsyncThunk(
 export const getAccountExtraData = createAsyncThunk(
   'smsCampaign/GetAccountExtraData', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetAccountExtraData`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetAccountExtraData`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -70,7 +70,7 @@ export const getAccountExtraData = createAsyncThunk(
 export const getGroupsBySubAccountId = createAsyncThunk(
   'smsCampaign/GetGroupsBySubAccountId', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetGroupsBySubAccountId`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetGroupsBySubAccountId`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -80,7 +80,7 @@ export const getGroupsBySubAccountId = createAsyncThunk(
 export const getCreditsforSMS = createAsyncThunk(
   'smsCampaign/GetCreditsForSms', async (count, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetCreditsForSms/${count}`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetCreditsForSms/${count}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -90,7 +90,7 @@ export const getCreditsforSMS = createAsyncThunk(
 export const getSmsByID = createAsyncThunk(
   'smsCampaign/GetSmsCampaignById', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetSmsCampaignById/${id}`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetSmsCampaignById/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -100,7 +100,7 @@ export const getSmsByID = createAsyncThunk(
 export const getSMSDirectReport = createAsyncThunk(
   'directReport/GetSmsDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/GetSmsDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/GetSmsDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -110,7 +110,7 @@ export const getSMSDirectReport = createAsyncThunk(
 export const getArchiveSMSDirectReport = createAsyncThunk(
   'directReport/GetArchiveSmsDirect', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/GetArchiveSmsDirect`, data);
+      const response = await PulseemReactInstance.post(`directReport/GetArchiveSmsDirect`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -120,7 +120,7 @@ export const getArchiveSMSDirectReport = createAsyncThunk(
 export const getSMSRequestOTP = createAsyncThunk(
   'RequestOTP', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`RequestOTP`, data);
+      const response = await PulseemReactInstance.post(`RequestOTP`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -129,7 +129,7 @@ export const getSMSRequestOTP = createAsyncThunk(
 export const getSMSConfirmOTP = createAsyncThunk(
   'ConfirmOTP', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`ConfirmOTP`, data);
+      const response = await PulseemReactInstance.post(`ConfirmOTP`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -138,7 +138,7 @@ export const getSMSConfirmOTP = createAsyncThunk(
 export const saveManualClients = createAsyncThunk(
   'smsCampaign/SaveManualClients', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/SaveManualClients`, data);
+      const response = await PulseemReactInstance.post(`smsCampaign/SaveManualClients`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -148,30 +148,29 @@ export const saveManualClients = createAsyncThunk(
 export const exportSMSDirectReport = createAsyncThunk(
   'directReport/ExportSmsDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/ExportSmsDirectReport`, data);
+      const response = await PulseemReactInstance.post(`directReport/ExportSmsDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
 
-export const exportArchiveSmsDirect = createAsyncThunk(
-  'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
-    try {
-      const response = await instence.post(`directReport/ExportArchiveSmsDirect`, data);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  })
-
+  export const exportArchiveSmsDirect = createAsyncThunk(
+    'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
+      try {
+        const response = await PulseemReactInstance.post(`directReport/ExportArchiveSmsDirect`, data);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
 
 
 
 export const restoreSms = createAsyncThunk(
   'smsCampaign/restoreSmsCampaigns', async (deletedsms, thunkAPI) => {
     try {
-      const response = await instence.put(`smsCampaign/restoreSmsCampaigns`, deletedsms);
+      const response = await PulseemReactInstance.put(`smsCampaign/restoreSmsCampaigns`, deletedsms);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -181,7 +180,7 @@ export const restoreSms = createAsyncThunk(
 export const deleteSms = createAsyncThunk(
   'smsCampaign/DeleteById', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`smsCampaign/DeleteById/${id}`);
+      const response = await PulseemReactInstance.delete(`smsCampaign/DeleteById/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -191,7 +190,7 @@ export const deleteSms = createAsyncThunk(
 export const duplicteSms = createAsyncThunk(
   'smsCampaign/cloneSmsCampaign', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`smsCampaign/cloneSmsCampaign/${id}`);
+      const response = await PulseemReactInstance.put(`smsCampaign/cloneSmsCampaign/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -200,7 +199,7 @@ export const duplicteSms = createAsyncThunk(
 export const smsDelete = createAsyncThunk(
   'smsCampaign/deleteSmsCampaign', async (id, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/deleteSmsCampaign/${id}`);
+      const response = await PulseemReactInstance.post(`smsCampaign/deleteSmsCampaign/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -210,7 +209,7 @@ export const smsDelete = createAsyncThunk(
 export const getSmsAuthorizationData = createAsyncThunk(
   'authorization/getAuthorizeNumbers', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`authorization/getAuthorizeNumbers`);
+      const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -220,7 +219,7 @@ export const getSmsAuthorizationData = createAsyncThunk(
 export const getAuthorizeNumbers = createAsyncThunk(
   'GetRelatedSubAccountNumber', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
+      const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -232,7 +231,7 @@ export const sendVerificationCode = createAsyncThunk(
     const { username = '', number = '' } = data || {};
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await instence.put(`authorization/newAuthorizeNumbers/${username}/${number}`);
+        const response = await PulseemReactInstance.put(`authorization/newAuthorizeNumbers/${username}/${number}`);
         resolve(JSON.parse(response.data))
       } catch (error) {
         reject({ error: error.message });
@@ -243,7 +242,7 @@ export const sendVerificationCode = createAsyncThunk(
 export const verifyCode = createAsyncThunk(
   'authorization/newAuthorizeNumberInsertCode', async (data, thunkAPI) => {
     try {
-      const response = await instence.put(`authorization/newAuthorizeNumberInsertCode/${data.phoneNumber}/${data.optinCode}`);
+      const response = await PulseemReactInstance.put(`authorization/newAuthorizeNumberInsertCode/${data.phoneNumber}/${data.optinCode}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -253,7 +252,7 @@ export const verifyCode = createAsyncThunk(
 export const getSmsReport = createAsyncThunk(
   'reports/SmsReport', async (query, thunkAPI) => {
     try {
-      const response = await instence.post(`reports/SmsReport`, query);
+      const response = await PulseemReactInstance.post(`reports/SmsReport`, query);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -263,7 +262,7 @@ export const getSmsReport = createAsyncThunk(
 export const getSmsGraph = createAsyncThunk(
   'reports/SmsReportGraph', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`reports/SmsReportGraph`);
+      const response = await PulseemReactInstance.get(`reports/SmsReportGraph`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -273,7 +272,7 @@ export const getSmsGraph = createAsyncThunk(
 export const getCampaignSumm = createAsyncThunk(
   'smsCampaign/GetCampaignSummary', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetCampaignSummary/${id}`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetCampaignSummary/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -283,7 +282,7 @@ export const getCampaignSumm = createAsyncThunk(
 export const smsSave = createAsyncThunk(
   'smsCampaign/Save', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/Save`, data);
+      const response = await PulseemReactInstance.post(`smsCampaign/Save`, data);
 
       return JSON.parse(response.data)
     } catch (error) {
@@ -293,7 +292,7 @@ export const smsSave = createAsyncThunk(
 export const smsSaveGroup = createAsyncThunk(
   'smsCampaign/SaveQuickSendGroups', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/SaveQuickSendGroups`, data);
+      const response = await PulseemReactInstance.post(`smsCampaign/SaveQuickSendGroups`, data);
 
       return JSON.parse(response.data)
     } catch (error) {
@@ -303,7 +302,7 @@ export const smsSaveGroup = createAsyncThunk(
 export const saveSmsCampSettings = createAsyncThunk(
   'smsCampaign/SaveCampaignSettings', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/SaveCampaignSettings`, data);
+      const response = await PulseemReactInstance.post(`smsCampaign/SaveCampaignSettings`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -312,7 +311,7 @@ export const saveSmsCampSettings = createAsyncThunk(
 export const smsCombinedGroup = createAsyncThunk(
   'smsCampaign/CreateCombinedGroup', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/CreateCombinedGroup`, data);
+      const response = await PulseemReactInstance.post(`smsCampaign/CreateCombinedGroup`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -321,7 +320,7 @@ export const smsCombinedGroup = createAsyncThunk(
 export const smsQuick = createAsyncThunk(
   'smsCampaign/QuickSend', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/QuickSend`, data);
+      const response = await PulseemReactInstance.post(`smsCampaign/QuickSend`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -332,7 +331,7 @@ export const smsQuick = createAsyncThunk(
 export const exportSmsReport = createAsyncThunk(
   'report/ExportSmsReport', async (demo = false, thunkAPI) => {
     try {
-      const response = await instence.post(`report/ExportSmsReport/${demo}`);
+      const response = await PulseemReactInstance.post(`report/ExportSmsReport/${demo}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -341,7 +340,7 @@ export const exportSmsReport = createAsyncThunk(
 export const getFinishedCampaigns = createAsyncThunk(
   'smsCampaign/GetFinishedSmsCampaigns', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetFinishedSmsCampaigns`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetFinishedSmsCampaigns`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -350,7 +349,7 @@ export const getFinishedCampaigns = createAsyncThunk(
 export const getCampaignSettings = createAsyncThunk(
   'smsCampaign/GetCampaignSettings', async (campaignId, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/GetCampaignSettings/${campaignId}`);
+      const response = await PulseemReactInstance.get(`smsCampaign/GetCampaignSettings/${campaignId}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -360,7 +359,7 @@ export const getCampaignSettings = createAsyncThunk(
 export const sendSms = createAsyncThunk(
   'smsCampaign/Send', async (sendData, thunkAPI) => {
     try {
-      const response = await instence.post(`smsCampaign/Send`, sendData);
+      const response = await PulseemReactInstance.post(`smsCampaign/Send`, sendData);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -370,7 +369,7 @@ export const sendSms = createAsyncThunk(
 export const IsOTPPassed = createAsyncThunk(
   'smsCampaign/IsOTPPassed', async (fromNumber, thunkAPI) => {
     try {
-      const response = await instence.get(`smsCampaign/IsOTPPassed/${fromNumber}`);
+      const response = await PulseemReactInstance.get(`smsCampaign/IsOTPPassed/${fromNumber}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -379,23 +378,12 @@ export const IsOTPPassed = createAsyncThunk(
 export const getSmsReplies = createAsyncThunk(
   'report/SmsReplies', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`report/SmsReplies/${id}`);
+      const response = await PulseemReactInstance.get(`report/SmsReplies/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-
-
-// export const SaveSms=createAsyncThunk(
-//   'smsCampaign/Save/',async (data,thunkAPI) => {
-//     try {
-//       const response=await instence.post(`smsCampaign/Save/`,data);
-//       return response.data
-//     } catch(error) {
-//       return thunkAPI.rejectWithValue({error: error.message});
-//     }
-//   })
 
 export const smsSlice = createSlice({
   name: 'newsletter',

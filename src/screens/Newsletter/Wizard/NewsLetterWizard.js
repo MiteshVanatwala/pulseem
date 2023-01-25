@@ -21,7 +21,7 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
-import { getCookie } from '../../../helpers/cookies';
+import { getCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { BiSave } from 'react-icons/bi'

@@ -11,7 +11,9 @@ import {
   EditIcon,
   DeleteRecipient,
   DeleteEmail,
-  DeletePhone
+  DeletePhone,
+  SettingIcon,
+  ResetIcon
 } from "../../assets/images/managment/index";
 import NotAvailable from "../../assets/images/notAvailable.png";
 
@@ -25,16 +27,16 @@ const Icons = {
     url: CopyIcon,
   },
   delete: {
-    type: 1,
-    url: DeleteIcon,
+    type: 2,
+    comp: DeleteIcon,
   },
   automation: {
-    type: 1,
-    url: AutomationIcon,
+    type: 2,
+    comp: AutomationIcon,
   },
   preview: {
-    type: 1,
-    url: PreviewIcon,
+    type: 2,
+    comp: PreviewIcon,
   },
   edit: {
     type: 1,
@@ -53,20 +55,20 @@ const Icons = {
     url: DeletePhone
   },
   addRecipient: {
-    type: 1,
-    url: AddRecipient,
+    type: 2,
+    comp: AddRecipient,
   },
   addRecipients: {
-    type: 1,
-    url: AddRecipients,
+    type: 2,
+    comp: AddRecipients,
   },
   reset: {
-    type: 1,
-    url: Reset,
+    type: 2,
+    comp: ResetIcon,
   },
   settings: {
-    type: 1,
-    url: SettingsIcon,
+    type: 2,
+    comp: SettingIcon,
   },
   alert: {
     type: 2,
@@ -76,12 +78,19 @@ const Icons = {
 
 const useStyles = makeStyles((theme) => ({
   box: {
-    fontSize: 32,
     width: 25,
     height: 'auto',
     color: "#000000",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     "& img": {
-      maxWidth: "100%",
+      maxWidth: '100%',
+    },
+    "& svg": {
+      maxWidth: 25,
+      maxHeight: 25,
+      fontSize: 24,
     },
   },
 }));
@@ -95,7 +104,7 @@ const IconWrapper = ({ iconName = "", onClick = () => false, ...props }) => {
       classes={props.classes}
       onClick={onClick}
     >
-      {icon?.type === 1 ? <img src={icon?.url} alt={icon?.url} /> : icon?.comp}
+      {icon.type === 1 ? <img src={icon.url} alt={icon.url} /> : <icon.comp width={18} height={20} />}
     </Box>
   );
 };

@@ -1,0 +1,41 @@
+﻿
+export enum AccountFeatures {
+    LockSending = 1,
+    SubAccounts = 2,
+    Targets = 3,
+    AutoTimingSend = 4,
+    CampaignTemplates = 5,
+    Optin = 6,
+    SMS = 7,
+    GoogleLinks = 8,
+    Future = 9,
+    InMailImages = 10,
+    ClientHTMLScript = 11,
+    LandingPages = 12,
+    LockExportData = 13,
+    FileAttachment = 14,
+    SimplyClub = 15,
+    ManualInputSend = 16,
+    MultiGroupDelete = 17,
+    PulseemKosher = 18,
+    AddCampaignLink2Sms = 19,
+    CampaignTopics = 20,
+    SmsResponse = 21,
+    SynchronizeRegularAndDirectClientStatuses = 22,
+    SmsLinksStatistics = 24,
+    UnSubscribeEmailFeature = 25,
+    UnSubscribeSMSFeature = 26,
+    LoginIPCheck = 27,
+    RemoveClients = 28,
+    Catalogue = 29,
+    Unsubscribe = 30,
+    FlashSMS = 31,
+    Automation = 32,
+    SmppDlrOnly = 33,
+    PrepaidFromWS = 34,
+    Notifications = 35
+}
+export interface AccountFeature {
+    CompanyID: number;
+    FeatureID: number;
+}

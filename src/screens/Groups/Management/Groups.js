@@ -4,7 +4,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
-    Box, Typography, Divider, TableBody, TableRow, TableCell,
+    Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
@@ -27,7 +27,7 @@ import AddRecipientPopup from "./Popup/AddRecipientPopup";
 import ConfirmDeletePopUp from "./Popup/ConfirmDeletePopUp";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { Loader } from '../../../components/Loader/Loader';
-import { MdOutlineLockClock } from "react-icons/md"
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineLockClock } from "react-icons/md"
 import { RiPagesLine } from "react-icons/ri"
 import IconWrapper from "../../../components/icons/IconWrapper";
 import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
@@ -43,6 +43,9 @@ import { voidFunction } from '../../../helpers/utils';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -116,24 +119,7 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
-    const renderHeader = () => {
-        return (
-            <>
-                <Typography className={classes.managementTitle}>
-                    {t("recipient.logPageHeaderResource1.Text")}
-                </Typography>
-                <Divider />
-            </>
-        );
-    };
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -242,7 +228,7 @@ const Groups = ({ classes }) => {
         }
 
         return (
-            <Grid container spacing={2} className={classes.lineTopMarging}>
+            <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
                 <Grid item>
                     <TextField
                         variant="outlined"
@@ -256,8 +242,6 @@ const Groups = ({ classes }) => {
                 </Grid>
                 <Grid item>
                     <Button
-                        size="large"
-                        variant="contained"
                         onClick={() => {
                             const searchObject = {
                                 PageIndex: 1,
@@ -273,8 +257,8 @@ const Groups = ({ classes }) => {
                             });
                             getData(searchObject);
                         }}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
                         {t("campaigns.btnSearchResource1.Text")}
                     </Button>
@@ -282,8 +266,6 @@ const Groups = ({ classes }) => {
                 {serachData.SearchTerm && (
                     <Grid item>
                         <Button
-                            size="large"
-                            variant="contained"
                             onClick={() => {
                                 const searchObject = {
                                     ...serachData,
@@ -303,8 +285,8 @@ const Groups = ({ classes }) => {
                                 setSearchStr("");
                                 getData(searchObject);
                             }}
-                            className={classes.searchButton}
-                            endIcon={<ClearIcon />}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         >
                             {t("common.clear")}
                         </Button>
@@ -320,13 +302,10 @@ const Groups = ({ classes }) => {
             <Grid container spacing={2} className={classes.linePadding}>
                 <Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen
-                        )}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => setDialog(DialogType.ADD_GROUP)}
+
                     >
                         {t("group.new")}
                     </Button>
@@ -334,9 +313,8 @@ const Groups = ({ classes }) => {
                 {windowSize !== "xs" && (
                     <Grid item>
                         <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(classes.actionButton, classes.actionButtonRed)}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             onClick={() => {
                                 selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
                             }}
@@ -347,9 +325,8 @@ const Groups = ({ classes }) => {
                 )}
                 <Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(classes.actionButton, classes.actionButtonRed)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_RECIPIENT)}
                     >
                         {t("recipient.deleteRecipient")}
@@ -357,8 +334,6 @@ const Groups = ({ classes }) => {
                 </Grid>
                 {/* <Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
                         className={clsx(classes.actionButton, classes.actionButtonRed)}
                         onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
                     >
@@ -367,9 +342,8 @@ const Groups = ({ classes }) => {
                 </Grid> */}
                 {accountFeatures && accountFeatures?.indexOf('15') > -1 && (<Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(classes.actionButton, classes.importButtonBlue)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
 
                     >
@@ -382,12 +356,9 @@ const Groups = ({ classes }) => {
                         <Button
                             variant="contained"
                             size="medium"
-                            className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonGreen
-                            )}
+                            className={clsx(classes.btn, classes.btnRounded)}
                             onClick={() => setShowConfirmDialog(true)}
-                            startIcon={<ExportIcon />}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         >
                             {t("campaigns.exportFile")}
                         </Button>
@@ -435,7 +406,7 @@ const Groups = ({ classes }) => {
                     />
 
                 </Grid>}
-                <Grid item sm={10}>
+                <Grid item sm={10} className='rowTitle'>
                     <CustomTooltip
                         isSimpleTooltip={false}
                         interactive={true}
@@ -444,7 +415,6 @@ const Groups = ({ classes }) => {
                             arrow: classes.fBlack,
                         }}
                         arrow={true}
-                        style={{ fontSize: 18 }}
                         placement={"top"}
                         title={<Typography noWrap={false}>{GroupName}</Typography>}
                         text={GroupName}
@@ -1040,6 +1010,7 @@ const Groups = ({ classes }) => {
                         ]}
                         variant="body1"
                         align="center"
+                        classes={{ container: 'rowIconContainer' }}
                     />
                 </TableCell>
             </TableRow>
@@ -1415,10 +1386,12 @@ const Groups = ({ classes }) => {
                         className: windowSize === "xs" && classes.dNone,
                     }}
                 >
-                    <TableBody>
-                        {groupData.Groups
-                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-                    </TableBody>
+                    <Box className='tableBodyContainer groupsTable'>
+                        <TableBody>
+                            {groupData.Groups
+                                .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                        </TableBody>
+                    </Box>
                 </DataTable>
             )
         }
@@ -1461,7 +1434,7 @@ const Groups = ({ classes }) => {
                 break;
             }
             case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
                 setDialog(DialogType.MESSAGE);
                 break;
             }
@@ -1780,8 +1753,11 @@ const Groups = ({ classes }) => {
         >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
-                {renderHeader()}
-                {renderSearchSection()}
+                <Box className={'topSection'}>
+
+                    <Title Text={t('recipient.logPageHeaderResource1.Text')} classes={classes} />
+                    {renderSearchSection()}
+                </Box>
                 {windowSize !== 'xs' ? renderManagmentLine() :
                     <Box
                         item

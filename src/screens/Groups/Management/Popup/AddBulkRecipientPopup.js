@@ -1,11 +1,11 @@
-import { Box, makeStyles, Typography, Button } from "@material-ui/core";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { UploadSettings } from "../../tempConstants";
 import UploadXL from '../../../../components/Files/UploadXL'
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
 import { Tooltip } from "@material-ui/core";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 const useStyles = makeStyles((theme) => ({
     contentBox: {
@@ -42,7 +42,7 @@ const AddBulkRecipientPopup = ({ classes,
     const localClasses = useStyles()
 
     return (
-        <Dialog
+        <BaseDialog
             classes={classes}
             open={isOpen}
             childrenStyle={classes.h50v}
@@ -92,7 +92,7 @@ const AddBulkRecipientPopup = ({ classes,
                 placeHolder={"recipient.addRecTextareaPlaceholder"}
                 tooltipText='recipient.bulkRecUpldTooltipText'
             />
-        </Dialog>
+        </BaseDialog>
     );
 };
 

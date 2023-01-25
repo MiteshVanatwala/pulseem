@@ -1,5 +1,3 @@
-import React from 'react';
-import { } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -8,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import './Toast.styles.css'
 import clsx from 'clsx';
 import { useTranslation } from "react-i18next";
-import { renderHtml } from '../../helpers/utils';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
 
@@ -30,10 +28,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Toast = ({ data, onClose }) => {
+const Toast = ({ data = null, onClose = () => { } }) => {
     const { t } = useTranslation();
     const { language } = useSelector(state => state.core)
-    const { isRTL } = useSelector(state => state.core);
     const classes = useStyles();
 
     moment.locale(language);
@@ -41,7 +38,7 @@ const Toast = ({ data, onClose }) => {
     return (
         <div className={clsx(classes.root, "alert")}>
             <Alert severity={data.severity} color={data.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>
-                {renderHtml(t(data.message))}
+                {RenderHtml(t(data.message))}
             </Alert>
             {data.showAnimtionCheck && <div className={"notification-pop"}>
                 <svg

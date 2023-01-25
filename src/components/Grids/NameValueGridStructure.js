@@ -1,5 +1,5 @@
 import { Box, Grid, makeStyles, Typography } from "@material-ui/core"
-import clsx from "clsx";
+// import clsx from "clsx";
 
 const useStyles = makeStyles({
     dataBox: {
@@ -36,9 +36,9 @@ const NameValueGridStructure = ({ gridArr = [],
                                         {obj?.name}
                                     </Typography>
                                 }
-                                <Typography component={classes.href && classes.value > 0 ? 'a' : 'p'}
+                                <Typography
                                     className={obj.classes?.value ?? classes?.value ?? ''}
-                                    href={classes.href ?? ''}
+                                    // href={classes.href ?? ''}
                                     target="_blank"
                                     align={align}
                                     variant={variant}

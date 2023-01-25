@@ -14,19 +14,15 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
-import queryString from 'query-string';
-import Title from '../../../components/Wizard/Title'
+import WizardTitle from '../../../components/Wizard/WizardTitle'
 import OTP from './OTP';
-import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
-import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
-
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
   getAccountExtraData,
-  getGroupsBySubAccountId,
+  // getGroupsBySubAccountId,
   smsSave,
   deleteSms,
   smsSaveGroup,
@@ -38,7 +34,6 @@ import {
   getCommonFeatures,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
-import { Dialog } from "../../../components/managment/index";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -46,15 +41,18 @@ import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile, AiOutlineAlignLeft } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
-import { logout } from '../../../helpers/api'
 import EmojiPicker from "../../../components/Emojis/EmojiPicker";
+import { logout } from '../../../helpers/Api/PulseemReactAPI'
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
+import useRedirect from "../../../helpers/Routes/Redirect";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -101,8 +99,9 @@ const defaultAccountExtraData = [
 ];
 
 
-const SmsCreator = ({ classes, ...props }) => {
+const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
+  const { id, FromAutomation, NodeToEdit } = useParams();
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
@@ -110,21 +109,19 @@ const SmsCreator = ({ classes, ...props }) => {
     maxLength: "13"
   }
 
-  const navigate = useNavigate();
+  const Redirect = useRedirect();
   const dispatch = useDispatch();
-  const { language, windowSize, isRTL, accountFeatures } = useSelector(
+  const { windowSize, isRTL, accountFeatures } = useSelector(
     (state) => state.core
   );
   const {
     previousLandingData,
     previousCampaignData,
-    extraData,
-    accountId,
     getCampaignSum,
-    smsSendResult,
     commonSettings,
     testGroups,
-    ToastMessages
+    ToastMessages,
+    extraData
   } = useSelector((state) => state.sms);
   const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
@@ -136,21 +133,17 @@ const SmsCreator = ({ classes, ...props }) => {
   const [campaignNumber, setcampaignNumber] = useState("");
   const [characterCount, setcharacterCount] = useState(0);
   const [linkCount, setlinkCount] = useState(0);
-  const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
   const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
   const [radioBtn, setradioBtn] = useState("top");
   const [landingSearch, setlandingSearch] = useState("");
   const [CampaignSearch, setCampaignSearch] = useState("");
   const [removalLinkDisabled, setremovalLinkDisabled] = useState(false);
-  const [waize, setwaize] = useState(false);
   const [smsCampaignId, setCampaignId] = useState("");
   const [ContactSearch, setContactSearch] = useState("");
   const [phone, setphone] = useState("");
-  const [alertToggle, setalertToggle] = useState(false);
   const [selectedGroup, setselectedGroup] = useState([]);
   const [StaticNumber, setStaticNumber] = useState("");
-  const [hidden, sethidden] = useState(false);
   const [splittedMsg, setsplittedMsg] = useState([])
   const [SplittedLinks, setSplittedLinks] = useState(null);
   const [Searched, setSearched] = useState("");
@@ -160,19 +153,17 @@ const SmsCreator = ({ classes, ...props }) => {
   const [storedValue, setstoredValue] = useState("");
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
-  const [total, settotal] = useState(0);
   const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
-  const [finalApi, setfinalApi] = useState(false);
   const [isTestCampaign, setIsTestCampaign] = useState(false);
   const [extraAccountDATA, setextraAccountDATA] = useState([]);
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
   const [isFromAutomation, setIsFromAutomation] = useState(false);
-  const [isNewVersion, setIsNewVersion] = useState(true);
   const [otpOpen, setOTPOpen] = useState(null);
   const [isSiteTracking, setIsSiteTracking] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [showRemovalLink, setShowRemovalLink] = useState(false);
+  const [reInitFromNumber, setInitFromNumber] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -195,7 +186,8 @@ const SmsCreator = ({ classes, ...props }) => {
     Type: 0,
     UpdateDate: Date.now(),
   });
-  const [quickSendPayload, setquickSendPayload] = useState({
+
+  const quickSendPayload = {
     SMSCampaignID: -1,
     SubAccountID: -1,
     Status: -1,
@@ -221,7 +213,7 @@ const SmsCreator = ({ classes, ...props }) => {
       Credits: "1",
       TotalRecipients: 1
     }
-  })
+  };
 
   useEffect(() => {
     setAlignment(isRTL ? "right" : "left");
@@ -245,10 +237,6 @@ const SmsCreator = ({ classes, ...props }) => {
       setShowRemovalLink(!accountFeatures.includes('39'))
     }
   }, [isPageLoaded || accountFeatures]);
-
-  const params = useParams()
-
-  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
 
   const renderHtml = (html) => {
     function createMarkup() {
@@ -278,7 +266,6 @@ const SmsCreator = ({ classes, ...props }) => {
         break;
       }
       case 2: {// NO_CREDITS
-        //setToastMessage(ToastMessages.NO_CREDITS)
         setDialogType({ type: "noCredit" });
         break;
       }
@@ -300,10 +287,6 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
   }
-
-  useEffect(async () => {
-    await handleSendResult();
-  }, [smsSendResult]);
 
   useEffect(() => {
     if (commonSettings.SubAccountSettings) {
@@ -344,7 +327,6 @@ const SmsCreator = ({ classes, ...props }) => {
       SmsCampaignID: smsCampaignId
     }
     await dispatch(smsQuick(FinalPayloadData));
-    setfinalApi(true);
     setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS);
     setLoader(false);
   };
@@ -352,25 +334,38 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const initDispatch = async () => {
     setLoader(true);
-    setCampaignId(props && params?.id ? params?.id : -1);
+    setCampaignId(id ?? -1);
     await dispatch(getPreviousLandingData());
-    await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
-    let resp = await dispatch(getAccountExtraData());
-    let arr = Object.keys(resp.payload)
+
+    if (!testGroups || testGroups?.length === 0)
+      await dispatch(getTestGroups());
+
+    let resp = null;
+    if (!extraData || extraData?.length === 0) {
+      const ed = await dispatch(getAccountExtraData());
+      resp = ed.payload;
+    }
+    else {
+      resp = extraData;
+    }
+
+    let arr = Object.keys(resp)
     let additionalExtraData = arr.map(function (key) {
-      return { [key]: resp.payload[key] };
-    })
+      return { [key]: resp[key] };
+    });
 
     for (let i = 0; i < additionalExtraData.length; i++) {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
     setextraAccountDATA(defaultAccountExtraData)
-    await dispatch(getGroupsBySubAccountId());
-    if (qs && qs.FromAutomation && qs.FromAutomation > 0) {
+    if (id && FromAutomation && FromAutomation > 0) {
       setIsFromAutomation(true);
     }
-    await initFromNumber();
+    await getSavedData();
+    if (!commonSettings || Object.keys(commonSettings).length === 0)
+      await dispatch(getCommonFeatures());
+    setInitFromNumber(true);
     setIsPageLoaded(true);
   }
 
@@ -378,42 +373,46 @@ const SmsCreator = ({ classes, ...props }) => {
     initDispatch();
   }, [dispatch]);
 
-  const initFromNumber = async () => {
-    const smsCampaign = await getSavedData();
-    const commonFeatures = await dispatch(getCommonFeatures());
-    let fromNumber = -1;
+  useEffect(() => {
+    const initFromNumber = async () => {
+      let fromNumber = -1;
 
-    if (smsCampaign && smsCampaign.FromNumber) {
-      fromNumber = smsCampaign.FromNumber;
-    }
-    else if (commonFeatures.payload.DefaultCellNumber !== "") {
-      fromNumber = commonFeatures.payload.DefaultCellNumber;
+      if (smsModel && smsModel.FromNumber) {
+        fromNumber = smsModel.FromNumber;
+      }
+      else if (commonSettings.DefaultCellNumber !== "") {
+        fromNumber = commonSettings.DefaultCellNumber;
+      }
+
+      const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
+
+      if (fromNumber === -1) {
+        fromNumber = virtualNumber.payload.Number;
+      }
+
+      setcampaignNumber(fromNumber);
+      setStaticNumber(virtualNumber.payload.Number);
+      setremovalNumber(virtualNumber.payload.RemovalKey);
+      setstoredValue(commonSettings.DefaultCellNumber);
+      if (fromNumber !== virtualNumber.payload.Number) {
+        setrestoreBool(false);
+        setremovalMessageButtonDisabled(true);
+      }
+      setLoader(false);
     }
 
-    const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
+    if (reInitFromNumber === true) {
+      initFromNumber();
 
-    if (fromNumber === -1) {
-      fromNumber = virtualNumber.payload.Number;
     }
-
-    setcampaignNumber(fromNumber);
-    setStaticNumber(virtualNumber.payload.Number);
-    setremovalNumber(virtualNumber.payload.RemovalKey);
-    setstoredValue(commonFeatures.payload.DefaultCellNumber);
-    if (fromNumber !== virtualNumber.payload.Number) {
-      setrestoreBool(false);
-      setremovalMessageButtonDisabled(true);
-    }
-    setLoader(false);
-  }
+  }, [reInitFromNumber])
 
   const getAutomationReturnUrl = (campaignId) => {
-    const nodeToEdit = qs.NodeToEdit ?? null;
-    return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
+    return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}`;
   }
   const getSavedData = async () => {
-    if (props && params?.id) {
-      let response = await dispatch(getSmsByID(params?.id))
+    if (id) {
+      let response = await dispatch(getSmsByID(id))
       if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
@@ -537,10 +536,10 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleSend = async () => {
     if (phone !== "") {
-      if (props && params?.id) {
+      if (id) {
         const smsQuickSendData = {
-          ...quickSendPayload, SmsCampaignID: params?.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: params?.id, Credits: messageCount,
+          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: id, Credits: messageCount,
             TotalRecipients: 1
           }
         }
@@ -584,21 +583,17 @@ const SmsCreator = ({ classes, ...props }) => {
   const onLeave = (e) => {
     if (!modalOpen && campaignNumber !== storedValue) {
       setDialogType({ type: 'alert' });
-      // setalertToggle(true);
-      setcounterBool(true);
-    } else {
-      setcounterBool(false);
     }
   }
   const handleRestore = async () => {
     setrestoreBool(true);
     setcampaignNumber(StaticNumber);
     setLoader(true);
-    let r = await dispatch(getCommonFeatures());
+    //let r = await dispatch(getCommonFeatures());
     setLoader(false);
     // setcampaignNumber(r.payload.DefaultCellNumber)
     setLoader(true);
-    let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
+    let response = await dispatch(getSMSVirtualNumber(commonSettings.DefaultCellNumber));
     setLoader(false);
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
@@ -617,9 +612,6 @@ const SmsCreator = ({ classes, ...props }) => {
       var tArea = document.getElementById("yourMessage");
       // filter:
       if (0 === text) {
-        return;
-      }
-      if (0 === cursorPos) {
         return;
       }
 
@@ -1153,7 +1145,6 @@ const SmsCreator = ({ classes, ...props }) => {
     e.preventDefault();
     const newSelection = selectedGroup.filter((g) => { return g.GroupID !== id });
     setselectedGroup(newSelection);
-    sethidden(newSelection.length === 0);
   };
 
   const siteTrackingLogic = () => {
@@ -1209,13 +1200,13 @@ const SmsCreator = ({ classes, ...props }) => {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
-          navigate(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+          Redirect({ url: `/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}` });
           setToastMessage(null);
         }, 1500);
       } else if (returnToAutomation) {
-        window.location = getAutomationReturnUrl(campaignId);
+        Redirect({ url: getAutomationReturnUrl(campaignId) });
       } else {
-        navigate(`/sms/send/${campaignId}`);
+        Redirect({ url: `/react/sms/send/${campaignId}` });
       }
     }
     else {
@@ -1276,25 +1267,24 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleDelete = async () => {
-    if (props && params?.id) {
-      let response = await dispatch(getSmsByID(params?.id))
+    if (id) {
+      let response = await dispatch(getSmsByID(id))
       if (response) {
         dispatch(deleteSms(response.payload.SMSCampaignID));
         handleClose();
-        navigate("/SMSCampaigns");
+        Redirect({ url: "/react/SMSCampaigns" });
       }
     }
     else {
       dispatch(deleteSms(-1));
       handleClose();
-      navigate("/SMSCampaigns");
+      Redirect({ url: "/react/SMSCampaigns" });
     }
   };
 
   const handleGroupClose = async () => {
     if (selectedGroup.length > 0) {
       const groupIds = selectedGroup.map((g) => { return g.GroupID });
-      settotal(selectedGroup.length);
       const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
       let r = await dispatch(smsSave(payloadToPush));
       setCampaignId(r.payload.Message);
@@ -1305,7 +1295,7 @@ const SmsCreator = ({ classes, ...props }) => {
           TestGroupsIds: groupIds,
         };
         handleSmsModelChange("SMSCampaignID", r.payload.Message);
-        let r2 = await dispatch(smsSaveGroup(payload2));
+        await dispatch(smsSaveGroup(payload2));
         await dispatch(getCampaignSumm(r.payload.Message));
         setsummary(true);
         setDialogType(null);
@@ -1317,19 +1307,15 @@ const SmsCreator = ({ classes, ...props }) => {
         setDialogType(null);
       }
     }
-    sethidden(true);
   };
 
   const handlecaution = () => {
-    setalertToggle(false);
-    setcounterBool(false);
     setmodalOpen(false);
     setremovalNumber(null);
     setDialogType(null);
   };
   const handleAlertoff = () => {
     setcampaignNumber(storedValue);
-    setalertToggle(false);
     setDialogType(null);
   };
   const handleExit = async (saveBeforeExit) => {
@@ -1343,7 +1329,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
-          navigate("/SMSCampaigns");
+          Redirect({ url: "/react/SMSCampaigns" });
 
         }
         else {
@@ -1357,7 +1343,7 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
     else if (saveBeforeExit === false) {
-      navigate("/SMSCampaigns");
+      Redirect({ url: "/react/SMSCampaigns" });
       setDialogType(null);
     }
   };
@@ -1392,7 +1378,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const onLocation = async () => {
     onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
     setlinkCount(linkCount + 1);
-    setwaize(false);
     setDialogType(null);
   };
 
@@ -1472,18 +1457,6 @@ const SmsCreator = ({ classes, ...props }) => {
       </div>
     );
   }
-  // const switchToOldVersion = () => {
-  //   setCookie("OldVersion", true);
-  //   setIsNewVersion(false);
-  //   setTimeout(() => {
-  //     if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
-  //       window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
-  //     }
-  //     else {
-  //       window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
-  //     }
-  //   }, 500)
-  // }
   //#region Dialogs
   const lpDialog = () => {
     return {
@@ -1515,7 +1488,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <Box style={{ marginTop: 20 }}>
             {previousLandingData
               .filter((val) => {
-                if (CampaignSearch == "") {
+                if (CampaignSearch === "") {
                   return val;
                 } else if (
                   val.CampaignName.toLowerCase().includes(
@@ -1581,7 +1554,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <Box style={{ marginTop: 20 }}>
             {previousCampaignData
               .filter((val) => {
-                if (landingSearch == "") {
+                if (landingSearch === "") {
                   return val;
                 } else if (
                   val.Name.toLowerCase().includes(
@@ -1629,7 +1602,7 @@ const SmsCreator = ({ classes, ...props }) => {
       content: (
         <Box className={classes.dialogBox}>
           <Paper component="form" className={btnStyle.root}>
-            <img src={Waze} style={{ pointerEvents: "none" }} />
+            <img src={Waze} style={{ pointerEvents: "none" }} alt="waze" />
             <InputBase
               className={btnStyle.input}
               placeholder={t("mainReport.typeAddress")}
@@ -1747,7 +1720,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 return g.Recipients > 0
               })
               .filter((val) => {
-                if (ContactSearch == "") {
+                if (ContactSearch === "") {
                   return val;
                 } else if (
                   val.GroupName.toLowerCase().includes(
@@ -1847,8 +1820,8 @@ const SmsCreator = ({ classes, ...props }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               variant='contained'
@@ -1880,7 +1853,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 60 }} />
           <Typography className={classes.mt2} style={{ fontWeight: 'bold' }}>{t("common.Notice")}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("siteTracking.NoticeLinkStatistics"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("siteTracking.NoticeLinkStatistics"))}</Typography>
         </Box>
       ),
       showDefaultButtons: true,
@@ -1942,44 +1915,27 @@ const SmsCreator = ({ classes, ...props }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 
   //#endregion
-  // const SwitchOldVersion = () => {
-  //   return (<Grid item={true} xs={12} style={{ paddingTop: 20 }}>
-  //     <PulseemSwitch
-  //       switchType={'ios'}
-  //       checked={isNewVersion}
-  //       onChange={switchToOldVersion}
-  //       name="checkedB"
-  //       handleDiameter={30}
-  //       height={20}
-  //       width={48}
-  //       id="ios-switch"
-  //     />
-  //     <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
-  //   </Grid>);
-  // }
+
   return (
     <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
-      {/* <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
-        <SwitchOldVersion />
-      </Grid> */}
       <Grid container
         spacing={windowSize === "xs" ? 0 : 3}
         className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
         style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
         <Grid item sm={12} md={12} lg={8}>
-          <Title title={t("mainReport.smsCampaign")}
+          <WizardTitle title={t("mainReport.smsCampaign")}
             classes={classes}
             tooltip={t("mainReport.toolTip1")}
             stepNumber={1}
@@ -1988,14 +1944,14 @@ const SmsCreator = ({ classes, ...props }) => {
           />
           {renderFields()}
           {renderMsg()}
-        </Grid>
+        </Grid >
         <Grid item xs={12} sm={12} md={12} lg={4}>
           <Box style={{ maxWidth: 420, marginTop: 20 }}>
             {renderPhone()}
           </Box>
         </Grid>
         {renderButtons()}
-      </Grid>
+      </Grid >
       {renderDialog()}
       {renderSummary()}
       {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}

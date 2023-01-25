@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles';
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-  GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
+  GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, PopMassage, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -24,17 +23,21 @@ import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { getCookie } from '../../../helpers/cookies'
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../../../helpers/Functions/cookies';
+import { Title } from '../../../components/managment/Title';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import EmailVerification from '../../Verification/EmailVerification';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
+  
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -51,7 +54,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [copyRef, setCopyRef] = useState(null)
   const [restoreArray, setRestoreArray] = useState([])
   const [showLoader, setLoader] = useState(true);
-  const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
@@ -60,9 +62,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   moment.locale(language)
 
-  const getData = () => {
-    dispatch(getNewslatterData())
-    dispatch(getAuthorizedEmails());
+  const getData = async () => {
+    await dispatch(getNewslatterData())
     setLoader(false);
   }
 
@@ -70,17 +71,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -115,8 +105,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -162,14 +152,15 @@ const NewsletterManagnentScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
+          onKeyPress={(e) => { handleSearch(); handleKeyPress(e) }}
           onClick={handleSearch}
-          onKeyPress={handleKeyPress}
+          // onKeyPress={}
           placeholder={t('common.CampaignName')}
         />
       )
     }
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -209,21 +200,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.searchButton, classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.searchButton, classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -251,20 +238,21 @@ const NewsletterManagnentScreen = ({ classes }) => {
               navigate('/Campaigns/Create');
             }}
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+              classes.btn,
+              classes.btnRounded,
+            )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+          >
             {t('campaigns.create')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
+              classes.btn,
+              classes.btnRounded,
             )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
               data: newslettersDeletedData
@@ -274,29 +262,24 @@ const NewsletterManagnentScreen = ({ classes }) => {
         </Grid>}
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonDarkBlue
+              classes.btn,
+              classes.btnRounded,
             )}
             onClick={redirctToArchive}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t('master.redirectToArchive')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonDarkBlue
+              classes.btn,
+              classes.btnRounded,
             )}
-            onClick={() => {
-              handleVerificationDialog();
-            }
-            }
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            onClick={() => setDialogType({ type: 'verifyEmail' })}
           >
             {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}
           </Button>
@@ -340,7 +323,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     const iconsMap = [[
       {
         key: 'send',
-        icon: SendGreenIcon,
+        uIcon: SendIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
@@ -349,7 +332,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -359,7 +342,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -375,7 +358,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -387,7 +370,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'groups',
-        icon: GroupsIcon,
+        uIcon: GroupsIcon,
         disable: Groups && Groups.length === 0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         remove: windowSize === 'xs',
@@ -401,7 +384,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'copy',
-        icon: CopyIcon,
+        uIcon: CopyIcon,
         lable: t('campaigns.CloneResource1.HeaderText'),
         rootClass: classes.paddingIcon,
         text: shareUrl || '',
@@ -416,7 +399,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'reports',
-        icon: ReportsIcon,
+        uIcon: ReportsIcon,
         disable: Status === 1,
         lable: t('campaigns.Reports'),
         remove: windowSize === 'xs',
@@ -425,7 +408,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'automation',
-        icon: AutomationIcon,
+        uIcon: AutomationIcon,
         disable: AutomationID === 0,
         lable: t('campaigns.automation'),
         remove: windowSize === 'xs',
@@ -436,7 +419,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         rootClass: classes.paddingIcon,
         disable: AutomationID !== 0,
@@ -463,12 +446,14 @@ const NewsletterManagnentScreen = ({ classes }) => {
               container>
               {map.map(icon => (
                 <Grid
-                  className={clsx(icon.disable && classes.disabledCursor)}
+                  style={{ flex: 1, alignItems: 'center', }}
+                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer', classes.justifyCenter, classes.alignSelfCenter)}
                   key={icon.key}
                   item >
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
+                    uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                   />
                   {icon.key === 'copy' && renderCopyToClipoard}
                 </Grid>
@@ -521,12 +506,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </>
     )
   }
-
-  const HtmlTooltip = withStyles((theme) => ({
-    tooltip: {
-      maxWidth: 220
-    },
-  }))(Tooltip);
 
   const renderNameCell = (row) => {
     let date = null
@@ -624,10 +603,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {sortData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -793,18 +774,19 @@ const NewsletterManagnentScreen = ({ classes }) => {
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
+      // verifyEmail: GetEmailVerificationDialog({ onClose: () => setDialogType(null) }),
     }
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 
@@ -812,17 +794,19 @@ const NewsletterManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='newsletter'
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
-      {renderSearchLine()}
+      containerClass={classes.management}>
+      <Box className={'topSection'}>
+        <Title Text={t('campaigns.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      {showEmailVerDialog && <VerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
+      <EmailVerification isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
 }
 
-export default NewsletterManagnentScreen
+export default NewsletterManagnentScreen;

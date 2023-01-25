@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box
 } from '@material-ui/core'
 import { ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
@@ -12,17 +12,18 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReplies } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { ClientStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../helpers/exportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { ClientStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { OrderItems } from '../../../helpers/Export/ExportHelper';
 import { EditIcon } from '../../../assets/images/managment/index'
 import { AiOutlineUserDelete, AiOutlineUsergroupDelete, AiOutlineExclamationCircle } from 'react-icons/ai';
 import { FiPhoneOff } from 'react-icons/fi';
 import { actionURL } from '../../../config';
-import { Dialog } from "../../../components/managment/index";
 import { deleteFromGroups, removeEmailClient, removeSmsClient } from '../../../redux/reducers/clientSlice';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 
 const SmsReplies = ({ classes, ...other }) => {
     const dispatch = useDispatch();
@@ -115,19 +116,29 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
-        setDialogType(null);
-        setShowLoader(true);
-        let orderList = preferredOrder(smsReplies, Object.keys(exportColumnHeader));
-        orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
-        orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
-        orderList = await formatDateTime(orderList);
-        exportFile({
-            data: orderList,
-            fileName: `smsReplies_${other.props.match.params.id}`,
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
-        setShowLoader(false)
+        let orderList = await OrderItems(smsReplies, Object.keys(exportColumnHeader));
+
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: true,
+            Statuses: ClientStatus.Email.concat(ClientStatus.Sms),
+            Order: Object.keys(exportColumnHeader),
+            DeleteProperties: ["Status"]
+        };
+
+        try {
+            const result = await HandleExportData(orderList, exportOptions);
+
+            ExportFile({
+                data: result,
+                fileName: `smsReplies_${other.props.match.params.id}`,
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     const renderTable = () => {
@@ -476,13 +487,13 @@ const SmsReplies = ({ classes, ...other }) => {
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <Dialog
+            dialogType && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onClose={handleClose}
                 {...currentDialog}>
                 {currentDialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
     const handleClose = () => {

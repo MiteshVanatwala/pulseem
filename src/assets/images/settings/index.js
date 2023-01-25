@@ -7,5 +7,6 @@ import StarMenuIcon from './starMenu.png'
 import GrafMenuIcon from './grafMenu.png'
 import GroupMenuIcon from './groupMenu.png'
 import CheckAnimation from './check-circle.gif'
+import UnLockIcon from './UnLock.tsx'
 
-export { GrafMenuIcon, GroupMenuIcon, CodeMenuIcon, CrusorMenuIcon, DolarMenuIcon, SettingsMenuIcon, ShareMenuIcon, StarMenuIcon, CheckAnimation }
+export { GrafMenuIcon, GroupMenuIcon, CodeMenuIcon, CrusorMenuIcon, DolarMenuIcon, SettingsMenuIcon, ShareMenuIcon, StarMenuIcon, CheckAnimation, UnLockIcon }

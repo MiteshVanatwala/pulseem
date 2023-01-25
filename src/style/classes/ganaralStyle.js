@@ -55,7 +55,29 @@ const graphTextWidth = {
 };
 
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
+  background: {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
+    zIndex: -1,
+    '& svg': {
+      position: 'absolute',
+      bottom: 0
+    },
+    '& .rightSvg': {
+      right: 0
+    },
+    '& .leftSvg': {
+      left: 0
+    }
+  },
+  appBody: {
+    maxWidth: 'calc(100vw - 6px)'
+  },
   sidebar: {
+    paddingRight: '0 !important',
     "&::-webkit-scrollbar": {
       display: "block !important",
       width: 6,
@@ -117,6 +139,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
+      borderRadius: 15
     },
   },
   noPadding: {
@@ -131,17 +154,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
   },
   dialogTitle: {
-    fontSize: "1.8rem",
-    fontWeight: "700",
-    color: "#0a74a9",
-    marginInline: 25,
+    fontSize: '1rem',
+    fontWeight: "500",
+    color: "#fff",
     whiteSpace: "pre-line",
   },
   resetDialogTitle: {
     fontSize: "2rem",
     fontWeight: "400",
     color: "#0a74a9",
-    // marginInline: 25,
     whiteSpace: "pre-line",
   },
   reducedTitle: {
@@ -150,7 +171,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   dialogChildren: {
-    // marginInline: 25,
     marginBlock: 20,
     paddingRight: summaryPadding[windowSize],
     paddingLeft: summaryPadding[windowSize],
@@ -220,6 +240,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dFlex: {
     display: "flex",
+  },
+  justifyContentEnd: {
+    display: 'flex',
+    justifyContent: 'flex-end'
   },
   width_min_content: {
     width: 'min-content'
@@ -307,9 +331,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   plr10: {
     padding: "0 10px",
-  },
-  pr25: {
-    paddingInlineStart: 25,
   },
   pr10: {
     paddingInlineStart: 10,
@@ -727,7 +748,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "600",
     marginInlineEnd: "10px",
     "@media screen and (max-width: 768px)": {
-      // width : '300px',
       fontSize: "26px",
     },
   },
@@ -769,7 +789,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#157eaf",
     fontSize: "30px",
     "@media screen and (max-width: 768px)": {
-      // width : '300px',
       fontSize: "24px",
     },
   },
@@ -781,6 +800,44 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     //   height: "0"
 
     // },
+  },
+  btn: {
+    padding: '2px 10px',
+    fontWeight: 'bold',
+    background: '#fff',
+    color: '#000',
+    '&:hover': {
+      background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+      color: '#fff',
+      '& svg': {
+        color: '#fff'
+      }
+    },
+    border: '2px solid #F65026',
+    '& svg': {
+      marginLeft: 5,
+      color: '#FF0054'
+    },
+    '& .MuiButton-startIcon': {
+      marginTop: '-2px'
+    }
+  },
+
+  btnNohover: {
+    '&:hover': {
+      background: '#fff',
+      '& svg': {
+        color: '#FF0054'
+      }
+    },
+  },
+
+  btnDisabled: {
+    opacity: 0.7,
+    pointerEvents: 'none'
+  },
+  btnRounded: {
+    borderRadius: 20,
   },
   buttonForm: {
     display: "flex",
@@ -1660,9 +1717,31 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "14px",
     },
   },
-  activeTab: {
-    borderBottom: "4px solid #168ee3",
-    color: "#007bff !important",
+  tablistRoot: {
+    '& .MuiTabs-fixed': {
+      '& .MuiTabs-flexContainer': {
+        height: '100%',
+        background: '#fff',
+        borderRadius: 10
+      }
+    }
+  },
+  btnTab: {
+    fontSize: 20,
+    textTransform: "capitalize",
+    padding: 2,
+    minWidth: 120,
+    minHeight: 40,
+    color: '#000',
+    background: '#E6E6E6',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    border: '3px solid #fff',
+    borderBottom: 'none',
+  },
+  currentActiveTab: {
+    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    color: "#fff !important",
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
@@ -1680,6 +1759,162 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: "auto",
     },
   },
+
+  settingsContainer: {
+    marginBottom: 68,
+    background: '#fff',
+    marginTop: 30,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    '& .head': {
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      '& .mgmtTitle': {
+        fontSize: 20
+      }
+    },
+    '& .containerBody': {
+      position: 'relative',
+      paddingBottom: 48,
+      // minHeight: 'calc(100vh - 10em)',
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
+      border: "2px solid #F0F5FF",
+
+      '& .settingsWrapper': {
+        paddingLeft: 31,
+        '& .mgmtTitle': {
+          fontSize: 18
+        },
+        '& .formContainer': {
+          position: 'relative',
+          paddingLeft: 15,
+          // paddingLeft: isRTL ? 0 : 15,
+          // paddingRight: isRTL ? 15 : 0,
+          '& .form': {
+            maxWidth: 900,
+            background: '#fff',
+            zIndex: 100,
+            position: 'relative',
+          },
+          '& .svg_data_analysis': {
+            position: 'absolute',
+            right: 86.44,
+            left: 'auto',
+            // right: isRTL ? 'auto' : 86.44,
+            // left: isRTL ? 86.44 : 'auto',
+            top: 49.17,
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .svg_app_settings': {
+            position: 'absolute',
+            top: 121.3,
+            right: 93.14,
+            left: 'auto',
+            // right: isRTL ? 'auto' : 93.14,
+            // left: isRTL ? 93.14 : 'auto',
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .subHeading': {
+            marginTop: 39,
+            color: '#000'
+          },
+          '& .MuiFormControl-root': {
+            maxWidth: 245,
+            '& .MuiSelect-root': {
+              padding: 0,
+              '&:focus': {
+                background: 'none'
+              },
+              '& input': {
+                padding: 0
+              }
+            },
+            '& .subform': {
+              marginTop: 22,
+              '& .selectWrapper': {
+                height: 'auto',
+                '& .MuiTypography-body1': {
+                  marginLeft: isRTL ? 12 : 0
+                  // marginRight: isRTL ? 0 : 12,
+                  // marginLeft: isRTL ? 12 : 0
+                }
+              },
+
+            }
+          },
+          '& .MuiTypography-body1': {
+            color: '#979797'
+          },
+          '& .link': {
+            fontSize: 15,
+            color: '#FF0054',
+            padding: '2px 0',
+            marginTop: 28,
+            marginLeft: 0
+          }
+        }
+      },
+      '& .textBoxWrapper': {
+        paddingTop: 30,
+        '& .MuiTypography-body1': {
+          color: '#979797'
+        },
+        '& .MuiTextField-root': {
+          paddingBottom: 2,
+          maxWidth: 245,
+          '& input': {
+            padding: 0
+          }
+        }
+      }
+
+      // display: 'grid',
+      // padding: '0 17px 32.8px 17px'
+    }
+  },
+
+  addCardForm: {
+    maxWidth: 470,
+    margin: 0,
+    '& .textBoxWrapper': {
+      maxWidth: '100%'
+    },
+    '& .MuiFormControl-root': {
+      maxWidth: '100%',
+      '& .MuiSelect-root': {
+        maxHeight: 29,
+        overflow: "hidden",
+        padding: '3px 0 7px 0',
+
+        '&:focus': {
+          background: 'none'
+        },
+        '& input': {
+          padding: 0
+        }
+      },
+      '& .MuiSelect-icon': {
+        display: 'none'
+      },
+    },
+    '& .MuiOutlinedInput-adornedEnd': {
+      paddingRight: 0
+    },
+    '& .MuiInputAdornment-root': {
+      color: '#ff104b',
+      '& svg': {
+        cursor: 'pointer',
+        // '&:hover':{
+
+        // },
+        '& path': {
+          fill: '#ff104b !important'
+        }
+      }
+    }
+  },
+
   areaCon: {
     width: "calc(100% - 20px)",
     outline: "none",
@@ -2116,7 +2351,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   graphCampaignName: {
-    fontWeight: "bold",
+    color: '#000',
     maxWidth: graphTextWidth[windowSize],
   },
   mt24: {
@@ -2189,26 +2424,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   //#region Dialog
   dialogIconContainer: {
-    paddingTop: 60,
-    paddingBottom: 15,
+    fontSize: 25,
+    marginTop: -2,
     textAlign: "center",
     color: "#fff",
-    borderRadius: 200,
-    backgroundColor: "#0371ad",
-    position: "absolute",
     justifyContent: "center",
     alignItems: "center",
-    top: -50,
   },
   dialogIconContainerRTL: {
-    right: -50,
-    paddingInlineEnd: 60,
-    paddingInlineStart: 15,
+    paddingInlineStart: 10,
   },
   dialogIconContainerLTR: {
-    left: -50,
-    paddingInlineEnd: 15,
-    paddingInlineStart: 60,
+    paddingInlineEnd: 10,
   },
   solidDialogExitButton: {
     fontSize: 30,
@@ -2220,23 +2447,32 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "0.5rem",
     cursor: "pointer"
   },
+  dialogTopBar: {
+    height: "auto",
+    padding: "2px 0px 0 6px",
+    color: "#fff",
+    fontWeight: 600,
+    textTransform: "capitalize",
+
+    height: 'auto',
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)'
+  },
   dialogExitButton: {
-    width: 25,
-    height: 25,
+    width: 27,
+    height: 27,
     textAlign: "center",
     color: "#fff",
-    borderRadius: 25,
     fontWeight: "700",
-    backgroundColor: "#0371ad",
-    position: "absolute",
-    top: "0.5rem",
+    top: "-0.2rem",
     cursor: "pointer",
+    borderBottomLeftRadius: 17,
+    fontSize: 18
   },
   dialogExitButtonRTL: {
-    left: "0.5rem",
+    left: "-0.1rem",
   },
   dialogExitButtonLTR: {
-    right: "0.5rem",
+    right: "-0.1rem",
   },
   solidDialog: {
     display: "flex",
@@ -2257,10 +2493,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContent: {
     display: "flex",
     flexDirection: "column",
-    border: "3px solid #0371ad",
     borderRadius: 5,
     margin: "1rem",
     padding: "1rem",
+    paddingBottom: 0,
     minWidth: dialogWidth[windowSize],
     "& $notification": {
       "& $iconWrapper": {
@@ -2497,12 +2733,120 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
 
+  textField: {
+    '&.MuiTextField-root': {
+      width: '100%',
+      borderBottom: '1px solid #D6D1E6',
+      paddingLeft: 5,
+      '&:hover': {
+        borderBottom: '1px solid #000',
+        '& .MuiInputAdornment-root': {
+          '& svg': {
+            '& path': {
+              fill: '#000'
+            }
+          }
+        }
+      },
+      '& input': {
+        padding: '3px 0 7px 0'
+      },
+      '& fieldset': {
+        border: 'none',
+      },
+      '& .MuiInputAdornment-root': {
+        '& svg': {
+          '& path': {
+            fill: '#B3B3B3'
+          }
+        }
+      }
+    }
+  },
+
   textFieldError: {
     "& .MuiInputBase-root": {
       "& input": {
         borderBottom: '2px solid red'
       }
     }
+  },
+  inputSwitch: {
+    // position: 'relative !important',
+    // display: 'inline-block !important',
+    // textAlign: 'left !important',
+    // opacity: 1,
+    // direction: 'ltr !important',
+    // borderRadius: '20px !important',
+    // transition: 'opacity 0.25s ease 0s !important',
+    // touchAction: 'none !important',
+    // webkitTapHighlightColor: 'rgba(0, 0, 0, 0) !important',
+    // userSelect: 'none !important',
+    // '& .react-switch-bg': {
+    //   height: 18,
+    //   width: 40,
+    //   margin: -9,
+    //   margin: 1.5,
+    //   sition: 'relative !important',
+    //   background: 'rgb(136, 136, 136) !important',
+    //   borderRadius: 20,
+    //   cursor: 'pointer !important',
+    //   transition: 'background 0.25s ease 0s !important',
+    // },
+    // '& .react-switch-handle': {
+    //   margin: '4px !important !important',
+    //   height: 14,
+    //   width: 14,
+    //   background: 'rgb(255, 255, 255) !important',
+    //   display: 'inline-block !important',
+    //   cursor: 'pointer !important',
+    //   borderRadius: '50% !important',
+    //   position: 'absolute !important',
+    //   transform: 'translateX(0px) !important',
+    //   top: 0,
+    //   outline: 0,
+    //   boxShadow: 'rgb(0 0 0 / 60%) 0px 1px 5px !important',
+    //   border: 0,
+    //   transition: 'background-color 0.25s ease 0s, transform 0.25s ease 0s, box-shadow 0.15s ease 0s !important',
+    // },
+    // '& input': {
+    //   border: 0,
+    //   clip: 'rect(0px, 0px, 0px, 0px) !important',
+    //   height: 1,
+    //   margin: -1,
+    //   overflow: 'hidden !important',
+    //   padding: '0 !important',
+    //   position: 'absolute !important',
+    //   width: '1 !important',
+    // },
+
+    // '& .MuiSwitch-switchBase': {
+    //   padding: 1,
+    //   '&$checked': {
+    //     transform: 'translateX(16px)',
+    //     color: '#fff',
+    //     '& + $track': {
+    //       backgroundColor: '#52d869',
+    //       opacity: 1,
+    //       border: 'none',
+    //     },
+    //   },
+    //   '&$focusVisible $thumb': {
+    //     color: '#52d869',
+    //     border: '6px solid #fff',
+    //   },
+    // },
+    // '& .MuiSwitch-thumb': {
+    //   width: 24,
+    //   height: 24,
+    // },
+    // '& .MuiSwitch-track': {
+    //   borderRadius: 26 / 2,
+    //   border: `1px solid grey`,
+    //   backgroundColor: 'grey',
+    //   opacity: 1,
+    //   transition: 'all .3s',
+    // },
   },
   ltr: {
     direction: 'ltr'

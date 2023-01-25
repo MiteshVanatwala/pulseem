@@ -3,7 +3,6 @@ import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { Dialog } from "../../../../components/managment/Dialog";
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
@@ -11,7 +10,9 @@ import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -114,6 +115,11 @@ const SimplyClubPupup = ({
                 setheaders([...tempHeaders])
             } catch (e) {
                 console.error(e);
+                dispatch(sendToTeamChannel({
+                    MethodName: 'preload',
+                    ComponentName: 'SimplyClubPupup.js',
+                    Text: e
+                }));
             }
         }
         if (ClientData) {
@@ -292,6 +298,11 @@ const SimplyClubPupup = ({
                 resolve(response);
             } catch (e) {
                 console.error(e);
+                dispatch(sendToTeamChannel({
+                    MethodName: 'handleAddClients',
+                    ComponentName: 'SimplyClubPupup.js',
+                    Text: e
+                }));
                 reject(null);
             }
         });
@@ -410,7 +421,7 @@ const SimplyClubPupup = ({
     const GroupDialog = () => {
 
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
@@ -492,7 +503,7 @@ const SimplyClubPupup = ({
                         </TableRow>))}
                     </Box>
                 </Box>
-            </Dialog >
+            </BaseDialog >
         )
     }
 
@@ -532,7 +543,7 @@ const SimplyClubPupup = ({
 
     return (
         <>
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={isOpen}
                 onClose={onClose}
@@ -618,7 +629,7 @@ const SimplyClubPupup = ({
                     summary={summary.data}
                 />}
 
-            </Dialog>
+            </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
         </>
     )

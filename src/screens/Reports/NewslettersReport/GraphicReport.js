@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Avatar, Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, Tab, Tabs, Typography } from "@material-ui/core";
+import React, { useState, useEffect } from 'react';
+import { Avatar, Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, Tab, Typography } from "@material-ui/core";
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,30 +12,30 @@ import { getNewsletterReportsByIds } from '../../../redux/reducers/newsletterSli
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
-import RecipientsTab from './RecipientsTab';
+// import RecipientsTab from './RecipientsTab';
 import queryString from 'query-string';
 import { Loader } from '../../../components/Loader/Loader';
-import { useLocation } from 'react-router';
+import useRedirect from '../../../helpers/Routes/Redirect';
+import { useParams } from 'react-router-dom';
 
 const GraphicReport = ({ props, classes }) => {
-  const { language, windowSize, isRTL } = useSelector(state => state.core)
-  const location = useLocation();
+  const { isRTL } = useSelector(state => state.core)
   const [tabValue, setTabValue] = useState(0);
+  const Redirect = useRedirect();
   const [showLoader, setLoader] = useState(true);
   const [campaignData, setData] = useState(null);
-  //const [campaignPreviewImage, setCampaignPreviewImage] = useState(null);
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
-
+  const { tab } = useParams();
+  
   const getData = async () => {
     const newsletterReport = await dispatch(getNewsletterReportsByIds(props.match.params.campaignID));
     setData(newsletterReport.payload[0]);
   }
 
   useEffect(async () => {
-    if (qs && qs.tab && qs.tab > 0) {
-      setTabValue(parseInt(qs.tab));
+    if (tab && tab > 0) {
+      setTabValue(parseInt(tab));
     }
     await getData();
     setLoader(false);
@@ -51,13 +51,14 @@ const GraphicReport = ({ props, classes }) => {
             </Typography>
           </Grid>
           <Grid item className={classes.mb4}>
-            <Typography
-              component={"a"}
-              href={"/react/Reports/NewsletterReports"}
+            <Button
+              onClick={() => {
+                Redirect({ url: "/react/Reports/NewsletterReports" });
+              }}
               className={classes.middleTxt}
             >
               {t("mainReport.backToNewsletterReports")}
-            </Typography>
+            </Button>
           </Grid>
         </Grid>
         <Divider />
@@ -453,7 +454,7 @@ const GraphicReport = ({ props, classes }) => {
       return (
         <Box className={clsx(classes.mt25, classes.mb10, classes.reportPaperBgGray, classes.spaceBetween)}>
           {items.map((item, idx) => (
-            <Box className={clsx(classes.ml25, classes.ps25, classes.pr25)} key={idx}>
+            <Box className={clsx(classes.ml25, classes.ps25, classes.ps25)} key={idx}>
               <Typography className={clsx(classes.bold, classes.blue, classes.f20)}>
                 {t(item.title)}
               </Typography>
@@ -519,7 +520,7 @@ const GraphicReport = ({ props, classes }) => {
           {<RenderCampaignSummary chartData={campaignData} />}
         </TabPanel>
         <TabPanel value={1} index={1} className={classes.p0}>
-          <RecipientsTab classes={classes} />
+          {/* <RecipientsTab classes={classes} /> */}
         </TabPanel>
         <TabPanel value={2} index={2} className={classes.p0}>
           {<RenderOpenClickTab />}

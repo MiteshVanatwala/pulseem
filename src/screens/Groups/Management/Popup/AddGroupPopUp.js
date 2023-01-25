@@ -19,8 +19,12 @@ import {
     createGroup,
     getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+
+import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 
 import { Dialog } from "../../../../components/managment/Dialog";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const AddGroupPopUp = ({
     classes,
@@ -83,6 +87,8 @@ const AddGroupPopUp = ({
                             await resolutionFunc(getData());
                             setNewGroupData(DEFAULT_NEW_GROUP);
                             onClose()
+                            if (data.IsTestGroup)
+                                await dispatch(getTestGroups());
                         }).then((res) => {
                             callback?.(response.payload.Message)
                         })
@@ -115,6 +121,11 @@ const AddGroupPopUp = ({
             })
 
         } catch (err) {
+            dispatch(sendToTeamChannel({
+                MethodName: 'init2FA',
+                ComponentName: 'Dashboard.js',
+                Text: err
+            }));
             return false;
         }
         setSaveDisabled(false);
@@ -122,7 +133,7 @@ const AddGroupPopUp = ({
 
     return (
         <>
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={isOpen}
                 title={t("group.createNew")}
@@ -293,7 +304,7 @@ const AddGroupPopUp = ({
                         </CustomTooltip>
                     </Box>
                 </Box>
-            </Dialog>
+            </BaseDialog>
         </>
     );
 };

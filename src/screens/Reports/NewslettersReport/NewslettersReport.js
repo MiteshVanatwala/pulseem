@@ -2,25 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Checkbox, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box, Checkbox, Tooltip, FormControlLabel
 } from '@material-ui/core'
 import Switch from "react-switch";
-import { SearchIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
+import { ReportsIcon, GroupRemoval } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { getCookie, setCookie } from '../../../helpers/cookies';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { EmailStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
@@ -28,6 +27,9 @@ import { voidFunction } from '../../../helpers/utils';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -251,17 +253,6 @@ const NewslettersReport = ({ classes }) => {
     handleSearch();
   }, [newslettersReports, isSearching])
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('mainReport.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
-
   const clearSearch = () => {
     setNotificationNameSearch('')
     handleFromDate(null)
@@ -271,43 +262,37 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
-    setLoader(true);
-    setDialog(null)
-    if (hasRevenue)
-      exportColumnHeader["Revenue"] = t("common.revenue");
-
-    let orderList = [];
+    let listToExport = null;
 
     if (toFileArray.length > 0) {
-      const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
-      orderList = await preferredOrder(fileArray, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      orderList =
-        exportFile({
-          data: orderList,
-          fileName: 'emailReport',
-          exportType: formatType,
-          fields: exportColumnHeader
-        });
+      listToExport = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
     }
     else {
-      const list = searchResults || newslettersReports;
-      orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      exportFile({
-        data: orderList,
+      listToExport = searchResults || newslettersReports;
+    }
+
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      Statuses: EmailStatus,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    };
+
+    try {
+      const result = await HandleExportData(listToExport, exportOptions);
+      ExportFile({
+        data: result,
         fileName: 'emailReport',
         exportType: formatType,
         fields: exportColumnHeader
       });
-    }
 
-    setToFileArray([]);
-    setLoader(false);
+      setToFileArray([]);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 
@@ -339,8 +324,8 @@ const NewslettersReport = ({ classes }) => {
         const lastUpdate = SendDate ?
           moment(SendDate, dateFormat).valueOf()
           : moment(LastEditDate, dateFormat).valueOf()
-        const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-        const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+        const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) || null
+        const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) || null
 
         if (!values)
           return true
@@ -402,10 +387,10 @@ const NewslettersReport = ({ classes }) => {
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
-            variant='outlined'
+            variant="standard"
             size='small'
             value={notificationNameSearch}
             onKeyPress={handleSearchKeyPress}
@@ -441,41 +426,38 @@ const NewslettersReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
-            checked={isDemoSend}
-            onColor="#0371ad"
-            //onHandleColor="#e6f6ff"
-            handleDiameter={20}
-            uncheckedIcon={false}
-            checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            height={15}
-            width={40}
-            className={clsx({ [classes.rtlSwitch]: isRTL })}
-            onChange={() => setIsDemoSend(!isDemoSend)}
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={isDemoSend}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx(classes.inputSwitch, { [classes.rtlSwitch]: isRTL })}
+                onChange={() => setIsDemoSend(!isDemoSend)}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
           />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -501,15 +483,13 @@ const NewslettersReport = ({ classes }) => {
         </Grid>} */}
         {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
               classes.actionButton,
               classes.actionButtonGreen,
               newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialog('exportFormat')}
-            startIcon={<ExportIcon />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -540,18 +520,19 @@ const NewslettersReport = ({ classes }) => {
     )
   }
 
-  const renderCellIcons = (row) => {
+  const renderCellIcons = (RowIcon, row, index, mgmtIconProps) => {
     const { CampaignID } = row
 
     return (
-      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }}>
+      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }} className={'rowIconContainer'}>
         <ManagmentIcon
           classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
-          icon={ReportsIcon}
-          lable={t('mainReport.locGraph.HeaderText')}
-          href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
+          uIcon={<RowIcon width={18} height={20} className={'rowIcon'} />}
+          // lable={t('mainReport.locGraph.HeaderText')}
+          // href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
+          {...mgmtIconProps}
         />
       </Box>
     )
@@ -573,7 +554,7 @@ const NewslettersReport = ({ classes }) => {
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {Name}
           </Typography>
-          {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+          {Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
@@ -604,7 +585,7 @@ const NewslettersReport = ({ classes }) => {
             }}
           />}
         </Grid>
-        <Grid item className={clsx(windowSize !== 'xs' && classes.w80)}>
+        <Grid item className={clsx(windowSize !== 'xs' ? classes.w80 : '', 'rowTitle')}>
           <Tooltip
             arrow
             title={row.Name}
@@ -689,13 +670,13 @@ const NewslettersReport = ({ classes }) => {
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
             {value?.toLocaleString() ?? '0'}
-          </Typography>
+          </Typography >
           <Typography style={{ textDecoration: isLink ? 'underline' : null }}
             className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
           </Typography>
-        </Box>
-      </Tooltip>
+        </Box >
+      </Tooltip >
     );
   }
 
@@ -747,7 +728,7 @@ const NewslettersReport = ({ classes }) => {
     )
   }
 
-  const renderRow = (row) => {
+  const renderRow = (row, index) => {
     const {
       CampaignID,
       Name,
@@ -846,26 +827,24 @@ const NewslettersReport = ({ classes }) => {
         <TableCell classes={borderCellStyle}
           align='center'
           className={clsx(classes.flex1, classes.hideOnSmallScreen)}>
-          <ManagmentIcon
-            classes={classes}
-            textClass={classes.lineHeight1point2}
-            uIcon={<div className={clsx(classes.managmentUicon, classes.f25, !RemovedClients || RemovedClients === 0 ? classes.disabled : null)}>
-              {'\uE15D'}
-            </div>}
-            lable={hrefs.RemoveReasons.title}
-            href={hrefs.RemoveReasons.href}
-            onClick={() => {
+          {renderCellIcons(GroupRemoval, row, index, {
+            lable: hrefs.RemoveReasons.title,
+            href: hrefs.RemoveReasons.href,
+            onClick: () => {
               setCookie('newsletterReportlastPage', page)
-            }}
-            disable={!RemovedClients || RemovedClients === 0}
-          />
+            },
+            disable: !RemovedClients || RemovedClients === 0,
+          })}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
           classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
           className={classes.flex1}>
-          {renderCellIcons(row)}
+          {renderCellIcons(ReportsIcon, row, index, {
+            lable: t('mainReport.locGraph.HeaderText'),
+            href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`
+          })}
         </TableCell>
         {hasRevenue && <TableCell
           classes={noBorderCellStyle}
@@ -896,7 +875,7 @@ const NewslettersReport = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} >
           <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
             {renderNameCell(row)}
           </Box>
@@ -981,10 +960,12 @@ const NewslettersReport = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer newsLetterReportTable'>
+        <TableBody>
+          {rowData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -1032,9 +1013,11 @@ const NewslettersReport = ({ classes }) => {
     <DefaultScreen
       currentPage='reports'
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
-      {renderSearchSection()}
+      containerClass={classes.management}>
+      <Box className={'topSection'}>
+        <Title Text={t('mainReport.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

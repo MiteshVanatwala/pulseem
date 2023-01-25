@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next';
 import GroupTags from '../../components/Groups/GroupTags'
-import { EventConditions } from '../../helpers/PulseemArrays'
+import { EventConditions } from '../../helpers/Constants'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import { FormControl, Typography, TextField, Box, Select, MenuItem, Button } from '@material-ui/core'
-import { updateMetaData, deleteMetaData, getCurrentEventGroups } from '../../redux/reducers/siteTrackingSlice';
-import { Dialog } from '../../components/managment/index';
+import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import { DeleteIcon } from '../../assets/images/managment/index';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 const EventToGroups = ({
     classes,
@@ -49,7 +49,7 @@ const EventToGroups = ({
             let newSelection = currentEvent.groupIds;
             dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection, id: currentEvent.id }));
         }
-    }, [currentEvent]);
+    }, [currentEvent, dispatch, index]);
 
     const renderGroupsDialog = () => {
         const currentMetaData = event.metadata.find((item) => { return item.id === currentEvent.id });
@@ -77,13 +77,13 @@ const EventToGroups = ({
         const dialog = renderGroupsDialog();
 
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={showGroupsDialog}
                 onClose={() => { setShowGroupsDialog(false) }}
                 {...dialog}>
                 {dialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
     const handleShowGroup = () => {
@@ -146,9 +146,6 @@ const EventToGroups = ({
             </Box>
             <Box style={{ width: '100%' }}>
                 <TextField
-                    inputProps={{
-                        shrink: false
-                    }}
                     placeholder={t("siteTracking.placeHolderAddPageUrl")}
                     className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null)}
                     required

@@ -1,0 +1,64 @@
+{
+  "accountSettings": {
+    "title": "הגדרות חשבון",
+    "fixedComDetails": {
+      "title": "פרטי חברה קבועים",
+      "fields": {
+        "compName": "שם החברה",
+        "contactName": "איש קשר/אשת קשר",
+        "mobile": "סלולרי",
+        "enableTwoFactorAuth": "הפעלת אימות דו שלבי",
+        "sendMeCode": "שליחת קוד"
+      },
+      "errors": {
+        "invalidEmail": "אימייל לא תקין",
+        "reqEmail": "אימייל הוא חובה",
+        "invalidMobile": "הנייד לא עובד",
+        "reqMobile": "נייד הוא חובה",
+        "reqCompName": "נדרש שם חברה",
+        "reqContctName": "נדרש שם איש קשר"
+      },
+      "securitySettings": "הגדרות אבטחת חשבון",
+      "btnChangePwd": "שינוי סיסמא",
+      "btnUpdate": "שמירת הגדרות",
+      "btnVerifyEmail": "Verification of email to send",
+      "btnVerifyNumber": "Verification of number to send"
+    },
+    "actDetails": {
+      "title": "פרטי חשבון",
+      "fields": {
+        "fromPhoneNumber": "מאת מספר טלפון",
+        "unsubSettings": "אפשרויות הסרת נמענים",
+        "smsUnsubLink": "קישור הסרה SMS",
+        "unsubByEmailOrCell": "הסרה לפי דואר אלקטרוני או סלולרי",
+        "unsubByEmailAndCell": "הסרת דואר אלקטרוני ומספר סלולרי",
+        "regSmsUnsubLink": "קישור הסרה רגיל",
+        "imdSmsUnsubLink": "קישור הסרה מיידי (ללא אימות)"
+      },
+      "btnUpdate": "שמירת פרטים"
+    }
+  },
+  "billingSettings": {
+    "title": "הגדרות פרטי חיוב",
+    "titleBillingInfo": "פרטי חיוב",
+    "fields": {
+      "compRegNumber": "מספר ח.פ.",
+      "invoiceEmail": "דואל לחשבוניות",
+      "invoiceLang": "שפת חשבוניות",
+      "cardNumber": "מס' כרטיס",
+      "expMonth": "תוקף חודש",
+      "expYear": "תוקף שנה",
+      "secCode": "CVV לא תקין",
+      "id": "ת.ז"
+    },
+    "errors": {
+      "invalidCardNum": "מספר כרטיס אשראי לא תקין",
+      "invalidMonth": "תוקף לא תקין",
+      "invalidYear": "תוקף לא תקין",
+      "invalidCvv": "CVV לא תקין",
+      "invalidId": "מספר תעודת זהות לא תקין בצע"
+    },
+    "btnUpdate": "עדכן פרטי חיוב",
+    "btnAddCard": "הוסף כרטיס אשראי"
+  }
+}

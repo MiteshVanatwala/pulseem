@@ -212,9 +212,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         justifyItems: 'flex-start',
         boxSizing: 'border-box'
     },
-    textField: {
-        width: '100%'
-    },
     flex: {
         width: '100%',
         height: '100%',

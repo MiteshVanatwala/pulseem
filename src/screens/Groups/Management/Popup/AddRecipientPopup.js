@@ -27,22 +27,18 @@ import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
 import { addRecipient, deleteRecipients } from "../../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
 import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
-
-import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
-
-
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
-import { Autocomplete } from "@material-ui/lab";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
-import { Close } from "@material-ui/icons";
 import { IoMdClose } from "react-icons/io";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 
 const useStyles = makeStyles({
@@ -162,7 +158,7 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...errors, [e.target.name]: t(ADD_RECIPIENT_REQUIRED_ERRORS[e.target.name]) })
         }
         if (e.target.name === "Email") {
-            if (!ValidateEmail(e.target.value)) {
+            if (!IsValidEmail(e.target.value)) {
                 setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
             }
         }
@@ -170,7 +166,7 @@ const AddRecipientPopup = ({ classes,
             if (e.target.value.length > 16 || e.target.value.length < 9) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength) })
             }
-            else if (!ValidateNumber(e.target.value)) {
+            else if (!IsValidPhone(e.target.value)) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
             }
         }
@@ -259,7 +255,7 @@ const AddRecipientPopup = ({ classes,
 
         if (!data.ClientsData.Email &&
             !data.ClientsData.Cellphone) {
-            if (!data.ClientsData.Email || !ValidateEmail(data.ClientsData.Email)) {
+            if (!data.ClientsData.Email || !IsValidEmail(data.ClientsData.Email)) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
             if (data.ClientsData.Cellphone.length < 9 || data.ClientsData.Cellphone.length > 16) {
@@ -270,7 +266,7 @@ const AddRecipientPopup = ({ classes,
             setActiveTab(0);
 
             return;
-        } else if (data.ClientsData.Email && !ValidateEmail(data.ClientsData.Email)) {
+        } else if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
             setActiveTab(0);
@@ -361,6 +357,11 @@ const AddRecipientPopup = ({ classes,
         }
         catch (err) {
             console.log('errr:', err)
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleSubmit',
+                ComponentName: 'AddRecipientPopup.js',
+                Text: err
+            }));
         }
         finally {
             setLoader(false)
@@ -441,7 +442,7 @@ const AddRecipientPopup = ({ classes,
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (ValidateNumber(tempVal)) {
+                                else if (!IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -474,7 +475,7 @@ const AddRecipientPopup = ({ classes,
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (ValidateNumber(tempVal)) {
+                                else if (IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -603,7 +604,7 @@ const AddRecipientPopup = ({ classes,
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (ValidateNumber(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}
@@ -628,7 +629,7 @@ const AddRecipientPopup = ({ classes,
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (ValidateNumber(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}
@@ -1249,7 +1250,7 @@ const AddRecipientPopup = ({ classes,
 
 
     return (
-        <Dialog
+        <BaseDialog
             classes={classes}
             open={isOpen}
             title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
@@ -1349,7 +1350,7 @@ const AddRecipientPopup = ({ classes,
                 }
             </Box>
             <Loader isOpen={showLaoder} />
-        </Dialog>
+        </BaseDialog>
     );
 };
 

@@ -1,4 +1,6 @@
-import { Box, Grid, makeStyles, Typography } from "@material-ui/core"
+import { Box, makeStyles, Typography } from "@material-ui/core"
+import clsx from 'clsx'
+
 const useStyles = makeStyles({
     flexBox: {
         display: 'flex',
@@ -30,7 +32,7 @@ const useStyles = makeStyles({
 });
 
 const FlexGrid = ({ gridArr = [],
-    classes = { text: {} },
+    classes = { text: {}, container: 'ffffff' },
     textVariant = "body1",
     alignText = "center",
     direction,
@@ -41,7 +43,7 @@ const FlexGrid = ({ gridArr = [],
     const localClasses = useStyles({ direction: direction, justifyContent: justifyContent, textVariant: textVariant })
     return (
         <>
-            <Box className={localClasses.flexBox} style={props.customStyle}>
+            <Box className={`${localClasses.flexBox} ${classes.container}`} style={props.customStyle}>
                 {
                     gridArr.map((obj, idx) => {
                         if(!obj.component){

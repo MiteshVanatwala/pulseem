@@ -5,14 +5,14 @@ import clsx from "clsx";
 import {
   Box,
   Typography,
-  Divider,
   TableBody,
   Grid,
   Button,
   TextField,
   TableRow,
   TableCell,
-  makeStyles
+  makeStyles,
+  Divider
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
@@ -51,7 +51,7 @@ import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
-import { ClientStatus } from "../../helpers/PulseemArrays";
+import { ClientStatus } from "../../helpers/Constants";
 import { switchClientStatus } from '../../helpers/functions';
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -59,6 +59,8 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -88,8 +90,8 @@ const ClientSearchResult = ({ props, classes }) => {
     accountFeatures,
     language,
     windowSize,
-    email,
-    phone,
+    // email,
+    // phone,
     rowsPerPage,
     smsOldVersion,
     isRTL
@@ -1643,7 +1645,7 @@ const ClientSearchResult = ({ props, classes }) => {
         )
       }
       return (
-        <Dialog
+        <BaseDialog
           cancelText="common.Cancel"
           confirmText="common.Yes"
           disableBackdropClick={true}
@@ -1654,7 +1656,7 @@ const ClientSearchResult = ({ props, classes }) => {
           // onConfirm={() => handleConfirmExport()}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
