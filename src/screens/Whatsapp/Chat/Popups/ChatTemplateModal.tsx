@@ -42,13 +42,13 @@ const ChatTemplateModal = ({
 				const cardData: savedTemplateCardProps =
 					template?.Data?.types[templateTypes.CARD];
 				return cardData?.title;
-			} else if (templateTypes.CARD in template?.Data?.types) {
+			} else if (templateTypes.MEDIA in template?.Data?.types) {
 				const mediaData: savedTemplateMediaProps =
-					template?.Data?.types[templateTypes.CARD];
+					template?.Data?.types[templateTypes.MEDIA];
 				return mediaData?.body;
-			} else if (templateTypes.CARD in template?.Data?.types) {
+			} else if (templateTypes.TEXT in template?.Data?.types) {
 				const textData: savedTemplateTextProps =
-					template?.Data?.types[templateTypes.CARD];
+					template?.Data?.types[templateTypes.TEXT];
 				return textData?.body;
 			}
 		}
