@@ -167,6 +167,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	useEffect(() => {
 		setApiCampaignData();
+		/**
+		 * we disable it because we want to run this code only when component loads
+		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

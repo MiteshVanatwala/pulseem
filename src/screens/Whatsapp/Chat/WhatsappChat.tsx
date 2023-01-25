@@ -125,6 +125,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (!personalFields || landingPages?.length <= 0) {
 			getDynamicModalValues();
 		}
+		/**
+		 * we disable it because we want to run this code only when component loads
+		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const getDynamicModalValues = async () => {
