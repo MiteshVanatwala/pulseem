@@ -132,10 +132,22 @@ const SendCampaign = ({
 	];
 
 	useEffect(() => {
+		/**
+		 * testGroupList is for fetching all test groups across the platform
+		 * Here testGroupList is we are taking from existing code and we don't
+		 * know what is the initial value that is the reason we kept it here in
+		 * if condition
+		 */
 		if (!testGroupList || testGroupList?.length === 0) {
 			dispatch(getTestGroups());
 		}
+		/**
+		 * getApiGroupsData is for fetching all groups across the platform
+		 */
 		getApiGroupsData();
+		/**
+		 * we disable it because we want to run this code only when component loads
+		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
