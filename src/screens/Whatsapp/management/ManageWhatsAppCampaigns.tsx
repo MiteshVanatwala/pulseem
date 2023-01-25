@@ -1003,7 +1003,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				isOpen={isPreviewCampaignOpen}
 				onClose={() => setIsPreviewCampaignOpen(false)}
 				title={translator('whatsappManagement.preview')}
-				subtitle={translator('whatsappManagement.preview')}
+				subtitle={''}
 				onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
 				type='alert'>
 				<Box className={classes.alertModalContentMobile}>
