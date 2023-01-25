@@ -103,9 +103,8 @@ const WhatsappInbound = ({ classes }) => {
         };
         try {
             request.IsExport = true;
-            searchData.whatsapp.IsExport = true;
-            response = await dispatch(getInboundReport(request));
-            let result = await HandleExportData(response?.Data, exportOptions)
+            const response = await dispatch(getInboundReport(request));
+            let result = await HandleExportData(response?.payload?.Data, exportOptions)
 
             ExportFile({
                 data: result,

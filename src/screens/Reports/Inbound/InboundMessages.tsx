@@ -39,11 +39,13 @@ const InboundMessages = ({ classes }: ClassesType) => {
                         >
                             {
                                 InboundTypes.map((it, idx) => {
+                                    const label = translator(it.name);
                                     return !it.disabled && <Tab
                                         key={it.key}
-                                        label={translator(it.name)}
                                         classes={{ root: classes.minWidth100 }}
                                         value={it.value}
+                                        title={translator(it.name)}
+                                        label={label}
                                     />
                                 })
                             }

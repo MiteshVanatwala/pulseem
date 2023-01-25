@@ -49,7 +49,7 @@ const SearchLine = ({
     onSetIsSearching
 
 }: SearchObject) => {
-    const { t } = useTranslation();
+    const { t: translator } = useTranslation();
     const localClasses = useStyles();
     const DEFAULT_REQUES: RequestObject = {
         FromDate: null,
@@ -107,7 +107,7 @@ const SearchLine = ({
                         value={searchRequest.FromNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
+                        placeholder={translator('common.FrmNumber')}
                     />
                 </Grid>
                 }
@@ -129,7 +129,7 @@ const SearchLine = ({
                     variant='inline'
                     keyboardIcon={<CalendarIcon />}
                     format={'DD/MM/YYYY'}
-                    placeholder={t('mms.locFromDateResource1.Text')}
+                    placeholder={translator('mms.locFromDateResource1.Text')}
                     initialFocusedDate={moment()}
                     value={searchRequest.FromDate}
                     onChange={(date: any, value?: string | null | undefined) => {
@@ -158,7 +158,7 @@ const SearchLine = ({
                     variant='inline'
                     keyboardIcon={<CalendarIcon />}
                     format={'DD/MM/YYYY'}
-                    placeholder={t('mms.locToDateResource1.Text')}
+                    placeholder={translator('mms.locToDateResource1.Text')}
                     initialFocusedDate={moment()}
                     value={searchRequest.ToDate}
                     onChange={(date: any, value?: string | null | undefined) => {
@@ -185,7 +185,7 @@ const SearchLine = ({
                         value={searchRequest.FromNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
+                        placeholder={translator('common.FrmNumber')}
                     />
                 </Grid>
                 <Grid item>
@@ -196,7 +196,7 @@ const SearchLine = ({
                         value={searchRequest.ToNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.ToNumber')}
+                        placeholder={translator('common.ToNumber')}
                     />
                 </Grid>
                 {dateFields()}
@@ -207,7 +207,7 @@ const SearchLine = ({
                         value={searchRequest.MessageText}
                         onChange={(e) => setSearchRequest({ ...searchRequest, MessageText: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.messageContent')}
+                        placeholder={translator('common.messageContent')}
                     />
                 </Grid>
             </>
@@ -236,7 +236,7 @@ const SearchLine = ({
                     onClick={handleSearch}
                     className={classes.searchButton}
                     endIcon={<SearchIcon />}>
-                    {t('campaigns.btnSearchResource1.Text')}
+                    {translator<string>('campaigns.btnSearchResource1.Text')}
                 </Button>
                 {windowSize !== 'xs' && <Link
                     color='initial'
@@ -244,7 +244,7 @@ const SearchLine = ({
                     underline='none'
                     onClick={() => setAdvanceSearch(!advanceSearch)}
                     className={clsx(localClasses.dBlock, classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-                    {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+                    {translator<string>(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
                 </Link>
                 }
             </Grid>
@@ -257,7 +257,7 @@ const SearchLine = ({
                     }}
                     className={classes.searchButton}
                     endIcon={<ClearIcon />}>
-                    {t('common.clear')}
+                    {translator<string>('common.clear')}
                 </Button>
             </Grid>
             }
