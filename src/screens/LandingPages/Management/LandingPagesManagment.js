@@ -16,7 +16,7 @@ import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
   duplicteLandingPage, downloadReport, exportSurvey
 } from '../../../redux/reducers/landingPagesSlice'
-import { openInNewTab } from '../../../helpers/functions'
+import { openInNewTab } from '../../../helpers/Functions/functions'
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'

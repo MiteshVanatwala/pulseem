@@ -30,7 +30,6 @@ import { addRecipient, deleteRecipients } from "../../../../redux/reducers/group
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
-import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
@@ -39,6 +38,7 @@ import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
 import { IoMdClose } from "react-icons/io";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+import { ReplaceExtraFieldHeader } from "../../../../helpers/UI/AccountExtraField";
 
 
 const useStyles = makeStyles({
@@ -949,7 +949,7 @@ const AddRecipientPopup = ({ classes,
         temp = temp.forEach((t) => {
             tempp[t.key] = t.value
         });
-        let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
+        let extraFields = Object.keys(ReplaceExtraFieldHeader(extraFieldsTemp, extraData));
         const json = windowSize === 'xs' ?
             extraFields.map((ef) => {
                 return {

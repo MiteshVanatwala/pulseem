@@ -17,7 +17,6 @@ import {
   getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
 } from '../../../redux/reducers/newsletterSlice'
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
