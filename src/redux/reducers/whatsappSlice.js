@@ -28,7 +28,7 @@ export const getInboundReport = createAsyncThunk(
   async (requestData, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.post(`Whatsapp/GetInboundMessages`, requestData);
-      response.data.IsExport = data.IsExport;
+      response.data.IsExport = requestData.IsExport;
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
