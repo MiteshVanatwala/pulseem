@@ -50,9 +50,7 @@ import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
-import {
-	ManagmentIconProps,
-} from './Types/Management.types';
+import { ManagmentIconProps } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
@@ -60,7 +58,7 @@ import {
 	getAllTemplates,
 	getSavedTemplatesById,
 } from '../../../redux/reducers/whatsappSlice';
-import { resetToastData, statusesByName } from '../Constant';
+import { apiStatus, resetToastData, statusesByName } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
@@ -133,7 +131,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: templateListAPIProps = await dispatch<any>(
 			getAllTemplates()
 		);
-		if (templateData.payload.Message === 'Success') {
+		if (templateData.payload.Message === apiStatus.SUCCESS) {
 			setTemplateListData(templateData.payload?.Data?.Items);
 			setTableData(templateData.payload?.Data?.Items);
 			setIsLoader(false);
@@ -197,7 +195,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.recipientsStatus, {
-						[classes.recipientsStatusStopped]: status === 'CreatedOnlyforPulseem',
+						[classes.recipientsStatusStopped]:
+							status === 'CreatedOnlyforPulseem',
 						[classes.recipientsStatusCreated]: status === 'Approved',
 						[classes.recipientsStatusSending]: status === 'Pending',
 						[classes.recipientsStatusSent]: status === 'Received',
@@ -698,7 +697,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							)}
 							{getRows()?.length === 0 ? (
 								<Box
-									className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.noDataRow)}>
+									className={clsx(
+										classes.flex,
+										classes.justifyCenterOfCenter,
+										classes.noDataRow
+									)}>
 									<Typography>
 										{translator('common.NoDataTryFilter')}
 									</Typography>
