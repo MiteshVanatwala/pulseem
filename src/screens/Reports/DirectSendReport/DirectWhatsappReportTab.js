@@ -388,6 +388,7 @@ const DirectWhatsappReportTab = ({
     // }
 
     const renderRow = (row) => {
+        const { Schedule, FromNumber, ToNumber, Status, Text, ErrorMessage, ReferenceId } = row;
         return (
             <TableRow
                 classes={rowStyle}>
@@ -395,37 +396,37 @@ const DirectWhatsappReportTab = ({
                     classes={cellStyle}
                     align='center'
                     className={classes.flex2}>
-                    {renderCell(row.Schedule, 'date')}
+                    {renderCell(Schedule, 'date')}
                 </TableCell>
 
                 <TableCell
                     classes={noborderCell}
                     align='center'
                     className={classes.flex1}>
-                    {renderCell(row.FromNumber)}
+                    {renderCell(FromNumber)}
                 </TableCell>
                 <TableCell
                     classes={noborderCell}
                     align='center'
                     className={classes.flex1}>
-                    {renderCell(row.ToNumber)}
+                    {renderCell(ToNumber)}
                 </TableCell>
                 <TableCell
                     classes={cellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderCell(row.Status, 'status')}
+                    {renderCell(Status, 'status')}
                 </TableCell>
                 <TableCell
                     classes={cellStyle}
                     align='center'
                     className={classes.flex3}>
-                    {renderCell(row.Text, 'content')}
+                    {renderCell(Text, 'content')}
                 </TableCell>
                 <TableCell
                     classes={noborderCell}
                     align='center'
-                    className={classes.flex1} title={row.ErrorMessage}>
+                    className={classes.flex1} title={ErrorMessage}>
                     <CustomTooltip
                         isSimpleTooltip={false}
                         interactive={true}
@@ -437,9 +438,9 @@ const DirectWhatsappReportTab = ({
                         arrow={true}
                         style={{ fontSize: 15 }}
                         placement={"top"}
-                        title={<Typography noWrap={false}>{row.ErrorMessage}</Typography>}
+                        title={<Typography noWrap={false}>{ErrorMessage}</Typography>}
                     >
-                        {row.ErrorMessage && row.ErrorMessage !== '' && <Typography>
+                        {ErrorMessage && ErrorMessage !== '' && <Typography>
                             {t('common.showError')}
                         </Typography>}
                     </CustomTooltip>
@@ -449,7 +450,7 @@ const DirectWhatsappReportTab = ({
                         <TableCell
                             classes={noborderCell}
                             align='center'
-                            className={classes.flex1} title={row.ReferenceId}>
+                            className={classes.flex1} title={ReferenceId}>
                             <CustomTooltip
                                 isSimpleTooltip={false}
                                 interactive={true}
@@ -461,28 +462,21 @@ const DirectWhatsappReportTab = ({
                                 arrow={true}
                                 style={{ fontSize: 15 }}
                                 placement={"top"}
-                                title={<Typography noWrap={false}>{row.ReferenceId}</Typography>}
+                                title={<Typography noWrap={false}>{ReferenceId}</Typography>}
                             >
-                                {row.ReferenceId && row.ReferenceId !== '' && <Typography>
+                                {ReferenceId && ReferenceId !== '' && <Typography>
                                     {t('common.showTemplateId')}
                                 </Typography>}
                             </CustomTooltip>
                         </TableCell>
                     </>
                 )}
-                {/* <TableCell
-                    classes={noborderCell}
-                    align='center'
-                    className={classes.flex1}>
-                    {renderCell(row.Credits)}
-                </TableCell> */}
             </TableRow>
         )
     }
 
-    const renderNameCell = (row) => {
-        const { DATE } = row
-        let d = moment(DATE);
+    const renderNameCell = (schedule) => {
+        let d = moment(schedule);
         d = `${d.format('DD/MM/YYYY HH:mm')}`
 
         return (
@@ -498,52 +492,57 @@ const DirectWhatsappReportTab = ({
     }
 
     const renderPhoneRow = (row) => {
-        const {
-            PID, DATE, FROM, TO, STATUS
-        } = row
+        const { Schedule, FromNumber, ToNumber, Status, Text, ErrorMessage } = row;
 
         return (
             <TableRow
-                key={row.ID}
-                component='div'
                 classes={rowStyle}>
-                <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} style={{ paddingInline: 10 }}>
-                    <Box className={clsx(classes.dFlex)} style={{ width: '100%', justifyContent: 'space-between' }}>
-                        <Box className={classes.dFlex} style={{ flexDirection: 'column', justifySelf: 'flex-start' }}>
-                            {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
-                        </Box>
-                        <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-                            <Typography style={{ color: whatsappStatusColor(STATUS) }}>
-                                {t(whatsappStatusToString(STATUS))}
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Grid container spacing={2}  >
-                        <Grid item>
-                            <Typography className={classes.mobileReportHead}>
-                                {t('common.FrmNumber')}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            {FROM}
-                        </Grid>
-                    </Grid>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                                {t('common.ToNumber')}
-                            </Typography>
-                            <Grid container spacing={2}>
-                                <Grid item>
-                                    {TO}
-                                </Grid>
+                <TableCell
+                    style={{ flex: 2 }}
+                    classes={{ root: classes.tableCellRoot }}
+                    className={classes.p20}
+                >
+                    <Box className={classes.ml10}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Box className={classes.spaceBetween}>
+                                    <Box>
+                                        <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                                            {t("common.ReplyDate")}
+                                        </Typography>
+                                        {renderCell(Schedule, 'date')}
+                                    </Box>
+                                    <Box>
+                                        {renderCell(Status, 'status')}
+                                    </Box>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Box className={classes.cellText}>
+                                    <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>{t('common.SentFromNumber')}</Typography>
+                                    <Typography component={'p'}
+                                        className={clsx(classes.middleTxt)}>
+                                        {FromNumber}
+                                    </Typography>
+                                </Box>
+                                <Box className={classes.cellText}>
+                                    <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>{t('common.SendTo2')}</Typography>
+                                    <Typography component={'p'}
+                                        className={clsx(classes.middleTxt)}>
+                                        {ToNumber}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>{t('common.messageContent')}</Typography>
+                                <Typography className={clsx(classes.ml0)}>
+                                    {Text}
+                                </Typography>
                             </Grid>
                         </Grid>
-                    </Grid>
+                    </Box>
                 </TableCell>
-            </TableRow>
+            </TableRow >
         )
     }
 
