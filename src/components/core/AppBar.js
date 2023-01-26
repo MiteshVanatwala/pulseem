@@ -22,6 +22,7 @@ import i18n from '../../i18n'
 import useRedirect from '../../helpers/Routes/Redirect';
 import { IoIosArrowDown } from 'react-icons/io';
 import { BsGlobe2 } from 'react-icons/bs';
+import { sitePrefix } from '../../config';
 
 const AppBarItem = ({
   item,
@@ -289,11 +290,11 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
       routes[2],
       routes[3],
       routes[4],
-      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: true },
+      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: `${sitePrefix}MmsCampaigns`, isShow: true },
       routes[6],
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
-      { title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount === true }      //routes[1]
+      { title: t('report.DirectSendReport'), key: 'directSendReport', href: `${sitePrefix}Reports/DirectSendReport`, isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount === true }      //routes[1]
     ]
     return (
       <>

@@ -13,6 +13,7 @@ import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
 import { useNavigate } from 'react-router';
 import { ChartIcon } from '../../assets/images/dashboard/index'
+import { sitePrefix } from '../../config';
 
 
 const RecipientChart = ({ classes, }) => {
@@ -103,6 +104,27 @@ const RecipientChart = ({ classes, }) => {
             }
         });
     }
+
+    // const renderCircleAdd = (innerTitle) => {
+    //     return (
+    //         <Grid item xs={12} sm={4} className={classes.doughnutGrid} key={`circleAdd${Math.round(Math.random() * 999999999)}`}>
+    //             <Typography align='center' className={classes.f20}>{t(innerTitle.mainTitle)}</Typography>
+    //             <Box className={classes.doughnutBox}>
+    //                 <Avatar className={classes.emptyDoughnut}>
+    //                     <Typography className={classes.noRecipients}>{t(innerTitle.centerTitle)}</Typography>
+    //                     <Button>
+    //                         <Box className={classes.dInlineBlock}>
+    //                             <div className={classes.addRecipientsIcon}>
+    //                                 {'\uE14F'}
+    //                             </div>
+    //                             <Typography className={classes.addRecipientsBtn}>{t('dashboard.add')}</Typography>
+    //                         </Box>
+    //                     </Button>
+    //                 </Avatar>
+    //             </Box>
+    //         </Grid>
+    //     )
+    // };
 
     const renderDoughnut = (report, index, colorScheme) => {
 
@@ -254,18 +276,14 @@ const RecipientChart = ({ classes, }) => {
                 item xs={12} sm={12} md={4}
                 className={classes.doughnutGrid}>
                 <Box className={classes.doughnutBox}>
-                    {/* <Link
+                    <Link
                         href="#!"
                         className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link> */}
-                    <Typography
-                        href="#!"
-                        className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
-                    <Typography className={'centerText'}>{t(titles[index].mainTitle)}</Typography>
-                    <Divider />
-                    <Typography className={'quantity'}>{report.Total.toLocaleString()}</Typography>
-                    {/* </Link> */}
+                        onClick={() => openReports(report.ReportSection, "total")}>
+                        <Typography className={'centerText'}>{t(titles[index].mainTitle)}</Typography>
+                        <Divider />
+                        <Typography className={'quantity'}>{report.Total.toLocaleString()}</Typography>
+                    </Link>
                     <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
                 </Box>
             </Grid>
@@ -416,7 +434,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/react/groups?NewGroup=true`}
+                        redirect={`${sitePrefix}groups?NewGroup=true`}
                         buttonClass={classes.createButton} />
                 )}
 
@@ -456,7 +474,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/react/Groups?NewGroup=true`}
+                        redirect={`${sitePrefix}/Groups?NewGroup=true`}
                         buttonClass={classes.importButtonBlue} />
                 }
             </Grid>

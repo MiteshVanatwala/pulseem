@@ -35,7 +35,6 @@ import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
-
 // User input controls
 import { EditRow } from './components/ContentDialogs'
 
@@ -45,6 +44,7 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
 /* END Bee */
+import { sitePrefix } from '../../config';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -385,7 +385,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const deleteNewsletter = async () => {
     setDialog(null);
     await dispatch(deleteCampaign(campaignId));
-    window.location = `/react/Campaigns`;
+    window.location = `${sitePrefix}Campaigns`;
   }
   const onDelete = () => {
     setIsResponseModal(false);
@@ -402,10 +402,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
     if (saveBeforeExit) {
-      saveDesign(true, '/react/Campaigns', false);
+      saveDesign(true, `${sitePrefix}Campaigns`, false);
     }
     else {
-      window.location.href = '/react/Campaigns';
+      window.location.href = `${sitePrefix}Campaigns`;
     }
   }
   const onExit = () => {
@@ -421,10 +421,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onBack = () => {
     if (isFromAutomation) {
-      saveDesign(true, `/react/Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+      saveDesign(true, `${sitePrefix}Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
     }
     else {
-      saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
+      saveDesign(true, `${sitePrefix}Campaigns/Create/${campaignId}`)
     }
   }
   const onTestSendSubmit = async (sendRequest) => {

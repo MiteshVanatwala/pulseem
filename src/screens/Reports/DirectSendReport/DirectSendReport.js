@@ -22,6 +22,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
@@ -328,7 +329,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             <Grid item>
               {!isArchive && <Button
                 onClick={() => {
-                  window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
+                  window.location = `${sitePrefix}Reports/DirectSendReport/Archive/?t=${tabValue}`
                 }}
                 className={clsx(
                   classes.btn, classes.btnRounded

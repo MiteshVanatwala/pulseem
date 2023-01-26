@@ -53,6 +53,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import { sitePrefix } from '../../../config';
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -1200,13 +1201,13 @@ const SmsCreator = ({ classes }) => {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
-          Redirect({ url: `/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}` });
+          Redirect({ url: `${sitePrefix}sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}` });
           setToastMessage(null);
         }, 1500);
       } else if (returnToAutomation) {
         Redirect({ url: getAutomationReturnUrl(campaignId) });
       } else {
-        Redirect({ url: `/react/sms/send/${campaignId}` });
+        Redirect({ url: `${sitePrefix}sms/send/${campaignId}` });
       }
     }
     else {
@@ -1272,13 +1273,13 @@ const SmsCreator = ({ classes }) => {
       if (response) {
         dispatch(deleteSms(response.payload.SMSCampaignID));
         handleClose();
-        Redirect({ url: "/react/SMSCampaigns" });
+        Redirect({ url: `${sitePrefix}SMSCampaigns` });
       }
     }
     else {
       dispatch(deleteSms(-1));
       handleClose();
-      Redirect({ url: "/react/SMSCampaigns" });
+      Redirect({ url: `${sitePrefix}SMSCampaigns` });
     }
   };
 
@@ -1329,7 +1330,7 @@ const SmsCreator = ({ classes }) => {
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
-          Redirect({ url: "/react/SMSCampaigns" });
+          Redirect({ url: `${sitePrefix}SMSCampaigns` });
 
         }
         else {
@@ -1343,7 +1344,7 @@ const SmsCreator = ({ classes }) => {
       }
     }
     else if (saveBeforeExit === false) {
-      Redirect({ url: "/react/SMSCampaigns" });
+      Redirect({ url: `${sitePrefix}SMSCampaigns` });
       setDialogType(null);
     }
   };

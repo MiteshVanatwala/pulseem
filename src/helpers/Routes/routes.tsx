@@ -23,6 +23,7 @@ import { logout } from "../Api/PulseemReactAPI";
 import { MdLogout } from "react-icons/md";
 import Whatsapp from "../../assets/images/dashboard/Whatsapp";
 import { HiArrowRight } from "react-icons/hi";
+import { sitePrefix } from "../../config";
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
@@ -73,7 +74,7 @@ export const getSettingsItem = (
     {
       key: "SiteTracking",
       title: t("master.siteTracking"),
-      href: "/react/SiteTracking",
+      href: `${sitePrefix}SiteTracking`,
       iconSrc: FaBinoculars,
       isFaIcon: true,
       isShow: true,
@@ -101,7 +102,7 @@ export const getRoutes = (
       key: "dashboard",
       title: t("dashboard.pageTitle"),
       iconUnicode: "\uF064",
-      href: "/react",
+      href: sitePrefix,
       isShow: windowSize && windowSize === "xs" ? true : false,
       icon: <img alt="Dashboard" src={DashboardIcon} />,
     },
@@ -109,14 +110,14 @@ export const getRoutes = (
       key: "groups",
       title: t("appBar.groups.title"),
       iconUnicode: "\ue0d5",
-      href: "/react/groups",
+      href: `${sitePrefix}groups`,
       isShow: true,
       icon: <img alt="Groups" src={GroupsIcon} />,
       options: [
         {
           key: "groupManagement",
           title: t("master.RadMenuItemResource6.Text"),
-          href: "/react/groups",
+          href: `${sitePrefix}groups`,
           isShow: true,
         },
         {
@@ -146,18 +147,18 @@ export const getRoutes = (
       title: t("master.newsletter"),
       pageTitle: t("campaigns.logPageHeaderResource1.Text"),
       iconUnicode: "\ue0a1",
-      href: "/react/Campaigns",
+      href: `${sitePrefix}Campaigns`,
       isShow: true,
       icon: <img alt="Newsletter" src={NewsletterIcon} />,
       options: [
         {
           title: t("master.RadMenuItemResource9b.Text"),
-          href: "/Pulseem/Editor/CampaignInfo?new=1&fromreact=true",
+          href: `${sitePrefix}Campaigns/Create`,
           isShow: true,
         },
         {
           title: t("master.RadMenuItemResource9.Text"),
-          href: "/react/Campaigns",
+          href: `${sitePrefix}Campaigns`,
           isShow: true,
         },
         {
@@ -188,7 +189,7 @@ export const getRoutes = (
         {
           key: "archiveManagement",
           title: t("master.campaignsArchive"),
-          href: "/react/Campaigns/Archive",
+          href: `${sitePrefix}Campaigns/Archive`,
           isShow: true,
         },
       ],
@@ -198,7 +199,7 @@ export const getRoutes = (
       title: "SMS",
       pageTitle: t("sms.PageResource1.Title"),
       iconUnicode: "\ue181",
-      href: "/react/SMSCampaigns",
+      href: `${sitePrefix}SMSCampaigns`,
       isShow:
         features &&
         !features.error &&
@@ -209,12 +210,12 @@ export const getRoutes = (
         {
           key: "create",
           title: t("master.RadMenuItemResource101.Text"),
-          href: "/react/sms/create",
+          href: `${sitePrefix}sms/create`,
           isShow: true,
         },
         {
           title: t("master.RadMenuItemResource102.Text"),
-          href: "/react/SMSCampaigns",
+          href: `${sitePrefix}SMSCampaigns`,
           isShow: true,
         },
         {
@@ -234,7 +235,7 @@ export const getRoutes = (
         },
         {
           title: t("master.MmsCampaignMnage.Text"),
-          href: "/react/MmsCampaigns",
+          href: `${sitePrefix}MmsCampaigns`,
           isShow: true,
         },
       ],
@@ -244,7 +245,7 @@ export const getRoutes = (
       title: "Whatsapp",
       pageTitle: t("whatsapp.PageResource1.Title"),
       iconUnicode: "\ue181",
-      href: "/react/SMSCampaigns",
+      href: `${sitePrefix}SMSCampaigns`,
       isShow: true,
       icon: <Whatsapp />,
       options: [
@@ -271,7 +272,7 @@ export const getRoutes = (
       title: t("master.RadItemLandingPagesMenu.Text"),
       pageTitle: t("landingPages.logPageHeaderResource1.Text"),
       iconUnicode: "\ue09d",
-      href: "/react/EditRegistrationPage",
+      href: `${sitePrefix}EditRegistrationPage`,
       isShow: true,
       icon: <img alt="Landing Pages" src={LandingPageIcon} />,
       options: [
@@ -282,7 +283,7 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemLandingManagement.Text"),
-          href: "/react/EditRegistrationPage",
+          href: `${sitePrefix}EditRegistrationPage`,
           isShow: true,
         },
         {
@@ -297,7 +298,7 @@ export const getRoutes = (
       title: t("master.Automations"),
       pageTitle: t("automations.logPageHeaderResource1.Text"),
       iconUnicode: "\ue087",
-      href: "/react/Automations",
+      href: `${sitePrefix}Automations`,
       isShow: true,
       icon: <img alt="Automations" src={AutomationsIcon} />,
       options: [
@@ -308,7 +309,7 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemManageAutomationResource.Text"),
-          href: "/react/Automations",
+          href: `${sitePrefix}Automations`,
           isShow: true,
         },
       ],
@@ -318,7 +319,7 @@ export const getRoutes = (
       title: t("master.notifications"),
       pageTitle: t("notifications.notificationManagement"),
       iconUnicode: "\ue117",
-      href: "/react/Notifications",
+      href: `${sitePrefix}Notifications`,
       isShow:
         features &&
         !features.error &&
@@ -329,12 +330,12 @@ export const getRoutes = (
         {
           key: "create",
           title: t("master.createNotification"),
-          href: "/react/Notification/create",
+          href: `${sitePrefix}Notification/create`,
           isShow: true,
         },
         {
           title: t("master.manageNotifications"),
-          href: "/react/Notifications",
+          href: `${sitePrefix}Notifications`,
           isShow: true,
         },
       ],
@@ -344,7 +345,7 @@ export const getRoutes = (
       title: t("master.RadMenuItemResource19.Text"),
       pageTitle: t("mainReport.logPageHeaderResource1.Text"),
       iconUnicode: "\ue049",
-      href: "/react/Reports/NewsletterReports",
+      href: `${sitePrefix}Reports/NewsletterReports`,
       isShow: true,
       icon: <img alt="Reports" src={ReportsIcon} />,
       options: [
@@ -355,19 +356,19 @@ export const getRoutes = (
         },
         {
           title: t("master.RadMenuItemResource13.Text"),
-          href: "/react/reports/NewsletterReports",
+          href: `${sitePrefix}reports/NewsletterReports`,
           isShow: true,
         },
         {
           key: "SmsReport",
           title: t("master.RadMenuItemResource24.Text"),
-          href: "/react/reports/SMSMainReport",
+          href: `${sitePrefix}reports/SMSMainReport`,
           isShow: true,
         },
         {
           key: "MmsReport",
           title: t("mmsreport.mmsReport"),
-          href: "/react/reports/MMSMainReport",
+          href: `${sitePrefix}reports/MMSMainReport`,
           isShow: true,
         },
         {
@@ -405,17 +406,17 @@ export const getRoutes = (
         //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
         // { key: 'directSendReport', title: t('report.DirectSendReport'), href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
         // { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: '/react/Reports/DirectSendReport/Archive', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
-        { key: 'productsReport', title: t('report.ProductsReport.title'), href: '/react/Reports/ProductsReport', isShow: true },
+        { key: 'productsReport', title: t('report.ProductsReport.title'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
         {
           key: "directSendReport",
           title: t("report.DirectSendReport"),
-          href: "/react/Reports/DirectSendReport",
+          href: `${sitePrefix}Reports/DirectSendReport`,
           isShow: true,
         },
         {
           key: "directSendReportArchive",
           title: t("report.ArchiveDirectSendReport"),
-          href: "/react/Reports/DirectSendReport/Archive",
+          href: `${sitePrefix}Reports/DirectSendReport/Archive`,
           isShow: true,
         },
         {
@@ -426,7 +427,7 @@ export const getRoutes = (
         {
           key: "smsResponse",
           title: t("master.smsReplies"),
-          href: "/react/reports/SmsReplies",
+          href: `${sitePrefix}reports/SmsReplies`,
           isShow: false,
         },
       ],

@@ -43,6 +43,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
+import { sitePrefix } from './config/index'
 
 const renderRoutes = (classes) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -60,30 +61,25 @@ const renderRoutes = (classes) => {
   return (
     <>
       <Route
-        exact
-        path="/react"
+        path={sitePrefix}
         element={<DashboardScreen classes={classes} />}
       />
       <Route
 
-        path="/react/sms/create/"
+        path={`${sitePrefix}sms/create/`}
         element={<SmsCreator classes={classes} />}
       />
       <Route
-        path="/react/sms/edit/:id"
+        path={`${sitePrefix}sms/edit/:id`}
         element={<SmsCreator classes={classes} />}
       />
       <Route
 
-        path="/react/sms/send/:id"
+        path={`${sitePrefix}sms/send/:id`}
         element={<SmsSend classes={classes} />}
       />
       <Route
-        path={`/react/notifications/edit/:notificationID`}
-        component={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
-      />
-      <Route
-        path={`/react/SendCampaign/:campaignID`}
+        path={`${sitePrefix}SendCampaign/:campaignID`}
         component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
@@ -99,12 +95,12 @@ const renderRoutes = (classes) => {
         element={transferUrl('/Pulseem/DuplicateCampign/', 'campaign')}
       />
       <Route
-        path={`/react/CampaignStatistics/:campaignID`}
+        path={`${sitePrefix}CampaignStatistics/:campaignID`}
         // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
         element={<GraphicReport classes={classes} />}
       />
       <Route
-        path={'/react/Groups'}
+        path={`${sitePrefix}Groups`}
         element={<Groups classes={classes} />}
       />
       <Route
@@ -126,59 +122,35 @@ const renderRoutes = (classes) => {
       {/* Newsletter */}
       <Route
         exact
-        path="/react/Campaigns"
+        path={`${sitePrefix}Campaigns`}
         element={<NewsletterManagment classes={classes} />}
       />
       <Route
         exact
-        path="/react/Campaigns/Create"
+        path={`${sitePrefix}Campaigns/Create`}
         element={<NewsLetterWizard classes={classes} />}
       />
       <Route
-        path="/react/Campaigns/Create/:id"
+        path={`${sitePrefix}Campaigns/Create/:id`}
         element={<NewsLetterWizard classes={classes} />}
       />
       <Route
         exact
-        path="/react/Campaigns/editor"
+        path={`${sitePrefix}Campaigns/editor`}
         element={<CampaignEditorBee classes={classes} />}
       />
       <Route
-        path="/react/Campaigns/editor/:id"
+        path={`${sitePrefix}Campaigns/editor/:id`}
         element={<CampaignEditorBee classes={classes} />}
       />
       <Route
         exact
-        path="/react/Campaigns/Archive"
+        path={`${sitePrefix}Campaigns/Archive`}
         element={<ArchiveManagement classes={classes} />}
-      />
-      {/* <Route
-        path={`/Editor/CampaignInfo`}
-        element={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
-      />
-      <Route
-        path={`/CampaignsByResults`}
-        element={transferUrl('/Pulseem/CampaignsByResults.aspx')}
-      />
-      <Route
-        path={`/CampaignsAbTestings`}
-        element={transferUrl('/Pulseem/CampaignsAbTestings.aspx')}
-      />
-      <Route
-        path={`/AutoSendPlans`}
-        element={transferUrl('/Pulseem/AutoSendPlans.aspx')}
-      />
-      <Route
-        path={`/CampaignTemplates`}
-        element={transferUrl('/Pulseem/CampaignTemplates.aspx')}
-      />
-      <Route
-        path={`/CampaignEdit`}
-        element={transferUrl('/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic')}
       />
       {/* SMS */}
       <Route
-        path={`/react/SMSCampaigns`}
+        path={`${sitePrefix}SMSCampaigns`}
         element={<SmsManagment classes={classes} />}
       />
       <Route
@@ -200,7 +172,7 @@ const renderRoutes = (classes) => {
 
       {/* MMS */}
       <Route
-        path="/react/MmsCampaigns"
+        path={`${sitePrefix}MmsCampaigns`}
         element={<MmsManagment classes={classes} />}
       />
       <Route
@@ -226,20 +198,15 @@ const renderRoutes = (classes) => {
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
       <Route
-        path="/react/ClientSearchResult/:referrer/:id"
+        path={`${sitePrefix}ClientSearchResult/:referrer/:id`}
         element={<ClientSearchResult classes={classes} />}
       />
-
-      {/* <Route
-        path="/ClientSearchResult/:id"
-        element={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
-      /> */}
-      {/* <Route
-        path="/ClientSearchResult"
-        element={<ClientSearchResult classes={classes} />}
-      /> */}
       <Route
-        path="/react/EditRegistrationPage"
+        path={`${sitePrefix}ClientSearchResult`}
+        element={<ClientSearchResult classes={classes} />}
+      />
+      <Route
+        path={`${sitePrefix}EditRegistrationPage`}
         element={<LandingPagesesManagment classes={classes} />}
       />
       <Route
@@ -252,7 +219,7 @@ const renderRoutes = (classes) => {
       />
       {/* Reports */}
       <Route
-        path={`/react/Reports/NewsletterReports`}
+        path={`${sitePrefix}Reports/NewsletterReports`}
         element={<NewslettersReport classes={classes} />}
       />
       <Route
@@ -260,21 +227,21 @@ const renderRoutes = (classes) => {
         component={transferUrl('/Pulseem/ClalReport.aspx')}
       />
       <Route
-        path={`/react/Reports/SMSMainReport`}
+        path={`${sitePrefix}Reports/SMSMainReport`}
         element={<SmsReport classes={classes} />}
       />
       <Route
         exact
-        path={"/react/Reports/SmsReplies/:id"}
+        path={`${sitePrefix}Reports/SmsReplies/:id`}
         element={<SmsReplies classes={classes} />}
       />
       <Route
-        path={`/react/Reports/MmsMainReport`}
+        path={`${sitePrefix}Reports/MmsMainReport`}
         element={<MmsReport classes={classes} />}
       />
       <Route
         exact
-        path={`/react/Reports/ProductsReport`}
+        path={`${sitePrefix}Reports/ProductsReport`}
         element={<ProductsReport classes={classes} />}
       />
       <Route
@@ -307,12 +274,12 @@ const renderRoutes = (classes) => {
       />
       <Route
         exact
-        path={`/react/Reports/DirectSendReport`}
+        path={`${sitePrefix}Reports/DirectSendReport`}
         element={<DirectSendReport classes={classes} isArchive={false} />}
       />
       <Route
         exact
-        path={`/react/Reports/DirectSendReport/Archive`}
+        path={`${sitePrefix}Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />
       <Route
@@ -321,7 +288,7 @@ const renderRoutes = (classes) => {
       />
       {/* Automations */}
       <Route
-        path="/react/Automations"
+        path={`${sitePrefix}Automations`}
         element={<AutomationManagment classes={classes} />}
       />
       <Route
@@ -344,22 +311,22 @@ const renderRoutes = (classes) => {
       {/* Notifications */}
       <Route
         exact
-        path={`/react/Notifications`}
+        path={`${sitePrefix}Notifications`}
         element={<NotificationManagement classes={classes} />}
       />
       <Route
         exact
-        path={"/react/Notification/create"}
+        path={`${sitePrefix}Notification/create`}
         element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
-        path={"/react/Notification/edit/:id"}
+        path={`${sitePrefix}Notification/edit/:id`}
         element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
-        path={"/react/Notification/send/:id"}
+        path={`${sitePrefix}Notification/send/:id`}
         element={<NotificationSend classes={classes} />}
       />
       {/* Settings */}
@@ -369,12 +336,12 @@ const renderRoutes = (classes) => {
       />
       <Route
         exact
-        path={`/react/AccountSettings`}
+        path={`${sitePrefix}AccountSettings`}
         element={<AccountSettingsEditor classes={classes} />}
       />
       <Route
         exact
-        path={`/react/BillingSettings`}
+        path={`${sitePrefix}BillingSettings`}
         element={<BillingSettingsEditor classes={classes} />}
       />
       <Route
@@ -407,7 +374,7 @@ const renderRoutes = (classes) => {
       />
       <Route
         exact
-        path={`/react/SiteTracking`}
+        path={`${sitePrefix}SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
       />
       <Route

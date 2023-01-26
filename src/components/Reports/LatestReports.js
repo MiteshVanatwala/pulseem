@@ -10,6 +10,7 @@ import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
 import { actionURL } from '../../config/index';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 import { NotesIcon } from '../../assets/images/dashboard/index'
+import { sitePrefix } from '../../config/index';
 
 const LatestReports = ({ classes, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
@@ -195,12 +196,12 @@ const LatestReports = ({ classes, t, isRTL }) => {
       sms: {
         title: t("dashboard.createFirstSms"),
         buttonText: t('sms.create'),
-        redirect: `/react/sms/create`
+        redirect: `${sitePrefix}sms/create`
       },
       newsletter: {
         title: t("dashboard.createFirstNewsletter"),
         buttonText: t('common.CreateNewsletter'),
-        redirect: `/Pulseem/Editor/CampaignInfo?new=1&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        redirect: `${sitePrefix}Campaigns/Create`
 
       },
       whatsapp: {

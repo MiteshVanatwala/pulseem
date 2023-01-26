@@ -29,6 +29,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -177,7 +178,7 @@ const NewslettersReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult/${id}`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,

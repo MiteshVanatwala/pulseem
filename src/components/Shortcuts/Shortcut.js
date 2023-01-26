@@ -11,6 +11,7 @@ import { DASHBOARD_SHORTCUT } from '../../model/Shortcuts/DashboardShortcuts';
 import useRedirect from '../../helpers/Routes/Redirect';
 import { FlagIcon } from '../../assets/images/dashboard/index'
 import { CgCloseO } from 'react-icons/cg';
+import { sitePrefix } from '../../config';
 
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
@@ -33,11 +34,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       pages: [
         {
           title: 'dashboard.createNotification',
-          link: '/react/Notification/create'
+          link: `${sitePrefix}Notification/create`
         },
         {
           title: 'dashboard.notificationManagement',
-          link: '/react/Notifications'
+          link: `${sitePrefix}Notifications`
         }
       ]
     }

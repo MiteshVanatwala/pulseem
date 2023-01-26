@@ -17,6 +17,7 @@ import queryString from 'query-string';
 import { Loader } from '../../../components/Loader/Loader';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { useParams } from 'react-router-dom';
+import { sitePrefix } from '../../../config';
 
 const GraphicReport = ({ props, classes }) => {
   const { isRTL } = useSelector(state => state.core)
@@ -27,7 +28,7 @@ const GraphicReport = ({ props, classes }) => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { tab } = useParams();
-  
+
   const getData = async () => {
     const newsletterReport = await dispatch(getNewsletterReportsByIds(props.match.params.campaignID));
     setData(newsletterReport.payload[0]);
@@ -53,7 +54,7 @@ const GraphicReport = ({ props, classes }) => {
           <Grid item className={classes.mb4}>
             <Button
               onClick={() => {
-                Redirect({ url: "/react/Reports/NewsletterReports" });
+                Redirect({ url: `${sitePrefix}Reports/NewsletterReports` });
               }}
               className={classes.middleTxt}
             >

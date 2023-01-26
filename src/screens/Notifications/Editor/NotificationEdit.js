@@ -29,6 +29,7 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
+import { sitePrefix } from '../../../config';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -222,7 +223,7 @@ const NotificationEdit = ({ classes }) => {
       saveNotification(true, false)
     }
     else {
-      Redirect({ url: "/react/Notifications" });
+      Redirect({ url: `${sitePrefix}Notifications` });
     }
   }
   const renderConfirmCancel = () => {
@@ -257,7 +258,7 @@ const NotificationEdit = ({ classes }) => {
   }
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
-      Redirect({ url: `/react/Notification/send/${notificationId}` });
+      Redirect({ url: `${sitePrefix}Notification/send/${notificationId}` });
     }
   }
   const handleNotificationName = (event) => {
@@ -934,7 +935,7 @@ const NotificationEdit = ({ classes }) => {
         dispatch(save(modelToSave)).then((response) => {
           if (location.pathname.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
-              Redirect({ url: "/react/Notifications" })
+              Redirect({ url: `${sitePrefix}Notifications` })
             }
             else {
               setToastMessage(toastMessages.SUCCESS);
@@ -943,7 +944,7 @@ const NotificationEdit = ({ classes }) => {
                   redirectAfterSave(response.payload);
                 }
                 else {
-                  Redirect({ url: `/react/Notification/edit/${response.payload}` });
+                  Redirect({ url: `${sitePrefix}Notification/edit/${response.payload}` });
                 }
                 setToastMessage(null);
               }, 1500);
@@ -961,7 +962,7 @@ const NotificationEdit = ({ classes }) => {
         });
       }
       if (isExit) {
-        Redirect({ url: "/react/Notifications" });
+        Redirect({ url: `${sitePrefix}Notifications` });
       }
     }
   }

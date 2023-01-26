@@ -61,6 +61,7 @@ import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
 import { SwitchClientStatus } from "../../helpers/UI/TableText";
+import { sitePrefix } from "../../config";
 
 const useStyles = makeStyles({
   groupName: {
@@ -977,7 +978,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
           <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
             if (location?.state && location?.state.PageProperty) {
-              navigate(`/react/${location?.state.PageProperty.PageName}`, {
+              navigate(`${sitePrefix}${location?.state.PageProperty.PageName}`, {
                 state: {
                   from: 'clientsearchresult'
                 }

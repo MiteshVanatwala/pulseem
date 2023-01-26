@@ -30,6 +30,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -120,7 +121,7 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult/${id}`,
       isRevenueCol: true,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
         state:

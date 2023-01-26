@@ -34,6 +34,7 @@ import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import useRedirect from "../../../helpers/Routes/Redirect";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { sitePrefix } from '../../../config';
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -1400,7 +1401,7 @@ const SmsSend = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.SUCCESS);
       }
       else if (toggle && exit === "exit") {
-        Redirect({ url: "/react/SMSCampaigns" });
+        Redirect({ url: `${sitePrefix}SMSCampaigns` });
       }
       else {
         let response = await dispatch(getCampaignSumm(requestPayload.SmsCampaignID));
@@ -1685,7 +1686,7 @@ const SmsSend = ({ classes, ...props }) => {
     if (id) {
       dispatch(deleteSms(id));
       setDialogType(null);
-      Redirect({ url: "/react/SMSCampaigns" });
+      Redirect({ url: `${sitePrefix}SMSCampaigns` });
     }
   };
   const renderToast = () => {
@@ -1713,7 +1714,7 @@ const SmsSend = ({ classes, ...props }) => {
     settypedData([]);
   };
   const handlePreviousPage = () => {
-    Redirect({ url: `/react/sms/edit/${id}` });
+    Redirect({ url: `${sitePrefix}sms/edit/${id}` });
   }
   const renderSendType2validation = () => {
     return (<>
@@ -2464,7 +2465,7 @@ const SmsSend = ({ classes, ...props }) => {
       showDefaultButtons: true,
       confirmText: t("common.Yes"),
       cancelText: t("common.No"),
-      onClose: () => { Redirect({ url: "/react/SMSCampaigns" }); },
+      onClose: () => { Redirect({ url: `${sitePrefix}SMSCampaigns` }); },
       onCancel: () => { setDialogType(null) },
       onConfirm: () => { onSaveSettings(true, "exit") }
     }
@@ -2490,7 +2491,7 @@ const SmsSend = ({ classes, ...props }) => {
                 color: "#ffffff",
                 borderRadius: "10px"
               }}
-              onClick={() => { Redirect({ url: "/react/SMSCampaigns" }) }}>{t("common.confirm")}</span>
+              onClick={() => { Redirect({ url: `${sitePrefix}SMSCampaigns` }) }}>{t("common.confirm")}</span>
           </div>
         </Box>
       ),

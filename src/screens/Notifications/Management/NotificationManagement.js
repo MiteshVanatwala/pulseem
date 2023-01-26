@@ -34,6 +34,7 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
+import { sitePrefix } from '../../../config/index';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
@@ -339,7 +340,7 @@ const NotificationManagement = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {<Grid item>
           <Button
-            onClick={() => Redirect({ url: '/react/Notification/create' })}
+            onClick={() => Redirect({ url: `${sitePrefix}Notification/create` })}
             className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.createNotification')}
@@ -413,7 +414,7 @@ const NotificationManagement = ({ classes }) => {
         remove: StatusID !== 0,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/react/Notification/send/${ID}`
+        href: `${sitePrefix}Notification/send/${ID}`
       },
       {
         key: 'preview',
@@ -431,7 +432,7 @@ const NotificationManagement = ({ classes }) => {
         disable: StatusID !== 0,
         lable: t('notifications.buttons.edit'),
         // remove: windowSize === 'xs',
-        href: `/react/notification/Edit/${ID}`,
+        href: `${sitePrefix}notification/Edit/${ID}`,
         rootClass: classes.paddingIcon
       },
       {

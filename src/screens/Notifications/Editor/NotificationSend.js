@@ -17,6 +17,7 @@ import { DateField } from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sitePrefix } from '../../../config';
 
 const NotificationSend = ({ classes }) => {
     const { id } = useParams();
@@ -200,7 +201,7 @@ const NotificationSend = ({ classes }) => {
             saveSettings(true)
         }
         else {
-            Redirect({ url: "/react/Notifications" });
+            Redirect({ url: `${sitePrefix}Notifications` });
         }
     }
     const saveSettings = async (isExit, isSummary = false) => {
@@ -222,7 +223,7 @@ const NotificationSend = ({ classes }) => {
                 }
                 else {
                     if (isSummary === false)
-                        Redirect({ url: "/react/Notifications" });
+                        Redirect({ url: `${sitePrefix}Notifications` });
                     else
                         getSummary();
                 }
@@ -293,7 +294,7 @@ const NotificationSend = ({ classes }) => {
                     classes.actionButtonLightBlue,
                     classes.backButton
                 )}
-                onClick={() => Redirect({ url: `/react/Notification/edit/${model.ID}` })}
+                onClick={() => Redirect({ url: `${sitePrefix}Notification/edit/${model.ID}` })}
             >
                 {t('notifications.back')}
             </Button>
@@ -649,7 +650,7 @@ const NotificationSend = ({ classes }) => {
                     <Button
                         variant='contained'
                         size='small'
-                        onClick={() => { Redirect({ url: "/react/Notifications" }) }}
+                        onClick={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
                         className={clsx(
                             classes.confirmButton,
                             classes.dialogConfirmButton,
@@ -664,7 +665,7 @@ const NotificationSend = ({ classes }) => {
                     showDivider={false}
                     classes={classes}
                     open={true}
-                    onClose={() => { Redirect({ url: "/react/Notifications" }) }}
+                    onClose={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
                     {...dialog}>
                     {dialog.content}
                 </BaseDialog>

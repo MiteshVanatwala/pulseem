@@ -31,6 +31,7 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -227,7 +228,7 @@ const SmsManagnentScreen = ({ classes }) => {
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
             onClick={() => {
-              Redirect({ url: "/react/sms/create" })
+              Redirect({ url: `${sitePrefix}sms/create` })
             }}
             className={clsx(
               classes.btn, classes.btnRounded
@@ -296,7 +297,7 @@ const SmsManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/react/sms/send/${Id}`
+        href: `${sitePrefix}sms/send/${Id}`
       },
       {
         key: 'preview',
@@ -317,7 +318,7 @@ const SmsManagnentScreen = ({ classes }) => {
         uIcon: EditIcon,
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: `/react/sms/edit/${Id}`,
+        href: `${sitePrefix}sms/edit/${Id}`,
         rootClass: classes.paddingIcon
       },
       {

@@ -33,9 +33,10 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import EmailVerification from '../../Verification/EmailVerification';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  
+
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -218,7 +219,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }
 
   const redirctToArchive = () => {
-    window.location = '/react/Campaigns/Archive'
+    window.location = `${sitePrefix}Campaigns/Archive`
   }
 
   const handleVerificationDialog = () => {
@@ -234,7 +235,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             variant='contained'
             size='medium'
             onClick={() => {
-              navigate('/Campaigns/Create');
+              navigate(`${sitePrefix}/Campaigns/Create`);
             }}
             className={clsx(
               classes.btn,
@@ -347,7 +348,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         onClick: () => {
           if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
-            navigate(`/Campaigns/editor/${CampaignID}?fromreact=true`)
+            navigate(`${sitePrefix}Campaigns/editor/${CampaignID}?fromreact=true`)
           }
           else {
             window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`

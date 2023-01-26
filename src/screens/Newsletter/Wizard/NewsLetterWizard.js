@@ -25,6 +25,7 @@ import { getCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { BiSave } from 'react-icons/bi'
+import { sitePrefix } from '../../../config';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -419,7 +420,7 @@ const NewsLetterWizard = ({ classes }) => {
 
                 if (isContiue) {
                     const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
-                    let redirectUrl = isBeeEditor ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
+                    let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
                             redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
@@ -440,14 +441,14 @@ const NewsLetterWizard = ({ classes }) => {
                         window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                         return false;
                     }
-                    navigate(`/Campaigns`);
+                    navigate(`${sitePrefix}Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
                     }
                     else {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                        navigate(`${sitePrefix}Campaigns/Create/${saveInfo.CampaignID}`)
                     }
                     initFilesAndCredits(saveInfo.CampaignID);
                 }
@@ -457,7 +458,7 @@ const NewsLetterWizard = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        navigate('/Campaigns');
+        navigate(`${sitePrefix}Campaigns`);
     }
     const renderToast = () => {
         if (toastMessage) {
@@ -797,7 +798,7 @@ const NewsLetterWizard = ({ classes }) => {
                 window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                 return false;
             }
-            navigate('/Campaigns');
+            navigate(`${sitePrefix}Campaigns`);
         }
     }
 

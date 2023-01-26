@@ -25,6 +25,7 @@ import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../../components/managment/Title';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
+import { sitePrefix } from '../../../config';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { accountFeatures, language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -573,7 +574,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       setPage(1)
       const newCampaignId = await dispatch(cloneArchiveCampaign(data))
       if (newCampaignId.payload > 0) {
-        window.open('/react/Campaigns');
+        window.open(`${sitePrefix}Campaigns`);
       }
     }
   })
