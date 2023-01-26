@@ -54,7 +54,7 @@ const InboundMessages = ({ classes }: ClassesType) => {
                                     return !it.disabled && <Tab
                                         key={it.key}
                                         value={it.value}
-                                        classes={{ root: clsx(classes.minWidth100, it.isNewFeature ? [localClasses.flexItems, classes.disabled] : null) }}
+                                        classes={{ root: clsx(classes.minWidth100, it.isNewFeature ? localClasses.flexItems : null) }}
                                         icon={it.isNewFeature ? <span className={classes.commingSoon}>{translator('common.commingSoon')}</span> : ''}
                                         label={it.isNewFeature ? <span style={{ marginInlineEnd: 5 }}>{translator(it.name)}</span> : translator(it.name)}
                                     />
