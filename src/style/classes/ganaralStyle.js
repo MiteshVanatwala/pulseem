@@ -2588,10 +2588,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     backgroundColor: "#dc3545",
     padding: 5,
-    fontSize: 13,
+    fontSize: 11,
     color: "#fff",
-    borderRadius: 2,
+    borderRadius: 5,
     fontWeight: 400,
-    marginInlineStart: "3px"
+    marginInlineStart: "3px",
+    marginBottom: '0 !important'
   },
+  flexCenterOfCenter: {
+    display: 'flex', width: '100%', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
+  }
 });

@@ -16,6 +16,8 @@ import { TablePagination } from '../../../../components/managment/index';
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../../helpers/exportHelper';
 import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
+import { renderHtml } from '../../../../helpers/utils';
+import { ImWhatsapp } from 'react-icons/im';
 
 const WhatsappInbound = ({ classes }) => {
     const dispatch = useDispatch();
@@ -228,7 +230,7 @@ const WhatsappInbound = ({ classes }) => {
             />
         )
     }
-    return <Box>
+    return inboundWhatsappReport?.Data ? (<Box>
         {renderHeader()}
         <SearchLine
             classes={classes}
@@ -250,7 +252,12 @@ const WhatsappInbound = ({ classes }) => {
             options={ExportFileTypes}
         />
         <Loader isOpen={showLoader} showBackdrop={true} />
-    </Box>
+    </Box>) : <>
+        <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
+            <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
+            <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
+        </Box>
+    </>
 }
 
 export default WhatsappInbound;

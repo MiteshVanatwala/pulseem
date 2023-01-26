@@ -15,10 +15,10 @@ import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { WhatsappStatus } from '../../../helpers/PulseemArrays';
-import { whatsappStatusToString, whatsappStatusColor } from '../../../helpers/functions';
+import { whatsappStatusToString, whatsappStatusColor, renderHtml } from '../../../helpers/functions';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { useSelector } from 'react-redux';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
+import { ImWhatsapp } from 'react-icons/im';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -43,7 +43,6 @@ const DirectWhatsappReportTab = ({
     const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
     const { t } = useTranslation();
     const [showLoader, setLoader] = useState(false)
-    const { showContent } = useSelector(state => state.report);
 
     const handleSearch = async () => {
         setLoader(true);
@@ -241,7 +240,7 @@ const DirectWhatsappReportTab = ({
                         value={ExternalRef}
                         onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'whatsapp')}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('report.ExternalRef')}
+                        placeholder={t('common.templateId')}
                     />
                 </Grid>
                 <Grid item>
@@ -366,18 +365,6 @@ const DirectWhatsappReportTab = ({
                         align='center'>
                         {t('common.templateId')}
                     </TableCell>
-                    {/* <TableCell
-                        classes={cellStyle}
-                        className={classes.flex1}
-                        align='center'>
-                        {t('report.Characters')}
-                    </TableCell> */}
-                    {/* <TableCell
-                        classes={cellStyle}
-                        align='center'
-                        className={classes.flex1}>
-                        {t('report.Credits')}
-                    </TableCell> */}
                 </TableRow>
             </TableHead>
         )
@@ -610,16 +597,19 @@ const DirectWhatsappReportTab = ({
         )
     }
 
-    return (
+    return directWhatsappReport?.Data ? (
         <>
             {renderSearchLine()}
-            {/* {windowSize !== 'xs' && renderToggleContent()} */}
             {renderTable()}
             {renderTablePagination()}
-            {/* {directWhatsappReport && <TotalSection classes={classes} TotalObject={directWhatsappReport} callerType="sms" />} */}
             <Loader isOpen={showLoader} />
         </>
-    );
+    ) : <>
+        <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
+            <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
+            <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
+        </Box>
+    </>
 }
 
 export default DirectWhatsappReportTab
