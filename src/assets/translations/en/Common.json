@@ -601,5 +601,6 @@
   "read": "Read",
   "NoInboundIn24Session": "No inbound",
   "TemplateVariables": "Template Variables",
-  "templateId": "Template ID"
+  "templateId": "Template ID",
+  "commingSoon": "Comming soon"
 }

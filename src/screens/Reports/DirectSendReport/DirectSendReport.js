@@ -24,10 +24,22 @@ import { useLocation } from 'react-router';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice'
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  flexItems: {
+    '& .MuiTab-wrapper': {
+      display: 'flex',
+      flexDirection: 'row-reverse',
+      alignItems: 'space-between'
+    }
+  }
+});
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const location = useLocation();
   const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
+  const localClasses = useStyles();
 
   const { showContent } = useSelector(state => state.report);
   const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
@@ -347,7 +359,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             >
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-              <Tab label={t('master.whatsapp')} classes={{ root: classes.minWidth100 }} value={2} />
+              <Tab label={<span style={{marginInlineEnd: 5}}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, classes.disabled, localClasses.flexItems) }} value={2}
+                icon={<span className={classes.commingSoon}>{t("common.commingSoon")}</span>} />
             </TabList>
             <Grid item>
               {!isArchive && tabValue !== 2 && <Button
