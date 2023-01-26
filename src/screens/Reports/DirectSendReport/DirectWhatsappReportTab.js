@@ -596,7 +596,7 @@ const DirectWhatsappReportTab = ({
         )
     }
 
-    return directWhatsappReport?.Data ? (
+    return directWhatsappReport?.Data?.length > 0 ? (
         <>
             {renderSearchLine()}
             {renderTable()}
