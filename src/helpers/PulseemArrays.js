@@ -82,3 +82,13 @@ export const MMSReportStatus = [
     { id: 4, value: 'report.smsReport.statuses.sent', color: "sendIconText" },
     { id: 5, value: 'report.smsReport.statuses.cancelled', color: "textColorRed" }
 ];
+
+export const WhatsappStatus = [
+    { id: null, value: 'common.All' },
+    { id: 1, value: 'common.Pending' },
+    { id: 2, value: 'common.Sent' },
+    { id: 3, value: 'common.delivered' },
+    { id: 4, value: 'common.failedStatus' },
+    { id: 5, value: 'common.Queued' },
+    { id: 6, value: 'common.read' }
+];
