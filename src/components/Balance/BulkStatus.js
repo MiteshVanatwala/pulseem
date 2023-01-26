@@ -74,14 +74,14 @@ const BulkStatus = ({ classes }) => {
       }
 
       const options = {
-        classes: classes,
-        open: isOpenPackageDialog,
-        onCancel: handleDialogClose,
-        onClose: handleDialogClose,
-        onConfirm: handleDialogClose,
-        showDefaultButtons: false,
-        style: availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null,
-        children: dialog.content
+        Classes: classes,
+        Open: isOpenPackageDialog,
+        OnCancel: handleDialogClose,
+        OnClose: handleDialogClose,
+        OnConfirm: handleDialogClose,
+        ShowDefaultButtons: false,
+        Style: availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null,
+        Children: dialog.content
       }
 
       return (
