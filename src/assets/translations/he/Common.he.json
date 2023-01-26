@@ -435,6 +435,8 @@
   "rowNumber": "מספר שורות",
   "clear": "נקה",
   "confirm": "אישור",
+  "stopped": "נעצר",
+  "cancelled": "מבוטל",
   "approved": "מאושר",
   "draft": "טיוטה",
   "failedStatus": "נכשלו",
@@ -597,5 +599,6 @@
   "NoInboundIn24Session": "לא התקבלה תשובה",
   "TemplateVariables": "משתנים בתבנית",
   "templateId": "מזהה תבנית",
-  "commingSoon": "בקרוב..."
+  "commingSoon": "בקרוב!",
+  "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים"
 }
