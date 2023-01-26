@@ -110,5 +110,6 @@
   "ExportLimitation": "לא ניתן להוריד קובץ שמכיל מעל 600 אלף רשומות",
   "clientName": "שם לקוח",
   "filterSearch": "החל סינון",
-  "closeFilterSearch": "סגור סינון"
+  "closeFilterSearch": "סגור סינון",
+  "smsReplies": "דו\"ח SMS נכנסים"
 }

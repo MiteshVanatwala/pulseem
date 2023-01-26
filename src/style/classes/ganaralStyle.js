@@ -2583,5 +2583,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   textRed: {
     color: '#c9302c'
-  }
+  },
+  commingSoon:
+  {
+    backgroundColor: "#dc3545",
+    padding: 5,
+    fontSize: 13,
+    color: "#fff",
+    borderRadius: 2,
+    fontWeight: 400,
+    marginInlineStart: "3px"
+  },
 });
