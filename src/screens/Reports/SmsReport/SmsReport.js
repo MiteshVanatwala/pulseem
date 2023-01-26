@@ -20,7 +20,7 @@ import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { smsReportStatus } from '../../../helpers/Constants';
-import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
@@ -257,19 +257,21 @@ const SmsReport = ({ classes }) => {
       OrderItems: true,
       FormatDate: true,
       ConvertStatusToString: true,
+      IsBoolean: true,
       BooleanToNumber: true,
       PropertyToReplace: 'IsResponse',
+      PropertyDefaultReplaceValue: t('common.No'),
       Statuses: smsReportStatus,
       Order: Object.keys(exportColumnHeader),
       DeleteProperties: ["Status"]
     };
 
     try {
-      const result = await HandleExportData(smsReport, exportOptions);
+      const result = await HandleExportData([...smsReport], exportOptions);
 
       ExportFile({
         data: result,
-        fileName: 'emailReport',
+        fileName: 'smsReport',
         exportType: formatType,
         fields: exportColumnHeader
       });

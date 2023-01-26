@@ -49,10 +49,9 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportAsXLSX, exportFile } from '../../helpers/exportFromJson';
-import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
+import { ExportFile } from "../../helpers/Export/ExportFile";
+import { FlatObject, HandleExportData } from "../../helpers/Export/ExportHelper";
 import { ClientStatus } from "../../helpers/Constants";
-import { switchClientStatus } from '../../helpers/functions';
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -60,6 +59,8 @@ import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
+import { SwitchClientStatus } from "../../helpers/UI/TableText";
 
 const useStyles = makeStyles({
   groupName: {
@@ -292,7 +293,7 @@ const ClientSearchResult = ({ props, classes }) => {
         "ExtraField12": t('common.ExtraField12'),
         "ExtraField13": t('common.ExtraField13'),
       }
-      updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
+      updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
   }, [extraData])
@@ -359,31 +360,34 @@ const ClientSearchResult = ({ props, classes }) => {
           client.SmsStatus = t(tempSmsStatus.value);
           return client;
         }, []);
-        orderList = orderList.map((ol) => { return flatObject(ol) });
+
+        orderList = orderList.map((ol) => { return FlatObject(ol) });
+
+        let propertToDelete = [];
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+          propertToDelete.push("Revenue");
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+          propertToDelete.push("SendDate");
         }
-        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
-        orderList = formatDateTime(orderList, t);
         const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
-        if (formatType === 'csv') {
-          // Pay attention -> We set XLSX for better header's order.
-          // CSV not supporting numeric extra fields order.
-          exportFile({
-            data: orderList,
-            exportType: formatType,
-            fields: exportColumnHeader.current,
-            fileName: fileName
-          })
-        }
-        else {
-          await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
-        }
+        const exportOptions = {
+          OrderItems: true,
+          FormatDate: true,
+          Statuses: ClientStatus,
+          Order: Object.keys(exportColumnHeader.current),
+          DeleteProperties: propertToDelete
+        };
+        const result = await HandleExportData(orderList, exportOptions);
+
+        ExportFile({
+          data: result,
+          exportType: formatType,
+          fields: exportColumnHeader.current,
+          fileName: fileName
+        })
       }
       else {
         setToastMessage(t('common.errorOccured'));
@@ -973,7 +977,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
           <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
             if (location?.state && location?.state.PageProperty) {
-              navigate(`/${location?.state.PageProperty.PageName}`, {
+              navigate(`/react/${location?.state.PageProperty.PageName}`, {
                 state: {
                   from: 'clientsearchresult'
                 }
@@ -1324,10 +1328,10 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
-        return t(switchClientStatus('email', Status))
+        return t(SwitchClientStatus(2, Status))
       }
       else if (Cellphone && !isEmail && Cellphone !== '') {
-        return t(switchClientStatus('sms', SmsStatus))
+        return t(SwitchClientStatus(1, SmsStatus))
       }
       return t("emailStatus.noStatus")
     }

@@ -47,7 +47,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 // Log({
                 //     MethodName: 'HandleExportData',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'OrderItems'
                 // })
                 console.error('OrderItems');
                 reject(error);
@@ -60,7 +60,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 // Log({
                 //     MethodName: 'ReplaceNull',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'ReplaceNull'
                 // })
                 reject(error);
             }
@@ -72,7 +72,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 // Log({
                 //     MethodName: 'SwitchStatus',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'SwitchStatus'
                 // })
                 reject(error);
             }
@@ -84,7 +84,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
                 // Log({
                 //     MethodName: 'BooleanToNumber',
                 //     ComponentName: 'ExportHelper.ts',
-                //     Text: error as string
+                //     Text: 'BooleanToNumber'
                 // })
                 reject(error);
             }
@@ -163,23 +163,35 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
     return retValData as ExportData;
 }
 export async function ReplaceNull(obj: ExportData | any, property: string, val: string = '') {
-    obj.forEach((o: { [x: string]: string; }) => {
-        if (o[property] === null || o[property] === '') {
-            o[property] = val;
-        }
+    return new Promise((resolve) => {
+        const newObject: any = [];
+        obj.forEach((o: { [x: string]: string; }) => {
+            Object.freeze(o);
+            let item = { ...o };
+            if (item[property] === null || item[property] === '') {
+                item[property] = val;
+            }
+            newObject.push(item);
+        });
+        resolve(newObject);
     });
-    return obj as ExportData;
 }
 export async function BooleanToNumber(obj: ExportData | any, property: string, isBoolean: boolean = false) {
-    obj.forEach((o: any) => {
-        if (!o[property]) {
-            o[property] = isBoolean ? i18n.t('common.No') : 0;
-        }
-        else {
-            o[property] = isBoolean ? i18n.t('common.Yes') : 1;
-        }
-    });
-    return obj as ExportData;
+    return new Promise((resolve) => {
+        const newObject: any = [];
+        obj.forEach((o: any) => {
+            Object.freeze(o);
+            let item = { ...o };
+            if (!item[property]) {
+                item[property] = isBoolean ? i18n.t('common.No') : 0;
+            }
+            else {
+                item[property] = isBoolean ? i18n.t('common.Yes') : 1;
+            }
+            newObject.push(item);
+        });
+        resolve(newObject);
+    })
 }
 export const FormatDate = (date: string) => {
     if (date === '' || !date) {
@@ -267,3 +279,9 @@ export const StringToArrayBuffer = (str: string) => {
         }
     })
 }
+export const FlatObject = (obj: any = {}) => Object.keys(obj || {}).reduce((o: any, cur) => {
+    if (typeof obj[cur] === 'object') {
+        o = { ...o, ...FlatObject(obj[cur]) }
+    } else { o[cur] = obj[cur] }
+    return o
+}, {})

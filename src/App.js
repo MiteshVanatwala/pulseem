@@ -131,25 +131,25 @@ const renderRoutes = (classes) => {
       />
       <Route
         exact
-        path="/Campaigns/Create"
+        path="/react/Campaigns/Create"
         element={<NewsLetterWizard classes={classes} />}
       />
       <Route
-        path="/Campaigns/Create/:id"
+        path="/react/Campaigns/Create/:id"
         element={<NewsLetterWizard classes={classes} />}
       />
       <Route
         exact
-        path="/Campaigns/editor"
+        path="/react/Campaigns/editor"
         element={<CampaignEditorBee classes={classes} />}
       />
       <Route
-        path="/Campaigns/editor/:id"
+        path="/react/Campaigns/editor/:id"
         element={<CampaignEditorBee classes={classes} />}
       />
       <Route
         exact
-        path="/Campaigns/Archive"
+        path="/react/Campaigns/Archive"
         element={<ArchiveManagement classes={classes} />}
       />
       {/* <Route
@@ -180,10 +180,6 @@ const renderRoutes = (classes) => {
       <Route
         path={`/react/SMSCampaigns`}
         element={<SmsManagment classes={classes} />}
-      />
-      <Route
-        path={`/SMSCampaignEdit`}
-        component={transferUrl('/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create')}
       />
       <Route
         path={`/SMSSmartResponses`}
@@ -242,16 +238,6 @@ const renderRoutes = (classes) => {
         path="/ClientSearchResult"
         element={<ClientSearchResult classes={classes} />}
       /> */}
-      <Route path="/ClientSearchResult/">
-        <Route
-          path=""
-          element={<ClientSearchResult classes={classes} />}
-        />
-        <Route
-          path=":id"
-          element={<ClientSearchResult classes={classes} />}
-        />
-      </Route>
       <Route
         path="/react/EditRegistrationPage"
         element={<LandingPagesesManagment classes={classes} />}
@@ -288,7 +274,7 @@ const renderRoutes = (classes) => {
       />
       <Route
         exact
-        path={`/Reports/ProductReport`}
+        path={`/react/Reports/ProductsReport`}
         element={<ProductsReport classes={classes} />}
       />
       <Route
@@ -298,10 +284,6 @@ const renderRoutes = (classes) => {
       <Route
         path={`/AccountReport`}
         component={transferUrl('/Pulseem/AccountReport.aspx')}
-      />
-      <Route
-        path={`/Reports/ProductsReport`}
-        element={<ProductsReport classes={classes} />}
       />
       {/* <Route
         path={`/CampaignComparison`}

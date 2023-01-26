@@ -289,6 +289,7 @@ const NewslettersReport = ({ classes }) => {
       });
 
       setToFileArray([]);
+      setDialog(null);
     } catch (error) {
       console.log(error);
     }

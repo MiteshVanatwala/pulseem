@@ -11,7 +11,7 @@ import { MdOutlineMarkEmailRead } from 'react-icons/md';
 import {
     getAuthorizeNumbers, sendVerificationCode, verifyCode
 } from '../../redux/reducers/smsSlice'
-import { renderHtml } from '../../helpers/functions';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
@@ -300,7 +300,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                     </Box>
                     <Box>
                         <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
-                        <Typography variant='body1'>{renderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+                        <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
                     </Box>
                 </Box>
             </Box>
@@ -505,7 +505,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                     </Box>
                     <Box>
                         <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
-                        <Typography variant='body1'>{renderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+                        <Typography variant='body1'>{RenderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
                     </Box>
                 </Box>
             </Box>

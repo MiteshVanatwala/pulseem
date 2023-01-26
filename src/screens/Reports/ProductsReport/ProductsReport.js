@@ -21,6 +21,7 @@ import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
