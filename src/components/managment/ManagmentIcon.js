@@ -1,58 +1,60 @@
-import React,{useRef} from 'react';
+import React, { useRef } from 'react';
 import clsx from 'clsx';
-import {Typography,Button,Box} from '@material-ui/core'
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { Typography, Button, Box } from '@material-ui/core'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-export const ManagmentIcon=({
+export const ManagmentIcon = ({
   classes,
   icon,
   uIcon,
-  lable='',
-  rootClass='',
-  iconClass='',
-  textClass='',
-  disable=false,
-  hide=false,
-  remove=false,
-  href='',
-  type='',
-  text='',
-  onClick=() => null}) => {
-  const buttonRef=useRef();
+  lable = '',
+  rootClass = '',
+  iconClass = '',
+  textClass = '',
+  disable = false,
+  hide = false,
+  remove = false,
+  href = '',
+  type = '',
+  text = '',
+  disableHover = false,
+  onClick = () => null }) => {
+  const buttonRef = useRef();
 
-  if(remove)
+  if (remove)
     return null
 
-  const renderButtonDefault=() => {
+  const renderButtonDefault = () => {
     return (
       <Button
         ref={buttonRef}
-        disabled={!!disable||!!hide}
+        disabled={!!disable || !!hide}
         size='small'
+        style={{ backgroundColor: disableHover ? 'transparent' : null }}
         onClick={() => onClick(buttonRef)}
         className={clsx({
           [classes.managmentIconHide]: hide
         })}>
         <Box
-          component={href? 'a':'div'}
+          component={href ? 'a' : 'div'}
           href={href}
-          className={clsx(disable&&classes.disabledCursor,
+          className={clsx(disable && classes.disabledCursor,
             classes.managmentIconContainer,
             rootClass
           )}>
-          {!!uIcon?
+          {!!uIcon ?
             uIcon
-            :<img
+            : <img
               src={icon}
               alt='Icon'
               className={clsx(
                 iconClass,
-                classes.managmentIcon,{
+                classes.managmentIcon, {
                 [classes.managmentIconDisable]: disable
               })} />}
           <Typography className={clsx(
             classes.managmentIconText,
-            textClass,disable&&classes.colorGray
+            textClass, disable && classes.colorGray
           )}>
             {lable}
           </Typography>
@@ -61,7 +63,7 @@ export const ManagmentIcon=({
     );
   }
 
-  const renderCopyField=() => {
+  const renderCopyField = () => {
     return (
       <CopyToClipboard text={text}>
         {renderButtonDefault()}
@@ -70,7 +72,7 @@ export const ManagmentIcon=({
   }
   return (
     <>
-      {type==='copy'? renderCopyField():renderButtonDefault()}
+      {type === 'copy' ? renderCopyField() : renderButtonDefault()}
     </>
   )
 }

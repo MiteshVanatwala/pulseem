@@ -121,7 +121,6 @@ export const formatDateTime = (arr, t) => {
         if (a.SendDate === '') {
             a.SendDate = t('common.notSent');
         }
-
     });
 
     return newArr;

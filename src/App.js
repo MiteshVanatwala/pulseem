@@ -33,12 +33,13 @@ import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
-import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+import SmsReplies from './screens/Reports/Inbound/Sms/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
+import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -414,6 +415,21 @@ const renderRoutes = (classes, history) => {
         exact
         path={`/SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/Inbound'}
+        element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/Inbound/:type'}
+        element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/Inbound/:type/:id'}
+        element={<InboundMessages classes={classes} />}
       />
     </Routes>
   )

@@ -84,11 +84,17 @@ export const MMSReportStatus = [
 ];
 
 export const WhatsappStatus = [
+    { id: -1, value: 'report.takenBySender' },
     { id: null, value: 'common.All' },
     { id: 1, value: 'common.Pending' },
     { id: 2, value: 'common.Sent' },
     { id: 3, value: 'common.delivered' },
     { id: 4, value: 'common.failedStatus' },
-    { id: 5, value: 'common.Queued' },
-    { id: 6, value: 'common.read' }
+    { id: 5, value: 'common.Unsubscribed' },
+    { id: 6, value: 'common.read' },
+    { id: 7, value: 'report.canceled' },
+    { id: 8, value: 'common.stopped' },
+    { id: 9, value: 'common.Removed' },
+    { id: 10, value: 'report.invalidFromNumber' },
+    { id: 11, value: 'common.NoInboundIn24Session' }
 ];
