@@ -267,58 +267,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
             </Box>
           }
         </Box>
-        {/* <Grid container justifyContent={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
-          <Grid item lg={showGraphs ? 6 : 12} md={12} className={tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null}>
-            {
-              showGraphs ? (innerData.map((c, index) => {
-                const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
-                return (
-                  <>
-
-                    {index === 0 && <Divider />}
-                    <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
-                      <Box className={clsx(classes.flex2, classes.paddingSides15)}>
-                        <BootstrapTooltip title={c.CampaignName} placement="top">
-                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f16, classes.ellipsisText, classes.graphCampaignName)}>
-                            {c.CampaignName}
-                          </Link>
-                        </BootstrapTooltip>
-                      </Box>
-                      <Box className={classes.flex1}>
-                        {tabType === "sms" && <Box>
-                          <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5, classes.f16)}>
-                            {c.TotalSendPlan.toLocaleString()} {`${c.TotalSendPlan === 1 ? t('common.Recipient') : t('common.Recipients')}`}
-                          </Typography>
-                        </Box>}
-                      </Box>
-                      <Box className={classes.flex1}>
-                        <Typography className={clsx(classes.dInlineBlock, classes.f16, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
-                          {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    {index === innerData.length - 1 && <Divider />}
-                  </>
-                )
-              })) :
-                (
-                  <ButtonWithTitle
-                    classes={classes}
-                    title={tabType === 'newsletter' ? t("dashboard.createFirstNewsletter") : t("dashboard.createFirstSms")}
-                    buttonText={tabType === 'newsletter' ? t('common.CreateNewsletter') : t('sms.create')}
-                    redirect={tabType === 'newsletter' ? `/react/Campaigns/Create` : `/react/sms/create`}
-                    buttonClass={classes.createButton} />
-                )
-            }
-          </Grid>
-          {showGraphs && <Grid item lg={6} md={12}>
-            <Box className={classes.barChart}>
-              <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
-            </Box>
-          </Grid>
-          }
-        </Grid> */}
-      </TabPanel >
+      </TabPanel>
     );
   }
 

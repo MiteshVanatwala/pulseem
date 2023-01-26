@@ -44,6 +44,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
+import queryString from 'query-string';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -75,6 +76,7 @@ const Groups = ({ classes }) => {
     const { state } = useLocation();
     const from = state?.from || "/";
     const pageProperty = useRef();
+    const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
     const DialogType = {
         ADD_GROUP: "ADD_GROUP",
@@ -162,6 +164,12 @@ const Groups = ({ classes }) => {
             setSearchStr(lastSearch?.SearchTerm ?? "");
         }
     }, [dispatch, serachData.PageIndex, rowsPerPage]);
+
+    useEffect(() => {
+        if (qs?.NewGroup === 'true') {
+            setDialog(DialogType.ADD_GROUP)
+        }
+    }, [])
 
 
     const renderSearchSection = () => {
@@ -1453,16 +1461,16 @@ const Groups = ({ classes }) => {
         }
     }
     const handleConfirmExport = (formatType) => {
-        let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
+        let qString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
         if (selectedGroups && selectedGroups.length > 0) {
-            queryString += `&Groups=${selectedGroups.join(',')}`;
+            qString += `&Groups=${selectedGroups.join(',')}`;
         }
         if (selectedGroups.length === 1) {
             const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
-            queryString += `&GroupName=${groupName.replace(' ', '-')}`;
+            qString += `&GroupName=${groupName.replace(' ', '-')}`;
         }
         // This should be change in the .NET site for support the format file selection POP UP 
-        window.open(`/Pulseem/ClientExport.csv?${queryString}`);
+        window.open(`/Pulseem/ClientExport.csv?${qString}`);
         setShowConfirmDialog(false);
     }
     const renderConfirmDialog = () => {
@@ -1601,15 +1609,24 @@ const Groups = ({ classes }) => {
                     return <AddGroupPopUp
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
-                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        onClose={() => {
+                            setDialog(null);
+                            setSelectedGroups([])
+                        }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
                         addClientByQuery={false}
-                        addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
+                        addAnotherRecCallback={(groupId) => {
+                            setSelectedGroups([...selectedGroups, groupId]);
+                            setDialog(DialogType.ADD_RECIPIENTS)
+                        }}
                         getData={() => getData(null)}
-                        handleResponses={(response, actions) => handleResponses(response, actions)}
+                        handleResponses={(response, actions) => {
+                            setDialog(null);
+                            handleResponses(response, actions);
+                        }}
                     />
                 }
                 case DialogType.EDIT_GROUP: {

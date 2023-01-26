@@ -4,7 +4,7 @@ export const DASHBOARD_SHORTCUT = {
       pages: [
         {
           title: 'dashboard.createGroup',
-          link: '/Pulseem/Groups.aspx?NewGroup=true'
+          link: '/react/Groups?NewGroup=true'
         },
         {
           title: 'appBar.groups.manageRecipients',
