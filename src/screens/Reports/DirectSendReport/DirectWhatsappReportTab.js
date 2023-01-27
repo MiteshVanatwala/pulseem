@@ -507,9 +507,6 @@ const DirectWhatsappReportTab = ({
                             <Grid item xs={12}>
                                 <Box className={classes.spaceBetween}>
                                     <Box>
-                                        <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                                            {t("common.ReplyDate")}
-                                        </Typography>
                                         {renderCell(Schedule, 'date')}
                                     </Box>
                                     <Box>
