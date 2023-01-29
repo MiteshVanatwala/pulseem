@@ -16,7 +16,7 @@ import { Button, Grid, Box } from "@material-ui/core";
 import {
     getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
-import { combinedGroup, addRecipient, addRecipients, createGroup, getDefaultGroup } from "../../../redux/reducers/groupSlice";
+import { combinedGroup, addRecipient, addRecipients, createGroup, getDefaultGroup, getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
 import { getAuthorizeNumbers, getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
 import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
@@ -30,7 +30,7 @@ import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
-import { getCampaignInfo, getGroups, getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
+import { getCampaignInfo, getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
 import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
@@ -101,9 +101,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
     const { verifiedEmails } = useSelector(state => state.common);
-    const { defaultGroupId } = useSelector((state) => state.group);
+    const { defaultGroupId, subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
-    const { ToastMessages, newsletterSettings, groupData, newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
+    const { ToastMessages, newsletterSettings, newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);
@@ -170,7 +170,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 return;
 
             const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null } = newsletterSettings;
-            const { Groups } = groupData;
+            const { Groups } = subAccountAllGroups;
 
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
@@ -179,7 +179,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setFilterValues({
                 ...filterValues,
                 toggleReci: ExceptionalDays !== '' && ExceptionalDays > 0,
-                selectedFilterGroups: ExeptionalGroups ? groupData?.Groups.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
+                selectedFilterGroups: ExeptionalGroups ? subAccountAllGroups?.filter((c) => ExeptionalGroups.indexOf(c.GroupID) > -1) : [],
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.CampaignID) > -1) : [],
                 exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
             });
@@ -211,8 +211,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     dispatch(getAuthorizedEmails())
                 if (!previousCampaignData || previousCampaignData?.length === 0)
                     dispatch(getPreviousCampaignData());
-                if (!groupData || groupData?.length === 0)
-                    await dispatch(getGroups());
+                if (!subAccountAllGroups || subAccountAllGroups?.length === 0)
+                    await dispatch(getGroupsBySubAccountId());
                 if (!testGroups || testGroups?.length === 0)
                     await dispatch(getTestGroups());
                 if (!extraData || extraData?.length === 0)
@@ -440,7 +440,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const createNewGroup = async (groupName) => {
-        const nameExist = groupData?.Groups.filter((g) => { return g?.GroupName === groupName });
+        const nameExist = subAccountAllGroups?.filter((g) => { return g?.GroupName === groupName });
         if (nameExist.length > 0) {
             setNewGroupDetails({ ...newGroupDetails, groupNameExist: true });
             return;
@@ -651,7 +651,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             handleReciInput: handleReciInput,
             filterValues: filterValues,
             setFilterValues: setFilterValues,
-            groupList: groupData?.Groups,
+            groupList: subAccountAllGroups,
             callbackUpdateGroupFilterd: (group) => callbackUpdateGroupFilterd(group),
             callbackFilteredGroups: (group) => callbackFilteredGroups(group),
             renderHtml: renderHtml,
@@ -780,10 +780,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const callbackSelectAll = () => {
         if (!allGroupsSelected) {
             if (showTestGroups) {
-                setSelectedGroups([...testGroups, ...groupData?.Groups]);
+                setSelectedGroups([...testGroups, ...subAccountAllGroups]);
             }
             else {
-                setSelectedGroups([...groupData?.Groups]);
+                setSelectedGroups([...subAccountAllGroups]);
             }
         } else {
             setSelectedGroups([]);
@@ -903,10 +903,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             </Stack>
                         </Stack>
                         <Stack justifyContent="center" >
-                            {activeTab === 0 && groupData?.Groups &&
+                            {activeTab === 0 && subAccountAllGroups &&
                                 <Groups
                                     classes={classes}
-                                    list={showTestGroups ? [...testGroups.concat(groupData?.Groups)] : [...groupData?.Groups]}
+                                    list={showTestGroups ? [...testGroups.concat(subAccountAllGroups)] : [...subAccountAllGroups]}
                                     // list={groupData?.Groups}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}

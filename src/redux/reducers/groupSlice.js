@@ -207,7 +207,7 @@ export const groupSlice = createSlice({
             state.groupData = payload;
         })
         builder.addCase(combinedGroup.fulfilled, (state, action) => {
-            state.groupData.push(action.payload);
+            state.subAccountAllGroups.push(action.payload);
         })
         builder.addCase(getDefaultGroup.fulfilled, (state, { payload }) => {
             state.defaultGroupId = payload;
