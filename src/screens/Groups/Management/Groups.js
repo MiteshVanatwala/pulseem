@@ -867,7 +867,7 @@ const Groups = ({ classes }) => {
                                                 value: ActiveCell,
                                                 classes: {
                                                     name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
-                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem,classes.noDecoration),
+                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
                                                     href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
                                                         {
                                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -1758,30 +1758,36 @@ const Groups = ({ classes }) => {
         )
     }
     const handleAddRecipientResponse = (res) => {
-        switch (res.payload.StatusCode) {
-            case 201: {
-                setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            case 404: {
-                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            case 400: {
-                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
-                setDialog(DialogType.MESSAGE);
-                break;
-            }
-            default: {
-                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
-                setDialog(DialogType.MESSAGE);
+        if (res === '') {
+            setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
+            setDialog(DialogType.MESSAGE);
+        }
+        else {
+            switch (res.payload.StatusCode) {
+                case 201: {
+                    setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
+                    setDialog(DialogType.MESSAGE);
+                    break;
+                }
+                case 202: {
+                    setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
+                    setDialog(DialogType.MESSAGE);
+                    break;
+                }
+                case 404: {
+                    setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
+                    setDialog(DialogType.MESSAGE);
+                    break;
+                }
+                case 400: {
+                    setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
+                    setDialog(DialogType.MESSAGE);
+                    break;
+                }
+                default: {
+                    setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
+                    setDialog(DialogType.MESSAGE);
+                }
             }
         }
     }
