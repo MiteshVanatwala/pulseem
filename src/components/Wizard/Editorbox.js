@@ -200,7 +200,13 @@ const Editorbox = ({
             siteTrackingLogic();
         }
         onUpdate(smsModel);
-    }, [commonSettings, smsModel]);
+    }, [commonSettings]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            onUpdate(smsModel);
+        }, 0)
+    }, [smsModel]);
 
     useEffect(() => {
         linkCalculation();
@@ -337,26 +343,6 @@ const Editorbox = ({
                 handleSmsModelChange("CreditsPerSms", 0);
             }
         });
-    }
-    const validationCheck = () => {
-        let isValid = true;
-        if (smsModel.Name === "") {
-            setcampaignBool(true);
-            isValid = false;
-        }
-
-        if (smsModel.Text === "") {
-            isValid = false
-        }
-        let english = /^[ A-Za-z0-9]*$/;
-        if (campaignNumber === "" || !english.test(campaignNumber)) {
-            setcampaignNumberValidated(true);
-            isValid = false;
-        }
-        if (!isValid) {
-            setDialogType({ type: "valiateError" })
-        }
-        return isValid;
     }
     const onAddText = (text) => {
         text = text.trim();
@@ -986,4 +972,4 @@ const Editorbox = ({
     );
 };
 
-export default Editorbox
+export default Editorbox;
