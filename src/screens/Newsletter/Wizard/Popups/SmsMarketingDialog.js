@@ -130,7 +130,7 @@ const SmsMarketingDialog = ({
         setSmsModel({ ...smsModel, SendDate: finalDate, Text: textRef.current.value });
 
         if (!textRef.current.value || textRef.current.value === '') {
-            setErrors(t('campaigns.newsLetterEditor.sendSettings.errors.reqText'))
+            setErrors({ Text: t('campaigns.newsLetterEditor.sendSettings.errors.reqText') })
         }
         else {
             if (handleValidation()) {
