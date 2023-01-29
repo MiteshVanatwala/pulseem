@@ -14,7 +14,7 @@ import { BiSave } from 'react-icons/bi'
 import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Button, Grid, Box } from "@material-ui/core";
 import {
-    getAccountExtraData, getPreviousCampaignData, getTestGroups, getSmsMarketing
+    getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
 import { combinedGroup, addRecipient, addRecipients, createGroup, getDefaultGroup } from "../../../redux/reducers/groupSlice";
 import { getAuthorizeNumbers, getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
@@ -102,7 +102,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { isRTL } = useSelector((state) => state.core);
     const { verifiedEmails } = useSelector(state => state.common);
     const { defaultGroupId } = useSelector((state) => state.group);
-    const { previousCampaignData, extraData, testGroups } = useSelector((state) => state.sms);
+    const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, groupData, newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
@@ -208,15 +208,17 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 if (!campaignInfo || campaignInfo?.length === 0)
                     await dispatch(getCampaignInfo(params.id))
                 if (!verifiedEmails || verifiedEmails?.length === 0)
-                    await dispatch(getAuthorizedEmails())
-                if (!previousCampaignData || previousCampaignData.length === 0)
-                    await dispatch(getPreviousCampaignData());
+                    dispatch(getAuthorizedEmails())
+                if (!previousCampaignData || previousCampaignData?.length === 0)
+                    dispatch(getPreviousCampaignData());
                 if (!groupData || groupData?.length === 0)
                     await dispatch(getGroups());
-                if (!testGroups || testGroups.length === 0)
+                if (!testGroups || testGroups?.length === 0)
                     await dispatch(getTestGroups());
-                if (!extraData || extraData.length === 0)
+                if (!extraData || extraData?.length === 0)
                     await dispatch(getAccountExtraData());
+                if (!previousLandingData || previousLandingData?.length === 0)
+                    dispatch(getPreviousLandingData());
                 resolve();
             } catch (error) {
                 reject(error)
@@ -905,6 +907,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                 <Groups
                                     classes={classes}
                                     list={showTestGroups ? [...testGroups.concat(groupData?.Groups)] : [...groupData?.Groups]}
+                                    // list={groupData?.Groups}
                                     selectedList={selectedGroups}
                                     callbackSelectedGroups={callbackSelectedGroups}
                                     callbackUpdateGroups={callbackUpdateGroups}
