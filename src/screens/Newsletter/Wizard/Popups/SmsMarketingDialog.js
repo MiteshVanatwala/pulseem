@@ -1,6 +1,6 @@
 import { Button, Select, FormControl, Grid, Typography, MenuItem, FormHelperText, Box, FormGroup, TextField, Link } from '@material-ui/core'
 import Switch from "react-switch";
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from 'react-i18next';
 import LabeledTextField from '../../../../components/core/LabeledTextField';
 import clsx from 'clsx';
@@ -24,6 +24,7 @@ const SmsMarketingDialog = ({
     onCancel = () => null,
     onConfirm = () => null
 }) => {
+    const textRef = useRef(null);
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
@@ -126,30 +127,36 @@ const SmsMarketingDialog = ({
         finalDate.set({ h: moment(smsModel.SendTime).format("HH"), m: moment(smsModel.SendTime).format("mm") });
         const newVal = finalDate.format();
 
-        setSmsModel({ ...smsModel, SendDate: finalDate });
+        setSmsModel({ ...smsModel, SendDate: finalDate, Text: textRef.current.value });
 
-        if (handleValidation()) {
-            const totalMarketing = { ...settings };
-            const smsCampaignPayload = {
-                Type: 0,
-                SendDate: newVal,
-                Name: smsModel.Name,
-                Text: smsModel.Text,
-                IsTestCampaign: false,
-                SendSmsTo: smsModel.SendSmsTo,
-                FromNumber: smsModel.FromNumber,
-                SmsBulkCost: smsModel.SmsBulkCost,
-                IsLinksStatistics: isLinksStatistics,
-                CreditsPerSms: smsModel.CreditsPerSms,
-                EmailCampaignID: totalMarketing?.CampaignID,
-                GroupIds: selectedGroups.map((g) => g.GroupID)
-            };
-
-            const r = await dispatch(setSmsMarketing(smsCampaignPayload));
-            handleTotalMarketingResponse(r.payload);
-            setLoader(false);
-            onConfirm();
+        if (!textRef.current.value || textRef.current.value === '') {
+            setErrors(t('campaigns.newsLetterEditor.sendSettings.errors.reqText'))
         }
+        else {
+            if (handleValidation()) {
+                const totalMarketing = { ...settings };
+                const smsCampaignPayload = {
+                    Type: 0,
+                    SendDate: newVal,
+                    Name: smsModel.Name,
+                    Text: textRef.current.value,
+                    IsTestCampaign: false,
+                    SendSmsTo: smsModel.SendSmsTo,
+                    FromNumber: smsModel.FromNumber,
+                    SmsBulkCost: smsModel.SmsBulkCost,
+                    IsLinksStatistics: isLinksStatistics,
+                    CreditsPerSms: smsModel.CreditsPerSms,
+                    EmailCampaignID: totalMarketing?.CampaignID,
+                    GroupIds: selectedGroups.map((g) => g.GroupID)
+                };
+
+                const r = await dispatch(setSmsMarketing(smsCampaignPayload));
+                handleTotalMarketingResponse(r.payload);
+                setLoader(false);
+                onConfirm();
+            }
+        }
+
         setLoader(false);
     }
     const handleTotalMarketingResponse = (response) => {
@@ -181,9 +188,6 @@ const SmsMarketingDialog = ({
 
         if (!smsModel.FromNumber) {
             tempErrors.FromNumber = t('campaigns.newsLetterEditor.sendSettings.errors.reqFromNumber');
-        }
-        if (!smsModel.Text) {
-            tempErrors.Text = t('campaigns.newsLetterEditor.sendSettings.errors.reqText');
         }
         if (!smsModel.SendDate) {
             tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.reqDate');
@@ -391,6 +395,7 @@ const SmsMarketingDialog = ({
                 <Grid item md={12}>
                     <Editorbox classes={classes}
                         variant="column"
+                        textRef={textRef}
                         values={{ ...smsModel }}
                         onUpdate={handleUpdate}
                         onFromNumberInit={(fromNumber) => setSmsModel({ ...smsModel, FromNumber: fromNumber })}
