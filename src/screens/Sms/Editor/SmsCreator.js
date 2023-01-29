@@ -467,9 +467,15 @@ const SmsCreator = ({ classes }) => {
 
   const getcredits = (count) => {
     dispatch(getCreditsforSMS(count)).then((res) => {
-      let credits = res.payload.split("#");
-      setmessageCount(credits[0]);
-      handleSmsModelChange("CreditsPerSms", credits[0]);
+      let credits = res.payload?.split("#");
+      if (credits && credits !== '') {
+          setmessageCount(credits[0]);
+          handleSmsModelChange("CreditsPerSms", credits[0]);
+      }
+      else {
+          setmessageCount(0);
+          handleSmsModelChange("CreditsPerSms", 0);
+      }
     });
   }
   const onCamppaignChange = (e) => {

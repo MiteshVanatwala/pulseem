@@ -10,7 +10,7 @@ import Toast from '../Toast/Toast.component';
 import Waze from "../../assets/images/waze.png";
 import { BsArrowClockwise } from "react-icons/bs";
 import { FaExclamationCircle } from 'react-icons/fa'
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import {
     getPreviousCampaignData,
     getPreviousLandingData,
@@ -281,7 +281,7 @@ const Editorbox = ({
             setremovalMessageButtonDisabled(true);
         }
         setLoader(false);
-        onFromNumberInit(smsModel.FromNumber ?? fromNumber);
+        onFromNumberInit(smsModel.FromNumber && smsModel.FromNumber !== '' ? smsModel.FromNumber : fromNumber);
     }
     const linkCalculation = () => {
         const text = document.getElementById("yourMessage").value;
@@ -327,9 +327,15 @@ const Editorbox = ({
     }
     const getcredits = (count) => {
         dispatch(getCreditsforSMS(count)).then((res) => {
-            let credits = res.payload.split("#");
-            setmessageCount(credits[0]);
-            handleSmsModelChange("CreditsPerSms", credits[0]);
+            let credits = res.payload?.split("#");
+            if (credits && credits !== '') {
+                setmessageCount(credits[0]);
+                handleSmsModelChange("CreditsPerSms", credits[0]);
+            }
+            else {
+                setmessageCount(0);
+                handleSmsModelChange("CreditsPerSms", 0);
+            }
         });
     }
     const validationCheck = () => {

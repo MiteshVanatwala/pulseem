@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { UnInterceptedAxiosInstance } from '../../helpers/Api/UnInterceptedAxiosInstance'
 
 export const getSmsData = createAsyncThunk(
   'smsCampaign/getAllSmsCampaigns', async (_, thunkAPI) => {
@@ -80,8 +81,8 @@ export const getGroupsBySubAccountId = createAsyncThunk(
 export const getCreditsforSMS = createAsyncThunk(
   'smsCampaign/GetCreditsForSms', async (count, thunkAPI) => {
     try {
-      const response = await PulseemReactInstance.get(`smsCampaign/GetCreditsForSms/${count}`);
-      return response.data
+      const response = UnInterceptedAxiosInstance.get(`smsCampaign/GetCreditsForSms/${count}`)
+      return response?.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -375,11 +376,20 @@ export const IsOTPPassed = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-export const getSmsReplies = createAsyncThunk(
+export const getSmsRepliesById = createAsyncThunk(
   'report/SmsReplies', async (id, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`report/SmsReplies/${id}`);
       return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const getSmsReplies = createAsyncThunk(
+  'SmsReplies/get', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`SmsReplies/get`, data);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -429,7 +439,7 @@ export const smsSlice = createSlice({
     smsCampaignSettings: [],
     smsSendResult: -1,
     OTPPassed: null,
-    smsReplies: [],
+    smsReplies: null,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'sms.saved', showAnimtionCheck: true },
       QUICK_SEND_SUCCESSS: { severity: 'success', color: 'success', message: 'sms.quickSend', showAnimtionCheck: true },
