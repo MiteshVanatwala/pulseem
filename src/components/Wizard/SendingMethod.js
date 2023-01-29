@@ -21,7 +21,7 @@ const SendingMethod = ({
     const [date, setDate] = useState(moment(campaign?.SendDate))
     const [isBestTime, setIsBestTime] = useState(false);
     const [isBestTimeFuture, setIsBestTimeFuture] = useState(false);
-    const [isAfterDay, setIsAfterDay] = useState(campaign?.AutoSendDelay > 0);
+    const [isAfterDay, setIsAfterDay] = useState(false);
     const sendDelayRef = useRef(null);
 
     const { windowSize, isRTL } = useSelector(
@@ -63,6 +63,7 @@ const SendingMethod = ({
             }
             if (campaign?.SendingMethod === 3) {
                 sendDelayRef.current.value = campaign?.AutoSendDelay === 0 ? '' : (campaign?.AutoSendDelay.toString().replace('-', '') ?? '');
+                setIsAfterDay(campaign?.AutoSendDelay > 0)
             }
         }
     }, [campaign])
