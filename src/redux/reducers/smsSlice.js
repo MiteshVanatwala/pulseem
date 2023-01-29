@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
-import { UnInterceptedAxiosInstance } from '../../helpers/Api/UnInterceptedAxiosInstance'
 
 export const getSmsData = createAsyncThunk(
   'smsCampaign/getAllSmsCampaigns', async (_, thunkAPI) => {
@@ -81,7 +80,7 @@ export const getGroupsBySubAccountId = createAsyncThunk(
 export const getCreditsforSMS = createAsyncThunk(
   'smsCampaign/GetCreditsForSms', async (count, thunkAPI) => {
     try {
-      const response = UnInterceptedAxiosInstance.get(`smsCampaign/GetCreditsForSms/${count}`)
+      const response = PulseemReactInstance.get(`smsCampaign/GetCreditsForSms/${count}`)
       return response?.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
