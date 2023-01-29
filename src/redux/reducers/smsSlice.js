@@ -79,12 +79,16 @@ export const getGroupsBySubAccountId = createAsyncThunk(
 
 export const getCreditsforSMS = createAsyncThunk(
   'smsCampaign/GetCreditsForSms', async (count, thunkAPI) => {
-    try {
-      const response = PulseemReactInstance.get(`smsCampaign/GetCreditsForSms/${count}`)
-      return response?.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await PulseemReactInstance.get(`smsCampaign/GetCreditsForSms/${count}`)
+        resolve(response?.data)
+      } catch (error) {
+        thunkAPI.rejectWithValue({ error: error.message })
+        reject();
+      }
+    })
+
   })
 
 export const getSmsByID = createAsyncThunk(
