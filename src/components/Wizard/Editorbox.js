@@ -84,6 +84,7 @@ const Editorbox = ({
     linkToUpdate = null,
     onUpdate = () => null,
     onFromNumberInit = () => null,
+    textRef,
     ...props }) => {
     const { t } = useTranslation();
     document.title = t("sms.pageTitle");
@@ -202,11 +203,9 @@ const Editorbox = ({
         onUpdate(smsModel);
     }, [commonSettings]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            onUpdate(smsModel);
-        }, 0)
-    }, [smsModel]);
+    // useEffect(() => {
+    //     onUpdate(smsModel);
+    // }, [smsModel]);
 
     useEffect(() => {
         linkCalculation();
@@ -432,6 +431,7 @@ const Editorbox = ({
             <Grid container>
                 <Grid item="true" xs={12} md={variant === "column" ? 12 : 8} className={classes.boxDiv} style={{ marginTop: 20 }}>
                     <textarea
+                        ref={textRef}
                         placeholder={t("mainReport.typeText")}
                         maxLength="1000"
                         outlined=""
