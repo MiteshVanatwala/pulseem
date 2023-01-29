@@ -171,16 +171,6 @@ export const setEmailSendSettings = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const getGroups = createAsyncThunk(
-  '/email/GetGroups', async (_, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.get(`/email/GetGroups`);
-      return response.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  })
-
 export const getSendSummary = createAsyncThunk(
   'email/GetSendSummary', async (campaignId, thunkAPI) => {
     try {
@@ -305,9 +295,6 @@ export const newsletterSlice = createSlice({
     })
     builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
       state.newsletterSendSummary = payload.Data
-    })
-    builder.addCase(getGroups.fulfilled, (state, { payload }) => {
-      state.groupData = payload?.Data
     })
     builder.addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
       state.campaignInfo = payload?.Message;
