@@ -43,7 +43,6 @@ import {
 	restoreSms,
 	deleteSms,
 	duplicteSms,
-	getAuthorizeNumbers,
 	sendVerificationCode,
 	verifyCode,
 	getSmsByID,
@@ -61,6 +60,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const SmsManagnentScreen = ({ classes }) => {
 	const { language, windowSize, rowsPerPage } = useSelector(
@@ -89,6 +89,7 @@ const SmsManagnentScreen = ({ classes }) => {
 	const [dialogType, setDialogType] = useState(null);
 	const [restoreArray, setRestoreArray] = useState([]);
 	const [showLoader, setLoader] = useState(true);
+	const [newSmsVerification, setNewSmsVerification] = useState(false);
 	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
 	const dispatch = useDispatch();
 	moment.locale(language);
@@ -264,13 +265,6 @@ const SmsManagnentScreen = ({ classes }) => {
 	};
 
 	const renderManagmentLine = () => {
-		const handleVerificationDialog = async () => {
-			const numbers = await dispatch(getAuthorizeNumbers());
-			setDialogType({
-				type: 'verify',
-				data: numbers.payload,
-			});
-		};
 		return (
 			<Grid container spacing={2} className={classes.linePadding}>
 				<Grid item xs={windowSize === 'xs' && 12}>
@@ -315,7 +309,7 @@ const SmsManagnentScreen = ({ classes }) => {
 								classes.actionButton,
 								classes.actionButtonDarkBlue
 							)}
-							onClick={handleVerificationDialog}>
+							onClick={() => setNewSmsVerification(true)}>
 							{t('sms.verificationDialogTitle')}
 						</Button>
 					</Grid>
@@ -1091,13 +1085,24 @@ const SmsManagnentScreen = ({ classes }) => {
 		<DefaultScreen
 			currentPage='sms'
 			classes={classes}
-			containerClass={classes.management}>
-			<Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
+			containerClass={clsx(classes.management, classes.mb50)}>
+			<Title
+				Text={t('sms.PageResource1.Title')}
+				Classes={classes.managementTitle}
+			/>
 			{renderSearchLine()}
 			{renderManagmentLine()}
 			{renderTable()}
 			{renderTablePagination()}
 			{renderDialog()}
+			{newSmsVerification && (
+				<VerificationDialog
+					classes={classes}
+					isOpen={newSmsVerification}
+					variant='sms'
+					onClose={() => setNewSmsVerification(false)}
+				/>
+			)}
 			<Loader isOpen={showLoader} />
 		</DefaultScreen>
 	);

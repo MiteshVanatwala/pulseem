@@ -28,7 +28,7 @@ const WhatsappTemplateEditor = ({
 	templateTextRef,
 	OnEditorActionButtonClick,
 	dynamicFieldCount,
-	linkCount
+	linkCount,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -145,27 +145,28 @@ const WhatsappTemplateEditor = ({
 				<Box
 					className={classes.whatsappActionButtonsWrapper}
 					id='buttons-wrapper'>
-					{buttons?.map((button: quickReplyButtonProps | callToActionRowProps) =>
-						button?.fields.map(
-							(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
-								field.fieldName === 'Button Text' && (
-									<Box
-										key={button.id}
-										className={classes.whatsappActionButtonsBox}>
-										<Button
-											className={classes.whatsappActionButtons}
-											onClick={() => OnEditorActionButtonClick(button)}>
-											{field.value}
-										</Button>
-										<DeleteOutlinedIcon
-											style={{ color: 'red', cursor: 'pointer' }}
-											onClick={() => {
-												onButtonDelete(button);
-											}}
-										/>
-									</Box>
-								)
-						)
+					{buttons?.map(
+						(button: quickReplyButtonProps | callToActionRowProps) =>
+							button?.fields.map(
+								(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
+									field.fieldName === 'Button Text' && (
+										<Box
+											key={button.id}
+											className={classes.whatsappActionButtonsBox}>
+											<Button
+												className={classes.whatsappActionButtons}
+												onClick={() => OnEditorActionButtonClick(button)}>
+												{field.value}
+											</Button>
+											<DeleteOutlinedIcon
+												style={{ color: 'red', cursor: 'pointer' }}
+												onClick={() => {
+													onButtonDelete(button);
+												}}
+											/>
+										</Box>
+									)
+							)
 					)}
 				</Box>
 			</div>

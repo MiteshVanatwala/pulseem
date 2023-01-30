@@ -47,7 +47,7 @@
   "deleted": "נמחק",
   "suspended": "הושהה",
   "requireAproval": "אימות נדרש",
-  "invalidFromNumber": "מספר מאת לא תקין",
+  "invalidFromNumber": "מאת מספר לא תקין",
   "toNumberLonger": "מספר נמען גדול 16",
   "blockedSync": "Blocked Due To Sync Feature",
   "blockedRemoval": "נחסם מסיבת הסרה",
@@ -59,7 +59,7 @@
   "SMSCredits": "SMS שנותרו בחבילה",
   "BulkEmails": "אימיילים שנותרו בחבילה",
   "MmsCredits": "MMS שנותרו בחבילה",
-  "TotalRecords":"סה\"כ רשומות",
+  "TotalRecords": "סה\"כ רשומות",
   "smsReport": {
     "statuses": {
       "other": "אחר",
@@ -92,11 +92,25 @@
       "activeNoResponse": "עם אפשרות למשובים - ואין משובים"
     }
   },
+  "ProductsReport": {
+    "title": "דו”ח מוצרים",
+    "products": "מוצרים",
+    "photo": "תמונה",
+    "prodName": "שם מוצר",
+    "category": "קטגוריה",
+    "price": "מחיר",
+    "purchased": "נמענים שרכשו",
+    "abandoned": "נמענים שנטשו",
+    "revenueFrmProd": "סך ההכנסות מהמוצר",
+    "productId": "מוצר מספר",
+    "registrationGuide": "חברו את החנות האינטרנטית שלכם לפולסים בעזרת ה-API שלנו או באמצעות התוספים ל-Wix ו-WooCommerce<br/>לתמיכה: <a href='tel:035240290'>035240290</a> / <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+  },
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
   "Reactivate": "Reactivate / בטל הסרה",
   "ExportLimitation": "לא ניתן להוריד קובץ שמכיל מעל 600 אלף רשומות",
   "clientName": "שם לקוח",
   "filterSearch": "החל סינון",
   "closeFilterSearch": "סגור סינון",
-  "errorReason": "סיבת השגיאה"
+  "errorReason": "סיבת השגיאה",
+  "smsReplies": "דו\"ח SMS נכנסים"
 }

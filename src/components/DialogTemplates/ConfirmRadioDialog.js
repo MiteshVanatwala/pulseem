@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
-import { SolidDialog } from '../managment/index';
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 
@@ -13,10 +13,10 @@ const ConfirmRadioDialog = ({
     radioTitle = '',
     options = null,
     isOpen = false,
-    onCancel = () => null,
-    onConfirm = () => null,
+    onCancel,
+    onConfirm,
     defaultValue = "",
-    cookieName = null
+    cookieName = ""
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
@@ -50,8 +50,8 @@ const ConfirmRadioDialog = ({
                             value={value}
                         >
                             {
-                                options.map((option) => {
-                                    return (<Box>
+                                options.map((option, idx) => {
+                                    return (<Box key={idx}>
                                         <FormControlLabel
                                             value={option?.value}
                                             control={<Radio color="primary" />}
@@ -114,13 +114,13 @@ const ConfirmRadioDialog = ({
         )
     };
 
-    return (<SolidDialog
+    return (<BaseDialog
         classes={classes}
         open={isOpen ?? false}
         onClose={() => onCancel()}
         {...dialog}>
         {dialog.content}
-    </SolidDialog>);
+    </BaseDialog>);
 }
 
 export default ConfirmRadioDialog;

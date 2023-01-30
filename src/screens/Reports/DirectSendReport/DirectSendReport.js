@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import moment from 'moment';
 import DirectSMSReportTab from './DirectSmsReport';
+import DirectWhatsappReportTab from './DirectWhatsappReportTab';
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
@@ -13,28 +14,47 @@ import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
-import { EmailStatus, SmsStatus } from '../../../helpers/Constants';
+import { EmailStatus, SmsStatus, WhatsappStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
+import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { getDirectReport } from '../../../redux/reducers/whatsappSlice'
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  flexItems: {
+    '& .MuiTab-wrapper': {
+      display: 'flex',
+      flexDirection: 'row-reverse',
+      alignItems: 'space-between'
+    }
+  }
+});
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
+  const location = useLocation();
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
+  const localClasses = useStyles();
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
-  const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+  const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
+  const { directWhatsappReport } = useSelector(state => state.whatsapp);
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
   const [tabValue, setTabValue] = useState(0);
   const rowsOptions = [6, 10, 20, 50];
   const [pageEmail, setPageEmail] = useState(1);
   const [pageSms, setPageSms] = useState(1);
+  const [pageWhatsapp, setPageWhatsapp] = useState(1);
   const [advanceSearch, setAdvanceSearch] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [exportEnable, setExportEnable] = useState(false);
@@ -42,6 +62,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
   const [dialogType, setDialog] = useState(null);
+  const priorDate = moment().subtract(30, 'days').utcOffset(0);
 
 
   useEffect(() => {
@@ -56,7 +77,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
     },
     current: {
-      from: moment({ hour: 0, minute: 0, second: 0 }).startOf('month').format('YYYY-MM-DD HH:mm'),
+      from: priorDate,
       to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
     }
   }
@@ -72,7 +93,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       Default: {
         PageIndex: 1,
         PageSize: rowsPerPage,
-        FromDate: defaultsDates.current.from,
+        FromDate: priorDate,
         ToDate: defaultsDates.current.to
       }
     },
@@ -87,10 +108,17 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       Default: {
         PageSize: rowsPerPage,
         PageIndex: 1,
-        FromDate: defaultsDates.current.from,
+        FromDate: priorDate,
         ToDate: defaultsDates.current.to,
         ShowContent: showContent
       }
+    },
+    WHATSAPP: {
+      PageSize: rowsPerPage,
+      PageIndex: 1,
+      FromDate: priorDate,
+      ToDate: defaultsDates.current.to,
+      ShowContent: showContent
     }
   };
   const getEmailReportData = async () => {
@@ -99,22 +127,18 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const getSMSReportData = async () => {
     await dispatch(isArchive ? getArchiveSMSDirectReport(defaultRequests.SMS.Archive) : getSMSDirectReport(defaultRequests.SMS.Default));
   }
+  const getWhatsappReportData = async () => {
+    await dispatch(getDirectReport(defaultRequests.WHATSAPP));
+  }
 
   const handleExportEnable = () => {
-    if (tabValue === 0) {
-      if (Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null) {
-        setExportEnable(directSmsReport.TotalSent > 0 && directSmsReport.TotalSent < MAX_EXPORT_RECORDS)
-      }
-      else {
-        setExportEnable(false);
-      }
-    } else {
-      if (Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null) {
-        setExportEnable(directNewsletterReport.TotalRecords > 0 && directNewsletterReport.TotalRecords < MAX_EXPORT_RECORDS)
-      }
-      else {
-        setExportEnable(false);
-      }
+    let reportObject = [directSmsReport?.DirectReport ?? null, directNewsletterReport?.DirectReport ?? null, directWhatsappReport?.Data ?? null];
+
+    if (reportObject[tabValue] && Object.keys(reportObject[tabValue])?.length > 0 && reportObject[tabValue] !== null) {
+      setExportEnable(true);
+    }
+    else {
+      setExportEnable(false);
     }
   }
 
@@ -130,17 +154,22 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
           FromDate: isArchive ? defaultsDates.archive.from : defaultsDates.current.from,
           ToDate: isArchive ? defaultsDates.archive.to : defaultsDates.current.to,
           ShowContent: showContent
+        },
+        whatsapp: {
+          FromDate: defaultsDates.current.from,
+          ToDate: defaultsDates.current.to
         }
       });
       await getEmailReportData();
       await getSMSReportData();
+      await getWhatsappReportData();
 
       setLoader(false);
     }
     initData();
   }, [dispatch])
 
-  useEffect(handleExportEnable, [tabValue, directNewsletterReport, directSmsReport])
+  useEffect(handleExportEnable, [tabValue, directNewsletterReport, directSmsReport, directWhatsappReport])
 
   const clearSearch = async (key) => {
     setLoader(true);
@@ -171,12 +200,17 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       setPageEmail(1);
       await getEmailReportData()
     }
+
+    if (key === 'whatsapp') {
+      setPageWhatsapp(1);
+      await dispatch(getDirectReport(defaultRequests.WHATSAPP));
+    }
     setLoader(false);
 
   }
 
   const handleSearchInput = (value, key, type) => {
-    let { sms = {}, email = {} } = searchData || {};
+    let { sms = {}, email = {}, whatsapp = {} } = searchData || {};
     if (key !== 'ShowContent') {
       type === 'sms' ? setPageSms(1) : setPageEmail(1);
     }
@@ -186,8 +220,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     if (type === 'email') {
       email[key] = value;
     }
+    if (type === 'whatsapp') {
+      whatsapp[key] = value;
+    }
 
-    setSearchData({ email, sms });
+    setSearchData({ email, sms, whatsapp });
   }
 
   const handleSearching = (key, value) => {
@@ -228,79 +265,135 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "Credits": t('report.Credits'),
       "StatusDescription": t('report.StatusDescription'),
       "ClientStatus": t('report.clientStatus')
+    },
+    WHATSAPP: {
+      "Schedule": t('common.SendDate'),
+      "FromNumber": t('common.FrmNumber'),
+      "ToNumber": t('common.ToNumber'),
+      "Status": t('common.Status'),
+      "StatusDescription": t('report.StatusDescription'),
+      "Text": t('common.messageContent'),
+      "ErrorMessage": t('report.failure'),
+      "ReferenceId": t('common.templateId'),
     }
   };
 
   const handleExportFile = async (formatType) => {
+    setDialog(null);
     setLoader(true);
     let response, fileName = null;
 
-    if (tabValue === 0) {
-      searchData.sms.ShowContent = showContent;
-      response = dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
+    switch (tabValue) {
+      case 0: // sms
+        {
+          searchData.sms.ShowContent = showContent;
+          response = dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
 
-      const exportOption = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusToString: false,
-        ConvertStatusDescription: true,
-        Statuses: SmsStatus,
-        ReplaceClientStatus: true,
-        DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
-        Order: Object.keys(excelHeaders.SMS)
-      };
+          const exportOption = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: SmsStatus,
+            ReplaceClientStatus: true,
+            DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
+            Order: Object.keys(excelHeaders.SMS)
+          };
 
-      try {
-        const result = await HandleExportData(response.payload, exportOption);
+          try {
+            const result = await HandleExportData(response.payload, exportOption);
 
-        fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: formatType,
-          fields: excelHeaders.SMS
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
+            fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.SMS
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
+      case 1: // Email
+        {
+          response = dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: EmailStatus,
+            ReplaceClientStatus: true,
+            PropertyToReplace: "Status",
+            PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
+            ReplaceNull: true,
+            DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
+            Order: Object.keys(excelHeaders.EMAIL)
+          };
 
-    }
+          try {
+            const result = await HandleExportData(response.payload, exportOptions);
 
-    if (tabValue === 1) {
-      response = dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-      const exportOptions = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusToString: false,
-        ConvertStatusDescription: true,
-        Statuses: EmailStatus,
-        ReplaceClientStatus: true,
-        PropertyToReplace: "Status",
-        PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
-        ReplaceNull: true,
-        DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
-        Order: Object.keys(excelHeaders.EMAIL)
-      };
+            fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.EMAIL
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
+      case 2: // Whatsapp
+        {
+          const requestPayload = { ...defaultRequests.WHATSAPP };
+          requestPayload.IsExport = true;
+          response = await dispatch(getDirectReport(requestPayload));
 
-      try {
-        const result = await HandleExportData(response.payload, exportOptions);
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: WhatsappStatus,
+            ReplaceClientStatus: true,
+            PropertyToReplace: '',
+            ReplaceNull: true,
+            Order: Object.keys(excelHeaders.WHATSAPP)
+          };
 
-        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: 'csv',
-          fields: excelHeaders.EMAIL
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
+          try {
+            let result = await HandleExportData(response.payload?.Data, exportOptions);
+            result = await ReplaceNull(result, 'ErrorMessage', '');
+            result = await ReplaceNull(result, 'TemplateVariables', '');
+            result = await ReplaceNull(result, 'ReferenceId', '');
+
+
+
+            fileName = "Whatsapp_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.WHATSAPP
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
     }
   }
   const renderTabs = () => {
@@ -319,9 +412,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             >
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
+              <Tab label={<span style={{ marginInlineEnd: 5 }}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2}
+                icon={<span className={classes.commingSoon}>{t("common.commingSoon")}</span>} />
             </TabList>
             <Grid item>
-              {!isArchive && <Button
+              {!isArchive && tabValue !== 2 && <Button
                 onClick={() => {
                   window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
                 }}
@@ -332,7 +427,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                   classes.actionButtonLightBlue)}>
                 {t('master.campaignsArchive')}
               </Button>}
-              {windowSize !== 'xs' && <CustomTooltip
+              {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <CustomTooltip
                 style={{ fontSize: 14 }}
                 text={t('report.ExportLimitation')}
                 icon={<Button
@@ -401,6 +496,27 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 isArchive={isArchive}
               />
             </TabPanel>
+            <TabPanel value={2} index={2} className={classes.p0}>
+              <DirectWhatsappReportTab
+                classes={classes}
+                dispatch={dispatch}
+                windowSize={windowSize}
+                isRTL={isRTL}
+                handleSearchInput={handleSearchInput}
+                handleSearching={handleSearching}
+                handlePageChange={setPageWhatsapp}
+                handleAdvanceSearch={setAdvanceSearch}
+                clearSearch={clearSearch}
+                page={pageWhatsapp}
+                rowsPerPage={rowsPerPage}
+                searchData={searchData}
+                isSearching={isSearching}
+                directWhatsappReport={directWhatsappReport ?? null}
+                advanceSearch={advanceSearch}
+                setLoader={setLoader}
+                rowsOptions={rowsOptions}
+              />
+            </TabPanel>
           </Grid>
         </TabContext>
 
@@ -413,7 +529,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       subPage={isArchive ? 'directSendReportArchive' : 'directSendReport'}
       currentPage='reports'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes.managementTitle} />
       {renderTabs()}
       <ConfirmRadioDialog

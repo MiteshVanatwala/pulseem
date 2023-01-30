@@ -222,6 +222,8 @@
     "Text": "Clone"
   },
   "GridButtonColumnResource2": {
+    "confirmExit": "You are about to exit the campaign settings",
+    "confirmExitText": "Would you like to save the campaign before exit?",
     "ConfirmText": "Do you want to delete the campaign?",
     "ConfirmTitle": "Delete campaign",
     "CurrentFilterValue": "",
@@ -474,6 +476,8 @@
   "recipients": "Recipients",
   "automation": "Automation",
   "create": "Create New Newsletter",
+  "createNewsLetterHeader": "Create New Newsletter Campaign",
+  "createNewsLetterSubTitle": "Setup Newsletter Campaign",
   "restoreDeleted": "Restore Deleted",
   "exportFile": "Export File",
   "lastUpdate": "Last update",
@@ -508,6 +512,7 @@
       "upload": "The file will appear as an attached file in your mail"
     },
     "errors": {
+      "campaignWasNotSent": "The campaign was not sent!",
       "invaliApiKey": "Invalid or missing API KEY",
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
@@ -516,17 +521,73 @@
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
       "campaignSubject": "Please fill in a campaign subject",
-      "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
-      "CampaignNotFound": "Campaign not found or deleted"
+      "invalidCampaignId": "Invalid campaign ID / not belong to the account",
+      "CampaignNotFound": "Campaign not found or deleted",
+      "missingSendingDate": "Campaign was not saved! Missing Sending Date",
+      "campaignAlreadySent": "The current campaign already sent",
+      "LOCK_SENDING": "This User is locked for sending email campaigns<br/>For further support please contact us ",
+      "UNAUTHORIZED_FROM_EMAIL": "This Email address is not authorized for sending email campaigns<br/>For further support please contact us ",
+      "NO_RECIPIENTS": "You did not select any recipients<br/>Please select recipients and try again",
+      "MONTHLY_RESTRICTIONS": "You have passed your monthly sending restriction<br/>For further support please contact us ",
+      "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since it’s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
+      "BULK_ENDED": "Your bulk has ended!<br/>To purchase a new bulk enter your dashboard<br/>Or contact our costumer support:",
+      "MONTHLY_BULK_ENDED": "You monthly bulk has ended!<br/>To purchase a new bulk enter your dashboard",
+      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
     },
-    "success": "Success"
+    "success": "Success",
+    "sendSettings": {
+      "optimalSending": "Optimal Sending",
+      "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
+      "optimalSendCBTooltip": "this process may take up to 24 hours",
+      "segmentation": "Segmentation",
+      "segmCriteria": "Segmentation Criteria",
+      "segmCritCb1": "Send to recipients That Opened The Email",
+      "segmCritCb2": "Send to recipients That Not Opened The Email",
+      "segmCritCb3": "Send to recipients That Clicked On Links",
+      "segmCritCb4": "Send to recipients That Not Clicked On Links",
+      "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
+      "emailFilterInput": "Don't send to recipients that got Email in last previous days",
+      "pendingClients": "Pending clients for approval",
+      "restrictedClients": "Restricted clients",
+      "duplicatedClients": "Duplicated clients",
+      "filters": "Filters",
+      "segmentations": "Segmentations",
+      "smsMarketing": {
+        "title": "SMS Marketing",
+        "sendTo": "Send To",
+        "everyone": "Everyone",
+        "opened": "Opened",
+        "unOpened": "Unopened",
+        "clicked": "Clicked",
+        "invalid": "Invalid",
+        "fromNumber": "From Number",
+        "sendingDate": "Sending Date",
+        "sendingTime": "Sending Time",
+        "smsMarketingSubTitle": "Send SMS to recipients in selected criteria that received email campaign for complete overall marketing.",
+        "addLinkToCampaign": "Add link to this Email campaign",
+        "addLinkToUpdate": "Add link to update contact"
+      },
+      "errors": {
+        "reqFromNumber": "From Number is required",
+        "reqText": "Text is required",
+        "reqDate": "Date is required",
+        "reqTime": "Time is required",
+        "reqSendTo": "Send to is required",
+        "invalidDate": "Invalid date",
+        "invalidTime": "Invalid time",
+        "enterVerifiedNumber": "Please enter the verified phone number"
+      },
+      "send": "Send",
+      "doNotSend": "Do not send",
+      "smsComplementary": "Complementary SMS Marketing"
+    }
   },
   "newsLetterMgmt": {
     "emailVerification": {
       "emailVerificationBtnText": "Email Verification",
       "popupTitle": "Verification of email to send",
       "popupDesc1": "To ensure the security of your account, we need to verify this email address belongs to you.",
-      "popupDesc2": "This is 2 one-time process for each email you send from.",
+      "popupDesc2": "This is a one-time process for each email you send from.",
       "firstSlide": {
         "verifiedEmails": "Verified emails",
         "verifyEmailAddr": "Verify Email Address",
@@ -540,7 +601,7 @@
         "error1": "Invalid Email",
         "error2": "Email is required",
         "anyProblem": "Did you encounter a problem?",
-        "contactUs": "Contact us",
+        "contactUs": "Contact us at <a href='tel:03-524-0290'>03-524-0290</a> or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
         "placeholder": "Enter email"
       },
       "thirdSlide": {
@@ -555,7 +616,10 @@
         "resend": "Resend",
         "resendSuccess": "Code Sent",
         "placeholder": "Enter code",
-        "btnText": "Verify"
+        "btnText": "Verify",
+        "email_error_abused": "Due to too many verification attempts this email was blocked for verification, please address customer support.",
+        "sms_error_abused": "Due to too many verification attempts this number was blocked for verification, please address customer support.",
+        "error_tooMuchAttempts": "Too many verification attempts, please click resend and verify with the new code"
       },
       "errorSlide": {
         "title": "Too many attempts",
@@ -591,5 +655,10 @@
   "leftToRight": "Left to right",
   "summaryTotal": "Total cost",
   "totalSize": "Total size",
-  "kb": "KB"
+  "kb": "KB",
+  "saveBlock": "Save Block",
+  "savedBlocks": "Saved-blocks",
+  "weSent": "We sent!",
+  "campaignIsOnItsWay": "Your campaign is on its way",
+  "newsletterSetUp": "Newsletter Set-Up"
 }

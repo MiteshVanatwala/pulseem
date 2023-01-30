@@ -12,7 +12,7 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { useParams } from 'react-router-dom';
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, Link } from '@material-ui/core'
 import { getNotificationById, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../../redux/reducers/notificationSlice';
-import Groups from '../../../components/Notifications/Groups/Groups';
+import Groups from '../../../components/Groups/GroupsHandler/Groups';
 import { DateField } from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
@@ -66,6 +66,7 @@ const NotificationSend = ({ classes }) => {
     const [showConfirmCancel, setShowConfirmCancel] = useState(false);
     const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
     const [showGroupsList, setShowGroupsList] = useState(false);
+    const [isSending, setIsSending] = useState(false);
 
     const toastMessages = {
         SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -484,10 +485,11 @@ const NotificationSend = ({ classes }) => {
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => insertNotificationForSend()}
+                            onClick={(e) => { setIsSending(true); insertNotificationForSend(e); }}
                             className={clsx(
                                 classes.dialogButton,
-                                classes.dialogConfirmButton
+                                classes.dialogConfirmButton,
+                                isSending ? classes.disabled : null
                             )}>
                             {t('common.Send1')}
                         </Button>

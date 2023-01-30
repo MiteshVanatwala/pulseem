@@ -451,7 +451,7 @@ const DirectEmailReportTab = ({
             component='button'
             underline='none'
             onClick={() => handleAdvanceSearch(!advanceSearch)}
-            className={clsx(classes.dBlock, classes.mt5, windowSize === 'xs' ? classes.hidden : null)}>
+            className={clsx(classes.dBlock, classes.mt1, windowSize === 'xs' ? classes.hidden : null)}>
             {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
           </Link>
         </Grid>

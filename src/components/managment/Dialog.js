@@ -1,18 +1,16 @@
-import React from 'react';
+
 import clsx from 'clsx';
 import {
   Typography, Divider, Grid, Button, Dialog as BaseDialog, Paper, Box
 } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { AlertIcon } from '../icons/index'
 
 export const Dialog = ({
   childrenPadding = true,
   classes,
   open = false,
   title = '',
-  icon = null,
   children,
   showDivider = false,
   onClose = () => null,
@@ -85,6 +83,7 @@ export const Dialog = ({
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
         <Grid item>
           <Button
+            name="btnConfirm"
             variant='contained'
             size='small'
             onClick={onConfirm}
@@ -111,21 +110,6 @@ export const Dialog = ({
     )
   }
 
-  const renderIcon = () => {
-    const alertIcon = <AlertIcon classes={classes} />
-    return (
-      <Box
-        className={clsx(
-          classes.dialogIconContainer,
-          {
-            [classes.dialogIconContainerRTL]: isRTL,
-            [classes.dialogIconContainerLTR]: !isRTL
-          }
-        )}>
-        {icon || alertIcon}
-      </Box>
-    )
-  }
 
   const renderChildren = () => {
     return (
@@ -150,7 +134,7 @@ export const Dialog = ({
 
   return (
     <BaseDialog
-      style={style}
+      style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={(event, reason) => {
@@ -162,7 +146,6 @@ export const Dialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {renderExitButton()}
         {renderContent()}
-        {renderIcon()}
       </Paper>
     </BaseDialog>
   )

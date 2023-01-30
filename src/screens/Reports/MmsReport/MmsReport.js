@@ -33,7 +33,7 @@ const DEFAULT_FILTER = {
 
 const MmsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
     const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
@@ -131,6 +131,8 @@ const MmsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
+        setDialog(null);
+        setLoader(true);
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
@@ -160,7 +162,8 @@ const MmsReport = ({ classes }) => {
         }
         catch (e) {
             console.error(e);
-        };
+        }
+        setLoader(false);
     }
 
     const colorTextStyle = {
@@ -334,7 +337,7 @@ const MmsReport = ({ classes }) => {
         const dataLength = filteredResults.length;
         return (
             <Grid container spacing={2} className={classes.linePadding} >
-                {windowSize !== 'xs' && <Grid item>
+                {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         variant='contained'
                         size='medium'
@@ -630,7 +633,7 @@ const MmsReport = ({ classes }) => {
     return (
         <DefaultScreen
             classes={classes}
-            containerClass={classes.management}
+            containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
             <Title Text={t('common.MMSReports')} Classes={classes.managementTitle} />

@@ -20,10 +20,7 @@ import {
     getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
-
-import { Dialog } from "../../../../components/managment/Dialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const AddGroupPopUp = ({
@@ -64,14 +61,16 @@ const AddGroupPopUp = ({
         CreatedDate: new Date(),
     };
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
+    const [saveDisabled, setSaveDisabled] = useState(false);
 
     const handleAddGroup = async (data, callback) => {
+        setSaveDisabled(true);
         if (!newGroupData.GroupName) {
             setToastMessage(ToastMessages.GROUP_NAME_EMPTY)
+            setSaveDisabled(false);
             return false;
         }
         try {
-            // 
             setLoader(true);
             const response = await dispatch(createGroup(data));
             setLoader(false);
@@ -126,6 +125,7 @@ const AddGroupPopUp = ({
             }));
             return false;
         }
+        setSaveDisabled(false);
     };
 
     return (
@@ -183,7 +183,8 @@ const AddGroupPopUp = ({
                                     classes.dialogConfirmButton,
                                     classes.actionButtonLightGreen,
                                     classes.whiteSpaceNoWrap,
-                                    !newGroupData.GroupName ? classes.disabled : ''
+                                    !newGroupData.GroupName || saveDisabled ? classes.disabled : '',
+
                                 )}
                                 onClick={() => handleAddGroup(newGroupData, addAnotherRecCallback)}
                             >
@@ -205,12 +206,14 @@ const AddGroupPopUp = ({
                                     classes.dialogConfirmButton,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap,
-                                    classes.textUppercase
+                                    classes.textUppercase,
+                                    saveDisabled ? classes.disabled : ''
                                 )}
                                 onClick={() => {
                                     if (addClientByQuery === true) {
+                                        setSaveDisabled(true);
                                         createGroupCallback(newGroupData);
-
+                                        setSaveDisabled(false);
                                     }
                                     else {
                                         handleAddGroup(newGroupData, createGroupCallback);

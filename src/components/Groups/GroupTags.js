@@ -4,10 +4,9 @@ import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-//import { setSelectedGroups } from '../../redux/reducers/groupSlice';
 
 
 const GroupTags = ({ classes,
@@ -17,6 +16,7 @@ const GroupTags = ({ classes,
     onRemoveGroup = () => null,
     style = null,
     dropDownProps = {
+        groups: null,
         selectedGroups: [],
         onChange: () => false
     },
@@ -25,12 +25,12 @@ const GroupTags = ({ classes,
     ...props
 }) => {
     const { t } = useTranslation();
-    // const [groups, setGroups] = useState([]);
+    const [groups, setGroups] = useState([]);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
-    // const dispatch = useDispatch();
-
+    const dispatch = useDispatch();
+    const groupsToShow = dropDownProps?.groups !== null && dropDownProps?.groups?.length > 0 ? dropDownProps.groups : subAccountAllGroups;
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
@@ -96,7 +96,7 @@ const GroupTags = ({ classes,
             debug={true}
             className={classes.autoCompleteTag}
             disableCloseOnSelect
-            options={subAccountAllGroups ?? []}
+            options={groupsToShow ?? []}
             getOptionLabel={(option) => option?.GroupName}
             value={subAccountAllGroups.reduce((prevVal, newVal) => {
                 if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
@@ -130,7 +130,7 @@ const GroupTags = ({ classes,
                 />
             )}
             PaperComponent={({ children }) => (
-                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+                <Paper className={classes.groupsAutoComplete} style={{ zIndex: 9000 }}>{children}</Paper>
             )}
         />
 

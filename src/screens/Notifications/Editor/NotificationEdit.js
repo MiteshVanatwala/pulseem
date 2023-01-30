@@ -28,6 +28,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -760,7 +761,8 @@ const NotificationEdit = ({ classes }) => {
           classes={classes}
           isConfirm={isGalleryConfirmed}
           callbackSelectFile={handleSelectedImage}
-          style={{ minWidth: 400 }} />
+          style={{ minWidth: 400 }}
+          folderType={PulseemFolderType.CLIENT_IMAGES} />
       )
     };
   }
@@ -970,7 +972,7 @@ const NotificationEdit = ({ classes }) => {
       subPage='create'
       customPadding={true}
       classes={classes}
-      containerClass={classes.editor}>
+      containerClass={clsx(classes.editor, classes.mb50)}>
       <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}

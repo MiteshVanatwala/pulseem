@@ -27,7 +27,7 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const ArchiveManagementScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures, language, windowSize, rowsPerPage } = useSelector(state => state.core)
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -234,6 +234,8 @@ const ArchiveManagementScreen = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setDialogType(null);
+    setLoader(true)
     const exportColumnHeader = {
       "Name": t('common.CampaignName'),
       "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
@@ -277,7 +279,7 @@ const ArchiveManagementScreen = ({ classes }) => {
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding}>
-        {windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -602,7 +604,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       currentPage="newsletter"
       subPage='archiveManagement'
       classes={classes}
-      containerClass={classes.managmentNarrow}>
+      containerClass={clsx(classes.managmentNarrow, classes.mb50)}>
       <Title Text={t('campaigns.logPageHeaderArchive.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}

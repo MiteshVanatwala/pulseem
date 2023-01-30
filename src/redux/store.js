@@ -14,31 +14,35 @@ import paymentReducer from './reducers/paymentSlice';
 import commonReducer from './reducers/commonSlice';
 import siteTrackingReducer from './reducers/siteTrackingSlice';
 import clientReducer from './reducers/clientSlice';
+import campaignReducer from './reducers/campaignEditorSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
 import ConnectorsSlice from './reducers/ConnectorsSlice';
-import WhatsappReducer from './reducers/whatsappSlice';
+import galleryReducer from './reducers/gallerySlice'
+import whatsappReducer from './reducers/whatsappSlice'
 
 export default configureStore({
-	reducer: {
-		core: coreReducer,
-		user: userReducer,
-		newsletter: newsletterReducer,
-		landingPages: landingPagesReducer,
-		mms: mmsReducer,
-		automations: automationsReducer,
-		notification: notificationReducer,
-		sms: smsReducer,
-		dashboard: dashboardReducer,
-		recipientReports: recipientReportsReducer,
-		shortcuts: shortcutReducer,
-		payment: paymentReducer,
-		common: commonReducer,
-		siteTracking: siteTrackingReducer,
-		client: clientReducer,
-		group: groupSlice,
-		report: reportSlice,
-		connectors: ConnectorsSlice,
-		whatsapp: WhatsappReducer,
-	},
+  reducer: {
+    core: coreReducer,
+    user: userReducer,
+    newsletter: newsletterReducer,
+    landingPages: landingPagesReducer,
+    mms: mmsReducer,
+    automations: automationsReducer,
+    notification: notificationReducer,
+    sms: smsReducer,
+    dashboard: dashboardReducer,
+    recipientReports: recipientReportsReducer,
+    shortcuts: shortcutReducer,
+    payment: paymentReducer,
+    common: commonReducer,
+    client: clientReducer,
+    campaignEditor: campaignReducer,
+    siteTracking: siteTrackingReducer,
+    group: groupSlice,
+    report: reportSlice,
+    connectors: ConnectorsSlice,
+    gallery: galleryReducer,
+    whatsapp: whatsappReducer
+  },
 });

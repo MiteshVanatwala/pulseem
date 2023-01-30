@@ -19,6 +19,8 @@ export const ManagmentIcon = ({
   href = '',
   type = '',
   text = '',
+  style = {},
+  disableHover = false,
   onClick = () => null }) => {
   const buttonRef = useRef();
   const Redirect = useRedirect();
@@ -32,6 +34,7 @@ export const ManagmentIcon = ({
         ref={buttonRef}
         disabled={!!disable || !!hide}
         size='small'
+        style={{ backgroundColor: disableHover ? 'transparent' : null }}
         onClick={() => {
           if (href) {
             Redirect({ url: href });
@@ -46,6 +49,7 @@ export const ManagmentIcon = ({
         <Box
           // component={href? 'a':'div'}
           // href={href}
+          style={style}
           className={clsx(disable && classes.disabledCursor,
             classes.managmentIconContainer,
             rootClass

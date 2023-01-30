@@ -8,18 +8,16 @@ import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft';
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Picker from 'emoji-picker-react';
 import Radio from '@material-ui/core/Radio';
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import Emoj from '../../../assets/images/smile.png';
 import Waze from '../../../assets/images/waze.png';
 import { FaCheck } from 'react-icons/fa';
 import { BsArrowClockwise } from 'react-icons/bs';
 import WizardTitle from '../../../components/Wizard/WizardTitle';
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import {
 	getPreviousCampaignData,
 	getPreviousLandingData,
@@ -58,6 +56,7 @@ import { logout } from '../../../helpers/Api/PulseemReactAPI';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 
 const useStyles = makeStyles((theme) => ({
 	customWidth: {
@@ -130,7 +129,6 @@ const SmsCreator = ({ classes }) => {
 	const location = useLocation();
 	const [dialogType, setDialogType] = useState(null);
 	const [alignment, setAlignment] = useState('right');
-	const [showEmoji, setShowEmoji] = useState(false);
 	const [checked, setChecked] = React.useState(false);
 	const [editmenuClick, seteditmenuClick] = useState(false);
 	const [campaignBool, setcampaignBool] = useState(false);
@@ -279,6 +277,11 @@ const SmsCreator = ({ classes }) => {
 			case 4: {
 				// OTP_NEEDED
 				setOTPOpen(true);
+				break;
+			}
+			case 8: {
+				// English letters not allowed
+				setDialogType({ type: 'englishLetterDialog' });
 				break;
 			}
 			default:
@@ -484,9 +487,14 @@ const SmsCreator = ({ classes }) => {
 
 	const getcredits = (count) => {
 		dispatch(getCreditsforSMS(count)).then((res) => {
-			let credits = res.payload.split('#');
-			setmessageCount(credits[0]);
-			handleSmsModelChange('CreditsPerSms', credits[0]);
+			let credits = res.payload?.split('#');
+			if (credits && credits !== '') {
+				setmessageCount(credits[0]);
+				handleSmsModelChange('CreditsPerSms', credits[0]);
+			} else {
+				setmessageCount(0);
+				handleSmsModelChange('CreditsPerSms', 0);
+			}
 		});
 	};
 	const onCamppaignChange = (e) => {
@@ -677,10 +685,6 @@ const SmsCreator = ({ classes }) => {
 		}
 	};
 
-	const onEmojiClick = (event, emojiObject) => {
-		setShowEmoji(false);
-		onAddText(emojiObject.emoji);
-	};
 	const renderFields = () => {
 		return (
 			<Grid
@@ -778,9 +782,9 @@ const SmsCreator = ({ classes }) => {
 	};
 
 	const onRemovalLink = async () => {
-		onAddText('##SmsUnsubscribeURL##');
+		onAddText(t('sms.smsUnsubscribeMessage'));
 		let total = splittedMsg;
-		total.push('##SmsUnsubscribeURL##');
+		total.push(t('sms.smsUnsubscribeMessage'));
 		if (isLinksStatistics && SplittedLinks !== null) {
 			setremovalLinkDisabled(true);
 		} else {
@@ -808,14 +812,11 @@ const SmsCreator = ({ classes }) => {
 		} else {
 			if (restoreBool) setremovalMessageButtonDisabled(false);
 		}
-		if (smsModel.Text.includes('##SmsUnsubscribeURL##')) {
+		if (smsModel.Text.includes(t('sms.smsUnsubscribeMessage'))) {
 			setremovalLinkDisabled(true);
 		} else {
 			setremovalLinkDisabled(false);
 		}
-	};
-	const handleClickOutsideEmoji = () => {
-		setShowEmoji(false);
 	};
 
 	const renderMsg = () => {
@@ -909,48 +910,14 @@ const SmsCreator = ({ classes }) => {
 										</Tooltip>
 									</>
 								)}
-								<ClickAwayListener onClickAway={handleClickOutsideEmoji}>
-									<Box className={classes.pickerEmoji}>
-										{showEmoji ? (
-											<Picker
-												onEmojiClick={onEmojiClick}
-												groupNames={{
-													smileys_people: t('emoji.smiles'),
-													animals_nature: t('emoji.nature'),
-													food_drink: t('emoji.foodAndDrinks'),
-													travel_places: t('emoji.places'),
-													activities: t('emoji.activities'),
-													objects: t('emoji.objects'),
-													symbols: t('emoji.symbols'),
-													recently_used: t('emoji.recently'),
-												}}
-												groupVisibility={{
-													flags: false,
-													recently_used: false,
-												}}
-											/>
-										) : null}
-										<Tooltip
-											disableFocusListener
-											title={t('mainReport.emoji')}
-											classes={{ tooltip: styles.customWidth }}
-											placement='top-start'
-											arrow>
-											<img
-												alt='emoji picker'
-												src={Emoj}
-												style={{
-													marginInlineEnd: '8px',
-													widht: '25px',
-													height: '25px',
-												}}
-												onClick={() => {
-													setShowEmoji(!showEmoji);
-												}}
-											/>
-										</Tooltip>
-									</Box>
-								</ClickAwayListener>
+
+								<EmojiPicker
+									classes={classes}
+									OnSelectEmoji={(emoji) => {
+										onAddText(emoji);
+									}}
+									boxStyles={{ alignItems: 'center' }}
+								/>
 							</Box>
 							<Box className={classes.baseButtons}>
 								<Tooltip
@@ -1140,7 +1107,7 @@ const SmsCreator = ({ classes }) => {
 			<Box className={classes.mobilePreviewContainer}>
 				<MobilePreview
 					classes={classes}
-					fromNumber={campaignNumber}
+					campaignNumber={campaignNumber}
 					text={smsModel.Text}
 					keyItem='edtiorPreview'
 				/>
@@ -1302,19 +1269,20 @@ const SmsCreator = ({ classes }) => {
 	const validationCheckpoint = async (callbackFunc) => {
 		if (validationCheck()) {
 			if (isSiteTracking === true) {
-				if (!smsModel.Text.includes('ref') && isLinksStatistics) {
+				if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics) {
 					let text = smsModel.Text;
 					const startIndex = smsModel.Text.substring(
 						smsModel.Text.indexOf(
 							commonSettings.SubAccountSettings.DomainAddress
 						)
 					);
-					const originalLink = startIndex.split(' ') || startIndex.split('\n');
+					const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
 					let originUrl = originalLink[0];
 					let newUrl = originUrl.trim();
-					newUrl += newUrl.includes('?')
-						? '&ref=##ClientIDEnc##'
-						: '?ref=##ClientIDEnc##';
+					newUrl +=
+						newUrl.indexOf('?') > -1
+							? '&ref=##ClientIDEnc##'
+							: '?ref=##ClientIDEnc##';
 					text = smsModel.Text.replace(originUrl, newUrl);
 					setSmsModel((currentState) => {
 						currentState.Text = text;
@@ -1375,8 +1343,20 @@ const SmsCreator = ({ classes }) => {
 			} else {
 				Redirect({ url: `/react/sms/send/${campaignId}` });
 			}
-		} else if (r.payload.Status === 3) {
-			setOTPOpen(true);
+		} else {
+			switch (r.payload.Status) {
+				case 3: {
+					setOTPOpen(true);
+					break;
+				}
+				case 8: {
+					setDialogType({ type: 'englishLetterDialog' });
+					break;
+				}
+				default: {
+					break;
+				}
+			}
 		}
 	};
 
@@ -1861,7 +1841,6 @@ const SmsCreator = ({ classes }) => {
 		};
 	};
 	const groupDialog = () => {
-		console.log('testGroups::', testGroups);
 		return {
 			title: t('mainReport.selectGroups'),
 			showDivider: true,
@@ -1887,6 +1866,9 @@ const SmsCreator = ({ classes }) => {
 					</Paper>
 					<Box style={{ marginTop: 20 }}>
 						{testGroups
+							.filter((g) => {
+								return g.Recipients > 0;
+							})
 							.filter((val) => {
 								if (ContactSearch === '') {
 									return val;
@@ -2088,6 +2070,51 @@ const SmsCreator = ({ classes }) => {
 			},
 		};
 	};
+	const englishLetterNotAllowed = () => {
+		return {
+			showDivider: false,
+			icon: (
+				<AiOutlineExclamationCircle style={{ fontSize: 30, color: '#fff' }} />
+			),
+			content: (
+				<Box
+					className={classes.dialogBox}
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						flexDirection: 'column',
+						alignItems: 'center',
+					}}>
+					<FaExclamationCircle style={{ fontSize: 100 }} />
+					<Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>
+						{RenderHtml(t('sms.englishLetterNotApprovedTitle'))}
+					</Typography>
+					<Typography style={{ textAlign: 'center' }}>
+						{RenderHtml(t('sms.englishLetterNotApprovedDescription'))}
+					</Typography>
+					<Box style={{ marginTop: 25 }}>
+						<Button
+							variant='contained'
+							size='small'
+							onClick={() => setDialogType(null)}
+							className={clsx(
+								classes.dialogButton,
+								classes.dialogConfirmButton
+							)}>
+							{t('common.Ok')}
+						</Button>
+					</Box>
+				</Box>
+			),
+			showDefaultButtons: false,
+			onClose: () => {
+				setDialogType(null);
+			},
+			onConfirm: () => {
+				setDialogType(null);
+			},
+		};
+	};
 	const renderDialog = () => {
 		const { type, data } = dialogType || {};
 
@@ -2102,6 +2129,7 @@ const SmsCreator = ({ classes }) => {
 			alert: alertDialog(),
 			noCredit: noCreditDialog(),
 			linkStatisticAlert: siteTrackingLinkDialog(data),
+			englishLetterDialog: englishLetterNotAllowed(),
 		};
 
 		const currentDialog = dialogContent[type] || {};

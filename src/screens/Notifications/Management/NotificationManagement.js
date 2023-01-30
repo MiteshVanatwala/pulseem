@@ -345,7 +345,12 @@ const NotificationManagement = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => Redirect({ url: '/react/Notification/create' })}
+            component="a"
+            href='/react/Notification/create'
+            onClick={(e) => {
+              e.preventDefault()
+              Redirect({ url: '/react/Notification/create' })
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -839,7 +844,7 @@ const NotificationManagement = ({ classes }) => {
         <Box className={classes.myGroupsTitleSection}>
           <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
           <Link
-            className={clsx(classes.f15, classes.bold, classes.mt5)}
+            className={clsx(classes.f15, classes.bold, classes.mt1)}
             component="button"
             color="textPrimary"
             underline="always"
@@ -1270,7 +1275,8 @@ const NotificationManagement = ({ classes }) => {
     <DefaultScreen
       currentPage='notifications'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}
+    >
       <Title
         Text={t('notifications.notificationManagement')} Classes={classes.managementTitle}
         ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}

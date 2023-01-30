@@ -222,6 +222,8 @@
     "Text": "שכפל"
   },
   "GridButtonColumnResource2": {
+    "confirmExit": "אתה עומד לצאת מהגדרות ניוזלטר",
+    "confirmExitText": "תרצה לשמור את הקמפיין לפני היציאה?",
     "ConfirmText": "האם ברצונך למחוק את הקמפיין?",
     "ConfirmTitle": "מחיקת קמפיין",
     "CurrentFilterValue": "",
@@ -465,6 +467,8 @@
   "recipients": "נמענים",
   "automation": "אוטומציות",
   "create": "יצירת קמפיין",
+  "createNewsLetterHeader": "יצירת קמפיין ניוזלטר",
+  "createNewsLetterSubTitle": "הגדרות ניוזלטר",
   "restoreDeleted": "שחזור מחוקים",
   "exportFile": "ייצוא קובץ",
   "lastUpdate": "עודכן ב",
@@ -494,23 +498,79 @@
       "FromName": "זהו שדה חובה",
       "FromEmail": ",ניתן לשלוח מכתובת אימייל מאומתת בלבד",
       "clickToVerify": "לאימות לחץ כאן",
-      "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול עלול לפגוע בעבירות.",
+      "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול להכניס את המייל לתיבת הספאם.",
       "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
       "upload": "יופיע כקובץ מצורף במייל שתשלחו"
     },
     "errors": {
-      "invaliApiKey": "Invalid or missing API KEY",
-      "fileExtNotAlwd": "File extension not allowed",
-      "fileCanNotNull": "File cannot be null",
-      "generalError": "Error Occured",
+      "campaignWasNotSent": "הקמפיין לא נשלח!",
+      "invaliApiKey": "מפתח API לא תקין!",
+      "fileExtNotAlwd": "סיומת הקובץ אינה נתמכת",
+      "fileCanNotNull": "קובץ לא יכול להיות ריק",
+      "generalError": "אירעה שגיאה",
       "campaignName": "אנא מלא שם קמפיין",
       "fromName": "אנא מלא שם שולח",
       "fromEmail": "נא מלא כתובת מייל לשליחה",
       "campaignSubject": "נא לרשום נושא קומפיין",
       "invalidCampaignId": "מזהה קמפיין שגוי / לא משוייך לחשבון",
-      "CampaignNotFound": "קמפיין לא נמצא או נמחק"
+      "CampaignNotFound": "קמפיין לא נמצא או נמחק",
+      "missingSendingDate": "הקמפיין לא נשמר! תאריך שליחה חסר",
+      "campaignAlreadySent": "קמפיין זה כבר נשלח",
+      "LOCK_SENDING": "חשבון זה נעול לשליחת קמפיינים באימייל<br/>לתמיכה נוספת אנא פנו לשירות הלקוחות שלנו",
+      "UNAUTHORIZED_FROM_EMAIL": "כתובת דואר אלקטרוני זו אינה מאושרת לשליחה<br/>לתמיכה נוספת אנא פנו לשירות הלקוחות שלנו",
+      "NO_RECIPIENTS": "לא בחרתם נמענים לשליחה<br/>אנא בחרו נמענים ונסו שנית",
+      "MONTHLY_RESTRICTIONS": "עברתם את מכסת השליחה החודשית שלכם<br/>לתמיכה נוספת אנא פנו לשירות הלקוחות שלנו",
+      "FIRST_CAMPAIGN_RESTRICTIONS": "ברכות על שליחת הקמפיין הראשון שלכם!<br/>מכיוון שזה הקמפיין הראשון אותו אתם שולחים, הוא יצטרך לעבור אישור על ידי נציג שלנו.<br/>לאחר קבלת האישור הקמפיין ישלח מידית.",
+      "BULK_ENDED": "החבילה שלכם נגמרה!<br/>עברו למסך הבית בכדי לרכוש חבילה חדשה",
+      "MONTHLY_BULK_ENDED": "החבילה החודשית שלכם נגמרה!<br/>עברו למסך הבית בכדי לרכוש חבילה חדשה<br/>או פנו לשירות הלקוחות שלנו",
+      "contactUs": "בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
     },
-    "success": "Success"
+    "success": "הקמפיין נשמר בהצלחה",
+    "sendSettings": {
+      "optimalSending": "שליחה אופטימלית",
+      "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
+      "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
+      "segmentation": "פילוחים",
+      "segmCriteria": "קריטריונים לפילוח",
+      "segmCritCb1": "שלח ללקוחות שפתחו דיוור",
+      "segmCritCb2": "שלח ללקוחות שלא פתחו דיוור",
+      "segmCritCb3": "שלח ללקוחות שהקליקו על קישור",
+      "segmCritCb4": "שלח ללקוחות שלא הקליקו על קישורים בדיוור",
+      "insertCampaginName": "אילו הגדרות שליחה לשכפל מקמפיין ##campaignName##?",
+      "emailFilterInput": "לא לשלוח ללקוחות שקיבלו ניוזלטר במספר הימים האחרונים",
+      "pendingClients": "לקוחות הממתינים לאישור",
+      "restrictedClients": "לקוחות חסומים",
+      "duplicatedClients": "לקוחות כפולים",
+      "filters": "סינון",
+      "segmentations": "פילוחים",
+      "smsMarketing": {
+        "title": "SMS שיווק משלים",
+        "sendTo": "שלח ל-",
+        "everyone": "כולם",
+        "opened": "פתחו",
+        "unOpened": "לא פתחו",
+        "clicked": "הקליקו",
+        "invalid": "נכשלו",
+        "fromNumber": "מאת",
+        "sendingDate": "תאריך שליחה",
+        "sendingTime": "זמן שליחה",
+        "smsMarketingSubTitle": "הפצת הודעת SMS ללקוחות בקרטריון הנבחר שקבלו קמפיין דיוור אלקטרוני להשלמת שיווק כולל",
+        "addLinkToCampaign": "הוסף קישור לקמפיין אימייל זה",
+        "addLinkToUpdate": "הוסף קישור לעדכון מידע"
+      },
+      "errors": {
+        "reqFromNumber": "הואחובהמספר עורך",
+        "reqText": "טקסט הוא חובה",
+        "reqDate": "תאריך הוא חובה",
+        "invalidDate": " תאריך לא תקין",
+        "invalidTime": "זמן לא תקין",
+        "reqTime": "זמן הוא חובה",
+        "reqSendTo": "שלח ל הוא חובה",
+        "enterVerifiedNumber": "נא להזין את מספר הטלפון המאומת"
+      },
+      "send": "שלח",
+      "doNotSend": "לא לשלוח"
+    }
   },
   "newsLetterMgmt": {
     "emailVerification": {
@@ -533,7 +593,7 @@
         "error_expired": "פג תוקף הקוד",
         "btnText": "שלחו לי אימייל לאימות",
         "anyProblem": "נתקלת בבעיה?",
-        "contactUs": "צרו איתנו קשר",
+        "contactUs": "צור איתנו קשר בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או במייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
         "placeholder": "הקלד אימייל"
       },
       "thirdSlide": {
@@ -547,7 +607,10 @@
         "resend": "שליחה חוזרת",
         "resendSuccess": "קוד נשלח",
         "placeholder": "הזינו אותו כאן",
-        "btnText": "אישור"
+        "btnText": "אישור",
+        "email_error_abused": "עקב ניסיונות אימות מרובים מייל זה נחסם לאימות, לתמיכה אנא פנה לשירות הלקוחות",
+        "sms_error_abused": "עקב ניסיונות אימות מרובים מספר זה נחסם לאימות, לתמיכה אנא פנה לשירות הלקוחות",
+        "error_tooMuchAttempts": "יותר מדי נסיונות אימות, אנא שלח מחדש ואמת עם הקוד החדש"
       },
       "errorSlide": {
         "title": "יותר מדי נסיונות",
@@ -583,5 +646,10 @@
   "leftToRight": "שמאל לימין",
   "summaryTotal": "סה\"כ עלות",
   "totalSize": "סה\"כ נפח",
-  "kb": "KB"
+  "kb": "KB",
+  "saveBlock": "שמור תבנית",
+  "savedBlocks": "תבניות-שמורות",
+  "weSent": "שלחנו!",
+  "campaignIsOnItsWay": "הקמפיין שלך בדרך ליעד",
+  "newsletterSetUp": "הגדרות קמפיין"
 }

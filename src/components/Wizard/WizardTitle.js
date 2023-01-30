@@ -32,12 +32,12 @@ const WizardTitle = ({ classes, title, tooltip = null, stepNumber, subTitle, top
             </Tooltip>
             }
         </Box>
-        <Box className={classes.headDiv}>
+        {subTitle && subTitle !== '' && <Box className={classes.headDiv}>
             {stepNumber && <Typography className={classes.headNo}>{stepNumber}</Typography>}
             <Typography className={classes.contentHead}>
                 {subTitle}
             </Typography>
-        </Box>
+        </Box>}
     </Box>)
 }
 

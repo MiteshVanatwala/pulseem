@@ -101,7 +101,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		'& .MuiPaper-root': {
 			borderRadius: 25,
 			overflowX: 'hidden',
-			boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
+			// boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
 			backgroundColor: '#fff',
 		},
 		'& .MuiDialog-scrollPaper': {
@@ -152,7 +152,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	dialogChildren: {
 		// marginInline: 25,
-		marginBlock: 20,
+		marginBlock: 30,
 		paddingRight: summaryPadding[windowSize],
 		paddingLeft: summaryPadding[windowSize],
 		overflowY: 'auto',
@@ -276,6 +276,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	maxWidth540: {
 		maxWidth: 540,
 	},
+	maxWidth900: {
+		maxWidth: 900,
+	},
 	flex2: {
 		flex: 2,
 	},
@@ -293,6 +296,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	p10: {
 		padding: 10,
+	},
+	pbt5: {
+		padding: '5px 0',
 	},
 	p20: {
 		padding: 20,
@@ -333,6 +339,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	pt14: {
 		paddingTop: 14,
 	},
+	pt15: {
+		paddingTop: 15,
+	},
 	pt2: {
 		paddingTop: 1.4,
 	},
@@ -347,6 +356,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	mr10: {
 		marginInlineEnd: 10,
+	},
+	mb0: {
+		marginBottom: '0px !important',
 	},
 	mb5: {
 		marginBottom: 5,
@@ -363,6 +375,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	mb20: {
 		marginBottom: 20,
 	},
+	ml20: {
+		marginInlineStart: 20,
+	},
 	ml25: {
 		marginInlineStart: 25,
 	},
@@ -372,15 +387,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	mbNeg10: {
 		marginBottom: -10,
 	},
-	mt5: {
-		marginTop: 5,
+	mlr10: {
+		marginInline: 10,
 	},
 	ml0: {
 		marginLeft: 0,
 		marginInlineStart: 0,
 	},
 	ml5: {
-		marginInlineStart: 5,
+		marginInline: 5,
 	},
 	ml10: {
 		marginInlineStart: 10,
@@ -395,7 +410,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		marginInlineStart: 15,
 	},
 	mt10: {
-		marginTop: 10,
+		marginTop: '10px !important',
 	},
 	mt15: {
 		marginTop: 15,
@@ -586,6 +601,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	mt4: {
 		marginTop: 20,
 	},
+	mt5: {
+		marginTop: 25,
+	},
+	mt6: {
+		marginTop: 30,
+	},
 	mb1: {
 		marginBottom: 5,
 	},
@@ -631,6 +652,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	font30: {
 		fontSize: 30,
+	},
+	w50: {
+		width: '50%',
+	},
+	w100: {
+		width: '100%',
+	},
+	h100: {
+		height: '100%',
+	},
+	hAuto: {
+		height: 'auto',
+	},
+	pRelative: {
+		position: 'ralative',
 	},
 	borderBox: {
 		border: '3px solid #0371ad',
@@ -751,8 +787,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		// height: "100px",
 		marginTop: '20px',
 		// "@media screen and (max-width: 960px)": {
-
-		//   height: "0"
 
 		// },
 	},
@@ -1569,18 +1603,220 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		alignItems: 'center',
 		cursor: 'pointer',
 
-		'&:hover': {
-			backgroundColor: '#efefef',
+		'@media screen and (max-width: 414px)': {
+			top: 120,
+			right: 42,
+			width: 260,
+			height: 205,
+		},
+		'@media screen and (max-width: 360px)': {
+			top: 105,
+			right: 38,
+			width: 230,
+			height: 190,
+		},
+		'@media screen and (max-width: 320px)': {
+			top: 90,
+			right: 38,
+			left: 'auto',
+			width: 200,
+			height: 165,
 		},
 	},
-	conInfo: {
-		fontSize: '22px',
-		color: '#555',
-		marginInlineEnd: '5px',
+	fromMe: {
+		alignSelf: 'flex-end',
+		borderRadius: '1.15rem',
+		lineHeight: '1.25',
+		// maxWidth: '79%',
+		minHeight: '53px',
+		padding: '0.5rem .875rem',
+		position: 'relative',
+		minWidth: 200,
+		wordWrap: 'break-word',
+		backgroundColor: '#3da6f6',
+		color: '#fff',
+		fontSize: 16,
+		'& p': {
+			wordBreak: 'break-word',
+		},
+		'&::before': {
+			borderBottomLeftRadius: '0.8rem 0.7rem',
+			borderRight: '1rem solid #3da6f6',
+			right: '-0.35rem',
+			transform: 'translate(0, -0.1rem)',
+			bottom: '-0.1rem',
+			content: `''`,
+			height: '1rem',
+			position: 'absolute',
+		},
+		'&::after': {
+			backgroundColor: '#fff',
+			borderBottomLeftRadius: '0.5rem',
+			right: '-40px',
+			transform: 'translate(-30px, -2px)',
+			width: '10px',
+			bottom: '-0.1rem',
+			content: `''`,
+			height: '1rem',
+			position: 'absolute',
+		},
+		'@media screen and (max-width: 414px)': {
+			minWidth: 150,
+		},
+		'@media screen and (max-width: 360px)': {
+			minWidth: 140,
+		},
 	},
-	tabDiv: {
-		display: 'grid',
-		gridTemplateColumns: '50% 50%',
+	groupName: {
+		display: 'block',
+		fontSize: '32px',
+		color: '#006996',
+		width: '700px',
+		'@media screen and (max-width: 768px)': {
+			width: '100%',
+			fontSize: '22px',
+		},
+	},
+	fieldsRequire: {
+		fontSize: '18px',
+		color: 'red',
+		fontWeight: '400',
+		'& li': {
+			marginTop: 5,
+		},
+		'@media screen and (max-width: 768px)': {
+			fontSize: '12px !important',
+			marginBottom: '4px',
+		},
+	},
+	baseDialogSetup: {
+		height: '60px',
+		borderBottom: '1px solid #DEE2E7',
+		'@media screen and (max-width: 768px)': {
+			height: 'auto',
+		},
+	},
+	bodyTextDialog: {
+		fontSize: '22px',
+		marginTop: '5px',
+		'@media screen and (max-width: 768px)': {
+			fontSize: '16px',
+		},
+	},
+	modalDiv: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		width: '700px',
+		marginTop: '20px',
+	},
+	modalSearch: {
+		width: '100%',
+		padding: '10px',
+		outline: 'none',
+	},
+	confirmButton: {
+		outline: 'none',
+		padding: '10px',
+		borderRadius: '30px',
+		height: '30px',
+		boxShadow: '0 1px 2px #a5a2a2',
+		border: '0',
+		width: '130px',
+		borderColor: '#449d44',
+		backgroundColor: '#449d44',
+		color: 'white',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontWeight: '700',
+		marginTop: '20px',
+	},
+	cancelBtn: {
+		outline: 'none',
+		padding: '10px',
+		borderRadius: '30px',
+		height: '30px',
+		boxShadow: '0 1px 2px #a5a2a2',
+		border: '0',
+		width: '130px',
+		borderColor: '#c9302c',
+		backgroundColor: '#c9302c',
+		color: 'white',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontWeight: '700',
+		marginTop: '20px',
+	},
+	saveButton: {
+		outline: 'none',
+		padding: '10px',
+		borderRadius: '30px',
+		height: '30px',
+		boxShadow: '0 1px 2px #a5a2a2',
+		border: '0',
+		width: '130px',
+		borderColor: '#4678a1',
+		backgroundColor: '#4678a1',
+		color: 'white',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontWeight: '700',
+		marginTop: '20px',
+	},
+	dropDiv: {
+		position: 'absolute',
+		width: '200px',
+		height: '150px',
+		top: '-150px',
+		left: '20px',
+		display: 'flex',
+		flexDirection: 'column',
+		'@media screen and (max-width: 768px)': {
+			top: '40px',
+			left: '0',
+			right: '0',
+			bottom: '0',
+			width: '100%',
+			zIndex: '999',
+		},
+	},
+	dropCon: {
+		marginBottom: '8px',
+		border: '1px solid #1c82b2',
+		boxShadow: '0 3px 5px 1px #e0dada',
+		borderRadius: '15px',
+		backgroundColor: '#fff',
+		padding: '10px',
+		width: '100%',
+		color: '#1c82b2',
+		textAlign: 'center',
+	},
+	listDiv: {
+		height: '300px',
+		maxHeight: '200px',
+		width: '100%',
+		overflowX: 'hidden',
+		marginTop: '20px',
+		overflow: 'auto',
+	},
+	listDivFilter: {
+		height: 130,
+		width: '100%',
+		overflowY: 'auto',
+		borderBottom: '1px solid #efefef',
+		borderLeft: '1px solid #efefef',
+		borderRight: '1px solid #efefef',
+		marginTop: '0',
+	},
+	searchCon: {
+		padding: 5,
+		display: 'flex',
+		alignItems: 'center',
+		cursor: 'pointer',
 
 		// "@media screen and (max-width: 768px)": {
 		//   width: "315px",
@@ -1603,6 +1839,139 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	activeTab: {
 		borderBottom: '4px solid #168ee3',
 		color: '#007bff !important',
+	},
+	areaManual: {
+		border: '2px dashed rgba(0,0,0,.2)',
+		// height: "400px",
+		backgroundColor: 'white !important',
+		'@media screen and (max-width: 768px)': {
+			width: 'auto',
+		},
+	},
+	greenManual: {
+		border: '2px dashed #4BB543',
+		// height: "400px",
+		backgroundColor: '#CCFFE5',
+		'@media screen and (max-width: 768px)': {
+			width: 'auto',
+		},
+	},
+	areaCon: {
+		width: 'calc(100% - 20px)',
+		outline: 'none',
+		border: 'none',
+		fontSize: '16px',
+		fontFamily: 'Sans-serif',
+		resize: 'none',
+		height: 315,
+		backgroundColor: 'white !important',
+		padding: '10px',
+		'&::placeholder': {
+			color: 'rgb(170, 170, 170)',
+			fontSize: '16px',
+			fontFamily: 'inherit',
+		},
+		'@media screen and (max-width: 965px)': {
+			maxHeight: 275,
+		},
+		'@media screen and (max-width: 768px)': {
+			width: '90%',
+		},
+	},
+	greenCon: {
+		width: 'calc(100% - 20px)',
+		outline: 'none',
+		border: 'none',
+		fontFamily: 'Sans-serif',
+		resize: 'none',
+		height: 315,
+		backgroundColor: '#CCFFE5',
+		padding: '10px',
+		'&::placeholder': {
+			color: 'rgb(170, 170, 170)',
+			fontSize: '16px',
+			fontFamily: 'inherit',
+		},
+	},
+	addManualDiv: {
+		padding: '8px !important',
+		backgroundColor: '#51AA51 !important',
+		color: '#fff !important',
+		marginInlineEnd: '6px !important',
+		borderRadius: '6px !important',
+		cursor: 'pointer !important',
+		'@media screen and (max-width: 768px)': {
+			fontSize: '10px !important',
+		},
+	},
+	clearDiv: {
+		padding: '8px !important',
+		color: '#277BFF !important',
+		marginInlineEnd: '6px !important',
+		borderRadius: '6px !important',
+		cursor: 'pointer !important',
+		border: '1px solid #277BFF !important',
+		'@media screen and (max-width: 768px)': {
+			fontSize: '10px !important',
+		},
+	},
+	backBtn: {
+		marginTop: '30px',
+		boxShadow: '0 1px 2px #a5a2a2',
+		padding: '12px',
+		backgroundColor: '#4F87B5',
+		width: '70px',
+		color: 'white',
+		borderRadius: '20px',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontWeight: '700',
+	},
+	pulseDiv: {
+		display: 'flex',
+		marginTop: '20px',
+		alignItems: 'center',
+	},
+	pulse: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		fontSize: 14,
+		border: '1px solid #277bff',
+		padding: '8px',
+		marginInlineEnd: '8px',
+		borderRadius: '4px',
+		cursor: 'pointer',
+		color: '#277bff',
+		'&:hover': {
+			color: '#ffffff',
+			backgroundColor: '#277bff',
+		},
+	},
+
+	// "@media screen and (max-width: 768px)": {
+	//   width: "315px",
+	// },
+	// "@media screen and (device-width: 411px)": {
+	//   width: "355px",
+	// },
+
+	tab1: {
+		padding: '10px',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		fontSize: '19px',
+		color: '#777777',
+		'@media screen and (max-width: 768px)': {
+			fontSize: '14px',
+		},
+	},
+	activeTab: {
+		borderBottom: '4px solid #168ee3',
+		color: '#007bff !important',
+		paddingBottom: '6px !important',
 	},
 	areaManual: {
 		border: '2px dashed rgba(0,0,0,.2)',
@@ -1749,8 +2118,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		width: '72px',
 		alignItems: 'center',
 		justifyContent: 'center',
-		borderBottomLeftRadius: '4px',
-		borderTopLeftRadius: '4px',
+		borderBottomLeftRadius: isRTL ? null : '4px',
+		borderBottomRightRadius: isRTL ? '4px' : null,
+		borderTopLeftRadius: isRTL ? null : '4px',
+		borderTopRightRadius: isRTL ? '4px' : null,
 		border: '1px solid #277BFF',
 		padding: '10px',
 		marginBottom: '8px',
@@ -1777,7 +2148,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		justifyContent: 'center',
 		borderBottomRightRadius: '4px',
 		borderTopRightRadius: '4px',
-		borderLeft: 'none',
+		borderBottomLeftRadius: isRTL ? '4px' : null,
+		borderBottomRightRadius: isRTL ? null : '4px',
+		borderTopLeftRadius: isRTL ? '4px' : null,
+		borderTopRightRadius: isRTL ? null : '4px',
+		// borderLeft: "none",
 		border: '1px solid #277BFF',
 		padding: '10px',
 		marginBottom: '8px',
@@ -1803,8 +2178,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		width: '72px',
 		alignItems: 'center',
 		justifyContent: 'center',
-		borderBottomLeftRadius: '4px',
-		borderTopLeftRadius: '4px',
+		borderBottomLeftRadius: isRTL ? null : '4px',
+		borderBottomRightRadius: isRTL ? '4px' : null,
+		borderTopLeftRadius: isRTL ? null : '4px',
+		borderTopRightRadius: isRTL ? '4px' : null,
 		border: '1px solid #277BFF',
 		padding: '10px',
 		marginBottom: '8px',
@@ -1817,8 +2194,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		width: '72px',
 		alignItems: 'center',
 		justifyContent: 'center',
-		borderBottomRightRadius: '4px',
-		borderTopRightRadius: '4px',
+		borderBottomRightRadius: isRTL ? null : '4px',
+		borderBottomLeftRadius: isRTL ? '4px' : null,
+		borderTopRightRadius: isRTL ? null : '4px',
+		borderTopLeftRadius: isRTL ? '4px' : null,
 		borderLeft: 'none',
 		border: '1px solid #277BFF',
 		padding: '10px',
@@ -1936,11 +2315,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 			display: 'flex',
 			alignItems: 'center',
 			justifyContent: 'center',
-			height: '500px',
 		},
 		'@media screen and (max-width: 566px)': {
 			marginTop: 25,
-			height: '500px',
 		},
 	},
 	groupsMan: {
@@ -2168,23 +2545,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		fontSize: 30,
 		fontFamily: 'Assistant',
 		textAlign: 'center',
-		color: '#000',
+		color: 'rgba(0, 0, 0, 0.7)',
 		fontWeight: '700',
 		position: 'absolute',
-		top: 0,
+		top: '0.2rem',
 		cursor: 'pointer',
 	},
 	dialogExitButtonRTL: {
-		left: '0.5rem',
+		left: '1.2rem',
 	},
 	dialogExitButtonLTR: {
-		right: '0.5rem',
+		right: '1rem',
 	},
 	solidDialog: {
 		display: 'flex',
 		flexDirection: 'column',
 		margin: '1rem',
 		padding: '1rem',
+		paddingTop: 0,
 		minWidth: dialogWidth[windowSize],
 		backgroundColor: '#fff',
 		'& .title': {
@@ -2305,6 +2683,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		boxShadow: '0px 3px 3px darkred',
 		maxWidth: 150,
 	},
+	dialogBlueButton: {
+		background: '#006996',
+		// backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+		border: '1px solid #006996',
+		borderTop: '0px solid #006996',
+		boxShadow: '0px 3px 3px #006996',
+		// maxWidth: 150,
+	},
 	dialogConfirmBlueButton: {
 		backgroundImage: 'linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)',
 		maxWidth: 150,
@@ -2331,7 +2717,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	marginBlock20: {
 		marginBlock: 20,
 	},
-
 	MuiChipRoot: {
 		backgroundColor: '#1c82b2 !important',
 		'& span': {
@@ -2394,15 +2779,40 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	customScroll: {
 		'&::-webkit-scrollbar': {
 			width: '6px',
+
+			'&::-webkit-scrollbar-thumb:hover': {
+				background: '#979595',
+			},
 		},
-		'&::-webkit-scrollbar-track': {
-			boxShadow: 'inset 0 0 5px #e9e9e9',
-			borderRadius: '10px',
+		scrollY: {
+			overflowX: 'hidden',
+			overflowY: 'scroll',
 		},
 
-		'&::-webkit-scrollbar-thumb': {
-			background: '#cccccc',
-			borderRadius: '10px',
+		switchButton: {
+			background: '#e4e4e4',
+			padding: '2px 10px 3px 10px',
+			boxShadow: 'inset 0px 0px 5px #898888',
+			fontWeight: 500,
+			cursor: 'pointer',
+		},
+		switchButtonActive: {
+			background: '#a9d9a9',
+			padding: '2px 10px 3px 10px',
+			boxShadow: '0px 0px 5px #898888',
+			fontWeight: 500,
+			cursor: 'pointer',
+		},
+		toggleSwitch: {
+			'& .MuiSwitch-switchBase.Mui-checked': {
+				color: '#339933',
+				'&:hover': {
+					backgroundColor: 'transparent',
+				},
+			},
+			'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+				backgroundColor: '#339933',
+			},
 		},
 
 		'&::-webkit-scrollbar-thumb:hover': {
@@ -2413,7 +2823,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		overflowX: 'hidden',
 		overflowY: 'scroll',
 	},
-
 	switchButton: {
 		background: '#e4e4e4',
 		padding: '2px 10px 3px 10px',
@@ -2450,11 +2859,36 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	ltr: {
 		direction: 'ltr',
 	},
+
+	selectPlaceholderInput: {
+		height: '90%',
+		opacity: 1,
+		border: 'none',
+		boxShadow: 'none',
+		background: 'none',
+		width: '95%',
+		borderRadius: 5,
+		paddingLeft: 10,
+		fontSize: '0.9rem',
+		position: 'absolute',
+		pointerEvents: 'none',
+		'&::placeholder': {
+			color: '#bfbfbf',
+		},
+	},
+
 	selectInputFormControl: {
 		'&.MuiFormControl-root': {
 			marginInline: 3,
 			'& label': {
 				marginInline: 5,
+			},
+			'& .outerborder': {
+				border: '1px solid #c4c4c4',
+				borderRadius: 5,
+				'& .MuiSelect-select': {
+					border: 'none !important',
+				},
 			},
 			'& .MuiSelect-select': {
 				minWidth: 200,
@@ -2463,11 +2897,86 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 				borderRadius: 4,
 				paddingLeft: 10,
 				paddingRight: 10,
+				minHeight: 25,
+				display: 'flex',
+				alignItems: 'center',
 			},
 			'& svg': {
 				left: isRTL ? 10 : 'auto',
 				right: isRTL ? 'auto' : 10,
 			},
 		},
+	},
+
+	dialogZindex: {
+		zIndex: '1000 !important',
+	},
+	testSendDialog: {
+		width: 440,
+		maxWidth: 440,
+	},
+	containerFullHeight: {
+		minHeight: 'calc(100vh - 120px)',
+		height: 'calc(100vh - 120px)',
+	},
+	pb15: {
+		paddingBottom: 15,
+	},
+	pb25: {
+		paddingBottom: 25,
+	},
+	pbt10: {
+		paddingTop: 10,
+		paddingBottom: 10,
+	},
+	pbt15: {
+		paddingTop: 15,
+		paddingBottom: 15,
+	},
+	buttonMinWidth: {
+		minWidth: 167,
+	},
+	noShadowAccordion: {
+		boxShadow: 'none',
+		'&.MuiAccordion-root': {
+			'&:before': {
+				height: 0,
+			},
+		},
+	},
+	filterHeight: {
+		height: '65vh',
+	},
+	root: {
+		'.Mui-expanded': {
+			margin: '0 !important',
+		},
+	},
+	flexColumnCenter: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	textRed: {
+		color: '#c9302c',
+	},
+	commingSoon: {
+		backgroundColor: '#dc3545',
+		padding: 5,
+		fontSize: 11,
+		color: '#fff',
+		borderRadius: 5,
+		fontWeight: 400,
+		marginInlineStart: '3px',
+		marginBottom: '0 !important',
+	},
+	flexCenterOfCenter: {
+		display: 'flex',
+		width: '100%',
+		justifyContent: 'center',
+		flexDirection: 'column',
+		alignItems: 'center',
+		textAlign: 'center',
 	},
 });

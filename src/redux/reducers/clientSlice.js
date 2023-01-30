@@ -119,6 +119,16 @@ export const changeClientStatus = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
+export const getClientsById = createAsyncThunk(
+  'client/GetClientsById', async (payload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`client/GetClientsById`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 
 
 export const clientSlice = createSlice({

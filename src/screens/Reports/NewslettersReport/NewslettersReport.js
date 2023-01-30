@@ -261,6 +261,10 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setLoader(true);
+    setDialog(null)
+    if (hasRevenue)
+      exportColumnHeader["Revenue"] = t("common.revenue");
     let listToExport = null;
 
     if (toFileArray.length > 0) {
@@ -293,6 +297,7 @@ const NewslettersReport = ({ classes }) => {
     } catch (error) {
       console.log(error);
     }
+    setLoader(false);
   }
 
 
@@ -483,7 +488,7 @@ const NewslettersReport = ({ classes }) => {
             {t('mainReport.compareCampaigns')}
           </Button>
         </Grid>} */}
-        {windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -1016,7 +1021,7 @@ const NewslettersReport = ({ classes }) => {
     <DefaultScreen
       currentPage='reports'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchSection()}
       {renderManagmentLine()}

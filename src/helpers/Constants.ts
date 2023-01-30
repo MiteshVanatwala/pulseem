@@ -74,3 +74,128 @@ export const MMSReportStatus = [
     { id: 4, value: 'report.smsReport.statuses.sent', color: "sendIconText" },
     { id: 5, value: 'report.smsReport.statuses.cancelled', color: "textColorRed" }
 ];
+export const UploadSettings = {
+    SMS: {
+        ShowGroupName: true,
+        Fields: [
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "FirstName",
+                label: "common.first_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "LastName",
+                label: "common.last_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "CellPhone",
+                label: "common.cellphone"
+            }
+        ]
+    },
+    GROUPS: {
+        ShowGroupName: false,
+        Fields: [
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "FirstName",
+                label: "common.first_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "LastName",
+                label: "common.last_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "CellPhone",
+                label: "common.cellphone"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Email",
+                label: "common.email"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Telephone",
+                label: "common.telephone"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Address",
+                label: "common.address"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "City",
+                label: "common.city"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "State",
+                label: "common.state"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Country",
+                label: "common.country"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Zip",
+                label: "common.zip"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Company",
+                label: "common.company"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "BirthDate",
+                label: "common.birth_date"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "ReminderDate",
+                label: "common.reminder_date"
+            }
+        ]
+    }
+
+};
+
+export const WhatsappStatus = [
+    { id: -1, value: 'report.takenBySender' },
+    { id: null, value: 'common.All' },
+    { id: 1, value: 'common.Pending' },
+    { id: 2, value: 'common.Sent' },
+    { id: 3, value: 'common.delivered' },
+    { id: 4, value: 'common.failedStatus' },
+    { id: 5, value: 'common.Unsubscribed' },
+    { id: 6, value: 'common.read' },
+    { id: 7, value: 'report.canceled' },
+    { id: 8, value: 'common.stopped' },
+    { id: 9, value: 'common.Removed' },
+    { id: 10, value: 'report.invalidFromNumber' },
+    { id: 11, value: 'common.NoInboundIn24Session' }
+];

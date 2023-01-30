@@ -25,7 +25,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const categories = { ...DASHBOARD_SHORTCUT };
   const Redirect = useRedirect();
 
-  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures.indexOf('35') > -1) {
+  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf('35') > -1) {
     categories['appBar.notifications.title'] = {
       title: 'appBar.notifications.title',
       pages: [
@@ -253,7 +253,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         <Button
           variant='contained'
           color='primary'
-          onClick={() => {
+          component="a"
+          href={data.ShortcutUrl}
+          onClick={(e) => {
+            e.preventDefault();
             Redirect({ url: data.ShortcutUrl })
           }}
           classes={{

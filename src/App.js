@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
@@ -35,7 +36,7 @@ import {
 	setIsClal,
 	setAccountFeatures,
 } from './redux/reducers/coreSlice'; //smsOldVersion
-import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
+import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
 import { useClasses } from './style/classes/index';
@@ -53,20 +54,24 @@ import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
-import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+import SmsReplies from './screens/Reports/Inbound/Sms/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
+import NewsLetterInfo from './screens/Newsletter/Wizard/NewsLetterInfo';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
+import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
+import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
+import InboundMessages from './screens/Reports/Inbound/InboundMessages';
+import { whatsappRoutes } from './screens/Whatsapp/Constant';
+import SaveCampain from './screens/Whatsapp/Campaign/SaveCampain';
 import SendCampaign from './screens/Whatsapp/Campaign/SendCampaign';
 import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAppTemplates';
 import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
 import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
-import SaveCampain from './screens/Whatsapp/Campaign/SaveCampain';
 import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
-import { whatsappRoutes } from './screens/Whatsapp/Constant';
 
 const renderRoutes = (classes, redirect) => {
 	const transferUrl =
@@ -132,7 +137,6 @@ const renderRoutes = (classes, redirect) => {
 			/>
 			<Route
 				path={`/react/CampaignStatistics/:campaignID`}
-				// component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
 				element={<GraphicReport classes={classes} />}
 			/>
 			<Route path={'/react/Groups'} element={<Groups classes={classes} />} />
@@ -140,10 +144,6 @@ const renderRoutes = (classes, redirect) => {
 				path={`/ClientSearch`}
 				element={transferUrl('/Pulseem/ClientSearch.aspx')}
 			/>
-			{/* <Route
-        path={`/ClientAdvancedSearch`}
-        element={transferUrl('/Pulseem/ClientAdvancedSearch.aspx')}
-      /> */}
 			<Route
 				path={`/DynamicGroups`}
 				element={transferUrl('/Pulseem/DynamicGroups.aspx')}
@@ -164,8 +164,32 @@ const renderRoutes = (classes, redirect) => {
 				element={<ArchiveManagement classes={classes} />}
 			/>
 			<Route
-				path={`/Editor/CampaignInfo`}
-				element={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
+				exact
+				path='/react/Campaigns/Create'
+				element={<NewsLetterInfo classes={classes} />}
+			/>
+			<Route
+				path='/react/Campaigns/Create/:id'
+				element={<NewsLetterInfo classes={classes} />}
+			/>
+			<Route
+				exact
+				path='/react/Campaigns/editor'
+				element={<CampaignEditorBee classes={classes} />}
+			/>
+			<Route
+				path='/react/Campaigns/editor/:id'
+				element={<CampaignEditorBee classes={classes} />}
+			/>
+			<Route
+				exact
+				path='/react/Campaigns/SendSettings/:id'
+				element={<NewsletterSendSettings classes={classes} />}
+			/>
+			<Route
+				exact
+				path='/react/Campaigns/Archive'
+				element={<ArchiveManagement classes={classes} />}
 			/>
 			<Route
 				path={`/CampaignsByResults`}
@@ -273,51 +297,10 @@ const renderRoutes = (classes, redirect) => {
 				element={<WhatsappChat classes={classes} />}
 			/>
 
-			{/* MMS */}
-			<Route
-				path='/react/MmsCampaigns'
-				element={<MmsManagment classes={classes} />}
-			/>
-			<Route
-				path='/CreateMmsCampaign'
-				element={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
-			/>
-			<Route
-				path='/MmsCampaignEdit/:id'
-				element={transferUrl(
-					'/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=',
-					'id'
-				)}
-			/>
-			<Route
-				path='/MmsPreviewCampaign/:id'
-				element={transferUrl(
-					'/Pulseem/MmsPreviewCampaign.aspx?MmsCampaignID=',
-					'id'
-				)}
-			/>
-			<Route
-				path='/SendMmsCampaign/:id'
-				element={transferUrl(
-					'/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=',
-					'id'
-				)}
-			/>
-			{/* Landing Pages */}
-
 			<Route
 				path='/NewWebForm/NewFormEdit/:id'
 				element={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
 			/>
-
-			{/* <Route
-        path="/ClientSearchResult/:id"
-        element={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
-      /> */}
-			{/* <Route
-        path="/ClientSearchResult"
-        element={<ClientSearchResult classes={classes} />}
-      /> */}
 			<Route path='/react/ClientSearchResult/'>
 				<Route path='' element={<ClientSearchResult classes={classes} />} />
 				<Route path=':id' element={<ClientSearchResult classes={classes} />} />
@@ -357,6 +340,11 @@ const renderRoutes = (classes, redirect) => {
 				element={<MmsReport classes={classes} />}
 			/>
 			<Route
+				exact
+				path={`/react/reports/ProductsReport`}
+				element={<ProductsReport classes={classes} />}
+			/>
+			<Route
 				path={`/AbTestsReport`}
 				element={transferUrl('/Pulseem/AbTestsReport.aspx')}
 			/>
@@ -364,10 +352,10 @@ const renderRoutes = (classes, redirect) => {
 				path={`/AccountReport`}
 				element={transferUrl('/Pulseem/AccountReport.aspx')}
 			/>
-			{/* <Route
-        path={`/CampaignComparison`}
-        element={transferUrl('/Pulseem/CampaignComparison.aspx')}
-      /> */}
+			<Route
+				path={`/Reports/ProductsReport`}
+				element={<ProductsReport classes={classes} />}
+			/>
 			<Route
 				path={`/ClientReport`}
 				element={transferUrl('/Pulseem/ClientReport.aspx')}
@@ -492,25 +480,40 @@ const renderRoutes = (classes, redirect) => {
 				element={<SiteTrackingEditor classes={classes} />}
 			/>
 			<Route path='*' element={<PageNotFound classes={classes} />} />
+			<Route
+				exact
+				path={'/react/Inbound'}
+				element={<InboundMessages classes={classes} />}
+			/>
+			<Route
+				exact
+				path={'/react/Inbound/:type'}
+				element={<InboundMessages classes={classes} />}
+			/>
+			<Route
+				exact
+				path={'/react/Inbound/:type/:id'}
+				element={<InboundMessages classes={classes} />}
+			/>
 		</Routes>
 	);
 };
 
 const App = ({ screenSize }) => {
+	const userName = useRef();
 	const dispatch = useDispatch();
-	const { language, isRTL, windowSize, accountSettings } = useSelector(
+	const { language, isRTL, windowSize, accountSettings, isClal } = useSelector(
 		(state) => state.core
 	);
 	screenSize && dispatch(setWindowSize(screenSize));
 
 	useEffect(() => {
 		const initFeatures = async () => {
-			const isClal = getCookie('isClal');
 			if (!accountSettings) {
 				const settings = await dispatch(getCommonFeatures());
 				dispatch(setAccountFeatures(settings.payload));
 			}
-			if (isClal === undefined) {
+			if (isClal === null) {
 				const response = await dispatch(isClalAccount());
 				dispatch(setIsClal(response.payload));
 			}
@@ -566,6 +569,7 @@ const App = ({ screenSize }) => {
 			dispatch(setRowsPerPage(rpp || 6));
 			dispatch(setLanguage(lang.toLowerCase()));
 			dispatch(setUsername(companyName));
+			userName.current = companyName;
 		};
 
 		const cookieFunctionObj = {

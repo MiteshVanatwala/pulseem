@@ -29,7 +29,8 @@ const AppBarItem = ({
   showIcon = false,
   classes,
   menuWidth = 290,
-  onInnerClick = () => null
+  onMainClick = () => null,
+  onInnerClick = () => null,
 }) => {
   const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
@@ -49,6 +50,7 @@ const AppBarItem = ({
     setOpen(false)
   }
   const currentStyle = showIcon ? classes.appBarItemIcon : classes.appBarItemText
+  {/* Top menu */ }
   return (
     <Box
       zIndex='tooltip'
@@ -57,10 +59,18 @@ const AppBarItem = ({
       className={clsx(classes.appBarItemContainer)}>
       <Box
         style={{ whiteSpace: 'nowrap' }}
+        component='a'
+        href={item.href}
         className={classes.appBarHrefContainer}
-        onClick={() => {
-          handleOpen()
-          Redirect({ url: item.href })
+        onClick={(e) => {
+          e.preventDefault();
+          if (onMainClick) {
+            onMainClick();
+          }
+          else {
+            handleOpen()
+            Redirect({ url: item.href })
+          }
         }}>
         <IconButton
           ref={buttonRef}
@@ -73,6 +83,7 @@ const AppBarItem = ({
 
         {(chosen || open) && <ArrowDropUp className={classes.appBarItemArrow} />}
       </Box>
+      {/* Submenu */}
       <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition placement={'bottom-start'} disablePortal>
         {({ TransitionProps }) => (
           <Grow
@@ -87,11 +98,14 @@ const AppBarItem = ({
                     option.isShow &&
                     <Box
                       key={index}
+                      component='a'
+                      href={option.href}
                       className={classes.appBarItemMenuItem}>
                       {index !== 0 && <Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.preventDefault();
                           if (!option.href || option.href === '') {
                             onInnerClick(option)
                           }
@@ -171,16 +185,15 @@ const LanguageSelector = ({ windowSize, classes }) => {
 }
 
 
-export const TopAppBar = ({ classes, currentPage = '' }) => {
+export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const Redirect = useRedirect();
   let cookieFeature = getCookie("accountFeatures");
-  const cookieIsClal = getCookie("isClal");
 
   if (cookieFeature && cookieFeature.constructor.name !== 'Array') {
     cookieFeature = null;
   }
 
-  const { accountSettings, companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount } = useSelector(state => state.core) // smsOldVersion
+  const { accountSettings, companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -216,7 +229,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, cookieIsClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
+  const routes = getRoutes(t, isClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
   // const navigate = ({ uri }) => {
@@ -241,9 +254,12 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           item={route}
           chosen={route.key === currentPage}
           showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
+          //onInnerClick={navigate}
           onInnerClick={() => Redirect({ url: route.href })}
+          onMainClick={null}
         />
       ))}
+      {/* Side menu */}
       {windowSize === 'xl' || windowSize === 'lg' ? <>
         <Box className={classes.appBerSpace} />
         <Typography
@@ -349,7 +365,11 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                           <Box
                             className={classes.phoneAppBarItemContainer}>
                             <Button
-                              onClick={() => Redirect({ url: route.href })}
+                              href={route.href}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                Redirect({ url: route.href })
+                              }}
                               style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
                               {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
@@ -386,23 +406,27 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   </SvgIcon>
   return (
     <Box style={{ flexGrow: 1 }}>
-      <AppBar position='static' className={classes.appBar} ref={topNavRef}>
+      <AppBar position='static' className={classes.appBar} ref={topNavRef} style={{ display: showAppBar === true ? null : 'none' }}>
         <Toolbar variant='dense'>
-          <Button
-            style={{ padding: 0, matgin: 0 }}
-            onClick={() => Redirect({ url: routes[0].href })}>
+          <Box
+            component='a'
+            href={routes[0].href}
+            onClick={(e) => {
+              e.preventDefault();
+              Redirect({ url: routes[0].href })
+            }}>
             <Box
               component='img'
               src={`${imageURL}`}
               alt='Logo'
               className={classes.appBarLogo} />
-          </Button>
+          </Box>
           {settingsLoaded && <>
             {renderAppBar()}
             <AppBarItem
               classes={classes}
               item={{ title: t('appBar.logout') }}
-              onMainClick={logout}
+              onMainClick={() => { logout() }}
             />
           </>
           }

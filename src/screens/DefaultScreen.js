@@ -8,7 +8,7 @@ import { getRoutes, getSettingsItem } from '../helpers/Routes/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
 
-const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass = '', customPadding = false }) => {
+const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true }) => {
   const { t } = useTranslation();
   const { isAdmin, isAllowSwitchAccount } = useSelector(state => state.core)
   let route, title;
@@ -61,6 +61,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         <title>{title}</title>
       </Helmet>
       <TopAppBar
+        showAppBar={showAppBar}
         classes={classes}
         currentPage={currentPage}
       />

@@ -1,50 +1,6 @@
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
-import { getCookie } from '../../helpers/Functions/cookies'
+import { getCookie, setCookie } from '../../helpers/Functions/cookies'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-
-export const getFileGallery = createAsyncThunk(
-  '/GetFileGallery', async (_, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.get(`/GetFileGallery`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
-export const createFolder = createAsyncThunk(
-  '/CreateFolder', async (folderName, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post(`/CreateFolder`, { FolderName: folderName }
-      );
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
-export const postImage = createAsyncThunk(
-  '/PostImageFile', async (fileGallery, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post(`/PostImageFile`, fileGallery
-      );
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
-export const deleteGalleryFile = createAsyncThunk(
-  '/DeleteGalleryFile', async (fileGallery, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post(`/DeleteGalleryFile`, fileGallery
-      );
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
 
 export const isClalAccount = createAsyncThunk(
   '/IsClalAccount', async (_, thunkAPI) => {
@@ -69,8 +25,9 @@ export const getCommonFeatures = createAsyncThunk(
     try {
       const settings = getCookie('accountSettings');
       if ((!settings || settings === '') || (req && req.forceRequest === true) ||
-        document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx') ||
-        document.referrer.toLocaleLowerCase().includes('login')) {
+        document.referrer.toLocaleLowerCase().indexOf('accountsmanage.aspx') > -1 ||
+        document.referrer.toLocaleLowerCase().indexOf('login') > -1 ||
+        req?.companyName !== settings?.SubAccountName) {
         const response = await PulseemReactInstance.get(`GetSubAccountWithFeatureAndSettings`);
         return JSON.parse(response.data)
       }
@@ -81,7 +38,18 @@ export const getCommonFeatures = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  });
+  })
+
+export const isAlive = createAsyncThunk(
+  'IsAlive', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`IsAlive`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 export const getAuthorizedEmails = createAsyncThunk(
   'authorization/GetAuthorizedEmails', async (_, thunkAPI) => {
     try {
@@ -127,11 +95,13 @@ export const getAuthorizeNumbers = createAsyncThunk(
     }
   })
 
-
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
-    Folders: []
+    Folders: [],
+    verifiedEmails: [],
+    verifiedNumbers: [],
+    tokenAlive: true
   },
   extraReducers: builder => {
     builder
@@ -142,6 +112,13 @@ export const commonSlice = createSlice({
       .addCase(getAuthorizeNumbers.fulfilled, (state, { payload }) => {
         state.verifiedNumbers = payload
       })
+    builder
+      .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+        setCookie('accountSettings', payload);
+      })
+    builder.addCase(isAlive.fulfilled, (state, { payload }) => {
+      state.tokenAlive = payload;
+    })
   }
 })
 

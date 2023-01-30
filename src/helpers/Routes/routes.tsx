@@ -149,7 +149,7 @@ export const getRoutes = (
 		options: [
 			{
 				title: t('master.RadMenuItemResource9b.Text'),
-				href: '/Pulseem/Editor/CampaignInfo?new=1&fromreact=true',
+				href: '/react/Campaigns/Create',
 				isShow: true,
 			},
 			{
@@ -187,6 +187,12 @@ export const getRoutes = (
 				title: t('master.campaignsArchive'),
 				href: '/react/Campaigns/Archive',
 				isShow: true,
+			},
+			{
+				key: 'newsletterSendSettings',
+				title: t('campaigns.newsLetterSendSettings.title'),
+				href: '/react/Campaigns/SendSettings',
+				isShow: false,
 			},
 		],
 	},
@@ -428,6 +434,12 @@ export const getRoutes = (
 				href: '/Pulseem/RemovedStats.aspx?fromreact=true',
 				isShow: true,
 			},
+			{
+				key: 'productsReport',
+				title: t('report.ProductsReport.title'),
+				href: '/react/reports/ProductsReport',
+				isShow: true,
+			},
 			//{title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
 			//{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
 			//{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
@@ -455,6 +467,18 @@ export const getRoutes = (
 				title: t('master.smsReplies'),
 				href: '/react/reports/SmsReplies',
 				isShow: false,
+			},
+			{
+				key: 'smsResponse',
+				title: t('master.smsReplies'),
+				href: '/react/reports/SmsReplies',
+				isShow: false,
+			},
+			{
+				key: 'inboundMessages',
+				title: t('master.smsReplies'),
+				href: '/react/Inbound/',
+				isShow: true,
 			},
 		],
 	},

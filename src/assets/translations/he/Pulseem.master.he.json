@@ -375,6 +375,9 @@
   "guides": "מדריכים",
   "implementScript": "הטמעת סקריפט",
   "pulseemSystem": "מערכת פולסים ",
+  "smsReplies": "ד\"ח משובים",
+  "newEditor": "עורך חדש",
   "siteTracking": "מעקב אתרים",
-  "smsReplies": "משובי SMS"
+  "continueToNewEditor": "שמור והמשך לעורך החדש",
+  "whatsapp": "Whatsapp"
 }

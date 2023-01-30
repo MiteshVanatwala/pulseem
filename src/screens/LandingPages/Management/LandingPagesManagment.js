@@ -27,10 +27,11 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
+import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
-  const { windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { windowSize, rowsPerPage, accountFeatures } = useSelector(state => state.core)
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
@@ -274,6 +275,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
+        disable: accountFeatures.indexOf('13') > -1,
         onClick: async () => {
           if (IsPayment) {
             dispatch(downloadReport(row))
@@ -439,8 +441,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     return (
       <>
         <Link
+          component='a'
+          href={`${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
+            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+            CampaignID: ID,
+            PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+            ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+          })}`}
           style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             if (Submits && Submits > 0) {
               navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {
@@ -712,7 +722,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='landingPages'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Title Text={t('landingPages.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
