@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent } from 'react';
 
 const CampaignFields = ({
 	classes,
@@ -14,7 +14,6 @@ const CampaignFields = ({
 	onCampaignNameChange,
 	from,
 	onFromChange,
-	onCampaignFromRestore,
 	showValidation,
 	phoneNumbersList,
 }: campaignFielsProps) => {
@@ -52,13 +51,6 @@ const CampaignFields = ({
 				<Box className={classes.inputCampDiv}>
 					<Typography className={classes.buttonHead}>
 						<>{translator('whatsappCampaign.from')}</>
-					</Typography>
-					<Typography
-						className={classes.restoreBtn}
-						onClick={() => {
-							onCampaignFromRestore();
-						}}>
-						<>{translator('whatsappCampaign.restore')}</>
 					</Typography>
 				</Box>
 				{phoneNumbersList?.length === 1 ? (

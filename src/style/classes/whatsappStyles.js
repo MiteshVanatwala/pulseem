@@ -1432,8 +1432,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					'&:nth-child(7)': {
 						width: '160px',
 					},
-					'& p': {
+					'& .underline': {
 						textDecoration: 'underline',
+						cursor: 'pointer',
+					},
+					'& p': {
 						fontFamily: 'Assistant',
 						fontWeight: '500',
 						fontSize: '16px',

@@ -238,7 +238,6 @@ const SendCampaign = ({
 
 	const onNewGroupSave = async () => {
 		if (newGroupName?.length > 0) {
-			console.log('onNewGroupSave');
 			const combinedGroupPayload = {
 				SubAccountID: 1,
 				GroupName: newGroupName,

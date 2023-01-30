@@ -577,10 +577,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
-	const onCampaignFromRestore = () => {
-		setFrom('16067520281');
-	};
-
 	const onDynamcFieldModalSave = (
 		updatedDynamicVariable: updatedVariableProps[]
 	) => {
@@ -694,7 +690,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									}
 									from={from}
 									onFromChange={(from) => setFrom(from)}
-									onCampaignFromRestore={() => onCampaignFromRestore()}
 									showValidation={showValidation}
 									phoneNumbersList={phoneNumbersList}
 								/>

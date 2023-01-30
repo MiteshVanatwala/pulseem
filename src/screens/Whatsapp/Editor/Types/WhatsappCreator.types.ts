@@ -221,6 +221,9 @@ export type toastProps = {
 	QUICK_SEND_SUCCESSS: toastKeyProps;
 	SAVE_CAMPAIGN_SUCCESS: toastKeyProps;
 	DELETE_CAMPAIGN_SUCCESS: toastKeyProps;
+	DELETE_TEMPLATE_SUCCESS: toastKeyProps;
+	SUBMIT_CAMPAIGN_SUCCESS: toastKeyProps;
+	DUPLICATE_CAMPAIGN_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -259,6 +262,8 @@ export type saveTemplateItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	Id: number;
+	IsAllowEdit: boolean;
 };
 
 export type saveTemplateDataProps = {
@@ -275,6 +280,27 @@ export type saveTemplatePayloadProps = {
 
 export type savedTemplateAPIProps = {
 	payload: saveTemplatePayloadProps;
+};
+
+export type getTemplateByIdDataAPIProps = {
+	Data: savedTemplateDataProps;
+	FileName: string;
+	FilePath: string;
+	FriendlyTemplateName: string;
+	id: number;
+	SavedApiWhatsappTemplatesId: number;
+	TemplateId: string;
+	TemplateName: string;
+};
+
+export type getTemplateByIdPayloadAPIProps = {
+	Data: getTemplateByIdDataAPIProps;
+	Message: string;
+	Status: string;
+};
+
+export type getTemplateByIdAPIProps = {
+	payload: getTemplateByIdPayloadAPIProps;
 };
 
 export type submitTemplateDataProps = {
@@ -301,6 +327,8 @@ export type templateListItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	Id: number;
+	IsAllowEdit: boolean;
 };
 
 export type templateListDataProps = {
@@ -313,7 +341,7 @@ export type templateListDataProps = {
 
 export type templateListPayloadProps = {
 	Message: string;
-	Status: number;
+	Status: string;
 	Data: templateListDataProps;
 };
 
@@ -333,26 +361,48 @@ export type deleteTemplateAPIProps = {
 	payload: deleteTemplatePayloadProps;
 };
 
-export type campaignListPayloadProps = {
-	Error: string;
+export type campaignListDataProps = {
 	Count: number;
+	CurrentPage: number;
+	Items: campaignDataProps[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type campaignListPayloadProps = {
 	Message: string;
 	Status: string;
-	Items: campaignDataProps[];
+	Data: campaignListDataProps;
 };
 
 export type campaignListAPIProps = {
 	payload: campaignListPayloadProps;
 };
 
-export type reportListPayloadProps = {
-	Error: string;
+export type reportListPayloadDataProps = {
 	Count: number;
+	CurrentPage: number;
+	Items: reportDataProps[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type reportListPayloadProps = {
+	Data: reportListPayloadDataProps;
 	Message: string;
 	Status: string;
-	Items: reportDataProps[];
 };
 
 export type reportListAPIProps = {
 	payload: reportListPayloadProps;
+};
+
+export type commonAPIResponsePayloadProps = {
+	Data: any;
+	Message: string;
+	Status: string;
+};
+
+export type commonAPIResponseProps = {
+	payload: commonAPIResponsePayloadProps;
 };

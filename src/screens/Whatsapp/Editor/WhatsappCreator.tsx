@@ -19,6 +19,7 @@ import {
 	coreProps,
 	deleteTemplateAPIProps,
 	fileUploadAPIProps,
+	getTemplateByIdAPIProps,
 	JSONFreetextVariableProps,
 	quickReplyButtonProps,
 	savedTemplateAPIProps,
@@ -60,7 +61,7 @@ import {
 	getLastDynamicFieldByValue,
 	getLastDynamicFieldValue,
 } from '../Common';
-import { resetToastData } from '../Constant';
+import { apiStatus, resetToastData } from '../Constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 
@@ -132,7 +133,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] =
+	const [isDeleteTemplateOpen, setIsDeleteTemplateOpen] =
 		useState<boolean>(false);
 	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
 		useState<boolean>(false);
@@ -418,17 +419,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const setTemplateById = async (templateId: string) => {
-		const templateData: savedTemplateAPIProps = await dispatch<any>(
-			getSavedTemplatesById({ templateId })
+		const templateData: getTemplateByIdAPIProps = await dispatch<any>(
+			getSavedTemplatesById(templateId)
 		);
 		setIsLoader(false);
-		if (templateData.payload.Message === 'Success') {
-			const templates = templateData.payload?.Data?.Items
-				? templateData.payload?.Data?.Items
-				: [];
-			if (templates && templates?.length > 0) {
-				const templateData = templates[0]?.Data;
-				const templateName = templates[0]?.TemplateName;
+		const templates = templateData.payload?.Data;
+		if (templateData.payload.Status === apiStatus.SUCCESS) {
+			if (templateData?.payload?.Data?.Data && templates) {
+				const templateData = templates?.Data;
+				const templateName = templates?.TemplateName;
 				if (templateData) {
 					setUpdatedTemplateData(templateData);
 				}
@@ -755,30 +754,37 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const saveTemplate = async () => {
-		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
-			submitTemplates(getRequestJSON(true))
-		);
-		if (submitTemplate?.payload?.Message === 'Success') {
-			setIsSubmitCampaignOpen(false);
-			setToastMessage(ToastMessages.SAVE_SUCCESS);
-			resetFields();
-		} else if (submitTemplate?.payload?.Message === 'Error') {
-			if (submitTemplate?.payload?.Message?.length > 0) {
-				setToastMessage({
-					...ToastMessages.ERROR,
-					message: submitTemplate?.payload?.Message,
-				});
-			} else {
-				setToastMessage(ToastMessages.ERROR);
+		let requestJSON = getRequestJSON(true);
+		if (requestJSON) {
+			if (templateID) {
+				requestJSON.id = Number(templateID);
 			}
-			setIsSubmitCampaignOpen(false);
+			let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+				submitTemplates(requestJSON)
+			);
+			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
+				setIsSubmitCampaignOpen(false);
+				setToastMessage(ToastMessages.SAVE_SUCCESS);
+				resetFields();
+				navigate('/react/whatsapp/template/create');
+			} else if (submitTemplate?.payload?.Status === 'Error') {
+				if (submitTemplate?.payload?.Message?.length > 0) {
+					setToastMessage({
+						...ToastMessages.ERROR,
+						message: submitTemplate?.payload?.Message,
+					});
+				} else {
+					setToastMessage(ToastMessages.ERROR);
+				}
+				setIsSubmitCampaignOpen(false);
+			}
 		}
 	};
 
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case 'delete':
-				setIsDeleteCampaignOpen(true);
+				setIsDeleteTemplateOpen(true);
 				break;
 			case 'save':
 				saveTemplate();
@@ -788,15 +794,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const onDeleteCampaign = async () => {
+	const onDeleteTemplate = async () => {
 		if (templateID) {
 			const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 				deleteTemplate(templateID)
 			);
-			if (deleteData?.payload?.Message === 'Success') {
+			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+				setIsDeleteTemplateOpen(false);
 				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 				resetFields();
-				setIsDeleteCampaignOpen(false);
 				navigate('/react/whatsapp/template/create');
 			} else {
 				deleteData?.payload?.Error
@@ -808,28 +814,35 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			}
 		} else {
 			resetFields();
-			setIsDeleteCampaignOpen(false);
+			setIsDeleteTemplateOpen(false);
 		}
 	};
 
 	const onSubmitCampaign = async () => {
-		let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
-			submitTemplates(getRequestJSON(false))
-		);
-		if (submitTemplate?.payload?.Message === 'Success') {
-			setIsSubmitCampaignOpen(false);
-			setToastMessage(ToastMessages.SUCCESS);
-			resetFields();
-		} else if (submitTemplate?.payload?.Message === 'Error') {
-			if (submitTemplate?.payload?.Message?.length > 0) {
-				setToastMessage({
-					...ToastMessages.ERROR,
-					message: submitTemplate?.payload?.Message,
-				});
-			} else {
-				setToastMessage(ToastMessages.ERROR);
+		let requestJSON = getRequestJSON(false);
+		if (requestJSON) {
+			if (templateID) {
+				requestJSON.id = Number(templateID);
 			}
-			setIsSubmitCampaignOpen(false);
+			let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+				submitTemplates(requestJSON)
+			);
+			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
+				setIsSubmitCampaignOpen(false);
+				setToastMessage(ToastMessages.SUCCESS);
+				resetFields();
+				navigate('/react/whatsapp/template/create');
+			} else if (submitTemplate?.payload?.Status === 'Error') {
+				if (submitTemplate?.payload?.Message?.length > 0) {
+					setToastMessage({
+						...ToastMessages.ERROR,
+						message: submitTemplate?.payload?.Message,
+					});
+				} else {
+					setToastMessage(ToastMessages.ERROR);
+				}
+				setIsSubmitCampaignOpen(false);
+			}
 		}
 	};
 
@@ -947,12 +960,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			/>
 			<AlertModal
 				classes={classes}
-				isOpen={isDeleteCampaignOpen}
-				onClose={() => setIsDeleteCampaignOpen(false)}
+				isOpen={isDeleteTemplateOpen}
+				onClose={() => setIsDeleteTemplateOpen(false)}
 				title={translator('whatsapp.alertModal.DeleteText')}
 				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
 				type='delete'
-				onConfirmOrYes={() => onDeleteCampaign()}
+				onConfirmOrYes={() => onDeleteTemplate()}
 			/>
 			<AlertModal
 				classes={classes}

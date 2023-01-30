@@ -41,10 +41,11 @@ import {
 import { exportAsXLSX } from '../../../helpers/Export/ExportFile';
 import { getAllReports } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { reportCellNames, reportData } from '../Constant';
+import { apiStatus, reportCellNames } from '../Constant';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { useNavigate } from 'react-router-dom';
 import { GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import { campaignStatus } from '../Constant';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -116,18 +117,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const renderNameCell = (row: reportDataProps) => {
 		let date = null;
 		let text = '';
-		if (!row.sendDate) {
-			date = moment(row.updatedDate, dateFormat);
-			text = translator('common.UpdatedOn');
-		} else {
-			date = moment(row.sendDate, dateFormat);
-			const dateMillis = date.valueOf();
-			const currentDateMillis = moment().valueOf();
-			text =
-				dateMillis > currentDateMillis
-					? translator('common.ScheduledFor')
-					: translator('common.SentOn');
-		}
+		date = moment(row.CreateDate, dateFormat);
+		text = translator('common.UpdatedOn');
 
 		return (
 			<>
@@ -141,8 +132,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					arrow={true}
 					style={{ fontSize: 16, fontWeight: 'bold' }}
 					placement={'top'}
-					title={<Typography noWrap={false}>{row.campaignName}</Typography>}
-					text={row.campaignName}
+					title={<Typography noWrap={false}>{row.Name}</Typography>}
+					text={row.Name}
 					children={undefined}
 					icon={undefined}
 				/>
@@ -167,15 +158,15 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		];
 		const filtersObject: filtersObjectProps = {
 			name: (row: reportDataProps) => {
-				return String(row.campaignName.toLowerCase()).includes(
+				return String(row.Name.toLowerCase()).includes(
 					campaignNameSearch.toLowerCase()
 				);
 			},
 			date: (row: reportDataProps, values: searchArrayProps) => {
-				const { updatedDate, sendDate } = row;
-				const lastUpdate = sendDate
-					? moment(sendDate, dateFormat).valueOf()
-					: moment(updatedDate, dateFormat).valueOf();
+				const { UpdateDate, CreateDate } = row;
+				const lastUpdate = CreateDate
+					? moment(CreateDate, dateFormat).valueOf()
+					: moment(UpdateDate, dateFormat).valueOf();
 				const startFromDate =
 					(values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ||
 					null;
@@ -231,19 +222,23 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const getTableTypographyCells = (
 		title: string,
-		value: string | number,
+		cellValue: number,
 		cellName: string,
 		row: reportDataProps
 	) => {
 		return (
 			<>
 				<Typography
-					onClick={() => onTableCellClick(cellName, row.waCampaignId)}
+					onClick={() =>
+						cellValue >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
+					}
 					className={classes.middleText}>
-					{value}
+					{cellValue ? cellValue : '0'}
 				</Typography>
 				<Typography
-					onClick={() => onTableCellClick(cellName, row.waCampaignId)}
+					onClick={() =>
+						cellValue >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
+					}
 					className={classes.middleText}>
 					{title}
 				</Typography>
@@ -254,31 +249,31 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const onExport = async () => {
 		const header: {} = {
 			1: 'Campaign Id',
-			3: 'Status',
-			4: 'Campaign Name',
+			2: 'Status',
+			3: 'Campaign Name',
+			4: 'From Number',
 			5: 'Total Send Plan',
-			6: 'Total Sent',
-			7: 'Total Read',
-			8: 'Clicks Count',
-			9: 'Unique Clicks Count',
-			10: 'Total Feedback',
-			11: 'Removed',
-			12: 'Failure',
-			13: 'Updated Date',
+			6: 'Clicks Count',
+			7: 'Unique Clicks Count',
+			8: 'Created Date',
+			9: 'Total Sent',
+			10: 'Total Read',
+			11: 'Failure',
+			12: 'Removed',
+			13: 'Total Feedback',
 			14: 'Send Date',
 		};
 		const exportData: exportDataProps[] = tableData?.map(
 			(row: reportDataProps) => {
 				let updatedRow: exportDataProps = {
 					...row,
-					updatedDate: row.updatedDate
-						? moment(row.updatedDate).format('DD/MM/YYYY')
-						: '',
-					sendDate: row.sendDate
-						? moment(row.sendDate).format('DD/MM/YYYY')
+					Status: campaignStatus[row.Status],
+					CreateDate: row.CreateDate
+						? moment(row.CreateDate).format('DD/MM/YYYY')
 						: '',
 				};
 				delete updatedRow.statusId;
+				delete updatedRow.TemplateID;
 				return updatedRow;
 			}
 		);
@@ -290,13 +285,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		const campaignData: reportListAPIProps = await dispatch<any>(
 			getAllReports()
 		);
-		if (campaignData.payload.Status === 'SUCCESS') {
-			setReportListData(campaignData.payload.Items);
-			setTableData(campaignData.payload.Items);
+		if (campaignData.payload.Status === apiStatus.SUCCESS) {
+			setReportListData(campaignData.payload.Data.Items);
+			setTableData(campaignData.payload.Data.Items);
 			setIsLoader(false);
 		} else {
-			setReportListData(reportData);
-			setTableData(reportData);
+			setReportListData([]);
+			setTableData([]);
 			setIsLoader(false);
 		}
 	};
@@ -472,8 +467,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 								</Box>
 							) : (
 								<>
-									{getRows()?.map((report: reportDataProps) => (
-										<TableRow key={report.waCampaignId} classes={rowStyle}>
+									{getRows()?.map((report: reportDataProps, index: number) => (
+										<TableRow
+											key={`whatsappReport_${report.WACampaignID}_${index}`}
+											classes={rowStyle}>
 											<TableCell
 												classes={cellStyle}
 												align='center'
@@ -485,20 +482,24 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												align='center'
 												className={clsx(classes.tableCellBody)}>
 												<Grid container justifyContent='space-around'>
-													<Grid item>
+													<Grid
+														item
+														className={`${report?.ToSend >= 1 && 'underline'}`}>
 														{getTableTypographyCells(
 															translator(
 																'mainReport.locTotalSendPlan.HeaderText'
 															),
-															report.totalSendPlan,
+															report.ToSend,
 															reportCellNames.TOSEND,
 															report
 														)}
 													</Grid>
-													<Grid item>
+													<Grid
+														item
+														className={`${report?.Sent >= 1 && 'underline'}`}>
 														{getTableTypographyCells(
 															translator('common.Sent'),
-															report.totalSent,
+															report.Sent,
 															reportCellNames.SENT,
 															report
 														)}
@@ -508,10 +509,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<TableCell
 												classes={cellStyle}
 												align='center'
-												className={clsx(classes.tableCellBody)}>
+												className={clsx(
+													classes.tableCellBody,
+													`${report?.Read >= 1 && 'underline'}`
+												)}>
 												{getTableTypographyCells(
 													translator('whatsappReport.read'),
-													report.totalRead,
+													report.Read,
 													reportCellNames.READ,
 													report
 												)}
@@ -521,18 +525,26 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												align='center'
 												className={clsx(classes.tableCellBody)}>
 												<Grid container justifyContent='space-around'>
-													<Grid item>
+													<Grid
+														item
+														className={`${
+															report?.ClicksCount >= 1 && 'underline'
+														}`}>
 														{getTableTypographyCells(
 															translator('common.Clicks'),
-															report.clicksCount,
+															report.ClicksCount,
 															reportCellNames.CLICKS,
 															report
 														)}
 													</Grid>
-													<Grid item>
+													<Grid
+														item
+														className={`${
+															report?.UniqueClicksCount >= 1 && 'underline'
+														}`}>
 														{getTableTypographyCells(
 															translator('common.Unique'),
-															report.uniqueClicksCount,
+															report.UniqueClicksCount,
 															reportCellNames.UNIQUE,
 															report
 														)}
@@ -542,10 +554,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<TableCell
 												classes={cellStyle}
 												align='center'
-												className={clsx(classes.tableCellBody)}>
+												className={clsx(
+													classes.tableCellBody,
+													`${report?.FeedBack >= 1 && 'underline'}`
+												)}>
 												{getTableTypographyCells(
 													translator('common.Total'),
-													report.totalFeedback,
+													report.FeedBack,
 													reportCellNames.FEEDBACK,
 													report
 												)}
@@ -555,18 +570,24 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												align='center'
 												className={clsx(classes.tableCellBody)}>
 												<Grid container justifyContent='space-around'>
-													<Grid item>
+													<Grid
+														item
+														className={`${
+															report?.Removed >= 1 && 'underline'
+														}`}>
 														{getTableTypographyCells(
 															translator('common.Removed'),
-															report.removed,
+															report.Removed,
 															reportCellNames.REMOVED,
 															report
 														)}
 													</Grid>
-													<Grid item>
+													<Grid
+														item
+														className={`${report?.Failed >= 1 && 'underline'}`}>
 														{getTableTypographyCells(
 															translator('common.failedStatus'),
-															report.failure,
+															report.Failed,
 															reportCellNames.FAILED,
 															report
 														)}
