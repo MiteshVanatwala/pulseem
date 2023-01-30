@@ -282,34 +282,35 @@ const WhatsappInbound = ({ classes }) => {
         )
     }
     return <>
-        {renderHeader()}
-        <SearchLine
-            classes={classes}
-            onSetPage={(val) => setPage(val)}
-            onFilterRequest={(val) => setRequest(val)}
-            onSetIsSearching={(val) => setIsSearching(val)}
-        />
-        {inboundWhatsappReport?.Data?.length > 0 ? (<Box>
-            {renderTable()}
-            {renderTablePagination()}
-            <ConfirmRadioDialog
-                classes={classes}
-                isOpen={dialog === 'exportFormat'}
-                title={t('campaigns.exportFile')}
-                radioTitle={t('common.SelectFormat')}
-                onConfirm={(e) => handleDownloadCsv(e)}
-                onCancel={() => setDialog(null)}
-                cookieName={'exportFormat'}
-                defaultValue="xls"
-                options={ExportFileTypes}
-            />
-            <Loader isOpen={showLoader} showBackdrop={true} />
-        </Box>) : <>
-            <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-                <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
-                <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
-            </Box>
-        </>}
+        {inboundWhatsappReport?.StatusCode === 201 ?
+            (<Box>
+                {renderHeader()}
+                <SearchLine
+                    classes={classes}
+                    onSetPage={(val) => setPage(val)}
+                    onFilterRequest={(val) => setRequest(val)}
+                    onSetIsSearching={(val) => setIsSearching(val)}
+                />
+                {renderTable()}
+                {renderTablePagination()}
+                <ConfirmRadioDialog
+                    classes={classes}
+                    isOpen={dialog === 'exportFormat'}
+                    title={t('campaigns.exportFile')}
+                    radioTitle={t('common.SelectFormat')}
+                    onConfirm={(e) => handleDownloadCsv(e)}
+                    onCancel={() => setDialog(null)}
+                    cookieName={'exportFormat'}
+                    defaultValue="xls"
+                    options={ExportFileTypes}
+                />
+                <Loader isOpen={showLoader} showBackdrop={true} />
+            </Box>) : <>
+                <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
+                    <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
+                    <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
+                </Box>
+            </>}
     </>
 }
 

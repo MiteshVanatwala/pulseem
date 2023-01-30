@@ -594,9 +594,9 @@ const DirectWhatsappReportTab = ({
     }
 
     return <>
-        {renderSearchLine()}
-        {directWhatsappReport?.Data?.length > 0 ? (
+        {directWhatsappReport?.StatusCode === 201 ? (
             <>
+                {renderSearchLine()}
                 {renderTable()}
                 {renderTablePagination()}
                 <Loader isOpen={showLoader} />
