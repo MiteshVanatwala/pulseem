@@ -378,7 +378,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							onClick={onSearch}
 							className={classes.searchButton}
 							endIcon={<SearchIcon />}>
-							{translator('campaigns.btnSearchResource1.Text')}
+							<>{translator('campaigns.btnSearchResource1.Text')}</>
 						</Button>
 					</Grid>
 					{isSearching && (
@@ -389,7 +389,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 								onClick={clearSearch}
 								className={classes.searchButton}
 								endIcon={<ClearIcon />}>
-								{translator('common.clear')}
+								<>{translator('common.clear')}</>
 							</Button>
 						</Grid>
 					)}
@@ -402,12 +402,14 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					<div className={classes.whatsappReportHeaderExportButton}>
 						<Button onClick={onExport}>
 							<img src={ExcelImg} alt='excel-icon' />
-							{translator('whatsappReport.export')}
+							<>{translator('whatsappReport.export')}</>
 						</Button>
 					</div>
 
 					<span className={classes.whatsappReportCampaignCount}>
-						{tableData?.length || 0} {translator('whatsappReport.campaigns')}
+						<>
+							{tableData?.length || 0} {translator('whatsappReport.campaigns')}
+						</>
 					</span>
 				</Grid>
 
@@ -462,7 +464,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
 									style={{ height: 50 }}>
 									<Typography>
-										{translator('common.NoDataTryFilter')}
+										<>{translator('common.NoDataTryFilter')}</>
 									</Typography>
 								</Box>
 							) : (

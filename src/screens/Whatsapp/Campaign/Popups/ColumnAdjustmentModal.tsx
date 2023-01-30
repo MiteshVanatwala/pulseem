@@ -121,7 +121,7 @@ const ColumnAdjustmentModal = ({
 				<div
 					id='responsive-dialog-title'
 					className={classes.columnAdjustmentModalTitle}>
-					{translator('whatsappCampaign.dfieldTitle')}
+					<>{translator('whatsappCampaign.dfieldTitle')}</>
 				</div>
 				<Box className={classes.columnAdjustmentModalClose}>
 					<Close fontSize={'small'} onClick={onColumnAdjustmentModalClose} />
@@ -139,7 +139,7 @@ const ColumnAdjustmentModal = ({
 						<Box>
 							<div className={classes.manualModal}>
 								<Typography className={classes.inputLabel}>
-									{translator('common.GroupName')}:
+									<>{translator('common.GroupName')}</>:
 								</Typography>
 								<div className={clsx(classes.buttonForm, classes.fullWidth)}>
 									<TextField
@@ -162,7 +162,7 @@ const ColumnAdjustmentModal = ({
 							<Box className={clsx(classes.commonFieldPulse, classes.mb3)}>
 								<Typography
 									style={{ fontSize: '20px', marginInlineEnd: '10px' }}>
-									{translator('sms.totalRecipients')}:
+									<>{translator('sms.totalRecipients')}</>:
 								</Typography>
 								<Typography
 									style={{
@@ -293,14 +293,14 @@ const ColumnAdjustmentModal = ({
 						autoFocus
 						// onClick={onConfirmOrYes}
 					>
-						{translator('whatsapp.alertModal.okButtonText')}
+						<>{translator('whatsapp.alertModal.okButtonText')}</>
 					</Button>
 					<Button
 						className='cancel-button'
 						color='primary'
 						variant='contained'
 						onClick={onColumnAdjustmentModalClose}>
-						{translator('whatsapp.alertModal.calcelButtonText')}
+						<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 					</Button>
 				</Grid>
 			</div>

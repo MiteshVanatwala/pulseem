@@ -60,7 +60,7 @@ const GroupSelector = ({
 		}
 		setAllGroupsSelected(!allGroupsSelected);
 	};
-	console.log(showTestGroups)
+	console.log(showTestGroups);
 
 	const onShowTestGroup = async (showTestGroups: boolean) => {
 		if (!showTestGroups && testGroupList?.length > 0) {
@@ -115,10 +115,10 @@ const GroupSelector = ({
 									? classes.createGroupSpan
 									: classes.createGroupSpanDisabled
 							}>
-							{translator('mainReport.createNewGroup')}
+							<>{translator('mainReport.createNewGroup')}</>
 						</span>
 						<span className={classes.iconNew}>
-							{translator('mainReport.newFeature')}
+							<>{translator('mainReport.newFeature')}</>
 						</span>
 						<Tooltip
 							disableFocusListener
@@ -140,7 +140,7 @@ const GroupSelector = ({
 								value={newGroupName}
 							/>
 							<span className={classes.saveBtn} onClick={onNewGroupSave}>
-								{translator('mainReport.save')}
+								<>{translator('mainReport.save')}</>
 							</span>
 						</div>
 					)}
@@ -151,7 +151,7 @@ const GroupSelector = ({
 						marginTop: '10px',
 					}}>
 					<span>
-						{translator('mainReport.totalReci')}:{' '}
+						<>{translator('mainReport.totalReci')}</>:{' '}
 						{selectedGroups
 							?.reduce(function (a: any, b: { [x: string]: any }) {
 								return a + b['Recipients'];

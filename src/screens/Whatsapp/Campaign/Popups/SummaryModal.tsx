@@ -29,7 +29,7 @@ const SummaryModal = ({
 			maxWidth={'md'}>
 			<div className={classes.summaryModal}>
 				<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-					{translator('whatsappCampaign.summary')}
+					<>{translator('whatsappCampaign.summary')}</>
 				</div>
 				<Box className={classes.alertModalClose}>
 					<Close fontSize={'small'} onClick={onSummaryModalClose} />
@@ -48,7 +48,7 @@ const SummaryModal = ({
 							<Grid item lg={6}>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										{translator('whatsappCampaign.campaignFrom')}
+										<>{translator('whatsappCampaign.campaignFrom')}</>
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
@@ -56,7 +56,7 @@ const SummaryModal = ({
 								</Box>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										{translator('whatsappCampaign.campaignName')}
+										<>{translator('whatsappCampaign.campaignName')}</>
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
@@ -64,7 +64,7 @@ const SummaryModal = ({
 								</Box>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										{translator('whatsappCampaign.when')}
+										<>{translator('whatsappCampaign.when')}</>
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
@@ -72,7 +72,7 @@ const SummaryModal = ({
 								</Box>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										{translator('whatsappCampaign.for')}
+										<>{translator('whatsappCampaign.for')}</>
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										215646512
@@ -90,14 +90,14 @@ const SummaryModal = ({
 												width: '50px',
 												cursor: 'pointer',
 											}}>
-											{translator('whatsappCampaign.details')}
+											<>{translator('whatsappCampaign.details')}</>
 										</Link>
 									</span>
 								</Box>
 								<div>&emsp;</div>
 								<Box className={classes.campaignSummaryTextWrapper}>
 									<span className={classes.campaignSummaryTextTitle}>
-										{translator('whatsappCampaign.sendRandomlyTo')}
+										<>{translator('whatsappCampaign.sendRandomlyTo')}</>
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
 										<input
@@ -111,7 +111,7 @@ const SummaryModal = ({
 										/>
 										&nbsp;
 										<span style={{ fontSize: '12px' }}>
-											{translator('whatsappCampaign.recipient')}
+											<>{translator('whatsappCampaign.recipient')}</>
 										</span>
 									</span>
 								</Box>
@@ -136,15 +136,15 @@ const SummaryModal = ({
 								<Box className={classes.campaignSummaryImportantText}>
 									<div>
 										<b>
-											{translator('whatsappCampaign.summaryNote')}
+											<>{translator('whatsappCampaign.summaryNote')}</>
 											<br />
-											{translator('whatsappCampaign.summaryNote2')}
+											<>{translator('whatsappCampaign.summaryNote2')}</>
 											<br />
-											{translator('whatsappCampaign.summaryNote3')}
+											<>{translator('whatsappCampaign.summaryNote3')}</>
 											<br />
 											<span>
 												<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
-													{translator('whatsappCampaign.limit')}
+													<>{translator('whatsappCampaign.limit')}</>
 												</a>
 											</span>
 										</b>
@@ -162,14 +162,14 @@ const SummaryModal = ({
 						autoFocus
 						// onClick={onConfirmOrYes}
 					>
-						{translator('whatsapp.alertModal.okButtonText')}
+						<>{translator('whatsapp.alertModal.okButtonText')}</>
 					</Button>
 					<Button
 						className='cancel-button'
 						color='primary'
 						variant='contained'
 						onClick={onSummaryModalClose}>
-						{translator('whatsapp.alertModal.calcelButtonText')}
+						<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 					</Button>
 				</Grid>
 			</div>
