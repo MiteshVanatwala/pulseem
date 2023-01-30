@@ -50,7 +50,12 @@ import clsx from 'clsx';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { apiStatus, campaignStatus, resetToastData } from '../Constant';
+import {
+	apiStatus,
+	campaignStatus,
+	campaignStatuses,
+	resetToastData,
+} from '../Constant';
 import Pagination from './Component/Pagination';
 import RestoreDeletedModal from './Popups/RestoreDeletedModal';
 import { KeyboardDatePicker } from '@material-ui/pickers';
@@ -280,11 +285,15 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.recipientsStatus, {
-						[classes.recipientsStatusCreated]: status === 1,
-						[classes.recipientsStatusSent]: status === 4,
-						[classes.recipientsStatusSending]: status === 2,
-						[classes.recipientsStatusStopped]: status === 3,
-						[classes.recipientsStatusCanceled]: status === 5,
+						[classes.recipientsStatusCreated]:
+							status === campaignStatuses.CREATED,
+						[classes.recipientsStatusSent]: status === campaignStatuses.SENDING,
+						[classes.recipientsStatusSending]:
+							status === campaignStatuses.STOPPED,
+						[classes.recipientsStatusStopped]:
+							status === campaignStatuses.FINISHED,
+						[classes.recipientsStatusCanceled]:
+							status === campaignStatuses.CANCELED,
 					})}>
 					{translator(
 						`whatsappManagement.${campaignStatus[status]?.toLocaleLowerCase()}`

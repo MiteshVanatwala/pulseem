@@ -556,12 +556,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const submitData: commonAPIResponseProps = await dispatch<any>(
 			submitTemplateDirect({ id: activeRowId })
 		);
+		setIsSubmitTemplateOpen(false);
 		if (submitData?.payload?.Status === apiStatus.SUCCESS) {
-			setIsSubmitTemplateOpen(false);
 			setToastMessage(ToastMessages.SUBMIT_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {
-			setIsSubmitTemplateOpen(false);
 			submitData?.payload?.Message
 				? setToastMessage({
 						...ToastMessages.ERROR,

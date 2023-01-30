@@ -80,6 +80,14 @@ export enum APIStatuses {
 	ERROR = 'Error',
 }
 
+export enum campaignStatuses {
+	CREATED = 1,
+	SENDING = 2,
+	STOPPED = 3,
+	FINISHED = 4,
+	CANCELED = 5,
+}
+
 export const countryCodes = [
 	'+93 AF',
 	'+355 AL',

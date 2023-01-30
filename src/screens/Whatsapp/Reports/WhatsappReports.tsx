@@ -222,7 +222,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const getTableTypographyCells = (
 		title: string,
-		value: number,
+		cellValue: number,
 		cellName: string,
 		row: reportDataProps
 	) => {
@@ -230,14 +230,14 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			<>
 				<Typography
 					onClick={() =>
-						value >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
+						cellValue >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
 					}
 					className={classes.middleText}>
-					{value ? value : '0'}
+					{cellValue ? cellValue : '0'}
 				</Typography>
 				<Typography
 					onClick={() =>
-						value >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
+						cellValue >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
 					}
 					className={classes.middleText}>
 					{title}

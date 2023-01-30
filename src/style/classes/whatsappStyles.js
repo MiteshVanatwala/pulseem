@@ -1322,13 +1322,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '0 8px',
 	},
 	manageTemplatesTableWrapperPadding: {
-		// padding: '0px 220px',
-		// '@media screen and (max-width: 1264px)': {
-		// 	padding: '0px 160px',
-		// },
-		// '@media screen and (max-width: 1170px)': {
-		// 	padding: '0 8px',
-		// },
+		padding: '0px 220px',
+		'@media screen and (max-width: 1264px)': {
+			padding: '0px 160px',
+		},
+		'@media screen and (max-width: 1170px)': {
+			padding: '0 8px',
+		},
 	},
 
 	whatsappReportHeaderButtons: {
