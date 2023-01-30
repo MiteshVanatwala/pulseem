@@ -10,7 +10,6 @@ import DefaultScreen from "../../DefaultScreen";
 import SmsReplies from "./Sms/SmsReplies";
 import Title from '../../../components/Wizard/WizardTitle';
 import WhatsappInbound from './Whatsapp/WhatsappInbound';
-import { renderHtml } from '../../../helpers/functions';
 
 const useStyles = makeStyles({
     flexItems: {
