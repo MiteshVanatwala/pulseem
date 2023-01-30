@@ -4,15 +4,14 @@ import moment from 'moment';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { exportFile } from '../../../../helpers/exportFromJson';
 import { ClientStatus } from '../../../../helpers/PulseemArrays';
-import { EditIcon, ExportIcon, SearchIcon } from '../../../../assets/images/managment/index';
+import { EditIcon, ExportIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
-import { TablePagination, ManagmentIcon, DateField } from '../../../../components/managment/index';
+import { TablePagination, ManagmentIcon } from '../../../../components/managment/index';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
@@ -41,9 +40,15 @@ const SmsReplies = ({ classes, ...other }) => {
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const { id } = useParams();
+    const priorDate = moment().subtract(30, 'days').utcOffset(0);
+
+    const defaultsDates = {
+        from: priorDate,
+        to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
+    }
     const defaultRequest = {
-        FromDate: null,
-        ToDate: null,
+        FromDate: defaultsDates.from,
+        ToDate: defaultsDates.to,
         FromNumber: '',
         ToNumber: '',
         Text: '',
@@ -59,10 +64,14 @@ const SmsReplies = ({ classes, ...other }) => {
 
 
     const getReplies = async () => {
+        setShowLoader(true);
         await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
+        setShowLoader(false);
     }
     const getRepliesById = async () => {
+        setShowLoader(true);
         await dispatch(getSmsRepliesById(id));
+        setShowLoader(false);
     }
 
     useEffect(() => {
@@ -80,7 +89,6 @@ const SmsReplies = ({ classes, ...other }) => {
         else {
             getReplies();
         }
-        setShowLoader(false);
     }, [request, page, rowsPerPage])
 
     useEffect(() => {
@@ -148,7 +156,9 @@ const SmsReplies = ({ classes, ...other }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setShowLoader(true);
-        let orderList = preferredOrder(smsReplies?.Data, Object.keys(exportColumnHeader));
+        let exportData = await dispatch(getSmsReplies({ ...request, IsExport: true }));
+        let orderList = exportData?.payload;
+        orderList = preferredOrder(smsReplies?.Data, Object.keys(exportColumnHeader));
         orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
         orderList = await formatDateTime(orderList);
@@ -183,8 +193,8 @@ const SmsReplies = ({ classes, ...other }) => {
         return (
             <TableHead>
                 <TableRow classes={rowStyle}>
-                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('common.SentFromNumber')}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.clientName')}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.clientName')} ({t('common.SentFromNumber')})</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('common.ToNumber')}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.smsStatus")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.emailStatus")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.ReplyDate")}</TableCell>
@@ -245,12 +255,6 @@ const SmsReplies = ({ classes, ...other }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={classes.flex2}>
-                    <Typography className={classes.font18}>{VirtualNumber}</Typography>
-                </TableCell>
-                <TableCell
-                    classes={cellBodyStyle}
-                    align='center'
                     className={clsx(classes.flex2, classes.ellipsisText)}>
                     <Grid
                         key={'edit'}
@@ -288,6 +292,12 @@ const SmsReplies = ({ classes, ...other }) => {
                             </Box>
                         </Box>
                     </Grid>
+                </TableCell>
+                <TableCell
+                    classes={cellBodyStyle}
+                    align='center'
+                    className={classes.flex2}>
+                    <Typography className={classes.font18}>{VirtualNumber}</Typography>
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
@@ -469,8 +479,8 @@ const SmsReplies = ({ classes, ...other }) => {
                 setDialog(null);
                 break;
             }
-                setShowLoader(false);
         }
+        setShowLoader(false);
     }
     //#endregion
 
