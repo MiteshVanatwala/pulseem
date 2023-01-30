@@ -593,18 +593,20 @@ const DirectWhatsappReportTab = ({
         )
     }
 
-    return directWhatsappReport?.Data?.length > 0 ? (
-        <>
-            {renderSearchLine()}
-            {renderTable()}
-            {renderTablePagination()}
-            <Loader isOpen={showLoader} />
-        </>
-    ) : <>
-        <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-            <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
-            <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
-        </Box>
+    return <>
+        {renderSearchLine()}
+        {directWhatsappReport?.Data?.length > 0 ? (
+            <>
+                {renderTable()}
+                {renderTablePagination()}
+                <Loader isOpen={showLoader} />
+            </>
+        ) : <>
+            <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
+                <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
+                <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
+            </Box>
+        </>}
     </>
 }
 
