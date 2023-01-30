@@ -43,6 +43,7 @@ import { voidFunction } from '../../../helpers/utils';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import queryString from 'query-string';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -74,6 +75,7 @@ const Groups = ({ classes }) => {
     const { state } = useLocation();
     const from = state?.from || "/";
     const pageProperty = useRef();
+    const qs = (window.location.search && queryString.parse(window.location.search)) || state;
 
     const DialogType = {
         ADD_GROUP: "ADD_GROUP",
@@ -179,6 +181,11 @@ const Groups = ({ classes }) => {
         }
     }, [dispatch, serachData.PageIndex, rowsPerPage]);
 
+    useEffect(() => {
+        if (qs?.NewGroup === 'true') {
+            setDialog(DialogType.ADD_GROUP)
+        }
+    }, [])
 
     const renderSearchSection = () => {
         const handleKeyDown = (event) => {
@@ -1638,7 +1645,7 @@ const Groups = ({ classes }) => {
                         addClientByQuery={false}
                         addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
                         getData={() => getData(null)}
-                        handleResponses={(response, actions) => handleResponses(response, actions)}
+                        handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions) }}
                     />
                 }
                 case DialogType.EDIT_GROUP: {
