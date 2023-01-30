@@ -16,6 +16,8 @@ import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
 import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
+import { ImWhatsapp } from 'react-icons/im';
 
 const WhatsappInbound = ({ classes }) => {
     const dispatch = useDispatch();
@@ -39,7 +41,7 @@ const WhatsappInbound = ({ classes }) => {
         ToDate: null,
         FromNumber: '',
         ToNumber: '',
-        MessageText: '',
+        TextMessage: '',
         PageIndex: 1,
         PageSize: rowsPerPage,
         IsExport: false
@@ -158,8 +160,7 @@ const WhatsappInbound = ({ classes }) => {
 
         return (
             <TableBody>
-                {rowData
-                    .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                {rowData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
             </TableBody>
         )
     }
@@ -207,7 +208,59 @@ const WhatsappInbound = ({ classes }) => {
     }
 
     const renderPhoneRow = (row) => {
-        return <></>
+        const {
+            Id,
+            SendDate,
+            FromNumber,
+            ToNumber,
+            TextMessage
+        } = row;
+
+        let reply = moment(SendDate, dateFormat);
+        return (
+            <TableRow
+                key={Id}
+                classes={rowStyle}>
+                <TableCell
+                    style={{ flex: 2 }}
+                    classes={{ root: classes.tableCellRoot }}
+                    className={classes.p20}
+                >
+                    <Box className={classes.ml10}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                                    {t("common.ReplyDate")}
+                                </Typography>
+                                <Typography component={'p'} className={clsx(classes.middleTxt)}>{reply.format('DD/MM/YYYY')} {reply.format('HH:mm:ss')}</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Box className={classes.cellText}>
+                                    <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>{t('common.SentFromNumber')}</Typography>
+                                    <Typography component={'p'}
+                                        className={clsx(classes.middleTxt)}>
+                                        {FromNumber}
+                                    </Typography>
+                                </Box>
+                                <Box className={classes.cellText}>
+                                    <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>{t('common.SendTo2')}</Typography>
+                                    <Typography component={'p'}
+                                        className={clsx(classes.middleTxt)}>
+                                        {ToNumber}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>{t('common.messageContent')}</Typography>
+                                <Typography className={clsx(classes.ml0)}>
+                                    {TextMessage}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                </TableCell>
+            </TableRow>
+        )
     }
 
     const handlePageChange = (val) => {
@@ -228,29 +281,37 @@ const WhatsappInbound = ({ classes }) => {
             />
         )
     }
-    return <Box>
-        {renderHeader()}
-        <SearchLine
-            classes={classes}
-            onSetPage={(val) => setPage(val)}
-            onFilterRequest={(val) => setRequest(val)}
-            onSetIsSearching={(val) => setIsSearching(val)}
-        />
-        {renderTable()}
-        {renderTablePagination()}
-        <ConfirmRadioDialog
-            classes={classes}
-            isOpen={dialog === 'exportFormat'}
-            title={t('campaigns.exportFile')}
-            radioTitle={t('common.SelectFormat')}
-            onConfirm={(e) => handleDownloadCsv(e)}
-            onCancel={() => setDialog(null)}
-            cookieName={'exportFormat'}
-            defaultValue="xls"
-            options={ExportFileTypes}
-        />
-        <Loader isOpen={showLoader} showBackdrop={true} />
-    </Box>
+    return <>
+        {inboundWhatsappReport?.StatusCode === 201 ?
+            (<Box>
+                {renderHeader()}
+                <SearchLine
+                    classes={classes}
+                    onSetPage={(val) => setPage(val)}
+                    onFilterRequest={(val) => setRequest(val)}
+                    onSetIsSearching={(val) => setIsSearching(val)}
+                />
+                {renderTable()}
+                {renderTablePagination()}
+                <ConfirmRadioDialog
+                    classes={classes}
+                    isOpen={dialog === 'exportFormat'}
+                    title={t('campaigns.exportFile')}
+                    radioTitle={t('common.SelectFormat')}
+                    onConfirm={(e) => handleDownloadCsv(e)}
+                    onCancel={() => setDialog(null)}
+                    cookieName={'exportFormat'}
+                    defaultValue="xls"
+                    options={ExportFileTypes}
+                />
+                <Loader isOpen={showLoader} showBackdrop={true} />
+            </Box>) : <>
+                <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
+                    <Typography style={{ fontSize: 30 }}>{RenderHtml(t('common.whatsappCommingSoon'))}</Typography>
+                    <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
+                </Box>
+            </>}
+    </>
 }
 
 export default WhatsappInbound;

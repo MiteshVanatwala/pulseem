@@ -13,16 +13,6 @@ export const getDirectReport = createAsyncThunk(
     }
   });
 
-export const exportReport = createAsyncThunk(
-  'Whatsapp/GetDirectReport', async (data, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post(`Whatsapp/GetDirectReport`, data);
-      return response.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
 export const getInboundReport = createAsyncThunk(
   'Whatsapp/GetInboundMessages',
   async (requestData, thunkAPI) => {

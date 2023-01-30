@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { Grid, Tab } from "@material-ui/core";
+import { Grid, makeStyles, Tab } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import { ClassesType } from "../../Classes.types";
 import { InboundTypes } from "./Constants";
@@ -10,12 +10,24 @@ import DefaultScreen from "../../DefaultScreen";
 import SmsReplies from "./Sms/SmsReplies";
 import Title from '../../../components/Wizard/WizardTitle';
 import WhatsappInbound from './Whatsapp/WhatsappInbound';
+import { renderHtml } from '../../../helpers/functions';
+
+const useStyles = makeStyles({
+    flexItems: {
+        '& .MuiTab-wrapper': {
+            display: 'flex',
+            flexDirection: 'row-reverse',
+            alignItems: 'space-between'
+        }
+    }
+});
 
 const InboundMessages = ({ classes }: ClassesType) => {
     const params = useParams();
     const { type, id } = params;
     const { t: translator } = useTranslation();
     const [activeTab, setActiveTab] = useState<string>('0');
+    const localClasses = useStyles();
 
     useEffect(() => {
         if (type?.toLowerCase() === 'whatsapp') {
@@ -42,10 +54,10 @@ const InboundMessages = ({ classes }: ClassesType) => {
                                     const label = translator(it.name);
                                     return !it.disabled && <Tab
                                         key={it.key}
-                                        classes={{ root: classes.minWidth100 }}
                                         value={it.value}
-                                        title={translator(it.name)}
-                                        label={label}
+                                        classes={{ root: clsx(classes.minWidth100, it.isNewFeature ? localClasses.flexItems : null) }}
+                                        icon={it.isNewFeature ? <span className={classes.commingSoon}>{translator('common.commingSoon')}</span> : ''}
+                                        label={it.isNewFeature ? <span style={{ marginInlineEnd: 5 }}>{translator(it.name)}</span> : translator(it.name)}
                                     />
                                 })
                             }

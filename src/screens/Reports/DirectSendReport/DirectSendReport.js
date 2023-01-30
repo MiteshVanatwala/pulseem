@@ -18,14 +18,30 @@ import { HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHel
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus, WhatsappStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
+import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
-import { getDirectReport, exportReport } from '../../../redux/reducers/whatsappSlice'
+import { getDirectReport } from '../../../redux/reducers/whatsappSlice'
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles({
+  flexItems: {
+    '& .MuiTab-wrapper': {
+      display: 'flex',
+      flexDirection: 'row-reverse',
+      alignItems: 'space-between'
+    }
+  }
+});
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
+  const location = useLocation();
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
+  const localClasses = useStyles();
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
   const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
@@ -256,7 +272,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "ToNumber": t('common.ToNumber'),
       "Status": t('common.Status'),
       "StatusDescription": t('report.StatusDescription'),
-      "ClientStatus": t('report.clientStatus')
+      "Text": t('common.messageContent'),
+      "ErrorMessage": t('report.failure'),
+      "ReferenceId": t('common.templateId'),
     }
   };
 
@@ -337,15 +355,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         }
       case 2: // Whatsapp
         {
-
-          
           const requestPayload = { ...defaultRequests.WHATSAPP };
           requestPayload.IsExport = true;
-          response = await dispatch(exportReport(requestPayload));
-
-          // finalData = replaceNull(finalData, 'ErrorMessage', '');
-          // finalData = replaceNull(finalData, 'TemplateVariables', '');
-          // finalData = replaceNull(finalData, 'ReferenceId', '');
+          response = await dispatch(getDirectReport(requestPayload));
 
           const exportOptions = {
             OrderItems: true,
@@ -400,7 +412,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             >
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-              <Tab label={t('master.whatsapp')} classes={{ root: classes.minWidth100 }} value={2} />
+              <Tab label={<span style={{ marginInlineEnd: 5 }}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2}
+                icon={<span className={classes.commingSoon}>{t("common.commingSoon")}</span>} />
             </TabList>
             <Grid item>
               {!isArchive && tabValue !== 2 && <Button

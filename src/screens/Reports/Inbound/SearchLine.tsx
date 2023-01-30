@@ -28,7 +28,7 @@ type RequestObject = {
     ToNumber: string,
     IsExport: Boolean,
     FromNumber: String,
-    MessageText: String
+    TextMessage: String
     ToDate: string | null,
     FromDate: string | null,
 }
@@ -56,7 +56,7 @@ const SearchLine = ({
         ToDate: null,
         FromNumber: '',
         ToNumber: '',
-        MessageText: '',
+        TextMessage: '',
         Text: '',
         PageIndex: currentPage,
         PageSize: 6,
@@ -119,8 +119,7 @@ const SearchLine = ({
             <Grid item>
                 <KeyboardDatePicker
                     inputVariant='outlined'
-                    className={clsx(
-                        classes.textField,
+                    className={clsx(classes.textField,
                         classes.NoPaddingtextField
                     )}
                     inputProps={{
@@ -129,19 +128,18 @@ const SearchLine = ({
                     variant='inline'
                     keyboardIcon={<CalendarIcon />}
                     format={'DD/MM/YYYY'}
-                    placeholder={translator('mms.locFromDateResource1.Text')}
+                    placeholder={translator(
+                        'mms.locFromDateResource1.Text'
+                    )}
                     initialFocusedDate={moment()}
-                    value={searchRequest.FromDate}
+                    value={searchRequest?.FromDate}
                     onChange={(date: any, value?: string | null | undefined) => {
-                        console.log(date);
-                        console.log(value);
-                        handleFromDate(value)
+                        handleFromDate(date)
                     }}
                     onClose={() => setIsFromDatePickerOpen(false)}
                     open={isFromDatePickerOpen}
                     onClick={() => setIsFromDatePickerOpen(true)}
                     autoOk={true}
-                    disableFuture
                 />
             </Grid>
             <Grid item>
@@ -154,17 +152,15 @@ const SearchLine = ({
                     inputProps={{
                         className: clsx(classes.datePickerInput, localClasses.padding11)
                     }}
-                    minDate={searchRequest.FromDate}
+                    minDate={searchRequest?.FromDate}
                     variant='inline'
                     keyboardIcon={<CalendarIcon />}
                     format={'DD/MM/YYYY'}
                     placeholder={translator('mms.locToDateResource1.Text')}
                     initialFocusedDate={moment()}
-                    value={searchRequest.ToDate}
+                    value={searchRequest?.ToDate}
                     onChange={(date: any, value?: string | null | undefined) => {
-                        console.log(date);
-                        console.log(value);
-                        handleToDate(value)
+                        handleToDate(date)
                     }}
                     onClose={() => setIsToDatePickerOpen(false)}
                     open={isToDatePickerOpen}
@@ -204,8 +200,8 @@ const SearchLine = ({
                     <TextField
                         variant='outlined'
                         size='small'
-                        value={searchRequest.MessageText}
-                        onChange={(e) => setSearchRequest({ ...searchRequest, MessageText: e.target.value })}
+                        value={searchRequest.TextMessage}
+                        onChange={(e) => setSearchRequest({ ...searchRequest, TextMessage: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={translator('common.messageContent')}
                     />

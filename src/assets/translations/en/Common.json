@@ -605,5 +605,7 @@
   "NoInboundIn24Session": "No inbound",
   "TemplateVariables": "Template Variables",
   "files": "[Files]:",
-  "templateId": "Template ID"
+  "templateId": "Template ID",
+  "commingSoon": "Comming soon!",
+  "whatsappCommingSoon": "Comming Soon!<br/>Sending Whatsapp messages<br/>via Pulseem"
 }

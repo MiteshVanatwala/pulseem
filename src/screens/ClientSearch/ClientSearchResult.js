@@ -1300,9 +1300,9 @@ const ClientSearchResult = ({ props, classes }) => {
             const recipientRequest = await dispatch(getClientsById([ClientID]));
             const cte = recipientRequest?.payload?.Data[0];
             //const existsClient = data.find((c) => { return c.ClientID === ClientID });
-            const tempData = data.filter((c) => { return c.ClientID !== ClientID });
-            setData([...tempData, cte])
-            setClientToEdit(cte);
+            //const tempData = data.filter((c) => { return c.ClientID !== ClientID });
+            //setData([ ...tempData, clientToEdit ])
+            setClientToEdit(clientToEdit);
             setDialog(DialogType.EDIT_RECIPIENT);
             setLoader(false);
           }
@@ -1727,10 +1727,8 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
-            // selectGroup={(idArr) => setSelectedGroups(idArr)}
             DialogType={DialogType}
             selectedGroups={mappedGroups}
-            setDialog={setDialog}
             handleResponses={(response, actions) => { handleResponses(response, actions); }}
             onAddRecipient={(closeDialog = true) => {
               closeDialog && setDialog(null);
