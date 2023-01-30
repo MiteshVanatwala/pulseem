@@ -65,7 +65,7 @@ const LeftPane = ({
 			className={classes.wizardFlex}>
 			<Grid item md={12} xs={12} className={classes.infoDiv}>
 				<span className={classes.conInfo}>
-					{translator('mainReport.whomTosend')}
+					<>{translator('mainReport.whomTosend')}</>
 				</span>
 				<Tooltip
 					disableFocusListener
@@ -87,7 +87,7 @@ const LeftPane = ({
 					<span
 						onClick={() => setActiveTab(tabs.GROUP)}
 						style={{ cursor: 'pointer' }}>
-						{translator('mainReport.groups')}
+						<>{translator('mainReport.groups')}</>
 					</span>
 				</Grid>
 				<Grid
@@ -105,7 +105,7 @@ const LeftPane = ({
 							setActiveTab(tabs.MANUAL);
 							setIsCreateNewGroup(false);
 						}}>
-						{translator('mainReport.manual')}
+						<>{translator('mainReport.manual')}</>
 					</span>
 					<Tooltip
 						disableFocusListener

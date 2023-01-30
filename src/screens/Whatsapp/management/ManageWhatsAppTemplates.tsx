@@ -688,7 +688,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							onClick={onSearch}
 							className={classes.searchButton}
 							endIcon={<SearchIcon />}>
-							{translator('campaigns.btnSearchResource1.Text')}
+							<>{translator('campaigns.btnSearchResource1.Text')}</>
 						</Button>
 					</Grid>
 					{isSearching && (
@@ -711,13 +711,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					className={classes.manageTemplatesHeaderButtons}>
 					<div>
 						<Button className={'green'} onClick={onCreateTemplate}>
-							{translator('whatsappManagement.createTemplate')}
+							<>{translator('whatsappManagement.createTemplate')}</>
 						</Button>
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
 						{tableData?.length || 0}{' '}
-						{translator('whatsappManagement.templates')}
+						<>{translator('whatsappManagement.templates')}</>
 					</span>
 				</Grid>
 
@@ -737,13 +737,15 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 											classes={cellStyle}
 											className={classes.flex3}
 											align='center'>
-											{translator('sms.GridBoundColumnResource2.HeaderText')}
+											<>
+												{translator('sms.GridBoundColumnResource2.HeaderText')}
+											</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
 											className={classes.flex1}
 											align='center'>
-											{translator('sms.StatusResource1.HeaderText')}
+											<>{translator('sms.StatusResource1.HeaderText')}</>
 										</TableCell>
 										<TableCell
 											classes={{ root: classes.tableCellRoot }}
@@ -759,7 +761,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 										classes.noDataRow
 									)}>
 									<Typography>
-										{translator('common.NoDataTryFilter')}
+										<>{translator('common.NoDataTryFilter')}</>
 									</Typography>
 								</Box>
 							) : (

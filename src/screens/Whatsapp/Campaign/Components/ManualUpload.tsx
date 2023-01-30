@@ -203,7 +203,7 @@ const ManualUpload = ({
 							onClick={() => {
 								handlePasted();
 							}}>
-							{translator('sms.editFields')}
+							<>{translator('sms.editFields')}</>
 						</span>
 						<span
 							className={classes.clearDiv}
@@ -213,12 +213,12 @@ const ManualUpload = ({
 								setTypedData([]);
 								setTotalRecords(0);
 							}}>
-							{translator('sms.clearList')}
+							<>{translator('sms.clearList')}</>
 						</span>
 					</div>
 				)}
 				<span>
-					{translator('sms.totalRecords')}: {totalRecords}
+					<>{translator('sms.totalRecords')}</>: {totalRecords}
 				</span>
 			</Grid>
 		</>

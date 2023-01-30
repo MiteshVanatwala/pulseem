@@ -150,8 +150,8 @@ const FilterRecipientsDialog = ({
 	};
 
 	const onConfirm = () => {
-    setFilterCampaigns(selectedModalFilterCampaigns)
-    setFilterGroups(selectedModalFilterGroups)
+		setFilterCampaigns(selectedModalFilterCampaigns);
+		setFilterGroups(selectedModalFilterGroups);
 		onConfirmOrYes();
 	};
 	return (
@@ -164,7 +164,7 @@ const FilterRecipientsDialog = ({
 					<div
 						id='responsive-dialog-title'
 						className={classes.filterModalTitle}>
-						{translator('whatsappCampaign.filter')}
+						<>{translator('whatsappCampaign.filter')}</>
 					</div>
 					<Box className={classes.filterModalClose}>
 						<Close fontSize={'small'} onClick={onFilterModalClose} />
@@ -200,7 +200,7 @@ const FilterRecipientsDialog = ({
 											marginTop: 2,
 										}}
 										className={classes.font13}>
-										{translator('smsReport.filterInputText')}
+										<>{translator('smsReport.filterInputText')}</>
 									</span>
 									<div
 										style={{
@@ -229,7 +229,7 @@ const FilterRecipientsDialog = ({
 									<div style={{ padding: '10px' }}>
 										<span className={classes.font13}>
 											{' '}
-											{translator('smsReport.inputTextFilter')}:
+											<>{translator('smsReport.inputTextFilter')}</>:
 										</span>
 									</div>
 									<div>
@@ -260,7 +260,7 @@ const FilterRecipientsDialog = ({
 								<div className={classes.camapignsDiv}>
 									<div style={{ padding: '10px' }}>
 										<span className={classes.font13}>
-											{translator('smsReport.campaignInfo')}:
+											<>{translator('smsReport.campaignInfo')}</>:
 										</span>
 									</div>
 									<div>
@@ -294,14 +294,14 @@ const FilterRecipientsDialog = ({
 							color='primary'
 							autoFocus
 							onClick={onConfirm}>
-							{translator('whatsapp.alertModal.okButtonText')}
+							<>{translator('whatsapp.alertModal.okButtonText')}</>
 						</Button>
 						<Button
 							className='cancel-button'
 							color='primary'
 							variant='contained'
 							onClick={onClose}>
-							{translator('whatsapp.alertModal.calcelButtonText')}
+							<>{translator('whatsapp.alertModal.calcelButtonText')}</>
 						</Button>
 					</Grid>
 				</div>

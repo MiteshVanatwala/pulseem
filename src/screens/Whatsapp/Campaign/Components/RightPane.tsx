@@ -57,7 +57,7 @@ const RightPane = ({
 				<h2
 					className={classes.sectionTitle}
 					style={{ marginTop: windowSize === 'xs' ? 15 : '' }}>
-					{translator('notifications.whenToSend')}
+					<>{translator('notifications.whenToSend')}</>
 				</h2>
 				<FormControl component='fieldset'>
 					<RadioGroup
@@ -79,12 +79,12 @@ const RightPane = ({
 							}
 							label={
 								<span className={classes.radioText}>
-									{translator('notifications.immediateSend')}
+									<>{translator('notifications.immediateSend')}</>
 								</span>
 							}
 						/>
 						<FormHelperText className={classes.helpText}>
-							{translator('notifications.immediateDescription')}
+							<>{translator('notifications.immediateDescription')}</>
 						</FormHelperText>
 						<FormControlLabel
 							value='2'
@@ -100,7 +100,7 @@ const RightPane = ({
 							}
 							label={
 								<span className={classes.radioText}>
-									{translator('notifications.futureSend')}
+									<>{translator('notifications.futureSend')}</>
 								</span>
 							}
 						/>
@@ -198,7 +198,7 @@ const RightPane = ({
 							}
 							label={
 								<span className={classes.radioText}>
-									{translator('mainReport.specialDate')}
+									<>{translator('mainReport.specialDate')}</>
 								</span>
 							}
 						/>
@@ -224,10 +224,14 @@ const RightPane = ({
 									handleSelectChange(e);
 								}}
 								value={sendType === '3' ? spectialDateFieldID : '0'}>
-								<option value='0'>{translator('common.select')}</option>
-								<option value='1'>{translator('mainReport.birthday')}</option>
+								<option value='0'>
+									<>{translator('common.select')}</>
+								</option>
+								<option value='1'>
+									<>{translator('mainReport.birthday')}</>
+								</option>
 								<option value='2'>
-									{translator('mainReport.creationDay')}
+									<>{translator('mainReport.creationDay')}</>
 								</option>
 							</select>
 						</Box>
@@ -259,7 +263,7 @@ const RightPane = ({
 									marginBottom: '8px',
 									fontSize: 14,
 								}}>
-								{translator('mainReport.days')}
+								<>{translator('mainReport.days')}</>
 							</span>
 
 							{isRTL ? (
@@ -273,7 +277,7 @@ const RightPane = ({
 												: classes.disabledAfter
 										}
 										onClick={() => setIsSpecialDateBefore(true)}>
-										{translator('mainReport.before')}
+										<>{translator('mainReport.before')}</>
 									</span>
 									<span
 										className={
@@ -284,7 +288,7 @@ const RightPane = ({
 												: classes.disabledBefore
 										}
 										onClick={() => setIsSpecialDateBefore(false)}>
-										{translator('mainReport.after')}
+										<>{translator('mainReport.after')}</>
 									</span>
 								</div>
 							) : (
@@ -298,7 +302,7 @@ const RightPane = ({
 												: classes.disabledBefore
 										}
 										onClick={() => setIsSpecialDateBefore(true)}>
-										{translator('mainReport.before')}
+										<>{translator('mainReport.before')}</>
 									</span>
 									<span
 										className={
@@ -309,7 +313,7 @@ const RightPane = ({
 												: classes.disabledAfter
 										}
 										onClick={() => setIsSpecialDateBefore(false)}>
-										{translator('mainReport.after')}
+										<>{translator('mainReport.after')}</>
 									</span>
 								</div>
 							)}

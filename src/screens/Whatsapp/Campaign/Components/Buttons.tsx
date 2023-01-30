@@ -51,7 +51,7 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 						handlePreviousPage();
 					}}>
 					<span style={{ marginInlineEnd: '5px' }}>{'<'}</span>
-					{translator('whatsappCampaign.back')}
+					<>{translator('whatsappCampaign.back')}</>
 				</Button>
 
 				<Box>

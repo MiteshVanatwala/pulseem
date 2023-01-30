@@ -262,7 +262,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					{recipients?.toLocaleString()}
 				</Typography>
 				<Typography className={classes.middleText}>
-					{translator('campaigns.recipients')}
+					<>{translator('campaigns.recipients')}</>
 				</Typography>
 			</>
 		);
@@ -275,7 +275,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					{messages.toLocaleString()}
 				</Typography>
 				<Typography className={classes.middleText}>
-					{translator('sms.CreditsResource1.HeaderText')}
+					<>{translator('sms.CreditsResource1.HeaderText')}</>
 				</Typography>
 			</>
 		);
@@ -295,9 +295,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						[classes.recipientsStatusCanceled]:
 							status === campaignStatuses.CANCELED,
 					})}>
-					{translator(
-						`whatsappManagement.${campaignStatus[status]?.toLocaleLowerCase()}`
-					)}
+					<>
+						{translator(
+							`whatsappManagement.${campaignStatus[
+								status
+							]?.toLocaleLowerCase()}`
+						)}
+					</>
 				</Typography>
 			</>
 		);
@@ -859,7 +863,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							onClick={onSearch}
 							className={classes.searchButton}
 							endIcon={<SearchIcon />}>
-							{translator('campaigns.btnSearchResource1.Text')}
+							<>{translator('campaigns.btnSearchResource1.Text')}</>
 						</Button>
 					</Grid>
 					{isSearching && (
@@ -870,7 +874,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 								onClick={clearSearch}
 								className={classes.searchButton}
 								endIcon={<ClearIcon />}>
-								{translator('common.clear')}
+								<>{translator('common.clear')}</>
 							</Button>
 						</Grid>
 					)}
@@ -882,18 +886,18 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					className={classes.manageTemplatesHeaderButtons}>
 					<div>
 						<Button className={'green'} onClick={() => onCreateCamoaign()}>
-							{translator('whatsappManagement.createCampaign')}
+							<>{translator('whatsappManagement.createCampaign')}</>
 						</Button>
 						<Button
 							className={'blue'}
 							onClick={() => setIsRestoreDeletedModal(true)}>
-							{translator('whatsappManagement.restore')}
+							<>{translator('whatsappManagement.restore')}</>
 						</Button>
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
 						{tableData?.length || 0}{' '}
-						{translator('whatsappManagement.campaigns')}
+						<>{translator('whatsappManagement.campaigns')}</>
 					</span>
 				</Grid>
 
@@ -910,25 +914,27 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 											classes={cellStyle}
 											className={classes.flex3}
 											align='center'>
-											{translator('sms.GridBoundColumnResource2.HeaderText')}
+											<>
+												{translator('sms.GridBoundColumnResource2.HeaderText')}
+											</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
 											className={classes.flex1}
 											align='center'>
-											{translator('campaigns.recipients')}
+											<>{translator('campaigns.recipients')}</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
 											className={classes.flex1}
 											align='center'>
-											{translator('sms.CreditsResource1.HeaderText')}
+											<>{translator('sms.CreditsResource1.HeaderText')}</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
 											className={classes.flex1}
 											align='center'>
-											{translator('sms.StatusResource1.HeaderText')}
+											<>{translator('sms.StatusResource1.HeaderText')}</>
 										</TableCell>
 										<TableCell
 											classes={{ root: classes.tableCellRoot }}
@@ -941,7 +947,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
 									style={{ height: 50 }}>
 									<Typography>
-										{translator('common.NoDataTryFilter')}
+										<>{translator('common.NoDataTryFilter')}</>
 									</Typography>
 								</Box>
 							) : (

@@ -658,9 +658,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							<>{translator('whatsappCampaign.note')}</>
 							<br />
 							<span style={isRTL ? { marginRight: 180 } : { marginRight: 300 }}>
-								{translator('whatsappCampaign.checkLimit')}{' '}
+								<>{translator('whatsappCampaign.checkLimit')}</>{' '}
 								<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
-									{translator('whatsappCampaign.here')}
+									<>{translator('whatsappCampaign.here')}</>
 								</a>
 							</span>
 						</b>
@@ -833,7 +833,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												}
 												label={
 													<Typography style={{ fontSize: 18 }}>
-														{translator('whatsappCampaign.oneContact')}
+														<>{translator('whatsappCampaign.oneContact')}</>
 													</Typography>
 												}
 											/>
@@ -863,7 +863,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													color='primary'
 													className={classes.testOneContactSendButton}
 													onClick={() => onTestOneSend()}>
-													{translator('whatsappCampaign.sendButton')}
+													<>{translator('whatsappCampaign.sendButton')}</>
 												</Button>
 											</Stack>
 											<br />
@@ -881,7 +881,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													}
 													label={
 														<Typography style={{ fontSize: 18 }}>
-															{translator('whatsappCampaign.testGroups')}
+															<>{translator('whatsappCampaign.testGroups')}</>
 														</Typography>
 													}
 												/>

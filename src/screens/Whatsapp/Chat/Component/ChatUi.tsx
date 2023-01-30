@@ -192,11 +192,11 @@ const ChatUi = ({
 							spacing={2}>
 							<Typography color='textSecondary'>
 								<label style={{ fontSize: '20px' }}>
-									{translator('whatsappChat.conversation')}
+									<>{translator('whatsappChat.conversation')}</>
 								</label>
 								<br />
 								<label style={{ fontSize: '15px' }}>
-									{translator('whatsappChat.cantSend')}
+									<>{translator('whatsappChat.cantSend')}</>
 								</label>
 							</Typography>
 
@@ -205,7 +205,7 @@ const ChatUi = ({
 									size='small'
 									className={'green'}
 									onClick={() => setIsTemplateModal(true)}>
-									{translator('whatsappChat.send')}
+									<>{translator('whatsappChat.send')}</>
 								</Button>
 							</Grid>
 						</Stack>
