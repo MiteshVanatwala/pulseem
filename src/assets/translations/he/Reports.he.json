@@ -47,7 +47,7 @@
   "deleted": "נמחק",
   "suspended": "הושהה",
   "requireAproval": "אימות נדרש",
-  "invalidFromNumber": "מספר מאת לא תקין",
+  "invalidFromNumber": "מאת מספר לא תקין",
   "toNumberLonger": "מספר נמען גדול 16",
   "blockedSync": "Blocked Due To Sync Feature",
   "blockedRemoval": "נחסם מסיבת הסרה",
@@ -110,5 +110,6 @@
   "ExportLimitation": "לא ניתן להוריד קובץ שמכיל מעל 600 אלף רשומות",
   "clientName": "שם לקוח",
   "filterSearch": "החל סינון",
-  "closeFilterSearch": "סגור סינון"
+  "closeFilterSearch": "סגור סינון",
+  "smsReplies": "דו\"ח SMS נכנסים"
 }

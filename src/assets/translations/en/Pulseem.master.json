@@ -378,8 +378,9 @@
   "implementScript": "Implement Script",
   "guides": "Guides",
   "pulseemSystem": "Pulseem System",
-  "smsReplies": "SMS Replies",
+  "smsReplies": "Inbound reports",
   "newEditor": "New Editor",
   "siteTracking": "Site Tracking",
-  "continueToNewEditor": "Save and Continue with new editor"
+  "continueToNewEditor": "Save and Continue with new editor",
+  "whatsapp": "Whatsapp"
 }

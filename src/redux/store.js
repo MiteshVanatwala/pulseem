@@ -18,6 +18,7 @@ import campaignReducer from './reducers/campaignEditorSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
 import galleryReducer from './reducers/gallerySlice'
+import whatsappReducer from './reducers/whatsappSlice'
 
 export default configureStore({
   reducer: {
@@ -39,6 +40,7 @@ export default configureStore({
     siteTracking: siteTrackingReducer,
     group: groupSlice,
     report: reportSlice,
-    gallery: galleryReducer
+    gallery: galleryReducer,
+    whatsapp: whatsappReducer
   },
 });

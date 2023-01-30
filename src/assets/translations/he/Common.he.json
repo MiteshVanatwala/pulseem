@@ -435,6 +435,8 @@
   "rowNumber": "מספר שורות",
   "clear": "נקה",
   "confirm": "אישור",
+  "stopped": "נעצר",
+  "cancelled": "מבוטל",
   "approved": "מאושר",
   "draft": "טיוטה",
   "failedStatus": "נכשלו",
@@ -588,5 +590,15 @@
   "filesNotUploaded": "קבצים נכשלו: ",
   "saveAndContinue": "שמור והמשך",
   "backToAutomation": "חזור לאוטומציה",
-  "files": "[קבצים]:"
+  "files": "[קבצים]:",
+  "showError": "הצג שגיאה",
+  "showTemplateId": "הצג תבנית",
+  "delivered": "הועבר",
+  "Queued": "בתור",
+  "read": "נקרא",
+  "NoInboundIn24Session": "לא התקבלה תשובה",
+  "TemplateVariables": "משתנים בתבנית",
+  "templateId": "מזהה תבנית",
+  "commingSoon": "בקרוב!",
+  "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים"
 }
