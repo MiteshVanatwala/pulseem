@@ -1,6 +1,6 @@
 {
-	"templateManagement": "Whatsapp Template Management",
-	"campaignManagement": "Whatsapp Campaign Management",
+	"templateManagement": "WhatsApp Template Management",
+	"campaignManagement": "WhatsApp Campaign Management",
 	"fromDatePlaceholder": "From Date",
 	"toDatePlaceholder": "To Date",
 	"restore": "Restore Deleted",
@@ -27,5 +27,6 @@
 	"rejected": "Rejected",
 	"finished": "Finished",
 	"sending": "Sending",
-	"canceled": "Canceled"
+	"canceled": "Canceled",
+	"CreatedOnlyforPulseem": "Created Only for Pulseem"
 }

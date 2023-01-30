@@ -1,5 +1,9 @@
 import { ClassesType } from '../../../Classes.types';
 import { BaseSyntheticEvent, RefObject } from 'react';
+import {
+	campaignDataProps,
+	reportDataProps,
+} from '../../Campaign/Types/WhatsappCampaign.types';
 
 export type WhatsappCreatorProps = {
 	classes: ClassesType[];
@@ -217,6 +221,9 @@ export type toastProps = {
 	QUICK_SEND_SUCCESSS: toastKeyProps;
 	SAVE_CAMPAIGN_SUCCESS: toastKeyProps;
 	DELETE_CAMPAIGN_SUCCESS: toastKeyProps;
+	DELETE_TEMPLATE_SUCCESS: toastKeyProps;
+	SUBMIT_CAMPAIGN_SUCCESS: toastKeyProps;
+	DUPLICATE_CAMPAIGN_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -255,18 +262,45 @@ export type saveTemplateItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	Id: number;
+	IsAllowEdit: boolean;
+};
+
+export type saveTemplateDataProps = {
+	Error: string;
+	Count: number;
+	Items: saveTemplateItemsProps[];
 };
 
 export type saveTemplatePayloadProps = {
-	Error: string;
-	Count: number;
+	Data: saveTemplateDataProps;
 	Message: string;
 	Status: string;
-	Items: saveTemplateItemsProps[];
 };
 
 export type savedTemplateAPIProps = {
 	payload: saveTemplatePayloadProps;
+};
+
+export type getTemplateByIdDataAPIProps = {
+	Data: savedTemplateDataProps;
+	FileName: string;
+	FilePath: string;
+	FriendlyTemplateName: string;
+	id: number;
+	SavedApiWhatsappTemplatesId: number;
+	TemplateId: string;
+	TemplateName: string;
+};
+
+export type getTemplateByIdPayloadAPIProps = {
+	Data: getTemplateByIdDataAPIProps;
+	Message: string;
+	Status: string;
+};
+
+export type getTemplateByIdAPIProps = {
+	payload: getTemplateByIdPayloadAPIProps;
 };
 
 export type submitTemplateDataProps = {
@@ -293,14 +327,22 @@ export type templateListItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	Id: number;
+	IsAllowEdit: boolean;
 };
 
-export type templateListPayloadProps = {
+export type templateListDataProps = {
 	Error: string;
 	Count: number;
 	Message: string;
-	Status: string;
+	Status: number;
 	Items: saveTemplateItemsProps[];
+};
+
+export type templateListPayloadProps = {
+	Message: string;
+	Status: string;
+	Data: templateListDataProps;
 };
 
 export type templateListAPIProps = {
@@ -317,4 +359,50 @@ export type deleteTemplatePayloadProps = {
 
 export type deleteTemplateAPIProps = {
 	payload: deleteTemplatePayloadProps;
+};
+
+export type campaignListDataProps = {
+	Count: number;
+	CurrentPage: number;
+	Items: campaignDataProps[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type campaignListPayloadProps = {
+	Message: string;
+	Status: string;
+	Data: campaignListDataProps;
+};
+
+export type campaignListAPIProps = {
+	payload: campaignListPayloadProps;
+};
+
+export type reportListPayloadDataProps = {
+	Count: number;
+	CurrentPage: number;
+	Items: reportDataProps[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type reportListPayloadProps = {
+	Data: reportListPayloadDataProps;
+	Message: string;
+	Status: string;
+};
+
+export type reportListAPIProps = {
+	payload: reportListPayloadProps;
+};
+
+export type commonAPIResponsePayloadProps = {
+	Data: any;
+	Message: string;
+	Status: string;
+};
+
+export type commonAPIResponseProps = {
+	payload: commonAPIResponsePayloadProps;
 };

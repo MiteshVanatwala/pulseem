@@ -10,8 +10,8 @@ import Groups from './Groups/Groups';
 const GroupSelector = ({
 	classes,
 	showTestGroups,
-	testGroups,
-	subAccountAllGroups,
+	testGroupList,
+	allGroupList,
 	selectedGroups,
 	isFilterSelected,
 	isCreateNewGroup,
@@ -51,18 +51,19 @@ const GroupSelector = ({
 	const onSelectAll = () => {
 		if (!allGroupsSelected) {
 			if (showTestGroups) {
-				setSelected([...testGroups, ...subAccountAllGroups]);
+				setSelected(testGroupList);
 			} else {
-				setSelected([...subAccountAllGroups]);
+				setSelected([...allGroupList]);
 			}
 		} else {
 			setSelected([]);
 		}
 		setAllGroupsSelected(!allGroupsSelected);
 	};
+	console.log(showTestGroups)
 
 	const onShowTestGroup = async (showTestGroups: boolean) => {
-		if (!showTestGroups && testGroups.length > 0) {
+		if (!showTestGroups && testGroupList?.length > 0) {
 			setShowTestGroups(true);
 		} else {
 			setShowTestGroups(false);
@@ -74,8 +75,8 @@ const GroupSelector = ({
 				classes={classes}
 				list={
 					showTestGroups
-						? [...testGroups, ...subAccountAllGroups]
-						: [...subAccountAllGroups]
+						? [...allGroupList, ...testGroupList]
+						: [...allGroupList]
 				}
 				selectedList={selectedGroups}
 				callbackSelectedGroups={onSelectedGroups}

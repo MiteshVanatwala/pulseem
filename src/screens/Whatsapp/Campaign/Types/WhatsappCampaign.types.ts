@@ -49,7 +49,6 @@ export type campaignFielsProps = {
 	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
 	onCampaignNameChange: (campaignName: string) => void;
 	onFromChange: (from: string) => void;
-	onCampaignFromRestore: () => void;
 	showValidation: boolean;
 	phoneNumbersList: string[];
 };
@@ -113,7 +112,8 @@ export type RightPaneProps = {
 
 export type LeftPaneProps = {
 	classes: ClassesType['classes'];
-	subAccountAllGroups: testGroupDataProps[];
+	allGroupList: testGroupDataProps[];
+	testGroupList: testGroupsProps[];
 	finishedCampaigns: testGroupDataProps[];
 	selectedFilterCampaigns: testGroupDataProps[];
 	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
@@ -155,7 +155,7 @@ export type FilterRecipientsDialogProps = {
 	classes: ClassesType['classes'];
 	isFilterModal: boolean;
 	onFilterModalClose: () => void;
-	subAccountAllGroups: testGroupDataProps[];
+	allGroupList: testGroupDataProps[];
 	finishedCampaigns: testGroupDataProps[];
 	selectedFilterCampaigns: testGroupDataProps[];
 	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
@@ -304,15 +304,19 @@ export type GroupsSelectAllProps = {
 };
 
 export type campaignDataProps = {
-	campaignId: number;
-	campaignName: string;
-	statusId: number;
-	status: string;
-	recipients: number;
-	messages: number;
-	IsAutomation: boolean;
-	updatedDate: string;
-	sendDate: string | null;
+	AutomationID: number;
+	AutomationTriggerInActive: boolean;
+	CreateDate: string;
+	CreditsPerSms: number;
+	Groups: string[] | string | null;
+	IsDeleted: boolean;
+	Name: string;
+	SendDate: string | null;
+	Status: number;
+	TotalSendPlan: number;
+	UpdateDate: string;
+	WACampaignID: number;
+	TemplateId: string;
 };
 
 export type searchArrayProps = {
@@ -328,37 +332,40 @@ export type filtersObjectProps = {
 };
 
 export type reportDataProps = {
-	waCampaignId: number;
+	WACampaignID: number;
 	statusId: number;
-	status: string;
-	campaignName: string;
-	totalSendPlan: number;
-	totalSent: number;
-	totalRead: number;
-	clicksCount: number;
-	uniqueClicksCount: number;
-	totalFeedback: number;
-	removed: number;
-	failure: number;
-	updatedDate: string | null;
-	sendDate: string | null;
+	Status: number;
+	Name: string;
+	ToSend: number;
+	Sent: number;
+	Read: number;
+	ClicksCount: number;
+	UniqueClicksCount: number;
+	FeedBack: number;
+	Removed: number;
+	Failed: number;
+	CreateDate: string;
+	UpdateDate: string;
+	FromNumber: string;
+	TemplateID: string;
 };
 
 export type exportDataProps = {
-	waCampaignId: number;
+	WACampaignID: number;
 	statusId?: number;
-	status: string;
-	campaignName: string;
-	totalSendPlan: number;
-	totalSent: number;
-	totalRead: number;
-	clicksCount: number;
-	uniqueClicksCount: number;
-	totalFeedback: number;
-	removed: number;
-	failure: number;
-	updatedDate: string | null;
-	sendDate: string | null;
+	Status: string;
+	Name: string;
+	ToSend: number;
+	Sent: number;
+	Read: number;
+	ClicksCount: number;
+	UniqueClicksCount: number;
+	FeedBack: number;
+	Removed: number;
+	Failed: number;
+	CreateDate: string;
+	FromNumber: string;
+	TemplateID?: string;
 };
 
 export type manualUploadProps = {
@@ -381,8 +388,8 @@ export type manualUploadProps = {
 export type groupSelectorProps = {
 	classes: ClassesType['classes'];
 	showTestGroups: boolean;
-	testGroups: [];
-	subAccountAllGroups: testGroupDataProps[];
+	testGroupList: testGroupsProps[];
+	allGroupList: testGroupDataProps[];
 	selectedGroups: testGroupDataProps[];
 	isFilterSelected: boolean;
 	isCreateNewGroup: boolean;
@@ -395,4 +402,10 @@ export type groupSelectorProps = {
 	setIsFilterModal: (isFilterModal: boolean) => void;
 	setAllGroupsSelected: (allGroupsSelected: boolean) => void;
 	setShowTestGroups: (showTestGroups: boolean) => void;
+};
+
+export type gropListAPIProps = {
+	meta: { requestStatus: string };
+	type: string;
+	payload: testGroupDataProps[];
 };

@@ -29,8 +29,10 @@ import DefaultScreen from '../../DefaultScreen';
 import {
 	buttonsDataProps,
 	callToActionProps,
+	commonAPIResponseProps,
 	coreProps,
 	deleteTemplateAPIProps,
+	getTemplateByIdAPIProps,
 	quickReplyButtonProps,
 	savedTemplateAPIProps,
 	savedTemplateCallToActionProps,
@@ -50,18 +52,18 @@ import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
-import {
-	ManagmentIconProps,
-	apiTemplateRowDataProps,
-} from './Types/Management.types';
+import { ManagmentIconProps } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
 	deleteTemplate,
+	duplicateTemplate,
 	getAllTemplates,
 	getSavedTemplatesById,
+	getSavedTemplatesPreviewById,
+	submitTemplateDirect,
 } from '../../../redux/reducers/whatsappSlice';
-import { resetToastData, statusesByName } from '../Constant';
+import { apiStatus, resetToastData, statusesByName } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
@@ -77,13 +79,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
-	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
+	const [isSubmitTemplateOpen, setIsSubmitTemplateOpen] =
 		useState<boolean>(false);
-	const [isPreviewCampaignOpen, setIsPreviewCampaignOpen] =
+	const [isPreviewTemplateOpen, setIsPreviewTemplateOpen] =
 		useState<boolean>(false);
-	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] =
+	const [isDeleteTemplateOpen, setIsDeleteTemplateOpen] =
 		useState<boolean>(false);
-	const [isDuplicateCampaignOpen, setIsDuplicateCampaignOpen] =
+	const [isDuplicateTemplateOpen, setIsDuplicateTemplateOpen] =
 		useState<boolean>(false);
 	const [campaignNameSearch, setCampaignNameSearch] = useState<string>('');
 	const [campainStatusSearch, setCampainStatusSearch] = useState<string>('');
@@ -134,9 +136,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: templateListAPIProps = await dispatch<any>(
 			getAllTemplates()
 		);
-		if (templateData.payload.Status === 'SUCCESS') {
-			setTemplateListData(templateData.payload.Items);
-			setTableData(templateData.payload.Items);
+		if (templateData.payload.Status === apiStatus.SUCCESS) {
+			setTemplateListData(templateData.payload?.Data?.Items);
+			setTableData(templateData.payload?.Data?.Items);
 			setIsLoader(false);
 		} else {
 			setTemplateListData([]);
@@ -198,10 +200,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.recipientsStatus, {
-						[classes.recipientsStatusCreated]: status === 'Received',
+						[classes.recipientsStatusStopped]:
+							status === 'CreatedOnlyforPulseem',
 						[classes.recipientsStatusCreated]: status === 'Approved',
 						[classes.recipientsStatusSending]: status === 'Pending',
-						[classes.recipientsStatusCanceled]: status === 'Received',
+						[classes.recipientsStatusSent]: status === 'Received',
 						[classes.recipientsStatusCanceled]: status === 'Rejected',
 					})}>
 					<>
@@ -368,52 +371,78 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setTemplateData(updatedTemplateData);
 	};
 
+	const getTemplateIdFromId = (id: string) => {
+		return templateListData?.find(
+			(template: templateListItemsProps) => id === template.Id?.toString()
+		)?.TemplateId;
+	};
+
 	const onPreview = async (templateId: string) => {
-		const templateData: savedTemplateAPIProps = await dispatch<any>(
-			getSavedTemplatesById({ templateId })
-		);
-		if (templateData.payload.Status === 'SUCCESS') {
-			const templates = templateData.payload.Items
-				? templateData.payload.Items
-				: [];
-			if (templates && templates?.length > 0) {
-				const templateData = templates[0]?.Data;
-				onSavedTemplateChange(templateData);
+		const previewTemplateId = getTemplateIdFromId(templateId);
+		if (previewTemplateId) {
+			const templateData: templateListAPIProps = await dispatch<any>(
+				getSavedTemplatesPreviewById({
+					templateId: previewTemplateId,
+				})
+			);
+			if (templateData.payload.Status === apiStatus.SUCCESS) {
+				const templates = templateData.payload?.Data?.Items;
+				if (templates && templates?.length > 0) {
+					const templateData = templates[0];
+					onSavedTemplateChange(templateData?.Data);
+				}
+				setIsPreviewTemplateOpen(true);
+			} else {
+				templateData?.payload?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: templateData?.payload?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
 			}
-			setIsPreviewCampaignOpen(true);
 		}
 	};
 
 	const onSend = async (templateId: string) => {
-		const templateData: savedTemplateAPIProps = await dispatch<any>(
-			getSavedTemplatesById({ templateId })
-		);
-		if (templateData.payload.Status === 'SUCCESS') {
-			const templates = templateData.payload.Items
-				? templateData.payload.Items
-				: [];
-			if (templates && templates?.length > 0) {
-				const templateData = templates[0]?.Data;
-				onSavedTemplateChange(templateData);
+		const previewTemplateId = getTemplateIdFromId(templateId);
+		if (previewTemplateId) {
+			const templateData: templateListAPIProps = await dispatch<any>(
+				getSavedTemplatesPreviewById({
+					templateId: previewTemplateId,
+				})
+			);
+			if (templateData.payload.Status === apiStatus.SUCCESS) {
+				const templates = templateData.payload?.Data?.Items;
+				if (templates && templates?.length > 0) {
+					const templateData = templates[0];
+					onSavedTemplateChange(templateData?.Data);
+				}
+				setIsSubmitTemplateOpen(true);
+			} else {
+				templateData?.payload?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: templateData?.payload?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
 			}
-			setIsSubmitCampaignOpen(true);
 		}
 	};
 
-	const onRowIconClick = (key: string, templateId: string) => {
-		setActiveRowId(templateId);
+	const onRowIconClick = (key: string, Id: string) => {
+		setActiveRowId(Id);
 		switch (key) {
 			case 'send':
-				onSend(templateId);
+				onSend(Id);
 				break;
 			case 'preview':
-				onPreview(templateId);
+				onPreview(Id);
 				break;
 			case 'duplicate':
-				setIsDuplicateCampaignOpen(true);
+				setIsDuplicateTemplateOpen(true);
 				break;
 			case 'delete':
-				setIsDeleteCampaignOpen(true);
+				setIsDeleteTemplateOpen(true);
 				break;
 
 			default:
@@ -429,12 +458,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				icon: SendGreenIcon,
 				lable: translator('whatsappManagement.submit'),
 				remove: row.Status !== 'Received',
-				onClick: (key: string, templateId: string) =>
-					onRowIconClick(key, templateId),
+				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.sendIcon,
 				textClass: classes.sendIconText,
-				id: row.TemplateId.toString(),
+				id: row.Id.toString(),
 			},
 			{
 				key: 'preview',
@@ -442,46 +470,42 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				icon: PreviewIcon,
 				lable: translator('whatsappManagement.preview'),
 				remove: windowSize === 'xs',
-				onClick: (key: string, templateId: string) =>
-					onRowIconClick(key, templateId),
+				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				id: row.TemplateId.toString(),
+				id: row.Id.toString(),
 			},
 			{
 				key: 'edit',
 				buttonKey: 'edit',
 				icon: EditIcon,
-				disable: row.Status !== "Received",
+				disable: !row?.IsAllowEdit,
 				lable: translator('campaigns.Image2Resource1.ToolTip'),
-				onClick: (key: string, templateId: string) =>
-					onRowIconClick(key, templateId),
+				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				href: `/react/whatsapp/template/edit/${row.TemplateId}`,
-				id: row.TemplateId.toString(),
+				href: `/react/whatsapp/template/edit/${row?.Id?.toString()}`,
+				id: row.Id.toString(),
 			},
 			{
 				key: 'duplicate',
 				buttonKey: 'duplicate',
 				icon: DuplicateIcon,
 				lable: translator('campaigns.lnkEditResource1.ToolTip'),
-				onClick: (key: string, templateId: string) =>
-					onRowIconClick(key, templateId),
+				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				id: row.TemplateId.toString(),
+				id: row.Id.toString(),
 			},
 			{
 				key: 'delete',
 				buttonKey: 'delete',
 				icon: DeleteIcon,
 				lable: translator('campaigns.DeleteResource1.HeaderText'),
-				onClick: (key: string, templateId: string) =>
-					onRowIconClick(key, templateId),
+				onClick: (key: string, Id: string) => onRowIconClick(key, Id),
 				classes: classes,
 				rootClass: classes.paddingIcon,
-				id: row.TemplateId?.toString(),
+				id: row.Id?.toString(),
 			},
 		];
 		return (
@@ -511,7 +535,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		}
 		if (campainStatusSearch && campainStatusSearch?.length > 0) {
 			searchedData = searchedData?.filter((row: templateListItemsProps) =>
-				row.Status?.includes(campainStatusSearch)
+				row.Status?.includes(campainStatusSearch.trim())
 			);
 		}
 		return searchedData;
@@ -520,7 +544,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const getRows = () => {
 		let sortData = tableData;
 
-		sortData = sortData.slice(
+		sortData = sortData?.slice(
 			(page - 1) * rowsPerPage,
 			(page - 1) * rowsPerPage + rowsPerPage
 		);
@@ -529,14 +553,29 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onSubmitTemplate = async () => {
-		console.log('onSubmitTemplate');
+		const submitData: commonAPIResponseProps = await dispatch<any>(
+			submitTemplateDirect({ id: activeRowId })
+		);
+		setIsSubmitTemplateOpen(false);
+		if (submitData?.payload?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.SUBMIT_CAMPAIGN_SUCCESS);
+			setApiTemplateData();
+		} else {
+			submitData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: submitData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	const onDeleteTemplate = async () => {
 		const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 			deleteTemplate(activeRowId)
 		);
-		if (deleteData?.payload?.Status === 'Success') {
+		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+			setIsDeleteTemplateOpen(false);
 			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {
@@ -550,7 +589,22 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicaTemplate = async () => {
-		console.log('onDuplicaTemplate');
+		const duplicateData: deleteTemplateAPIProps = await dispatch<any>(
+			duplicateTemplate(activeRowId)
+		);
+		if (duplicateData?.payload?.Status === apiStatus.SUCCESS) {
+			setIsDuplicateTemplateOpen(false);
+			setToastMessage(ToastMessages.DELETE_TEMPLATE_SUCCESS);
+			setApiTemplateData();
+		} else {
+			setIsDuplicateTemplateOpen(false);
+			duplicateData?.payload?.Error
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: duplicateData?.payload?.Error,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	const onCreateTemplate = async () => {
@@ -620,7 +674,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							}
 							value={campainStatusSearch}>
 							{Object.keys(statusesByName)?.map((status: string) => (
-								<MenuItem key={'no-data-template'} value={status}>
+								<MenuItem key={'no-data-template' + status} value={status}>
 									<>{translator(statusesByName[status])}</>
 								</MenuItem>
 							))}
@@ -697,30 +751,45 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{getRows()?.map((row: templateListItemsProps) => (
-								<TableRow
-									key={row.TemplateId}
-									classes={rowStyle}>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex3, classes.tableCellBody)}>
-										{renderNameCell(row)}
-									</TableCell>
-									<TableCell
-										classes={cellStyle}
-										align='center'
-										className={clsx(classes.flex1, classes.tableCellBody)}>
-										{renderStatusCell(row.Status)}
-									</TableCell>
-									<TableCell
-										component='th'
-										scope='row'
-										className={clsx(classes.flex5, classes.tableCellRoot)}>
-										{renderCellIcons(row)}
-									</TableCell>
-								</TableRow>
-							))}
+							{getRows()?.length === 0 ? (
+								<Box
+									className={clsx(
+										classes.flex,
+										classes.justifyCenterOfCenter,
+										classes.noDataRow
+									)}>
+									<Typography>
+										{translator('common.NoDataTryFilter')}
+									</Typography>
+								</Box>
+							) : (
+								<>
+									{getRows()?.map((row: templateListItemsProps, index) => (
+										<TableRow
+											key={`templateMaganement_${row.Id}_${index}`}
+											classes={rowStyle}>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex3, classes.tableCellBody)}>
+												{renderNameCell(row)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderStatusCell(row.Status)}
+											</TableCell>
+											<TableCell
+												component='th'
+												scope='row'
+												className={clsx(classes.flex5, classes.tableCellRoot)}>
+												{renderCellIcons(row)}
+											</TableCell>
+										</TableRow>
+									))}
+								</>
+							)}
 						</Table>
 					</TableContainer>
 				</Grid>
@@ -740,8 +809,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			<AlertModal
 				classes={classes}
-				isOpen={isSubmitCampaignOpen}
-				onClose={() => setIsSubmitCampaignOpen(false)}
+				isOpen={isSubmitTemplateOpen}
+				onClose={() => setIsSubmitTemplateOpen(false)}
 				title={translator('whatsapp.alertModal.ConfirmText')}
 				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
 				onConfirmOrYes={() => onSubmitTemplate()}
@@ -759,11 +828,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			<AlertModal
 				classes={classes}
-				isOpen={isPreviewCampaignOpen}
-				onClose={() => setIsPreviewCampaignOpen(false)}
+				isOpen={isPreviewTemplateOpen}
+				onClose={() => setIsPreviewTemplateOpen(false)}
 				title={translator('whatsappManagement.preview')}
 				subtitle={''}
-				onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
+				onConfirmOrYes={() => setIsPreviewTemplateOpen(false)}
 				type='alert'>
 				<Box className={classes.alertModalContentMobile}>
 					<WhatsappMobilePreview
@@ -778,8 +847,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			<AlertModal
 				classes={classes}
-				isOpen={isDeleteCampaignOpen}
-				onClose={() => setIsDeleteCampaignOpen(false)}
+				isOpen={isDeleteTemplateOpen}
+				onClose={() => setIsDeleteTemplateOpen(false)}
 				title={translator('whatsappManagement.deleteTemplate')}
 				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
 				type='delete'
@@ -788,8 +857,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			<AlertModal
 				classes={classes}
-				isOpen={isDuplicateCampaignOpen}
-				onClose={() => setIsDuplicateCampaignOpen(false)}
+				isOpen={isDuplicateTemplateOpen}
+				onClose={() => setIsDuplicateTemplateOpen(false)}
 				title={translator('whatsappManagement.duplicate')}
 				subtitle={translator('whatsappManagement.duplicateDesc')}
 				type='delete'

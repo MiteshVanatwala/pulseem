@@ -14,7 +14,8 @@ import { tabs } from '../../Constant';
 
 const LeftPane = ({
 	classes,
-	subAccountAllGroups,
+	allGroupList,
+	testGroupList,
 	finishedCampaigns,
 	selectedGroups,
 	setSelected,
@@ -31,7 +32,6 @@ const LeftPane = ({
 	isCreateNewGroup,
 	setIsCreateNewGroup,
 }: ClassesType & LeftPaneProps) => {
-	const { testGroups } = useSelector((state: { sms: smsProps }) => state.sms);
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
 	const [alertModalSubtitle, setAlertModalSubtitle] = useState<string>('');
@@ -138,8 +138,8 @@ const LeftPane = ({
 					<GroupSelector
 						classes={classes}
 						showTestGroups={showTestGroups}
-						testGroups={testGroups}
-						subAccountAllGroups={subAccountAllGroups}
+						testGroupList={testGroupList}
+						allGroupList={allGroupList}
 						selectedGroups={selectedGroups}
 						isFilterSelected={isFilterSelected}
 						isCreateNewGroup={isCreateNewGroup}
@@ -167,7 +167,7 @@ const LeftPane = ({
 				isFilterModal={isFilterModal}
 				onFilterModalClose={() => setIsFilterModal(false)}
 				classes={classes}
-				subAccountAllGroups={subAccountAllGroups}
+				allGroupList={allGroupList}
 				finishedCampaigns={finishedCampaigns}
 				selectedFilterCampaigns={selectedFilterCampaigns}
 				setFilterCampaigns={setFilterCampaigns}

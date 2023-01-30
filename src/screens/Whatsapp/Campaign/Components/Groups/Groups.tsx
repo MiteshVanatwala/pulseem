@@ -1,12 +1,7 @@
 import { BaseSyntheticEvent, useState } from 'react';
 import {
 	Typography,
-	ListItemAvatar,
-	Avatar,
 	Grid,
-	ListItem,
-	ListItemText,
-	ListItemSecondaryAction,
 	List,
 	TextField,
 	FormControl,
@@ -22,8 +17,6 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import 'moment/locale/he';
 import clsx from 'clsx';
-import { HiUserGroup } from 'react-icons/hi';
-import { FaCheck } from 'react-icons/fa';
 import { BsSearch } from 'react-icons/bs';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { MdClear } from 'react-icons/md';
@@ -59,7 +52,6 @@ const Groups = ({
 	);
 	const { t: translator } = useTranslation();
 	const [groupNameSearch, setGroupNameSearch] = useState<string>('');
-	const [clearInput, setClearInput] = useState<boolean>(false);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 
 	const handleShowTestGroup = () => {
@@ -67,12 +59,10 @@ const Groups = ({
 		setShowTestGroups(!showTestGroups);
 	};
 	const handleSearch = (event: BaseSyntheticEvent) => {
-		setClearInput(event.target.value !== '');
 		setGroupNameSearch(event.target.value);
 	};
 	const resetSearch = (event: BaseSyntheticEvent) => {
 		setGroupNameSearch('');
-		setClearInput(false);
 	};
 	const onSelectGroup = (group: testGroupDataProps) => {
 		callbackSelectedGroups(group);
@@ -179,17 +169,16 @@ const Groups = ({
 				<Grid item xs={12}>
 					<FormControl className={clsx(classes.margin, classes.searchInput)}>
 						<Input
-							autoComplete='off'
 							onChange={handleSearch}
 							placeholder={translator('notifications.buttons.search')}
-							id='searchGroup'
+							value={groupNameSearch}
 							startAdornment={
 								<InputAdornment position='start'>
 									<BsSearch />
 								</InputAdornment>
 							}
 							endAdornment={
-								clearInput && (
+								groupNameSearch?.length > 0 && (
 									<InputAdornment position='start' onClick={resetSearch}>
 										<MdClear style={{ cursor: 'pointer' }} />
 									</InputAdornment>
@@ -207,17 +196,16 @@ const Groups = ({
 				{windowSize !== 'xs' && (
 					<FormControl className={clsx(classes.margin, classes.searchInput)}>
 						<Input
-							autoComplete='off'
 							onChange={handleSearch}
 							placeholder={translator('notifications.buttons.search')}
-							id='searchGroup'
+							value={groupNameSearch}
 							startAdornment={
 								<InputAdornment position='start'>
 									<BsSearch />
 								</InputAdornment>
 							}
 							endAdornment={
-								clearInput && (
+								groupNameSearch?.length > 0 && (
 									<InputAdornment position='start' onClick={resetSearch}>
 										<MdClear style={{ cursor: 'pointer' }} />
 									</InputAdornment>

@@ -216,7 +216,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
 		);
-		setSavedTemplateList(savedTemplate.payload.Items);
+		setSavedTemplateList(savedTemplate.payload?.Data?.Items);
 	};
 
 	useEffect(() => {
@@ -562,7 +562,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onOkTestSending = () => {
 		if (validateSaveCampaign()) {
-			console.log('onOkTestSending')
+			console.log('onOkTestSending');
 			setIsTestGroupModal(false);
 		} else {
 			setIsTestGroupModal(false);
@@ -575,10 +575,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		} else {
 			setIsValidationAlert(true);
 		}
-	};
-
-	const onCampaignFromRestore = () => {
-		setFrom('16067520281');
 	};
 
 	const onDynamcFieldModalSave = (
@@ -694,7 +690,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									}
 									from={from}
 									onFromChange={(from) => setFrom(from)}
-									onCampaignFromRestore={() => onCampaignFromRestore()}
 									showValidation={showValidation}
 									phoneNumbersList={phoneNumbersList}
 								/>

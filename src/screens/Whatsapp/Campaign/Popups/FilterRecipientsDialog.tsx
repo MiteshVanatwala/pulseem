@@ -16,7 +16,7 @@ const FilterRecipientsDialog = ({
 	classes,
 	isFilterModal,
 	onFilterModalClose,
-	subAccountAllGroups,
+	allGroupList,
 	finishedCampaigns,
 	selectedFilterCampaigns,
 	setFilterCampaigns,
@@ -241,8 +241,8 @@ const FilterRecipientsDialog = ({
 												showSelectAll={false}
 												list={
 													showTestGroups
-														? [...testGroups, ...subAccountAllGroups]
-														: [...subAccountAllGroups]
+														? [...testGroups, ...allGroupList]
+														: [...allGroupList]
 												}
 												selectedList={selectedModalFilterGroups}
 												callbackUpdateGroups={callbackUpdateGroupFilterd}
