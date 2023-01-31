@@ -273,7 +273,8 @@ const SendCampaign = ({
 			subPage={'send2'}
 			currentPage='whatsapp'
 			classes={classes}
-			customPadding={true}>
+			customPadding={true}
+			containerClass={null}>
 			<div>
 				<div>
 					<WizardTitle

@@ -388,6 +388,38 @@ export const createCombinedGroup = createAsyncThunk(
 	}
 );
 
+export const getDirectReport = createAsyncThunk(
+	'Whatsapp/GetDirectReport',
+	async (data: any, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`Whatsapp/GetDirectReport`,
+				data
+			);
+			response.data.IsExport = data.IsExport;
+			return response.data;
+		} catch (error: any) {
+			return thunkAPI.rejectWithValue({ error: error.message });
+		}
+	}
+);
+
+export const getInboundReport = createAsyncThunk(
+	'Whatsapp/GetInboundMessages',
+	async (requestData: any, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`Whatsapp/GetInboundMessages`,
+				requestData
+			);
+			response.data.IsExport = requestData.IsExport;
+			return response.data;
+		} catch (error: any) {
+			return thunkAPI.rejectWithValue({ error: error.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -445,6 +477,8 @@ export const whatsappSlice = createSlice({
 				showAnimtionCheck: true,
 			},
 		},
+		directWhatsappReport: null,
+		inboundWhatsappReport: null,
 	},
 	reducers: {},
 	extraReducers: (builder) => {
@@ -459,6 +493,12 @@ export const whatsappSlice = createSlice({
 		});
 		builder.addCase(userPhoneNumbers.fulfilled, (state, { payload }) => {
 			state.userPhoneNumbers = payload;
+		});
+		builder.addCase(getDirectReport.fulfilled, (state, { payload }) => {
+			if (!payload.IsExport) state.directWhatsappReport = payload;
+		});
+		builder.addCase(getInboundReport.fulfilled, (state, { payload }) => {
+			if (!payload.IsExport) state.inboundWhatsappReport = payload;
 		});
 	},
 });
