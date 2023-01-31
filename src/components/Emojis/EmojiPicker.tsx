@@ -1,5 +1,5 @@
 import { SyntheticEvent, useState } from 'react';
-import Picker from 'emoji-picker-react';
+import Picker, { IEmojiData } from 'emoji-picker-react';
 import { Tooltip, ClickAwayListener } from '@material-ui/core';
 import Emoj from '../../assets/images/smile.png';
 import { Box, makeStyles } from '@material-ui/core';
@@ -39,7 +39,7 @@ const EmojiPicker = ({ classes, boxStyles, OnSelectEmoji }: PickerObject) => {
 				style={{ alignItems: 'flex-start', ...boxStyles }}>
 				{showEmoji ? (
 					<Picker
-						onEmojiClick={(event, emojiObject: any) => {
+						onEmojiClick={(event, emojiObject: IEmojiData) => {
 							OnSelectEmoji(emojiObject?.emoji);
 						}}
 						groupNames={{

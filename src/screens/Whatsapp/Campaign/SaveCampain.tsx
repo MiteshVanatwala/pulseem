@@ -643,7 +643,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			subPage={'create'}
 			currentPage='whatsapp'
 			classes={classes}
-			customPadding={true}>
+			customPadding={true}
+			containerClass={null}>
 			{renderToast()}
 			<Grid container justifyContent='space-between' alignItems='center'>
 				<Title

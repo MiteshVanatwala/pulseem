@@ -5,7 +5,7 @@ import { BaseSyntheticEvent, useState } from 'react';
 import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
 import { Button, Grid, IconButton, Typography } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
+// import EmojiPicker from 'emoji-picker-react';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import Highlighter from 'react-highlight-words';
 import {
@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import { Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { getVariableValue } from '../../Common';
+import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 
 const ChatUi = ({
 	classes,
@@ -83,8 +84,8 @@ const ChatUi = ({
 			</strong>
 		);
 	};
-	const onEmojiClick = (emoji: EmojiClickData, event: MouseEvent) => {
-		setNewMessage(`${newMessage} ${emoji.emoji}`);
+	const onEmojiClick = (emoji: string) => {
+		setNewMessage(`${newMessage} ${emoji}`);
 	};
 
 	const onEditableDivChange = (e: BaseSyntheticEvent) => {
@@ -145,13 +146,12 @@ const ChatUi = ({
 					<button
 						aria-label='Emojis'
 						onClick={() => setShowEmojis(!showEmojis)}>
-						<Icon
-							id='smiley'
-							className={`${classes.whatsappChat} chat__input-icon ${
-								showEmojis
-									? `${classes.whatsappChat} chat__input-icon--highlight`
-									: ''
-							}`}
+						<EmojiPicker
+							classes={classes}
+							OnSelectEmoji={(emoji: string) => {
+								onEmojiClick(emoji);
+							}}
+							boxStyles={{ alignItems: 'center' }}
 						/>
 					</button>
 					<button aria-label='chat' onClick={() => setIsTemplateModal(true)}>
@@ -164,11 +164,6 @@ const ChatUi = ({
 							}`}
 						/>
 					</button>
-					{showEmojis && (
-						<Grid container className={classes.whatsappChatEmojiPickerWrapper}>
-							<EmojiPicker onEmojiClick={onEmojiClick} />
-						</Grid>
-					)}
 					<div
 						className={`${classes.whatsappChat} chat__input`}
 						data-text='Type a message'
@@ -190,7 +185,7 @@ const ChatUi = ({
 							justifyContent='center'
 							alignItems='center'
 							spacing={2}>
-							<Typography color='textSecondary'>
+							{/* <Typography color='textSecondary'>
 								<label style={{ fontSize: '20px' }}>
 									<>{translator('whatsappChat.conversation')}</>
 								</label>
@@ -198,7 +193,7 @@ const ChatUi = ({
 								<label style={{ fontSize: '15px' }}>
 									<>{translator('whatsappChat.cantSend')}</>
 								</label>
-							</Typography>
+							</Typography> */}
 
 							<Grid className={classes.manageTemplatesHeaderButtons}>
 								<Button

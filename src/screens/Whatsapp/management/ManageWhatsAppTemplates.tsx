@@ -635,7 +635,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			subPage={'manage'}
 			currentPage='whatsapp'
 			classes={classes}
-			customPadding={true}>
+			customPadding={true}
+			containerClass={null}>
 			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.templateManagement')}

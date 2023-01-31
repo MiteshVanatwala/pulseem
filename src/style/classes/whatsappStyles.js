@@ -1296,7 +1296,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 
 	manageWhatsappTemplates: {},
 	manageTemplatesHeaderButtons: {
-		marginTop: '18px',
 		justifyContent: 'space-between',
 		'& button': {
 			background: 'blue',

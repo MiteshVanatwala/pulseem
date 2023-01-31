@@ -354,7 +354,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				subPage={'chat'}
 				currentPage='whatsapp'
 				classes={classes}
-				customPadding={false}>
+				customPadding={false}
+				containerClass={null}>
 				<div className={`${classes.whatsappChat} app`}>
 					<div className={`${classes.whatsappChat} app-content`}>
 						<SideBar

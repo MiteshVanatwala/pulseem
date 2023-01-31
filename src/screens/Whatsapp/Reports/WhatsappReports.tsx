@@ -301,7 +301,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			subPage={'manage'}
 			currentPage='whatsapp'
 			classes={classes}
-			customPadding={true}>
+			customPadding={true}
+			containerClass={null}>
 			<Title
 				Text={translator('whatsappReport.report')}
 				Classes={classes.whatsappTemplateTitle}

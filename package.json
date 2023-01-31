@@ -31,7 +31,7 @@
     "chart.js": "^3.3.2",
     "chartjs-plugin-datalabels": "2.0.0-rc.1",
     "dotenv": "^10.0.0",
-    "emoji-picker-react": "^4.4.7",
+    "emoji-picker-react": "^3.4.8",
     "export-from-json": "^1.4.0",
     "firebase": "^8.5.0",
     "i18next": "^19.9.2",
