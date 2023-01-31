@@ -15,7 +15,7 @@ import { TablePagination, ManagmentIcon } from '../../../../components/managment
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
-import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../../helpers/exportHelper';
+import { preferredOrder, formatDateTime, smsStatusNumberToString } from '../../../../helpers/exportHelper';
 import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 
@@ -34,7 +34,7 @@ const SmsReplies = ({ classes, ...other }) => {
     const { smsReplies, extraData } = useSelector(state => state.sms);
     const { ToastMessages } = useSelector(state => state.client);
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
-    const { accountFeatures, windowSize } = useSelector(state => state.core);
+    const { accountFeatures, windowSize, isRTL } = useSelector(state => state.core);
     const { groupData } = useSelector((state) => state.group);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
@@ -134,7 +134,6 @@ const SmsReplies = ({ classes, ...other }) => {
         "Cellphone": t('common.cellphone'),
         "CreationDate": t('common.CreationDate'),
         "SmsStatus": t('common.smsStatus'),
-        "Status": t('common.Status'),
         "ExtraField1": t('common.ExtraField1'),
         "ExtraField2": t('common.ExtraField2'),
         "ExtraField3": t('common.ExtraField3'),
@@ -159,7 +158,6 @@ const SmsReplies = ({ classes, ...other }) => {
         let exportData = await dispatch(getSmsReplies({ ...request, IsExport: true }));
         let orderList = exportData?.payload;
         orderList = preferredOrder(smsReplies?.Data, Object.keys(exportColumnHeader));
-        orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
         orderList = await formatDateTime(orderList);
         exportFile({
@@ -196,7 +194,6 @@ const SmsReplies = ({ classes, ...other }) => {
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.clientName')} ({t('common.SentFromNumber')})</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('common.ToNumber')}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.smsStatus")}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.emailStatus")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.ReplyDate")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex5} align='center' >{t("common.messageContent")}</TableCell>
                 </TableRow>
@@ -219,16 +216,9 @@ const SmsReplies = ({ classes, ...other }) => {
             </TableBody>
         )
     }
-    const statusToText = (status, type) => {
-        let translatedStatus = status;
-        if (type === 'email') {
-            translatedStatus = ClientStatus.Email.find((x) => { return x.id === status });
-            translatedStatus = translatedStatus ?? { value: 'common.noEmail' };
-        }
-        else {
-            translatedStatus = ClientStatus.Sms.find((x) => { return x.id === status });
-            translatedStatus = translatedStatus ?? { value: 'common.noSms' };
-        }
+    const statusToText = (status) => {
+        let translatedStatus = ClientStatus.Sms.find((x) => { return x.id === status });
+        translatedStatus = translatedStatus ?? { value: 'common.noSms' };
         return t(translatedStatus?.value);
     }
 
@@ -237,11 +227,8 @@ const SmsReplies = ({ classes, ...other }) => {
             ClientID,
             FirstName,
             LastName,
-            Email,
             CellPhone,
-            CreationDate,
             SmsStatus,
-            Status,
             ReplyDate,
             ReplyText,
             VirtualNumber
@@ -257,27 +244,24 @@ const SmsReplies = ({ classes, ...other }) => {
                     align='center'
                     className={clsx(classes.flex2, classes.ellipsisText)}>
                     <Grid
+                        item
                         key={'edit'}
-                        style={{ maxWidth: 100 }}
-                        item>
+                        style={{ width: '100%' }}
+                    >
                         <Box className={classes.dFlex}>
-                            <Box>
+                            <Box style={{ width: '70%', textAlign: isRTL ? 'right' : 'left' }}>
                                 <Typography className={classes.font18}>{CellPhone}</Typography>
-                                <Typography className={clsx(classes.font13, classes.ellipsisText)}
-                                    style={{ maxWidth: 80 }}
+                                <Typography className={clsx(classes.font14, classes.ellipsisText)}
                                     title={`${FirstName} ${LastName}`}
                                 >{FirstName} {LastName}</Typography>
                             </Box>
-                            <Box>
+                            <Box className={ClientID > 0 ? null : classes.disabled} style={{width: '30%'}}>
                                 <ManagmentIcon
                                     disableHover={true}
                                     key='edit'
                                     classes={classes}
                                     icon={EditIcon}
-                                    iconClass={clsx(
-                                        classes.smallIcon,
-                                        ClientID > 0 ? null : classes.disabled)
-                                    }
+                                    iconClass={clsx(classes.smallIcon)}
                                     rootClass={classes.paddingIcon}
                                     onClick={async () => {
                                         setShowLoader(true);
@@ -303,13 +287,7 @@ const SmsReplies = ({ classes, ...other }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {statusToText(SmsStatus, 'sms')}
-                </TableCell>
-                <TableCell
-                    classes={cellBodyStyle}
-                    align='center'
-                    className={classes.flex2}>
-                    {statusToText(Status, 'email')}
+                    {statusToText(SmsStatus)}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}

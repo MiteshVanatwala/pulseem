@@ -1830,6 +1830,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: '100%'
   },
   smallIcon: {
-    width: 12
+    width: 14
   }
 });
