@@ -86,7 +86,7 @@ const InboundMessages = ({ classes }: ClassesType) => {
             classes={classes}
             stepNumber={null}
             subTitle={null}
-            title={translator('master.smsReplies')}
+            title={translator('master.linkSMSResponsesReport.Text')}
             key="Inbound_reports"
             tooltip={null}
             topZero={undefined}
