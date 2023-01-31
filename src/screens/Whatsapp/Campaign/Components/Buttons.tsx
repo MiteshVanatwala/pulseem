@@ -1,0 +1,119 @@
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import clsx from 'clsx';
+import { Button, Box } from '@material-ui/core';
+import { BsTrash } from 'react-icons/bs';
+import { useTranslation } from 'react-i18next';
+import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
+import { coreProps } from '../Types/WhatsappCampaign.types';
+import useRedirect from '../../../../helpers/Routes/Redirect';
+import { buttons } from '../../Constant';
+
+const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
+	const { t: translator } = useTranslation();
+
+	const { isRTL, windowSize } = useSelector(
+		(state: { core: coreProps }) => state.core
+	);
+	const [isFromAutomation, setIsFromAutomation] = useState<boolean>(false);
+	const Redirect = useRedirect();
+
+	const handlePreviousPage = () => {
+		// Redirect({ url: `/react/sms/edit/${id}` });
+		alert('Redirect to previous page');
+	};
+
+	return (
+		<div
+			style={
+				isRTL
+					? { marginRight: 'auto' }
+					: { marginLeft: 'auto', paddingBottom: 40 }
+			}
+			className={clsx(classes.baseButtonsContainer, 'baseButtonsContainer')}>
+			<div className={classes.rightMostContainer}>
+				<Button
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.actionButton,
+						classes.actionButtonLightBlue,
+						classes.backButton,
+						isRTL && windowSize !== 'xs' && windowSize !== 'sm'
+							? classes.marginLeftAuto
+							: windowSize !== 'xs' && windowSize !== 'sm'
+							? classes.marginRightAuto
+							: null
+					)}
+					color='primary'
+					style={{ margin: '8px' }}
+					onClick={() => {
+						handlePreviousPage();
+					}}>
+					<span style={{ marginInlineEnd: '5px' }}>{'<'}</span>
+					<>{translator('whatsappCampaign.back')}</>
+				</Button>
+
+				<Box>
+					<Button
+						variant='contained'
+						size='medium'
+						className={clsx(classes.actionButton, classes.actionButtonRed)}
+						style={{ margin: '8px', padding: '9px 0' }}
+						onClick={(e) => onFormButtonClick(buttons.DELETE)}>
+						<BsTrash style={{ fontSize: '25' }} />
+					</Button>
+				</Box>
+
+				<Button
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.actionButton,
+						classes.actionButtonLightBlue,
+						classes.backButton
+					)}
+					color='primary'
+					style={{ margin: '8px' }}
+					onClick={(e) => onFormButtonClick(buttons.EXIT)}>
+					<>{translator('whatsappCampaign.exit')}</>
+				</Button>
+
+				<Button
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.actionButton,
+						classes.actionButtonLightBlue,
+						classes.backButton
+					)}
+					color='primary'
+					style={{ margin: '8px' }}
+					onClick={(e) => onFormButtonClick(buttons.SAVE)}>
+					<>{translator('whatsappCampaign.save')}</>
+				</Button>
+
+				<Button
+					type='submit'
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.actionButton,
+						classes.actionButtonLightGreen,
+						classes.backButton
+					)}
+					color='primary'
+					style={{ margin: '8px' }}
+					onClick={(e) => onFormButtonClick(buttons.SEND)}>
+					{!isFromAutomation ? (
+						<>{translator('whatsappCampaign.send')}</>
+					) : (
+						<>{translator('whatsapp.saveAndExit')}</>
+					)}
+				</Button>
+			</div>
+		</div>
+	);
+};
+
+export default React.memo(Buttons);

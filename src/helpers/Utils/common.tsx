@@ -1,13 +1,15 @@
 import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
-} from '../../screens/Whatsapp/Editor/WhatsappCreator.types';
+} from '../../screens/Whatsapp/Editor/Types/WhatsappCreator.types';
 
 export const getValueByFieldName = (
 	button: quickReplyButtonProps,
 	fieldName: string
 ) => {
-	return button.fields.find((field: quickReplyButtonsFieldProps) => {
+	const value = button.fields.find((field: quickReplyButtonsFieldProps) => {
 		return field.fieldName === fieldName;
 	})?.value;
+
+	return value ? value : '';
 };

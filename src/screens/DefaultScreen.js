@@ -22,7 +22,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
     else {
       route = getRoutes(t).filter(route => route.key === currentPage);
       route = route[0].options.filter(opt => opt.key === subPage);
-      title = (route && route[0].title) ?? '';
+      title = (route && route[0]?.title) ?? '';
     }
   } else {
     route = getRoutes(t).filter(route => route.key === currentPage);

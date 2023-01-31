@@ -19,7 +19,7 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	quickReplyProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -31,6 +31,7 @@ const QuickReply = ({
 	setQuickReplyButtons,
 	updateTemplateData,
 	templateButtons,
+	isEditable,
 }: quickReplyProps) => {
 	const { t: translator } = useTranslation();
 	const onSubmit = (e: BaseSyntheticEvent) => {
@@ -65,13 +66,13 @@ const QuickReply = ({
 		const updatedQuickButtons = quickReplyButtons.map((button) =>
 			button.id === changedButton.id
 				? {
-					...button,
-					fields: button.fields.map((field: quickReplyButtonsFieldProps) =>
-						field.fieldName === changedField.fieldName
-							? { ...field, value: e.target.value }
-							: field
-					),
-				}
+						...button,
+						fields: button.fields.map((field: quickReplyButtonsFieldProps) =>
+							field.fieldName === changedField.fieldName
+								? { ...field, value: e.target.value }
+								: field
+						),
+				  }
 				: button
 		);
 		setQuickReplyButtons(updatedQuickButtons);
@@ -102,22 +103,18 @@ const QuickReply = ({
 			<DialogTitle
 				id='form-dialog-title'
 				className={classes.quickReplayDialogHeader}>
-				<>
-					{translator('whatsapp.quickReply.title')}
-					<IconButton
-						aria-label='close'
-						onClick={closeQuickReply}
-						className={classes.quickReplayDialogClose}>
-						<CloseIcon />
-					</IconButton>
-				</>
+				<>{translator('whatsapp.quickReply.title')}</>
+				<IconButton
+					aria-label='close'
+					onClick={closeQuickReply}
+					className={classes.quickReplayDialogClose}>
+					<CloseIcon />
+				</IconButton>
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText
 					className={classes.quickReplayDialogHeaderDescription}>
-					<>
-						{translator('whatsapp.quickReply.titleDescription')}
-					</>
+					<>{translator('whatsapp.quickReply.titleDescription')}</>
 				</DialogContentText>
 				<form onSubmit={onSubmit}>
 					{quickReplyButtons?.map((button) => (
@@ -128,9 +125,7 @@ const QuickReply = ({
 							key={button.id}>
 							<Grid item>
 								<Typography>
-									<>
-										{translator('whatsapp.quickReply.buttonText')}
-									</>
+									<>{translator('whatsapp.quickReply.buttonText')}</>
 								</Typography>
 								<Grid container className={classes.quickReplayButtonWrapper}>
 									{button?.fields?.map(
@@ -143,6 +138,7 @@ const QuickReply = ({
 													onChange={(e) => onButtonTextChange(e, button, field)}
 													required
 													key={index}
+													disabled={!isEditable}
 												/>
 												<Button
 													variant='outlined'
@@ -162,38 +158,38 @@ const QuickReply = ({
 									)}
 								</Grid>
 							</Grid>
-							<DeleteOutlinedIcon
-								className={classes.quickReplyDelete}
-								onClick={() => onDeleteButton(button)}
-							/>
+							{isEditable && (
+								<DeleteOutlinedIcon
+									className={classes.quickReplyDelete}
+									onClick={() => onDeleteButton(button)}
+								/>
+							)}
 						</Grid>
 					))}
 					<DialogActions>
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={addMore}
-							disabled={quickReplyButtons?.length >= 3 ? true : false}>
-							<>
-								{translator('whatsapp.quickReply.addMore')}
-							</>
-						</Button>
+						{isEditable && (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={addMore}
+								disabled={quickReplyButtons?.length >= 3 ? true : false}>
+								<>{translator('whatsapp.quickReply.addMore')}</>
+							</Button>
+						)}
 						<Button
 							onClick={closeQuickReply}
 							variant='contained'
 							color='secondary'>
-							<>
-								{translator('whatsapp.quickReply.exit')}
-							</>
+							<>{translator('whatsapp.quickReply.exit')}</>
 						</Button>
-						<Button
-							variant='contained'
-							type='submit'
-							className={classes.quickReplySave}>
-							<>
-								{translator('whatsapp.quickReply.save')}
-							</>
-						</Button>
+						{isEditable && (
+							<Button
+								variant='contained'
+								type='submit'
+								className={classes.quickReplySave}>
+								<>{translator('whatsapp.quickReply.save')}</>
+							</Button>
+						)}
 					</DialogActions>
 				</form>
 			</DialogContent>

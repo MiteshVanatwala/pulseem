@@ -1,36 +1,104 @@
-import React, { BaseSyntheticEvent, useMemo, useRef, useState } from 'react';
+import React, {
+	BaseSyntheticEvent,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
-import TemplateFields from './TemplateFields';
-import ActionCallPopOver from './ActionCallPopOver';
-import Buttons from './Buttons';
+import TemplateFields from './Components/TemplateFields';
+import ActionCallPopOver from './Popups/ActionCallPopOver';
+import Buttons from './Components/Buttons';
 import {
+	buttonsDataProps,
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
 	coreProps,
+	deleteTemplateAPIProps,
+	fileUploadAPIProps,
+	getTemplateByIdAPIProps,
+	JSONFreetextVariableProps,
 	quickReplyButtonProps,
+	savedTemplateAPIProps,
+	savedTemplateCallToActionProps,
+	savedTemplateCardProps,
+	savedTemplateDataProps,
+	savedTemplateListProps,
+	savedTemplateMediaProps,
+	savedTemplateQuickReplyProps,
+	savedTemplateTextProps,
+	submitTemplateAPIProps,
 	templateDataProps,
+	toastProps,
 	WhatsappCreatorProps,
-} from './WhatsappCreator.types';
+} from './Types/WhatsappCreator.types';
 import { ClassesType } from '../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import { Box, Grid } from '@material-ui/core';
-import WhatsappTemplateEditor from './WhatsappTemplateEditor';
-import { actionButtonProps } from './WhatsappCreator.types';
-import QuickReply from './QuickReply';
-import { useSelector } from 'react-redux';
-import WhatsappMobilePreview from './WhatsappMobilePreview';
-import WhatsappTips from './whatsappTips';
+import WhatsappTemplateEditor from './Components/WhatsappTemplateEditor';
+import { actionButtonProps } from './Types/WhatsappCreator.types';
+import QuickReply from './Popups/QuickReply';
+import { useDispatch, useSelector } from 'react-redux';
+import WhatsappMobilePreview from './Components/WhatsappMobilePreview';
+import WhatsappTips from './Components/whatsappTips';
+import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
+import {
+	deleteTemplate,
+	getSavedTemplates,
+	getSavedTemplatesById,
+	submitTemplates,
+	uploadMedia,
+} from '../../../redux/reducers/whatsappSlice';
+import Toast from '../../../components/Toast/Toast.component';
+import { JSONProps } from './Types/JSON.types';
+import {
+	getDynamicFieldIndex,
+	getDynamicFields,
+	getLastDynamicFieldByValue,
+	getLastDynamicFieldValue,
+} from '../Common';
+import { apiStatus, resetToastData } from '../Constant';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
+	const { templateID } = useParams();
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [savedTemplateList, setSavedTemplateList] = useState<
+		savedTemplateListProps[]
+	>([]);
+	const getSavedTemplateFields = async () => {
+		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
+			getSavedTemplates({ templateStatus: 3 })
+		);
+		setSavedTemplateList(savedTemplate.payload.Data.Items);
+	};
+	useEffect(() => {
+		setIsLoader(true);
+		getSavedTemplateFields().then(() => {
+			if (templateID) {
+				setTemplateById(templateID);
+			} else {
+				setIsLoader(false);
+			}
+		});
 
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
 	//This regex will test dynamic field having two digits in side (i.e. {{10}});
 	const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -50,6 +118,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			],
 		},
 	];
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 	const [templateName, setTemplateName] = useState<string>('');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
@@ -57,12 +127,25 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		templateText: '',
 		templateButtons: [],
 	});
-	const [fileData, setFileData] = useState<File>();
+	const [fileData, setFileData] = useState<string>('');
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
 		quickReplyButtonProps[]
 	>(initialQuickReplyButtons);
+	const [isDeleteTemplateOpen, setIsDeleteTemplateOpen] =
+		useState<boolean>(false);
+	const [isSubmitCampaignOpen, setIsSubmitCampaignOpen] =
+		useState<boolean>(false);
+	const [linkCount, setlinkCount] = useState<number>(0);
+	const [dynamicFieldCount, setDynamicFieldCount] = useState<number>(0);
+
+	let updatedTemplateData: templateDataProps = {
+		templateText: '',
+		templateButtons: [],
+	};
+	let updatedButtonType: string = '';
+	let updatedFileData: string = '';
 
 	enum ActionButtons {
 		QuickReply = 'quickReply',
@@ -122,8 +205,247 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setTemplateName(e.target.value.toLowerCase());
 	};
 
-	const onSavedTemplateChange = (e: BaseSyntheticEvent) => {
-		setSavedTemplate(e.target.value);
+	const resetFields = () => {
+		setTemplateName('');
+		setSavedTemplate('');
+		setButtonType('');
+		setTemplateData({
+			templateText: '',
+			templateButtons: [],
+		});
+		setFileData('');
+		setQuickReplyButtons(initialQuickReplyButtons);
+		setCallToActionFieldRows([initialFieldRow]);
+	};
+
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} onClose={undefined} />;
+		}
+		return null;
+	};
+
+	const uploadFile = async (file: File | undefined) => {
+		if (file) {
+			setFileData(translator('whatsapp.uploading'));
+			const myFormData: FormData = new FormData();
+			myFormData.append('file', file);
+			const uploadedFile: fileUploadAPIProps = await dispatch<any>(
+				uploadMedia(myFormData)
+			);
+			if (uploadedFile.payload?.Data?.length > 0) {
+				setFileData(uploadedFile.payload?.Data);
+			} else {
+				setFileData('');
+			}
+		} else {
+			setFileData('');
+		}
+	};
+
+	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					return {
+						id: uniqid(),
+						typeOfAction: '',
+						fields: [
+							{
+								fieldName: translator('whatsapp.websiteButtonText'),
+								type: 'text',
+								placeholder: translator(
+									'whatsapp.websiteButtonTextPlaceholder'
+								),
+								value: button.title,
+							},
+						],
+					};
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: translator('whatsapp.phoneButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.phoneButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.country'),
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972 Israel',
+								},
+								{
+									fieldName: translator('whatsapp.phoneNumber'),
+									type: 'tel',
+									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: translator('whatsapp.websiteButtonText'),
+									type: 'text',
+									placeholder: translator(
+										'whatsapp.websiteButtonTextPlaceholder'
+									),
+									value: button.title,
+								},
+								{
+									fieldName: translator('whatsapp.websiteURL'),
+									type: 'text',
+									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
+		}
+	};
+
+	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
+		const quickReplyData: savedTemplateQuickReplyProps =
+			templateData?.types['quick-reply'];
+		updatedButtonType = 'quickReply';
+		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		updatedTemplateData.templateText = quickReplyData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
+		const callToActionData: savedTemplateCallToActionProps =
+			templateData?.types['call-to-action'];
+		updatedButtonType = 'callToAction';
+		const buttonData = setButtonsData(
+			'callToAction',
+			callToActionData?.actions
+		);
+		updatedTemplateData.templateText = callToActionData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
+		const cardData: savedTemplateCardProps = templateData?.types['card'];
+		updatedTemplateData.templateText = cardData?.title;
+		if (cardData?.actions?.length > 0) {
+			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
+				updatedButtonType = 'callToAction';
+				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else {
+				updatedButtonType = 'quickReply';
+				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			}
+		}
+		if (cardData?.media?.length > 0) {
+			updatedFileData = cardData?.media[0];
+		}
+	};
+
+	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
+		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+		updatedTemplateData.templateText = mediaData?.body;
+		if (mediaData?.media?.length > 0) {
+			updatedFileData = mediaData?.media[0];
+		}
+	};
+
+	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
+		const textData: savedTemplateTextProps = templateData?.types['text'];
+		updatedTemplateData.templateText = textData?.body;
+	};
+
+	const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
+		if ('quick-reply' in templateData?.types) {
+			saveQuickreplyTemplate(templateData);
+		}
+		if ('call-to-action' in templateData?.types) {
+			saveCallToActionTemplate(templateData);
+		} else if ('card' in templateData?.types) {
+			saveCardTemplate(templateData);
+		} else if ('media' in templateData?.types) {
+			saveMediaTemplate(templateData);
+		} else if ('text' in templateData?.types) {
+			saveTextTemplate(templateData);
+		}
+	};
+
+	const onSavedTemplateChange = (TemplateId: string) => {
+		setSavedTemplate(TemplateId);
+		const savedTemplateData: savedTemplateListProps | undefined =
+			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
+		const templateData: savedTemplateDataProps | undefined =
+			savedTemplateData?.Data;
+		if (templateData) {
+			setUpdatedTemplateData(templateData);
+		}
+		setFileData(updatedFileData);
+		// setTemplateName(savedTemplateData?.TemplateName || '');
+		setButtonType(updatedButtonType);
+		setTemplateData(updatedTemplateData);
+		if (updatedButtonType === 'quickReply') {
+			setQuickReplyButtons(updatedTemplateData.templateButtons);
+		} else {
+			setCallToActionFieldRows(updatedTemplateData.templateButtons);
+		}
+		if (templateData?.variables) {
+			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+		}
+	};
+
+	const setTemplateById = async (templateId: string) => {
+		const templateData: getTemplateByIdAPIProps = await dispatch<any>(
+			getSavedTemplatesById(templateId)
+		);
+		setIsLoader(false);
+		const templates = templateData.payload?.Data;
+		if (templateData.payload.Status === apiStatus.SUCCESS) {
+			if (templateData?.payload?.Data?.Data && templates) {
+				const templateData = templates?.Data;
+				const templateName = templates?.TemplateName;
+				if (templateData) {
+					setUpdatedTemplateData(templateData);
+				}
+				setSavedTemplate(templateId);
+				setTemplateName(templateName || '');
+				setFileData(updatedFileData);
+				setButtonType(updatedButtonType);
+				setTemplateData(updatedTemplateData);
+				if (updatedButtonType === 'quickReply') {
+					setQuickReplyButtons(updatedTemplateData.templateButtons);
+				} else {
+					setCallToActionFieldRows(updatedTemplateData.templateButtons);
+				}
+				if (templateData?.variables) {
+					setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+				}
+			}
+		}
 	};
 
 	const getQuickReplyActions = () => {
@@ -168,15 +490,42 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
-	const getRequestJSON = () => {
-		const requestJSON = {
+	const getFriendlyTemplateName = () => {
+		return templateName?.replace(/ /g, '_')?.replace(/[^a-z0-9_]/gi, '');
+	};
+
+	const getJSONVariables = () => {
+		const dynamicFields = getDynamicFields(templateData.templateText);
+		if (dynamicFields?.length > 0) {
+			let variables: JSONFreetextVariableProps = {};
+			for (let i = 0; i < dynamicFields.length; i++) {
+				variables[dynamicFields[i].replace(/[{}]/g, '')] = 'freetext';
+			}
+			return variables;
+		}
+		return {};
+	};
+
+	const getSubtitle = () => {
+		if (templateData.templateText?.includes('Reply “remove” to unsubscribe')) {
+			return 'Reply “remove” to unsubscribe';
+		}
+		if (templateData.templateText?.includes('להסרה השב “הסר')) {
+			return 'להסרה השב “הסר';
+		}
+		return '';
+	};
+
+	const getRequestJSON = (isSave: boolean) => {
+		const generatedTemplatename = getFriendlyTemplateName();
+		const variables = getJSONVariables();
+		const requestJSON: JSONProps = {
 			text: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'name',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					text: {
 						body: templateData.templateText,
@@ -184,31 +533,26 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				},
 			},
 			textMedia: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'account',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					media: {
 						body: templateData.templateText,
 						media_type: 'image',
-						media: ['http://clipart-library.com/data_images/320465.png'],
+						media: [fileData],
 					},
 				},
 			},
 			quickReply: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'Name',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
-					text: {
-						body: templateData.templateText,
-					},
 					'quick-reply': {
 						body: templateData.templateText,
 						actions: getQuickReplyActions(),
@@ -216,16 +560,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				},
 			},
 			callToAction: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'flight_number',
-					'2': 'arrival_city',
-					'3': 'departure_time',
-					'4': 'gate_number',
-					'5': 'url_suffix',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					'call-to-action': {
 						body: templateData.templateText,
@@ -234,44 +573,47 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				},
 			},
 			textMediaAndButton: {
-				phonenumber: '',
-				templateName: templateName,
-				variables: {
-					'1': 'coupon_code',
-				},
+				friendlyTemplateName: templateName,
+				templateName: generatedTemplatename,
+				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				isSaveOnly: isSave ? true : false,
 				types: {
 					card: {
-						title: templateData.templateText,
-						subtitle: 'To unsubscribe, reply Stop',
+						title: templateData.templateText
+							?.replace(/Reply “remove” to unsubscribe/g, '')
+							.replace(/להסרה השב “הסר”/g, ''),
+						subtitle: getSubtitle(),
+						media: [fileData],
 						actions:
 							buttonType === 'quickReply'
 								? getQuickReplyActions()
 								: getCallTOActionActions(),
 					},
-					text: {
-						body: templateData.templateText,
-					},
 				},
 			},
 		};
 		const templateText = templateData.templateText;
-		if (templateText?.length > 0 && buttonType.length > 0 && fileData?.name) {
+		if (
+			templateText?.length > 0 &&
+			buttonType.length > 0 &&
+			fileData?.length > 0
+		) {
 			return requestJSON.textMediaAndButton;
 		} else if (templateText?.length > 0 && buttonType === 'quickReply') {
 			return requestJSON.quickReply;
 		} else if (templateText?.length > 0 && buttonType === 'callToAction') {
 			return requestJSON.callToAction;
-		} else if (templateText?.length > 0 && fileData?.name) {
+		} else if (templateText?.length > 0 && fileData?.length > 0) {
 			return requestJSON.textMedia;
 		} else if (templateText?.length > 0) {
-			return templateText;
+			return requestJSON.text;
 		}
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		getRequestJSON();
+		setIsSubmitCampaignOpen(true);
 	};
 
 	const addDynamicField = (
@@ -299,36 +641,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 
 		return updatedTemplateText;
-	};
-
-	const getDynamicFieldIndex = (text: string) => {
-		let indices = [];
-		for (let i = 0; i < text.length; i++) {
-			if (
-				dynamicFieldL5.test(text.slice(i, i + 5)) ||
-				dynamicFieldL6.test(text.slice(i, i + 6))
-			) {
-				indices.push(i);
-			}
-		}
-		return indices;
-	};
-
-	const getLastDynamicFieldValue = (text: string) => {
-		let str = text;
-		let indices: string[] = [];
-		for (let i = 0; i < str.length; i++) {
-			if (dynamicFieldL5.test(str.slice(i, i + 5))) {
-				indices.push(str.slice(i, i + 5).replace(/[{}]/g, ''));
-			} else if (dynamicFieldL6.test(str.slice(i, i + 6))) {
-				indices.push(str.slice(i, i + 6).replace(/[{}]/g, ''));
-			}
-		}
-		return indices?.length > 0 ? indices[indices?.length - 1] : '0';
-	};
-
-	const getLastDynamicFieldByValue = (value: string) => {
-		return `{{${(Number(value) + 1).toString()}}}`;
 	};
 
 	const reOrderDynamicFieldValue = (text: string) => {
@@ -363,11 +675,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onButtonClick = (button: actionButtonProps) => {
-		if (button.buttonTitle.includes('callToAction')) {
+		if (button.buttonTitle?.includes('callToAction')) {
 			setIsCallToActionOpen(true);
-		} else if (button.buttonTitle.includes('quickReplay')) {
+		} else if (button.buttonTitle?.includes('quickReplay')) {
 			setIsQuickReplyOpen(true);
-		} else if (button.buttonTitle.includes('dynamicField')) {
+		} else if (button.buttonTitle?.includes('dynamicField')) {
 			const selectionEnd = templateTextRef.current?.selectionEnd;
 			const textLength = templateTextRef.current?.textLength;
 			setTemplateData({
@@ -377,7 +689,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				),
 			});
 			templateTextRef.current?.focus();
-		} else if (button.buttonTitle.includes('removalText')) {
+		} else if (button.buttonTitle?.includes('removalText')) {
 			setTemplateData({
 				...templateData,
 				templateText: `${templateData.templateText} ${isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
@@ -440,6 +752,106 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
+	const saveTemplate = async () => {
+		let requestJSON = getRequestJSON(true);
+		if (requestJSON) {
+			if (templateID) {
+				requestJSON.id = Number(templateID);
+			}
+			let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+				submitTemplates(requestJSON)
+			);
+			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
+				setIsSubmitCampaignOpen(false);
+				setToastMessage(ToastMessages.SAVE_SUCCESS);
+				resetFields();
+				navigate('/react/whatsapp/template/create');
+			} else if (submitTemplate?.payload?.Status === 'Error') {
+				if (submitTemplate?.payload?.Message?.length > 0) {
+					setToastMessage({
+						...ToastMessages.ERROR,
+						message: submitTemplate?.payload?.Message,
+					});
+				} else {
+					setToastMessage(ToastMessages.ERROR);
+				}
+				setIsSubmitCampaignOpen(false);
+			}
+		}
+	};
+
+	const onFormButtonClick = (buttonName: string) => {
+		switch (buttonName) {
+			case 'delete':
+				setIsDeleteTemplateOpen(true);
+				break;
+			case 'save':
+				saveTemplate();
+				break;
+			default:
+				break;
+		}
+	};
+
+	const onDeleteTemplate = async () => {
+		if (templateID) {
+			const deleteData: deleteTemplateAPIProps = await dispatch<any>(
+				deleteTemplate(templateID)
+			);
+			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+				setIsDeleteTemplateOpen(false);
+				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+				resetFields();
+				navigate('/react/whatsapp/template/create');
+			} else {
+				deleteData?.payload?.Error
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Error,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		} else {
+			resetFields();
+			setIsDeleteTemplateOpen(false);
+		}
+	};
+
+	const onSubmitCampaign = async () => {
+		let requestJSON = getRequestJSON(false);
+		if (requestJSON) {
+			if (templateID) {
+				requestJSON.id = Number(templateID);
+			}
+			let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+				submitTemplates(requestJSON)
+			);
+			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
+				setIsSubmitCampaignOpen(false);
+				setToastMessage(ToastMessages.SUCCESS);
+				resetFields();
+				navigate('/react/whatsapp/template/create');
+			} else if (submitTemplate?.payload?.Status === 'Error') {
+				if (submitTemplate?.payload?.Message?.length > 0) {
+					setToastMessage({
+						...ToastMessages.ERROR,
+						message: submitTemplate?.payload?.Message,
+					});
+				} else {
+					setToastMessage(ToastMessages.ERROR);
+				}
+				setIsSubmitCampaignOpen(false);
+			}
+		}
+	};
+
+	const closeCallToAction = (isReset: Boolean) => {
+		setIsCallToActionOpen(false);
+		if (isReset && buttonType === 'callToAction') {
+			setCallToActionFieldRows([...templateData.templateButtons]);
+		}
+	};
+
 	return (
 
 		<DefaultScreen
@@ -448,6 +860,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			classes={classes}
 			containerClass={null}
 			customPadding={true}>
+			{renderToast()}
 			<Title
 				Text={translator('whatsapp.header')}
 				Classes={classes.whatsappTemplateTitle}
@@ -455,7 +868,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				Element={null}
 			/>
 			<br />
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={onSubmit}>
 				<Grid container>
 					<TemplateFields
 						classes={classes}
@@ -463,8 +876,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						savedTemplate={savedTemplate}
 						fileData={fileData}
 						onTemplateNameChange={(e) => onTemplateNameChange(e)}
-						onSavedTemplateChange={(e) => onSavedTemplateChange(e)}
-						setFileData={(fileData) => setFileData(fileData)}
+						onSavedTemplateChange={(e) => onSavedTemplateChange(e.target.value)}
+						setFileData={(fileData) => uploadFile(fileData)}
+						savedTemplateList={savedTemplateList}
 					/>
 					<Grid
 						container
@@ -487,6 +901,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										? setIsQuickReplyOpen(true)
 										: setIsCallToActionOpen(true)
 								}
+								dynamicFieldCount={dynamicFieldCount}
+								linkCount={linkCount}
 							/>
 						</Grid>
 
@@ -502,12 +918,16 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 											campaignNumber='1'
 											templateData={templateData}
 											buttonType={buttonType}
+											fileData={fileData}
 										/>
 									</Box>
 								</Grid>
 							</Grid>
 						</Grid>
-						<Buttons classes={classes} />
+						<Buttons
+							classes={classes}
+							onFormButtonClick={(buttonName) => onFormButtonClick(buttonName)}
+						/>
 					</Grid>
 				</Grid>
 			</form>
@@ -523,10 +943,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					updateTemplateButton(data, 'quickReply')
 				}
 				templateButtons={templateData.templateButtons}
+				isEditable={true}
 			/>
 			<ActionCallPopOver
 				isCallToActionOpen={isCallToActionOpen}
-				closeCallToAction={() => setIsCallToActionOpen(false)}
+				closeCallToAction={(isReset) => closeCallToAction(isReset)}
 				classes={classes}
 				callToActionFieldRows={callToActionFieldRows}
 				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
@@ -536,7 +957,37 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				updateTemplateData={(data: callToActionProps) =>
 					updateTemplateButton(data, 'callToAction')
 				}
+				isEditable={true}
 			/>
+			<AlertModal
+				classes={classes}
+				isOpen={isDeleteTemplateOpen}
+				onClose={() => setIsDeleteTemplateOpen(false)}
+				title={translator('whatsapp.alertModal.DeleteText')}
+				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+				type='delete'
+				onConfirmOrYes={() => onDeleteTemplate()}
+			/>
+			<AlertModal
+				classes={classes}
+				isOpen={isSubmitCampaignOpen}
+				onClose={() => setIsSubmitCampaignOpen(false)}
+				title={translator('whatsapp.alertModal.ConfirmText')}
+				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
+				onConfirmOrYes={() => onSubmitCampaign()}
+				type='submit'>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						campaignNumber='1'
+						templateData={templateData}
+						buttonType={buttonType}
+						fileData={fileData}
+					/>
+				</Box>
+			</AlertModal>
+
+			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
 };

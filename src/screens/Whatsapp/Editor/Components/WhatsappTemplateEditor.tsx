@@ -9,13 +9,13 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	WhatsappCreatorProps,
-} from './WhatsappCreator.types';
+} from '../Types/WhatsappCreator.types';
 import clsx from 'clsx';
 import { Box, Button, makeStyles, Tooltip } from '@material-ui/core';
 import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft';
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import { ClassesType } from '../../Classes.types';
+import { ClassesType } from '../../../Classes.types';
 
 const WhatsappTemplateEditor = ({
 	classes,
@@ -27,6 +27,8 @@ const WhatsappTemplateEditor = ({
 	templateText,
 	templateTextRef,
 	OnEditorActionButtonClick,
+	dynamicFieldCount,
+	linkCount,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -42,8 +44,6 @@ const WhatsappTemplateEditor = ({
 	}));
 	const styles = useStyles();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [linkCount, setlinkCount] = useState(0);
-	const [messageCount, setMessageCount] = useState(0);
 	const [alignment, setAlignment] = useState<string>('right');
 	const [textAreaHeight, setTextAreaHeight] = useState<string>('auto');
 
@@ -56,7 +56,6 @@ const WhatsappTemplateEditor = ({
 		const textAreaHeight = textAreaElement?.scrollHeight || 0;
 		const buttonWrapperHeight = buttonsWrapperElement?.scrollHeight || 0;
 		const avaliableHeight = 240 - (textAreaHeight + buttonWrapperHeight);
-		console.log('avaliableHeight::', avaliableHeight);
 		if (textAreaHeight) {
 			if (avaliableHeight >= 25) {
 				setTextAreaHeight(25 + textAreaHeight + 'px');
@@ -93,10 +92,10 @@ const WhatsappTemplateEditor = ({
 				tooltipTitle: 'whatsapp.template.quickReplayTooltip',
 				buttonTitle: 'whatsapp.template.quickReplay',
 			},
-			{
-				tooltipTitle: 'whatsapp.template.removalLinkTooltip',
-				buttonTitle: 'whatsapp.template.removalLink',
-			},
+			// {
+			// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
+			// 	buttonTitle: 'whatsapp.template.removalLink',
+			// },
 			{
 				tooltipTitle: 'whatsapp.template.removalTextTooltip',
 				buttonTitle: 'whatsapp.template.removalText',
@@ -110,16 +109,16 @@ const WhatsappTemplateEditor = ({
 	);
 
 	const isDisableButton = (buttonTitle: string) => {
-		if (buttonTitle.includes('callToAction') && buttonType === 'quickReply') {
+		if (buttonTitle?.includes('callToAction') && buttonType === 'quickReply') {
 			return true;
 		} else if (
-			buttonTitle.includes('quickReplay') &&
+			buttonTitle?.includes('quickReplay') &&
 			buttonType === 'callToAction'
 		) {
 			return true;
 		} else if (
-			buttonTitle.includes('removalText') &&
-			templateText.includes('Reply “remove” to unsubscribe')
+			buttonTitle?.includes('removalText') &&
+			templateText?.includes('Reply “remove” to unsubscribe')
 		) {
 			return true;
 		}
@@ -146,27 +145,28 @@ const WhatsappTemplateEditor = ({
 				<Box
 					className={classes.whatsappActionButtonsWrapper}
 					id='buttons-wrapper'>
-					{buttons.map((button: quickReplyButtonProps | callToActionRowProps) =>
-						button.fields.map(
-							(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
-								field.fieldName === 'Button Text' && (
-									<Box
-										key={button.id}
-										className={classes.whatsappActionButtonsBox}>
-										<Button
-											className={classes.whatsappActionButtons}
-											onClick={() => OnEditorActionButtonClick(button)}>
-											{field.value}
-										</Button>
-										<DeleteOutlinedIcon
-											style={{ color: 'red', cursor: 'pointer' }}
-											onClick={() => {
-												onButtonDelete(button);
-											}}
-										/>
-									</Box>
-								)
-						)
+					{buttons?.map(
+						(button: quickReplyButtonProps | callToActionRowProps) =>
+							button?.fields.map(
+								(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
+									field.fieldName === 'Button Text' && (
+										<Box
+											key={button.id}
+											className={classes.whatsappActionButtonsBox}>
+											<Button
+												className={classes.whatsappActionButtons}
+												onClick={() => OnEditorActionButtonClick(button)}>
+												{field.value}
+											</Button>
+											<DeleteOutlinedIcon
+												style={{ color: 'red', cursor: 'pointer' }}
+												onClick={() => {
+													onButtonDelete(button);
+												}}
+											/>
+										</Box>
+									)
+							)
 					)}
 				</Box>
 			</div>
@@ -183,12 +183,12 @@ const WhatsappTemplateEditor = ({
 				</span>
 
 				<span className={classes.textInfoWrapper}>
-					{messageCount}
+					{dynamicFieldCount}
 					<span className={classes.textInfo}>
 						<>
-							{messageCount === 1
-								? translator('sms.message')
-								: translator('sms.messages')}
+							{dynamicFieldCount === 1
+								? translator('whatsappCampaign.dfield')
+								: translator('whatsappCampaign.dfields')}
 						</>
 					</span>
 				</span>
@@ -196,9 +196,7 @@ const WhatsappTemplateEditor = ({
 				<span className={classes.textInfoWrapper}>
 					{templateText?.length}/1024
 					<span className={classes.textInfo}>
-						<>
-							{translator('mainReport.char')}
-						</>
+						<>{translator('mainReport.char')}</>
 					</span>
 				</span>
 			</Box>
@@ -269,9 +267,7 @@ const WhatsappTemplateEditor = ({
 											: null
 									)}
 									onClick={() => onButtonClick(button)}>
-									<>
-										{translator(button.buttonTitle)}
-									</>
+									<>{translator(button.buttonTitle)}</>
 								</Button>
 							)}
 						</Tooltip>
