@@ -386,25 +386,15 @@ export const getSmsRepliesById = createAsyncThunk(
     }
   });
 export const getSmsReplies = createAsyncThunk(
-  'SmsReplies/get', async (data, thunkAPI) => {
+  'SmsReplies/get', async (requestData, thunkAPI) => {
     try {
-      const response = await instence.post(`SmsReplies/get`, data);
+      const response = await instence.post(`SmsReplies/get`, requestData);
+      response.data.IsExport = requestData.IsExport;
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-
-
-// export const SaveSms=createAsyncThunk(
-//   'smsCampaign/Save/',async (data,thunkAPI) => {
-//     try {
-//       const response=await instence.post(`smsCampaign/Save/`,data);
-//       return response.data
-//     } catch(error) {
-//       return thunkAPI.rejectWithValue({error: error.message});
-//     }
-//   })
 
 export const smsSlice = createSlice({
   name: 'newsletter',
@@ -525,7 +515,9 @@ export const smsSlice = createSlice({
       state.smsCampaignSettings = action.error
     })
     builder.addCase(getSmsReplies.fulfilled, (state, { payload }) => {
-      state.smsReplies = payload;
+      if (!payload.IsExport) {
+        state.smsReplies = payload;
+      }
     })
 
     // builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))
