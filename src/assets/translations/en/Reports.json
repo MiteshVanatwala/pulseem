@@ -110,6 +110,5 @@
   "ExportLimitation": "Exported docs cannot contain more than 600K results",
   "clientName": "Client Name",
   "filterSearch": "Apply filter",
-  "closeFilterSearch": "Close filter",
-  "smsReplies": "SMS Incoming report"
+  "closeFilterSearch": "Close filter"
 }
