@@ -927,6 +927,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						<Buttons
 							classes={classes}
 							onFormButtonClick={(buttonName) => onFormButtonClick(buttonName)}
+							displayBackButton={false}
 						/>
 					</Grid>
 				</Grid>

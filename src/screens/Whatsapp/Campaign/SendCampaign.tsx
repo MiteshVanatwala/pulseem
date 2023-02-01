@@ -328,7 +328,11 @@ const SendCampaign = ({
 							/>
 						</Grid>
 					</Grid>
-					<Buttons classes={classes} onFormButtonClick={onFormButtonClick} />
+					<Buttons
+						classes={classes}
+						onFormButtonClick={onFormButtonClick}
+						displayBackButton={true}
+					/>
 				</div>
 				<SummaryModal
 					classes={classes}

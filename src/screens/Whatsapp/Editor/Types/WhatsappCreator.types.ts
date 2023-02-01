@@ -34,6 +34,10 @@ export type TemplateFieldsProps = {
 	savedTemplateList: savedTemplateListProps[];
 };
 
+export type ReduxUserProps = {
+	username: string;
+};
+
 export type MessageEditorProps = {
 	classes: ClassesType;
 };
@@ -77,6 +81,7 @@ export type whatsappMobilePreviewProps = {
 export type ButtonsProps = {
 	classes: ClassesType['classes'];
 	onFormButtonClick: (buttonName: string) => void;
+	displayBackButton: boolean;
 };
 
 export type campaignPage1ButtonsProps = {

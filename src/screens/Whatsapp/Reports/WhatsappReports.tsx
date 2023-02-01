@@ -301,8 +301,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			subPage={'manage'}
 			currentPage='whatsapp'
 			classes={classes}
-			customPadding={true}
-			containerClass={null}>
+			customPadding={false}
+			containerClass={clsx(classes.management, classes.mb50)}>
 			<Title
 				Text={translator('whatsappReport.report')}
 				Classes={classes.whatsappTemplateTitle}
@@ -423,12 +423,18 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							{windowSize !== 'xs' && (
 								<TableHead>
 									<TableRow classes={rowStyle}>
-										<TableCell classes={cellStyle} align='center'>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex3}
+											align='center'>
 											<>
 												{translator('sms.GridBoundColumnResource2.HeaderText')}
 											</>
 										</TableCell>
-										<TableCell classes={cellStyle} align='center'>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex2}
+											align='center'>
 											<Grid container justifyContent='space-around'>
 												<Grid item>
 													<>
@@ -442,19 +448,34 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												</Grid>
 											</Grid>
 										</TableCell>
-										<TableCell classes={cellStyle} align='center'>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex1}
+											align='center'>
 											<>{translator('whatsappReport.read')}</>
 										</TableCell>
-										<TableCell classes={cellStyle} align='center'>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex2}
+											align='center'>
 											<>{translator('common.Clicks')}</>
 										</TableCell>
-										<TableCell classes={cellStyle} align='center'>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex1}
+											align='center'>
 											<>{translator('common.Feedback')}</>
 										</TableCell>
-										<TableCell classes={cellStyle} align='center'>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex2}
+											align='center'>
 											<>{}</>
 										</TableCell>
-										<TableCell classes={cellStyle} align='center'>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex1}
+											align='center'>
 											<>{translator('common.revenue')}</>
 										</TableCell>
 									</TableRow>
@@ -477,17 +498,15 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<TableCell
 												classes={cellStyle}
 												align='center'
-												className={clsx(classes.tableCellBody)}>
+												className={clsx(classes.tableCellBody, classes.flex3)}>
 												{renderNameCell(report)}
 											</TableCell>
 											<TableCell
 												classes={cellStyle}
 												align='center'
-												className={clsx(classes.tableCellBody)}>
+												className={clsx(classes.tableCellBody, classes.flex2)}>
 												<Grid container justifyContent='space-around'>
-													<Grid
-														item
-														className={`${report?.ToSend >= 1 && 'underline'}`}>
+													<Grid item>
 														{getTableTypographyCells(
 															translator(
 																'mainReport.locTotalSendPlan.HeaderText'
@@ -514,7 +533,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												align='center'
 												className={clsx(
 													classes.tableCellBody,
-													`${report?.Read >= 1 && 'underline'}`
+													`${report?.Read >= 1 && 'underline'}`,
+													classes.flex1
 												)}>
 												{getTableTypographyCells(
 													translator('whatsappReport.read'),
@@ -526,13 +546,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<TableCell
 												classes={cellStyle}
 												align='center'
-												className={clsx(classes.tableCellBody)}>
+												className={clsx(classes.tableCellBody, classes.flex2)}>
 												<Grid container justifyContent='space-around'>
-													<Grid
-														item
-														className={`${
-															report?.ClicksCount >= 1 && 'underline'
-														}`}>
+													<Grid item>
 														{getTableTypographyCells(
 															translator('common.Clicks'),
 															report.ClicksCount,
@@ -557,10 +573,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<TableCell
 												classes={cellStyle}
 												align='center'
-												className={clsx(
-													classes.tableCellBody,
-													`${report?.FeedBack >= 1 && 'underline'}`
-												)}>
+												className={clsx(classes.tableCellBody, classes.flex1)}>
 												{getTableTypographyCells(
 													translator('common.Total'),
 													report.FeedBack,
@@ -571,7 +584,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<TableCell
 												classes={cellStyle}
 												align='center'
-												className={clsx(classes.tableCellBody)}>
+												className={clsx(classes.tableCellBody, classes.flex2)}>
 												<Grid container justifyContent='space-around'>
 													<Grid
 														item
@@ -600,7 +613,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<TableCell
 												component='th'
 												scope='row'
-												className={clsx(classes.tableCellRoot)}>
+												className={clsx(classes.tableCellRoot, classes.flex1)}>
 												{/* {'Revenue'} */}
 											</TableCell>
 										</TableRow>

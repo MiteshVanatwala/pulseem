@@ -781,7 +781,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					<Grid className={classes.WhatsappCampainP1Right} item md={12} lg={6}>
 						<Grid container>
 							<Grid item xs={12} sm={12} md={12} lg={12}>
-								<Box>
+								<Box className={classes.WhatsappCampainMobilePreviewBox}>
 									<WhatsappMobilePreview
 										classes={classes}
 										campaignNumber='1'
@@ -791,7 +791,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									/>
 								</Box>
 							</Grid>
-							<Grid item xs={12} sm={12} md={12} lg={12}>
+							<Grid
+								className={classes.WhatsappCampainMobilePreviewBox}
+								item
+								xs={12}
+								sm={12}
+								md={12}
+								lg={12}>
 								<Box className={classes.switchDiv}>
 									<FormGroup>
 										<Switch
@@ -941,6 +947,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				</Grid>
 				<Grid container>
 					<Buttons
+						displayBackButton={false}
 						classes={classes}
 						onFormButtonClick={(buttonName: string) =>
 							onFormButtonClick(buttonName)

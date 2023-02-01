@@ -1048,16 +1048,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '0px 8px 0px 8px',
 	},
 	WhatsappCampainP1Right: {
-		padding: '0px 108px 0px 204px',
-		'@media screen and (max-width: 1325px)': {
-			padding: '0px 82px 0px 186px',
-		},
-		'@media screen and (max-width: 1279px)': {
-			marginTop: '24px',
-		},
-		'@media screen and (max-width: 768px)': {
-			padding: '0px',
-		},
+		padding: '0px',
 	},
 	WhatsappCampainButtonContent: {
 		fontFamily: 'OpenSansHebrew',
@@ -1328,6 +1319,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			background: '#3498DB',
 		},
 	},
+	manageTemplatesCreate: {
+		marginTop: '10px',
+	},
+	manageCampaignCreateAndRestore: {
+		marginTop: '10px',
+	},
 	manageTemplatesCampaignCount: {
 		marginTop: '25px',
 		fontSize: '14px',
@@ -1387,66 +1384,39 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'& table': {
 			'& tr': {
 				'& th': {
-					fontWeight: '500',
-					'&:nth-child(1)': {
-						width: '270px',
-					},
-					'&:nth-child(2)': {
-						width: '160px',
+					fontWeight: 'bolder',
+					'& div': {
+						fontWeight: '700',
 					},
 					'&:nth-child(3)': {
-						width: '70px',
 						color: '#26BE35',
-					},
-					'&:nth-child(4)': {
-						width: '140px',
-					},
-					'&:nth-child(5)': {
-						width: '70px',
-					},
-					'&:nth-child(6)': {
-						width: '160px',
-					},
-					'&:nth-child(7)': {
-						width: '160px',
 					},
 				},
 				'& td': {
 					'&:nth-child(1)': {
-						width: '270px',
 						'& p': {
 							textDecoration: 'none',
 						},
 					},
-					'&:nth-child(2)': {
-						width: '160px',
-					},
 					'&:nth-child(3)': {
-						width: '70px',
 						'& p': {
 							color: '#26BE35',
 						},
 					},
 					'&:nth-child(4)': {
-						width: '140px',
 						'& p': {
-							color: '#6464FF',
+							color: '#3498DB',
 						},
 					},
 					'&:nth-child(5)': {
-						width: '70px',
 						'& p': {
-							color: '#6464FF',
+							color: '#3498DB',
 						},
 					},
 					'&:nth-child(6)': {
-						width: '160px',
 						'& p': {
-							color: 'red',
+							color: '#E74C3C',
 						},
-					},
-					'&:nth-child(7)': {
-						width: '160px',
 					},
 					'& .underline': {
 						textDecoration: 'underline',
@@ -1454,8 +1424,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					},
 					'& p': {
 						fontFamily: 'Assistant',
-						fontWeight: '500',
-						fontSize: '16px',
+						fontSize: '18px',
+						fontWeight: '400',
+						lineHeight: '1.5',
 					},
 				},
 			},
@@ -2424,10 +2395,101 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		justifyContent: 'space-between',
 	},
 	chooseTemplateModalUl: {
-		// maxHeight: '400px',
 		overflowY: 'auto',
 	},
 	noDataRow: {
 		height: 50,
+	},
+	whatsappDropDown: {
+		marginLeft: 5,
+		alignSelf: 'flex-end',
+		border: '1px solid #1c82b2',
+		borderRadius: '.2rem',
+		padding: '17px 4px',
+		height: 28,
+		'& .MuiSelect-selectMenu': {
+			color: '#1c82b2 !important',
+			'&:focus': {
+				// backgroundColor: '#fff'
+			},
+		},
+		'& .MuiSelect-icon': {
+			color: '#1c82b2 !important',
+		},
+	},
+	whatsappAreaManual: {
+		border: '2px dashed rgba(0,0,0,.2)',
+		minHeight: '439px',
+		backgroundColor: 'white !important',
+		'@media screen and (max-width: 768px)': {
+			width: 'auto',
+		},
+	},
+	whatsappGreenManual: {
+		border: '2px dashed #4BB543',
+		minHeight: '439px',
+		backgroundColor: '#CCFFE5',
+		'@media screen and (max-width: 768px)': {
+			width: 'auto',
+		},
+	},
+
+	whatsappTemplatesStatus: {
+		fontSize: 18,
+		color: 'black',
+		'& p': {
+			wordBreak: 'break-all',
+			whiteSpace: 'normal',
+		},
+	},
+	whatsappTemplateStatusApproved: {
+		color: '#27AE60',
+		fontWeight: 700,
+	},
+	whatsappTemplateStatusReceived: {
+		color: '#0371AD',
+		fontWeight: 700,
+	},
+	whatsappTemplateStatusRejected: {
+		color: '#E74C3C',
+		fontWeight: 700,
+	},
+	whatsappTemplateStatusPending: {
+		color: '#F59A23',
+		fontWeight: 700,
+	},
+	whatsappTemplateStatusRejectedReason: {
+		color: '#E74C3C',
+		fontWeight: 400,
+		fontSize: '11px',
+	},
+	WhatsappCampainMobilePreviewBox: {
+		maxWidth: '326px',
+		margin: '0 auto',
+	},
+
+	whatsappCampaignStatus: {
+		fontSize: 18,
+		color: 'black',
+	},
+	whatsappCampaignStatusCreated: {
+		color: '#27AE60',
+		fontWeight: 700,
+	},
+	whatsappCampaignStatusFinished: {
+		color: '#0371AD',
+		fontWeight: 700,
+	},
+	whatsappCampaignStatusCanceled: {
+		color: '#E74C3C',
+		fontWeight: 700,
+	},
+	whatsappCampaignStatusStopped: {
+		color: '#E74C3C',
+		fontWeight: 700,
+	},
+	whatsappCampaignStatusSending: {
+		color: '#F59A23',
+		fontWeight: 700,
 	},
 });

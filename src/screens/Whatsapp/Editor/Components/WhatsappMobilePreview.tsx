@@ -1,15 +1,17 @@
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 
-import { Box, Button, Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 import {
 	callToActionFieldProps,
 	callToActionRowProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
+	ReduxUserProps,
 	whatsappMobilePreviewProps,
 } from '../Types/WhatsappCreator.types';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 const WhatsappMobilePreview = ({
 	classes,
@@ -34,6 +36,10 @@ const WhatsappMobilePreview = ({
 			? (templateTextElement?.clientWidth - 15).toString() + 'px'
 			: 'auto';
 	};
+
+	const { username } = useSelector(
+		(state: { user: ReduxUserProps }) => state.user
+	);
 
 	useEffect(() => {
 		setQuickReplyWidth(getQuickReplyWidth());
@@ -97,7 +103,11 @@ const WhatsappMobilePreview = ({
 												<img src={AccountUser} alt='Avatar' />
 											</div>
 											<div className='name'>
-												<span>{campaignNumber}</span>
+												<span>
+													{username?.length <= 10
+														? username
+														: `${username?.substring(0, 10)}...`}
+												</span>
 												<span className='status'>
 													<>{translator('whatsapp.online')}</>
 												</span>
@@ -170,7 +180,9 @@ const WhatsappMobilePreview = ({
 																							target='_blank'
 																							href={`tel:${getValueByFieldName(
 																								button,
-																								translator('whatsapp.phoneNumber')
+																								translator(
+																									'whatsapp.phoneNumber'
+																								)
 																							)}`}>
 																							<i
 																								className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>

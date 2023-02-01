@@ -9,7 +9,7 @@ import { coreProps } from '../Types/WhatsappCampaign.types';
 import useRedirect from '../../../../helpers/Routes/Redirect';
 import { buttons } from '../../Constant';
 
-const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
+const Buttons = ({ classes, onFormButtonClick, displayBackButton }: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
 	const { isRTL, windowSize } = useSelector(
@@ -32,27 +32,29 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 			}
 			className={clsx(classes.baseButtonsContainer, 'baseButtonsContainer')}>
 			<div className={classes.rightMostContainer}>
-				<Button
-					variant='contained'
-					size='medium'
-					className={clsx(
-						classes.actionButton,
-						classes.actionButtonLightBlue,
-						classes.backButton,
-						isRTL && windowSize !== 'xs' && windowSize !== 'sm'
-							? classes.marginLeftAuto
-							: windowSize !== 'xs' && windowSize !== 'sm'
-							? classes.marginRightAuto
-							: null
-					)}
-					color='primary'
-					style={{ margin: '8px' }}
-					onClick={() => {
-						handlePreviousPage();
-					}}>
-					<span style={{ marginInlineEnd: '5px' }}>{'<'}</span>
-					<>{translator('whatsappCampaign.back')}</>
-				</Button>
+				{displayBackButton && (
+					<Button
+						variant='contained'
+						size='medium'
+						className={clsx(
+							classes.actionButton,
+							classes.actionButtonLightBlue,
+							classes.backButton,
+							isRTL && windowSize !== 'xs' && windowSize !== 'sm'
+								? classes.marginLeftAuto
+								: windowSize !== 'xs' && windowSize !== 'sm'
+								? classes.marginRightAuto
+								: null
+						)}
+						color='primary'
+						style={{ margin: '8px' }}
+						onClick={() => {
+							handlePreviousPage();
+						}}>
+						<span style={{ marginInlineEnd: '5px' }}>{'<'}</span>
+						<>{translator('whatsappCampaign.back')}</>
+					</Button>
+				)}
 
 				<Box>
 					<Button
