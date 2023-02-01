@@ -1,6 +1,10 @@
 {
 	"Title": "Whatsapp",
 	"NewWhatsappCampaign": "יצירת תבנית WhatsApp",
+	"SendWhatsappCampaign": "Whatsapp שליחת קמפיין",
+	"ManageWhatsappTemplate": "Whatsapp ניהול תבניות",
+	"ManageWhatsappCampaign": "WhatsApp ניהול קמפיינים",
+	"ReportsWhatsapp": "דו”חות WhatsApp",
 	"header": "יצירת תבנית WhatsApp",
 	"WAMenuItemResource": {
 		"Text": "תבנית WhatsApp חדשה"
