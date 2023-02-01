@@ -568,7 +568,10 @@
         "desc": "מעתה תוכלו לשלוח דרך אימייל זה ללא צורך באימות חוזר",
         "btnTxt": "המשך ל קמפיינים"
       }
-    }
+    },
+    "payAttention": "!שימו לב!",
+    "campMadewithOldEditor": "קמפיין זה נוצר בעורך הישן",
+    "chooseNewEditorToCreateCamp": "על מנת להשתמש בעורך החדש יש ללחוץ על “יצירת קמפיין” ולבחור בעורך החדש"
   },
   "newsLetterSendSettings": {
     "title": "שלח ניוזלטר",

@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Grid, Button, TextField, Box, Tooltip, FormControlLabel, Checkbox
 } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles';
 import {
@@ -28,7 +28,7 @@ import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { getCookie } from '../../../helpers/cookies'
+import { getCookie, setCookie } from '../../../helpers/cookies'
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate } from 'react-router-dom';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
@@ -56,6 +56,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
+  const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
 
   moment.locale(language)
@@ -324,7 +325,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }
 
   const renderCellIcons = (row) => {
-    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive } = row
+    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor } = row
 
     const renderCopyToClipoard = (
       showCopied === CampaignID ?
@@ -379,10 +380,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          setDialogType({
-            type: 'duplicate',
-            data: CampaignID
-          })
+          setDialogType(
+            !IsNewEditor && getCookie('O2NedtrPopup') && getCookie('O2NedtrPopup') !== "false" ?
+              {
+                type: 'cautionEditorChange',
+                data: { CampaignID: CampaignID }
+              }
+              : {
+                type: 'duplicate',
+                data: CampaignID
+              }
+          )
         }
       },
       {
@@ -669,8 +677,77 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   }
 
+  const handleHideDuplicateCationMessage = (e) => {
+    setHideDuplicateCautionMessage(e);
+    if (e === true) {
+      setCookie("O2NedtrPopup", "false");
+    }
+    else {
+      setCookie("O2NedtrPopup", "true");
+    }
+  }
+
   const handleClose = () => {
     setDialogType(null)
+  }
+
+  const getCautionEditorChangeDialog = (data = {}) => {
+    return {
+      title: '',
+      showDivider: false,
+      icon: false,
+      exit: <Box
+        onClick={() => setDialogType(null)}
+        className={clsx(
+          classes.dialogExitButton,
+          classes.btnNoBgExitDialog,
+          classes.f25,
+          {
+            [classes.dialogExitButtonRTL]: !isRTL,
+            [classes.dialogExitButtonLTR]: isRTL
+          }
+        )}>
+        x
+      </Box>,
+      contentStyle: classes.noBorder,
+      content: (
+        <Grid container>
+          <Grid item xs={12} className={clsx(classes.mb4)} style={{ textAlign: 'center' }}>
+            <Typography className={clsx(classes.pbt5, classes.f25)}>
+              {t('campaigns.newsLetterMgmt.payAttention')}
+              {/* Pay attention! */}
+            </Typography>
+            <Typography className={classes.f20}>
+              {t('campaigns.newsLetterMgmt.campMadewithOldEditor')}
+            </Typography>
+            <Typography className={classes.f20}>
+              {t('campaigns.newsLetterMgmt.chooseNewEditorToCreateCamp')}
+            </Typography>
+
+            <Box className={classes.mt15}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={hideDuplicateCautionMessage}
+                    onChange={() => handleHideDuplicateCationMessage(!hideDuplicateCautionMessage)}
+                    name="checkedB"
+                    color="primary"
+                  />
+                }
+                label={t('notifications.implementDialog.dontShowThisMessage')}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+      ),
+      onConfirm: async () => {
+        handleClose()
+        setDialogType({
+          type: 'duplicate',
+          data: data.CampaignID
+        })
+      }
+    }
   }
 
   const getRestorDialog = (data = []) => {
@@ -793,6 +870,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
+      cautionEditorChange: getCautionEditorChangeDialog(data),
     }
 
     const currentDialog = dialogContent[type] || {}
