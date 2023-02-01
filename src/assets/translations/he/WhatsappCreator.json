@@ -1,10 +1,11 @@
 {
 	"Title": "Whatsapp",
 	"NewWhatsappCampaign": "יצירת תבנית WhatsApp",
-	"SendWhatsappCampaign": "Whatsapp שליחת קמפיין",
-	"ManageWhatsappTemplate": "Whatsapp ניהול תבניות",
+	"SendWhatsappCampaign": "WhatsApp שליחת קמפיין",
+	"ManageWhatsappTemplate": "WhatsApp ניהול תבניות",
 	"ManageWhatsappCampaign": "WhatsApp ניהול קמפיינים",
 	"ReportsWhatsapp": "דו”חות WhatsApp",
+	"ChatWhatsapp": "WhatsApp Chat",
 	"header": "יצירת תבנית WhatsApp",
 	"WAMenuItemResource": {
 		"Text": "תבנית WhatsApp חדשה"
@@ -12,13 +13,13 @@
 	"PageResource1": {
 		"Title": "ניהול קמפיינים בוואטסאפ"
 	},
-	"submit": "שלח",
+	"submit": "הגש",
 	"saveSms": "שמור",
 	"saveAndExit": "שמור וצא",
 	"send": "לִשְׁלוֹחַ",
 	"submitted": "התבנית נשלחה בהצלחה",
 	"error": "משהו השתבש",
-	"online": "באינטרנט",
+	"online": "מחובר/ת",
 	"uploadFileTitle": "העלה קובץ-PNG,JPG,PDF,MP4",
 	"uploading": "מעלה...",
 	"totalSize": "גודל כולל",
@@ -27,9 +28,9 @@
 	"whatsappTemplate": "צור תבנית WhatsApp חדשה",
 	"toolTip1": "צור את התוכן שברצונך לשלוח לנמענים שלך ולאחר מכן בחר כיצד, מתי ולמי לשלוח",
 	"createContent": "צור תוכן",
-	"templateName": "שם התבנית",
-	"templateNamePlaceholder": "שם התבנית",
-	"templateDesc": "רק אתה תראה את השם",
+	"templateName": "שם תבנית",
+	"templateNamePlaceholder": "שם תבנית",
+	"templateDesc": "רק אתם תראו את השם",
 	"selectSavedTemplate": "בחר תבנית שמורה",
 	"selectSavedTemplatePlaceholder": "בחר תבנית שמורה",
 	"typeText": "הוסף טקסט כאן - עד 1024 תווים",
@@ -38,13 +39,13 @@
 
 	"callToActionButton": "קריאה לפעולה",
 	"callToActionSaveButton": "שמור",
-	"callToActionExitButton": "וצא",
+	"callToActionExitButton": "צא",
 	"callToActionAddMoreButton": "הוסף עוד",
 	"callToActionRemoveButton": "הסר",
 	"callToActionTitle": "קריאה לפעולה",
 	"callToActionDialogContentText": "צור עד 2 לחצנים שיאפשרו ללקוחות להגיב להודעות שלך או לנקוט בפעולה.",
 	"typeOfAction": "סוג פעולה",
-	"phoneButtonText": "טקסט לחצן",
+	"phoneButtonText": "טקסט כפתור:",
 	"phoneButtonTextPlaceholder": "צור קשר",
 	"country": "מדינה",
 	"phoneNumber": "מספר טלפון",
@@ -73,7 +74,7 @@
 		"title": "תגובה מהירה",
 		"titleDescription": "צור עד 3 לחצנים המאפשרים ללקוחות להגיב להודעות שלך עם הטקסט הנבחר",
 		"addMore": "הוסף כפתור",
-		"exit": "וצא",
+		"exit": "צא",
 		"save": "שמור",
 		"buttonText": "טקסט כפתור"
 	},
@@ -83,12 +84,12 @@
 		"confirmButtonText": "לְאַשֵׁר",
 		"calcelButtonText": "לְבַטֵל",
 		"yesButtonText": "כן",
-		"submitButtonText": "שלח",
+		"submitButtonText": "הגש",
 		"DeleteText": "מחק מסע פרסום",
 		"DeleteTitle": "האם אתה בטוח?",
 		"ConfirmText": "שלח מסע פרסום",
-		"ConfirmTitle": "האם אתה בטוח שברצונך לשלוח את התבנית שלך?",
-		"fileSizeAlert": "גודל הקובץ צריך להיות פחות מ-16MB",
+		"ConfirmTitle": "האם אתה בטוח שברצונך להגיש את התבנית?",
+		"fileSizeAlert": "קובץ גדול מ-16 מגה בייט",
 		"alert": "עֵרָנִי"
 	}
 }

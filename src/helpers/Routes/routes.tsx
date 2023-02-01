@@ -273,7 +273,7 @@ export const getRoutes = (
 			},
 			{
 				key: 'chat',
-				title: 'Whatsapp Chat',
+				title: t('whatsapp.ChatWhatsapp'),
 				href: whatsappRoutes.CHAT,
 				isShow: true,
 			},

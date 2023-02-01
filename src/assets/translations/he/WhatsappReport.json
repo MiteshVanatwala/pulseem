@@ -1,9 +1,15 @@
 {
-  "report": "דוח WhatsApp",
-  "fromDate": "מתאריך",
-  "toDate": "עד היום",
-  "export": "ייצוא קובץ",
-  "campaigns": "מסעות פרסום",
-  "read": "לקרוא",
-  "failed": "נִכשָׁל"
+	"report": "דו”חות WhatsApp",
+	"fromDate": "מתאריך",
+	"toDate": "לתאריך",
+	"export": "ייצוא קובץ",
+	"campaigns": "מסעות פרסום",
+	"read": "נקראו",
+	"failed": "נכשלו",
+	"toSend": "לשליחה",
+	"sent": "נשלחו",
+	"clicks": "קליקים",
+	"unique": "ייחודיות",
+	"feedback": "משובים",
+	"revenue": "Revenue"
 }

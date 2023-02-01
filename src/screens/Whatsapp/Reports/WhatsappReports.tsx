@@ -438,7 +438,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 													</>
 												</Grid>
 												<Grid item>
-													<>{translator('common.Sent')}</>
+													<>{translator('whatsappReport.sent')}</>
 												</Grid>
 											</Grid>
 										</TableCell>
@@ -446,10 +446,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											<>{translator('whatsappReport.read')}</>
 										</TableCell>
 										<TableCell classes={cellStyle} align='center'>
-											<>{translator('common.Clicks')}</>
+											<>{translator('whatsappReport.clicks')}</>
 										</TableCell>
 										<TableCell classes={cellStyle} align='center'>
-											<>{translator('common.Feedback')}</>
+											<>{translator('whatsappReport.feedback')}</>
 										</TableCell>
 										<TableCell classes={cellStyle} align='center'>
 											<>{}</>
@@ -489,9 +489,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 														item
 														className={`${report?.ToSend >= 1 && 'underline'}`}>
 														{getTableTypographyCells(
-															translator(
-																'mainReport.locTotalSendPlan.HeaderText'
-															),
+															translator('whatsappReport.toSend'),
 															report.ToSend,
 															reportCellNames.TOSEND,
 															report
@@ -501,7 +499,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 														item
 														className={`${report?.Sent >= 1 && 'underline'}`}>
 														{getTableTypographyCells(
-															translator('common.Sent'),
+															translator('whatsappReport.sent'),
 															report.Sent,
 															reportCellNames.SENT,
 															report
@@ -534,7 +532,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 															report?.ClicksCount >= 1 && 'underline'
 														}`}>
 														{getTableTypographyCells(
-															translator('common.Clicks'),
+															translator('whatsappReport.clicks'),
 															report.ClicksCount,
 															reportCellNames.CLICKS,
 															report
@@ -546,7 +544,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 															report?.UniqueClicksCount >= 1 && 'underline'
 														}`}>
 														{getTableTypographyCells(
-															translator('common.Unique'),
+															translator('whatsappReport.unique'),
 															report.UniqueClicksCount,
 															reportCellNames.UNIQUE,
 															report
