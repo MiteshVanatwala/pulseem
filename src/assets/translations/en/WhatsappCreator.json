@@ -1,10 +1,11 @@
 {
 	"Title": "Whatsapp",
 	"NewWhatsappCampaign": "Create WhatsApp Template",
-	"SendWhatsappCampaign": "Send Whatsapp Campaign",
-	"ManageWhatsappTemplate": "Whatsapp Template Managment",
+	"SendWhatsappCampaign": "Send WhatsApp Campaign",
+	"ManageWhatsappTemplate": "WhatsApp Template Managment",
 	"ManageWhatsappCampaign": "WhatsApp Campaign Management",
 	"ReportsWhatsapp": "WhatsApp Reports",
+	"ChatWhatsapp": "WhatsApp Chat",
 	"header": "Create WhatsApp Template",
 	"WAMenuItemResource": {
 		"Text": "New WhatsApp Template"
