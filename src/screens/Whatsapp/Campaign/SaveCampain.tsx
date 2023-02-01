@@ -654,7 +654,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					Element={null}
 				/>
 				<Box>
-					<div style={{ textAlign: 'right', color: '#DC3D1B' }}>
+					<div className={classes.WhatsappCampainNotice}>
 						<b>
 							<>{translator('whatsappCampaign.note')}</>
 							<br />

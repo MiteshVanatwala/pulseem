@@ -1022,6 +1022,23 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginTop: 20,
 		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
 	},
+	WhatsappCampainNotice: {
+		textAlign: 'right',
+		'& b': {
+			color: '#b11515',
+			fontWeight: 'bolder',
+		},
+		'& span': {
+			lineHeight: '34px',
+			color: '#b11515',
+			fontWeight: 'bolder',
+		},
+		'& a': {
+			color: '#0371ad',
+			fontWeight: 'bolder',
+			textDecoration: 'underline',
+		},
+	},
 	WhatsappCampainP1: {
 		'@media screen and (max-width: 786px)': {
 			flexDirection: 'column',
