@@ -458,13 +458,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											classes={cellStyle}
 											className={classes.flex2}
 											align='center'>
-											<>{translator('whatsappReport.Clicks')}</>
+											<>{translator('whatsappReport.clicks')}</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
 											className={classes.flex1}
 											align='center'>
-											<>{translator('whatsappReport.Feedback')}</>
+											<>{translator('whatsappReport.feedback')}</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
