@@ -715,7 +715,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '8px',
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
-		height: 'calc(100% - 16px)',
+		height: '100%',
 		'& .title': {
 			fontFamily: 'OpenSansHebrew-Bold',
 		},

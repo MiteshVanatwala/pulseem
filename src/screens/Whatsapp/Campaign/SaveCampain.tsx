@@ -87,46 +87,40 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
-	const websiteField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.websiteButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.websiteURL'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteURLPlaceholder'),
-				value: '',
-			},
-		],
-		[translator]
-	);
-	const phoneNumberField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.phoneButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.country'),
-				type: 'select',
-				placeholder: 'Select Your Country Code',
-				value: '+972 Israel',
-			},
-			{
-				fieldName: translator('whatsapp.phoneNumber'),
-				type: 'tel',
-				placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-				value: '',
-			},
-		],
-		[translator]
-	);
+	const websiteField = [
+		{
+			fieldName: 'whatsapp.websiteButtonText',
+			type: 'text',
+			placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+			value: '',
+		},
+		{
+			fieldName: 'whatsapp.websiteURL',
+			type: 'text',
+			placeholder: 'whatsapp.websiteURLPlaceholder',
+			value: '',
+		},
+	];
+	const phoneNumberField = [
+		{
+			fieldName: 'whatsapp.phoneButtonText',
+			type: 'text',
+			placeholder: 'whatsapp.phoneButtonTextPlaceholder',
+			value: '',
+		},
+		{
+			fieldName: 'whatsapp.country',
+			type: 'select',
+			placeholder: 'Select Your Country Code',
+			value: '+972 Israel',
+		},
+		{
+			fieldName: 'whatsapp.phoneNumber',
+			type: 'tel',
+			placeholder: 'whatsapp.phoneNumberPlaceholder',
+			value: '',
+		},
+	];
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
