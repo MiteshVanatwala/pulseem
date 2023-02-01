@@ -55,6 +55,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
             emptyRows: true,
             defaultRows: false,
         },
+        workspace:{
+            type: 'mixed',
+        },
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
