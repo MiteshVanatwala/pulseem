@@ -87,11 +87,11 @@ const Groups = ({ classes,
 
                 <ListItemAvatar>
                     <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderPrimary)}>
                         {isExist ?
                             (<FaCheck className={clsx(classes.green)} />)
                             :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
+                            (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                         }
                     </Avatar>
                 </ListItemAvatar>
@@ -117,11 +117,11 @@ const Groups = ({ classes,
             >
                 <ListItemAvatar>
                     <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderPrimary)}>
                         {isExist ?
                             (<FaCheck className={clsx(classes.green)} />)
                             :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
+                            (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                         }
                     </Avatar>
                 </ListItemAvatar>
@@ -138,11 +138,11 @@ const Groups = ({ classes,
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
                 <Avatar
-                    className={clsx(classes.listIcon, classes.transparentBg, allSelected ? classes.green : classes.blue, allSelected ? classes.borderGreen : classes.borderBlue)}>
+                    className={clsx(classes.listIcon, classes.transparentBg, allSelected ? classes.green : classes.blue, allSelected ? classes.borderGreen : classes.borderPrimary)}>
                     {allSelected ?
                         (<FaCheck className={clsx(classes.green)} />)
                         :
-                        (<HiUserGroup className={clsx(classes.blue)} />)
+                        (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                     }
                 </Avatar>
             </ListItemAvatar>

@@ -68,6 +68,7 @@ export const BaseDialog = ({
         })}
         justifyContent="center"
         alignItems="center"
+        alignSelf="center"
       >
         <CgClose />
       </Stack>
@@ -155,7 +156,9 @@ export const BaseDialog = ({
       >
         <Stack direction={"row"}>
           {RenderIcon()}
-          <Stack>{renderTitle ? renderTitle() : RenderTitleDefault()}</Stack>
+          <Stack alignSelf="center">
+            {renderTitle ? renderTitle() : RenderTitleDefault()}
+          </Stack>
         </Stack>
         {RenderExitButton()}
       </Stack>
@@ -165,7 +168,7 @@ export const BaseDialog = ({
   const RenderChildren = () => {
     return (
       <Stack
-        className={clsx(classes.dialogChildren, childrenStyle)}
+        className={clsx(classes.dialogChildren, childrenStyle, classes.sidebar)}
         style={{
           maxHeight: maxHeight
             ? maxHeight

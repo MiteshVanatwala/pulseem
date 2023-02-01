@@ -257,9 +257,8 @@ export const Preview = (
   const campaignID = (isSMS && model.SMSCampaignID) || (isMMS && model.MmsCampaignID) || model.ID || '';
   return (
     <>
-      {showID && <Typography className={classes.previewID}><b>{t('common.campaignID')}</b>:&nbsp;{campaignID}</Typography>}
       <Grid className={mobileFullsize && classes.alignCenter}>
-        {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
+        {showTitle && <Typography className={clsx(classes.colrPrimary, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</Typography>}
         {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
           <Tabs
             value={previewDeviceSelected}
@@ -268,14 +267,14 @@ export const Preview = (
             scrollButtons="off"
             aria-label="scrollable force tabs example"
           >
-            <Tab className={classes.deviceSelector} icon={<FaChrome style={{ fontSize: '24px' }} />} {...a11yProps(0)} />
-            <Tab className={classes.deviceSelector} icon={<FaFirefox style={{ fontSize: '24px' }} />} {...a11yProps(1)} />
-            <Tab className={classes.deviceSelector} icon={<FaMobile style={{ fontSize: '24px' }} />} {...a11yProps(2)} />
+            <Tab label={<FaChrome style={{ fontSize: '24px' }} />} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }}  {...a11yProps(0)} />
+            <Tab label={<FaFirefox style={{ fontSize: '24px' }} />} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }}  {...a11yProps(1)} />
+            <Tab label={<FaMobile style={{ fontSize: '24px' }} />} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }}  {...a11yProps(2)} />
           </Tabs>
         </AppBar>
         }
         {mobileFullsize ? mobileFullPreview() :
-          <>
+          <Box className={classes.mt2}>
             <TabPanel value={previewDeviceSelected} index={0}>
               {desktopPreview(true)}
             </TabPanel >
@@ -285,7 +284,7 @@ export const Preview = (
             <TabPanel value={previewDeviceSelected} index={2}>
               {mobilePreview()}
             </TabPanel >
-          </>
+          </Box>
         }
       </Grid>
     </>

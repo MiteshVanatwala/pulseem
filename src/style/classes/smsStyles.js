@@ -72,7 +72,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     tagSelected: {
         '& .MuiAutocomplete-tag': {
             marginTop: 5,
-            backgroundColor: '#1c82b2',
+            background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)',
             '& .MuiChip-label': {
                 color: '#fff !important'
             },

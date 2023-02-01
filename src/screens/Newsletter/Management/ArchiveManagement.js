@@ -26,9 +26,10 @@ import { Title } from '../../../components/managment/Title';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { sitePrefix } from '../../../config';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const ArchiveManagementScreen = ({ classes }) => {
-  const { accountFeatures, language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures, language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -156,7 +157,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       )
     }
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -174,8 +175,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             size='large'
             variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
@@ -184,8 +185,8 @@ const ArchiveManagementScreen = ({ classes }) => {
             size='large'
             variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -284,13 +285,9 @@ const ArchiveManagementScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
-              newsletterArchiveData.length > 0 ? null : classes.disabled
-            )}
             onClick={() => setDialogType("exportFormat")}
-            startIcon={<ExportIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -322,7 +319,7 @@ const ArchiveManagementScreen = ({ classes }) => {
     const iconsMap = [[
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
@@ -332,7 +329,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -358,12 +355,13 @@ const ArchiveManagementScreen = ({ classes }) => {
               container>
               {map.map(icon => (
                 <Grid
-                  className={clsx(icon.disable && classes.disabledCursor)}
+                  className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
                   key={icon.key}
                   item >
                   <ManagmentIcon
                     classes={classes}
                     {...icon}
+                    uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                   />
                 </Grid>
               ))}
@@ -514,10 +512,12 @@ const ArchiveManagementScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {sortData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -605,25 +605,29 @@ const ArchiveManagementScreen = ({ classes }) => {
       currentPage="newsletter"
       subPage='archiveManagement'
       classes={classes}
-      containerClass={classes.managmentNarrow}>
-      <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />
-      {renderSearchLine()}
-      {renderManagmentLine()}
-      {renderTable()}
-      {renderTablePagination()}
-      {renderDialog()}
-      <ConfirmRadioDialog
-        classes={classes}
-        isOpen={dialogType === 'exportFormat'}
-        title={t('campaigns.exportFile')}
-        radioTitle={t('common.SelectFormat')}
-        onConfirm={(e) => handleDownloadCsv(e)}
-        onCancel={() => setDialogType(null)}
-        cookieName={'exportFormat'}
-        defaultValue="xls"
-        options={ExportFileTypes}
-      />
-      <Loader isOpen={showLoader} />
+      containerClass={classes.management}>
+      <Box className={classes.mb50}>
+        <Box className={'topSection'}>
+          <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />
+          {renderSearchLine()}
+        </Box>
+        {renderManagmentLine()}
+        {renderTable()}
+        {renderTablePagination()}
+        {renderDialog()}
+        <Loader isOpen={showLoader} />
+        <ConfirmRadioDialog
+          classes={classes}
+          isOpen={dialogType === 'exportFormat'}
+          title={t('campaigns.exportFile')}
+          radioTitle={t('common.SelectFormat')}
+          onConfirm={(e) => handleDownloadCsv(e)}
+          onCancel={() => setDialogType(null)}
+          cookieName={'exportFormat'}
+          defaultValue="xls"
+          options={ExportFileTypes}
+        />
+      </Box>
     </DefaultScreen>
   )
 }

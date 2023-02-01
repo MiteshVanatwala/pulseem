@@ -206,7 +206,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         alignContent: 'center'
     },
     dashed: {
-        border: '1px dashed #64a1bd'
+        border: '1px dashed #ff3343'
     },
     notificationTop: {
         justifyItems: 'flex-start',
@@ -324,7 +324,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginBottom: '0px'
     },
     deviceSelectorPanel: {
-        maxWidth: '200px',
+        maxWidth: 'calc(100% - 10px)',
         backgroundColor: 'transparent',
         boxShadow: 'none'
     },
@@ -524,6 +524,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         color: '#48a148',
         stroke: '#48a148 !important'
     },
+    borderPrimary: {
+        border: '1px solid #ff3343',
+    },
     borderBlue: {
         border: '1px solid #1c82b2',
     },
@@ -550,18 +553,18 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     dropDown: {
         marginLeft: 5,
         alignSelf: 'flex-end',
-        border: '1px solid #1c82b2',
+        border: '1px solid #ff3343',
         borderRadius: '.2rem',
         padding: 3,
         height: 28,
         '& .MuiSelect-selectMenu': {
-            color: '#1c82b2 !important',
+            color: '#ff3343 !important',
             '&:focus': {
                 // backgroundColor: '#fff'
             }
         },
         '& .MuiSelect-icon': {
-            color: '#1c82b2 !important'
+            color: '#ff3343 !important'
         }
     },
     groupFilterRow: {
@@ -584,7 +587,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: 36,
         fontSize: 24,
         '& .MuiButton-label': {
-            color: '#1c82b2'
+            color: '#ff3343'
         }
     },
     padding10: {

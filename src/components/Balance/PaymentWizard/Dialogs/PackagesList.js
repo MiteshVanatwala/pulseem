@@ -21,11 +21,9 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
         return (
             packageList[packageType].data &&
             <>
-                {/* {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />} */}
                 <Grid item xs={12}>
-                    <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{packageList[packageType].title}</Typography>
+                    <Typography>{packageList[packageType].description}</Typography>
                     <Divider />
-                    <Typography className={classes.mt3}>{packageList[packageType].description}</Typography>
                 </Grid>
                 {
                     packageList[packageType].data.sort((a, b) => a.Quantity - b.Quantity).map((d, index) => {

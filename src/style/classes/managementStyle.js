@@ -83,10 +83,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   managementTitle: {
     fontSize: windowSize === "xs" ? 20 : 29,
-    // paddingBlock: "0.5rem",
     fontFamily: "Assistant",
     fontWeight: "bold",
-    marginTop: 20,
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
     fontWeight: 300,
     color: '#4D4D4D'
@@ -947,11 +945,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   gruopsDialogButton: {
     alignSelf: "center",
     fontFamily: "OpenSansHebrew",
-    color: "#fff",
     textTransform: "capitalize",
     width: 400,
-    fontSize: 16,
-    borderRadius: 100,
+    fontSize: '0.875rem',
   },
   gruopsDialogBullet: {
     fontSize: 8,
@@ -969,9 +965,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flex: 1,
     height: 300,
     width: 600,
-    border: "1px solid #8b8b8b",
+    border: '2px solid #d9d9d9',
+    padding: 15,
     overflowY: "auto",
-    padding: 5,
     marginBlock: 10,
   },
   grayTextCell: {
@@ -1166,10 +1162,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
   },
   scriptCode: {
-    background: "#eee",
+    background: '#1e1b1b',
+    color: '#ff9467',
+    padding: 10,
     fontSize: 12,
     wordBreak: "break-all",
     overflow: "auto",
+    borderRadius: 10
   },
   verificationTitle: {
     fontWeight: "bold",
@@ -1281,7 +1280,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   link: {
     textDecoration: 'underline',
     margin: '0 5px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    textUnderlineOffset: '4px',
+    "&:hover": {
+      textDecoration: 'none',
+    }
   },
   popperPaper: {
     padding: "5px 0",
@@ -1989,8 +1992,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   implementButtonFlex: {
     maxHeight: '45',
-    marginTop: 'auto',
-    marginBottom: 15,
+    marginBottom: 5,
+    marginRight: 5,
     marginInlineStart: 'auto',
     lineHeight: windowSize === 'xs' ? 1 : null,
   },

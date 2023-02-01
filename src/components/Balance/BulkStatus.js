@@ -9,18 +9,20 @@ import clsx from 'clsx';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { Dialog } from '../Popup/Dialog';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon, NewBubbleIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
+import useCore from '../../helpers/hooks/Core';
+import { BaseDialog } from '../DialogTemplates/BaseDialog';
 
-const BulkStatus = ({ classes }) => {
+const BulkStatus = () => {
   const { billingTypeId, accountFeatures, accountSettings, isRTL } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
-  const [selectedPackageType, setPackageType] = useState(1);
+  const [selectedPackageType, setPackageType] = useState({ type: 1, title: '' });
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { classes } = useCore()
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
 
@@ -61,31 +63,33 @@ const BulkStatus = ({ classes }) => {
   }
 
   const renderPackagesDialog = () => {
-    if (isOpenPackageDialog === true && accountSettings !== null) {
+    if (isOpenPackageDialog && accountSettings !== null) {
       let dialog = {};
       let availablePack = null;
 
-      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType === -1 || !accountSettings.Account.IsPaying) {
+      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account.IsPaying) {
         dialog = renderBillingSupportDialog();
       }
       else {
         dialog = renderPackagesListDialog();
-        availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
+        availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType.type });
       }
 
       const options = {
-        Classes: classes,
-        Open: isOpenPackageDialog,
-        OnCancel: handleDialogClose,
-        OnClose: handleDialogClose,
-        OnConfirm: handleDialogClose,
+        classes: classes,
+        open: isOpenPackageDialog,
+        title: selectedPackageType.title,
+        onCancel: handleDialogClose,
+        onClose: handleDialogClose,
+        onConfirm: handleDialogClose,
         ShowDefaultButtons: false,
         Style: availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null,
-        Children: dialog.content
+        children: dialog.content,
+        paperStyle: classes.packageDialogPpaper
       }
 
       return (
-        <Dialog {...options}></Dialog>
+        <BaseDialog {...options}></BaseDialog>
       );
     }
   }
@@ -125,7 +129,7 @@ const BulkStatus = ({ classes }) => {
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PurchaseWizard classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
+          <PurchaseWizard classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType.type} />
         </Grid >
       )
     };
@@ -142,8 +146,8 @@ const BulkStatus = ({ classes }) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
     dispatch(setAccountFeatures(settings.payload));
     if (!settings.payload.Account.IsPaying) {
-      packageType = -1;
-      setPackageType(-1);
+      packageType = { type: -1, title: '' };
+      setPackageType(packageType);
     }
     else {
       setPackageType(packageType);
@@ -196,7 +200,7 @@ const BulkStatus = ({ classes }) => {
                 {getBillingTypeText(Newsletters)}
               </Typography>
             </Box>
-            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType(3)}>
+            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 2, title: t('dashboard.purchaseNewsletter') })}>
               <Button className={clsx(classes.btn, classes.btnRounded, !isAllowNewsletter() ? classes.btnDisabled : '')}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -223,7 +227,7 @@ const BulkStatus = ({ classes }) => {
                 {getBillingTypeText(Sms)}
               </Typography>
             </Box>
-            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType(3)}>
+            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 3, title: t('dashboard.purchaseSms') })}>
               <Button className={clsx(classes.btn, classes.btnRounded, !isAllowSms() ? classes.btnDisabled : '')}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

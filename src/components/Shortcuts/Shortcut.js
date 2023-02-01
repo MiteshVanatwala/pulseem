@@ -254,9 +254,6 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         <Button
           variant='contained'
           color='primary'
-          onClick={() => {
-            Redirect({ url: data.ShortcutUrl })
-          }}
           classes={{
             label: classes.shortcutLabel,
             root: classes.shortcutButton
@@ -269,13 +266,17 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
               {'\uE09C'}
             </IconButton>
             }
-            <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5, classes.flex1,)}>{t(data.CategoryName)}</Typography>
+            <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5, classes.flex1,)} onClick={() => {
+              Redirect({ url: data.ShortcutUrl })
+            }}>{t(data.CategoryName)}</Typography>
             <Link className={'deleteShortcut'} style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
               onClick={deleteShortcut}
             ><CgCloseO /></Link>
           </Box>
           <Divider />
-          <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
+          <Typography align='center' className={classes.pageTitle} onClick={() => {
+            Redirect({ url: data.ShortcutUrl })
+          }}>{t(data.ShortcutName)}</Typography>
         </Button>
         {renderShortcutMenu(data.ID, true, index)}
       </Box>

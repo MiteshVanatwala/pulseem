@@ -67,10 +67,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       bottom: 0
     },
     '& .rightSvg': {
-      right: 0
+      right: 0,
+      transform: isRTL ? 'scaleX(-1)' : 'scaleX(1)'
     },
     '& .leftSvg': {
-      left: 0
+      left: 0,
+      transform: isRTL ? 'scaleX(-1)' : 'scaleX(1)'
     }
   },
   appBody: {
@@ -98,6 +100,28 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&::-webkit-scrollbar-thumb:hover": {
       background: "#999",
     },
+    '& *': {
+      "&::-webkit-scrollbar": {
+        display: "block !important",
+        width: 6,
+        height: 6,
+      },
+      /* Track */
+      "&::-webkit-scrollbar-track": {
+        boxShadow: "inset 0 0 0px",
+        borderRadius: 10,
+        backgroundColor: "#fff !important",
+      },
+      /* Handle */
+      "&::-webkit-scrollbar-thumb": {
+        background: "#ccc",
+        borderRadius: 10,
+      },
+      /* Handle on hover */
+      "&::-webkit-scrollbar-thumb:hover": {
+        background: "#999",
+      },
+    }
   },
   dialogCustomSize: {
     height: "40vh",
@@ -170,9 +194,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "1.3rem",
     }
   },
+  packageDialogPpaper: {
+    background: '#ffe6e0c4'
+  },
   dialogChildren: {
     marginBlock: 20,
-    paddingRight: summaryPadding[windowSize],
+    marginTop: 5,
+    paddingRight: `${summaryPadding[windowSize]}px !important`,
     paddingLeft: summaryPadding[windowSize],
     overflowY: "auto",
   },
@@ -196,8 +224,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogIconContent: {
     fontFamily: "pulseemicons",
     color: "#fff",
-    fontSize: 30,
-    padding: 5,
+    fontSize: 25,
+    '&.unicode': {
+      fontSize: 20
+    }
+    // padding: 5,
   },
   dialogAlertIcon: {
     fontSize: 28,
@@ -474,6 +505,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   line1: {
     lineHeight: 1,
   },
+  colrPrimary: {
+    color: '#ff3343'
+  },
   bgWhite: {
     backgroundColor: "#ffffff !important",
   },
@@ -580,6 +614,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#157eaf",
     fontSize: 30,
   },
+  packageBoxTitle: {
+    color: "#f5370d",
+  },
   blue: {
     color: "#0a74a9",
   },
@@ -602,6 +639,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "#fff",
     boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
     padding: 5,
+  },
+  packageBox: {
+    borderRadius: 30,
+    background: 'linear-gradient(145deg, #fff3f3, #ffc2b0)',
+    boxShadow: '5px 5px 10px #999999, -5px -5px 10px #ffffff',
+    padding: 5,
+  },
+  packageBoxQty: {
+    color: '#fff',
+    fontSize: '1.1rem',
+    fontWeight: '600'
   },
   mt1: {
     marginTop: 5,
@@ -680,7 +728,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     position: 'ralative'
   },
   borderBox: {
-    border: "3px solid #0371ad",
+    // border: "3px solid #0371ad",
     margin: "1rem",
     display: "flex",
     padding: "1rem",
@@ -805,6 +853,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: '2px 10px',
     fontWeight: 'bold',
     background: '#fff',
+    maxWidth: 250,
     color: '#000',
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
@@ -819,7 +868,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#FF0054'
     },
     '& .MuiButton-startIcon': {
-      marginTop: '-2px'
+      marginTop: '-2px',
+      width: 30
+    },
+    '& .MuiButton-endIcon': {
+      width: 30
     }
   },
 
@@ -1760,6 +1813,65 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
 
+  editorCont: {
+    marginTop: 40,
+    marginBottom: 50,
+    background: '#fff',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    '& .mgmtTitle': {
+      fontSize: 22
+    },
+    '& .containerBody': {
+      paddingInline: 20,
+      paddingTop: 20,
+      border: "2px solid #F0F5FF",
+
+      '& .stepHead': {
+        fontSize: 20,
+        display: 'flex',
+        '& .stepNum': {
+          padding: '6px 12px',
+          fontWeight: 700,
+          background: 'red',
+          color: '#fff',
+          // alignSelf: 'center'
+        },
+        '& .stepTitle': {
+          // paddingInline: '6px',
+          // alignSelf: 'center'
+          // background: 'red',
+          marginLeft: 5,
+          margin: 'auto'
+        },
+        '& .stepDesc': {
+          fontSize: 20,
+          margin: 'auto',
+          marginInline: 5,
+          "@media screen and (max-width: 768px)": {
+            fontSize: 15,
+          },
+        }
+      },
+      '& .bodyBlock': {
+        paddingInline: 10
+      },
+      '& .textBoxWrapper': {
+        // paddingTop: 30,
+        '& .MuiTypography-body1': {
+          color: '#979797'
+        },
+        '& .MuiTextField-root': {
+          paddingBottom: 2,
+          maxWidth: 245,
+          '& input': {
+            padding: 0
+          }
+        }
+      }
+    }
+  },
+
   settingsContainer: {
     marginBottom: 68,
     background: '#fff',
@@ -2448,13 +2560,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   dialogTopBar: {
-    height: "auto",
+    height: 36,
     padding: "2px 0px 0 6px",
     color: "#fff",
     fontWeight: 600,
     textTransform: "capitalize",
-
-    height: 'auto',
     background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)'
   },
   dialogExitButton: {
@@ -2496,6 +2606,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 5,
     margin: "1rem",
     padding: "1rem",
+    paddingTop: 0,
     paddingBottom: 0,
     minWidth: dialogWidth[windowSize],
     "& $notification": {
@@ -2706,6 +2817,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflowX: 'hidden',
     overflowY: 'scroll',
 
+  },
+  checkbox: {
+    '&.MuiCheckbox-root': {
+      color: '#FF3343',
+      '&$checked': {
+        color: 'FF3343',
+      },
+    },
   },
   switchButton: {
     background: '#e4e4e4',

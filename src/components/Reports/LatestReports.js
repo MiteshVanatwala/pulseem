@@ -225,7 +225,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                   <>
 
                     {index === 0 && <Divider />}
-                    <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
+                    <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
                       <Box className={clsx(classes.flex2, classes.paddingSides15)}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
                           <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f16, classes.ellipsisText, classes.graphCampaignName)}>

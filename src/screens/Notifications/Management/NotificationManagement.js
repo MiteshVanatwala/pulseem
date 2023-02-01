@@ -190,6 +190,7 @@ const NotificationManagement = ({ classes }) => {
         classes={classes}
         open={showScriptDialog}
         onClose={() => setShowScriptDialog(false)}
+        onCancel={() => setShowScriptDialog(false)}
         {...dialog}>
         {dialog.content}
       </BaseDialog>
@@ -720,6 +721,7 @@ const NotificationManagement = ({ classes }) => {
     return {
       childrenStyle: classes.previewPaper,
       showDivider: false,
+      title: <><b>{t('common.campaignID')}</b>:&nbsp;{data?.SMSCampaignID || data?.MmsCampaignID || data?.ID || ''}</>,
       icon: (
         <div className={classes.dialogIconContent}>
           {'\uE0F8'}
@@ -743,7 +745,9 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}>
           {t('common.confirm')}
         </Button>
@@ -776,7 +780,9 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}>
           {t('common.Ok')}
         </Button>
@@ -791,7 +797,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.restoreTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE185'}
         </div>
       ),
@@ -821,30 +827,25 @@ const NotificationManagement = ({ classes }) => {
       title: null,
       renderTitle: () => (
         <Box className={classes.myGroupsTitleSection}>
-          <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
-          <Link
-            className={clsx(classes.f15, classes.bold, classes.mt1)}
-            component="button"
-            color="textPrimary"
-            underline="always"
-            onClick={() => {
-              setDialogType({
-                type: 'createGroup',
-                data: {}
-              })
-            }}>
-            {t('notifications.howToCreateGroup')}
-          </Link>
+          <Typography className={classes.dialogTitle}>{t('notifications.myGroups') + " ("}</Typography>
+          {" "}
+          <Typography className={clsx(classes.dialogTitle, classes.link, classes.bold)} onClick={() => {
+            setDialogType({
+              type: 'createGroup',
+              data: {}
+            })
+          }}> {t('notifications.howToCreateGroup')}? </Typography>
+          {" )"}
         </Box>
       ),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, classes.mt1, 'unicode')}>
           {'\uE0D5'}
         </div>
       ),
       content: (
-        <Box className={classes.dialogBox}>
+        <Box className={clsx(classes.dialogBox, classes.pt0)}>
           <Table>
             <TableHead >
               <TableRow>
@@ -879,7 +880,8 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded
           )}>
           {t('common.Ok')}
         </Button>
@@ -893,12 +895,24 @@ const NotificationManagement = ({ classes }) => {
       paperStyle: classes.maxWidth540,
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0D5'}
         </div>
       ),
       content: (
         <Box className={classes.dialogBox}>
+          <Button
+            onClick={handleShowGroups}
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+              classes.f12,
+            )}
+            startIcon={!isRTL ? <MdArrowBackIos size={14} /> : <MdArrowForwardIos size={14} />}
+            style={{ position: 'absolute', top: 60 }}
+          >
+            {t('notifications.back')}
+          </Button>
           <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
           <Typography variant='body'>{t('common.pulseemLink')}</Typography>
@@ -929,7 +943,8 @@ const NotificationManagement = ({ classes }) => {
           onClick={handleDialogClose}
           className={clsx(
             classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
           )}>
           {t('common.confirm')}
         </Button>
@@ -943,7 +958,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.groupsByIdTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0D5'}
         </div>
       ),
@@ -983,7 +998,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.deleteTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0D2'}
         </div>
       ),
@@ -1006,7 +1021,7 @@ const NotificationManagement = ({ classes }) => {
       title: t('notifications.duplicateTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE038'}
         </div>
       ),
@@ -1059,19 +1074,15 @@ const NotificationManagement = ({ classes }) => {
   }
   const renderImplement = () => {
     return {
-      title: null,
+      title: t('notifications.implementDialog.beforeYouStarted'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\u005E'}
         </div>
       ),
       content: (
-        <Box className={classes.dialogBox}>
-          <Typography
-            className={classes.f28}>
-            {t('notifications.implementDialog.beforeYouStarted')}
-          </Typography>
+        <Box className={clsx(classes.pt0, classes.dialogBox)}>
           <Typography
             className={clsx(classes.f20, classes.pb10)}>
             {t('notifications.implementDialog.startSendingOutMessage')}
@@ -1080,6 +1091,7 @@ const NotificationManagement = ({ classes }) => {
             1. {t('notifications.downloadThe')}
             <a
               download="service-worker.js"
+              className={clsx(classes.link, classes.colrPrimary)}
               href={process.env.PUBLIC_URL + '/assets/scripts/service-worker.js'}>
               {t('notifications.attachedScript')}
             </a>
@@ -1108,23 +1120,23 @@ const NotificationManagement = ({ classes }) => {
           </Grid>
           {scriptDirectory === 1 ?
             <Box>
-              <Box className={classes.directoryField}>
+              <Box className={clsx(classes.directoryField)}>
                 <Typography className={classes.f16}>
-                  {t("notifications.enterDirectory")}
-                </Typography>
-                <Typography
-                  variant="body2" className={classes.f16}>
-                  {t("notifications.example")}: /examplefolder1/examplefodler2/
+                  {t("notifications.enterDirectory") + ':'}
                 </Typography>
               </Box>
               <TextField
                 variant="outlined"
                 size="small"
                 fullWidth
-                className={classes.maxWidth400}
+                className={clsx(classes.textField, classes.maxWidth400)}
                 onChange={handleScriptPathChange}
                 value={scriptPath}
               />
+              <Typography
+                variant="body2" className={classes.f14}>
+                {t("notifications.example")}: /examplefolder1/examplefodler2/
+              </Typography>
             </Box> : null}
           <hr />
           <Typography className={classes.f18}>
@@ -1165,8 +1177,8 @@ const NotificationManagement = ({ classes }) => {
               control={
                 <Checkbox
                   checked={scriptDialog}
+                  className={classes.checkbox}
                   onChange={() => handleDontShowAgain(!scriptDialog)}
-                  color="primary"
                 />
               }
               label={t('notifications.implementDialog.dontShowThisMessage')} />
@@ -1177,7 +1189,8 @@ const NotificationManagement = ({ classes }) => {
             onClick={() => setShowScriptDialog(false)}
             className={clsx(
               classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
+              classes.btn,
+              classes.btnRounded
             )}>
             {t('common.Ok')}
           </Button>
@@ -1241,6 +1254,7 @@ const NotificationManagement = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleDialogClose}
+        onCancel={handleDialogClose}
         {...dialog}>
         {dialog.content}
       </BaseDialog>);

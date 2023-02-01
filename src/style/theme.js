@@ -22,7 +22,7 @@ export const getTheme = (language) => {
       direction,
       palette: {
         primary: {
-          main: "#0371ad",
+          main: "#ff3343",
         },
       },
       overrides: {
