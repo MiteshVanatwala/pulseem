@@ -73,16 +73,6 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 onSaveUserBlock(jsonFile, json);
             }
         },
-        rowConfiguration: {
-            emptyRows: true,
-            defaultRows: false,
-            externalContentURLs: [{
-                name: "Saved Rows",
-                value: "saved-rows",
-                handle: "saved-rows",
-                isLocal: true,
-            }]
-        },
         contentDialog: {
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
