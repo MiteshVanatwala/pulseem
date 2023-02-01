@@ -55,6 +55,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
             emptyRows: true,
             defaultRows: false,
         },
+        workspace:{
+            type: 'mixed',
+        },
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
@@ -69,6 +72,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
                 //const rowName = json.metadata.name;
                 onSaveUserBlock(jsonFile, json);
             }
+        },
+        rowConfiguration: {
+            emptyRows: true,
+            defaultRows: false,
+            externalContentURLs: [{
+                name: "Saved Rows",
+                value: "saved-rows",
+                handle: "saved-rows",
+                isLocal: true,
+            }]
         },
         contentDialog: {
             saveRow: {
