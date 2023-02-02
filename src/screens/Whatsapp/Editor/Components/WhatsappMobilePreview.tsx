@@ -104,9 +104,9 @@ const WhatsappMobilePreview = ({
 											</div>
 											<div className='name'>
 												<span>
-													{username?.length <= 10
+													{username?.length <= 6
 														? username
-														: `${username?.substring(0, 10)}...`}
+														: `${username?.substring(0, 6)}...`}
 												</span>
 												<span className='status'>
 													<>{translator('whatsapp.online')}</>
