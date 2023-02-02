@@ -943,7 +943,7 @@ const NewsLetterWizard = ({ classes }) => {
                                 control={
                                     <Checkbox
                                         checked={hideCautionNewMessage}
-                                        onChange={() => handleHideOldCautionMessage(!hideCautionNewMessage)}
+                                        onChange={() => handleHideNewCautionMessage(!hideCautionNewMessage)}
                                         name="checkedB"
                                         color="primary"
                                     />
