@@ -327,6 +327,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const renderCellIcons = (row) => {
     const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive, IsNewEditor } = row
 
+    const cautionPopup = getCookie('showCautionDuplicateCampaign');
+    const showCautionNewEditor = !IsNewEditor && (cautionPopup !== "false" ?? false);
+
     const renderCopyToClipoard = (
       showCopied === CampaignID ?
         <PopMassage
@@ -381,7 +384,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType(
-            !IsNewEditor && getCookie('O2NedtrPopup') && getCookie('O2NedtrPopup') !== "false" ?
+            // !IsNewEditor && getCookie('O2NedtrPopup') && getCookie('O2NedtrPopup') !== "false" ?
+            showCautionNewEditor ?
               {
                 type: 'cautionEditorChange',
                 data: { CampaignID: CampaignID }
@@ -680,10 +684,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const handleHideDuplicateCationMessage = (e) => {
     setHideDuplicateCautionMessage(e);
     if (e === true) {
-      setCookie("O2NedtrPopup", "false");
+      setCookie("showCautionDuplicateCampaign", "false");
     }
     else {
-      setCookie("O2NedtrPopup", "true");
+      setCookie("showCautionDuplicateCampaign", "true");
     }
   }
 

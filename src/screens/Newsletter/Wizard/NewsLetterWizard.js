@@ -393,20 +393,20 @@ const NewsLetterWizard = ({ classes }) => {
     const handleHideNewCautionMessage = (e) => {
         setHideCautionNewMessage(e);
         if (e === true) {
-            setCookie("O2NedtrPopupNw", "false");
+            setCookie("showCautionOldEditor", "false");
         }
         else {
-            setCookie("O2NedtrPopupNw", "true");
+            setCookie("showCautionOldEditor", "true");
         }
     }
 
     const handleHideOldCautionMessage = (e) => {
         setHideCautionOldMessage(e);
         if (e === true) {
-            setCookie("N2OedtrPopupNw", "false");
+            setCookie("showCautionNewEditor", "false");
         }
         else {
-            setCookie("N2OedtrPopupNw", "true");
+            setCookie("showCautionNewEditor", "true");
         }
     }
 
@@ -827,6 +827,8 @@ const NewsLetterWizard = ({ classes }) => {
 
     const renderButtons = () => {
         const wizardButtons = [];
+        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false"
+        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false"
         if (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
             wizardButtons.push(<>
                 <Button
@@ -860,7 +862,7 @@ const NewsLetterWizard = ({ classes }) => {
         else {
             if (id !== null && campaingnValues.IsNewEditor === true) {
                 wizardButtons.push(<Button
-                    onClick={() => getCookie('O2NedtrPopupNw') && getCookie('O2NedtrPopupNw') !== "false" ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, true)}
+                    onClick={() => handleSubmit(true, false, true)}
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -874,7 +876,7 @@ const NewsLetterWizard = ({ classes }) => {
             }
             else {
                 wizardButtons.push(<><Button
-                    onClick={() => getCookie('N2OedtrPopupNw') !== "false" ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, false)}
+                    onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -886,7 +888,7 @@ const NewsLetterWizard = ({ classes }) => {
                     color="primary"
                 >{t('common.saveAndContinue')}</Button>
                     {(id === null || id === undefined) && <Button
-                        onClick={() => getCookie('O2NedtrPopupNw') !== "false" ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, true)}
+                        onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
                         variant='contained'
                         size='medium'
                         className={clsx(
@@ -953,7 +955,7 @@ const NewsLetterWizard = ({ classes }) => {
                 </Grid>
             ),
             onConfirm: async () => {
-                handleSubmit(true, false, true)
+                handleSubmit(true, false, false)
                 setDialogType(null)
             }
         }
@@ -1009,7 +1011,7 @@ const NewsLetterWizard = ({ classes }) => {
                 </Grid>
             ),
             onConfirm: async () => {
-                handleSubmit(true, false, false)
+                handleSubmit(true, false, true)
                 setDialogType(null)
             }
         }
