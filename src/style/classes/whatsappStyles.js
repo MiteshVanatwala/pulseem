@@ -1024,7 +1024,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
 	},
 	WhatsappCampainNotice: {
-		textAlign: isRTL ? 'center' : 'right',
+		textAlign: 'center',
 		color: '#b11515',
 		fontWeight: 'bolder',
 		flex: isRTL ? '2 !important' : 'unset',

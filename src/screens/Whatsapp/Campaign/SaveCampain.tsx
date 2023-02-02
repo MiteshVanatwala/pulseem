@@ -650,7 +650,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				<Grid item className={classes.WhatsappCampainNotice}>
 					<>{translator('whatsappCampaign.note')}</>
 					<br />
-					<span style={isRTL ? { marginRight: 180 } : { marginRight: 300 }}>
+					<span>
 						<>{translator('whatsappCampaign.checkLimit')}</>{' '}
 						<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
 							<>{translator('whatsappCampaign.here')}</>
