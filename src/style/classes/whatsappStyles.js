@@ -2501,11 +2501,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: 'black',
 	},
 	whatsappCampaignStatusCreated: {
-		color: '#27AE60',
+		color: '#0371AD',
 		fontWeight: 700,
 	},
 	whatsappCampaignStatusFinished: {
-		color: '#0371AD',
+		color: '#27AE60',
 		fontWeight: 700,
 	},
 	whatsappCampaignStatusCanceled: {
