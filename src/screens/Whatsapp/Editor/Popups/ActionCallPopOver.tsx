@@ -64,7 +64,7 @@ const ActionCallPopOver = ({
 				if (r.id !== row.id) return r;
 				const updatedFields = r.fields.map((f: callToActionFieldProps) => {
 					if (field.fieldName === f.fieldName) {
-						if (field.fieldName !== 'Phone Number')
+						if (field.fieldName !== 'whatsapp.phoneNumber')
 							return { ...f, value: e.target.value };
 						return { ...f, value: e.target.value?.replace(/\D/g, '') };
 					}
@@ -156,16 +156,16 @@ const ActionCallPopOver = ({
 														type={field.type}
 														name={field.fieldName}
 														inputProps={
-															field.fieldName === 'Phone Number'
+															field.fieldName === 'whatsapp.phoneNumber'
 																? {
 																		maxLength: 20,
 																  }
-																: field.fieldName === 'Website URL'
+																: field.fieldName === 'whatsapp.websiteURL'
 																? { maxLength: 2000 }
 																: { maxLength: 20 }
 														}
 														helperText={
-															field.fieldName === 'Website URL'
+															field.fieldName === 'whatsapp.websiteURL'
 																? `${field.value?.length || 0}/${2000}`
 																: `${field.value?.length || 0}/${20}`
 														}
