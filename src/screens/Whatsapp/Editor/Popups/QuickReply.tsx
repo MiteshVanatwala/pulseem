@@ -47,9 +47,9 @@ const QuickReply = ({
 		typeOfAction: '',
 		fields: [
 			{
-				fieldName: translator('whatsapp.websiteButtonText'),
+				fieldName: 'whatsapp.websiteButtonText',
 				type: 'text',
-				placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+				placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 				value: '',
 			},
 		],

@@ -165,25 +165,23 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
 		switch (buttonType) {
-			case buttonTypes.QUICK_REPLY:
+			case 'quickReply':
 				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
 						typeOfAction: '',
 						fields: [
 							{
-								fieldName: translator('whatsapp.websiteButtonText'),
+								fieldName: 'whatsapp.websiteButtonText',
 								type: 'text',
-								placeholder: translator(
-									'whatsapp.websiteButtonTextPlaceholder'
-								),
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 								value: button.title,
 							},
 						],
 					};
 				});
 				return buttonData ? buttonData : [];
-			case buttonTypes.CALL_TO_ACTION:
+			case 'callToAction':
 				buttonData = data?.map((button: buttonsDataProps) => {
 					if (button?.type === 'PHONE') {
 						return {
@@ -191,23 +189,21 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							typeOfAction: 'phonenumber',
 							fields: [
 								{
-									fieldName: translator('whatsapp.phoneButtonText'),
+									fieldName: 'whatsapp.phoneButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.phoneButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.country'),
+									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
 									value: '+972 Israel',
 								},
 								{
-									fieldName: translator('whatsapp.phoneNumber'),
+									fieldName: 'whatsapp.phoneNumber',
 									type: 'tel',
-									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
 									value: button.phone,
 								},
 							],
@@ -218,17 +214,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							typeOfAction: 'website',
 							fields: [
 								{
-									fieldName: translator('whatsapp.websiteButtonText'),
+									fieldName: 'whatsapp.websiteButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.websiteButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.websiteURL'),
+									fieldName: 'whatsapp.websiteURL',
 									type: 'text',
-									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
 							],

@@ -87,55 +87,49 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
-	const websiteField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.websiteButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.websiteURL'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteURLPlaceholder'),
-				value: '',
-			},
-		],
-		[translator]
-	);
-	const phoneNumberField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.phoneButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.country'),
-				type: 'select',
-				placeholder: 'Select Your Country Code',
-				value: '+972 Israel',
-			},
-			{
-				fieldName: translator('whatsapp.phoneNumber'),
-				type: 'tel',
-				placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-				value: '',
-			},
-		],
-		[translator]
-	);
+	const websiteField = [
+		{
+			fieldName: 'whatsapp.websiteButtonText',
+			type: 'text',
+			placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+			value: '',
+		},
+		{
+			fieldName: 'whatsapp.websiteURL',
+			type: 'text',
+			placeholder: 'whatsapp.websiteURLPlaceholder',
+			value: '',
+		},
+	];
+	const phoneNumberField = [
+		{
+			fieldName: 'whatsapp.phoneButtonText',
+			type: 'text',
+			placeholder: 'whatsapp.phoneButtonTextPlaceholder',
+			value: '',
+		},
+		{
+			fieldName: 'whatsapp.country',
+			type: 'select',
+			placeholder: 'Select Your Country Code',
+			value: '+972 Israel',
+		},
+		{
+			fieldName: 'whatsapp.phoneNumber',
+			type: 'tel',
+			placeholder: 'whatsapp.phoneNumberPlaceholder',
+			value: '',
+		},
+	];
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
 			typeOfAction: '',
 			fields: [
 				{
-					fieldName: translator('whatsapp.websiteButtonText'),
+					fieldName: 'whatsapp.websiteButtonText',
 					type: 'text',
-					placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 					value: '',
 				},
 			],
@@ -349,11 +343,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						typeOfAction: '',
 						fields: [
 							{
-								fieldName: translator('whatsapp.websiteButtonText'),
+								fieldName: 'whatsapp.websiteButtonText',
 								type: 'text',
-								placeholder: translator(
-									'whatsapp.websiteButtonTextPlaceholder'
-								),
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 								value: button.title,
 							},
 						],
@@ -368,23 +360,21 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							typeOfAction: 'phonenumber',
 							fields: [
 								{
-									fieldName: translator('whatsapp.phoneButtonText'),
+									fieldName: 'whatsapp.phoneButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.phoneButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.country'),
+									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
 									value: '+972 Israel',
 								},
 								{
-									fieldName: translator('whatsapp.phoneNumber'),
+									fieldName: 'whatsapp.phoneNumber',
 									type: 'tel',
-									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
 									value: button.phone,
 								},
 							],
@@ -395,17 +385,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							typeOfAction: 'website',
 							fields: [
 								{
-									fieldName: translator('whatsapp.websiteButtonText'),
+									fieldName: 'whatsapp.websiteButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.websiteButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.websiteURL'),
+									fieldName: 'whatsapp.websiteURL',
 									type: 'text',
-									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
 							],
@@ -646,27 +634,28 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			customPadding={true}
 			containerClass={null}>
 			{renderToast()}
-			<Grid container justifyContent='space-between' alignItems='center'>
-				<Title
-					Text={translator('whatsappCampaign.header')}
-					Classes={classes.WhatsappCampainP1Title}
-					ContainerStyle={{}}
-					Element={null}
-				/>
-				<Box>
-					<div style={{ textAlign: 'right', color: '#DC3D1B' }}>
-						<b>
-							<>{translator('whatsappCampaign.note')}</>
-							<br />
-							<span style={isRTL ? { marginRight: 180 } : { marginRight: 300 }}>
-								<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-								<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
-									<>{translator('whatsappCampaign.here')}</>
-								</a>
-							</span>
-						</b>
-					</div>
-				</Box>
+			<Grid
+				className={classes.WhatsappCampainHeaderWrapper}
+				container
+				alignItems='center'>
+				<Grid item>
+					<Title
+						Text={translator('whatsappCampaign.header')}
+						Classes={classes.WhatsappCampainP1Title}
+						ContainerStyle={{}}
+						Element={null}
+					/>
+				</Grid>
+				<Grid item className={classes.WhatsappCampainNotice}>
+					<>{translator('whatsappCampaign.note')}</>
+					<br />
+					<span>
+						<>{translator('whatsappCampaign.checkLimit')}</>{' '}
+						<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
+							<>{translator('whatsappCampaign.here')}</>
+						</a>
+					</span>
+				</Grid>
 			</Grid>
 			<br />
 			<form onSubmit={(e: BaseSyntheticEvent) => onSubmit(e)}>
@@ -722,8 +711,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 															| quickReplyButtonsFieldProps
 															| callToActionFieldProps
 													) =>
-														field.fieldName ===
-															translator('whatsapp.phoneButtonText') && (
+														(field.fieldName === 'whatsapp.websiteButtonText' ||
+															field.fieldName ===
+																'whatsapp.phoneButtonText') && (
 															<Box
 																key={button.id}
 																className={
@@ -746,6 +736,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								</div>
 								<Box className={classes.whatsappSmallInfoDiv}>
 									<span className={classes.textInfoWrapper}>
+										{isRTL && <>{linkCount}&nbsp;</>}
 										<span className={classes.textInfo}>
 											{linkCount === 1 ? (
 												<>{translator('whatsappCampaign.link')}</>
@@ -753,10 +744,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												<>{translator('whatsappCampaign.links')}</>
 											)}
 										</span>
-										&nbsp;{linkCount}
+										{!isRTL && <>&nbsp;{linkCount}</>}
 									</span>
 
 									<span className={classes.textInfoWrapper}>
+										{isRTL && <>{dynamicFieldCount}&nbsp;</>}
 										<span className={classes.textInfo}>
 											{dynamicFieldCount === 1 ? (
 												<>{translator('whatsappCampaign.dfield')}</>
@@ -764,15 +756,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												<>{translator('whatsappCampaign.dfields')}</>
 											)}
 										</span>
-										&nbsp;{dynamicFieldCount}
+										{!isRTL && <>&nbsp;{dynamicFieldCount}</>}
 									</span>
 
 									<span className={classes.textInfoWrapper}>
-										{/* {templateText?.length} */}
+										{isRTL && (
+											<>{templateData.templateText?.length}/1024&nbsp;</>
+										)}
 										<span className={classes.textInfo}>
 											<>{translator('whatsappCampaign.char')}</>
 										</span>
-										&nbsp;0/1024
+										{!isRTL && (
+											<>&nbsp;{templateData.templateText?.length}/1024</>
+										)}
 									</span>
 								</Box>
 							</Grid>
@@ -781,7 +777,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					<Grid className={classes.WhatsappCampainP1Right} item md={12} lg={6}>
 						<Grid container>
 							<Grid item xs={12} sm={12} md={12} lg={12}>
-								<Box>
+								<Box className={classes.WhatsappCampainMobilePreviewBox}>
 									<WhatsappMobilePreview
 										classes={classes}
 										campaignNumber='1'
@@ -791,8 +787,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									/>
 								</Box>
 							</Grid>
-							<Grid item xs={12} sm={12} md={12} lg={12}>
-								<Box className={classes.switchDiv}>
+							<Grid
+								className={classes.WhatsappCampainMobilePreviewBox}
+								item
+								xs={12}
+								sm={12}
+								md={12}
+								lg={12}>
+								<Box
+									className={clsx(classes.switchDiv, classes.testSendWrapper)}>
 									<FormGroup>
 										<Switch
 											checked={isTestSend}
@@ -808,9 +811,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 										<Typography style={{ fontSize: '18px' }}>
 											<>{translator('whatsappCampaign.tsend')}</>
 										</Typography>
-										<Typography
-											className={classes.descSwitch}
-											style={{ fontSize: '12px', marginTop: '-4px' }}>
+										<Typography className={classes.whatsappDescSwitch}>
 											<>{translator('whatsappCampaign.tsendDesc')}</>
 										</Typography>
 									</Box>
@@ -833,7 +834,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													/>
 												}
 												label={
-													<Typography style={{ fontSize: 18 }}>
+													<Typography style={{ fontSize: 16 }}>
 														<>{translator('whatsappCampaign.oneContact')}</>
 													</Typography>
 												}
@@ -881,7 +882,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 														/>
 													}
 													label={
-														<Typography style={{ fontSize: 18 }}>
+														<Typography style={{ fontSize: 16 }}>
 															<>{translator('whatsappCampaign.testGroups')}</>
 														</Typography>
 													}
@@ -941,6 +942,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				</Grid>
 				<Grid container>
 					<Buttons
+						displayBackButton={false}
 						classes={classes}
 						onFormButtonClick={(buttonName: string) =>
 							onFormButtonClick(buttonName)

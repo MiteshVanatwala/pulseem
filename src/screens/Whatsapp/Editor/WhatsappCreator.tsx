@@ -110,9 +110,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			typeOfAction: '',
 			fields: [
 				{
-					fieldName: translator('whatsapp.websiteButtonText'),
+					fieldName: 'whatsapp.websiteButtonText',
 					type: 'text',
-					placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 					value: '',
 				},
 			],
@@ -151,46 +151,40 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		QuickReply = 'quickReply',
 	}
 
-	const websiteField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.websiteButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.websiteURL'),
-				type: 'text',
-				placeholder: translator('whatsapp.websiteURLPlaceholder'),
-				value: '',
-			},
-		],
-		[translator]
-	);
-	const phoneNumberField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.phoneButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.country'),
-				type: 'select',
-				placeholder: 'Select Your Country Code',
-				value: '+972 Israel',
-			},
-			{
-				fieldName: translator('whatsapp.phoneNumber'),
-				type: 'tel',
-				placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-				value: '',
-			},
-		],
-		[translator]
-	);
+	const websiteField = [
+		{
+			fieldName: 'whatsapp.websiteButtonText',
+			type: 'text',
+			placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+			value: '',
+		},
+		{
+			fieldName: 'whatsapp.websiteURL',
+			type: 'text',
+			placeholder: 'whatsapp.websiteURLPlaceholder',
+			value: '',
+		},
+	];
+	const phoneNumberField = [
+		{
+			fieldName: 'whatsapp.phoneButtonText',
+			type: 'text',
+			placeholder: 'whatsapp.phoneButtonTextPlaceholder',
+			value: '',
+		},
+		{
+			fieldName: 'whatsapp.country',
+			type: 'select',
+			placeholder: 'Select Your Country Code',
+			value: '+972 Israel',
+		},
+		{
+			fieldName: 'whatsapp.phoneNumber',
+			type: 'tel',
+			placeholder: 'whatsapp.phoneNumberPlaceholder',
+			value: '',
+		},
+	];
 
 	const initialFieldRow = {
 		id: uniqid(),
@@ -260,11 +254,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						typeOfAction: '',
 						fields: [
 							{
-								fieldName: translator('whatsapp.websiteButtonText'),
+								fieldName: 'whatsapp.websiteButtonText',
 								type: 'text',
-								placeholder: translator(
-									'whatsapp.websiteButtonTextPlaceholder'
-								),
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 								value: button.title,
 							},
 						],
@@ -279,23 +271,21 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							typeOfAction: 'phonenumber',
 							fields: [
 								{
-									fieldName: translator('whatsapp.phoneButtonText'),
+									fieldName: 'whatsapp.phoneButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.phoneButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.country'),
+									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
 									value: '+972 Israel',
 								},
 								{
-									fieldName: translator('whatsapp.phoneNumber'),
+									fieldName: 'whatsapp.phoneNumber',
 									type: 'tel',
-									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
 									value: button.phone,
 								},
 							],
@@ -306,17 +296,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							typeOfAction: 'website',
 							fields: [
 								{
-									fieldName: translator('whatsapp.websiteButtonText'),
+									fieldName: 'whatsapp.websiteButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.websiteButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.websiteURL'),
+									fieldName: 'whatsapp.websiteURL',
 									type: 'text',
-									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
 							],
@@ -692,8 +680,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle?.includes('removalText')) {
 			setTemplateData({
 				...templateData,
-				templateText: `${templateData.templateText} ${isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
-					}`,
+				templateText: `${templateData.templateText} ${
+					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
+				}`,
 			});
 		}
 	};
@@ -853,7 +842,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	return (
-
 		<DefaultScreen
 			subPage={'create'}
 			currentPage='whatsapp'
@@ -927,6 +915,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						<Buttons
 							classes={classes}
 							onFormButtonClick={(buttonName) => onFormButtonClick(buttonName)}
+							displayBackButton={false}
 						/>
 					</Grid>
 				</Grid>

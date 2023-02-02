@@ -218,7 +218,7 @@ const Groups = ({
 					<Box className={classes.filterButtonsContainer}>
 						{selectedList.length > 0 && showFilter ? (
 							<Button
-								className={clsx(classes.formControl, classes.dropDown)}
+								className={clsx(classes.formControl, classes.whatsappDropDown)}
 								onClick={callbackReciFilter}
 								style={{
 									height: '36px',
@@ -254,7 +254,7 @@ const Groups = ({
 							<>{translator('sms.showTestGroups')}</>
 						</Button>
 						<FormControl
-							className={clsx(classes.formControl, classes.dropDown)}>
+							className={clsx(classes.formControl, classes.whatsappDropDown)}>
 							<Select
 								id='groupOrder'
 								value={sortBySelected}
@@ -271,7 +271,7 @@ const Groups = ({
 							}}
 							className={clsx(
 								classes.formControl,
-								classes.dropDown,
+								classes.whatsappDropDown,
 								classes.controlField
 							)}
 							onClick={() => {

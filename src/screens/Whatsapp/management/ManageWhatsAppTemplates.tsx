@@ -195,23 +195,29 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			</>
 		);
 	};
-	const renderStatusCell = (status: string) => {
+	const renderStatusCell = (status: string, rejectionReason: string) => {
 		return (
 			<>
 				<Typography
-					className={clsx(classes.middleText, classes.recipientsStatus, {
+					className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
 						[classes.recipientsStatusStopped]:
 							status === 'CreatedOnlyforPulseem',
-						[classes.recipientsStatusCreated]: status === 'Approved',
-						[classes.recipientsStatusSending]: status === 'Pending',
-						[classes.recipientsStatusSent]: status === 'Received',
-						[classes.recipientsStatusCanceled]: status === 'Rejected',
+						[classes.whatsappTemplateStatusApproved]: status === 'Approved',
+						[classes.whatsappTemplateStatusPending]: status === 'Pending',
+						[classes.whatsappTemplateStatusReceived]: status === 'Received',
+						[classes.whatsappTemplateStatusRejected]: status === 'Rejected',
 					})}>
 					<>
 						{statusesByName[status]
 							? translator(statusesByName[status])
 							: status}
 					</>
+					{status === 'Rejected' && (
+						<Typography
+							className={classes.whatsappTemplateStatusRejectedReason}>
+							{rejectionReason}
+						</Typography>
+					)}
 				</Typography>
 			</>
 		);
@@ -227,11 +233,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						typeOfAction: '',
 						fields: [
 							{
-								fieldName: translator('whatsapp.websiteButtonText'),
+								fieldName: 'whatsapp.websiteButtonText',
 								type: 'text',
-								placeholder: translator(
-									'whatsapp.websiteButtonTextPlaceholder'
-								),
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 								value: button.title,
 							},
 						],
@@ -246,23 +250,21 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							typeOfAction: 'phonenumber',
 							fields: [
 								{
-									fieldName: translator('whatsapp.phoneButtonText'),
+									fieldName: 'whatsapp.phoneButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.phoneButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.country'),
+									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
 									value: '+972 Israel',
 								},
 								{
-									fieldName: translator('whatsapp.phoneNumber'),
+									fieldName: 'whatsapp.phoneNumber',
 									type: 'tel',
-									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
 									value: button.phone,
 								},
 							],
@@ -273,17 +275,15 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							typeOfAction: 'website',
 							fields: [
 								{
-									fieldName: translator('whatsapp.websiteButtonText'),
+									fieldName: 'whatsapp.websiteButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.websiteButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.websiteURL'),
+									fieldName: 'whatsapp.websiteURL',
 									type: 'text',
-									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
 							],
@@ -635,8 +635,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			subPage={'manage'}
 			currentPage='whatsapp'
 			classes={classes}
-			customPadding={true}
-			containerClass={null}>
+			customPadding={false}
+			containerClass={clsx(classes.management, classes.mb50)}>
 			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.templateManagement')}
@@ -710,7 +710,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					container
 					spacing={2}
 					className={classes.manageTemplatesHeaderButtons}>
-					<div>
+					<div className={classes.manageTemplatesCreate}>
 						<Button className={'green'} onClick={onCreateTemplate}>
 							<>{translator('whatsappManagement.createTemplate')}</>
 						</Button>
@@ -781,7 +781,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 												classes={cellStyle}
 												align='center'
 												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderStatusCell(row.Status)}
+												{renderStatusCell(row.Status, row.RejectionReason)}
 											</TableCell>
 											<TableCell
 												component='th'

@@ -284,15 +284,16 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		return (
 			<>
 				<Typography
-					className={clsx(classes.middleText, classes.recipientsStatus, {
-						[classes.recipientsStatusCreated]:
+					className={clsx(classes.middleText, classes.whatsappCampaignStatus, {
+						[classes.whatsappCampaignStatusCreated]:
 							status === campaignStatuses.CREATED,
-						[classes.recipientsStatusSent]: status === campaignStatuses.SENDING,
-						[classes.recipientsStatusSending]:
+						[classes.whatsappCampaignStatusSending]:
+							status === campaignStatuses.SENDING,
+						[classes.whatsappCampaignStatusStopped]:
 							status === campaignStatuses.STOPPED,
-						[classes.recipientsStatusStopped]:
+						[classes.whatsappCampaignStatusFinished]:
 							status === campaignStatuses.FINISHED,
-						[classes.recipientsStatusCanceled]:
+						[classes.whatsappCampaignStatusCanceled]:
 							status === campaignStatuses.CANCELED,
 					})}>
 					<>
@@ -317,11 +318,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						typeOfAction: '',
 						fields: [
 							{
-								fieldName: translator('whatsapp.websiteButtonText'),
+								fieldName: 'whatsapp.websiteButtonText',
 								type: 'text',
-								placeholder: translator(
-									'whatsapp.websiteButtonTextPlaceholder'
-								),
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 								value: button.title,
 							},
 						],
@@ -336,23 +335,21 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							typeOfAction: 'phonenumber',
 							fields: [
 								{
-									fieldName: translator('whatsapp.phoneButtonText'),
+									fieldName: 'whatsapp.phoneButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.phoneButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.country'),
+									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
 									value: '+972 Israel',
 								},
 								{
-									fieldName: translator('whatsapp.phoneNumber'),
+									fieldName: 'whatsapp.phoneNumber',
 									type: 'tel',
-									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
 									value: button.phone,
 								},
 							],
@@ -363,17 +360,15 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							typeOfAction: 'website',
 							fields: [
 								{
-									fieldName: translator('whatsapp.websiteButtonText'),
+									fieldName: 'whatsapp.websiteButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.websiteButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.websiteURL'),
+									fieldName: 'whatsapp.websiteURL',
 									type: 'text',
-									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
 							],
@@ -783,8 +778,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			subPage={'manage'}
 			currentPage='whatsapp'
 			classes={classes}
-			customPadding={true}
-			containerClass={null}>
+			customPadding={false}
+			containerClass={clsx(classes.management, classes.mb50)}>
 			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.campaignManagement')}
@@ -885,7 +880,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					container
 					spacing={2}
 					className={classes.manageTemplatesHeaderButtons}>
-					<div>
+					<div className={classes.manageCampaignCreateAndRestore}>
 						<Button className={'green'} onClick={() => onCreateCamoaign()}>
 							<>{translator('whatsappManagement.createCampaign')}</>
 						</Button>

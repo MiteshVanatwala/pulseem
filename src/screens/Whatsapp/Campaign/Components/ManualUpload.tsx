@@ -163,7 +163,7 @@ const ManualUpload = ({
 				md={12}
 				xs={12}
 				className={
-					highlighted ? clsx(classes.greenManual) : clsx(classes.areaManual)
+					highlighted ? classes.whatsappGreenManual : classes.whatsappAreaManual
 				}>
 				<textarea
 					placeholder={translator('sms.dragXlOrCsv')}

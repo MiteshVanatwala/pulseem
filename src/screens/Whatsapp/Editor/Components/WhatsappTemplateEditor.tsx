@@ -149,7 +149,8 @@ const WhatsappTemplateEditor = ({
 						(button: quickReplyButtonProps | callToActionRowProps) =>
 							button?.fields.map(
 								(field: quickReplyButtonsFieldProps | callToActionFieldProps) =>
-									field.fieldName === 'Button Text' && (
+									(field.fieldName === 'whatsapp.websiteButtonText' ||
+										field.fieldName === 'whatsapp.phoneButtonText') && (
 										<Box
 											key={button.id}
 											className={classes.whatsappActionButtonsBox}>

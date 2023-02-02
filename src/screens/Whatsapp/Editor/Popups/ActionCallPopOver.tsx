@@ -64,7 +64,7 @@ const ActionCallPopOver = ({
 				if (r.id !== row.id) return r;
 				const updatedFields = r.fields.map((f: callToActionFieldProps) => {
 					if (field.fieldName === f.fieldName) {
-						if (field.fieldName !== 'Phone Number')
+						if (field.fieldName !== 'whatsapp.phoneNumber')
 							return { ...f, value: e.target.value };
 						return { ...f, value: e.target.value?.replace(/\D/g, '') };
 					}
@@ -145,29 +145,31 @@ const ActionCallPopOver = ({
 
 									{row?.fields.map(
 										(field: callToActionFieldProps, fIndex: number) =>
-											field.fieldName !== 'Country' ? (
+											field.type !== 'select' ? (
 												<Grid item md={3} key={'TOCF' + fIndex}>
-													<Typography>{field.fieldName}</Typography>
+													<Typography>
+														<>{translator(field?.fieldName)}</>
+													</Typography>
 													<TextField
 														disabled={!isEditable}
 														required={true}
 														type={field.type}
 														name={field.fieldName}
 														inputProps={
-															field.fieldName === 'Phone Number'
+															field.fieldName === 'whatsapp.phoneNumber'
 																? {
 																		maxLength: 20,
 																  }
-																: field.fieldName === 'Website URL'
+																: field.fieldName === 'whatsapp.websiteURL'
 																? { maxLength: 2000 }
 																: { maxLength: 20 }
 														}
 														helperText={
-															field.fieldName === 'Website URL'
+															field.fieldName === 'whatsapp.websiteURL'
 																? `${field.value?.length || 0}/${2000}`
 																: `${field.value?.length || 0}/${20}`
 														}
-														placeholder={field.placeholder}
+														placeholder={translator(field.placeholder)}
 														variant='outlined'
 														onChange={(e) =>
 															onTypeOfActionFieldChange(e, row, field)
@@ -178,13 +180,15 @@ const ActionCallPopOver = ({
 												</Grid>
 											) : (
 												<Grid item md={2} key={'TOCF' + fIndex}>
-													<Typography>{field.fieldName}</Typography>
+													<Typography>
+														<>{translator(field?.fieldName)}</>
+													</Typography>
 													<TextField
 														disabled={!isEditable}
 														select
 														required
 														name={field.fieldName}
-														placeholder={field.placeholder}
+														placeholder={translator(field.placeholder)}
 														variant='outlined'
 														onChange={(e) =>
 															onTypeOfActionFieldChange(e, row, field)
