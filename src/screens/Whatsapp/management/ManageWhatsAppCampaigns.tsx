@@ -318,11 +318,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						typeOfAction: '',
 						fields: [
 							{
-								fieldName: translator('whatsapp.websiteButtonText'),
+								fieldName: 'whatsapp.websiteButtonText',
 								type: 'text',
-								placeholder: translator(
-									'whatsapp.websiteButtonTextPlaceholder'
-								),
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 								value: button.title,
 							},
 						],
@@ -337,23 +335,21 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							typeOfAction: 'phonenumber',
 							fields: [
 								{
-									fieldName: translator('whatsapp.phoneButtonText'),
+									fieldName: 'whatsapp.phoneButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.phoneButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.country'),
+									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
 									value: '+972 Israel',
 								},
 								{
-									fieldName: translator('whatsapp.phoneNumber'),
+									fieldName: 'whatsapp.phoneNumber',
 									type: 'tel',
-									placeholder: translator('whatsapp.phoneNumberPlaceholder'),
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
 									value: button.phone,
 								},
 							],
@@ -364,17 +360,15 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							typeOfAction: 'website',
 							fields: [
 								{
-									fieldName: translator('whatsapp.websiteButtonText'),
+									fieldName: 'whatsapp.websiteButtonText',
 									type: 'text',
-									placeholder: translator(
-										'whatsapp.websiteButtonTextPlaceholder'
-									),
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 									value: button.title,
 								},
 								{
-									fieldName: translator('whatsapp.websiteURL'),
+									fieldName: 'whatsapp.websiteURL',
 									type: 'text',
-									placeholder: translator('whatsapp.websiteURLPlaceholder'),
+									placeholder: 'whatsapp.websiteURLPlaceholder',
 									value: button.url,
 								},
 							],
