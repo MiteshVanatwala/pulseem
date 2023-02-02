@@ -1013,6 +1013,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 
 	/* Send Campaign */
 
+	WhatsappCampainHeaderWrapper: {
+		'& div': {
+			flex: isRTL ? 1 : 'unset',
+		},
+	},
+
 	WhatsappCampainP1Title: {
 		fontSize: windowSize === 'xs' ? '25px' : '36px',
 		color: '#333333',
@@ -1023,11 +1029,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
 	},
 	WhatsappCampainNotice: {
-		textAlign: 'right',
-		'& b': {
-			color: '#b11515',
-			fontWeight: 'bolder',
-		},
+		textAlign: isRTL ? 'center' : 'right',
+		color: '#b11515',
+		fontWeight: 'bolder',
+		flex: isRTL ? '2 !important' : 'unset',
 		'& span': {
 			lineHeight: '34px',
 			color: '#b11515',

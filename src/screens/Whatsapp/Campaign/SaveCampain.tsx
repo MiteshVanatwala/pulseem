@@ -634,27 +634,29 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			customPadding={true}
 			containerClass={null}>
 			{renderToast()}
-			<Grid container justifyContent='space-between' alignItems='center'>
-				<Title
-					Text={translator('whatsappCampaign.header')}
-					Classes={classes.WhatsappCampainP1Title}
-					ContainerStyle={{}}
-					Element={null}
-				/>
-				<Box>
-					<div className={classes.WhatsappCampainNotice}>
-						<b>
-							<>{translator('whatsappCampaign.note')}</>
-							<br />
-							<span style={isRTL ? { marginRight: 180 } : { marginRight: 300 }}>
-								<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-								<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
-									<>{translator('whatsappCampaign.here')}</>
-								</a>
-							</span>
-						</b>
-					</div>
-				</Box>
+			<Grid
+				className={classes.WhatsappCampainHeaderWrapper}
+				container
+				justifyContent='space-between'
+				alignItems='center'>
+				<Grid item>
+					<Title
+						Text={translator('whatsappCampaign.header')}
+						Classes={classes.WhatsappCampainP1Title}
+						ContainerStyle={{}}
+						Element={null}
+					/>
+				</Grid>
+				<Grid item className={classes.WhatsappCampainNotice}>
+					<>{translator('whatsappCampaign.note')}</>
+					<br />
+					<span style={isRTL ? { marginRight: 180 } : { marginRight: 300 }}>
+						<>{translator('whatsappCampaign.checkLimit')}</>{' '}
+						<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
+							<>{translator('whatsappCampaign.here')}</>
+						</a>
+					</span>
+				</Grid>
 			</Grid>
 			<br />
 			<form onSubmit={(e: BaseSyntheticEvent) => onSubmit(e)}>
