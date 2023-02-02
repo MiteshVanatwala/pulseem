@@ -2016,7 +2016,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		},
 		'@media screen and (max-width: 768px)': {
 			marginTop: 0,
-			display: 'flex',
+			display: 'block',
 			alignItems: 'center',
 			justifyContent: 'center',
 		},

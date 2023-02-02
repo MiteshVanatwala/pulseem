@@ -737,6 +737,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								</div>
 								<Box className={classes.whatsappSmallInfoDiv}>
 									<span className={classes.textInfoWrapper}>
+										{isRTL && <>{linkCount}&nbsp;</>}
 										<span className={classes.textInfo}>
 											{linkCount === 1 ? (
 												<>{translator('whatsappCampaign.link')}</>
@@ -744,10 +745,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												<>{translator('whatsappCampaign.links')}</>
 											)}
 										</span>
-										&nbsp;{linkCount}
+										{!isRTL && <>&nbsp;{linkCount}</>}
 									</span>
 
 									<span className={classes.textInfoWrapper}>
+										{isRTL && <>{dynamicFieldCount}&nbsp;</>}
 										<span className={classes.textInfo}>
 											{dynamicFieldCount === 1 ? (
 												<>{translator('whatsappCampaign.dfield')}</>
@@ -755,15 +757,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												<>{translator('whatsappCampaign.dfields')}</>
 											)}
 										</span>
-										&nbsp;{dynamicFieldCount}
+										{!isRTL && <>&nbsp;{dynamicFieldCount}</>}
 									</span>
 
 									<span className={classes.textInfoWrapper}>
-										{/* {templateText?.length} */}
+										{isRTL && (
+											<>{templateData.templateText?.length}/1024&nbsp;</>
+										)}
 										<span className={classes.textInfo}>
 											<>{translator('whatsappCampaign.char')}</>
 										</span>
-										&nbsp;0/1024
+										{!isRTL && (
+											<>&nbsp;{templateData.templateText?.length}/1024</>
+										)}
 									</span>
 								</Box>
 							</Grid>
@@ -789,7 +795,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								sm={12}
 								md={12}
 								lg={12}>
-								<Box className={classes.switchDiv}>
+								<Box
+									className={clsx(classes.switchDiv, classes.testSendWrapper)}>
 									<FormGroup>
 										<Switch
 											checked={isTestSend}
@@ -805,9 +812,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 										<Typography style={{ fontSize: '18px' }}>
 											<>{translator('whatsappCampaign.tsend')}</>
 										</Typography>
-										<Typography
-											className={classes.descSwitch}
-											style={{ fontSize: '12px', marginTop: '-4px' }}>
+										<Typography className={classes.whatsappDescSwitch}>
 											<>{translator('whatsappCampaign.tsendDesc')}</>
 										</Typography>
 									</Box>
@@ -830,7 +835,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													/>
 												}
 												label={
-													<Typography style={{ fontSize: 18 }}>
+													<Typography style={{ fontSize: 16 }}>
 														<>{translator('whatsappCampaign.oneContact')}</>
 													</Typography>
 												}
@@ -878,7 +883,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 														/>
 													}
 													label={
-														<Typography style={{ fontSize: 18 }}>
+														<Typography style={{ fontSize: 16 }}>
 															<>{translator('whatsappCampaign.testGroups')}</>
 														</Typography>
 													}

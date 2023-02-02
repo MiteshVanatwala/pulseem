@@ -151,9 +151,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	textInfoWrapper: {
 		fontSize: '14px',
 		fontWeight: '400',
-		'&:not(:last-child)': {
-			marginRight: '10px',
-		},
+		marginRight: '10px',
+		color: '#1c82b2',
 	},
 	callToActionDialogHeaderDescription: {
 		fontSize: 12,
@@ -466,12 +465,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			background: '#1e1e1e',
 			borderRadius: '20px',
 			'@media (max-width: 768px)': {
-				// borderRadius: '0',
-				// flex: 'none',
-				// padding: '0',
 				maxWidth: 'none',
-				// overflow: 'hidden',
-				height: '100%',
+				height: '344px',
 				width: '100%',
 			},
 			'&:before': {
@@ -1257,9 +1252,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '2px 4px',
 	},
 	testSendRadio: {
-		padding: '0 12px',
+		padding: '8px 12px 0px 12px',
+		'& p': {
+			fontFamily: 'OpenSansHebrew',
+		},
 	},
 	testOneContactSendButton: {
+		fontFamily: 'OpenSansHebrew',
 		color: '#009f00',
 		border: '1px solid #009f00',
 		marginRight: isRTL ? '8px !important' : '0px',
@@ -2472,7 +2471,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		maxWidth: '326px',
 		margin: '0 auto',
 	},
-
+	testSendWrapper: {
+		fontFamily: 'OpenSansHebrew',
+		'& p': {
+			fontFamily: 'OpenSansHebrew',
+		},
+	},
+	whatsappDescSwitch: {
+		width: '200px',
+		fontSize: '15px',
+		marginTop: '-4px',
+		color: '#C2C2C2',
+		fontWeight: '400',
+		'@media screen and (max-width: 768px)': {
+			width: '100%',
+		},
+	},
 	whatsappCampaignStatus: {
 		fontSize: 18,
 		color: 'black',
