@@ -637,7 +637,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			<Grid
 				className={classes.WhatsappCampainHeaderWrapper}
 				container
-				justifyContent='space-between'
 				alignItems='center'>
 				<Grid item>
 					<Title

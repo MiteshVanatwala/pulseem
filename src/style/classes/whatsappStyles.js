@@ -1009,6 +1009,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	/* Send Campaign */
 
 	WhatsappCampainHeaderWrapper: {
+		justifyContent: 'space-between',
+		'@media screen and (max-width: 964px)': {
+			display: 'inline',
+		},
 		'& div': {
 			flex: isRTL ? 1 : 'unset',
 		},
@@ -1027,7 +1031,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textAlign: 'center',
 		color: '#b11515',
 		fontWeight: 'bolder',
+		paddingRight: isRTL ? '126px' : '0px',
 		flex: isRTL ? '2 !important' : 'unset',
+		'@media screen and (max-width: 964px)': {
+			paddingRight: '0px',
+			paddingTop: '12px',
+		},
 		'& span': {
 			lineHeight: '34px',
 			color: '#b11515',
