@@ -134,6 +134,7 @@ export const BaseDialog = ({
   };
 
   const RenderIcon = () => {
+    if (icon === false) return <></>;
     const alertIcon = <IoAlertCircleOutline />;
     return (
       <Stack
