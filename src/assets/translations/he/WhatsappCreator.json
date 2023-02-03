@@ -80,9 +80,9 @@
 	},
 
 	"alertModal": {
-		"okButtonText": "בסדר",
-		"confirmButtonText": "לְאַשֵׁר",
-		"calcelButtonText": "לְבַטֵל",
+		"okButtonText": "אישור",
+		"confirmButtonText": "אישור",
+		"calcelButtonText": "ביטול",
 		"yesButtonText": "כן",
 		"submitButtonText": "הגש",
 		"DeleteText": "מחק מסע פרסום",
