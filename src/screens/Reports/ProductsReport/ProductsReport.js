@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
+import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText, InputAdornment } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
@@ -22,6 +22,9 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { Title } from '../../../components/managment/Title';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -65,10 +68,10 @@ const ProductsReport = ({ classes }) => {
             }, 200);
         }
         if (searchData?.OrderBY === 0 && searchData?.OrderByParameter === key) {
-            return <FaSortAmountUp style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => handleClickSort(1)} />
+            return <FaSortAmountUp className={classes.colrPrimary} style={{ cursor: 'pointer' }} onClick={() => handleClickSort(1)} />
         }
         else {
-            return <FaSortAmountDown style={{ color: '#0371ad', cursor: 'pointer' }} onClick={() => handleClickSort(0)} />
+            return <FaSortAmountDown className={classes.colrPrimary} style={{ cursor: 'pointer' }} onClick={() => handleClickSort(0)} />
         }
     }
 
@@ -172,7 +175,7 @@ const ProductsReport = ({ classes }) => {
             <Grid
                 container
                 spacing={2}
-                className={classes.lineTopMarging}>
+                className={clsx(classes.lineTopMarging, 'searchLine')}>
                 <Grid item>
                     <TextField
                         variant='outlined'
@@ -185,19 +188,24 @@ const ProductsReport = ({ classes }) => {
                 </Grid>
 
                 <Grid item>
-                    <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%' }} >
+                    <FormControl variant="standard" className={classes.selectInputFormControl} style={{ width: '100%', height: 29 }} >
                         <Select
                             style={{
-                                height: 40,
-                                paddingInlineStart: 10,
-                                paddingInlineEnd: 20
+                                minWidth: 245
                             }}
                             placeholder={t('report.ProductsReport.category')}
-                            className={clsx(classes.select, 'outerborder')}
                             labelId="category"
                             id="category"
                             multiple
                             value={searchData.CategoryID}
+                            endAdornment={
+                                <InputAdornment
+                                    className={classes.selectAdornment}
+                                    position="end"
+                                >
+                                    <IoIosArrowDown size={20} />
+                                </InputAdornment>
+                            }
                             inputProps={{
                                 placeholder: t('report.ProductsReport.category'),
                                 class: searchData.CategoryID.length === 0 ? classes.selectPlaceholderInput : classes.dNone
@@ -229,16 +237,14 @@ const ProductsReport = ({ classes }) => {
 
                 <Grid item>
                     <Button
-                        size='large'
-                        variant='contained'
                         onClick={() => {
                             if (searchData.CategoryID.length > 0 || searchData.ProductName) {
                                 setIsSearching(true)
                                 setFilter(true)
                             }
                         }}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
                         {t('notifications.buttons.search')}
                     </Button>
@@ -247,15 +253,13 @@ const ProductsReport = ({ classes }) => {
                 {
                     filter && <Grid item>
                         <Button
-                            size='large'
-                            variant='contained'
                             onClick={() => {
                                 setSearchData(DEFAULT_FILTER)
                                 setIsSearching(true)
                                 setFilter(false)
                             }}
-                            className={classes.searchButton}
-                            endIcon={<ClearIcon />}>
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                             {t('common.clear')}
                         </Button>
                     </Grid>
@@ -265,22 +269,17 @@ const ProductsReport = ({ classes }) => {
     }
 
     const renderManagmentLine = () => {
-        const dataLength = productsReportDetails?.TotalProducts;
+        const dataLength = productsReportDetails?.TotalProducts ?? 0;
         return (
             <Grid container spacing={2} className={classes.linePadding}>
                 {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
-                        variant='contained'
-                        size='medium'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonGreen,
-                        )}
+                        className={clsx(classes.btn, classes.btnRounded)}
                         onClick={() => {
                             dispatch(GetProductReports({ ...searchData, IsExport: true }))
                             setDialogType('exportFormat')
                         }}
-                        startIcon={<ExportIcon />}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
                         {t('campaigns.exportFile')}
                     </Button>
@@ -410,10 +409,12 @@ const ProductsReport = ({ classes }) => {
                         className: windowSize === "xs" && classes.dNone,
                     }}
                 >
-                    <TableBody>
-                        {productsReportDetails?.Products
-                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-                    </TableBody>
+                    <Box className='tableBodyContainer groupsTable'>
+                        <TableBody>
+                            {productsReportDetails?.Products
+                                .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                        </TableBody>
+                    </Box>
                 </DataTable>)
         }
         return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -441,14 +442,20 @@ const ProductsReport = ({ classes }) => {
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="productsReport">
-            <Typography className={classes.managementTitle}>
-                {t('report.ProductsReport.title')}
-            </Typography>
-            <Divider />
-            <Grid item xs={12}>
-                <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
-            </Grid>
-            {renderFilter()}
+            <Box>
+                <Box className='topSection'>
+                    <Title Text={t('report.ProductsReport.title')} classes={classes} />
+                    <Grid item xs={12} className={classes.mt2} style={{ paddingLeft: 31 }}>
+                        <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
+                        <Typography display='inline'>{t('common.ForSupport')}: </Typography>
+                        <Typography display='inline' className={clsx(classes.link, classes.colrPrimary)} component='a' href="tel:035240290">035240290</Typography>
+                        <Typography display='inline' className={classes.colrPrimary}> / </Typography>
+                        <Typography display='inline' className={clsx(classes.link, classes.colrPrimary)} component='a' href="mailto:support@pulseem.com">support@pulseem.com</Typography>
+                    </Grid>
+                    {renderFilter()}
+                </Box>
+            </Box>
+            {/* <Divider /> */}
             {renderManagmentLine()}
             {renderTableBody()}
             {renderTablePagination()}

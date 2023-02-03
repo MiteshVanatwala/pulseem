@@ -83,24 +83,20 @@ const ConfirmRadioDialog = ({
             >
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onConfirm(value) }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.confirm')}
                     </Button>
                 </Grid>
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onCancel() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogCancelButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.cancel')}
                     </Button>
