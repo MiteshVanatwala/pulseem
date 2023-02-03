@@ -224,7 +224,7 @@ const ActionCallPopOver = ({
 					<DialogActions>
 						{callToActionFieldRows?.length < 2 && (
 							<Button variant='contained' color='primary' onClick={addMore}>
-								<>{translator('whatsapp.callToActionAddMoreButton')}</>
+								<>{translator('whatsapp.quickReply.addMore')}</>
 							</Button>
 						)}
 						<Button

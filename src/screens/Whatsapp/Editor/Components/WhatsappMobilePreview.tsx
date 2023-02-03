@@ -103,11 +103,7 @@ const WhatsappMobilePreview = ({
 												<img src={AccountUser} alt='Avatar' />
 											</div>
 											<div className='name'>
-												<span>
-													{username?.length <= 6
-														? username
-														: `${username?.substring(0, 6)}...`}
-												</span>
+												<span>{username}</span>
 												<span className='status'>
 													<>{translator('whatsapp.online')}</>
 												</span>

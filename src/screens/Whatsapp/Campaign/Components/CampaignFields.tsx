@@ -86,10 +86,6 @@ const CampaignFields = ({
 						)}
 					</TextField>
 				)}
-				<Typography
-					className={clsx(classes.WhatsappCampainButtonContent, 'red')}>
-					<>{translator('whatsappCampaign.fromDesc')}</>
-				</Typography>
 			</Grid>
 
 			<Grid item xs={12} md={12} sm={12} className={classes.buttonForm}>

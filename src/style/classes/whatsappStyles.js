@@ -145,7 +145,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	textInfo: {
-		marginLeft: '4px',
+		marginLeft: isRTL ? '0px' : '4px',
+		marginRight: isRTL ? '4px' : '0px',
 		color: '#8b8b8b',
 	},
 	textInfoWrapper: {
@@ -334,7 +335,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			margin: isRTL ? '0 8px 0 0' : '0 0 0 8px',
 			overflow: 'hidden',
 			whiteSpace: 'nowrap',
-			width: 'auto',
+			width: 'calc(100% - 177px)',
 		},
 		'& .status': {
 			display: 'block',
@@ -1451,7 +1452,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		backgroundColor: '#0371ad',
 		color: '#ffffff',
 		marginTop: '6px',
-		marginLeft: '10px',
+		marginLeft: isRTL ? '0px' : '10px',
+		marginRight: isRTL ? '10px' : '0px',
 		padding: '3px 9px',
 		borderRadius: '20px',
 		'&:hover': {
