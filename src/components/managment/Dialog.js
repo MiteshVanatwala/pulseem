@@ -51,10 +51,11 @@ export const Dialog = ({
   const renderExitButton = () => {
     return (
       <>
-        {props.exit ? null : <Box
+        {props.exit ? props.exit : <Box
           onClick={onExit}
           className={clsx(
             classes.dialogExitButton,
+            classes.btnBgExitDialog,
             {
               [classes.dialogExitButtonRTL]: isRTL,
               [classes.dialogExitButtonLTR]: !isRTL
@@ -113,6 +114,8 @@ export const Dialog = ({
   }
 
   const renderIcon = () => {
+    if (icon === false)
+      return <></>
     const alertIcon = <AlertIcon classes={classes} />
     return (
       <Box
