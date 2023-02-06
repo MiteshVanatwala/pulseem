@@ -359,8 +359,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             >
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-              <Tab label={<span style={{marginInlineEnd: 5}}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2}
-                icon={<span className={classes.commingSoon}>{t("common.commingSoon")}</span>} />
+              {/* <Tab label={<span style={{marginInlineEnd: 5}}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2}
+                icon={<span className={classes.commingSoon}>{t("common.commingSoon")}</span>} /> */}
             </TabList>
             <Grid item>
               {!isArchive && tabValue !== 2 && <Button
@@ -443,7 +443,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 isArchive={isArchive}
               />
             </TabPanel>
-            <TabPanel value={2} index={2} className={classes.p0}>
+            {/* <TabPanel value={2} index={2} className={classes.p0}>
               <DirectWhatsappReportTab
                 classes={classes}
                 dispatch={dispatch}
@@ -463,7 +463,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 setLoader={setLoader}
                 rowsOptions={rowsOptions}
               />
-            </TabPanel>
+            </TabPanel> */}
           </Grid>
         </TabContext>
 
