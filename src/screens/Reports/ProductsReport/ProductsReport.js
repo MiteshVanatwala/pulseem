@@ -445,7 +445,7 @@ const ProductsReport = ({ classes }) => {
             <Box>
                 <Box className='topSection'>
                     <Title Text={t('report.ProductsReport.title')} classes={classes} />
-                    <Grid item xs={12} className={classes.mt2} style={{ paddingLeft: 31 }}>
+                    <Grid item xs={12} className={classes.mt2} style={{ paddingInline: 31 }}>
                         <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
                         <Typography display='inline'>{t('common.ForSupport')}: </Typography>
                         <Typography display='inline' className={clsx(classes.link, classes.colrPrimary)} component='a' href="tel:035240290">035240290</Typography>

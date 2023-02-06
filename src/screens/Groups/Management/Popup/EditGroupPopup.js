@@ -118,7 +118,6 @@ const EditGroupPopup = ({ classes,
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={onClose}
                 onCancel={onClose}
                 renderButtons={() => (
@@ -128,11 +127,11 @@ const EditGroupPopup = ({ classes,
                         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
                         <Grid item>
                             <Button
-                                variant="contained"
-                                size="small"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogCancelButton
+                                    // classes.dialogButton,
+                                    // classes.dialogCancelButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 onClick={() => onClose()}
                             >
@@ -141,11 +140,11 @@ const EditGroupPopup = ({ classes,
                         </Grid>
                         <Grid item>
                             <Button
-                                variant="contained"
-                                size="small"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton
+                                    // classes.dialogButton,
+                                    // classes.dialogConfirmButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 onClick={() => {
                                     handleEditGroup(editableFroupData);

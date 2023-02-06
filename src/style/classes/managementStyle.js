@@ -68,7 +68,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       paddingBottom: 31,
       '& .searchLine': {
         paddingLeft: 31
-      }
+      },
+      "@media screen and (max-width: 765px)": {
+        paddingBottom: 17,
+      },
     }
   },
   managmentNarrow: {
@@ -77,7 +80,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   mgmtTitleContainer: {
     width: 'auto !important',
     background: '#F0F5FF',
-    padding: `11px 0 8px 31.69px`,
+    padding: `11px 31.69px 8px 31.69px`,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10
   },
@@ -1930,7 +1933,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       overflowY: 'scroll',
       maxHeight: 150,
       '& :hover': {
-        color: '#0371ad'
+        color: '#ff3343'
       },
       '&::-webkit-scrollbar': {
         width: '6px',
@@ -1942,12 +1945,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       },
 
       '&::-webkit-scrollbar-thumb': {
-        background: '#0371ad',
+        background: '#ff3343',
         borderRadius: '10px'
       },
 
       '&::-webkit-scrollbar-thumb:hover': {
-        background: '#036297'
+        background: '#ef2c3c'
       }
     }
   },

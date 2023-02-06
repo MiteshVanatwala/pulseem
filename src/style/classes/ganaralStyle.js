@@ -1591,11 +1591,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   groupName: {
     display: "block",
     fontSize: "32px",
-    color: "#006996",
     width: "700px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
       fontSize: "22px",
+      textAlign: 'start'
     },
   },
   fieldsRequire: {
@@ -2757,7 +2757,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   autoCompleteTag: {
     '& .MuiAutocomplete-tag': {
-      backgroundColor: '#0371ad',
+      backgroundColor: '#ff3343',
       color: '#fff',
       '& .MuiChip-deleteIcon': {
         fill: '#fff'

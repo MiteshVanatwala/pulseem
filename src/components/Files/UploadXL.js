@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Box, TextField } from "@material-ui/core";
+import { Typography, Grid, Box, TextField, Button } from "@material-ui/core";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -18,7 +18,6 @@ import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import moment from 'moment';
 import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
-import { Button } from "@mui/material";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
@@ -798,7 +797,7 @@ const UploadXL = ({
                 {areaData !== "" ? (
                     <div>
                         <Button
-                            className={classes.addManualDiv}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 handlePasted(areaData);
                             }}
@@ -806,7 +805,7 @@ const UploadXL = ({
                             {t("sms.editFields")}
                         </Button>
                         <Button
-                            className={classes.clearDiv}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 setareaData("");
                                 setContacts([]);

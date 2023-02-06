@@ -23,7 +23,6 @@ import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 
-import { Dialog } from "../../../../components/managment/Dialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const AddGroupPopUp = ({
@@ -140,7 +139,6 @@ const AddGroupPopUp = ({
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={onClose}
                 onCancel={onClose}
                 onConfirm={() => {
@@ -161,8 +159,8 @@ const AddGroupPopUp = ({
                                 variant="contained"
                                 size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogCancelButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap
                                 )}
@@ -182,8 +180,8 @@ const AddGroupPopUp = ({
                                 size="medium"
                                 className={clsx(
                                     classes.fullWidth,
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.actionButtonLightGreen,
                                     classes.whiteSpaceNoWrap,
                                     !newGroupData.GroupName || saveDisabled ? classes.disabled : '',
@@ -205,8 +203,8 @@ const AddGroupPopUp = ({
                                 variant="contained"
                                 size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap,
                                     classes.textUppercase,

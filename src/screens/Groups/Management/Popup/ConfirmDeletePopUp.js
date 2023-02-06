@@ -5,6 +5,8 @@ import {
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { DeleteIcon } from '../../../../assets/images/managment';
+import { MdDeleteForever } from 'react-icons/md';
 
 const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, handleDeleteGroup }) => {
 
@@ -15,9 +17,8 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
             classes={classes}
             open={isOpen}
             title={t("group.delete")}
-            icon={<Box className={classes.dialogAlertIcon}>
-                !
-            </Box>}
+
+            icon={<MdDeleteForever />}
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}

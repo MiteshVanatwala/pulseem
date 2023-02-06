@@ -209,27 +209,29 @@ const Groups = ({ classes }) => {
 
         if (windowSize === "xs") {
             return (
-                <SearchField
-                    classes={classes}
-                    value={searchStr}
-                    onChange={(e) => setSearchStr(e.target.value)}
-                    onClick={() => {
-                        const searchObject = {
-                            PageIndex: 1,
-                            PageSize: rowsPerPage,
-                            SearchTerm: searchStr,
-                        };
+                <Grid container className={'searchLine'}>
+                    <SearchField
+                        classes={classes}
+                        value={searchStr}
+                        onChange={(e) => setSearchStr(e.target.value)}
+                        onClick={() => {
+                            const searchObject = {
+                                PageIndex: 1,
+                                PageSize: rowsPerPage,
+                                SearchTerm: searchStr,
+                            };
 
-                        setSearchData(searchObject);
-                        SetPageState({
-                            "PageName": "groups",
-                            "PageNumber": 1,
-                            "SearchData": searchObject
-                        });
-                    }}
-                    onKeyPress={handleKeyPress}
-                    placeholder={t("common.GroupName")}
-                />
+                            setSearchData(searchObject);
+                            SetPageState({
+                                "PageName": "groups",
+                                "PageNumber": 1,
+                                "SearchData": searchObject
+                            });
+                        }}
+                        onKeyPress={handleKeyPress}
+                        placeholder={t("common.GroupName")}
+                    />
+                </Grid>
             );
         }
 
@@ -338,14 +340,6 @@ const Groups = ({ classes }) => {
                         {t("recipient.deleteRecipient")}
                     </Button>
                 </Grid>
-                {/* <Grid item xs={colSize}>
-                    <Button
-                        className={clsx(classes.actionButton, classes.actionButtonRed)}
-                        onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
-                    >
-                        {t("recipient.unsubscribe")}
-                    </Button>
-                </Grid> */}
                 {accountFeatures && accountFeatures?.indexOf('15') > -1 && (<Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
@@ -360,8 +354,6 @@ const Groups = ({ classes }) => {
                     accountFeatures?.indexOf('13') === -1 &&
                     <Grid item xs={colSize}>
                         <Button
-                            variant="contained"
-                            size="medium"
                             className={clsx(classes.btn, classes.btnRounded)}
                             onClick={() => setShowConfirmDialog(true)}
                             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -1613,6 +1605,10 @@ const Groups = ({ classes }) => {
                             setDialog(null);
                             setSelectedGroups([])
                         }}
+                        onCancel={() => {
+                            setDialog(null);
+                            setSelectedGroups([])
+                        }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1634,6 +1630,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.EDIT_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]) }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1650,6 +1647,7 @@ const Groups = ({ classes }) => {
                             classes={classes}
                             isOpen={dialog === DialogType.RESET_GROUP}
                             onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                            onCancel={() => { setDialog(null); setSelectedGroups([]) }}
                             setLoader={setLoader}
                             windowSize={windowSize}
                             ToastMessages={ToastMessages}
@@ -1666,6 +1664,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_RECIPIENT}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1685,6 +1684,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_RECIPIENTS}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1701,6 +1701,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1716,6 +1717,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.DELETE_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         windowSize={windowSize}
                         handleDeleteGroup={() => handleDeleteGroup()}
                     />
@@ -1725,6 +1727,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.MESSAGE}
                         onClose={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
                         windowSize={windowSize}
                         title={responseMessage.title}
                         message={responseMessage.message}
@@ -1737,6 +1740,7 @@ const Groups = ({ classes }) => {
                             classes={classes}
                             isOpen={dialog === DialogType.SIMPLY_CLUB}
                             onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                            onCancel={() => { setDialog(null); setSelectedGroups([]) }}
                             windowSize={windowSize}
                             title={responseMessage.title}
                             message={responseMessage.message}
