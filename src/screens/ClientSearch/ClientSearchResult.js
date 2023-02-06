@@ -992,7 +992,8 @@ const ClientSearchResult = ({ props, classes }) => {
     let sessionSearchData = null;
     if (searchReferrer === true) {
       sessionSearchData = JSON.parse(window.sessionStorage?.getItem('searchData'));
-      sessionSearchData.IsSearchByFilter = true;
+      if (sessionSearchData)
+        sessionSearchData.IsSearchByFilter = true;
     }
     setSearchData({ ...searchData, ...sessionSearchData })
   }
