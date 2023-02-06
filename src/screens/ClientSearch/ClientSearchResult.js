@@ -995,7 +995,7 @@ const ClientSearchResult = ({ props, classes }) => {
       if (sessionSearchData)
         sessionSearchData.IsSearchByFilter = true;
     }
-    setSearchData({ ...searchData, ...sessionSearchData })
+    setSearchData({ ...sessionSearchData, ...searchData })
   }
   // DONE
   const renderSearchLine = () => {
