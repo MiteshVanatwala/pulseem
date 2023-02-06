@@ -34,6 +34,7 @@ import {
   CompanyDetailsType,
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import useCore from "../../../helpers/hooks/Core";
 
 const Form_CompanyDetails = ({
@@ -44,6 +45,9 @@ const Form_CompanyDetails = ({
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
+  const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
+  const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
+
 
   const [dialogType, setDialogType] = useState<{
     type: string;
@@ -185,7 +189,7 @@ const Form_CompanyDetails = ({
 
   const handleSave = () => {
     if (isValidPayload()) {
-      let response = dispatch(() => {}); //updateCompanyDetails()
+      let response = dispatch(() => { }); //updateCompanyDetails()
       handleResponses(response);
     }
   };
@@ -227,9 +231,8 @@ const Form_CompanyDetails = ({
           classes={classes}
           isIcon={false}
           ContainerStyle={{
-            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${
-              isRTL ? 0 : "14.69px"
-            }`,
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+              }`,
           }}
         />
         <Box className={"formContainer"}>
@@ -520,14 +523,7 @@ const Form_CompanyDetails = ({
                     "link"
                   )}
                   onClick={() =>
-                    setDialogType({
-                      type: "verifyPhone",
-                      data: {
-                        title: t(
-                          "settings.accountSettings.fixedComDetails.btnVerifyNumber"
-                        ),
-                      },
-                    })
+                    setSmsVerificationPopup(true)
                   }
                   startIcon={<MdMobileFriendly />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -548,14 +544,7 @@ const Form_CompanyDetails = ({
                     "link"
                   )}
                   onClick={() =>
-                    setDialogType({
-                      type: "verifyEmail",
-                      data: {
-                        title: t(
-                          "settings.accountSettings.fixedComDetails.btnVerifyEmail"
-                        ),
-                      },
-                    })
+                    setEmailVerificationPopup(true)
                   }
                   startIcon={<MdOutlineMarkEmailRead />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -586,6 +575,8 @@ const Form_CompanyDetails = ({
         </Box>
       </Box>
       {RenderDialog()}
+      {emailVerificationPopup && <VerificationDialog classes={classes} variant="email" isOpen={emailVerificationPopup} onClose={() => setEmailVerificationPopup(false)} />}
+      {smsVerificationPopup && <VerificationDialog classes={classes} variant="sms" isOpen={smsVerificationPopup} onClose={() => setSmsVerificationPopup(false)} />}
     </>
   );
 };
