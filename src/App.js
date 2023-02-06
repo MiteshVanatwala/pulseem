@@ -331,10 +331,6 @@ const renderRoutes = (classes) => {
       />
       {/* Settings */}
       <Route
-        path={`/AccountSettings`}
-        component={transferUrl('/Pulseem/AccountSettings.aspx')}
-      />
-      <Route
         exact
         path={`${sitePrefix}AccountSettings`}
         element={<AccountSettingsEditor classes={classes} />}

@@ -87,13 +87,7 @@ const AppBarItem = ({
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   style={{ padding: 0 }}>
-                  <Box>
-                    <MenuItem key={-1}>
-
-                    </MenuItem>
-                  </Box>
-                  {item.options && item.options.map((option, index) => (
-                    option.isShow &&
+                  {item.options && item.options.filter((item) => item.isShow !== false).map((option, index) => (
                     <Box
                       key={index}
                       className={classes.appBarItemMenuItem}>

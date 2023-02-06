@@ -33,11 +33,11 @@ export const getSettingsItem = (
 ) => ({
   key: "settings",
   title: title,
-  href: "/Pulseem/AccountSettings.aspx",
+  href: "/react/AccountSettings",
   options: [
     {
       title: t("master.RadMenuItemResource2.Text"),
-      href: "/Pulseem/AccountSettings.aspx?fromreact=true",
+      href: "/react/AccountSettings",
       iconSrc: SettingsMenuIcon,
       isShow: true,
     },
@@ -401,11 +401,6 @@ export const getRoutes = (
           href: "/Pulseem/RemovedStats.aspx?fromreact=true",
           isShow: true,
         },
-        //{title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
-        //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
-        //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
-        // { key: 'directSendReport', title: t('report.DirectSendReport'), href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
-        // { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: '/react/Reports/DirectSendReport/Archive', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
         { key: 'productsReport', title: t('report.ProductsReport.title'), href: `${sitePrefix}Reports/ProductsReport`, isShow: true },
         {
           key: "directSendReport",

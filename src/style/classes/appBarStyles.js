@@ -6,6 +6,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     flexDirection: 'column',
     textDecoration: 'none',
     zIndex: 1300,
+    height: '100%',
     '& .chosenText, .chosenText~.downArraow': {
       fontWeight: 'bold',
       color: '#FF0054'
@@ -23,6 +24,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'none',
     justifyContent: 'center',
     cursor: 'pointer',
+    height: '100%'
   },
   appBarItemText: {
     display: 'flex',
