@@ -36,6 +36,10 @@
                 "imdSmsUnsubLink": "sms immediate unsubscribe link (no validation)"
             },
             "btnUpdate": "Update Account Details"
+        },
+        "auth": {
+            "everyDay": "Every Day",
+            "everyTwoWeeks": "Every Two Weeks"
         }
     },
     "billingSettings": {

@@ -36,7 +36,11 @@
         "imdSmsUnsubLink": "קישור הסרה מיידי (ללא אימות)"
       },
       "btnUpdate": "שמירת פרטים"
-    }
+    },
+    "auth": {
+      "everyDay": "כל יום",
+      "everyTwoWeeks": "כל שבועיים"
+  }
   },
   "billingSettings": {
     "title": "הגדרות פרטי חיוב",

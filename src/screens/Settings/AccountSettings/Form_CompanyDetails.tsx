@@ -30,16 +30,18 @@ import {
 } from "../../../helpers/Utils/Validations";
 import {
   CompDtlErrorsType,
-  CompDtlPropTypes,
-  CompanyDetailsType,
+  CompDtlPropTypes
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import useCore from "../../../helpers/hooks/Core";
+import { AccountSettings } from '../../../Models/Account/AccountSettings';
 
 const Form_CompanyDetails = ({
   setToastMessage,
   ToastMessages,
+  Settings,
+  OnUpdate
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
@@ -54,32 +56,20 @@ const Form_CompanyDetails = ({
     data: any;
   } | null>(null);
 
-  const [companyDetails, setCompanyDetails] = useState<CompanyDetailsType>({
-    CompanyName: "",
-    ContactName: "",
-    BirthDate: null,
-    Telephone: "",
-    Mobile: "",
-    Email: "",
-    Address: "",
-    City: "",
-    Zip: "",
-    TwoFactorAuth: false,
-    SendCodeMethod: "",
-  });
+  const [companyDetails, setCompanyDetails] = useState<AccountSettings>({} as AccountSettings);
 
-  const [errors, setErrors] = useState<CompDtlErrorsType>({
+  const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
     ContactName: "",
     BirthDate: "",
     Telephone: "",
-    Mobile: "",
+    CellPhone: "",
     Email: "",
     Address: "",
     City: "",
-    Zip: "",
-    SendCodeMethod: "",
-  });
+    ZipCode: null,
+    TwoFactorAuthTestMethodID: null
+  } as AccountSettings);
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -99,20 +89,20 @@ const Form_CompanyDetails = ({
         ),
       };
     }
-    if (!companyDetails.Mobile) {
+    if (!companyDetails.CellPhone) {
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        Mobile: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
+        CellPhone: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
       };
     } else if (
-      companyDetails.Mobile.length > 16 ||
-      companyDetails.Mobile.length < 9
+      companyDetails.CellPhone.length > 16 ||
+      companyDetails.CellPhone.length < 9
     ) {
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        Mobile: t(
+        CellPhone: t(
           "settings.accountSettings.fixedComDetails.errors.invalidMobile"
         ),
       };
@@ -140,13 +130,18 @@ const Form_CompanyDetails = ({
     return isValid;
   };
 
+  useEffect(() => {
+    setCompanyDetails(Settings);
+  }, [Settings])
+
   const handleChange = (e: any, name = "") => {
+    //@ts-ignore
     !!errors?.[e?.target?.name] &&
       setErrors({ ...errors, [e.target.name]: "" });
     if (name === "TwoFactorAuth") {
       setCompanyDetails({
         ...companyDetails,
-        TwoFactorAuth: !companyDetails.TwoFactorAuth,
+        TwoFactorAuthEnabled: !companyDetails.TwoFactorAuthEnabled,
       });
     } else if (name === "BirthDate") {
       setCompanyDetails({
@@ -165,32 +160,9 @@ const Form_CompanyDetails = ({
       });
     }
   };
-
-  const handleResponses = (response: any) => {
-    switch (response?.StatusCode || response?.payload?.StatusCode) {
-      case 201: {
-        break;
-      }
-      case 401: {
-        break;
-      }
-      case 405: {
-        break;
-      }
-      case 409: {
-        break;
-      }
-      case 500:
-      default: {
-        setToastMessage(ToastMessages?.GENERAL_ERROR);
-      }
-    }
-  };
-
   const handleSave = () => {
     if (isValidPayload()) {
-      let response = dispatch(() => { }); //updateCompanyDetails()
-      handleResponses(response);
+      OnUpdate(companyDetails);
     }
   };
 
@@ -219,6 +191,10 @@ const Form_CompanyDetails = ({
       </BaseDialog>
     );
   };
+
+  const handleTwoFactorOption = (e: any) => {
+    setCompanyDetails({ ...companyDetails, TwoFactorAuthOptionID: e?.target?.value });
+  }
 
   return (
     <>
@@ -302,7 +278,7 @@ const Form_CompanyDetails = ({
               <TextField
                 variant="outlined"
                 size="small"
-                name="Telehone"
+                name="Telephone"
                 value={companyDetails.Telephone}
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
@@ -318,16 +294,16 @@ const Form_CompanyDetails = ({
               <TextField
                 variant="outlined"
                 size="small"
-                name="Mobile"
-                value={companyDetails.Mobile}
+                name="CellPhone"
+                value={companyDetails.CellPhone}
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
-                error={!!errors.Mobile}
+                error={!!errors.CellPhone}
               />
-              {!!errors.Mobile && (
+              {!!errors.CellPhone && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
-                  {errors.Mobile}
+                  {errors.CellPhone}
                 </Typography>
               )}
             </Grid>
@@ -403,7 +379,7 @@ const Form_CompanyDetails = ({
                     <PulseemSwitch
                       switchType="ios"
                       classes={classes}
-                      checked={companyDetails.TwoFactorAuth}
+                      checked={companyDetails.TwoFactorAuthEnabled ?? false}
                       onColor="#0371ad"
                       handleDiameter={20}
                       boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
@@ -445,33 +421,30 @@ const Form_CompanyDetails = ({
                 >
                   <Select
                     autoWidth
-                    value={companyDetails.SendCodeMethod}
+                    value={companyDetails.TwoFactorAuthOptionID ?? null}
                     style={{
                       maxHeight: 40,
                       overflow: "hidden",
                       paddingLeft: 0,
                       paddingRight: 0,
                     }}
-                    name="SendCodeMethod"
-                    onChange={(e: any) => handleChange(e)}
+                    name="TwoFactorAuthOptionID"
+                    onChange={(e: any) => { handleTwoFactorOption(e) }}
                   >
                     <MenuItem value="" className={classes.dropDownItem}>
                       {t("common.Status")}
                     </MenuItem>
                     {[
-                      "Option 1",
-                      "Option 2",
-                      "Option 3",
-                      "Option 4",
-                      "Option 5",
+                      { name: t("settings.accountSettings.auth.everyDay"), value: 101 },
+                      { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
                     ].map((so, index) => {
                       return (
                         <MenuItem
-                          key={index}
-                          value={index}
+                          key={so.value}
+                          value={so.value}
                           className={classes.dropDownItem}
                         >
-                          {so}
+                          {so.name}
                         </MenuItem>
                       );
                     })}

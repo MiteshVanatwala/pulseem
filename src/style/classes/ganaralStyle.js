@@ -853,7 +853,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: '2px 10px',
     fontWeight: 'bold',
     background: '#fff',
-    maxWidth: 250,
+    maxWidth: 280,
     color: '#000',
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',

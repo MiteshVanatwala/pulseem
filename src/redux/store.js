@@ -19,7 +19,9 @@ import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
 import galleryReducer from './reducers/gallerySlice'
 import ConnectorsSlice from './reducers/ConnectorsSlice';
+import AccountSettingsSlice from './reducers/AccountSettingsSlice';
 import settingsSlice from './reducers/settingsSlice';
+
 
 export default configureStore({
   reducer: {
@@ -43,6 +45,7 @@ export default configureStore({
     report: reportSlice,
     gallery: galleryReducer,
     connectors: ConnectorsSlice,
+    accountSettings: AccountSettingsSlice,
     settings: settingsSlice
   },
 });
