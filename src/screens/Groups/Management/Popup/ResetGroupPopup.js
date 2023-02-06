@@ -6,6 +6,7 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import { resetGroups } from '../../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { DeleteIcon } from '../../../../assets/images/managment';
 
 const ResetGroupPopup = ({
     onClose,

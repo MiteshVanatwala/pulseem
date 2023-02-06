@@ -125,6 +125,9 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
       marginRight: isRTL ? '-24px' : 0,
       borderBottomLeftRadius: isRTL ? 0 : 40,
       borderBottomRightRadius: isRTL ? 40 : 0,
+      '& svg': {
+        padding: '0 28px'
+      }
     }
   },
   appBar: {
@@ -200,6 +203,17 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: 'none',
     height: 0
   },
+  phoneAppBarPaperContainer: {
+    zIndex: '1',
+    boxSizing: 'border-box',
+    top: 3,
+    width: '100%',
+    left: -7,
+    padding: '0 75px',
+    "@media screen and (max-width: 540px)": {
+      padding: 0
+    }
+  },
   phoneAppBarContainer: {
     display: 'flex',
     flex: 1,
@@ -207,10 +221,13 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     maxWidth: '100%'
   },
   phoneAppBarButton: {
-    color: 'white',
+    color: '#000',
     textTransform: 'none',
     fontSize: 28,
-    borderRadius: 0
+    borderRadius: 0,
+    "&:hover": {
+      color: "#ff3343"
+    }
   },
   phoneAppBarPaper: {
     padding: 20,
@@ -219,20 +236,23 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   },
   phoneAppBarPopupContainer: {
     padding: 20,
-    border: '2px solid #0371ad',
+    border: '2px solid #ff3343',
     borderRadius: 5,
     alignSelf: 'center'
   },
   phoneAppBarCloseContainer: {
-    backgroundColor: '#006996',
+    backgroundColor: '#ff3343',
     justifyContent: 'center',
     position: 'absolute',
     borderRadius: 50,
     display: 'flex',
     height: 20,
     width: 20,
-    left: 12,
-    top: 15
+    left: 86,
+    top: 15,
+    "@media screen and (max-width: 540px)": {
+      left: 12
+    }
   },
   phoneAppBarCloseIcon: {
     fontSize: 13,

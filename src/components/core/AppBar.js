@@ -23,6 +23,7 @@ import useRedirect from '../../helpers/Routes/Redirect';
 import { IoIosArrowDown } from 'react-icons/io';
 import { BsGlobe2 } from 'react-icons/bs';
 import { sitePrefix } from '../../config';
+import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
 
 const AppBarItem = ({
   item,
@@ -306,14 +307,17 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
           open={open}
           anchorEl={topNavRef.current}
           role={undefined}
-          style={{ zIndex: '1', boxSizing: 'border-box', }}
+          className={classes.phoneAppBarPaperContainer}
+          // style={{
+
+          // }}
           transition
         >
           {({ TransitionProps }) => (
             <Grow
               {...TransitionProps}>
               <Paper
-                style={{ width: windowWidth - 40 }}
+                // style={{ width: windowWidth - 40 }}
                 className={classes.phoneAppBarPaper}>
                 <ClickAwayListener
                   onClickAway={handleOpen}>
@@ -385,11 +389,12 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
             // className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
             className={clsx(classes.pulseemAppBarLogo, 'logo')}
           >
-            <Box
+            <PulseemNewLogo />
+            {/* <Box
               component='img'
               src={`${imageURL}`}
               alt='Logo'
-              className={classes.appBarLogo} />
+              className={classes.appBarLogo} /> */}
           </Button>
           {settingsLoaded && <>
             {renderAppBar()}

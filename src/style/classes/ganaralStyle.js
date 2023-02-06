@@ -1591,11 +1591,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   groupName: {
     display: "block",
     fontSize: "32px",
-    color: "#006996",
     width: "700px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
       fontSize: "22px",
+      textAlign: 'start'
     },
   },
   fieldsRequire: {
@@ -2757,7 +2757,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   autoCompleteTag: {
     '& .MuiAutocomplete-tag': {
-      backgroundColor: '#0371ad',
+      backgroundColor: '#ff3343',
       color: '#fff',
       '& .MuiChip-deleteIcon': {
         fill: '#fff'
@@ -2991,8 +2991,28 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   selectInputFormControl: {
     '&.MuiFormControl-root': {
       marginInline: 3,
+      borderBottom: "1px solid #d6d1e6",
+      "&:hover": {
+        borderBottom: "1px solid #000"
+      },
       '& label': {
         marginInline: 5
+      },
+
+      '& .MuiSelect-root': {
+        maxHeight: 29,
+        overflow: "hidden",
+        padding: '3px 0 7px 0',
+
+        '&:focus': {
+          background: 'none'
+        },
+        '& input': {
+          padding: 0
+        }
+      },
+      '& .MuiSelect-icon': {
+        display: 'none'
       },
       '& .outerborder': {
         border: '1px solid #c4c4c4',
@@ -3001,15 +3021,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           border: 'none !important'
         },
       },
-      '& .MuiSelect-select': {
-        minWidth: 200,
-        maxWidth: '100%',
-        border: '1px solid #c4c4c4',
-        borderRadius: 4,
-        paddingLeft: 10,
-        paddingRight: 10,
-      },
+      // '& .MuiSelect-select': {
+      //   minWidth: 200,
+      //   maxWidth: '100%',
+      //   border: '1px solid #c4c4c4',
+      //   borderRadius: 4,
+      //   paddingLeft: 10,
+      //   paddingRight: 10,
+      // },
       '& svg': {
+        color: '#ff3343',
         left: isRTL ? 10 : 'auto',
         right: isRTL ? 'auto' : 10,
       }
