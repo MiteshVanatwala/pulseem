@@ -576,6 +576,15 @@
         "desc": "From now on you will be able to send with this email without needing verification",
         "btnTxt": "Continue to campaigns"
       }
+    },
+    "payAttention": "Pay attention!",
+    "campMadewithOldEditor": "This campaign was made with the old editor",
+    "chooseNewEditorToCreateCamp": "In order to use the new editor go to “Create Campaign” and choose the new editor",
+    "newsLetterWizard": {
+      "continueEditingInOldEditor": "If you created a campaign in the new editor and you want to continue editing it in the old editor",
+      "recreateInOldEditor": "You will have to recreate the campaign in the old editor",
+      "continueEditingInNewEditor": "If you created a campaign in the old editor and you want to continue editing it in the new editor",
+      "recreateInNewEditor": "You will have to recreate the campaign in the new editor"
     }
   },
   "newsLetterSendSettings": {

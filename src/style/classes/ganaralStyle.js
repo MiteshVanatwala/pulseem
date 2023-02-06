@@ -2227,10 +2227,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#fff",
     borderRadius: 25,
     fontWeight: "700",
-    backgroundColor: "#0371ad",
     position: "absolute",
     top: "0.5rem",
     cursor: "pointer",
+  },
+  btnBgExitDialog: {
+    backgroundColor: "#0371ad",
+  },
+  btnNoBgExitDialog: {
+    background: "none",
+    color: "#000"
   },
   dialogExitButtonRTL: {
     left: "0.5rem",

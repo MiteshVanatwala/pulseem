@@ -639,7 +639,7 @@ const ClientSearchResult = ({ props, classes }) => {
   ];
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
+    await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page, SearchTerm: searchStr !== '' ? searchStr : searchData.SearchTerm }));
     setLoader(false);
   };
   // const getSearchData = async () => {
@@ -992,9 +992,10 @@ const ClientSearchResult = ({ props, classes }) => {
     let sessionSearchData = null;
     if (searchReferrer === true) {
       sessionSearchData = JSON.parse(window.sessionStorage?.getItem('searchData'));
-      sessionSearchData.IsSearchByFilter = true;
+      if (sessionSearchData)
+        sessionSearchData.IsSearchByFilter = true;
     }
-    setSearchData({ ...searchData, ...sessionSearchData })
+    setSearchData({ ...sessionSearchData, ...searchData })
   }
   // DONE
   const renderSearchLine = () => {
