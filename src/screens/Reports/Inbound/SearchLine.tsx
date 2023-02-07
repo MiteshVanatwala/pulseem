@@ -51,9 +51,17 @@ const SearchLine = ({
 }: SearchObject) => {
     const { t } = useTranslation();
     const localClasses = useStyles();
-    const DEFAULT_REQUES: RequestObject = {
-        FromDate: null,
-        ToDate: null,
+
+    const priorDate = moment().subtract(30, 'days').utcOffset(0).format('YYYY-MM-DD HH:mm').toString();
+
+    const defaultsDates = {
+        from: priorDate,
+        to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
+    }
+
+    const DEFAULT_REQUEST: RequestObject = {
+        FromDate: defaultsDates.from,
+        ToDate: defaultsDates.to.toString(),
         FromNumber: '',
         ToNumber: '',
         TextMessage: '',
@@ -64,8 +72,8 @@ const SearchLine = ({
     };
 
     const [isSearching, setIsSearching] = useState<boolean>(false);
-    const [request, setRequest] = useState<RequestObject>(DEFAULT_REQUES);
-    const [searchRequest, setSearchRequest] = useState<RequestObject>(DEFAULT_REQUES);
+    const [request, setRequest] = useState<RequestObject>(DEFAULT_REQUEST);
+    const [searchRequest, setSearchRequest] = useState<RequestObject>(DEFAULT_REQUEST);
     const [isFromDatePickerOpen, setIsFromDatePickerOpen] = useState<boolean | undefined>(false);
     const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean | undefined>(false);
     const [advanceSearch, setAdvanceSearch] = useState<boolean | undefined>(false);
@@ -77,7 +85,7 @@ const SearchLine = ({
 
     useEffect(() => {
         if (!isSearching) {
-            setSearchRequest(DEFAULT_REQUES);
+            setSearchRequest(DEFAULT_REQUEST);
         }
     }, [isSearching]);
 
@@ -217,7 +225,7 @@ const SearchLine = ({
     }
     const handleClearSearchForm = (e: any) => {
         e.preventDefault();
-        onFilterRequest(DEFAULT_REQUES);
+        onFilterRequest(DEFAULT_REQUEST);
         onSetIsSearching(false);
         setIsSearching(false);
     }

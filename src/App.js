@@ -418,17 +418,17 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={'/Inbound'}
+        path={'/reports/Inbound'}
         element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
-        path={'/Inbound/:type'}
+        path={'/reports/Inbound/:type'}
         element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
-        path={'/Inbound/:type/:id'}
+        path={'/reports/Inbound/:type/:id'}
         element={<InboundMessages classes={classes} />}
       />
     </Routes>
