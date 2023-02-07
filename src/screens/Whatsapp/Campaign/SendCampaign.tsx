@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import { buttons, tabs } from '../Constant';
 import { getTestGroups } from '../../../redux/reducers/smsSlice';
+import { useParams } from 'react-router-dom';
 
 const SendCampaign = ({
 	classes,

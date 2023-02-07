@@ -62,6 +62,7 @@ import {
 	userPhoneNumbers,
 	getSavedTemplates,
 	saveCampaign,
+	getCampaignSettingsById,
 } from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
@@ -78,9 +79,12 @@ import {
 import Toast from '../../../components/Toast/Toast.component';
 import { resetToastData } from '../Constant';
 import AlertModal from '../Editor/Popups/AlertModal';
+import { useParams } from 'react-router-dom';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
+	const tid = useParams();
+
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
@@ -606,8 +610,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onSubmit = async (e: BaseSyntheticEvent) => {
 		e.preventDefault();
 		const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+		console.log(
+			'Url passed id => ',
+			tid,
+			dispatch(getCampaignSettingsById('44'))
+		);
 		if (data.Status === 0) {
-			navigate('/react/Whatsapp/send/page2');
+			if (!tid) {
+				navigate('/react/Whatsapp/send/page2');
+			} else {
+				navigate(`/react/Whatsapp/send/page2/${tid}`);
+			}
 		} else {
 			data?.Message
 				? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })

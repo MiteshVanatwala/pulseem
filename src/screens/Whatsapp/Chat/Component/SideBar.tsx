@@ -3,10 +3,17 @@ import Icon from './Icon';
 import { contacts, lastMessage } from './data';
 import { WhatsappChatSideBarProps } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
+import {
+	IconButton,
+	makeStyles,
+	MenuItem,
+	Select,
+	Chip,
+} from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { green, yellow, red } from '@material-ui/core/colors';
 
 const SideBar = ({
 	classes,
@@ -22,6 +29,11 @@ const SideBar = ({
 				backgroundColor: 'rgba(0,0,0,0)',
 			},
 		},
+		selectSection: {
+			'&:focus': {
+				backgroundColor: 'rgba(0,0,0,0)',
+			},
+		},
 	}));
 	const muiclasses = useStyles();
 	const [activeUser, setActiveUser] = useState<string>('8123591159');
@@ -30,6 +42,11 @@ const SideBar = ({
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
 	};
 
+	const [userStatus, setUserStatus] = useState<string>('Open');
+	const handleUserStatus = (e: BaseSyntheticEvent) => {
+		e.preventDefault();
+		setUserStatus(e.target.value);
+	};
 	return (
 		<>
 			<aside
@@ -93,7 +110,7 @@ const SideBar = ({
 						<Link
 							className={`${classes.whatsappChat} sidebar-contact`}
 							to={`/chat/${contact.id}`}
-							onClick={(e) => handleChatId(contact.id)}>
+							onClick={(e) => handleChatId(e, contact.id)}>
 							<div
 								className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}>
 								<img
@@ -113,6 +130,28 @@ const SideBar = ({
 									</h2>
 									<span
 										className={`${classes.whatsappChat} sidebar-contact__time`}>
+										<span style={{ paddingRight: '10px' }}>
+											<Select
+												classes={{ root: muiclasses.selectSection }}
+												autoWidth
+												value={userStatus}
+												variant='standard'
+												style={{ fontSize: '12px' }}
+												onChange={(e) => handleUserStatus(e)}>
+												<MenuItem value={'Open'}>Open</MenuItem>
+												<MenuItem value={'Pending'}>Pending</MenuItem>
+												<MenuItem value={'Solved'}>
+													<Chip
+														label='Solved'
+														style={{
+															backgroundColor: green[300],
+															color: 'white',
+														}}
+														size='small'
+													/>
+												</MenuItem>
+											</Select>
+										</span>
 										{formatTime(lastMessage.time)}
 									</span>
 								</div>
