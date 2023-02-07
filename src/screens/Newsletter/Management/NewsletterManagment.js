@@ -385,7 +385,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         onClick: () => {
           setDialogType(
             // !IsNewEditor && getCookie('O2NedtrPopup') && getCookie('O2NedtrPopup') !== "false" ?
-            showCautionNewEditor ?
+            showCautionNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ?
               {
                 type: 'cautionEditorChange',
                 data: { CampaignID: CampaignID }

@@ -207,6 +207,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const handleSearchInput = (value, key, type) => {
     let { sms = {}, email = {}, whatsapp = {} } = searchData || {};
+
     if (key !== 'ShowContent') {
       type === 'sms' ? setPageSms(1) : setPageEmail(1);
     }
@@ -359,7 +360,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
             >
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
-              <Tab label={<span style={{marginInlineEnd: 5}}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2}
+              <Tab label={<span style={{ marginInlineEnd: 5 }}>{t('master.whatsapp')}</span>} classes={{ root: clsx(classes.minWidth100, localClasses.flexItems) }} value={2}
                 icon={<span className={classes.commingSoon}>{t("common.commingSoon")}</span>} />
             </TabList>
             <Grid item>
