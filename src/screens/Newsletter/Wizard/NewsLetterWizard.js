@@ -876,7 +876,7 @@ const NewsLetterWizard = ({ classes }) => {
             }
             else {
                 wizardButtons.push(<><Button
-                    onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
+                    onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, false)}
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -888,7 +888,7 @@ const NewsLetterWizard = ({ classes }) => {
                     color="primary"
                 >{t('common.saveAndContinue')}</Button>
                     {(id === null || id === undefined) && <Button
-                        onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
+                        onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, true)}
                         variant='contained'
                         size='medium'
                         className={clsx(
