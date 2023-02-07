@@ -39,8 +39,12 @@
         },
         "auth": {
             "everyDay": "Every Day",
-            "everyTwoWeeks": "Every Two Weeks"
-        }
+            "everyTwoWeeks": "Every Two Weeks",
+            "activatedSuccessfuly": "Two factor authentication activated!",
+            "inActivetedSuccessfuly": "Two factor authentication inactivated!",
+            "notSaved": "Two factor authentication was not saved. Please contact support."
+        },
+        "savedSuccessfuly": "Settings successfuly saved!"
     },
     "billingSettings": {
         "title": "Billing settings",

@@ -20,7 +20,7 @@ import useCore from "../../../helpers/hooks/Core";
 import { IsNumberField } from "../../../helpers/Utils/Validations";
 import { AccountSettings } from "../../../Models/Account/AccountSettings";
 
-const Form_AccountDetails = ({
+const FORM_ACCOUNT_DETAILS = ({
   setToastMessage,
   ToastMessages,
   Settings,
@@ -227,4 +227,4 @@ const Form_AccountDetails = ({
     </Box>
   );
 };
-export default Form_AccountDetails;
+export default FORM_ACCOUNT_DETAILS;

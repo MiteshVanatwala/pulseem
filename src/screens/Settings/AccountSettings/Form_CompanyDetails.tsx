@@ -20,9 +20,9 @@ import {
   MdMobileFriendly,
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
-import { UnLockIcon } from "../../../assets/images/settings";
+import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
 import { Title } from "../../../components/managment/Title";
-import Illustration_data_Analysis from "../../../assets/images/settings/Illustration_data_Analysis";
+import ILLUSTRATION_DATA_ANALYSIS from "../../../assets/images/settings/Illustration_data_Analysis";
 import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
@@ -36,8 +36,9 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
+import { update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
 
-const Form_CompanyDetails = ({
+const FORM_COMPANY_DETAILS = ({
   setToastMessage,
   ToastMessages,
   Settings,
@@ -46,6 +47,7 @@ const Form_CompanyDetails = ({
   const { t } = useTranslation();
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
+  const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
   const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -132,17 +134,37 @@ const Form_CompanyDetails = ({
 
   useEffect(() => {
     setCompanyDetails(Settings);
-  }, [Settings])
+  }, [Settings]);
+
+  useEffect(() => {
+    if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {
+      if (twoFAUpdated?.StatusCode === 201) {
+        setToastMessage(twoFAUpdated?.Message === 'activated' ? ToastMessages.TWO_FA_SAVED : ToastMessages.TWO_FA_SAVED_INACTIVE);
+      }
+      else {
+        setToastMessage(ToastMessages.TWO_FA_NOT_SAVED);
+      }
+    }
+  }, [twoFAUpdated])
+
+  const on2FAUpdate = (req: AccountSettings) => {
+    dispatch(update2FASettings(req)).then(() => {
+      setCompanyDetails(req);
+      OnUpdate(req, false);
+    })
+  }
 
   const handleChange = (e: any, name = "") => {
     //@ts-ignore
     !!errors?.[e?.target?.name] &&
       setErrors({ ...errors, [e.target.name]: "" });
     if (name === "TwoFactorAuth") {
-      setCompanyDetails({
+      const req = {
         ...companyDetails,
-        TwoFactorAuthEnabled: !companyDetails.TwoFactorAuthEnabled,
-      });
+        TwoFactorAuthEnabled: !!!companyDetails.TwoFactorAuthEnabled,
+      };
+      on2FAUpdate(req);
+
     } else if (name === "BirthDate") {
       setCompanyDetails({
         ...companyDetails,
@@ -162,7 +184,7 @@ const Form_CompanyDetails = ({
   };
   const handleSave = () => {
     if (isValidPayload()) {
-      OnUpdate(companyDetails);
+      OnUpdate(companyDetails, true);
     }
   };
 
@@ -193,7 +215,9 @@ const Form_CompanyDetails = ({
   };
 
   const handleTwoFactorOption = (e: any) => {
-    setCompanyDetails({ ...companyDetails, TwoFactorAuthOptionID: e?.target?.value });
+    const req = { ...companyDetails, TwoFactorAuthOptionID: e?.target?.value };
+    setCompanyDetails(req);
+    on2FAUpdate(req);
   }
 
   return (
@@ -212,7 +236,14 @@ const Form_CompanyDetails = ({
           }}
         />
         <Box className={"formContainer"}>
-          <Illustration_data_Analysis className={"svg_data_analysis"} />
+          <img src={DataAnalysis} className={'svg_data_analysis'} alt="" width="225" height="155" style={{
+            top: 121,
+            right: isRTL ? 'auto' : '93.14px',
+            left: isRTL ? '93.14px' : 'auto',
+            position: 'absolute',
+            transform: 'scaleX(1)'
+          }} />
+          {/* <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> */}
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -359,8 +390,8 @@ const Form_CompanyDetails = ({
               <TextField
                 variant="outlined"
                 size="small"
-                name="Zip"
-                value={companyDetails.Zip}
+                name="ZipCode"
+                value={companyDetails.ZipCode === 0 ? '' : companyDetails.ZipCode}
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
@@ -379,7 +410,7 @@ const Form_CompanyDetails = ({
                     <PulseemSwitch
                       switchType="ios"
                       classes={classes}
-                      checked={companyDetails.TwoFactorAuthEnabled ?? false}
+                      checked={companyDetails.TwoFactorAuthEnabled === true}
                       onColor="#0371ad"
                       handleDiameter={20}
                       boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
@@ -417,11 +448,12 @@ const Form_CompanyDetails = ({
                 </Typography>
                 <FormControl
                   className={classes.formControl}
-                  style={{ width: "100%", maxHeight: 40 }}
+                  style={{ width: "100%", maxHeight: 40, paddingInlineStart: 10 }}
                 >
                   <Select
+                    disabled={!companyDetails.TwoFactorAuthEnabled}
                     autoWidth
-                    value={companyDetails.TwoFactorAuthOptionID ?? null}
+                    value={companyDetails.TwoFactorAuthOptionID ?? 202}
                     style={{
                       maxHeight: 40,
                       overflow: "hidden",
@@ -431,9 +463,6 @@ const Form_CompanyDetails = ({
                     name="TwoFactorAuthOptionID"
                     onChange={(e: any) => { handleTwoFactorOption(e) }}
                   >
-                    <MenuItem value="" className={classes.dropDownItem}>
-                      {t("common.Status")}
-                    </MenuItem>
                     {[
                       { name: t("settings.accountSettings.auth.everyDay"), value: 101 },
                       { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
@@ -554,4 +583,4 @@ const Form_CompanyDetails = ({
   );
 };
 
-export default Form_CompanyDetails;
+export default FORM_COMPANY_DETAILS;

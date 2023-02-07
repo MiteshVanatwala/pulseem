@@ -8,5 +8,6 @@ import GrafMenuIcon from './grafMenu.png'
 import GroupMenuIcon from './groupMenu.png'
 import CheckAnimation from './check-circle.gif'
 import UnLockIcon from './UnLock.tsx'
+import DataAnalysis from './DataAnalysis.png'
 
-export { GrafMenuIcon, GroupMenuIcon, CodeMenuIcon, CrusorMenuIcon, DolarMenuIcon, SettingsMenuIcon, ShareMenuIcon, StarMenuIcon, CheckAnimation, UnLockIcon }
+export { GrafMenuIcon, GroupMenuIcon, CodeMenuIcon, CrusorMenuIcon, DolarMenuIcon, SettingsMenuIcon, ShareMenuIcon, StarMenuIcon, CheckAnimation, UnLockIcon, DataAnalysis }

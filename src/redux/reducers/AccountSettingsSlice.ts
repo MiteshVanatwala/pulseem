@@ -14,28 +14,70 @@ export const getAccountSettings = createAsyncThunk(
     }
   }
 );
-
-const initialState = {
-  StatusCode: 200,
-  Message: '',
-  Data: null as AccountSettings
-} as PulseemResponse
+export const updateDetails = createAsyncThunk(
+  'AccountSettings/UpdateDetails',
+  async (settings: AccountSettings, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSettings/UpdateDetails`, settings);
+      return response.data
+    } catch (error) {
+      return console.log(error);
+    }
+  }
+);
+export const updateSettings = createAsyncThunk(
+  'AccountSettings/UpdateSettings',
+  async (settings: AccountSettings, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSettings/UpdateSettings`, settings);
+      return response.data
+    } catch (error) {
+      return console.log(error);
+    }
+  }
+);
+export const update2FASettings = createAsyncThunk(
+  'AccountSettings/Update2FASettings',
+  async (settings: AccountSettings, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.put(`AccountSettings/Update2FASettings`, settings)
+      return response.data;
+    } catch (error) {
+      return console.log(error);
+    }
+  }
+);
 
 const AccountSettingsSlice = createSlice({
   name: 'AccountSettings',
-  initialState,
+  initialState: {
+    accountSettings: {
+      StatusCode: 200,
+      Message: '',
+      Data: {} as AccountSettings,
+    } as PulseemResponse,
+    ToastMessages: {
+      GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
+      SETTINGS_SAVED: { severity: 'success', color: 'success', message: 'settings.accountSettings.savedSuccessfuly', showAnimtionCheck: false },
+      TWO_FA_SAVED: { severity: 'success', color: 'success', message: 'settings.accountSettings.auth.activatedSuccessfuly', showAnimtionCheck: false },
+      TWO_FA_SAVED_INACTIVE: { severity: 'success', color: 'success', message: 'settings.accountSettings.auth.inActivetedSuccessfuly', showAnimtionCheck: false },
+      TWO_FA_NOT_SAVED: { severity: 'error', color: 'error', message: 'settings.accountSettings.auth.notSaved', showAnimtionCheck: false },
+    },
+    twoFAUpdated: {
+      StatusCode: 200,
+      Message: '',
+      Data: ''
+    } as PulseemResponse
+  },
   reducers: {
     // fill in primary logic here
   },
   extraReducers: (builder) => {
-    builder.addCase(getAccountSettings.pending, (state, action) => {
-      // both `state` and `action` are now correctly typed
-      // based on the slice state and the `pending` action creator
-    })
     builder.addCase(getAccountSettings.fulfilled, (state, action) => {
-      state.Data = action.payload?.Data;
-      state.StatusCode = action.payload?.StatusCode;
-      state.Message = action.payload?.Message;
+      state.accountSettings = action.payload;
+    })
+    builder.addCase(update2FASettings.fulfilled, (state, action) => {
+      state.twoFAUpdated = action.payload;
     })
   },
 })

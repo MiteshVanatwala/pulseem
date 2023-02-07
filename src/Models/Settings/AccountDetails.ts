@@ -6,6 +6,6 @@ export type AccDtlPropTypes = {
   ToastMessages: {
     [key: string]: any;
   };
-  Settings: AccountSettings,
+  Settings: AccountSettings | null,
   OnUpdate: Function
 };

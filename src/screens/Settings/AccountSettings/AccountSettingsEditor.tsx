@@ -5,11 +5,11 @@ import { Title } from "../../../components/managment/Title";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
-import Form_CompanyDetails from "./Form_CompanyDetails";
-import Form_AccountDetails from "./Form_AccountDetails";
+import FORM_COMPANY_DETAILS from "./Form_CompanyDetails";
+import FORM_ACCOUNT_DETAILS from "./Form_AccountDetails";
 import Toast from "../../../components/Toast/Toast.component";
 import useCore from "../../../helpers/hooks/Core";
-import { getAccountSettings } from "../../../redux/reducers/AccountSettingsSlice";
+import { getAccountSettings, updateDetails, updateSettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { Loader } from "../../../components/Loader/Loader";
 
@@ -18,8 +18,7 @@ const AccountSettingsEditor = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { classes } = useCore();
-  const { ToastMessages } = useSelector((state: any) => state?.settings);
-  const { StatusCode, Message, Data } = useSelector((state: any) => state?.accountSettings);
+  const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
   const [settingRequest, setSettingRequest] = useState<AccountSettings | null>({
@@ -71,16 +70,42 @@ const AccountSettingsEditor = () => {
   }, []);
 
   useEffect(() => {
-    setSettingRequest(Data);
-  }, [Data]);
+    setSettingRequest(accountSettings?.Data);
+  }, [accountSettings]);
 
-  const handleUpdate = (updatedObject: AccountSettings) => {
-    setSettingRequest({ ...settingRequest, ...updatedObject })
+  const handleUpdate = async (updatedObject: AccountSettings, saveType: string, sendRequest: boolean) => {
+
+    setSettingRequest({ ...settingRequest, ...updatedObject });
+
+    if (sendRequest === true) {
+      setShowLoader(true);
+      let response = null;
+
+      try {
+        switch (saveType) {
+          case 'company': {
+            response = await dispatch(updateDetails(updatedObject));
+            break;
+          }
+          case 'account':
+          default: {
+            response = await dispatch(updateSettings(updatedObject));
+          }
+        }
+      }
+      catch (ex) { }
+      finally {
+        handleResponses(response);
+        setShowLoader(false);
+      }
+    }
+
   }
 
   const handleResponses = (response: any) => {
     switch (response?.StatusCode || response?.payload?.StatusCode) {
       case 201: {
+        setToastMessage(ToastMessages.SETTINGS_SAVED);
         break;
       }
       case 401: {
@@ -112,17 +137,17 @@ const AccountSettingsEditor = () => {
           <Title Text={t("settings.accountSettings.title")} classes={classes} />
         </Box>
         <Box className={"containerBody"}>
-          <Form_CompanyDetails
+          <FORM_COMPANY_DETAILS
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
-            Settings={{ ...Data }}
-            OnUpdate={(updatedObject: AccountSettings) => handleUpdate(updatedObject)}
+            Settings={{ ...settingRequest as AccountSettings }}
+            OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
           />
-          <Form_AccountDetails
+          <FORM_ACCOUNT_DETAILS
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
-            Settings={{ ...Data }}
-            OnUpdate={(updatedObject: AccountSettings) => handleUpdate(updatedObject)}
+            Settings={{ ...settingRequest as AccountSettings }}
+            OnUpdate={(updatedObject: AccountSettings) => handleUpdate(updatedObject, 'account', true)}
           />
         </Box>
       </Box>
