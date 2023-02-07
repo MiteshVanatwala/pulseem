@@ -21,8 +21,8 @@
       "securitySettings": "הגדרות אבטחת חשבון",
       "btnChangePwd": "שינוי סיסמא",
       "btnUpdate": "שמירת הגדרות",
-      "btnVerifyEmail": "Verification of email to send",
-      "btnVerifyNumber": "Verification of number to send"
+      "btnVerifyEmail": "אימות כתובת אימייל לשליחה",
+      "btnVerifyNumber": "אימות מספר לשליחה"
     },
     "actDetails": {
       "title": "פרטי חשבון",

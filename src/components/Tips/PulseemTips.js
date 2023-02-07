@@ -6,7 +6,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
-import { HornIcon, Illustration_tipulseem } from '../../assets/images/dashboard/index'
+import { HornIcon, IllustrationTipulseem } from '../../assets/images/dashboard/index'
 
 const PulseemTips = ({ classes, t, isRTL }) => {
   const { tips } = useSelector(state => state.dashboard);
@@ -68,9 +68,10 @@ const PulseemTips = ({ classes, t, isRTL }) => {
         </Typography>
       </Box>
       <Box className={classes.flexJustifyCenter}>
-        <Illustration_tipulseem />
+        {/* <IllustrationTipulseem /> */}
+        <img alt="Tips" src={IllustrationTipulseem} width="158" height="99" />
       </Box>
-      <Box dir={'ltr'} >
+      <Box dir={'ltr'} style={{marginTop: 30}}>
         <Carousel
           autoPlay={true}
           interval={8000}
