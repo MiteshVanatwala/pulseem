@@ -827,8 +827,8 @@ const NewsLetterWizard = ({ classes }) => {
 
     const renderButtons = () => {
         const wizardButtons = [];
-        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false"
-        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false"
+        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
         if (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
             wizardButtons.push(<>
                 <Button
