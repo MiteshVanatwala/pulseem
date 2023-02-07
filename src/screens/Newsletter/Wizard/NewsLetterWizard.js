@@ -932,10 +932,10 @@ const NewsLetterWizard = ({ classes }) => {
                             {/* Pay attention! */}
                         </Typography>
                         <Typography className={classes.f20}>
-                            {t('campaigns.newsLetterMgmt.newsLetterWizard.continueEditingInOldEditor')}
+                            {t('campaigns.newsLetterMgmt.newsLetterWizard.continueEditingInNewEditor')}
                         </Typography>
                         <Typography className={classes.f20}>
-                            {t('campaigns.newsLetterMgmt.newsLetterWizard.continueEditingInNewEditor')}
+                            {t('campaigns.newsLetterMgmt.newsLetterWizard.recreateInOldEditor')}
                         </Typography>
 
                         <Box className={classes.mt15}>
@@ -988,7 +988,7 @@ const NewsLetterWizard = ({ classes }) => {
                             {/* Pay attention! */}
                         </Typography>
                         <Typography className={classes.f20}>
-                            {t('campaigns.newsLetterMgmt.newsLetterWizard.recreateInOldEditor')}
+                            {t('campaigns.newsLetterMgmt.newsLetterWizard.continueEditingInOldEditor')}
                         </Typography>
                         <Typography className={classes.f20}>
                             {t('campaigns.newsLetterMgmt.newsLetterWizard.recreateInNewEditor')}
