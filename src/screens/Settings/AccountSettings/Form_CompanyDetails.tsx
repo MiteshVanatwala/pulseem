@@ -22,14 +22,12 @@ import {
 } from "react-icons/md";
 import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
 import { Title } from "../../../components/managment/Title";
-import ILLUSTRATION_DATA_ANALYSIS from "../../../assets/images/settings/Illustration_data_Analysis";
 import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
   IsValidEmail,
 } from "../../../helpers/Utils/Validations";
 import {
-  CompDtlErrorsType,
   CompDtlPropTypes
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
@@ -37,6 +35,7 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
+import queryString from 'query-string';
 
 const FORM_COMPANY_DETAILS = ({
   setToastMessage,
@@ -152,6 +151,18 @@ const FORM_COMPANY_DETAILS = ({
       setCompanyDetails(req);
       OnUpdate(req, false);
     })
+  }
+
+  useEffect(() => {
+    const qs = window.location.search && queryString.parse(window.location.search);
+    if (qs["2fa"] === 'true') {
+      console.log(1);
+      // Apply two factor automatically
+    }
+  }, [])
+
+  const handleQueryString2FA = () => {
+
   }
 
   const handleChange = (e: any, name = "") => {
