@@ -409,6 +409,21 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'& img': {
 			width: '100%',
 			borderRadius: '4px',
+			'&.video-preview-img': {
+				width: '100%',
+				background: 'white',
+				padding: '12px',
+				height: '152px',
+			},
+			'&.pdf-preview-img': {
+				width: '38px',
+				padding: '4px',
+				paddingLeft: '0px',
+			},
+			'&.download-preview-img': {
+				width: '28px',
+				padding: '4px',
+			},
 		},
 	},
 	callToActionButtonsWrapper: {
@@ -2552,5 +2567,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				color: '#27AE60',
 			},
 		},
+	},
+	pdfFileName: {
+		wordWrap: 'break-word',
+		whiteSpace: 'pre-wrap',
+		width: 'calc(100% - 66px)',
 	},
 });

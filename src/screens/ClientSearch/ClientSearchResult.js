@@ -676,7 +676,7 @@ const ClientSearchResult = ({ props, classes }) => {
   ];
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
+    await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page, SearchTerm: searchStr !== '' ? searchStr : searchData.SearchTerm }));
     setLoader(false);
   };
   // const getSearchData = async () => {

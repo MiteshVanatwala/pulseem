@@ -229,8 +229,13 @@ export type personalFieldAPIProps = {
 	payload: personalFieldDataProps;
 };
 
+export type phoneNumberAPIDataProps = {
+	Data: string[];
+	status: string;
+};
+
 export type phoneNumberAPIProps = {
-	payload: string[];
+	payload: phoneNumberAPIDataProps;
 };
 
 export type personalFieldDataProps = {
@@ -282,7 +287,7 @@ export type saveCampaignResponsePayloadProps = {
 	Data: { WACampaignId: number };
 	ErrorCode: number;
 	Message: string | null;
-	Status: number;
+	Status: string;
 };
 
 export type saveCampaignResponseProps = {
@@ -408,4 +413,34 @@ export type gropListAPIProps = {
 	meta: { requestStatus: string };
 	type: string;
 	payload: testGroupDataProps[];
+};
+
+export type CampaignDetailByIdDataProps = {
+	ClicksCount: number;
+	CreateDate: string;
+	CreditsPerSms: number;
+	FromNumber: string;
+	IsTestCampaign: false;
+	LogicalDeleted: false;
+	Name: string;
+	SendDate: number;
+	SendingMethod: number;
+	Status: number;
+	SubAccountID: number;
+	TemplateID: string;
+	TotalSendPlan: number;
+	UniqueClicksCount: number;
+	UpdateDate: string;
+	VariableValues: any;
+	WACampaignID: number;
+};
+
+export type CampaignDetailByIdPayloadProps = {
+	Data: CampaignDetailByIdDataProps;
+	Message: string;
+	Status: string;
+};
+
+export type CampaignDetailByIdProps = {
+	payload: CampaignDetailByIdPayloadProps;
 };

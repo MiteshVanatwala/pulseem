@@ -72,7 +72,6 @@ export type actionProps = {
 
 export type whatsappMobilePreviewProps = {
 	classes: ClassesType['classes'];
-	campaignNumber: string;
 	templateData: templateDataProps;
 	buttonType: string;
 	fileData: string;

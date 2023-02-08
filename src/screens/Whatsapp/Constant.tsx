@@ -39,6 +39,12 @@ export enum fieldNames {
 	NAVIGATION = 'navigation',
 }
 
+export enum fileTypes {
+	DOCUMENT = 'document',
+	VIDEO = 'video',
+	IMAGE = 'image',
+}
+
 export enum tabs {
 	GROUP = 'group',
 	MANUAL = 'manual',

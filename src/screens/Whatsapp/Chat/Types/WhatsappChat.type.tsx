@@ -54,3 +54,32 @@ export type AllIconComponentProps = {
 export type AllIconProps = {
 	[key: string]: (props: AllIconComponentProps) => JSX.Element;
 };
+
+export type APIWhatsappChatSidebarContactsItemsProps = {
+	ConversationStatusId: number;
+	IsTemplate: boolean;
+	IsUnsubscribed: boolean;
+	LastMessage: string;
+	LastMessageDate: string;
+	PhoneNumber: string;
+	Unread: number;
+	UserName: string;
+};
+
+export type APIWhatsappChatSidebarContactsDataProps = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatSidebarContactsItemsProps[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APIWhatsappChatSidebarContactsPayloadProps = {
+	Data: APIWhatsappChatSidebarContactsDataProps;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatSidebarContactsProps = {
+	payload: APIWhatsappChatSidebarContactsPayloadProps;
+};
