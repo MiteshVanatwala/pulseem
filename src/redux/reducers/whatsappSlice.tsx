@@ -436,6 +436,23 @@ export const getCampaignSettingsById = createAsyncThunk(
 	}
 );
 
+export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChatContacts',
+	async (number: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChatContacts`,
+				{ PhoneNumber: number }
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -443,6 +460,7 @@ export const whatsappSlice = createSlice({
 		submitTemplate: [],
 		saveTemplate: [],
 		userPhoneNumbers: [],
+		// getWhatsappChatContactsByPhoneNumber: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -516,6 +534,12 @@ export const whatsappSlice = createSlice({
 		builder.addCase(getInboundReport.fulfilled, (state, { payload }) => {
 			if (!payload.IsExport) state.inboundWhatsappReport = payload;
 		});
+		// builder.addCase(
+		// 	getWhatsappChatContactsByPhoneNumber.fulfilled,
+		// 	(state, { payload }) => {
+		// 		state.getWhatsappChatContactsByPhoneNumber = payload;
+		// 	}
+		// );
 	},
 });
 
