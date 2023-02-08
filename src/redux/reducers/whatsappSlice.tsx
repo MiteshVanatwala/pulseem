@@ -436,6 +436,21 @@ export const getCampaignSettingsById = createAsyncThunk(
 	}
 );
 
+export const getCampaignDetailById = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsappCampaignDetail',
+	async (campaignID: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetWhatsappCampaignDetail/${campaignID}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {

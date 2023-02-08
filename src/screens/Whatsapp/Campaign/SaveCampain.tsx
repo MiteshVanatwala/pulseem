@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import { Title } from '../../../components/managment/Title';
 import { useTranslation } from 'react-i18next';
@@ -26,12 +26,13 @@ import {
 	updatedVariableProps,
 	landingPageDataProps,
 	landingPageAPIProps,
-	testGroupsProps,
 	smsReducerProps,
 	saveCampaignDataProps,
 	saveCampaignResponseProps,
 	saveCampaignResponsePayloadProps,
 	phoneNumberAPIProps,
+	CampaignDetailByIdProps,
+	CampaignDetailByIdDataProps,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -63,6 +64,7 @@ import {
 	getSavedTemplates,
 	saveCampaign,
 	getCampaignSettingsById,
+	getCampaignDetailById,
 } from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
@@ -77,14 +79,13 @@ import {
 	getTestGroups,
 } from '../../../redux/reducers/smsSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import { resetToastData } from '../Constant';
+import { apiStatus, resetToastData } from '../Constant';
 import AlertModal from '../Editor/Popups/AlertModal';
 import { useParams } from 'react-router-dom';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
-	const tid = useParams();
-
+	const { campaignID } = useParams();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
@@ -215,6 +216,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			getSavedTemplates({ templateStatus: 3 })
 		);
 		setSavedTemplateList(savedTemplate.payload?.Data?.Items);
+		setCampaignDetail(savedTemplate.payload?.Data?.Items);
 	};
 
 	useEffect(() => {
@@ -230,18 +232,27 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const getPhoneNumber = async () => {
-		// const { payload: phoneNumberData }: phoneNumberAPIProps =
-		// 	await dispatch<any>(userPhoneNumbers());
-		const phoneNumberData: phoneNumberAPIProps['payload'] = [
-			'91901000001',
-			'91901000002',
-			'91901000003',
-		];
-		if (phoneNumberData?.length > 0) {
-			setFrom(phoneNumberData[0]);
+	const setCampaignDetail = (templateList: savedTemplateListProps[]) => {
+		if (campaignID && templateList) {
+			(async () => {
+				const { payload: campaignData }: CampaignDetailByIdProps =
+					await dispatch<any>(getCampaignDetailById(campaignID));
+				if (campaignData.Status === apiStatus.SUCCESS) {
+					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
+					setCampaignName(campaignData?.Data?.Name);
+					setFrom(campaignData?.Data?.FromNumber);
+				}
+			})();
 		}
-		setPhoneNumbersList(phoneNumberData);
+	};
+
+	const getPhoneNumber = async () => {
+		const { payload: phoneNumberData }: phoneNumberAPIProps =
+			await dispatch<any>(userPhoneNumbers());
+		if (phoneNumberData?.Data?.length > 0) {
+			setFrom(phoneNumberData?.Data[0]);
+		}
+		setPhoneNumbersList(phoneNumberData?.Data);
 	};
 
 	const getDynamicModalValues = async () => {
@@ -482,12 +493,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setDynamicModalVariable(0);
 	};
 
-	const onSavedTemplateChange = (TemplateId: string) => {
+	const onSavedTemplateChange = (
+		TemplateId: string,
+		templateList: savedTemplateListProps[] = savedTemplateList
+	) => {
 		resetDynamicFields();
 
 		setSavedTemplate(TemplateId);
 		const savedTemplateData: savedTemplateListProps | undefined =
-			savedTemplateList?.find((template) => template.TemplateId === TemplateId);
+			templateList?.find((template) => template.TemplateId === TemplateId);
 		const templateData: savedTemplateDataProps | undefined =
 			savedTemplateData?.Data;
 		if (templateData) {
@@ -595,7 +609,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (validateSaveCampaign()) {
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
 
-			if (data.Status === 0) {
+			if (data.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
 			} else {
 				data?.Message
@@ -609,22 +623,20 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onSubmit = async (e: BaseSyntheticEvent) => {
 		e.preventDefault();
-		const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
-		console.log(
-			'Url passed id => ',
-			tid,
-			dispatch(getCampaignSettingsById('44'))
-		);
-		if (data.Status === 0) {
-			if (!tid) {
-				navigate('/react/Whatsapp/send/page2');
+		if (validateSaveCampaign()) {
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+
+			if (data.Status === apiStatus.SUCCESS) {
+				navigate(
+					`/react/whatsapp/campaign/edit/page2/${data.Data.WACampaignId}`
+				);
 			} else {
-				navigate(`/react/Whatsapp/send/page2/${tid}`);
+				data?.Message
+					? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
+					: setToastMessage(ToastMessages.ERROR);
 			}
 		} else {
-			data?.Message
-				? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
-				: setToastMessage(ToastMessages.ERROR);
+			setIsValidationAlert(true);
 		}
 	};
 
@@ -666,7 +678,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						<>{translator('whatsappCampaign.checkLimit')}</>{' '}
 						<a
 							href='https://business.facebook.com/settings/whatsapp-business-accounts/'
-							target='_blank' rel="noreferrer">
+							target='_blank'
+							rel='noreferrer'>
 							<>{translator('whatsappCampaign.here')}</>
 						</a>
 					</span>
@@ -795,7 +808,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								<Box className={classes.WhatsappCampainMobilePreviewBox}>
 									<WhatsappMobilePreview
 										classes={classes}
-										campaignNumber='1'
 										templateData={templateData}
 										buttonType={buttonType}
 										fileData={fileData}

@@ -821,7 +821,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				<Box className={classes.alertModalContentMobile}>
 					<WhatsappMobilePreview
 						classes={classes}
-						campaignNumber='1'
 						templateData={templateData}
 						buttonType={buttonType}
 						fileData={fileData}
@@ -840,7 +839,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				<Box className={classes.alertModalContentMobile}>
 					<WhatsappMobilePreview
 						classes={classes}
-						campaignNumber='1'
 						templateData={templateData}
 						buttonType={buttonType}
 						fileData={fileData}
