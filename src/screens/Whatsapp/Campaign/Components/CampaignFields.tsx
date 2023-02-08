@@ -1,9 +1,35 @@
-import { Box, TextField, Typography, MenuItem, Grid } from '@material-ui/core';
+import {
+	Box,
+	TextField,
+	Typography,
+	MenuItem,
+	Grid,
+	Select,
+	ListSubheader,
+	InputAdornment,
+} from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { BaseSyntheticEvent } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import { useState, useMemo } from 'react';
+import SearchIcon from '@mui/material/IconButton/IconButton';
+import { makeStyles } from '@material-ui/core/styles';
+import { getTemplateIdByName, getTemplateNameById } from '../../Common';
+
+// const containsText = (text: any, searchText: any) =>
+// 	text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+
+const useStyles = makeStyles((theme) => ({
+	selectEmpty: {
+		marginTop: theme.spacing(2),
+	},
+	menuPaper: {
+		maxHeight: 400,
+	},
+}));
 
 const CampaignFields = ({
 	classes,
@@ -21,6 +47,20 @@ const CampaignFields = ({
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+
+	const onTemplateChange = (e: BaseSyntheticEvent) => {
+		if (e.target.textContent !== '') {
+			const templateId = getTemplateIdByName(
+				savedTemplateList,
+				e.target.textContent
+			);
+			if (templateId) {
+				onSavedTemplateChange(templateId);
+			}
+		} else {
+			onSavedTemplateChange("");
+		}
+	};
 
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
@@ -92,31 +132,19 @@ const CampaignFields = ({
 				<Typography className={classes.buttonHead}>
 					<>{translator('whatsappCampaign.chooseTemplate')}</>
 				</Typography>
-
-				<TextField
-					select
-					required
-					id='selectSavedTemplate'
-					type='text'
+				<Autocomplete
+					id='template-list'
 					className={
 						showValidation && savedTemplate?.length === 0
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
-					onChange={onSavedTemplateChange}
-					value={savedTemplate}>
-					{savedTemplateList?.length > 0 ? (
-						savedTemplateList.map((template) => (
-							<MenuItem key={template.TemplateId} value={template.TemplateId}>
-								{template.TemplateName}
-							</MenuItem>
-						))
-					) : (
-						<MenuItem key={'no-data-template'} disabled>
-							<>{translator('whatsapp.noTemplateAaliable')}</>
-						</MenuItem>
-					)}
-				</TextField>
+					options={savedTemplateList.map((template) => template.TemplateName)}
+					renderInput={(params) => <TextField {...params} />}
+					onChange={onTemplateChange}
+					value={getTemplateNameById(savedTemplateList, savedTemplate)}
+				/>
+
 				<Typography className={classes.WhatsappCampainButtonContent}>
 					<>{translator('whatsappCampaign.chooseTemplateDesc')}</>
 				</Typography>

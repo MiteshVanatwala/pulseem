@@ -12,6 +12,8 @@ import {
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import AlertModal from '../Popups/AlertModal';
+import { Autocomplete } from '@mui/material';
+import { getTemplateIdByName, getTemplateNameById } from '../../Common';
 
 const TemplateFields = ({
 	classes,
@@ -59,6 +61,20 @@ const TemplateFields = ({
 		setFileData(undefined);
 	};
 
+	const onTemplateChange = (e: BaseSyntheticEvent) => {
+		if (e.target.textContent !== '') {
+			const templateId = getTemplateIdByName(
+				savedTemplateList,
+				e.target.textContent
+			);
+			if (templateId) {
+				onSavedTemplateChange(templateId);
+			}
+		} else {
+			onSavedTemplateChange('');
+		}
+	};
+
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 			<Grid item xs={12} sm={12} md={12} lg={5}>
@@ -92,34 +108,20 @@ const TemplateFields = ({
 							<>{translator('whatsapp.selectSavedTemplate')}</>
 						</Typography>
 
-						<TextField
-							select
-							id='selectSavedTemplate'
-							type='text'
-							placeholder={translator(
-								'whatsapp.selectSavedTemplatePlaceholder'
-							)}
+						<Autocomplete
+							id='template-list'
 							className={
 								isCampaign
 									? clsx(classes.buttonField, classes.error)
 									: clsx(classes.buttonField, classes.success)
 							}
-							onChange={onSavedTemplateChange}
-							value={savedTemplate}>
-							{savedTemplateList?.length > 0 ? (
-								savedTemplateList.map((template) => (
-									<MenuItem
-										key={template.TemplateId}
-										value={template.TemplateId}>
-										{template.TemplateName}
-									</MenuItem>
-								))
-							) : (
-								<MenuItem key={'no-data-template'} disabled>
-									<>{translator('whatsapp.noTemplateAaliable')}</>
-								</MenuItem>
+							options={savedTemplateList.map(
+								(template) => template.TemplateName
 							)}
-						</TextField>
+							renderInput={(params) => <TextField {...params} />}
+							onChange={onTemplateChange}
+							value={getTemplateNameById(savedTemplateList, savedTemplate)}
+						/>
 					</Grid>
 				</Grid>
 			</Grid>
@@ -145,7 +147,7 @@ const TemplateFields = ({
 								onChange={(e) => onFileUploadChange(e)}
 							/>
 							{fileData?.length > 0 ? (
-								<div style={{ marginRight: 'auto' }}>
+								<div style={{ marginRight: 'auto', width: '100%' }}>
 									<Button
 										variant='contained'
 										color='primary'
@@ -153,11 +155,12 @@ const TemplateFields = ({
 										style={{
 											borderRadius: '22px',
 											padding: '0px 10px 0px 10px',
+											width: '100%',
 										}}
 										onClick={(e) => onFileDeselect(e)}>
 										{fileData
 											?.split('/')
-											[fileData?.split('/')?.length - 1]?.substring(0, 10) +
+											[fileData?.split('/')?.length - 1]?.substring(0, 25) +
 											'...'}
 										&emsp;
 										<i className='zmdi zmdi-close'></i>

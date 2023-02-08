@@ -664,7 +664,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					<br />
 					<span>
 						<>{translator('whatsappCampaign.checkLimit')}</>{' '}
-						<a href='https://business.facebook.com/settings/whatsapp-business-accounts/'>
+						<a
+							href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+							target='_blank' rel="noreferrer">
 							<>{translator('whatsappCampaign.here')}</>
 						</a>
 					</span>
@@ -684,8 +686,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 									classes={classes}
 									savedTemplateList={savedTemplateList}
 									savedTemplate={savedTemplate}
-									onSavedTemplateChange={(e) =>
-										onSavedTemplateChange(e.target.value)
+									onSavedTemplateChange={(templateId) =>
+										onSavedTemplateChange(templateId)
 									}
 									campaignName={campaignName}
 									onCampaignNameChange={(campaignName) =>

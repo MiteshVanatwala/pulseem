@@ -195,7 +195,8 @@ const WhatsappMobilePreview = ({
 																							href={getValueByFieldName(
 																								button,
 																								'whatsapp.websiteURL'
-																							)}>
+																							)}
+																							target='_blank'>
 																							<i
 																								className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
 																							<span
