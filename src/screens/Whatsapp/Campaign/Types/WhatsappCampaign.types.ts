@@ -431,7 +431,7 @@ export type CampaignDetailByIdDataProps = {
 	TotalSendPlan: number;
 	UniqueClicksCount: number;
 	UpdateDate: string;
-	VariableValues: any;
+	VariableValues: updatedVariableProps[];
 	WACampaignID: number;
 };
 

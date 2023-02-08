@@ -32,7 +32,6 @@ import {
 	saveCampaignResponsePayloadProps,
 	phoneNumberAPIProps,
 	CampaignDetailByIdProps,
-	CampaignDetailByIdDataProps,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -241,6 +240,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
+					console.log(
+						'campaignData?.Data?.VariableValues',
+						campaignData?.Data?.VariableValues
+					);
+					setUpdatedDynamicVariable(campaignData?.Data?.VariableValues);
 				}
 			})();
 		}
@@ -592,7 +596,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const saveCampaignCall = async () => {
 		const reqData: saveCampaignDataProps = {
-			WACampaignID: 0,
+			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
 			Variables: updatedDynamicVariable,
 			name: campaignName,
