@@ -1,5 +1,7 @@
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-
+import Video from '../../../../assets/images/video.png';
+import PDF from '../../../../assets/images/pdf.png';
+import Download from '../../../../assets/images/download.png';
 import { Box, Grid } from '@material-ui/core';
 import {
 	callToActionFieldProps,
@@ -12,10 +14,10 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { fileTypes } from '../../Constant';
 
 const WhatsappMobilePreview = ({
 	classes,
-	campaignNumber,
 	templateData,
 	buttonType,
 	fileData,
@@ -67,6 +69,15 @@ const WhatsappMobilePreview = ({
 		);
 	};
 
+	const getFileType = () => {
+		if (fileData?.includes('.png') || fileData?.includes('.jpeg')) {
+			return fileTypes.IMAGE;
+		} else if (fileData?.includes('.pdf')) {
+			return fileTypes.DOCUMENT;
+		} else if (fileData?.includes('.mp4')) {
+			return fileTypes.VIDEO;
+		}
+	};
 	return (
 		<Box className={classes.phoneDiv}>
 			<div className={classes.whatsappPhoneImg}>
@@ -103,11 +114,7 @@ const WhatsappMobilePreview = ({
 												<img src={AccountUser} alt='Avatar' />
 											</div>
 											<div className='name'>
-												<span>
-													{username?.length <= 6
-														? username
-														: `${username?.substring(0, 6)}...`}
-												</span>
+												<span>{username}</span>
 												<span className='status'>
 													<>{translator('whatsapp.online')}</>
 												</span>
@@ -137,12 +144,53 @@ const WhatsappMobilePreview = ({
 																	className={
 																		classes.whatsappMobileMessageTextAndImage
 																	}>
-																	{fileData?.length > 0 && (
-																		<img
-																			src={fileData}
-																			alt='uploaded-file-preview'
-																		/>
-																	)}
+																	{getFileType() === fileTypes.IMAGE &&
+																		fileData?.length > 0 && (
+																			<img
+																				src={fileData}
+																				alt='uploaded-file-preview'
+																			/>
+																		)}
+																	{getFileType() === fileTypes.VIDEO &&
+																		fileData?.length > 0 && (
+																			<a
+																				href={fileData}
+																				target='_blank'
+																				rel='noreferrer'>
+																				<img
+																					className='video-preview-img'
+																					src={Video}
+																					alt='uploaded-file-preview'
+																				/>
+																			</a>
+																		)}
+																	{getFileType() === fileTypes.DOCUMENT &&
+																		fileData?.length > 0 && (
+																			<Grid container alignItems='center'>
+																				<img
+																					className='pdf-preview-img'
+																					src={PDF}
+																					alt='uploaded-file-preview'
+																				/>
+																				<div className={classes.pdfFileName}>
+																					{fileData
+																						?.split('/')
+																						[
+																							fileData?.split('/')?.length - 1
+																						]?.substring(0, 18) + '...'}
+																				</div>
+																				<a
+																					href={fileData}
+																					target='_blank'
+																					rel='noreferrer'>
+																					<img
+																						className='download-preview-img'
+																						src={Download}
+																						alt='uploaded-file-preview'
+																					/>
+																				</a>
+																			</Grid>
+																		)}
 																	<pre>{templateText}</pre>
 																</div>
 															)}
@@ -175,13 +223,13 @@ const WhatsappMobilePreview = ({
 																				<Grid item key={button.id}>
 																					{button.typeOfAction ===
 																					'phonenumber' ? (
-																						// eslint-disable-next-line react/jsx-no-target-blank
 																						<a
 																							target='_blank'
 																							href={`tel:${getValueByFieldName(
 																								button,
 																								'whatsapp.phoneNumber'
-																							)}`}>
+																							)}`}
+																							rel='noreferrer'>
 																							<i
 																								className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
 																							<span
@@ -199,7 +247,9 @@ const WhatsappMobilePreview = ({
 																							href={getValueByFieldName(
 																								button,
 																								'whatsapp.websiteURL'
-																							)}>
+																							)}
+																							target='_blank'
+																							rel='noreferrer'>
 																							<i
 																								className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
 																							<span

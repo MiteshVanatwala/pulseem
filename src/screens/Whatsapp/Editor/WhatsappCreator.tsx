@@ -864,7 +864,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						savedTemplate={savedTemplate}
 						fileData={fileData}
 						onTemplateNameChange={(e) => onTemplateNameChange(e)}
-						onSavedTemplateChange={(e) => onSavedTemplateChange(e.target.value)}
+						onSavedTemplateChange={(templateId) => onSavedTemplateChange(templateId)}
 						setFileData={(fileData) => uploadFile(fileData)}
 						savedTemplateList={savedTemplateList}
 					/>
@@ -903,7 +903,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									<Box>
 										<WhatsappMobilePreview
 											classes={classes}
-											campaignNumber='1'
 											templateData={templateData}
 											buttonType={buttonType}
 											fileData={fileData}
@@ -968,7 +967,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				<Box className={classes.alertModalContentMobile}>
 					<WhatsappMobilePreview
 						classes={classes}
-						campaignNumber='1'
 						templateData={templateData}
 						buttonType={buttonType}
 						fileData={fileData}

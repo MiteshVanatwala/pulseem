@@ -3,7 +3,7 @@ import SideBar from './Component/SideBar';
 import './css/index.css';
 import DefaultScreen from '../../DefaultScreen';
 import { WhatsappChatProps } from './Types/WhatsappChat.type';
-import { useEffect, useMemo, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
 import {
 	buttonsDataProps,
 	callToActionFieldProps,
@@ -339,7 +339,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
-	const handleChatId = (id: number) => {
+	const handleChatId = (e: BaseSyntheticEvent, id: number) => {
+		e.preventDefault();
 		console.log('Chat Id', id);
 	};
 	return (

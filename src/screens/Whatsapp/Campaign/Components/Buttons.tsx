@@ -9,7 +9,11 @@ import { coreProps } from '../Types/WhatsappCampaign.types';
 import useRedirect from '../../../../helpers/Routes/Redirect';
 import { buttons } from '../../Constant';
 
-const Buttons = ({ classes, onFormButtonClick, displayBackButton }: ButtonsProps) => {
+const Buttons = ({
+	classes,
+	onFormButtonClick,
+	displayBackButton,
+}: ButtonsProps) => {
 	const { t: translator } = useTranslation();
 
 	const { isRTL, windowSize } = useSelector(
@@ -56,16 +60,14 @@ const Buttons = ({ classes, onFormButtonClick, displayBackButton }: ButtonsProps
 					</Button>
 				)}
 
-				<Box>
-					<Button
-						variant='contained'
-						size='medium'
-						className={clsx(classes.actionButton, classes.actionButtonRed)}
-						style={{ margin: '8px', padding: '9px 0' }}
-						onClick={(e) => onFormButtonClick(buttons.DELETE)}>
-						<BsTrash style={{ fontSize: '25' }} />
-					</Button>
-				</Box>
+				<Button
+					variant='contained'
+					size='medium'
+					className={clsx(classes.actionButton, classes.actionButtonRed)}
+					style={{ margin: '8px', padding: '13px 0' }}
+					onClick={(e) => onFormButtonClick(buttons.DELETE)}>
+					<BsTrash size={22} />
+				</Button>
 
 				<Button
 					variant='contained'

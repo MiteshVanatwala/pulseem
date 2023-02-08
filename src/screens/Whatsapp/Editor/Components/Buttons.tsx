@@ -20,16 +20,14 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 					: { marginLeft: 'auto', paddingBottom: 40 }
 			}
 			className={clsx(classes.baseButtonsContainer, 'baseButtonsContainer')}>
-			<Box>
-				<Button
-					variant='contained'
-					size='medium'
-					className={clsx(classes.actionButton, classes.actionButtonRed)}
-					style={{ margin: '8px', padding: '9px 0' }}
-					onClick={() => onFormButtonClick('delete')}>
-					<BsTrash style={{ fontSize: '25' }} />
-				</Button>
-			</Box>
+			<Button
+				variant='contained'
+				size='medium'
+				className={clsx(classes.actionButton, classes.actionButtonRed)}
+				style={{ margin: '8px', padding: '13px 0' }}
+				onClick={() => onFormButtonClick('delete')}>
+				<BsTrash size={18} />
+			</Button>
 
 			<Button
 				variant='contained'

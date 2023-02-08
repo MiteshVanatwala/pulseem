@@ -1,3 +1,5 @@
+import { color } from '@amcharts/amcharts4/core';
+
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignTitle: {
 		fontSize: windowSize === 'xs' ? '25px' : '30px',
@@ -145,7 +147,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	textInfo: {
-		marginLeft: '4px',
+		marginLeft: isRTL ? '0px' : '4px',
+		marginRight: isRTL ? '4px' : '0px',
 		color: '#8b8b8b',
 	},
 	textInfoWrapper: {
@@ -334,7 +337,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			margin: isRTL ? '0 8px 0 0' : '0 0 0 8px',
 			overflow: 'hidden',
 			whiteSpace: 'nowrap',
-			width: 'auto',
+			width: 'calc(100% - 177px)',
 		},
 		'& .status': {
 			display: 'block',
@@ -406,6 +409,21 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'& img': {
 			width: '100%',
 			borderRadius: '4px',
+			'&.video-preview-img': {
+				width: '100%',
+				background: 'white',
+				padding: '12px',
+				height: '152px',
+			},
+			'&.pdf-preview-img': {
+				width: '38px',
+				padding: '4px',
+				paddingLeft: '0px',
+			},
+			'&.download-preview-img': {
+				width: '28px',
+				padding: '4px',
+			},
 		},
 	},
 	callToActionButtonsWrapper: {
@@ -1451,7 +1469,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		backgroundColor: '#0371ad',
 		color: '#ffffff',
 		marginTop: '6px',
-		marginLeft: '10px',
+		marginLeft: isRTL ? '0px' : '10px',
+		marginRight: isRTL ? '10px' : '0px',
 		padding: '3px 9px',
 		borderRadius: '20px',
 		'&:hover': {
@@ -2519,5 +2538,39 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignStatusSending: {
 		color: '#F59A23',
 		fontWeight: 700,
+	},
+	whatsappChatStatusSelect: {
+		borderRadius: '22px',
+		paddingLeft: '8px',
+		minWidth: '77px',
+		'& .MuiSelect-select.MuiSelect-select': {
+			padding: '2px 24px 2px 0px',
+		},
+		'&.open': {
+			border: '2px solid #E74C3C',
+			color: '#E74C3C',
+			'& .MuiSelect-icon': {
+				color: '#E74C3C',
+			},
+		},
+		'&.pending': {
+			border: '2px solid #F59A23',
+			color: '#F59A23',
+			'& .MuiSelect-icon': {
+				color: '#F59A23',
+			},
+		},
+		'&.solved': {
+			border: '2px solid #27AE60',
+			color: '#27AE60',
+			'& .MuiSelect-icon': {
+				color: '#27AE60',
+			},
+		},
+	},
+	pdfFileName: {
+		wordWrap: 'break-word',
+		whiteSpace: 'pre-wrap',
+		width: 'calc(100% - 66px)',
 	},
 });

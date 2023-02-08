@@ -1,11 +1,11 @@
 {
 	"Title": "Whatsapp",
 	"NewWhatsappCampaign": "יצירת תבנית WhatsApp",
-	"SendWhatsappCampaign": "WhatsApp שליחת קמפיין",
-	"ManageWhatsappTemplate": "WhatsApp ניהול תבניות",
-	"ManageWhatsappCampaign": "WhatsApp ניהול קמפיינים",
+	"SendWhatsappCampaign": "שליחת קמפיין WhatsApp",
+	"ManageWhatsappTemplate": "ניהול תבניות WhatsApp",
+	"ManageWhatsappCampaign": "ניהול קמפיינים WhatsApp",
 	"ReportsWhatsapp": "דו”חות WhatsApp",
-	"ChatWhatsapp": "WhatsApp Chat",
+	"ChatWhatsapp": "צ'אט WhatsApp",
 	"header": "יצירת תבנית WhatsApp",
 	"WAMenuItemResource": {
 		"Text": "תבנית WhatsApp חדשה"
@@ -80,9 +80,9 @@
 	},
 
 	"alertModal": {
-		"okButtonText": "בסדר",
-		"confirmButtonText": "לְאַשֵׁר",
-		"calcelButtonText": "לְבַטֵל",
+		"okButtonText": "אישור",
+		"confirmButtonText": "אישור",
+		"calcelButtonText": "ביטול",
 		"yesButtonText": "כן",
 		"submitButtonText": "הגש",
 		"DeleteText": "מחק מסע פרסום",

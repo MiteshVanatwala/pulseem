@@ -47,6 +47,7 @@
 	"sendValidation": "The following fields are invalid",
 	"sendButton": "SEND",
 	"checkLimit": "Check your limit",
+	"removalLinkTooltip": "Add removal link",
 	"here": "here",
 	"whatsappCampaign": "Create New WhatsApp Campaign",
 	"back": "Back",

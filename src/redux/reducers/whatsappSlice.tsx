@@ -132,11 +132,11 @@ export const submitTemplates = createAsyncThunk(
 );
 
 export const uploadMedia = createAsyncThunk(
-	'whatsAppCampaign/UploadWhatsAppMediaFile',
+	'WhatsAppTemplate/UploadWhatsAppMediaFile',
 	async (data: FormData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/UploadWhatsAppMediaFile`,
+				`WhatsAppTemplate/UploadWhatsAppMediaFile`,
 				data
 			);
 
@@ -416,6 +416,37 @@ export const getInboundReport = createAsyncThunk(
 			return response.data;
 		} catch (error: any) {
 			return thunkAPI.rejectWithValue({ error: error.message });
+		}
+	}
+);
+
+export const getCampaignSettingsById = createAsyncThunk(
+	'whatsAppCampaign/GetCampaignSettings',
+	async (id: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetCampaignSettings/${id}`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getCampaignDetailById = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsappCampaignDetail',
+	async (campaignID: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetWhatsappCampaignDetail/${campaignID}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
 );

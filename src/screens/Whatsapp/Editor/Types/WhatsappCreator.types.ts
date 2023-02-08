@@ -28,7 +28,7 @@ export type TemplateFieldsProps = {
 	templateName: string;
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
-	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	onSavedTemplateChange: (templateId: string) => void;
 	fileData: string;
 	setFileData: (fileData: File | undefined) => void;
 	savedTemplateList: savedTemplateListProps[];
@@ -72,7 +72,6 @@ export type actionProps = {
 
 export type whatsappMobilePreviewProps = {
 	classes: ClassesType['classes'];
-	campaignNumber: string;
 	templateData: templateDataProps;
 	buttonType: string;
 	fileData: string;

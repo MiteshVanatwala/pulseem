@@ -121,7 +121,6 @@ const SummaryModal = ({
 								<Box className={classes.sumRight}>
 									<MobilePreview
 										classes={classes}
-										campaignNumber={fromNumber}
 										templateData={{
 											templateText: '',
 											templateButtons: [],

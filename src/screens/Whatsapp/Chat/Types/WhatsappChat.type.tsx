@@ -1,3 +1,4 @@
+import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { updatedVariableProps } from '../../Campaign/Types/WhatsappCampaign.types';
 import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
@@ -31,7 +32,7 @@ export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
-	handleChatId: (chatId: number) => void;
+	handleChatId: (e: BaseSyntheticEvent, chatId: number) => void;
 };
 
 export type chatModalProps = {

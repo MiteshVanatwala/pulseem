@@ -7,6 +7,7 @@ import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
 const SideBar = ({
 	classes,
@@ -22,6 +23,11 @@ const SideBar = ({
 				backgroundColor: 'rgba(0,0,0,0)',
 			},
 		},
+		selectSection: {
+			'&:focus': {
+				backgroundColor: 'rgba(0,0,0,0)',
+			},
+		},
 	}));
 	const muiclasses = useStyles();
 	const [activeUser, setActiveUser] = useState<string>('8123591159');
@@ -30,6 +36,24 @@ const SideBar = ({
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
 	};
 
+	const [userStatus, setUserStatus] = useState<string>('Open');
+	const handleUserStatus = (e: BaseSyntheticEvent) => {
+		e.preventDefault();
+		setUserStatus(e.target.value);
+	};
+	const getStatusClass = () => {
+		switch (userStatus) {
+			case 'Open':
+				return 'open';
+			case 'Pending':
+				return 'pending';
+			case 'Solved':
+				return 'solved';
+
+			default:
+				break;
+		}
+	};
 	return (
 		<>
 			<aside
@@ -93,7 +117,7 @@ const SideBar = ({
 						<Link
 							className={`${classes.whatsappChat} sidebar-contact`}
 							to={`/chat/${contact.id}`}
-							onClick={(e) => handleChatId(contact.id)}>
+							onClick={(e) => handleChatId(e, contact.id)}>
 							<div
 								className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}>
 								<img
@@ -113,6 +137,23 @@ const SideBar = ({
 									</h2>
 									<span
 										className={`${classes.whatsappChat} sidebar-contact__time`}>
+										<span style={{ paddingRight: '10px' }}>
+											<Select
+												classes={{ root: muiclasses.selectSection }}
+												className={clsx(
+													classes.whatsappChatStatusSelect,
+													getStatusClass()
+												)}
+												autoWidth
+												value={userStatus}
+												variant='standard'
+												style={{ fontSize: '12px' }}
+												onChange={(e) => handleUserStatus(e)}>
+												<MenuItem value={'Open'}>Open</MenuItem>
+												<MenuItem value={'Pending'}>Pending</MenuItem>
+												<MenuItem value={'Solved'}>Solved</MenuItem>
+											</Select>
+										</span>
 										{formatTime(lastMessage.time)}
 									</span>
 								</div>
