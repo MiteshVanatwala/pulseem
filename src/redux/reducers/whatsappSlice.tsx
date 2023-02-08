@@ -132,11 +132,11 @@ export const submitTemplates = createAsyncThunk(
 );
 
 export const uploadMedia = createAsyncThunk(
-	'whatsAppCampaign/UploadWhatsAppMediaFile',
+	'WhatsAppTemplate/UploadWhatsAppMediaFile',
 	async (data: FormData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/UploadWhatsAppMediaFile`,
+				`WhatsAppTemplate/UploadWhatsAppMediaFile`,
 				data
 			);
 

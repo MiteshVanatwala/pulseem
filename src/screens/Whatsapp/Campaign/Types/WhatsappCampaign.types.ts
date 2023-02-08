@@ -46,7 +46,7 @@ export type campaignFielsProps = {
 	savedTemplate: string;
 	campaignName: string;
 	from: string;
-	onSavedTemplateChange: (e: BaseSyntheticEvent) => void;
+	onSavedTemplateChange: (templateId: string) => void;
 	onCampaignNameChange: (campaignName: string) => void;
 	onFromChange: (from: string) => void;
 	showValidation: boolean;

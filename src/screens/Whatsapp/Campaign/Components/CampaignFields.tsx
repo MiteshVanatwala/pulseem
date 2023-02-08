@@ -17,6 +17,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useState, useMemo } from 'react';
 import SearchIcon from '@mui/material/IconButton/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
+import { getTemplateIdByName, getTemplateNameById } from '../../Common';
 
 // const containsText = (text: any, searchText: any) =>
 // 	text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
@@ -46,19 +47,21 @@ const CampaignFields = ({
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const templateDropdownClasses = useStyles();
-	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
-	// const allOptions = savedTemplateList.map((temp) => temp.TemplateName);
-	// console.log(allOptions[0]);
-	// const [selectedOption, setSelectedOption] = useState(allOptions[0]);
-	// const [searchText, setSearchText] = useState('');
+	const onTemplateChange = (e: BaseSyntheticEvent) => {
+		if (e.target.textContent !== '') {
+			const templateId = getTemplateIdByName(
+				savedTemplateList,
+				e.target.textContent
+			);
+			if (templateId) {
+				onSavedTemplateChange(templateId);
+			}
+		} else {
+			onSavedTemplateChange("");
+		}
+	};
 
-	// const displayedOptions = allOptions.filter((template) =>
-	// 	containsText(template, searchText)
-	// );
-
-	// console.log('Display Options', displayedOptions);
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 			<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
@@ -129,48 +132,8 @@ const CampaignFields = ({
 				<Typography className={classes.buttonHead}>
 					<>{translator('whatsappCampaign.chooseTemplate')}</>
 				</Typography>
-
-				<TextField
-					select
-					required
-					id='selectSavedTemplate'
-					type='text'
-					className={
-						showValidation && savedTemplate?.length === 0
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
-					SelectProps={{ autoWidth: true }}
-					inputProps={{
-						MenuProps: {
-							anchorOrigin: {
-								vertical: isRTL ? 'bottom' : 'top',
-								horizontal: isRTL ? 'left' : 'right',
-							},
-							transformOrigin: {
-								vertical: 'top',
-								horizontal: 'center',
-							},
-							classes: { paper: templateDropdownClasses.menuPaper },
-						},
-					}}
-					onChange={onSavedTemplateChange}
-					value={savedTemplate}>
-					{savedTemplateList?.length > 0 ? (
-						savedTemplateList.map((template) => (
-							<MenuItem key={template.TemplateId} value={template.TemplateId}>
-								{template.TemplateName}
-							</MenuItem>
-						))
-					) : (
-						<MenuItem key={'no-data-template'} disabled>
-							<>{translator('whatsapp.noTemplateAaliable')}</>
-						</MenuItem>
-					)}
-				</TextField>
-				{/* <Autocomplete
-					disablePortal
-					id='combo-box-demo'
+				<Autocomplete
+					id='template-list'
 					className={
 						showValidation && savedTemplate?.length === 0
 							? clsx(classes.buttonField, classes.error)
@@ -178,57 +141,9 @@ const CampaignFields = ({
 					}
 					options={savedTemplateList.map((template) => template.TemplateName)}
 					renderInput={(params) => <TextField {...params} />}
-					onChange={onSavedTemplateChange}
-					value={savedTemplate}
-				/> */}
-
-				{/* <Select
-					className={
-						showValidation && savedTemplate?.length === 0
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
-					}
-					MenuProps={{ autoFocus: false }}
-					labelId='search-select-label'
-					id='search-select'
-					value={savedTemplate}
-					label='Options'
-					onChange={onSavedTemplateChange}
-					onClose={() => setSearchText('')}
-					renderValue={() => selectedOption}>
-					<ListSubheader>
-						<TextField
-							size='small'
-							autoFocus
-							placeholder='Type to search...'
-							fullWidth
-							InputProps={{
-								startAdornment: (
-									<InputAdornment position='start'>
-										<SearchIcon />
-									</InputAdornment>
-								),
-							}}
-							onChange={(e) => setSearchText(e.target.value)}
-							onKeyDown={(e) => {
-								if (e.key !== 'Escape') {
-									e.stopPropagation();
-								}
-							}}
-						/>
-					</ListSubheader>
-					{savedTemplateList?.length > 0 ? (
-						displayedOptions.map((template, i) => (
-							<MenuItem key={i} value={i}>
-								{template}
-							</MenuItem>
-						))
-					) : (
-						<MenuItem key={'no-data-template'} disabled>
-							<>{translator('whatsapp.noTemplateAaliable')}</>
-						</MenuItem>
-					)}
-				</Select> */}
+					onChange={onTemplateChange}
+					value={getTemplateNameById(savedTemplateList, savedTemplate)}
+				/>
 
 				<Typography className={classes.WhatsappCampainButtonContent}>
 					<>{translator('whatsappCampaign.chooseTemplateDesc')}</>

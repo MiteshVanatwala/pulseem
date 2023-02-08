@@ -1,3 +1,5 @@
+import { savedTemplateListProps } from './Editor/Types/WhatsappCreator.types';
+
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
 //This regex will test dynamic field having one digits in side (i.e. {{1}});
@@ -48,4 +50,28 @@ export const getLastDynamicFieldByValue = (value: string) => {
 
 export const getVariableValue = (variable: string) => {
 	return variable?.replace(/[{}]/g, '');
+};
+
+export const getTemplateIdByName = (
+	savedTemplateList: savedTemplateListProps[],
+	templateName: string
+) => {
+	return (
+		savedTemplateList?.find(
+			(template: savedTemplateListProps) =>
+				template.TemplateName === templateName
+		)?.TemplateId || null
+	);
+};
+
+export const getTemplateNameById = (
+	savedTemplateList: savedTemplateListProps[],
+	templateId: string
+) => {
+	return (
+		savedTemplateList?.find(
+			(template: savedTemplateListProps) =>
+				template.TemplateId === templateId
+		)?.TemplateName || null
+	);
 };
