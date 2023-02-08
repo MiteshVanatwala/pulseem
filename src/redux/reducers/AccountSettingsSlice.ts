@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { AccountSettings } from '../../Models/Account/AccountSettings';
+import { LoginPassword } from '../../Models/Account/Password';
 
 export const getAccountSettings = createAsyncThunk(
   'AccountSettings/Get',
@@ -47,6 +48,16 @@ export const update2FASettings = createAsyncThunk(
     }
   }
 );
+export const changePassword = createAsyncThunk('AccountSettings/ChangePassword',
+  async (passLogin: LoginPassword, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`AccountSettings/ChangePassword`, passLogin)
+      return response.data;
+    } catch (error) {
+      return console.log(error);
+    }
+  }
+);
 
 const AccountSettingsSlice = createSlice({
   name: 'AccountSettings',
@@ -62,6 +73,10 @@ const AccountSettingsSlice = createSlice({
       TWO_FA_SAVED: { severity: 'success', color: 'success', message: 'settings.accountSettings.auth.activatedSuccessfuly', showAnimtionCheck: false },
       TWO_FA_SAVED_INACTIVE: { severity: 'success', color: 'success', message: 'settings.accountSettings.auth.inActivetedSuccessfuly', showAnimtionCheck: false },
       TWO_FA_NOT_SAVED: { severity: 'error', color: 'error', message: 'settings.accountSettings.auth.notSaved', showAnimtionCheck: false },
+      INVALID_EMAIL: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.invalidEmail', showAnimtionCheck: false },
+      INVALID_CELLPHONE: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.invalidMobile', showAnimtionCheck: false },
+      VERIFY_EMAIL: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.verifyEmail', showAnimtionCheck: false },
+      VERIFY_CELLPHONE: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.verifyMobile', showAnimtionCheck: false },
     },
     twoFAUpdated: {
       StatusCode: 200,

@@ -12,7 +12,8 @@ import useCore from "../../../helpers/hooks/Core";
 import { getAccountSettings, updateDetails, updateSettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { Loader } from "../../../components/Loader/Loader";
-
+import { logout } from "../../../helpers/Api/PulseemReactAPI";
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const AccountSettingsEditor = () => {
   const { t } = useTranslation();
@@ -21,7 +22,10 @@ const AccountSettingsEditor = () => {
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
-  const [settingRequest, setSettingRequest] = useState<AccountSettings | null>({
+  const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
+  const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
+  const [verificationStep, setVerificationStep] = useState(0);
+    const [settingRequest, setSettingRequest] = useState<AccountSettings | null>({
     SubAccountId: -1,
     LoginUserName: '',
     AccountID: -1,
@@ -109,20 +113,53 @@ const AccountSettingsEditor = () => {
         break;
       }
       case 401: {
+        logout();
         break;
       }
-      case 405: {
+      case 400: {
+        switch (response?.payload?.Message) {
+          case 'Email': {
+            setToastMessage(ToastMessages.INVALID_EMAIL);
+            break;
+          }
+          case 'Cellphone': {
+            setToastMessage(ToastMessages.INVALID_CELLPHONE);
+            break;
+          }
+          case 'AuthEmail': {
+            setVerificationStep(1);
+            setToastMessage(ToastMessages.VERIFY_EMAIL);
+            handleVerification('email');
+            break;
+          }
+          case 'AuthCellphone': {
+            setVerificationStep(1);
+            setToastMessage(ToastMessages.VERIFY_CELLPHONE);
+            handleVerification('cellphone');
+            break;
+          }
+        }
         break;
       }
-      case 409: {
-        break;
-      }
+      case 200:
       case 500:
       default: {
         setToastMessage(ToastMessages?.GENERAL_ERROR);
+        break;
       }
     }
   };
+
+  const handleVerification = (type: string) => {
+    if (!type || type === '') {
+      return false;
+    }
+    if (type === 'cellphone')
+      setSmsVerificationPopup(true);
+    else if (type === 'email')
+      setEmailVerificationPopup(true);
+
+  }
 
   return (
     <DefaultScreen
@@ -142,6 +179,7 @@ const AccountSettingsEditor = () => {
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
             OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
+            SetVerification={handleVerification}
           />
           <FORM_ACCOUNT_DETAILS
             setToastMessage={setToastMessage}
@@ -151,6 +189,20 @@ const AccountSettingsEditor = () => {
           />
         </Box>
       </Box>
+      {emailVerificationPopup && <VerificationDialog
+        classes={classes}
+        variant="email"
+        isOpen={emailVerificationPopup}
+        value={verificationStep > 0 && settingRequest?.DefaultFromMail}
+        step={verificationStep}
+        onClose={() => { setEmailVerificationPopup(false); setVerificationStep(0); }} />}
+      {smsVerificationPopup && <VerificationDialog
+        classes={classes}
+        variant="sms"
+        value={verificationStep > 0 && settingRequest?.DefaultCellNumber}
+        step={verificationStep}
+        isOpen={smsVerificationPopup}
+        onClose={() => { setSmsVerificationPopup(false); setVerificationStep(0); }} />}
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   );

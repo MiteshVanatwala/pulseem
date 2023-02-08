@@ -67,5 +67,16 @@
     },
     "btnUpdate": "עדכן פרטי חיוב",
     "btnAddCard": "הוסף כרטיס אשראי"
+  },
+  "changePassword": {
+    "title": "שנה סיסמא",
+    "subTitle": "הזן את הסיסמא הישנה והקלד את הסיסמא החדשה",
+    "oldPassword": "סיסמא ישנה",
+    "newPassword": "סיסמא חדשה",
+    "confirmPassword": "אימות סיסמא",
+    "error": {
+      "required": "שדה חובה",
+      "notMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"
+    }
   }
 }

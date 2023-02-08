@@ -31,33 +31,34 @@ import {
   CompDtlPropTypes
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
-import queryString from 'query-string';
+import { useSearchParams } from 'react-router-dom';
+import ChangePassword from "./Password/ChangePassword";
+
 
 const FORM_COMPANY_DETAILS = ({
   setToastMessage,
   ToastMessages,
   Settings,
-  OnUpdate
+  OnUpdate,
+  SetVerification
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
-  const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
-  const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
-
 
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any;
   } | null>(null);
 
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [companyDetails, setCompanyDetails] = useState<AccountSettings>({} as AccountSettings);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
@@ -133,6 +134,8 @@ const FORM_COMPANY_DETAILS = ({
 
   useEffect(() => {
     setCompanyDetails(Settings);
+    if (Settings)
+      handleQueryString2FA();
   }, [Settings]);
 
   useEffect(() => {
@@ -153,16 +156,14 @@ const FORM_COMPANY_DETAILS = ({
     })
   }
 
-  useEffect(() => {
-    const qs = window.location.search && queryString.parse(window.location.search);
-    if (qs["2fa"] === 'true') {
-      console.log(1);
-      // Apply two factor automatically
-    }
-  }, [])
-
   const handleQueryString2FA = () => {
-
+    if (searchParams.has('2fa') && Settings?.SubAccountId > 0 && !Settings.TwoFactorAuthEnabled) {
+      searchParams.delete('2fa');
+      setSearchParams(searchParams);
+      const req = { ...companyDetails, TwoFactorAuthEnabled: true };
+      setCompanyDetails(req);
+      on2FAUpdate(req);
+    }
   }
 
   const handleChange = (e: any, name = "") => {
@@ -510,14 +511,7 @@ const FORM_COMPANY_DETAILS = ({
                     "link"
                   )}
                   onClick={() =>
-                    setDialogType({
-                      type: "changePwd",
-                      data: {
-                        title: t(
-                          "settings.accountSettings.fixedComDetails.btnChangePwd"
-                        ),
-                      },
-                    })
+                    setShowChangePassword(true)
                   }
                   startIcon={<UnLockIcon />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -536,7 +530,7 @@ const FORM_COMPANY_DETAILS = ({
                     "link"
                   )}
                   onClick={() =>
-                    setSmsVerificationPopup(true)
+                    SetVerification('cellphone')
                   }
                   startIcon={<MdMobileFriendly />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -557,7 +551,7 @@ const FORM_COMPANY_DETAILS = ({
                     "link"
                   )}
                   onClick={() =>
-                    setEmailVerificationPopup(true)
+                    SetVerification('email')
                   }
                   startIcon={<MdOutlineMarkEmailRead />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -588,8 +582,11 @@ const FORM_COMPANY_DETAILS = ({
         </Box>
       </Box>
       {RenderDialog()}
-      {emailVerificationPopup && <VerificationDialog classes={classes} variant="email" isOpen={emailVerificationPopup} onClose={() => setEmailVerificationPopup(false)} />}
-      {smsVerificationPopup && <VerificationDialog classes={classes} variant="sms" isOpen={smsVerificationPopup} onClose={() => setSmsVerificationPopup(false)} />}
+      {showChangePassword && <ChangePassword
+        IsOpen={showChangePassword}
+        OnClose={() => setShowChangePassword(false)}
+      />
+      }
     </>
   );
 };

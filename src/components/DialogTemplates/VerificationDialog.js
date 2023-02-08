@@ -21,9 +21,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     const { username } = useSelector(state => state.user)
     const { verifiedEmails, verifiedNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
-    const [verificationStep, setVerificationStep] = useState(0)
+    const [verificationStep, setVerificationStep] = useState(props?.step ?? 0)
     const [verificationError, setVerificationError] = useState(null)
-    const [selectedVerificationContact, setSelectedVerificationContact] = useState('')
+    const [selectedVerificationContact, setSelectedVerificationContact] = useState(props?.value ?? '')
     const [codeResend, setCodeResend] = useState(false)
     const [verificationCode, setVerificationCode] = useState('')
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
@@ -192,8 +192,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     }
 
     const EMAIL_MODULE = () => {
-        //let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
-
         const EMAIL_SLIDE_1 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
@@ -210,8 +208,21 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%' }} >
-                        <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                            <Button className={clsx(
+                                classes.actionButton,
+                                classes.actionButtonDarkBlue,
+                                'btnVerifyNew'
+                            )}
+                                onClick={() => {
+                                    setSelectedVerificationContact('')
+                                    setVerificationError({ Number: '' })
+                                    NextSlide()
+                                }}
+                            >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.addNewToVerify')}</Button>
+                        </Box>
                         <Box className={clsx('contactDataBox', classes.sidebar)}>
                             {
                                 verifiedEmails.map((obj) => (
@@ -234,17 +245,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                                 ))
                             }
                         </Box>
-                        <Button className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonDarkBlue,
-                            isRTL ? 'btnVerifyNewRtl' : 'btnVerifyNewLtr'
-                        )}
-                            onClick={() => {
-                                setSelectedVerificationContact('')
-                                setVerificationError({ Number: '' })
-                                NextSlide()
-                            }}
-                        >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.addNewToVerify')}</Button>
                     </Box>
                 </Box>
             </Box>
@@ -413,8 +413,21 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         </Typography>
                         <Divider />
                     </Box>
-                    <Box style={{ position: 'relative', height: '70%' }} >
-                        <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
+                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('sms.numbersAccount')} </Typography>
+                            <Button className={clsx(
+                                classes.actionButton,
+                                classes.actionButtonDarkBlue,
+                                'btnVerifyNew'
+                            )}
+                                onClick={() => {
+                                    setSelectedVerificationContact('')
+                                    setVerificationError({ Number: '' })
+                                    NextSlide()
+                                }}
+                            >{t('sms.verifyAnotherNumber')}</Button>
+                        </Box>
                         <Box className={clsx('contactDataBox', classes.sidebar)}>
                             {
                                 (verifiedNumbers || verifiedEmails).map((obj) => (
@@ -437,17 +450,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                                 ))
                             }
                         </Box>
-                        <Button className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonDarkBlue,
-                            isRTL ? 'btnVerifyNewRtl' : 'btnVerifyNewLtr'
-                        )}
-                            onClick={() => {
-                                setSelectedVerificationContact('')
-                                setVerificationError({ Number: '' })
-                                NextSlide()
-                            }}
-                        >{t('sms.verifyAnotherNumber')}</Button>
                     </Box>
                 </Box>
             </Box>

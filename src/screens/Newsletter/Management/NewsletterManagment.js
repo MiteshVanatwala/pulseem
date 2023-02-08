@@ -30,10 +30,10 @@ import { useNavigate } from 'react-router-dom';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import EmailVerification from '../../Verification/EmailVerification';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const NewsletterManagnentScreen = ({ classes }) => {
 
@@ -236,7 +236,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             variant='contained'
             size='medium'
             onClick={() => {
-              navigate(`${sitePrefix}/Campaigns/Create`);
+              navigate(`${sitePrefix}Campaigns/Create`);
             }}
             className={clsx(
               classes.btn,
@@ -884,7 +884,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      <EmailVerification isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} />
+      <VerificationDialog
+        classes={classes}
+        variant="email"
+        isOpen={dialogType?.type === "verifyEmail"}
+        onClose={() => setDialogType(false)} />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
