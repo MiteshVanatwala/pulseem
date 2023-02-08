@@ -3,17 +3,11 @@ import Icon from './Icon';
 import { contacts, lastMessage } from './data';
 import { WhatsappChatSideBarProps } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import {
-	IconButton,
-	makeStyles,
-	MenuItem,
-	Select,
-	Chip,
-} from '@material-ui/core';
+import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { green, yellow, red } from '@material-ui/core/colors';
+import clsx from 'clsx';
 
 const SideBar = ({
 	classes,
@@ -46,6 +40,19 @@ const SideBar = ({
 	const handleUserStatus = (e: BaseSyntheticEvent) => {
 		e.preventDefault();
 		setUserStatus(e.target.value);
+	};
+	const getStatusClass = () => {
+		switch (userStatus) {
+			case 'Open':
+				return 'open';
+			case 'Pending':
+				return 'pending';
+			case 'Solved':
+				return 'solved';
+
+			default:
+				break;
+		}
 	};
 	return (
 		<>
@@ -133,6 +140,10 @@ const SideBar = ({
 										<span style={{ paddingRight: '10px' }}>
 											<Select
 												classes={{ root: muiclasses.selectSection }}
+												className={clsx(
+													classes.whatsappChatStatusSelect,
+													getStatusClass()
+												)}
 												autoWidth
 												value={userStatus}
 												variant='standard'
@@ -140,16 +151,7 @@ const SideBar = ({
 												onChange={(e) => handleUserStatus(e)}>
 												<MenuItem value={'Open'}>Open</MenuItem>
 												<MenuItem value={'Pending'}>Pending</MenuItem>
-												<MenuItem value={'Solved'}>
-													<Chip
-														label='Solved'
-														style={{
-															backgroundColor: green[300],
-															color: 'white',
-														}}
-														size='small'
-													/>
-												</MenuItem>
+												<MenuItem value={'Solved'}>Solved</MenuItem>
 											</Select>
 										</span>
 										{formatTime(lastMessage.time)}

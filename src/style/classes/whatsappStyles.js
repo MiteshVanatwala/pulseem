@@ -1,3 +1,5 @@
+import { color } from '@amcharts/amcharts4/core';
+
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignTitle: {
 		fontSize: windowSize === 'xs' ? '25px' : '30px',
@@ -2521,5 +2523,34 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignStatusSending: {
 		color: '#F59A23',
 		fontWeight: 700,
+	},
+	whatsappChatStatusSelect: {
+		borderRadius: '22px',
+		paddingLeft: '8px',
+		minWidth: '77px',
+		'& .MuiSelect-select.MuiSelect-select': {
+			padding: '2px 24px 2px 0px',
+		},
+		'&.open': {
+			border: '2px solid #E74C3C',
+			color: '#E74C3C',
+			'& .MuiSelect-icon': {
+				color: '#E74C3C',
+			},
+		},
+		'&.pending': {
+			border: '2px solid #F59A23',
+			color: '#F59A23',
+			'& .MuiSelect-icon': {
+				color: '#F59A23',
+			},
+		},
+		'&.solved': {
+			border: '2px solid #27AE60',
+			color: '#27AE60',
+			'& .MuiSelect-icon': {
+				color: '#27AE60',
+			},
+		},
 	},
 });
