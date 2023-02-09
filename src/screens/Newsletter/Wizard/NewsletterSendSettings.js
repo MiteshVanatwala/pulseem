@@ -540,6 +540,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     else {
                         r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
                     }
+                    dispatch(getGroupsBySubAccountId());
                     handleAddClientsResponse(r);
                 }
             })
@@ -572,9 +573,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.INVALID_API_MISSING_KEY);
                 break;
             }
-            default:
             case 200:
-            case 500: {
+            case 500:
+            default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR);
             }
         }
@@ -1015,7 +1016,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     <Grid item xs={12} md={1}></Grid>
                     <Grid item md={4} xs={12}>
                         <SendingMethod
-                            disabled={newsletterSettings.Status !== 1}
+                            disabled={newsletterSettings?.Status !== 1}
                             classes={classes}
                             ToastMessages={ToastMessages}
                             setToastMessage={setToastMessage}
@@ -1029,7 +1030,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings.Status !== 1}
+                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1}
                                                 onClick={() => {
                                                     handlePulseDialog();
                                                 }}
@@ -1051,7 +1052,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!segmantIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 1}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
                                                 onClick={() => setDialogType({ type: 'filterRecipients' })}
                                             >
                                                 {t('mainReport.recipientFilter')}
@@ -1062,7 +1063,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings.Status !== 1}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
                                                 onClick={() => {
                                                     handleSmsMarketing();
                                                 }}
@@ -1078,10 +1079,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             </Box>
             <WizardActions
                 classes={classes}
-                onBack={newsletterSettings.Status === 1 && handlePreviousPage}
-                onDelete={newsletterSettings.Status === 1 && onHandleDelete}
+                onBack={newsletterSettings?.Status === 1 && handlePreviousPage}
+                onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
                 onExit={() => { setDialogType({ type: "exit" }) }}
-                additionalButtons={newsletterSettings.Status === 1 && renderButtons()}
+                additionalButtons={newsletterSettings?.Status === 1 && renderButtons()}
             />
             {renderDialog()}
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
