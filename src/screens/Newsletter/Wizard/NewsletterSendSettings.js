@@ -153,6 +153,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         SendTime: null,
         IsLinksStatistics: true
     });
+    const [newGroupId, setNewGroupId] = useState(0);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -541,15 +542,24 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
                     }
                     dispatch(getGroupsBySubAccountId());
-                    handleAddClientsResponse(r);
+                    handleAddClientsResponse(r?.payload);
+                    setNewGroupId(parseInt(response?.payload?.Message));
                 }
             })
-
         }
         catch (error) {
             console.error('ADD Clients Error: ', error)
         }
     }
+
+    useEffect(() => {
+        if (newGroupId > 0) {
+            const newGroup = subAccountAllGroups?.filter((g) => { return g?.GroupID === parseInt(newGroupId) });
+            if (newGroup && newGroup?.length > 0) {
+                setSelectedGroups([...selectedGroups, newGroup[0]]);
+            }
+        }
+    }, [newGroupId, subAccountAllGroups])
 
     const handleCreateGroupResponses = (res, successCallback) => {
         switch (res?.payload?.StatusCode) {
@@ -558,9 +568,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             case 201:
                 successCallback?.()
                 break;
+            case 422: {
+                setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
+                break;
+            }
             default:
                 setToastMessage(ToastMessages.GENERAL_ERROR);
-                break
+                break;
         }
     }
     const handleAddClientsResponse = (res) => {
@@ -577,6 +591,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             case 500:
             default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR);
+                break;
             }
         }
     }
