@@ -80,6 +80,13 @@
         "error": {
             "required": "Required field",
             "notMatch": "Password confirmation doesnt match"
+        },
+        "responses": {
+            "201": "Password has been changed successfuly!",
+            "403": "Incorrect password",
+            "406": "Password cannot be empty!",
+            "407": "Confirmation password is not matched",
+            "408": "Invalid old password"
         }
     }
 }

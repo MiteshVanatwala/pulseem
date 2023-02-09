@@ -5,19 +5,17 @@ import useCore from "../../../../helpers/hooks/Core";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "../../../../components/Loader/Loader";
 import { Visibility, VisibilityOff } from '@material-ui/icons'
-import { Title } from "../../../../components/managment/Title";
-import Toast from "../../../../components/Toast/Toast.component";
 import { LoginPassword } from "../../../../Models/Account/Password";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { changePassword } from "../../../../redux/reducers/AccountSettingsSlice";
-import { Box, Typography, TextField, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Button } from '@material-ui/core'
+import { Box, Typography, TextField, makeStyles, Grid, Button } from '@material-ui/core'
 
 const useStyles = makeStyles({
     dialogContainer: {
         width: '100%'
     },
     fw500: {
-        fontWeight: '500 !important'
+        fontWeight: 500
     },
     textRow: {
         display: 'flex',
@@ -56,9 +54,9 @@ const useStyles = makeStyles({
     }
 });
 
-export interface PasswordParams { IsOpen: boolean, OnClose: Function | null }
+export interface PasswordParams { IsOpen: boolean, OnClose: Function, SetToast: Function }
 
-const ChangePassword = ({ IsOpen = false, OnClose = null }: PasswordParams) => {
+const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) => {
     const { classes } = useCore();
     const { t } = useTranslation();
     const localClasses = useStyles();
@@ -72,6 +70,7 @@ const ChangePassword = ({ IsOpen = false, OnClose = null }: PasswordParams) => {
     const [confirmPassError, setConfirmPassError] = useState<string>('');
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
     const dispatch = useDispatch();
 
     const handleConfirm = async () => {
@@ -115,7 +114,16 @@ const ChangePassword = ({ IsOpen = false, OnClose = null }: PasswordParams) => {
     }
 
     const handleResponses = (response: any) => {
+        SetToast(ToastMessages.CHANGE_PASSWORD[response?.payload?.StatusCode]);
 
+        if (response?.payload?.StatusCode === 201) {
+            setLoginPass({
+                OldPassword: '',
+                NewPassword: '',
+                ConfirmPassword: ''
+            });
+            OnClose();
+        }
     }
     return (
         <>
