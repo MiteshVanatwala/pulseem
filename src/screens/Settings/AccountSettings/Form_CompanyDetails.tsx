@@ -141,7 +141,7 @@ const FORM_COMPANY_DETAILS = ({
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {
       if (twoFAUpdated?.StatusCode === 201) {
-        setToastMessage(twoFAUpdated?.Message === 'activated' ? ToastMessages.TWO_FA_SAVED : ToastMessages.TWO_FA_SAVED_INACTIVE);
+        setToastMessage(twoFAUpdated?.Message === 'Activated' ? ToastMessages.TWO_FA_SAVED : ToastMessages.TWO_FA_SAVED_INACTIVE);
       }
       else {
         setToastMessage(ToastMessages.TWO_FA_NOT_SAVED);
