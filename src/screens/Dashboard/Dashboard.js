@@ -53,7 +53,7 @@ const DashboardScreen = ({ classes }) => {
   }, [dispatch, accountSettings, TFAInit])
 
   const onConfirm2FA = () => {
-    window.location = `/${sitePrefix}/AccountSettings?2fa=1`
+    window.location = `${sitePrefix}/AccountSettings?2fa=1`
   }
   const onCancel2FA = () => {
     setShowTFA(false);

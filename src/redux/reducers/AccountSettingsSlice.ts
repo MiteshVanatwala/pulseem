@@ -92,7 +92,13 @@ const AccountSettingsSlice = createSlice({
     } as PulseemResponse
   },
   reducers: {
-    // fill in primary logic here
+    resetTwoFA: (state) => {
+      state.twoFAUpdated = {
+        StatusCode: 200,
+        Message: '',
+        Data: ''
+      } as PulseemResponse
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAccountSettings.fulfilled, (state, action) => {
@@ -104,4 +110,5 @@ const AccountSettingsSlice = createSlice({
   },
 })
 
+export const { resetTwoFA } = AccountSettingsSlice.actions
 export default AccountSettingsSlice.reducer

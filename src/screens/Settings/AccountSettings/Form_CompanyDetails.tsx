@@ -33,7 +33,7 @@ import {
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
-import { update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
+import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 
@@ -153,6 +153,7 @@ const FORM_COMPANY_DETAILS = ({
     dispatch(update2FASettings(req)).then(() => {
       setCompanyDetails(req);
       OnUpdate(req, false);
+      dispatch(resetTwoFA());
     })
   }
 
