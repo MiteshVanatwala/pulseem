@@ -26,13 +26,19 @@ export type WhatsappChatUiProps = {
 	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
 	setDynamicModalVariable: (dynamicModalVariable: number) => void;
 	savedTemplate: string;
+	chatPhoneNumber: string;
+	chatUserPhoneNumber: string;
 };
 
 export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
-	handleChatId: (e: BaseSyntheticEvent, chatId: number) => void;
+	handleChatId: (
+		e: BaseSyntheticEvent,
+		Phone: string,
+		UserPhone: string
+	) => void;
 };
 
 export type chatModalProps = {

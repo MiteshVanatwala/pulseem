@@ -37,8 +37,12 @@ import {
 	getPreviousLandingData,
 } from '../../../redux/reducers/smsSlice';
 import { buttonTypes } from '../Constant';
+import React from 'react';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
+	const [chatPhoneNumber, setChatPhoneNumber] = useState<string>('');
+	const [chatUserPhoneNumber, setChatUserPhoneNumber] = useState<string>('');
+
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
@@ -339,10 +343,18 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
-	const handleChatId = (e: BaseSyntheticEvent, id: number) => {
+	const handleChatId = (
+		e: BaseSyntheticEvent,
+		phoneNumber: string,
+		userPhoneNumber: string
+	) => {
 		e.preventDefault();
-		console.log('Chat Id', id);
+		setChatPhoneNumber(userPhoneNumber);
+		setChatUserPhoneNumber(phoneNumber);
+
+		console.log('Chat Id', userPhoneNumber, phoneNumber);
 	};
+
 	return (
 		<>
 			<DefaultScreen
@@ -376,6 +388,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							setIsDynamcFieldModal={setIsDynamcFieldModal}
 							setDynamicModalVariable={setDynamicModalVariable}
 							savedTemplate={savedTemplate}
+							chatPhoneNumber={chatPhoneNumber}
+							chatUserPhoneNumber={chatUserPhoneNumber}
 						/>
 					</div>
 				</div>
@@ -397,3 +411,5 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 };
 
 export default WhatsappChat;
+
+// const ChatMemo = React.memo(ChatUi);

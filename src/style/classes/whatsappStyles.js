@@ -2568,6 +2568,20 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 	},
+	whatsappMainChatStatusSelect: {
+		borderRadius: '22px',
+		backgroundColor: '#c0c0c0',
+		paddingLeft: '8px',
+		minWidth: '80px',
+		border: '2px solid #5A5A5A',
+		color: '#5A5A5A',
+		'& .MuiSelect-icon': {
+			color: '#5A5A5A',
+		},
+		'& .MuiSelect-select.MuiSelect-select': {
+			padding: '8px 24px 8px 0px',
+		},
+	},
 	pdfFileName: {
 		wordWrap: 'break-word',
 		whiteSpace: 'pre-wrap',

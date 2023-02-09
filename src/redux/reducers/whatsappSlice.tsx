@@ -436,6 +436,22 @@ export const getCampaignSettingsById = createAsyncThunk(
 	}
 );
 
+export const getCampaignDetailById = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsappCampaignDetail',
+	async (campaignID: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetWhatsappCampaignDetail/${campaignID}`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 	'WhatsAppChat/GetWhatsAppChatContacts',
 	async (number: string, thunkAPI) => {
@@ -453,12 +469,22 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 	}
 );
 
-export const getCampaignDetailById = createAsyncThunk(
-	'whatsAppCampaign/GetWhatsappCampaignDetail',
-	async (campaignID: string, thunkAPI) => {
+export const getWhatsappChat = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChat',
+	async (
+		data: {
+			activePhoneNumber: string;
+			activeUserNumber: string;
+		},
+		thunkAPI
+	) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`whatsAppCampaign/GetWhatsappCampaignDetail/${campaignID}`
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChat`,
+				{
+					PhoneNumber: data.activePhoneNumber,
+					UserNumber: data.activeUserNumber,
+				}
 			);
 
 			return response.data;
@@ -476,7 +502,6 @@ export const whatsappSlice = createSlice({
 		submitTemplate: [],
 		saveTemplate: [],
 		userPhoneNumbers: [],
-		// getWhatsappChatContactsByPhoneNumber: [],
 		ToastMessages: {
 			SUCCESS: {
 				severity: 'success',
@@ -550,12 +575,6 @@ export const whatsappSlice = createSlice({
 		builder.addCase(getInboundReport.fulfilled, (state, { payload }) => {
 			if (!payload.IsExport) state.inboundWhatsappReport = payload;
 		});
-		// builder.addCase(
-		// 	getWhatsappChatContactsByPhoneNumber.fulfilled,
-		// 	(state, { payload }) => {
-		// 		state.getWhatsappChatContactsByPhoneNumber = payload;
-		// 	}
-		// );
 	},
 });
 

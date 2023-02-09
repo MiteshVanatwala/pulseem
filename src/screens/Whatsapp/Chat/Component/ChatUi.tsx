@@ -1,7 +1,13 @@
 import Icon from './Icon';
 import { allMessages, dates, user } from './data';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { BaseSyntheticEvent, useState } from 'react';
+import {
+	BaseSyntheticEvent,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import { WhatsappChatUiProps } from '../Types/WhatsappChat.type';
 import { Button, Grid, IconButton, Typography } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
@@ -17,6 +23,10 @@ import { Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { getVariableValue } from '../../Common';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
+import { apiStatus } from '../../Constant';
+import { useDispatch } from 'react-redux';
+import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
+import React from 'react';
 
 const ChatUi = ({
 	classes,
@@ -33,7 +43,17 @@ const ChatUi = ({
 	setIsDynamcFieldModal,
 	setDynamicModalVariable,
 	savedTemplate,
+	chatPhoneNumber,
+	chatUserPhoneNumber,
 }: WhatsappChatUiProps) => {
+	const [allWhatsappChat, setAllWhatsappChat] = useState<any>([]);
+	const [activePhoneNumber, setActivePhoneNumber] =
+		useState<string>('16067520281');
+	const [activeUserNumber, setActiveUserNumber] =
+		useState<string>('918657485699');
+	console.log(chatPhoneNumber, chatUserPhoneNumber);
+
+	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
 	const formatTime = (timeString: string) => {
@@ -48,7 +68,6 @@ const ChatUi = ({
 		setChatTimer(time);
 	};
 
-	setInterval(setUpdateTime, 1000);
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
 		const isAvaliable = updatedDynamicVariable?.find(
@@ -90,6 +109,26 @@ const ChatUi = ({
 
 	const onEditableDivChange = (e: BaseSyntheticEvent) => {
 		setNewMessage(e.target.value);
+	};
+
+	useEffect(() => {
+		getAPIAllWhatsappChat();
+		// const interval = setInterval(setUpdateTime, 1000);
+		// return () => {
+		// 	clearInterval(interval);
+		// };
+	}, []);
+
+	const getAPIAllWhatsappChat = async () => {
+		const allWhatsAppChatData: any = await dispatch<any>(
+			getWhatsappChat({ activePhoneNumber, activeUserNumber })
+		);
+		console.log(allWhatsAppChatData);
+		if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
+			setAllWhatsappChat(allWhatsAppChatData.payload.Data.Items);
+		} else {
+			setAllWhatsappChat([]);
+		}
 	};
 
 	const chatHeader = () => {
@@ -400,4 +439,4 @@ const ChatUi = ({
 	);
 };
 
-export default ChatUi;
+export default React.memo(ChatUi);
