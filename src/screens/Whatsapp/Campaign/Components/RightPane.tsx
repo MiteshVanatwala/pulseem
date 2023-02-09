@@ -224,14 +224,10 @@ const RightPane = ({
 									handleSelectChange(e);
 								}}
 								value={sendType === '3' ? spectialDateFieldID : '0'}>
-								<option value='0'>
-									<>{translator('common.select')}</>
-								</option>
-								<option value='1'>
-									<>{translator('mainReport.birthday')}</>
-								</option>
+								<option value='0'>{translator('common.select')}</option>
+								<option value='1'>{translator('mainReport.birthday')}</option>
 								<option value='2'>
-									<>{translator('mainReport.creationDay')}</>
+									{translator('mainReport.creationDay')}
 								</option>
 							</select>
 						</Box>

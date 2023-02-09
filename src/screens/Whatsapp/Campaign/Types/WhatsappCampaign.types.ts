@@ -506,7 +506,7 @@ export type ApiSaveCampaignSettingsDataProps = {
 		 * and you have selected groups but you don't want to send last
 		 * campaign recipients then you can add here)
 		 **/
-		IsExceptionalroups?: boolean;
+		IsExceptionalGroups?: boolean;
 		Groups?: number[];
 		IsExceptionSmsCampaigns?: boolean;
 		Campaigns?: number[];
@@ -522,4 +522,13 @@ export type ApiSaveCampaignSettingsDataProps = {
 		sendhour?: string;
 	};
 	FutureDateTime?: string;
+};
+
+export type ApiSaveCampaignSettingsPayloadProps = {
+	Message: string;
+	Status: string;
+};
+
+export type ApiSaveCampaignSettingsProps = {
+	payload: ApiSaveCampaignSettingsPayloadProps;
 };

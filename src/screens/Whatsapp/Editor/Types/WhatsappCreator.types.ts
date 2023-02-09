@@ -230,6 +230,7 @@ export type toastProps = {
 	DUPLICATE_CAMPAIGN_SUCCESS: toastKeyProps;
 	INVALID_RECIPIENTS: toastKeyProps;
 	DATE_PASS: toastKeyProps;
+	CAMPAIGN_SAVE_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {

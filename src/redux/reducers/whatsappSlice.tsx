@@ -510,6 +510,12 @@ export const whatsappSlice = createSlice({
 				message: 'smsReport.pastDateSelected',
 				showAnimtionCheck: false,
 			},
+			CAMPAIGN_SAVE_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign saved succesfully',
+				showAnimtionCheck: true,
+			},
 		},
 		directWhatsappReport: null,
 		inboundWhatsappReport: null,

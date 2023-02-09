@@ -5,6 +5,7 @@ import { Grid } from '@material-ui/core';
 import {
 	APIManualUploadDataProps,
 	ApiSaveCampaignSettingsDataProps,
+	ApiSaveCampaignSettingsProps,
 	APISaveManualUploadClientsProps,
 	createCombinedGroupProps,
 	gropListAPIProps,
@@ -26,11 +27,18 @@ import ValidationAlert from './Popups/ValidationAlert';
 import {
 	createCombinedGroup,
 	getAllGroups,
+	saveCampaignSettings,
 	saveManualUpload,
 } from '../../../redux/reducers/whatsappSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
-import { buttons, initialSelectArray, resetToastData, tabs } from '../Constant';
+import {
+	apiStatus,
+	buttons,
+	initialSelectArray,
+	resetToastData,
+	tabs,
+} from '../Constant';
 import { getTestGroups } from '../../../redux/reducers/smsSlice';
 import { translateHebrewColumns } from '../Common';
 import { toastProps } from '../Editor/Types/WhatsappCreator.types';
@@ -242,30 +250,40 @@ const SendCampaign = ({
 		}
 	};
 
-	const onCampaignSave = () => {
+	const onCampaignSave = async () => {
 		// saveCampaignSettings
-		// 	let saveCampaignSettingsPayload: ApiSaveCampaignSettingsDataProps = {
-		// 		WACampaignID: Number(campaignID),
-		// SendTypeID: 1,
-		// Groups: [selectedGroups],
-		// SendExeptional: {
-		// 	IsExceptionalroups?: boolean,
-		// 	Groups?: number[],
-		// 	IsExceptionSmsCampaigns?: boolean,
-		// 	Campaigns?: number[],
-		// 	ExceptionalDays?: number,
-		// },
-		// RandomSettings?: {
-		// 	RandomAmount?: number,
-		// },
-		// specialsettings?: {
-		// 	datefieldid?: number,
-		// 	day?: number,
-		// 	intervaltypeid?: number,
-		// 	sendhour?: string,
-		// },
-		// FutureDateTime?: string,
-		// 	}
+		let saveCampaignSettingsPayload: ApiSaveCampaignSettingsDataProps = {
+			WACampaignID: Number(campaignID),
+			SendTypeID: Number(sendType),
+			Groups: selectedGroups?.map((group) => group.GroupID),
+			// SendExeptional: {
+			// 	IsExceptionalGroups?: boolean,
+			// 	Groups?: number[],
+			// 	IsExceptionSmsCampaigns?: boolean,
+			// 	Campaigns?: number[],
+			// 	ExceptionalDays?: number,
+			// },
+			// specialsettings?: {
+			// 	datefieldid?: number,
+			// 	day?: number,
+			// 	intervaltypeid?: number,
+			// 	sendhour?: string,
+			// },
+			// FutureDateTime?: string,
+		};
+		const { payload: saveCampaignSettingData }: ApiSaveCampaignSettingsProps =
+			await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));
+		console.log(saveCampaignSettingData);
+		if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.CAMPAIGN_SAVE_SUCCESS);
+		} else {
+			saveCampaignSettingData?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: saveCampaignSettingData?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	const onFormButtonClick = (buttonName: string) => {
