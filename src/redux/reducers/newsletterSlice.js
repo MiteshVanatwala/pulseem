@@ -251,7 +251,7 @@ export const newsletterSlice = createSlice({
       GROUP_CREATED_SUCCESS: { severity: 'success', color: 'success', message: "sms.groupSaved", showAnimtionCheck: true },
       SEND_DATE_MISSING: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.missingSendingDate", showAnimtionCheck: false },
       CAMPAIGN_ALREADY_SENT: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.campaignAlreadySent", showAnimtionCheck: false },
-
+      GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
     }
     //archiveDirectNewsletterReport: []
   },
