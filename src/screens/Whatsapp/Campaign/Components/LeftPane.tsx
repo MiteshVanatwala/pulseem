@@ -1,16 +1,15 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Grid, Tooltip } from '@material-ui/core';
 import { ClassesType } from '../../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { LeftPaneProps, smsProps } from '../Types/WhatsappCampaign.types';
-import ColumnAdjustmentModal from '../Popups/ColumnAdjustmentModal';
+import { LeftPaneProps } from '../Types/WhatsappCampaign.types';
 import AlertModal from '../../Editor/Popups/AlertModal';
 import FilterRecipientsDialog from '../Popups/FilterRecipientsDialog';
-import ManualUpload from './ManualUpload';
 import GroupSelector from './GroupSelector';
 import { tabs } from '../../Constant';
+import UploadXL from '../../../../components/Files/UploadXL';
+import { UploadSettings } from '../../../Groups/tempConstants';
 
 const LeftPane = ({
 	classes,
@@ -31,40 +30,15 @@ const LeftPane = ({
 	onFilter,
 	isCreateNewGroup,
 	setIsCreateNewGroup,
-	onManualUploadGroupName,
-	manualUploadGroupName,
-	columnValidate,
-	groupTextError,
-	GroupNameValidationMessage,
-	setColumnValidate,
-	setGroupTextError,
-	setGroupNameValidationMessage,
-	headers,
-	setInitialHeadState,
-	setHeaders,
 	onManualUpload,
-	typedData,
-	setTypedData,
-	resetColumnTitle,
-	selectArray
 }: ClassesType & LeftPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
 	const [alertModalSubtitle, setAlertModalSubtitle] = useState<string>('');
-	const [highlighted, setHighlighted] = useState<boolean>(false);
-	const [areaData, setAreaData] = useState<string>('');
-	const [totalRecords, setTotalRecords] = useState<number>(0);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [isFilterSelected, setIsFilterSelected] = useState<boolean>(false);
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
-	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
-		useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
-
-	const onColumnAdjustmentModalChange = (isModal: boolean) => {
-		setIsColumnAdjustmentModal(isModal);
-		resetColumnTitle();
-	};
 
 	return (
 		<Grid
@@ -125,20 +99,19 @@ const LeftPane = ({
 				</Grid>
 			</Grid>
 			{activeTab === tabs.MANUAL && (
-				<ManualUpload
+				<UploadXL
 					classes={classes}
-					highlighted={highlighted}
-					areaData={areaData}
-					setHighlighted={setHighlighted}
-					setAreaData={setAreaData}
-					setTypedData={setTypedData}
-					setTotalRecords={setTotalRecords}
-					totalRecords={totalRecords}
-					setInitialHeadState={setInitialHeadState}
-					setHeaders={setHeaders}
-					setIsColumnAdjustmentModal={onColumnAdjustmentModalChange}
-					setAlertModalSubtitle={setAlertModalSubtitle}
-					setIsAlert={setIsAlert}
+					areaStyle={{
+						height: 395,
+					}}
+					onDone={(groupName: any, res: any, uploadedAsFile: any) => {
+						onManualUpload(groupName, res, uploadedAsFile);
+					}}
+					settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
+					setToastMessage={() => {}}
+					placeHolder={'recipient.addRecTextareaPlaceholder'}
+					tooltipText='recipient.bulkRecUpldTooltipText'
+					onlyMapping={true}
 				/>
 			)}
 			<Grid item md={12} xs={12}>
@@ -163,24 +136,6 @@ const LeftPane = ({
 					/>
 				)}
 			</Grid>
-			<ColumnAdjustmentModal
-				classes={classes}
-				isColumnAdjustmentModal={isColumnAdjustmentModal}
-				onColumnAdjustmentModalClose={() => setIsColumnAdjustmentModal(false)}
-				headers={headers}
-				setheaders={setHeaders}
-				typedData={typedData}
-				onManualUploadGroupName={onManualUploadGroupName}
-				manualUploadGroupName={manualUploadGroupName}
-				columnValidate={columnValidate}
-				groupTextError={groupTextError}
-				GroupNameValidationMessage={GroupNameValidationMessage}
-				setColumnValidate={setColumnValidate}
-				setGroupTextError={setGroupTextError}
-				setGroupNameValidationMessage={setGroupNameValidationMessage}
-				onManualUpload={onManualUpload}
-				selectArray={selectArray}
-			/>
 			<FilterRecipientsDialog
 				isFilterModal={isFilterModal}
 				onFilterModalClose={() => setIsFilterModal(false)}

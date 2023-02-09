@@ -1,4 +1,4 @@
-import { selectArrayProps } from './Campaign/Types/WhatsappCampaign.types';
+
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
 import {
 	campaignStatusProps,
@@ -332,27 +332,6 @@ export const resetToastData: toastProps['SUCCESS'] = {
 	message: '',
 	showAnimtionCheck: false,
 };
-
-export const initialSelectArray: selectArrayProps[] = [
-	{
-		isdisabled: false,
-		idx: -1,
-		value: 'FirstName',
-		label: 'First Name',
-	},
-	{
-		isdisabled: false,
-		idx: 1,
-		value: 'LastName',
-		label: 'Last Name',
-	},
-	{
-		isdisabled: false,
-		idx: 2,
-		value: 'CellPhone',
-		label: 'Cellphone',
-	},
-];
 
 export const statuses: statusProps = {
 	1: 'common.Created',

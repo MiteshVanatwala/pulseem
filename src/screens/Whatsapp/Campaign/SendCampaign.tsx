@@ -3,15 +3,17 @@ import DefaultScreen from '../../DefaultScreen';
 import WizardTitle from '../../../components/Wizard/WizardTitle';
 import { Grid } from '@material-ui/core';
 import {
-	APIManualUploadDataProps,
+	APICreateGroupDataProps,
+	ApiCreateGroupPayloadProps,
 	ApiSaveCampaignSettingsDataProps,
 	ApiSaveCampaignSettingsProps,
-	APISaveManualUploadClientsProps,
 	createCombinedGroupProps,
 	gropListAPIProps,
-	selectArrayProps,
 	smsReducerProps,
 	testGroupDataProps,
+	uploadClientDataPayloadProps,
+	uploadClientDataProps,
+	uploadDataProps,
 	WhatsappCampaignSecondProps,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
@@ -25,22 +27,22 @@ import moment from 'moment';
 import Toast from '../../../components/Toast/Toast.component';
 import ValidationAlert from './Popups/ValidationAlert';
 import {
+	addRecipient,
+	addRecipients,
 	createCombinedGroup,
+	createGroup,
 	getAllGroups,
 	saveCampaignSettings,
-	saveManualUpload,
 } from '../../../redux/reducers/whatsappSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
 import {
 	apiStatus,
 	buttons,
-	initialSelectArray,
 	resetToastData,
 	tabs,
 } from '../Constant';
 import { getTestGroups } from '../../../redux/reducers/smsSlice';
-import { translateHebrewColumns } from '../Common';
 import { toastProps } from '../Editor/Types/WhatsappCreator.types';
 import { useParams } from 'react-router-dom';
 
@@ -155,25 +157,6 @@ const SendCampaign = ({
 			Recipients: 2,
 		},
 	];
-
-	const [manualUploadGroupName, setManualUploadGroupName] =
-		useState<string>('');
-	const [columnValidate, setColumnValidate] = useState<boolean>(false);
-	const [groupTextError, setGroupTextError] = useState<boolean>(false);
-	const [GroupNameValidationMessage, setGroupNameValidationMessage] =
-		useState<string>('');
-
-	const [initialHeadState, setInitialHeadState] = useState<string[]>([
-		'Adjust Title',
-		'Adjust Title',
-		'Adjust Title',
-	]);
-	const [headers, setHeaders] = useState<string[]>(initialHeadState);
-	const [typedData, setTypedData] = useState<string[][]>([
-		['Demo', 'Title', 'Name'],
-	]);
-	const [selectArray, setselectArray] =
-		useState<selectArrayProps[]>(initialSelectArray);
 
 	useEffect(() => {
 		/**
@@ -360,29 +343,66 @@ const SendCampaign = ({
 		}
 	};
 
-	const onManualUpload = async () => {
-		let requestPayload: APISaveManualUploadClientsProps[] = [];
-
-		for (let j = 0; j < typedData.length; j++) {
-			requestPayload.push({});
-			for (let k = 0; k < typedData[j].length; k++) {
-				if (headers[k] && headers[k] !== translator('sms.adjustTitle')) {
-					let key = translateHebrewColumns(
-						headers[k].toLocaleString().trim().replace(' ', '')
-					);
-					let obj: any = requestPayload[j];
-					obj[key] = typedData[j][k].trim();
-				}
+	const onManualUpload = async (
+		groupName: string,
+		uploadData: uploadDataProps,
+		uploadedAsFile: boolean
+	) => {
+		let requestPayload: ApiCreateGroupPayloadProps = {
+			GroupName: groupName,
+			IsTestGroup: false,
+		};
+		let uploadClientData: uploadClientDataProps;
+		const { payload: createGroupData }: APICreateGroupDataProps =
+			await dispatch<any>(createGroup(requestPayload));
+		if (createGroupData?.StatusCode === 201 && createGroupData?.Message) {
+			if (uploadedAsFile === true) {
+				uploadClientData = await dispatch<any>(
+					addRecipients({
+						...uploadData,
+						GroupIds: [Number(createGroupData?.Message)],
+					})
+				);
+			} else {
+				uploadClientData = await dispatch<any>(
+					addRecipient({
+						...uploadData,
+						GroupIds: [Number(createGroupData?.Message)],
+					})
+				);
 			}
+			handleAddClientsResponse(uploadClientData?.payload);
+		} else {
+			createGroupData?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: createGroupData?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
 		}
-		const manualUploadData: APIManualUploadDataProps = await dispatch<any>(
-			saveManualUpload({
-				GroupName: manualUploadGroupName,
-				Clients: requestPayload,
-			})
-		);
-		if (manualUploadData.payload.Reason === 'no_recipients_to_update') {
-			setToastMessage(ToastMessages.INVALID_RECIPIENTS);
+	};
+
+	const handleAddClientsResponse = async (
+		res: uploadClientDataPayloadProps
+	) => {
+		switch (res?.StatusCode) {
+			case 201: {
+				setToastMessage(ToastMessages.UPLOAD_CLIENT_DATA_SUCEESS);
+				setActiveTab('group');
+				await getApiGroupsData();
+				// setSelectedGroups([...selectedGroups, res.Message])
+				break;
+			}
+			case 401: {
+				setToastMessage(ToastMessages.INVALID_API_MISSING_KEY);
+				break;
+			}
+			case 200:
+			case 500:
+			default: {
+				setToastMessage(ToastMessages.GENERAL_ERROR);
+				break;
+			}
 		}
 	};
 
@@ -422,22 +442,7 @@ const SendCampaign = ({
 								onFilter={onFilter}
 								isCreateNewGroup={isCreateNewGroup}
 								setIsCreateNewGroup={setIsCreateNewGroup}
-								onManualUploadGroupName={setManualUploadGroupName}
-								manualUploadGroupName={manualUploadGroupName}
-								columnValidate={columnValidate}
-								groupTextError={groupTextError}
-								GroupNameValidationMessage={GroupNameValidationMessage}
-								setColumnValidate={setColumnValidate}
-								setGroupTextError={setGroupTextError}
-								setGroupNameValidationMessage={setGroupNameValidationMessage}
-								setHeaders={setHeaders}
-								setInitialHeadState={setInitialHeadState}
-								headers={headers}
 								onManualUpload={onManualUpload}
-								typedData={typedData}
-								setTypedData={setTypedData}
-								resetColumnTitle={() => setHeaders(initialHeadState)}
-								selectArray={selectArray}
 							/>
 						</Grid>
 						<Grid item md={1} xs={12}></Grid>

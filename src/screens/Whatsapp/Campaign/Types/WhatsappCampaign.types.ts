@@ -129,22 +129,11 @@ export type LeftPaneProps = {
 	onFilter: () => void;
 	isCreateNewGroup: boolean;
 	setIsCreateNewGroup: (val: boolean) => void;
-	onManualUploadGroupName: (uploadGroupName: string) => void;
-	manualUploadGroupName: string;
-	columnValidate: boolean;
-	groupTextError: boolean;
-	GroupNameValidationMessage: string;
-	setColumnValidate: (isColumnValidate: boolean) => void;
-	setGroupTextError: (isGroupTextError: boolean) => void;
-	setGroupNameValidationMessage: (validationMessage: string) => void;
-	setHeaders: (headState: string[]) => void;
-	setInitialHeadState: (headState: string[]) => void;
-	headers: string[];
-	onManualUpload: () => void;
-	typedData: string[][];
-	setTypedData: (typedData: string[][]) => void;
-	resetColumnTitle: () => void;
-	selectArray: selectArrayProps[];
+	onManualUpload: (
+		groupName: string,
+		uploadData: uploadDataProps,
+		uploadedAsFile: boolean
+	) => void;
 };
 export type WhatsappCampaignSecondProps = {
 	classes: ClassesType['classes'];
@@ -194,25 +183,6 @@ export type tagDataProps = {
 	highlightIndex: number;
 };
 
-export type ColumnAdjustmentModalProps = {
-	classes: ClassesType['classes'];
-	isColumnAdjustmentModal: boolean;
-	onColumnAdjustmentModalClose: () => void;
-	headers: string[];
-	setheaders: (headers: string[]) => void;
-	typedData: string[][];
-	onManualUploadGroupName: (uploadGroupname: string) => void;
-	manualUploadGroupName: string;
-	columnValidate: boolean;
-	groupTextError: boolean;
-	GroupNameValidationMessage: string;
-	setColumnValidate: (isColumnValidate: boolean) => void;
-	setGroupTextError: (isGroupTextError: boolean) => void;
-	setGroupNameValidationMessage: (validationMessage: string) => void;
-	onManualUpload: () => void;
-	selectArray: selectArrayProps[];
-};
-
 export type DynamicModalFieldsProps = {
 	classes: ClassesType['classes'];
 	activeDynamicButton: string;
@@ -242,13 +212,6 @@ export type TestGroupModalRowsProps = {
 	searchGroupResult: testGroupDataProps[];
 	onSelectGroup: (groupID: number) => void;
 	isSelectdGroup: (groupID: number) => boolean;
-};
-
-export type selectArrayProps = {
-	isdisabled: boolean;
-	idx: number;
-	value: string;
-	label: string;
 };
 
 export type personalFieldAPIProps = {
@@ -399,22 +362,6 @@ export type exportDataProps = {
 	TemplateID?: string;
 };
 
-export type manualUploadProps = {
-	classes: ClassesType['classes'];
-	highlighted: boolean;
-	areaData: string;
-	setHighlighted: (value: boolean) => void;
-	setAreaData: (areaData: string) => void;
-	setTypedData: (typedData: string[][]) => void;
-	setTotalRecords: (totalRecords: number) => void;
-	setInitialHeadState: (headState: string[]) => void;
-	setHeaders: (headState: string[]) => void;
-	setIsColumnAdjustmentModal: (columnAdjustmentModal: boolean) => void;
-	setAlertModalSubtitle: (alertModalSubtitle: string) => void;
-	setIsAlert: (isAlert: boolean) => void;
-	totalRecords: number;
-};
-
 export type groupSelectorProps = {
 	classes: ClassesType['classes'];
 	showTestGroups: boolean;
@@ -474,17 +421,6 @@ export type createCombinedGroupProps = {
 	payload: testGroupDataProps;
 };
 
-export type APISaveManualUploadClientsProps = {
-	Cellphone?: string;
-	FirstName?: string;
-	LastName?: string;
-};
-
-export type APISaveManualUploadProps = {
-	GroupName: string;
-	Clients: APISaveManualUploadClientsProps[];
-};
-
 export type APIManualUploadDataPayloadProps = {
 	GroupID: number;
 	Reason: string;
@@ -531,4 +467,53 @@ export type ApiSaveCampaignSettingsPayloadProps = {
 
 export type ApiSaveCampaignSettingsProps = {
 	payload: ApiSaveCampaignSettingsPayloadProps;
+};
+
+export type ApiCreateGroupPayloadProps = {
+	GroupName: string;
+	IsTestGroup: boolean;
+};
+
+export type uploadDataClientsDataProps = {
+	[key: string]: string;
+};
+export type uploadDataMappingProps = {
+	Index: number;
+	Title: string;
+};
+
+export type uploadDataProps = {
+	ClientsData: uploadDataClientsDataProps[];
+	GroupIds: number[];
+	Mapping: uploadDataMappingProps[];
+};
+
+export type APICreateGroupDataPayloadProps = {
+	Message: string;
+	StatusCode: number;
+};
+
+export type APICreateGroupDataProps = {
+	payload: APICreateGroupDataPayloadProps;
+};
+
+export type uploadClientDataPayloadProps = {
+	Message: string;
+	StatusCode: number;
+	Summary: {
+		DuplicateCellphones: number;
+		DuplicateEmails: number;
+		ExistingCellphones: number;
+		ExistingEmails: number;
+		InvalidOrEmptyCellphones: number;
+		InvalidOrEmptyEmails: number;
+		TotalDuplicates: number;
+		TotalInvalidOrEmptyAddresses: number;
+		TotalRecords: number;
+		TotalValidUploadedRecords: number;
+	};
+};
+
+export type uploadClientDataProps = {
+	payload: uploadClientDataPayloadProps;
 };

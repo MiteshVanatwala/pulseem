@@ -231,6 +231,10 @@ export type toastProps = {
 	INVALID_RECIPIENTS: toastKeyProps;
 	DATE_PASS: toastKeyProps;
 	CAMPAIGN_SAVE_SUCCESS: toastKeyProps;
+	UPLOAD_CLIENT_DATA_SUCEESS: toastKeyProps;
+	INVALID_API_MISSING_KEY: toastKeyProps;
+	GENERAL_ERROR: toastKeyProps;
+	GROUP_ALREADY_EXIST: toastKeyProps;
 };
 
 export type toastKeyProps = {

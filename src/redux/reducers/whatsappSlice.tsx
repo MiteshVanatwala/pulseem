@@ -8,10 +8,13 @@ import {
 	TextMediaAndButton,
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
 import {
+	ApiCreateGroupPayloadProps,
 	ApiSaveCampaignSettingsDataProps,
-	APISaveManualUploadProps,
 	saveCampaignDataProps,
+	uploadDataProps,
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
+import { setUploadProgress } from './groupSlice';
 
 type ApiErrorProps = {
 	message: string;
@@ -426,13 +429,50 @@ export const getCampaignDetailById = createAsyncThunk(
 	}
 );
 
-export const saveManualUpload = createAsyncThunk(
-	'smsCampaign/SaveManualClients',
-	async (uploadData: APISaveManualUploadProps, thunkAPI) => {
+export const createGroup = createAsyncThunk(
+	'Group/Create',
+	async (createGroupPayload: ApiCreateGroupPayloadProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(
+				`Group/Create`,
+				createGroupPayload
+			);
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const addRecipients = createAsyncThunk(
+	'Client/Upload',
+	async (payload: uploadDataProps, thunkAPI) => {
+		try {
+			//const dispatch = useDispatch()
+			const response = await uploaderInstance.put(`Client/Upload`, payload, {
+				onUploadProgress: (progressEvent) => {
+					const { loaded, total } = progressEvent;
+					let percent = Math.floor((loaded * 100) / total);
+					thunkAPI.dispatch(setUploadProgress(percent));
+				},
+			});
+
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const addRecipient = createAsyncThunk(
+	'client/AddClients',
+	async (payload: uploadDataProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`smsCampaign/SaveManualClients`,
-				uploadData
+				`client/AddClients`,
+				payload
 			);
 			return JSON.parse(response.data);
 		} catch (error) {
@@ -515,6 +555,30 @@ export const whatsappSlice = createSlice({
 				color: 'success',
 				message: 'Campaign saved succesfully',
 				showAnimtionCheck: true,
+			},
+			UPLOAD_CLIENT_DATA_SUCEESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'campaigns.newsLetterEditor.success',
+				showAnimtionCheck: false,
+			},
+			INVALID_API_MISSING_KEY: {
+				severity: 'error',
+				color: 'error',
+				message: 'campaigns.newsLetterEditor.errors.invaliApiKey',
+				showAnimtionCheck: false,
+			},
+			GENERAL_ERROR: {
+				severity: 'error',
+				color: 'error',
+				message: 'campaigns.newsLetterEditor.errors.generalError',
+				showAnimtionCheck: false,
+			},
+			GROUP_ALREADY_EXIST: {
+				severity: 'error',
+				color: 'error',
+				message: 'group.alreadyExist',
+				showAnimtionCheck: false,
 			},
 		},
 		directWhatsappReport: null,
