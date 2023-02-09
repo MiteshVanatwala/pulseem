@@ -234,25 +234,10 @@ const SendCampaign = ({
 	};
 
 	const onCampaignSave = async () => {
-		// saveCampaignSettings
 		let saveCampaignSettingsPayload: ApiSaveCampaignSettingsDataProps = {
 			WACampaignID: Number(campaignID),
 			SendTypeID: Number(sendType),
 			Groups: selectedGroups?.map((group) => group.GroupID),
-			// SendExeptional: {
-			// 	IsExceptionalGroups?: boolean,
-			// 	Groups?: number[],
-			// 	IsExceptionSmsCampaigns?: boolean,
-			// 	Campaigns?: number[],
-			// 	ExceptionalDays?: number,
-			// },
-			// specialsettings?: {
-			// 	datefieldid?: number,
-			// 	day?: number,
-			// 	intervaltypeid?: number,
-			// 	sendhour?: string,
-			// },
-			// FutureDateTime?: string,
 		};
 		const { payload: saveCampaignSettingData }: ApiSaveCampaignSettingsProps =
 			await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));

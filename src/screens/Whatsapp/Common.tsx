@@ -74,16 +74,3 @@ export const getTemplateNameById = (
 		)?.TemplateName || null
 	);
 };
-
-export const translateHebrewColumns = (key: string) => {
-	if (key === 'שםפרטי') {
-		return 'FirstName';
-	}
-	if (key === 'שםמשפחה') {
-		return 'LastName';
-	}
-	if (key === 'סלולרי') {
-		return 'Cellphone';
-	}
-	return key;
-};

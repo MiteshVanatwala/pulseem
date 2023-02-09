@@ -240,10 +240,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
-					console.log(
-						'campaignData?.Data?.VariableValues',
-						campaignData?.Data?.VariableValues
-					);
 					setUpdatedDynamicVariable(campaignData?.Data?.VariableValues);
 				}
 			})();
