@@ -11,7 +11,6 @@ const ManualUpload = ({
 	areaData,
 	setHighlighted,
 	setAreaData,
-	setContacts,
 	setTypedData,
 	setTotalRecords,
 	totalRecords,
@@ -209,7 +208,6 @@ const ManualUpload = ({
 							className={classes.clearDiv}
 							onClick={() => {
 								setAreaData('');
-								setContacts([]);
 								setTypedData([]);
 								setTotalRecords(0);
 							}}>

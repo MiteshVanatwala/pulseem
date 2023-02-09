@@ -70,8 +70,20 @@ export const getTemplateNameById = (
 ) => {
 	return (
 		savedTemplateList?.find(
-			(template: savedTemplateListProps) =>
-				template.TemplateId === templateId
+			(template: savedTemplateListProps) => template.TemplateId === templateId
 		)?.TemplateName || null
 	);
+};
+
+export const translateHebrewColumns = (key: string) => {
+	if (key === 'שםפרטי') {
+		return 'FirstName';
+	}
+	if (key === 'שםמשפחה') {
+		return 'LastName';
+	}
+	if (key === 'סלולרי') {
+		return 'Cellphone';
+	}
+	return key;
 };

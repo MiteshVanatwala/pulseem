@@ -31,13 +31,28 @@ const LeftPane = ({
 	onFilter,
 	isCreateNewGroup,
 	setIsCreateNewGroup,
+	onManualUploadGroupName,
+	manualUploadGroupName,
+	columnValidate,
+	groupTextError,
+	GroupNameValidationMessage,
+	setColumnValidate,
+	setGroupTextError,
+	setGroupNameValidationMessage,
+	headers,
+	setInitialHeadState,
+	setHeaders,
+	onManualUpload,
+	typedData,
+	setTypedData,
+	resetColumnTitle,
+	selectArray
 }: ClassesType & LeftPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
 	const [alertModalSubtitle, setAlertModalSubtitle] = useState<string>('');
 	const [highlighted, setHighlighted] = useState<boolean>(false);
 	const [areaData, setAreaData] = useState<string>('');
-	const [contacts, setContacts] = useState<number[]>([]);
 	const [totalRecords, setTotalRecords] = useState<number>(0);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [isFilterSelected, setIsFilterSelected] = useState<boolean>(false);
@@ -45,17 +60,11 @@ const LeftPane = ({
 	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
 		useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
-	const [typedData, setTypedData] = useState<string[][]>([
-		['Demo', 'Title', 'Name'],
-	]);
-	const [initialHeadState, setInitialHeadState] = useState<string[]>([
-		'Adjust Title',
-		'Adjust Title',
-		'Adjust Title',
-	]);
-	const [headers, setHeaders] = useState<string[]>(initialHeadState);
 
-	const handleCombined = () => {};
+	const onColumnAdjustmentModalChange = (isModal: boolean) => {
+		setIsColumnAdjustmentModal(isModal);
+		resetColumnTitle();
+	};
 
 	return (
 		<Grid
@@ -122,13 +131,12 @@ const LeftPane = ({
 					areaData={areaData}
 					setHighlighted={setHighlighted}
 					setAreaData={setAreaData}
-					setContacts={setContacts}
 					setTypedData={setTypedData}
 					setTotalRecords={setTotalRecords}
 					totalRecords={totalRecords}
 					setInitialHeadState={setInitialHeadState}
 					setHeaders={setHeaders}
-					setIsColumnAdjustmentModal={setIsColumnAdjustmentModal}
+					setIsColumnAdjustmentModal={onColumnAdjustmentModalChange}
 					setAlertModalSubtitle={setAlertModalSubtitle}
 					setIsAlert={setIsAlert}
 				/>
@@ -162,6 +170,16 @@ const LeftPane = ({
 				headers={headers}
 				setheaders={setHeaders}
 				typedData={typedData}
+				onManualUploadGroupName={onManualUploadGroupName}
+				manualUploadGroupName={manualUploadGroupName}
+				columnValidate={columnValidate}
+				groupTextError={groupTextError}
+				GroupNameValidationMessage={GroupNameValidationMessage}
+				setColumnValidate={setColumnValidate}
+				setGroupTextError={setGroupTextError}
+				setGroupNameValidationMessage={setGroupNameValidationMessage}
+				onManualUpload={onManualUpload}
+				selectArray={selectArray}
 			/>
 			<FilterRecipientsDialog
 				isFilterModal={isFilterModal}

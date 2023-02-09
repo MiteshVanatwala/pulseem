@@ -7,7 +7,11 @@ import {
 	TextMedia,
 	TextMediaAndButton,
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
-import { saveCampaignDataProps } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import {
+	ApiSaveCampaignSettingsDataProps,
+	APISaveManualUploadProps,
+	saveCampaignDataProps,
+} from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
 type ApiErrorProps = {
 	message: string;
@@ -24,35 +28,6 @@ type ApiSubmitTemplatesDataProps =
 	| TextMedia
 	| JSONPropsText
 	| undefined;
-
-type ApiSaveCampaignSettingsDataProps = {
-	WACampaignID: number;
-	SendTypeID: number;
-	Groups: number[];
-	SendExeptional?: {
-		/**
-		 * To Send Campaign on particlar occation with dates and groups.
-		 * (for example, If you want to send campaign on particular date
-		 * and you have selected groups but you don't want to send last
-		 * campaign recipients then you can add here)
-		 **/
-		IsExceptionalroups?: boolean;
-		Groups?: number[];
-		IsExceptionSmsCampaigns?: boolean;
-		Campaigns?: number[];
-		ExceptionalDays?: number;
-	};
-	RandomSettings?: {
-		RandomAmount?: number;
-	};
-	specialsettings?: {
-		datefieldid?: number;
-		day?: number;
-		intervaltypeid?: number;
-		sendhour?: string;
-	};
-	FutureDateTime?: string;
-};
 
 type ApiSendCampaignDataProps = {
 	WACampaignID: number;
@@ -372,15 +347,15 @@ export const getAllGroups = createAsyncThunk(
 );
 
 export const createCombinedGroup = createAsyncThunk(
-	'smsCampaign/CreateCombinedGroup',
+	'Group/CreateCombinedGroup',
 	async (groupsData: apiCombineGroupProps, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`smsCampaign/CreateCombinedGroup`,
+				`Group/CreateCombinedGroup`,
 				groupsData
 			);
 
-			return response.data;
+			return JSON.parse(response.data);
 		} catch (error) {
 			const err = error as ApiErrorProps;
 			return thunkAPI.rejectWithValue({ error: err.message });
@@ -451,6 +426,22 @@ export const getCampaignDetailById = createAsyncThunk(
 	}
 );
 
+export const saveManualUpload = createAsyncThunk(
+	'smsCampaign/SaveManualClients',
+	async (uploadData: APISaveManualUploadProps, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`smsCampaign/SaveManualClients`,
+				uploadData
+			);
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -506,6 +497,18 @@ export const whatsappSlice = createSlice({
 				color: 'success',
 				message: 'Campaign cloned succesfully',
 				showAnimtionCheck: true,
+			},
+			INVALID_RECIPIENTS: {
+				severity: 'error',
+				color: 'error',
+				message: 'sms.noRecipientToUpdate',
+				showAnimtionCheck: false,
+			},
+			DATE_PASS: {
+				severity: 'error',
+				color: 'error',
+				message: 'smsReport.pastDateSelected',
+				showAnimtionCheck: false,
 			},
 		},
 		directWhatsappReport: null,

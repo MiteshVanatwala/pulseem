@@ -129,6 +129,22 @@ export type LeftPaneProps = {
 	onFilter: () => void;
 	isCreateNewGroup: boolean;
 	setIsCreateNewGroup: (val: boolean) => void;
+	onManualUploadGroupName: (uploadGroupName: string) => void;
+	manualUploadGroupName: string;
+	columnValidate: boolean;
+	groupTextError: boolean;
+	GroupNameValidationMessage: string;
+	setColumnValidate: (isColumnValidate: boolean) => void;
+	setGroupTextError: (isGroupTextError: boolean) => void;
+	setGroupNameValidationMessage: (validationMessage: string) => void;
+	setHeaders: (headState: string[]) => void;
+	setInitialHeadState: (headState: string[]) => void;
+	headers: string[];
+	onManualUpload: () => void;
+	typedData: string[][];
+	setTypedData: (typedData: string[][]) => void;
+	resetColumnTitle: () => void;
+	selectArray: selectArrayProps[];
 };
 export type WhatsappCampaignSecondProps = {
 	classes: ClassesType['classes'];
@@ -185,6 +201,16 @@ export type ColumnAdjustmentModalProps = {
 	headers: string[];
 	setheaders: (headers: string[]) => void;
 	typedData: string[][];
+	onManualUploadGroupName: (uploadGroupname: string) => void;
+	manualUploadGroupName: string;
+	columnValidate: boolean;
+	groupTextError: boolean;
+	GroupNameValidationMessage: string;
+	setColumnValidate: (isColumnValidate: boolean) => void;
+	setGroupTextError: (isGroupTextError: boolean) => void;
+	setGroupNameValidationMessage: (validationMessage: string) => void;
+	onManualUpload: () => void;
+	selectArray: selectArrayProps[];
 };
 
 export type DynamicModalFieldsProps = {
@@ -379,7 +405,6 @@ export type manualUploadProps = {
 	areaData: string;
 	setHighlighted: (value: boolean) => void;
 	setAreaData: (areaData: string) => void;
-	setContacts: (contacts: number[]) => void;
 	setTypedData: (typedData: string[][]) => void;
 	setTotalRecords: (totalRecords: number) => void;
 	setInitialHeadState: (headState: string[]) => void;
@@ -443,4 +468,58 @@ export type CampaignDetailByIdPayloadProps = {
 
 export type CampaignDetailByIdProps = {
 	payload: CampaignDetailByIdPayloadProps;
+};
+
+export type createCombinedGroupProps = {
+	payload: testGroupDataProps;
+};
+
+export type APISaveManualUploadClientsProps = {
+	Cellphone?: string;
+	FirstName?: string;
+	LastName?: string;
+};
+
+export type APISaveManualUploadProps = {
+	GroupName: string;
+	Clients: APISaveManualUploadClientsProps[];
+};
+
+export type APIManualUploadDataPayloadProps = {
+	GroupID: number;
+	Reason: string;
+	Recipients: number;
+};
+
+export type APIManualUploadDataProps = {
+	payload: APIManualUploadDataPayloadProps;
+};
+
+export type ApiSaveCampaignSettingsDataProps = {
+	WACampaignID: number;
+	SendTypeID: number;
+	Groups: number[];
+	SendExeptional?: {
+		/**
+		 * To Send Campaign on particlar occation with dates and groups.
+		 * (for example, If you want to send campaign on particular date
+		 * and you have selected groups but you don't want to send last
+		 * campaign recipients then you can add here)
+		 **/
+		IsExceptionalroups?: boolean;
+		Groups?: number[];
+		IsExceptionSmsCampaigns?: boolean;
+		Campaigns?: number[];
+		ExceptionalDays?: number;
+	};
+	RandomSettings?: {
+		RandomAmount?: number;
+	};
+	specialsettings?: {
+		datefieldid?: number;
+		day?: number;
+		intervaltypeid?: number;
+		sendhour?: string;
+	};
+	FutureDateTime?: string;
 };

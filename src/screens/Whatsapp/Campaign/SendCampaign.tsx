@@ -3,7 +3,12 @@ import DefaultScreen from '../../DefaultScreen';
 import WizardTitle from '../../../components/Wizard/WizardTitle';
 import { Grid } from '@material-ui/core';
 import {
+	APIManualUploadDataProps,
+	ApiSaveCampaignSettingsDataProps,
+	APISaveManualUploadClientsProps,
+	createCombinedGroupProps,
 	gropListAPIProps,
+	selectArrayProps,
 	smsReducerProps,
 	testGroupDataProps,
 	WhatsappCampaignSecondProps,
@@ -21,11 +26,14 @@ import ValidationAlert from './Popups/ValidationAlert';
 import {
 	createCombinedGroup,
 	getAllGroups,
+	saveManualUpload,
 } from '../../../redux/reducers/whatsappSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
-import { buttons, tabs } from '../Constant';
+import { buttons, initialSelectArray, resetToastData, tabs } from '../Constant';
 import { getTestGroups } from '../../../redux/reducers/smsSlice';
+import { translateHebrewColumns } from '../Common';
+import { toastProps } from '../Editor/Types/WhatsappCreator.types';
 import { useParams } from 'react-router-dom';
 
 const SendCampaign = ({
@@ -33,12 +41,19 @@ const SendCampaign = ({
 }: ClassesType & WhatsappCampaignSecondProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
+	const { campaignID } = useParams();
 	const { testGroups: testGroupList } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
 
-	const [selectedGroups, setSelected] = useState<testGroupDataProps[]>([]);
+	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
+		[]
+	);
 	const [selectedFilterCampaigns, setFilterCampaigns] = useState<
 		testGroupDataProps[]
 	>([]);
@@ -53,7 +68,8 @@ const SendCampaign = ({
 	const [model, setModel] = useState<{}>({ ID: 0 });
 	const [isSpecialDateBefore, setIsSpecialDateBefore] = useState<boolean>(true);
 	const [timePickerOpen, setTimePickerOpen] = useState<boolean>(false);
-	const [toastMessage, setToastMessage] = useState<string>('');
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
 
@@ -132,6 +148,25 @@ const SendCampaign = ({
 		},
 	];
 
+	const [manualUploadGroupName, setManualUploadGroupName] =
+		useState<string>('');
+	const [columnValidate, setColumnValidate] = useState<boolean>(false);
+	const [groupTextError, setGroupTextError] = useState<boolean>(false);
+	const [GroupNameValidationMessage, setGroupNameValidationMessage] =
+		useState<string>('');
+
+	const [initialHeadState, setInitialHeadState] = useState<string[]>([
+		'Adjust Title',
+		'Adjust Title',
+		'Adjust Title',
+	]);
+	const [headers, setHeaders] = useState<string[]>(initialHeadState);
+	const [typedData, setTypedData] = useState<string[][]>([
+		['Demo', 'Title', 'Name'],
+	]);
+	const [selectArray, setselectArray] =
+		useState<selectArrayProps[]>(initialSelectArray);
+
 	useEffect(() => {
 		/**
 		 * testGroupList is for fetching all test groups across the platform
@@ -182,7 +217,7 @@ const SendCampaign = ({
 
 		if (date < moment()) {
 			date = moment();
-			setToastMessage('ToastMessages.DATE_PASS');
+			setToastMessage(ToastMessages.DATE_PASS);
 		}
 
 		handleFromDate(date);
@@ -207,6 +242,32 @@ const SendCampaign = ({
 		}
 	};
 
+	const onCampaignSave = () => {
+		// saveCampaignSettings
+		// 	let saveCampaignSettingsPayload: ApiSaveCampaignSettingsDataProps = {
+		// 		WACampaignID: Number(campaignID),
+		// SendTypeID: 1,
+		// Groups: [selectedGroups],
+		// SendExeptional: {
+		// 	IsExceptionalroups?: boolean,
+		// 	Groups?: number[],
+		// 	IsExceptionSmsCampaigns?: boolean,
+		// 	Campaigns?: number[],
+		// 	ExceptionalDays?: number,
+		// },
+		// RandomSettings?: {
+		// 	RandomAmount?: number,
+		// },
+		// specialsettings?: {
+		// 	datefieldid?: number,
+		// 	day?: number,
+		// 	intervaltypeid?: number,
+		// 	sendhour?: string,
+		// },
+		// FutureDateTime?: string,
+		// 	}
+	};
+
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.DELETE:
@@ -216,7 +277,7 @@ const SendCampaign = ({
 				console.log(buttons.EXIT);
 				break;
 			case buttons.SAVE:
-				console.log(buttons.SAVE);
+				onCampaignSave();
 				break;
 			case buttons.SEND:
 				console.log(buttons.SEND);
@@ -227,10 +288,14 @@ const SendCampaign = ({
 		}
 	};
 
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
 	const renderToast = () => {
 		if (toastMessage) {
 			setTimeout(() => {
-				setToastMessage('');
+				resetToast();
 			}, 4000);
 			return <Toast data={toastMessage} onClose='' />;
 		}
@@ -246,7 +311,15 @@ const SendCampaign = ({
 					(group: testGroupDataProps) => group.GroupID
 				),
 			};
-			await dispatch(createCombinedGroup(combinedGroupPayload));
+			const createdGroupData: createCombinedGroupProps = await dispatch<any>(
+				createCombinedGroup(combinedGroupPayload)
+			);
+			await getApiGroupsData();
+			if (createdGroupData?.payload?.GroupID) {
+				setSelectedGroups([createdGroupData?.payload]);
+				setNewGroupName('');
+				setIsCreateNewGroup(false);
+			}
 		} else {
 			setGroupSendValidationErrors(['Group name - required field']);
 			setIsValidationAlert(true);
@@ -266,6 +339,32 @@ const SendCampaign = ({
 		} else {
 			setAllGroupList([]);
 			setIsLoader(false);
+		}
+	};
+
+	const onManualUpload = async () => {
+		let requestPayload: APISaveManualUploadClientsProps[] = [];
+
+		for (let j = 0; j < typedData.length; j++) {
+			requestPayload.push({});
+			for (let k = 0; k < typedData[j].length; k++) {
+				if (headers[k] && headers[k] !== translator('sms.adjustTitle')) {
+					let key = translateHebrewColumns(
+						headers[k].toLocaleString().trim().replace(' ', '')
+					);
+					let obj: any = requestPayload[j];
+					obj[key] = typedData[j][k].trim();
+				}
+			}
+		}
+		const manualUploadData: APIManualUploadDataProps = await dispatch<any>(
+			saveManualUpload({
+				GroupName: manualUploadGroupName,
+				Clients: requestPayload,
+			})
+		);
+		if (manualUploadData.payload.Reason === 'no_recipients_to_update') {
+			setToastMessage(ToastMessages.INVALID_RECIPIENTS);
 		}
 	};
 
@@ -292,7 +391,7 @@ const SendCampaign = ({
 								testGroupList={testGroupList}
 								finishedCampaigns={finishedCampaigns}
 								selectedGroups={selectedGroups}
-								setSelected={setSelected}
+								setSelected={setSelectedGroups}
 								selectedFilterCampaigns={selectedFilterCampaigns}
 								setFilterCampaigns={setFilterCampaigns}
 								selectedFilterGroups={selectedFilterGroups}
@@ -305,6 +404,22 @@ const SendCampaign = ({
 								onFilter={onFilter}
 								isCreateNewGroup={isCreateNewGroup}
 								setIsCreateNewGroup={setIsCreateNewGroup}
+								onManualUploadGroupName={setManualUploadGroupName}
+								manualUploadGroupName={manualUploadGroupName}
+								columnValidate={columnValidate}
+								groupTextError={groupTextError}
+								GroupNameValidationMessage={GroupNameValidationMessage}
+								setColumnValidate={setColumnValidate}
+								setGroupTextError={setGroupTextError}
+								setGroupNameValidationMessage={setGroupNameValidationMessage}
+								setHeaders={setHeaders}
+								setInitialHeadState={setInitialHeadState}
+								headers={headers}
+								onManualUpload={onManualUpload}
+								typedData={typedData}
+								setTypedData={setTypedData}
+								resetColumnTitle={() => setHeaders(initialHeadState)}
+								selectArray={selectArray}
 							/>
 						</Grid>
 						<Grid item md={1} xs={12}></Grid>

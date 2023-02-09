@@ -28,37 +28,21 @@ const ColumnAdjustmentModal = ({
 	headers,
 	setheaders,
 	typedData,
+	onManualUploadGroupName,
+	manualUploadGroupName,
+	columnValidate,
+	groupTextError,
+	GroupNameValidationMessage,
+	setColumnValidate,
+	setGroupTextError,
+	setGroupNameValidationMessage,
+	onManualUpload,
+	selectArray
 }: ColumnAdjustmentModalProps) => {
 	const theme: Theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 	const { t: translator } = useTranslation();
-	const [groupTextError, setGroupTextError] = useState<boolean>(false);
-	const [groupNameInput, setgroupNameInput] = useState<string>('');
-	const [GroupNameValidationMessage, setGroupNameValidationMessage] =
-		useState<string>('');
-	const [contacts, setContacts] = useState<number[][]>([]);
 	const [dropIndex, setdropIndex] = useState<number>(-1);
-	const [columnValidate, setcolumnValidate] = useState<boolean>(false);
-	const [selectArray, setselectArray] = useState<selectArrayProps[]>([
-		{
-			isdisabled: false,
-			idx: -1,
-			value: 'FirstName',
-			label: 'First Name',
-		},
-		{
-			isdisabled: true,
-			idx: 1,
-			value: 'LastName',
-			label: 'Last Name',
-		},
-		{
-			isdisabled: true,
-			idx: 2,
-			value: 'CellPhone',
-			label: 'Cellphone',
-		},
-	]);
 
 	const handleChangeId = (id: number) => {
 		if (dropIndex === -1) {
@@ -102,21 +86,27 @@ const ColumnAdjustmentModal = ({
 		setheaders(h);
 	};
 
+	const onManualUploadOk = () => {
+		if (manualUploadGroupName?.length === 0) {
+			setGroupTextError(true);
+			setColumnValidate(true);
+			setGroupNameValidationMessage(translator('common.requiredField'));
+		} else {
+			onManualUpload();
+		}
+	};
+
+	const onGroupNamechange = (groupName: string) => {
+		setGroupTextError(false);
+		onManualUploadGroupName(groupName);
+	};
+
 	return (
 		<Dialog
 			fullScreen={fullScreen}
 			open={isColumnAdjustmentModal}
 			onClose={onColumnAdjustmentModalClose}
 			aria-labelledby='responsive-dialog-title'>
-			{/* <div className={classes.whatsappCampaignDynamicFieldTitle}>
-				{translator('whatsappCampaign.dfieldTitle')}
-			</div>
-			<Box className={classes.whatsappCampaignDynamicFieldClose}>
-				<IconButton>
-					<Close onClick={onColumnAdjustmentModalClose} />
-				</IconButton>
-			</Box> */}
-
 			<div className={classes.columnAdjustmentModal}>
 				<div
 					id='responsive-dialog-title'
@@ -150,8 +140,10 @@ const ColumnAdjustmentModal = ({
 												? clsx(classes.textInput, classes.error)
 												: clsx(classes.textInput, classes.success)
 										}
-										// onChange={handleManualDialog}
-										value={groupNameInput}></TextField>
+										onChange={(e: BaseSyntheticEvent) =>
+											onGroupNamechange(e.target.value)
+										}
+										value={manualUploadGroupName}></TextField>
 									{groupTextError ? (
 										<span className={classes.errorLabel}>
 											{GroupNameValidationMessage}
@@ -170,7 +162,7 @@ const ColumnAdjustmentModal = ({
 										marginInlineEnd: '10px',
 										fontWeight: '600',
 									}}>
-									{contacts.length !== 0 ? contacts.length : typedData.length}
+									{typedData.length}
 								</Typography>
 								<Tooltip
 									disableFocusListener
@@ -184,7 +176,7 @@ const ColumnAdjustmentModal = ({
 								className={classes.columnAdjustmentModalTableWrapper}
 								key='columnAdjustment'>
 								<table>
-									{typedData.length !== 0 || contacts.length !== 0 ? (
+									{typedData.length !== 0 ? (
 										headers.map((_item: string, idx: number) => {
 											return (
 												<th key={idx} className={classes.manualHeader}>
@@ -291,8 +283,7 @@ const ColumnAdjustmentModal = ({
 						variant='contained'
 						color='primary'
 						autoFocus
-						// onClick={onConfirmOrYes}
-					>
+						onClick={onManualUploadOk}>
 						<>{translator('whatsapp.alertModal.okButtonText')}</>
 					</Button>
 					<Button
