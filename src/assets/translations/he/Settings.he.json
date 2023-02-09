@@ -40,7 +40,8 @@
     "auth": {
       "everyDay": "כל יום",
       "everyTwoWeeks": "כל שבועיים",
-      "savedSuccessfuly": "הפעלת אימות דו-שלבי בוצעה בהצלחה!",
+      "activatedSuccessfuly": "הפעלת אימות דו-שלבי בוצעה בהצלחה!",
+      "inActivetedSuccessfuly": "כיבוי אימות דו-שלבי בוצעה בהצלחה!",
       "notSaved": "הפעלת אימות דו שלבי לא נשמרה. אנא פנה לתמיכה."
     },
     "savedSuccessfuly": "ההגדרות נשמרו בהצלחה!"
