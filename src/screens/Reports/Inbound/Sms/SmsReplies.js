@@ -15,7 +15,7 @@ import { TablePagination, ManagmentIcon } from '../../../../components/managment
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
-import { preferredOrder, formatDateTime, smsStatusNumberToString } from '../../../../helpers/exportHelper';
+import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
 import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 
@@ -157,8 +157,13 @@ const SmsReplies = ({ classes, ...other }) => {
         setShowLoader(true);
         let exportData = await dispatch(getSmsReplies({ ...request, IsExport: true }));
         let orderList = exportData?.payload;
-        orderList = preferredOrder(smsReplies?.Data, Object.keys(exportColumnHeader));
+        orderList = preferredOrder(orderList?.Data, Object.keys(exportColumnHeader));
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
+        orderList = replaceNull(orderList, 'FirstName', '');
+        orderList = replaceNull(orderList, 'LastName', '');
+        orderList = replaceNull(orderList, 'Cellphone', '');
+        orderList = replaceNull(orderList, 'Email', '');
+        orderList = replaceNull(orderList, 'CreationDate', '');
         orderList = await formatDateTime(orderList);
         exportFile({
             data: orderList,
@@ -255,7 +260,7 @@ const SmsReplies = ({ classes, ...other }) => {
                                     title={`${FirstName} ${LastName}`}
                                 >{FirstName} {LastName}</Typography>
                             </Box>
-                            <Box className={ClientID > 0 ? null : classes.disabled} style={{width: '30%'}}>
+                            <Box className={ClientID > 0 ? null : classes.disabled} style={{ width: '30%' }}>
                                 <ManagmentIcon
                                     disableHover={true}
                                     key='edit'
