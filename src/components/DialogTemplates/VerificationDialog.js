@@ -13,6 +13,7 @@ import {
 } from '../../redux/reducers/smsSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { BaseDialog } from '../DialogTemplates/BaseDialog';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, variant = 'email', ...props }) => {
@@ -632,15 +633,16 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
     })
 
     return (
-        <Dialog
+        <BaseDialog
             classes={classes}
             contentStyle={classes.maxWidth900}
             open={isOpen}
             onClose={handleClose}
+            onCancel={handleClose}
             renderButtons={Popup().renderButtons || null}
             {...Popup()}>
             {Popup().content}
-        </Dialog>
+        </BaseDialog>
     )
 }
 
