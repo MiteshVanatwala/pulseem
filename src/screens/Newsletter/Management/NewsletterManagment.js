@@ -219,10 +219,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const redirctToArchive = () => {
-    window.location = `${sitePrefix}Campaigns/Archive`
-  }
-
   const handleVerificationDialog = () => {
 
     setShowEmailVerDialog(true)
@@ -235,7 +231,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => {
+            component="a"
+            href={`${sitePrefix}Campaigns/Create`}
+            onClick={(e) => {
+              e.preventDefault();
               navigate(`${sitePrefix}Campaigns/Create`);
             }}
             className={clsx(
@@ -263,11 +262,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
         </Grid>}
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
+            component="a"
+            href={`${sitePrefix}Campaigns/Archive`}
             className={clsx(
               classes.btn,
               classes.btnRounded,
             )}
-            onClick={redirctToArchive}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(`${sitePrefix}Campaigns/Archive`)
+            }}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t('master.redirectToArchive')}

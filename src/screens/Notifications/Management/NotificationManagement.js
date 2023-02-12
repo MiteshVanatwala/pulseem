@@ -341,7 +341,12 @@ const NotificationManagement = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {<Grid item>
           <Button
-            onClick={() => Redirect({ url: `${sitePrefix}Notification/create` })}
+            component="a"
+            href='/react/Notification/create'
+            onClick={(e) => {
+              e.preventDefault()
+              Redirect({ url: `${sitePrefix}Notification/create` })
+            }}
             className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.createNotification')}

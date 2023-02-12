@@ -26,6 +26,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
+import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 
@@ -433,7 +434,15 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <>
         <Link
           style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
-          onClick={() => {
+          component='a'
+          href={`${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
+            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+            CampaignID: ID,
+            PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+            ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+          })}`}
+          onClick={(e) => {
+            e.preventDefault();
             if (Submits && Submits > 0) {
               navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {

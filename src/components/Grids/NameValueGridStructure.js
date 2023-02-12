@@ -38,7 +38,8 @@ const NameValueGridStructure = ({ gridArr = [],
                                 }
                                 <Typography
                                     className={obj.classes?.value ?? classes?.value ?? ''}
-                                    // href={classes.href ?? ''}
+                                    component='a'
+                                    href={obj.classes.href ?? ''}
                                     target="_blank"
                                     align={align}
                                     variant={variant}
@@ -56,6 +57,8 @@ const NameValueGridStructure = ({ gridArr = [],
                                 {!reverse &&
                                     <Typography
                                         className={obj.classes?.name ?? classes?.name ?? ''}
+                                        component='a'
+                                        href={obj.classes.href ?? ''}
                                         align={align}
                                         variant={variant}
                                         style={{ cursor: obj.onClick ? 'pointer' : null }}
