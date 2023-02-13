@@ -21,6 +21,7 @@ module.exports = {
             }]
     },
     optimization: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
         minimizer: [new TerserPlugin({
             extractComments: false,
         })],

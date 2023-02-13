@@ -45,7 +45,7 @@ const DashboardScreen = ({ classes }) => {
   }
 
   const onConfirm2FA = () => {
-    window.location = '/Pulseem/AccountSettings.aspx?2fa=1'
+    window.location = '/react/AccountSettings?2fa=1'
   }
   const onCancel2FA = () => {
     setShowTFA(false);

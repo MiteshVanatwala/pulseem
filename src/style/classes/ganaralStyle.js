@@ -2603,5 +2603,121 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   flexCenterOfCenter: {
     display: 'flex', width: '100%', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
-  }
+  },
+  settingsContainer: {
+    marginBottom: 68,
+    background: '#fff',
+    marginTop: 30,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    '& .head': {
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      '& .mgmtTitle': {
+        fontSize: 20
+      }
+    },
+    '& .containerBody': {
+      position: 'relative',
+      paddingBottom: 48,
+      // minHeight: 'calc(100vh - 10em)',
+      // borderBottomLeftRadius: 20,
+      // borderBottomRightRadius: 20,
+      // border: "2px solid #F0F5FF",
+
+      '& .settingsWrapper': {
+        paddingLeft: 31,
+        '& .mgmtTitle': {
+          fontSize: 18
+        },
+        '& .formContainer': {
+          position: 'relative',
+          paddingLeft: 15,
+          // paddingLeft: isRTL ? 0 : 15,
+          // paddingRight: isRTL ? 15 : 0,
+          '& .form': {
+            // maxWidth: 900,
+            background: '#fff',
+            zIndex: 100,
+            position: 'relative',
+          },
+          '& .svg_data_analysis': {
+            position: 'absolute',
+            right: 86.44,
+            left: 'auto',
+            // right: isRTL ? 'auto' : 86.44,
+            // left: isRTL ? 86.44 : 'auto',
+            top: 49.17,
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .svg_app_settings': {
+            position: 'absolute',
+            top: 121.3,
+            right: 93.14,
+            left: 'auto',
+            // right: isRTL ? 'auto' : 93.14,
+            // left: isRTL ? 93.14 : 'auto',
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .subHeading': {
+            marginTop: 39,
+            color: '#000'
+          },
+          '& .MuiFormControl-root': {
+            // maxWidth: 245,
+            '& .MuiSelect-root': {
+              padding: 0,
+              paddingInlineStart: 35,
+              '&:focus': {
+                background: 'none'
+              },
+              '& input': {
+                padding: 0
+              }
+            },
+            '& .subform': {
+              marginTop: 22,
+              '& .selectWrapper': {
+                height: 'auto',
+                '& .MuiTypography-body1': {
+                  marginLeft: isRTL ? 12 : 0
+                  // marginRight: isRTL ? 0 : 12,
+                  // marginLeft: isRTL ? 12 : 0
+                }
+              },
+
+            }
+          },
+          '& .MuiTypography-body1': {
+            color: '#979797'
+          },
+          '& .link': {
+            fontSize: 15,
+            color: '#FF0054',
+            padding: '2px 0',
+            marginTop: 28,
+            marginLeft: 0
+          }
+        }
+      },
+      '& .textBoxWrapper': {
+        paddingTop: 30,
+        paddingInlineEnd: 30,
+        '& .MuiTypography-body1': {
+          color: '#979797'
+        },
+        '& .MuiTextField-root': {
+          paddingBottom: 2,
+          // maxWidth: 245,
+          // '& input': {
+          //   padding: 0
+          // }
+        }
+      }
+
+      // display: 'grid',
+      // padding: '0 17px 32.8px 17px'
+    }
+  },
+
 });

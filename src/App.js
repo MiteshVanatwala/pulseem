@@ -40,6 +40,7 @@ import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
+import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -380,8 +381,9 @@ const renderRoutes = (classes, history) => {
       />
       {/* Settings */}
       <Route
+        exact
         path={`/AccountSettings`}
-        element={transferUrl('/Pulseem/AccountSettings.aspx')}
+        element={<AccountSettingsEditor classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}
