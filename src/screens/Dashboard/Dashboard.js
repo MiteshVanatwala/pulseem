@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
-import { Grid } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
 import BulkStatus from '../../components/Balance/BulkStatus';
@@ -12,12 +12,17 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCookie } from '../../helpers/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
+import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import Toast from "../../components/Toast/Toast.component";
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [showTFA, setShowTFA] = useState(false);
   const [TFAInit, setTFAInit] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -30,6 +35,14 @@ const DashboardScreen = ({ classes }) => {
       setTFAInit(true);
     }
   }, [accountSettings])
+
+  const renderToast = () => {
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+    return <Toast data={toastMessage} />;
+  };
+
 
   const init2FA = async () => {
     try {
@@ -61,6 +74,9 @@ const DashboardScreen = ({ classes }) => {
         onConfirm={onConfirm2FA}
         onCancel={onCancel2FA} />
       <Grid container>
+        <Grid>
+          <Button onClick={() => { setShowChangePassword(true) }}>Click</Button>
+        </Grid>
         <Grid item xs={12} sm={9} md={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
@@ -97,6 +113,14 @@ const DashboardScreen = ({ classes }) => {
           />
         </Grid>
       </Grid>
+      {toastMessage && renderToast()}
+      {showChangePassword && <ChangePassword
+        SetToast={setToastMessage}
+        IsOpen={showChangePassword}
+        OnClose={() => setShowChangePassword(false)}
+        Text={RenderHtml(t('dashboard.changePassword'))}
+      />
+      }
     </DefaultScreen>
   )
 }

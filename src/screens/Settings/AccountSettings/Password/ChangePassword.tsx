@@ -59,7 +59,7 @@ const useStyles = makeStyles({
     }
 });
 
-export interface PasswordParams { IsOpen: boolean, OnClose: Function, SetToast: Function }
+export interface PasswordParams { IsOpen: boolean, OnClose: Function, SetToast: Function, Text: string | null | undefined }
 
 const useStylesBootstrap = makeStyles((theme) => ({
     arrow: {
@@ -79,7 +79,7 @@ function BootstrapTooltip(props: any) {
     return <Tooltip arrow classes={classes} {...props} />;
 }
 
-const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) => {
+const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordParams) => {
     const { classes, isRTL } = useCore();
     const { t } = useTranslation();
     const localClasses = useStyles();
@@ -187,7 +187,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) =
             >
                 <Grid container className={clsx(classes.mb4)} style={{ maxWidth: 'calc(25vw)' }}>
                     <Grid item xs={12}>
-                        <Typography>{t("settings.changePassword.subTitle")}</Typography>
+                        <Typography>{Text ? Text : t("settings.changePassword.subTitle")}</Typography>
                     </Grid>
                     {/* Old Password */}
                     <Grid item xs={10} className={clsx(

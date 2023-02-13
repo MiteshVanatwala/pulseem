@@ -540,6 +540,7 @@ const FORM_COMPANY_DETAILS = ({
       </Box>
       {RenderDialog()}
       {showChangePassword && <ChangePassword
+        Text={null}
         SetToast={setToastMessage}
         IsOpen={showChangePassword}
         OnClose={() => setShowChangePassword(false)}
