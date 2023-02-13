@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import useCore from "../../../../helpers/hooks/Core";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "../../../../components/Loader/Loader";
@@ -9,6 +9,11 @@ import { LoginPassword } from "../../../../Models/Account/Password";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { changePassword } from "../../../../redux/reducers/AccountSettingsSlice";
 import { Box, Typography, TextField, makeStyles, Grid, Button } from '@material-ui/core'
+import Tooltip from '@material-ui/core/Tooltip';
+import Zoom from '@material-ui/core/Zoom';
+import { ValidPassword } from "./Types";
+import PasswordHint from "./PasswordHint";
+
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -56,8 +61,26 @@ const useStyles = makeStyles({
 
 export interface PasswordParams { IsOpen: boolean, OnClose: Function, SetToast: Function }
 
+const useStylesBootstrap = makeStyles((theme) => ({
+    arrow: {
+        color: theme.palette.common.black,
+    },
+    tooltip: {
+        backgroundColor: theme.palette.common.black,
+        fontSize: 14,
+        width: 350,
+        maxWidth: 'none'
+    },
+}));
+
+function BootstrapTooltip(props: any) {
+    const classes = useStylesBootstrap();
+
+    return <Tooltip arrow classes={classes} {...props} />;
+}
+
 const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) => {
-    const { classes } = useCore();
+    const { classes, isRTL } = useCore();
     const { t } = useTranslation();
     const localClasses = useStyles();
     const [loginPass, setLoginPass] = useState<LoginPassword>({
@@ -70,7 +93,21 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) =
     const [confirmPassError, setConfirmPassError] = useState<string>('');
     const [showLoader, setShowLoader] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [passwordValidation, setPasswordValidation] = useState<ValidPassword>({
+        LowerChar: false,
+        SpecialChar: false,
+        UpperChar: false,
+        PasswordLength: 0,
+        NumberChar: false
+    } as ValidPassword);
+    const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
+
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
+    const lowerCaseLetters = /[a-z]/g;
+    const upperCaseLetters = /[A-Z]/g;
+    const numbers = /[0-9]/g;
+    const specialLetters = /[!"#$%&'()*+.\/:;<=>?@\[\\\]^_`{|}~-]/g
+
     const dispatch = useDispatch();
 
     const handleConfirm = async () => {
@@ -111,6 +148,18 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) =
             [e?.target?.name]:
                 trimValue.length + 1 === actualValue?.length ? actualValue : trimValue,
         });
+
+        if (e?.target.name === 'NewPassword') {
+            const validPass = {
+                LowerChar: trimValue?.match(lowerCaseLetters),
+                SpecialChar: trimValue?.match(specialLetters),
+                UpperChar: trimValue?.match(upperCaseLetters),
+                PasswordLength: trimValue.length + 1,
+                NumberChar: trimValue?.match(numbers),
+            } as ValidPassword;
+
+            setPasswordValidation(validPass);
+        }
     }
 
     const handleResponses = (response: any) => {
@@ -125,6 +174,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) =
             OnClose();
         }
     }
+
     return (
         <>
             <BaseDialog
@@ -132,9 +182,6 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) =
                 onClose={OnClose}
                 onCancel={OnClose}
                 onConfirm={handleConfirm}
-                icon={<div className={classes.dialogIconContent} >
-                    {'\uE0D5'}
-                </div >}
                 title={t("settings.changePassword.title")}
                 showDivider={true}
             >
@@ -160,7 +207,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) =
                                 variant="outlined"
                                 value={loginPass.OldPassword}
                                 className={clsx(classes.textField, classes.minWidth252, oldPassError !== '' ? classes.textFieldError : '')}
-                                inputProps={{ autocomplete: "new-password" }}
+                                inputProps={{ autocomplete: "old-password" }}
                                 onChange={handleChange}
                                 helperText={oldPassError}
                                 InputProps={{
@@ -182,22 +229,33 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast }: PasswordParams) =
 
                         </Grid>
                         <Grid item xs={6} >
-                            <Box className={classes.flex2} >
-                                <TextField
-                                    type={showPassword ? "text" : "password"}
-                                    id="outlined-basic"
-                                    name="NewPassword"
-                                    label=""
-                                    variant="outlined"
-                                    value={loginPass.NewPassword}
-                                    className={clsx(classes.textField, classes.minWidth252, newPassError !== '' ? classes.textFieldError : '')}
-                                    inputProps={{ autocomplete: "new-password" }}
-                                    onChange={handleChange}
-                                    helperText={newPassError}
-                                    InputProps={{
-                                        endAdornment: <Button onClick={() => setShowPassword(!showPassword)} className={localClasses.pwdEveButton} > {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}</Button>,
-                                    }}
-                                />
+                            <Box className={classes.flex2}>
+                                <BootstrapTooltip
+                                    TransitionComponent={Zoom}
+                                    interactive={true}
+                                    title={
+                                        <PasswordHint Password={passwordValidation} />
+                                    }
+                                    arrow
+                                    open={showPasswordTip}>
+                                    <TextField
+                                        onFocus={() => setShowPasswordTip(true)}
+                                        onBlur={() => setShowPasswordTip(false)}
+                                        type={showPassword ? "text" : "password"}
+                                        id="outlined-basic"
+                                        name="NewPassword"
+                                        label=""
+                                        variant="outlined"
+                                        value={loginPass.NewPassword}
+                                        className={clsx(classes.textField, classes.minWidth252, newPassError !== '' ? classes.textFieldError : '')}
+                                        inputProps={{ autocomplete: "new-password" }}
+                                        onChange={handleChange}
+                                        helperText={newPassError}
+                                        InputProps={{
+                                            endAdornment: <Button onClick={() => setShowPassword(!showPassword)} className={localClasses.pwdEveButton} > {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}</Button>,
+                                        }}
+                                    />
+                                </BootstrapTooltip>
                             </Box>
                         </Grid>
                     </Grid>

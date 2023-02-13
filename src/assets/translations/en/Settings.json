@@ -87,6 +87,14 @@
             "406": "Password cannot be empty!",
             "407": "Confirmation password is not matched",
             "408": "Invalid old password"
+        },
+        "passwordHint": {
+            "title": "The password must contain",
+            "length": "At least 8 characters",
+            "specialChar": "Special character",
+            "upperChar": "Uppercase letter (En)",
+            "lowerChar": "Lowercase letter (En)",
+            "number": "Number"
         }
     }
 }

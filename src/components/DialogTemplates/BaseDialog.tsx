@@ -25,9 +25,9 @@ export const BaseDialog = ({
   icon = "",
   children,
   showDivider = false,
-  onClose = () => {},
-  onCancel = () => {},
-  onConfirm = () => {},
+  onClose = () => { },
+  onCancel = () => { },
+  onConfirm = () => { },
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -77,6 +77,7 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
+        style={{ textAlign: 'center', marginTop: 15, color: "#000" }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -103,27 +104,30 @@ export const BaseDialog = ({
       >
         <Grid item>
           <Button
-            name="btnConfirm"
-            variant="contained"
-            size="small"
+            variant='contained'
+            size='small'
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
-            className={clsx(classes.btn, classes.btnRounded)}
-          >
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogConfirmButton
+            )}>
             <>{t(confirmText)}</>
           </Button>
         </Grid>
         <Grid item>
           <Button
-            variant="contained"
-            size="small"
+            variant='contained'
+            size='small'
             onClick={(e: React.MouseEvent<HTMLElement>) => {
               if (onClose) {
                 onClose();
               }
               return false;
             }}
-            className={clsx(classes.btn, classes.btnRounded)}
-          >
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogCancelButton
+            )}>
             <>{t(cancelText)}</>
           </Button>
         </Grid>
@@ -151,13 +155,14 @@ export const BaseDialog = ({
   const RenderTopBar = () => {
     return (
       <Stack
+        style={{ width: '100%' }}
         className={clsx(classes.dialogTopBar)}
         direction="row"
         justifyContent={"space-between"}
       >
-        <Stack direction={"row"}>
-          {RenderIcon()}
-          <Stack alignSelf="center">
+        <Stack direction={"row"} style={{ width: '100%' }}>
+          {/* {RenderIcon()} */}
+          <Stack alignSelf="center" style={{ width: '100%' }}>
             {renderTitle ? renderTitle() : RenderTitleDefault()}
           </Stack>
         </Stack>
@@ -174,8 +179,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-            ? "calc(65vh)"
-            : "calc(45vh)",
+              ? "calc(65vh)"
+              : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}
@@ -188,6 +193,7 @@ export const BaseDialog = ({
   const RenderContent = () => {
     return (
       <Stack
+        style={{ border: 'none' }}
         dir={direction[isRTL]}
         className={clsx(classes.dialogContent, contentStyle)}
       >

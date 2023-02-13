@@ -42,8 +42,7 @@ const FORM_COMPANY_DETAILS = ({
   setToastMessage,
   ToastMessages,
   Settings,
-  OnUpdate,
-  SetVerification
+  OnUpdate
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
@@ -520,48 +519,6 @@ const FORM_COMPANY_DETAILS = ({
                   >
                     <>
                       {t("settings.accountSettings.fixedComDetails.btnChangePwd")}
-                    </>
-                  </Button>
-                  <Button
-                    className={clsx(
-                      classes.btn,
-                      classes.btnNohover,
-                      classes.noBorder,
-                      classes.link,
-                      classes.textCapitalize,
-                      "link"
-                    )}
-                    onClick={() =>
-                      SetVerification('cellphone')
-                    }
-                    startIcon={<MdMobileFriendly />}
-                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  >
-                    <>
-                      {t(
-                        "settings.accountSettings.fixedComDetails.btnVerifyNumber"
-                      )}
-                    </>
-                  </Button>
-                  <Button
-                    className={clsx(
-                      classes.btn,
-                      classes.btnNohover,
-                      classes.noBorder,
-                      classes.link,
-                      classes.textCapitalize,
-                      "link"
-                    )}
-                    onClick={() =>
-                      SetVerification('email')
-                    }
-                    startIcon={<MdOutlineMarkEmailRead />}
-                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  >
-                    <>
-                      {t(
-                        "settings.accountSettings.fixedComDetails.btnVerifyEmail"
-                      )}
                     </>
                   </Button>
                 </Grid>

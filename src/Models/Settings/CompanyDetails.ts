@@ -21,6 +21,5 @@ export type CompDtlPropTypes = {
         [key: string]: any;
     };
     Settings: AccountSettings | null,
-    OnUpdate: Function,
-    SetVerification: Function
+    OnUpdate: Function
 };

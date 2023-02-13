@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Divider, Typography } from "@material-ui/core";
+import { Box, Divider, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Title } from "../../../components/managment/Title";
 import DefaultScreen from "../../DefaultScreen";
@@ -14,11 +14,18 @@ import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { Loader } from "../../../components/Loader/Loader";
 import { logout } from "../../../helpers/api";
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import {
+  MdArrowBackIos,
+  MdArrowForwardIos,
+  MdMobileFriendly,
+  MdOutlineMarkEmailRead,
+} from "react-icons/md";
 
 const AccountSettingsEditor = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { classes } = useCore();
+  const { isRTL } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
@@ -170,12 +177,56 @@ const AccountSettingsEditor = () => {
     >
       {toastMessage && renderToast()}
       <Box className={clsx(classes.settingsContainer)}>
-        <Box className="head">
-          <Typography className={classes.managementTitle}>
+        <Box className="head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
             {t('settings.accountSettings.title')}
           </Typography>
-          <Divider />
+          <Box style={{ marginInlineStart: 'auto' }}>
+            <Button
+              className={clsx(
+                classes.btn,
+                classes.btnNohover,
+                classes.noBorder,
+                classes.link,
+                classes.textCapitalize,
+                "link"
+              )}
+              onClick={() =>
+                handleVerification('cellphone')
+              }
+              startIcon={<MdMobileFriendly />}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            >
+              <>
+                {t(
+                  "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                )}
+              </>
+            </Button>
+            <Button
+              className={clsx(
+                classes.btn,
+                classes.btnNohover,
+                classes.noBorder,
+                classes.link,
+                classes.textCapitalize,
+                "link"
+              )}
+              onClick={() =>
+                handleVerification('email')
+              }
+              startIcon={<MdOutlineMarkEmailRead />}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            >
+              <>
+                {t(
+                  "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                )}
+              </>
+            </Button>
+          </Box>
         </Box>
+        <Divider />
         <Box className={"containerBody"}>
           <FORM_COMPANY_DETAILS
             setToastMessage={setToastMessage}
