@@ -410,7 +410,7 @@ const FORM_COMPANY_DETAILS = ({
             <Grid item xs={12}>
               <Grid container className={"subform"}>
                 <Grid item xs={12}>
-                  <Typography className="subHeading">
+                  <Typography className={clsx("subHeading")}>
                     <>
                       {t("settings.accountSettings.fixedComDetails.securitySettings")}
                     </>
@@ -460,19 +460,16 @@ const FORM_COMPANY_DETAILS = ({
                     </>
                   </Typography>
                   <FormControl
-                    className={classes.formControl}
+                    variant="outlined" className={classes.formControl}
                     style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10 }}
                   >
                     <Select
+                      style={{
+                        height: 40
+                      }}
                       disabled={!companyDetails?.TwoFactorAuthEnabled}
                       autoWidth
                       value={companyDetails?.TwoFactorAuthOptionID ?? 202}
-                      style={{
-                        maxHeight: 40,
-                        overflow: "hidden",
-                        paddingLeft: 0,
-                        paddingRight: 0,
-                      }}
                       name="TwoFactorAuthOptionID"
                       onChange={(e: any) => { handleTwoFactorOption(e) }}
                     >

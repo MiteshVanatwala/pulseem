@@ -852,6 +852,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiInputLabel-formControl": {
       top: -7,
     },
+    "& .MuiSvgIcon-root.MuiSelect-icon.MuiSelect-iconOutlined": {
+      left: "auto !important",
+      right: "10px !important"
+    },
   },
   formControlSelect: {
     "& .MuiSelect-outlined.MuiSelect-outlined": {

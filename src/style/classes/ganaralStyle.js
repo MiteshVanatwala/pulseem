@@ -2661,13 +2661,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           },
           '& .subHeading': {
             marginTop: 39,
-            color: '#000'
+            color: '#000 !important',
+            fontWeight: 900
           },
           '& .MuiFormControl-root': {
             // maxWidth: 245,
             '& .MuiSelect-root': {
               padding: 0,
-              paddingInlineStart: 35,
+              paddingInlineStart: 15,
               '&:focus': {
                 background: 'none'
               },
