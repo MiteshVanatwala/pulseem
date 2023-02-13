@@ -28,6 +28,7 @@ import { Stack } from "@mui/material";
 import { BaseDialog } from "./BaseDialog";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import useCore from "../../helpers/hooks/Core";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 
 type Verification_Dialog_Popup = {
   variant: string;
@@ -242,17 +243,6 @@ const VerificationDialog = ({
       children: (
         <>
           <Stack pb={1}>
-            {/* <Stack pb={1} className={classes.textCenter}> */}
-            <Typography
-              style={{
-                fontWeight: 700,
-                padding: "0 0 10px 0",
-                color: "#0a74a9",
-              }}
-              variant="h4"
-            >
-              <>{t("campaigns.newsLetterMgmt.emailVerification.popupTitle")}</>
-            </Typography>
             <Typography style={{ fontSize: 14, color: "#000" }} variant="body1">
               <>{t("campaigns.newsLetterMgmt.emailVerification.popupDesc1")}</>
             </Typography>
@@ -277,6 +267,7 @@ const VerificationDialog = ({
                 ({ IsOptIn, Number }: { IsOptIn: boolean; Number: string }) => (
                   <Stack
                     className={clsx(classes.flex, classes.hAuto, "emailBox")}
+                    direction="row"
                   >
                     <Avatar
                       className={IsOptIn ? classes.checkIcon : classes.redIcon}
@@ -309,8 +300,8 @@ const VerificationDialog = ({
             </Stack>
             <Button
               className={clsx(
-                classes.actionButton,
-                classes.actionButtonDarkBlue,
+                classes.btn,
+                classes.btnRounded,
                 isRTL ? "btnVerifyNewRTL" : "btnVerifyNewLtr"
               )}
               onClick={() => {
@@ -369,7 +360,7 @@ const VerificationDialog = ({
                 value={selectedVerificationContact}
                 inputProps={{
                   disabled: authorizedTypeDisabled,
-                  className: classes.textColorBlue,
+                  className: clsx(classes.textColorBlue, classes.textCenter),
                 }}
                 onChange={(e) => {
                   !!verificationError?.email &&
@@ -390,8 +381,8 @@ const VerificationDialog = ({
             <Stack mt={2} alignItems="center">
               <Button
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonGreen,
+                  classes.btn,
+                  classes.btnRounded,
                   classes.wFitContent
                 )}
                 onClick={() => {
@@ -438,8 +429,10 @@ const VerificationDialog = ({
               </>{" "}
               <span className={classes.link}>
                 <>
-                  {t(
-                    "campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs"
+                  {RenderHtml(
+                    t(
+                      "campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs"
+                    )
                   )}
                 </>
               </span>
@@ -489,7 +482,14 @@ const VerificationDialog = ({
               <TextField
                 variant="outlined"
                 size="small"
-                className={clsx(classes.textField, classes.maxWidth400)}
+                className={clsx(
+                  classes.textField,
+                  classes.maxWidth400,
+                  classes.textCenter
+                )}
+                inputProps={{
+                  className: classes.textCenter,
+                }}
                 onChange={(e) => {
                   e.preventDefault();
                   !!verificationError?.code &&
@@ -508,8 +508,8 @@ const VerificationDialog = ({
             <Stack mt={2} alignItems="center">
               <Button
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonDarkBlue,
+                  classes.btn,
+                  classes.btnRounded,
                   classes.buttonMinWidth
                 )}
                 onClick={() => {
@@ -653,10 +653,11 @@ const VerificationDialog = ({
             </Typography>
             <Button
               className={clsx(
-                classes.actionButton,
-                classes.actionButtonGreen,
+                classes.btn,
+                classes.btnRounded,
                 classes.buttonMinWidth,
-                classes.mt6
+                classes.mt6,
+                classes.middle
               )}
               onClick={() => {
                 handleClose();
@@ -680,16 +681,6 @@ const VerificationDialog = ({
       children: (
         <>
           <Stack pb={1}>
-            <Typography
-              style={{
-                fontWeight: 700,
-                padding: "0 0 10px 0",
-                color: "#0a74a9",
-              }}
-              variant="h4"
-            >
-              <>{t("sms.verificationDialogTitle")}</>
-            </Typography>
             <Typography style={{ fontSize: 14, color: "#000" }} variant="body1">
               <>{t("sms.verificationBody")}</>
             </Typography>
@@ -728,6 +719,7 @@ const VerificationDialog = ({
                   <Stack
                     className={clsx(classes.flex, classes.hAuto, "emailBox")}
                     key={`verificationNumber${ID}`}
+                    direction="row"
                   >
                     <Avatar
                       className={IsOptIn ? classes.checkIcon : classes.redIcon}
@@ -757,8 +749,8 @@ const VerificationDialog = ({
             </Stack>
             <Button
               className={clsx(
-                classes.actionButton,
-                classes.actionButtonDarkBlue,
+                classes.btn,
+                classes.btnRounded,
                 "btnVerifyNewLtr"
               )}
               onClick={() => {
@@ -806,7 +798,7 @@ const VerificationDialog = ({
                 value={selectedVerificationContact}
                 inputProps={{
                   disabled: authorizedTypeDisabled,
-                  className: classes.textColorBlue,
+                  className: clsx(classes.textColorBlue, classes.textCenter),
                 }}
                 onChange={(e) => {
                   !!verificationError?.Number &&
@@ -818,18 +810,18 @@ const VerificationDialog = ({
                 className={clsx(
                   classes.textField,
                   classes.maxWidth400,
-                  classes.txtCenter
+                  classes.middle
                 )}
                 placeholder={t("sms.enterNumberText")}
                 error={!!verificationError?.Number}
-                // helperText={verificationError?.email}
               />
             </Stack>
             <Stack mt={2}>
               <Button
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonGreen
+                  classes.btn,
+                  classes.btnRounded,
+                  classes.middle
                 )}
                 onClick={() => {
                   if (selectedVerificationContact) {
@@ -882,7 +874,14 @@ const VerificationDialog = ({
               <TextField
                 variant="outlined"
                 size="small"
-                className={clsx(classes.textField, classes.maxWidth400)}
+                className={clsx(
+                  classes.textField,
+                  classes.maxWidth400,
+                  classes.middle
+                )}
+                inputProps={{
+                  className: classes.textCenter,
+                }}
                 onChange={(e) => {
                   !!verificationError?.code &&
                     setVerificationError({ code: "" });
@@ -900,9 +899,10 @@ const VerificationDialog = ({
             <Stack mt={2}>
               <Button
                 className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonDarkBlue,
-                  classes.buttonMinWidth
+                  classes.btn,
+                  classes.btnRounded,
+                  classes.buttonMinWidth,
+                  classes.middle
                 )}
                 onClick={() => {
                   if (trials === 4) {
@@ -1033,10 +1033,11 @@ const VerificationDialog = ({
             </Typography>
             <Button
               className={clsx(
-                classes.actionButton,
-                classes.actionButtonGreen,
+                classes.btn,
+                classes.btnRounded,
                 classes.mt15,
-                classes.buttonMinWidth
+                classes.buttonMinWidth,
+                classes.middle
               )}
               onClick={() => {
                 handleClose();
@@ -1051,7 +1052,7 @@ const VerificationDialog = ({
 
   const POPUP_OBJECT: { [key: string]: POPUP_OBJECT_TYPE } = {
     email: {
-      title: "",
+      title: <>{t("campaigns.newsLetterMgmt.emailVerification.popupTitle")}</>,
       icon: (
         <div className={classes.dialogIconContent}>
           <MdOutlineMarkEmailRead />
@@ -1070,15 +1071,14 @@ const VerificationDialog = ({
           {verificationStep < 1 && (
             <Button
               name="btnConfirm"
-              variant="contained"
-              size="small"
               onClick={() => {
                 handleClose();
               }}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
-                classes.ml5
+                classes.btn,
+                classes.btnRounded,
+                classes.ml5,
+                classes.middle
               )}
             >
               <>{t("common.Ok")}</>
@@ -1088,13 +1088,12 @@ const VerificationDialog = ({
           {verificationStep > 0 && verificationStep < 3 && (
             <Button
               name="btnConfirm"
-              variant="contained"
-              size="small"
               onClick={PrevSlide}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
-                classes.ml5
+                classes.btn,
+                classes.btnRounded,
+                classes.ml5,
+                classes.middle
               )}
             >
               <>{t("notifications.back")}</>
@@ -1104,7 +1103,7 @@ const VerificationDialog = ({
       ),
     },
     sms: {
-      title: "",
+      title: <>{t("sms.verificationDialogTitle")}</>,
       icon: <div className={classes.dialogIconContent}>{"\uE11B"}</div>,
       content: (
         <>
@@ -1119,15 +1118,14 @@ const VerificationDialog = ({
           {verificationStep < 1 && (
             <Button
               name="btnConfirm"
-              variant="contained"
-              size="small"
               onClick={() => {
                 handleClose();
               }}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
-                classes.ml5
+                classes.btn,
+                classes.btnRounded,
+                classes.ml5,
+                classes.middle
               )}
             >
               <>{t("common.Ok")}</>
@@ -1137,13 +1135,12 @@ const VerificationDialog = ({
           {verificationStep > 0 && verificationStep < 3 && (
             <Button
               name="btnConfirm"
-              variant="contained"
-              size="small"
               onClick={PrevSlide}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
-                classes.ml5
+                classes.btn,
+                classes.btnRounded,
+                classes.ml5,
+                classes.middle
               )}
             >
               <>{t("notifications.back")}</>

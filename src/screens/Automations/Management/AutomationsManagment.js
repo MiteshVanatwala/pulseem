@@ -134,14 +134,16 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          onKeyPress={handleKeyPress}
-          placeholder={t('automations.labelAutomationName')}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={campaineNameSearch}
+            onChange={handleCampainNameChange}
+            onClick={handleSearch}
+            onKeyPress={handleKeyPress}
+            placeholder={t('automations.labelAutomationName')}
+          />
+        </Grid>
       )
     }
 
@@ -485,7 +487,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.tabelCellPadding) }}>
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
@@ -601,17 +603,19 @@ const AutomationsManagnentScreen = ({ classes }) => {
       title: t('automations.restoreCampaignTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE185'}
         </div>
       ),
-      content: (
+      content: restoreArray?.length > 0 ? (
         <RestorDialogContent
           classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
         />
+      ) : (
+        <Typography className={clsx(classes.bold, classes.textCenter)}>{t('common.NoData')}</Typography>
       ),
       onConfirm: async () => {
         handleClose()
@@ -785,6 +789,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>

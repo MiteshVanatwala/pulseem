@@ -26,7 +26,7 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog.tsx';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
@@ -145,14 +145,16 @@ const SmsManagnentScreen = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          onKeyPress={handleKeyPress}
-          placeholder={t('common.CampaignName')}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={campaineNameSearch}
+            onChange={handleCampainNameChange}
+            onClick={handleSearch}
+            onKeyPress={handleKeyPress}
+            placeholder={t('common.CampaignName')}
+          />
+        </Grid>
       )
     }
 
@@ -534,7 +536,7 @@ const SmsManagnentScreen = ({ classes }) => {
         key={row.Id}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
+        <TableCell style={{ flex: 1 }} classes={{ root: (classes.tableCellRoot, classes.mt1) }}>
           <Box className={classes.justifyBetween}>
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
@@ -654,7 +656,7 @@ const SmsManagnentScreen = ({ classes }) => {
       title: t('sms.restoreCampaignTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE185'}
         </div>
       ),
@@ -683,7 +685,7 @@ const SmsManagnentScreen = ({ classes }) => {
       title: t('campaigns.ShowGroupsTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0D5'}
         </div>
       ),
@@ -705,12 +707,11 @@ const SmsManagnentScreen = ({ classes }) => {
       ),
       renderButtons: () => (
         <Button
-          variant='contained'
-          size='small'
           onClick={handleClose}
           className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}>
           {t('common.Ok')}
         </Button>
@@ -721,11 +722,6 @@ const SmsManagnentScreen = ({ classes }) => {
   const getDeleteDialog = (data = '') => ({
     title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{ fontSize: 18 }}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
@@ -742,11 +738,6 @@ const SmsManagnentScreen = ({ classes }) => {
   const getDuplicateDialog = (data = '') => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{ fontSize: 18 }}>
         {t('campaigns.dialogDuplicateContent')}
@@ -766,8 +757,9 @@ const SmsManagnentScreen = ({ classes }) => {
       childrenPadding: false,
       contentStyle: classes.pt2rem,
       showDivider: false,
+      title: t('campaigns.Image1Resource1.ToolTip'),
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE0F8'}
         </div>
       ),
@@ -785,12 +777,11 @@ const SmsManagnentScreen = ({ classes }) => {
       ),
       renderButtons: () => (
         <Button
-          variant='contained'
-          size='small'
           onClick={handleClose}
           className={clsx(
-            classes.confirmButton,
-            classes.dialogConfirmButton,
+            classes.btn,
+            classes.btnRounded,
+            classes.middle
           )}>
           {t('common.confirm')}
         </Button>
@@ -804,7 +795,7 @@ const SmsManagnentScreen = ({ classes }) => {
       title: t('sms.verificationDialogTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE11B'}
         </div>
       ),
@@ -893,7 +884,7 @@ const SmsManagnentScreen = ({ classes }) => {
   const getShortVerifyDialog = (data = '') => ({
     showDivider: false,
     icon: (
-      <div className={classes.dialogIconContent}>
+      <div className={clsx(classes.dialogIconContent, 'unicode')}>
         {'\uE11B'}
       </div>
     ),
@@ -937,7 +928,7 @@ const SmsManagnentScreen = ({ classes }) => {
   const getVerificationSentDialog = (data = '') => ({
     showDivider: false,
     icon: (
-      <div className={classes.dialogIconContent}>
+      <div className={clsx(classes.dialogIconContent, 'unicode')}>
         {'\uE11B'}
       </div>
     ),
@@ -998,7 +989,7 @@ const SmsManagnentScreen = ({ classes }) => {
   const getVerificationSuccessDialog = () => ({
     showDivider: false,
     icon: (
-      <div className={classes.dialogIconContent}>
+      <div className={clsx(classes.dialogIconContent, 'unicode')}>
         {'\uE11B'}
       </div>
     ),
@@ -1040,6 +1031,7 @@ const SmsManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>

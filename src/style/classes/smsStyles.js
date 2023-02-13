@@ -506,12 +506,16 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             border: '2px solid #F0F5FF',
             borderRadius: 10,
             paddingBottom: 31,
+            background: '#fff',
             '& .searchLine': {
-                paddingLeft: 31,
+                paddingInlineStart: 31,
                 '& .MuiGrid-item': {
                     marginRight: 27.42
                 }
-            }
+            },
+            "@media screen and (max-width: 765px)": {
+                paddingBottom: 17,
+            },
         }
     },
     adjustC:

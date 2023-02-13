@@ -147,6 +147,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   maxWidth450: {
     maxWidth: '450px !important'
   },
+  maxWidth500: {
+    maxWidth: '500px !important'
+  },
 
   wFitContent: {
     width: 'fit-content'
@@ -644,7 +647,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         },
         '& .rowTitle': {
           textAlign: 'center',
-          alignItems: 'flex-start'
+          alignItems: 'flex-start',
+          "@media screen and (max-width: 768px)": {
+            textAlign: 'start'
+          },
         },
         '& .MuiTableCell-root': {
 
@@ -1999,6 +2005,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginRight: 5,
     marginInlineStart: 'auto',
     lineHeight: windowSize === 'xs' ? 1 : null,
+    "@media screen and (max-width: 540px)": {
+      marginTop: 5,
+      marginLeft: 38
+    },
   },
 
   carouselContainer: {

@@ -34,6 +34,7 @@ import EmailVerification from '../../Verification/EmailVerification';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog.tsx';
 
 const NewsletterManagnentScreen = ({ classes }) => {
 
@@ -149,15 +150,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onKeyPress={(e) => { handleSearch(); handleKeyPress(e) }}
-          onClick={handleSearch}
-          // onKeyPress={}
-          placeholder={t('common.CampaignName')}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={campaineNameSearch}
+            onChange={handleCampainNameChange}
+            onKeyPress={(e) => { handleSearch(); handleKeyPress(e) }}
+            onClick={handleSearch}
+            // onKeyPress={}
+            placeholder={t('common.CampaignName')}
+          />
+        </Grid>
       )
     }
     return (
@@ -233,10 +236,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             onClick={() => {
-              navigate(`${sitePrefix}/Campaigns/Create`);
+              navigate(`${sitePrefix}Campaigns/Create`);
             }}
             className={clsx(
               classes.btn,
@@ -454,7 +455,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
             key={index}
             item>
             <Grid
-              container>
+              container
+              className={windowSize === 'xs' ? classes.mt1 : ''}
+            >
               {map.map(icon => (
                 <Grid
                   style={{ flex: 1, alignItems: 'center', }}
@@ -521,6 +524,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const renderNameCell = (row) => {
     let date = null
     let text = ''
+    let separator = windowSize === 'xs' ? ":" : "";
     if (!row.SendDate) {
       date = moment(row.UpdatedDate, dateFormat)
       text = t('common.UpdatedOn')
@@ -543,11 +547,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
           text={row.Name}
         />
         <Typography className={classes.f14}>
-          {`${t("mainReport.CampaignID")} ${row.CampaignID}`}
+          {`${t("mainReport.CampaignID")}${separator} ${row.CampaignID}`}
         </Typography>
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+          {`${text}${separator} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
@@ -594,7 +598,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         key={row.CampaignID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.tabelCellPadding) }}>
           <Box className={classes.justifyBetween}>
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
@@ -680,19 +684,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
       title: '',
       showDivider: false,
       icon: false,
-      // exitButton: <Box
-      //   onClick={() => setDialogType(null)}
-      //   className={clsx(
-      //     classes.dialogExitButton,
-      //     classes.btnNoBgExitDialog,
-      //     classes.f25,
-      //     {
-      //       [classes.dialogExitButtonRTL]: !isRTL,
-      //       [classes.dialogExitButtonLTR]: isRTL
-      //     }
-      //   )}>
-      //   x
-      // </Box>,
       contentStyle: classes.noBorder,
       content: (
         <Grid container>
@@ -884,7 +875,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      <EmailVerification isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} />
+      <VerificationDialog isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} variant="email" />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

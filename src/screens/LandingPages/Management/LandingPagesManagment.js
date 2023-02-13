@@ -106,14 +106,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={landingPageNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          onKeyPress={handleKeyPress}
-          placeholder={placeholder}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={landingPageNameSearch}
+            onChange={handleCampainNameChange}
+            onClick={handleSearch}
+            onKeyPress={handleKeyPress}
+            placeholder={placeholder}
+          />
+        </Grid>
       )
     }
     return (
@@ -503,7 +505,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.tabelCellPadding) }}>
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
@@ -589,7 +591,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       title: t('landingPages.restoreLandingPageTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE185'}
         </div>
       ),
@@ -698,6 +700,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>

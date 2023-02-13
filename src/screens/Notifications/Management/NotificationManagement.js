@@ -265,14 +265,16 @@ const NotificationManagement = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={notificationNameSearch}
-          onKeyPress={handleSearch}
-          onChange={handleNotificationNameChange}
-          onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={notificationNameSearch}
+            onKeyPress={handleSearch}
+            onChange={handleNotificationNameChange}
+            onClick={handleSearch}
+            placeholder={t('common.CampaignName')}
+          />
+        </Grid>
       )
     }
 
@@ -647,7 +649,7 @@ const NotificationManagement = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1) }}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
           <Box className={classes.justifyBetween}>
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
@@ -1272,7 +1274,7 @@ const NotificationManagement = ({ classes }) => {
       <Box className={'topSection'}>
         <Title
           Text={t('notifications.notificationManagement')} classes={classes}
-          ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
+          ContainerStyle={{ display: 'flex', flexWrap: 'wrap' }}
           Element={
             <Button onClick={() => {
               setCookie('scriptDialog', true);

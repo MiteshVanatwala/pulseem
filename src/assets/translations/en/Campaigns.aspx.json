@@ -544,7 +544,7 @@
         "error1": "Invalid Email",
         "error2": "Email is required",
         "anyProblem": "Did you encounter a problem?",
-        "contactUs": "Contact us at <a href='tel:03-524-0290'>03-524-0290</a> or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+        "contactUs": "Contact us at <a href='tel:03-524-0290' style='color:#FF3343'>03-524-0290</a> or at <a href='mailto:support@pulseem.com' style='color:#FF3343'>support@pulseem.com</a>",
         "placeholder": "Enter email"
       },
       "thirdSlide": {
