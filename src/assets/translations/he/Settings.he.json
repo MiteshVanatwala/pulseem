@@ -88,7 +88,7 @@
     },
     "passwordHint": {
       "title": "על הסיסמא להכיל",
-      "length": "לפחות 8 אותיות",
+      "length": "לפחות 8 תווים",
       "specialChar": "תו מיוחד",
       "upperChar": "אות גדולה באנגלית",
       "lowerChar": "אות קטנה באנגלית",

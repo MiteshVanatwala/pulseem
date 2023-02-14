@@ -317,12 +317,12 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                     </Grid>
                     {errors?.length > 0 && <Grid container>
                         <Grid item xs={12}>
-                            {t('settings.changePassword.passwordHint.title')}:
-                            <ul>
-                                {errors.map((err) => {
-                                    return <li>{err}</li>;
+                            <Typography className={classes.red}>{t('settings.changePassword.passwordHint.title')}:</Typography>
+                            <Typography className={classes.red}>
+                                {errors.map((err, idx) => {
+                                    return `${err}${idx < (errors.length - 1) ? ', ' : ''}`;
                                 })}
-                            </ul>
+                            </Typography>
                         </Grid>
                     </Grid>}
                 </Grid>
