@@ -175,11 +175,11 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
 
         if (e?.target.name === 'NewPassword') {
             const validPass = {
-                LowerChar: trimValue?.match(lowerCaseLetters),
-                SpecialChar: trimValue?.match(specialLetters),
-                UpperChar: trimValue?.match(upperCaseLetters),
+                LowerChar: !!trimValue?.match(lowerCaseLetters),
+                SpecialChar: !!trimValue?.match(specialLetters),
+                UpperChar: !!trimValue?.match(upperCaseLetters),
                 PasswordLength: trimValue.length + 1,
-                NumberChar: trimValue?.match(numbers),
+                NumberChar: !!trimValue?.match(numbers),
             } as ValidPassword;
 
             setPasswordValidation(validPass);
@@ -317,12 +317,12 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                     </Grid>
                     {errors?.length > 0 && <Grid container>
                         <Grid item xs={12}>
-                            {t('settings.changePassword.passwordHint.title')}:
-                            <ul>
-                                {errors.map((err) => {
-                                    return <li>{err}</li>;
+                            <Typography className={classes.red}>{t('settings.changePassword.passwordHint.title')}:</Typography>
+                            <Typography className={classes.red}>
+                                {errors.map((err, idx) => {
+                                    return `${err}${idx < (errors.length - 1) ? ', ' : ''}`;
                                 })}
-                            </ul>
+                            </Typography>
                         </Grid>
                     </Grid>}
                 </Grid>
