@@ -153,6 +153,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
             setErrors(missingRules);
         }
         else {
+            setErrors([]);
             if (isValid) {
                 setShowLoader(true);
                 const response = await dispatch(changePassword(loginPass));
