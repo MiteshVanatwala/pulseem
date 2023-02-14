@@ -3,7 +3,10 @@ import { Grid, Tooltip } from '@material-ui/core';
 import { ClassesType } from '../../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { LeftPaneProps } from '../Types/WhatsappCampaign.types';
+import {
+	LeftPaneProps,
+	uploadDataProps,
+} from '../Types/WhatsappCampaign.types';
 import AlertModal from '../../Editor/Popups/AlertModal';
 import FilterRecipientsDialog from '../Popups/FilterRecipientsDialog';
 import GroupSelector from './GroupSelector';
@@ -31,6 +34,10 @@ const LeftPane = ({
 	isCreateNewGroup,
 	setIsCreateNewGroup,
 	onManualUpload,
+	exceptionalDaysToggle,
+	exceptionalDays,
+	setExceptionalDaysToggle,
+	setExceptionalDays,
 }: ClassesType & LeftPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
@@ -40,6 +47,10 @@ const LeftPane = ({
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
 
+	const onFilterSave = () => {
+		setIsFilterModal(false);
+		onFilter();
+	};
 	return (
 		<Grid
 			container
@@ -102,9 +113,13 @@ const LeftPane = ({
 				<UploadXL
 					classes={classes}
 					areaStyle={{
-						height: 395,
+						height: 493,
 					}}
-					onDone={(groupName: any, res: any, uploadedAsFile: any) => {
+					onDone={(
+						groupName: string,
+						res: uploadDataProps,
+						uploadedAsFile: boolean
+					) => {
 						onManualUpload(groupName, res, uploadedAsFile);
 					}}
 					settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
@@ -122,7 +137,11 @@ const LeftPane = ({
 						testGroupList={testGroupList}
 						allGroupList={allGroupList}
 						selectedGroups={selectedGroups}
-						isFilterSelected={isFilterSelected}
+						isFilterSelected={
+							selectedFilterGroups?.length > 0 ||
+							selectedFilterCampaigns?.length > 0 ||
+							(exceptionalDaysToggle && exceptionalDays?.length > 0)
+						}
 						isCreateNewGroup={isCreateNewGroup}
 						newGroupName={newGroupName}
 						allGroupsSelected={allGroupsSelected}
@@ -146,7 +165,11 @@ const LeftPane = ({
 				setFilterCampaigns={setFilterCampaigns}
 				selectedFilterGroups={selectedFilterGroups}
 				setFilterGroups={setFilterGroups}
-				onConfirmOrYes={onFilter}
+				onConfirmOrYes={onFilterSave}
+				exceptionalDaysToggle={exceptionalDaysToggle}
+				exceptionalDays={exceptionalDays}
+				setExceptionalDaysToggle={setExceptionalDaysToggle}
+				setExceptionalDays={setExceptionalDays}
 			/>
 			<AlertModal
 				classes={classes}

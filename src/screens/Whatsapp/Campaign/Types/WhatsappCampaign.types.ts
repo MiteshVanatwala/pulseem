@@ -80,6 +80,11 @@ export type testGroupDataProps = {
 	Recipients: number;
 };
 
+export type selectedFilterCampaignsProps = {
+	WACampaignID: number;
+	Name: string;
+};
+
 export type testGroupModalProps = {
 	classes: ClassesType['classes'];
 	isOpen: boolean;
@@ -96,7 +101,6 @@ export type RightPaneProps = {
 	handleDatePicker: (updatedDate: MaterialUiPickersDate | null) => void;
 	sendDate: MaterialUiPickersDate | null;
 	sendTime: MaterialUiPickersDate | null;
-	setsendTime: (updatedSendTime: MaterialUiPickersDate | null) => void;
 	handleRadioTime: (updatedRadioTime: MaterialUiPickersDate | null) => void;
 	sendType: string;
 	handleSendType: (e: BaseSyntheticEvent) => void;
@@ -108,15 +112,18 @@ export type RightPaneProps = {
 	handleSelectChange: (e: BaseSyntheticEvent) => void;
 	isSpecialDateBefore: boolean;
 	setIsSpecialDateBefore: (value: boolean) => void;
+	specialDatedropDown: string[];
 };
 
 export type LeftPaneProps = {
 	classes: ClassesType['classes'];
 	allGroupList: testGroupDataProps[];
 	testGroupList: testGroupsProps[];
-	finishedCampaigns: testGroupDataProps[];
-	selectedFilterCampaigns: testGroupDataProps[];
-	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
+	finishedCampaigns: selectedFilterCampaignsProps[];
+	selectedFilterCampaigns: selectedFilterCampaignsProps[];
+	setFilterCampaigns: (
+		updatedFilterCampaigns: selectedFilterCampaignsProps[]
+	) => void;
 	selectedFilterGroups: testGroupDataProps[];
 	setFilterGroups: (updatedFilterGroups: testGroupDataProps[]) => void;
 	selectedGroups: testGroupDataProps[];
@@ -134,6 +141,10 @@ export type LeftPaneProps = {
 		uploadData: uploadDataProps,
 		uploadedAsFile: boolean
 	) => void;
+	exceptionalDaysToggle: boolean;
+	exceptionalDays: string;
+	setExceptionalDaysToggle: (exceptionalDaysToggle: boolean) => void;
+	setExceptionalDays: (exceptionalDays: string) => void;
 };
 export type WhatsappCampaignSecondProps = {
 	classes: ClassesType['classes'];
@@ -156,17 +167,40 @@ export type GroupsProps = {
 	uniqueKey: string;
 };
 
+export type CampaignGroupsProps = {
+	classes: ClassesType['classes'];
+	list: selectedFilterCampaignsProps[];
+	isFilterSelected: boolean;
+	selectedList: selectedFilterCampaignsProps[];
+	innerHeight: number;
+	showSortBy: boolean;
+	showFilter: boolean;
+	showSelectAll: boolean;
+	callbackSelectedGroups: (group: selectedFilterCampaignsProps) => void;
+	callbackUpdateGroups: (value: selectedFilterCampaignsProps[]) => void;
+	callbackSelectAll: () => void;
+	callbackReciFilter: () => void;
+	callbackShowTestGroup: (showTestGroups: boolean) => void;
+	uniqueKey: string;
+};
+
 export type FilterRecipientsDialogProps = {
 	classes: ClassesType['classes'];
 	isFilterModal: boolean;
 	onFilterModalClose: () => void;
 	allGroupList: testGroupDataProps[];
-	finishedCampaigns: testGroupDataProps[];
-	selectedFilterCampaigns: testGroupDataProps[];
-	setFilterCampaigns: (updatedFilterCampaigns: testGroupDataProps[]) => void;
+	finishedCampaigns: selectedFilterCampaignsProps[];
+	selectedFilterCampaigns: selectedFilterCampaignsProps[];
+	setFilterCampaigns: (
+		updatedFilterCampaigns: selectedFilterCampaignsProps[]
+	) => void;
 	selectedFilterGroups: testGroupDataProps[];
 	setFilterGroups: (updatedFilterGroups: testGroupDataProps[]) => void;
 	onConfirmOrYes: () => void;
+	exceptionalDaysToggle: boolean;
+	exceptionalDays: string;
+	setExceptionalDaysToggle: (exceptionalDaysToggle: boolean) => void;
+	setExceptionalDays: (exceptionalDays: string) => void;
 };
 
 export type SummaryModalProps = {
@@ -175,6 +209,9 @@ export type SummaryModalProps = {
 	campaignName: string;
 	fromNumber: string;
 	onSummaryModalClose: () => void;
+	onConfirmOrYes: () => void;
+	selectedGroups: testGroupDataProps[];
+	selectedFilterGroups: testGroupDataProps[];
 };
 
 export type tagDataProps = {
@@ -516,4 +553,103 @@ export type uploadClientDataPayloadProps = {
 
 export type uploadClientDataProps = {
 	payload: uploadClientDataPayloadProps;
+};
+
+export type specialDateDropDownPayloadProps = {
+	[key: string]: string;
+};
+
+export type specialDateDropDownDataProps = {
+	payload: specialDateDropDownPayloadProps;
+};
+
+export type campaignSettingsPayloadDataProps = {
+	WACampaignID: number;
+	SendTypeID: number;
+	Groups: number[];
+	FutureDateTime: string | null;
+	SendExeptional?: {
+		/**
+		 * To Send Campaign on particlar occation with dates and groups.
+		 * (for example, If you want to send campaign on particular date
+		 * and you have selected groups but you don't want to send last
+		 * campaign recipients then you can add here)
+		 **/
+		IsExceptionalGroups?: boolean;
+		Groups?: number[];
+		IsExceptionSmsCampaigns?: boolean;
+		Campaigns?: number[];
+		ExceptionalDays?: number;
+		ExceptionalID?: number;
+	};
+	SpecialSettings?: {
+		DateFieldID?: number;
+		Day?: number;
+		IntervalTypeID?: number;
+		SendHour?: string;
+		SendDate?: string;
+		SpecialSettingId?: number;
+	};
+};
+
+export type campaignSettingsPayloadProps = {
+	Data: campaignSettingsPayloadDataProps;
+	Message: string;
+	Status: string;
+};
+
+export type campaignSettingsDataProps = {
+	payload: campaignSettingsPayloadProps;
+};
+
+export type whatsappCampaignNameFilterPayloadDataProps = {
+	WACampaignID: number;
+	Name: string;
+};
+
+export type whatsappCampaignNameFilterPayloadProps = {
+	Data: whatsappCampaignNameFilterPayloadDataProps[];
+	Message: string;
+	Status: string;
+};
+
+export type whatsappCampaignNameFilterDataProps = {
+	payload: whatsappCampaignNameFilterPayloadProps;
+};
+export type ApiGetCampaignSummaryPayloadData = {
+	ClientTotalCount: number;
+	ClientUniqCount: number;
+	DuplicateCellphoneSharedWithClienCount: number;
+	EmptyCellphoneCount: number;
+	ExceptionalDayClientCount: number;
+	ExceptionalGroupsClientCount: number;
+	ExceptionalWACampaignClientCount: number;
+	FinalCount: number;
+	Invalid: number;
+	Removed: number;
+	SpecialSettingUniqCount: number;
+};
+
+export type ApiGetCampaignSummaryPayload = {
+	Data: ApiGetCampaignSummaryPayloadData;
+	Message: string;
+	Status: string;
+};
+
+export type ApiGetCampaignSummary = {
+	payload: ApiGetCampaignSummaryPayload;
+};
+
+export type ApiSendCampaign = {
+	Message: string;
+	Status: string;
+};
+
+export type ApiQuickSendPayload = {
+	Message: string;
+	Status: string;
+};
+
+export type ApiQuickSend = {
+	payload: ApiQuickSendPayload;
 };

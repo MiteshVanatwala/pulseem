@@ -5,15 +5,23 @@ import { Grid } from '@material-ui/core';
 import {
 	APICreateGroupDataProps,
 	ApiCreateGroupPayloadProps,
+	ApiGetCampaignSummary,
 	ApiSaveCampaignSettingsDataProps,
 	ApiSaveCampaignSettingsProps,
+	ApiSendCampaign,
+	campaignSettingsDataProps,
+	campaignSettingsPayloadDataProps,
 	createCombinedGroupProps,
 	gropListAPIProps,
+	selectedFilterCampaignsProps,
 	smsReducerProps,
+	specialDateDropDownDataProps,
 	testGroupDataProps,
 	uploadClientDataPayloadProps,
 	uploadClientDataProps,
 	uploadDataProps,
+	whatsappCampaignNameFilterDataProps,
+	whatsappCampaignNameFilterPayloadDataProps,
 	WhatsappCampaignSecondProps,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
@@ -31,8 +39,14 @@ import {
 	addRecipients,
 	createCombinedGroup,
 	createGroup,
+	deleteCampaign,
+	getAccountExtraData,
 	getAllGroups,
+	getCampaignSettings,
+	getWhatsappCampaignNameFilter,
+	getWhatsAppCampaignSummary,
 	saveCampaignSettings,
+	sendCampaign,
 } from '../../../redux/reducers/whatsappSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
@@ -41,16 +55,22 @@ import {
 	buttons,
 	resetToastData,
 	tabs,
+	whatsappRoutes,
 } from '../Constant';
 import { getTestGroups } from '../../../redux/reducers/smsSlice';
-import { toastProps } from '../Editor/Types/WhatsappCreator.types';
-import { useParams } from 'react-router-dom';
+import {
+	commonAPIResponseProps,
+	toastProps,
+} from '../Editor/Types/WhatsappCreator.types';
+import { useNavigate, useParams } from 'react-router-dom';
+import AlertModal from '../Editor/Popups/AlertModal';
 
 const SendCampaign = ({
 	classes,
 }: ClassesType & WhatsappCampaignSecondProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { campaignID } = useParams();
 	const { testGroups: testGroupList } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
@@ -65,12 +85,12 @@ const SendCampaign = ({
 		[]
 	);
 	const [selectedFilterCampaigns, setFilterCampaigns] = useState<
-		testGroupDataProps[]
+		selectedFilterCampaignsProps[]
 	>([]);
 	const [selectedFilterGroups, setFilterGroups] = useState<
 		testGroupDataProps[]
 	>([]);
-	const [sendDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
+	const [sendDate, handleSendDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);
 	const [sendTime, setsendTime] = useState<MaterialUiPickersDate | null>(null);
@@ -82,7 +102,7 @@ const SendCampaign = ({
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
-
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
@@ -94,69 +114,14 @@ const SendCampaign = ({
 	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
 
 	const [allGroupList, setAllGroupList] = useState<testGroupDataProps[]>([]);
+	const [exceptionalDaysToggle, setExceptionalDaysToggle] =
+		useState<boolean>(false);
+	const [exceptionalDays, setExceptionalDays] = useState<string>('');
 
-	const finishedCampaigns: testGroupDataProps[] = [
-		{
-			GroupID: 899579,
-			GroupName: 'ccccc (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:08.933',
-			UpdateDate: '2017-08-20T11:02:08.933',
-			IsTestGroup: false,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 891980,
-			GroupName: 'cdgsfsgdf (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2017-08-20T11:02:39.197',
-			UpdateDate: '2017-08-20T12:44:55.69',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 5,
-		},
-		{
-			GroupID: 1666780,
-			GroupName: 'left123',
-			SubAccountID: 0,
-			CreationDate: '2022-04-08T14:41:09.493',
-			UpdateDate: '2022-04-17T12:46:45.297',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 1,
-		},
-		{
-			GroupID: 1655652,
-			GroupName: 'MeitalTest (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2022-03-10T14:33:53.9',
-			UpdateDate: '2022-03-10T14:33:53.9',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 814457,
-			GroupName: 'omer (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2022-04-08T14:41:09.493',
-			UpdateDate: '2017-05-21T14:45:34.537',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 0,
-		},
-		{
-			GroupID: 552962,
-			GroupName: 'בדיקה (Testing)',
-			SubAccountID: 0,
-			CreationDate: '2016-01-18T18:24:45.42',
-			UpdateDate: '2016-01-18T18:28:09.06',
-			IsTestGroup: true,
-			IsDynamic: false,
-			Recipients: 2,
-		},
-	];
+	const [specialDatedropDown, setSpecialDatedropDown] = useState<string[]>([]);
+	const [finishedCampaigns, setFinishedCampaigns] = useState<
+		selectedFilterCampaignsProps[]
+	>([]);
 
 	useEffect(() => {
 		/**
@@ -171,15 +136,111 @@ const SendCampaign = ({
 		/**
 		 * getApiGroupsData is for fetching all groups across the platform
 		 */
-		getApiGroupsData();
+		(async () => {
+			setIsLoader(true);
+			const groupsData = await getApiGroupsData();
+			const campaignsData = await getFilterCampaign();
+			getSpecialDateDropDown();
+			getCampaignSettingData(groupsData, campaignsData);
+		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
 		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const getFilterCampaign = async () => {
+		if (campaignID) {
+			const {
+				payload: whatsappCampaignNameFilterData,
+			}: whatsappCampaignNameFilterDataProps = await dispatch<any>(
+				getWhatsappCampaignNameFilter(campaignID)
+			);
+			if (whatsappCampaignNameFilterData?.Status === apiStatus.SUCCESS) {
+				setFinishedCampaigns(whatsappCampaignNameFilterData?.Data);
+				return whatsappCampaignNameFilterData?.Data;
+			}
+			return [];
+		}
+	};
+
+	const getSpecialDateDropDown = async () => {
+		const specialDateDropDownData: specialDateDropDownDataProps =
+			await dispatch<any>(getAccountExtraData());
+		if (specialDateDropDownData?.payload) {
+			setSpecialDatedropDown(
+				Object.values(specialDateDropDownData?.payload)?.filter(
+					(specialDay) => specialDay?.length > 0
+				)
+			);
+		}
+	};
+
+	const setSendSetting = (
+		SendTypeID: number,
+		FutureDateTime: string | null,
+		SpecialSettings: campaignSettingsPayloadDataProps['SpecialSettings']
+	) => {
+		if (SendTypeID === 2 && FutureDateTime) {
+			setsendTime(moment(FutureDateTime));
+		} else if (SendTypeID === 3 && SpecialSettings) {
+			setdaysBeforeAfter(SpecialSettings?.Day?.toString() || '');
+			setsendTime(moment(SpecialSettings?.SendHour));
+			setIsSpecialDateBefore(
+				SpecialSettings?.IntervalTypeID === -1 ? true : false
+			);
+			setDateFieldID(SpecialSettings?.DateFieldID?.toString() || '0');
+		}
+	};
+
+	const getCampaignSettingData = async (
+		groupsData: testGroupDataProps[] | undefined,
+		campaignsData: whatsappCampaignNameFilterPayloadDataProps[] | undefined
+	) => {
+		if (campaignID) {
+			const { payload: campaignSettings }: campaignSettingsDataProps =
+				await dispatch<any>(getCampaignSettings(campaignID));
+			setIsLoader(false);
+			let apiGroups = campaignSettings?.Data?.Groups;
+			let apiFilterGroups = campaignSettings?.Data?.SendExeptional?.Groups;
+			let apiFilterCampaigns =
+				campaignSettings?.Data?.SendExeptional?.Campaigns;
+			setSendType(campaignSettings?.Data?.SendTypeID?.toString());
+			setSendSetting(
+				campaignSettings?.Data?.SendTypeID,
+				campaignSettings?.Data?.FutureDateTime,
+				campaignSettings?.Data?.SpecialSettings
+			);
+			if (groupsData) {
+				setSelectedGroups(
+					groupsData?.filter((groupData) =>
+						apiGroups?.includes(Number(groupData?.GroupID))
+					)
+				);
+				setFilterGroups(
+					groupsData?.filter((groupData) =>
+						apiFilterGroups?.includes(Number(groupData?.GroupID))
+					)
+				);
+			}
+			if (campaignsData) {
+				setFilterCampaigns(
+					campaignsData?.filter((campaign) =>
+						apiFilterCampaigns?.includes(Number(campaign?.WACampaignID))
+					)
+				);
+			}
+			if (campaignSettings?.Data?.SendExeptional?.ExceptionalDays) {
+				setExceptionalDays(
+					campaignSettings?.Data?.SendExeptional?.ExceptionalDays?.toString()
+				);
+				setExceptionalDaysToggle(true);
+			}
+		}
+	};
+
 	const handleDatePicker = (value: MaterialUiPickersDate | null) => {
-		handleFromDate(value);
+		handleSendDate(value);
 	};
 
 	const handleRadioTime = (value: MaterialUiPickersDate | null) => {
@@ -189,10 +250,10 @@ const SendCampaign = ({
 	const handleSendType = (event: BaseSyntheticEvent) => {
 		if (event.target.value === '1') {
 			setModel({ ...model, SendDate: null });
-			handleFromDate(null);
+			handleSendDate(null);
 		} else if (event.target.value === '3') {
 			setModel({ ...model, SendDate: null });
-			handleFromDate(null);
+			handleSendDate(null);
 		}
 		setSendType(event.target.value);
 	};
@@ -211,7 +272,7 @@ const SendCampaign = ({
 			setToastMessage(ToastMessages.DATE_PASS);
 		}
 
-		handleFromDate(date);
+		handleSendDate(date);
 		setTimePickerOpen(false);
 	};
 
@@ -233,31 +294,87 @@ const SendCampaign = ({
 		}
 	};
 
-	const onCampaignSave = async () => {
+	const onCampaignSave = async (
+		showMessage: boolean = true,
+		ApiSelectedGroups: testGroupDataProps[] = selectedGroups
+	) => {
 		let saveCampaignSettingsPayload: ApiSaveCampaignSettingsDataProps = {
 			WACampaignID: Number(campaignID),
 			SendTypeID: Number(sendType),
-			Groups: selectedGroups?.map((group) => group.GroupID),
+			Groups: ApiSelectedGroups?.map((group) => group.GroupID),
+			SendExeptional: {
+				IsExceptionalGroups: selectedFilterGroups?.length > 0 ? true : false,
+				Groups: selectedFilterGroups?.map((group) => group.GroupID),
+				IsExceptionSmsCampaigns:
+					selectedFilterCampaigns?.length > 0 ? true : false,
+				Campaigns: selectedFilterCampaigns?.map(
+					(campaign) => campaign.WACampaignID
+				),
+				ExceptionalDays: exceptionalDaysToggle ? Number(exceptionalDays) : 0,
+			},
 		};
+		if (sendType === '2') {
+			saveCampaignSettingsPayload['FutureDateTime'] = `${moment(
+				sendDate
+			).format('YYYY-MM-DD hh:mm:ss')}`;
+		}
+		if (sendType === '3') {
+			saveCampaignSettingsPayload['specialsettings'] = {
+				datefieldid: Number(spectialDateFieldID),
+				day: Number(daysBeforeAfter),
+				intervaltypeid: isSpecialDateBefore ? -1 : 1,
+				sendhour: moment(sendTime).format('YYYY-MM-DD hh:mm'),
+			};
+		}
 		const { payload: saveCampaignSettingData }: ApiSaveCampaignSettingsProps =
 			await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));
-		console.log(saveCampaignSettingData);
-		if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
-			setToastMessage(ToastMessages.CAMPAIGN_SAVE_SUCCESS);
-		} else {
-			saveCampaignSettingData?.Message
-				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: saveCampaignSettingData?.Message,
-				  })
-				: setToastMessage(ToastMessages.ERROR);
+		if (showMessage) {
+			if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
+				setToastMessage(ToastMessages.CAMPAIGN_SAVE_SUCCESS);
+			} else {
+				saveCampaignSettingData?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: saveCampaignSettingData?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
 		}
+	};
+
+	const onCampaignSend = async () => {
+		setIsSummaryModal(true);
+	};
+
+	const onDeleteClick = () => {
+		setIsDeleteCampaignOpen(true);
+	};
+
+	const onDeleteCampaign = async () => {
+		if (campaignID) {
+			const deleteData: commonAPIResponseProps = await dispatch<any>(
+				deleteCampaign(campaignID)
+			);
+			setIsDeleteCampaignOpen(false);
+			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+				navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+			} else {
+				deleteData?.payload?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		}
+		setIsDeleteCampaignOpen(false);
 	};
 
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.DELETE:
-				console.log(buttons.DELETE);
+				onDeleteClick();
 				break;
 			case buttons.EXIT:
 				console.log(buttons.EXIT);
@@ -266,7 +383,7 @@ const SendCampaign = ({
 				onCampaignSave();
 				break;
 			case buttons.SEND:
-				console.log(buttons.SEND);
+				onCampaignSend();
 				break;
 
 			default:
@@ -297,15 +414,19 @@ const SendCampaign = ({
 					(group: testGroupDataProps) => group.GroupID
 				),
 			};
+			setIsLoader(true);
 			const createdGroupData: createCombinedGroupProps = await dispatch<any>(
 				createCombinedGroup(combinedGroupPayload)
 			);
 			await getApiGroupsData();
+			setIsLoader(false);
+
 			if (createdGroupData?.payload?.GroupID) {
 				setSelectedGroups([createdGroupData?.payload]);
 				setNewGroupName('');
 				setIsCreateNewGroup(false);
 			}
+			await onCampaignSave(false, [createdGroupData?.payload]);
 		} else {
 			setGroupSendValidationErrors(['Group name - required field']);
 			setIsValidationAlert(true);
@@ -321,10 +442,10 @@ const SendCampaign = ({
 		const groupData: gropListAPIProps = await dispatch<any>(getAllGroups());
 		if (groupData.meta?.requestStatus === 'fulfilled') {
 			setAllGroupList(groupData.payload);
-			setIsLoader(false);
+			return groupData.payload;
 		} else {
 			setAllGroupList([]);
-			setIsLoader(false);
+			return [];
 		}
 	};
 
@@ -333,6 +454,7 @@ const SendCampaign = ({
 		uploadData: uploadDataProps,
 		uploadedAsFile: boolean
 	) => {
+		setIsLoader(true);
 		let requestPayload: ApiCreateGroupPayloadProps = {
 			GroupName: groupName,
 			IsTestGroup: false,
@@ -356,8 +478,12 @@ const SendCampaign = ({
 					})
 				);
 			}
-			handleAddClientsResponse(uploadClientData?.payload);
+			handleAddClientsResponse(
+				uploadClientData?.payload,
+				createGroupData?.Message
+			);
 		} else {
+			setIsLoader(false);
 			createGroupData?.Message
 				? setToastMessage({
 						...ToastMessages.ERROR,
@@ -368,14 +494,23 @@ const SendCampaign = ({
 	};
 
 	const handleAddClientsResponse = async (
-		res: uploadClientDataPayloadProps
+		res: uploadClientDataPayloadProps,
+		groupID: string
 	) => {
 		switch (res?.StatusCode) {
 			case 201: {
 				setToastMessage(ToastMessages.UPLOAD_CLIENT_DATA_SUCEESS);
 				setActiveTab('group');
-				await getApiGroupsData();
-				// setSelectedGroups([...selectedGroups, res.Message])
+				setIsLoader(true);
+				const latestGroups = await getApiGroupsData();
+				const latestAddedGroup = latestGroups?.find(
+					(group) => group.GroupID?.toString() === groupID
+				);
+				setIsLoader(false);
+				if (latestAddedGroup) {
+					setSelectedGroups([...selectedGroups, latestAddedGroup]);
+					await onCampaignSave(false, [...selectedGroups, latestAddedGroup]);
+				}
 				break;
 			}
 			case 401: {
@@ -387,6 +522,22 @@ const SendCampaign = ({
 			default: {
 				setToastMessage(ToastMessages.GENERAL_ERROR);
 				break;
+			}
+		}
+	};
+
+	const onSummarySend = async () => {
+		setIsLoader(true);
+		if (campaignID) {
+			const { Status, Message }: ApiSendCampaign = await dispatch<any>(
+				sendCampaign({ WACampaignID: Number(campaignID) })
+			);
+			setIsLoader(false);
+			if (Status === apiStatus.SUCCESS) {
+			} else {
+				Message
+					? setToastMessage({ ...ToastMessages.ERROR, message: Message })
+					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
 	};
@@ -428,6 +579,10 @@ const SendCampaign = ({
 								isCreateNewGroup={isCreateNewGroup}
 								setIsCreateNewGroup={setIsCreateNewGroup}
 								onManualUpload={onManualUpload}
+								exceptionalDaysToggle={exceptionalDaysToggle}
+								exceptionalDays={exceptionalDays}
+								setExceptionalDaysToggle={setExceptionalDaysToggle}
+								setExceptionalDays={setExceptionalDays}
 							/>
 						</Grid>
 						<Grid item md={1} xs={12}></Grid>
@@ -437,7 +592,6 @@ const SendCampaign = ({
 								handleDatePicker={handleDatePicker}
 								sendDate={sendDate}
 								sendTime={sendTime}
-								setsendTime={setsendTime}
 								handleRadioTime={handleRadioTime}
 								sendType={sendType}
 								handleSendType={handleSendType}
@@ -449,6 +603,7 @@ const SendCampaign = ({
 								handleSelectChange={handleSelectChange}
 								isSpecialDateBefore={isSpecialDateBefore}
 								setIsSpecialDateBefore={setIsSpecialDateBefore}
+								specialDatedropDown={specialDatedropDown}
 							/>
 						</Grid>
 					</Grid>
@@ -464,6 +619,9 @@ const SendCampaign = ({
 					campaignName={''}
 					fromNumber={''}
 					onSummaryModalClose={() => setIsSummaryModal(false)}
+					onConfirmOrYes={onSummarySend}
+					selectedGroups={selectedGroups}
+					selectedFilterGroups={selectedFilterGroups}
 				/>
 				<ValidationAlert
 					classes={classes}
@@ -471,6 +629,15 @@ const SendCampaign = ({
 					onClose={() => setIsValidationAlert(false)}
 					title={translator('whatsappCampaign.sendValidation')}
 					requiredFields={groupSendValidationErrors}
+				/>
+				<AlertModal
+					classes={classes}
+					isOpen={isDeleteCampaignOpen}
+					onClose={() => setIsDeleteCampaignOpen(false)}
+					title={translator('whatsapp.alertModal.DeleteText')}
+					subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+					type='delete'
+					onConfirmOrYes={() => onDeleteCampaign()}
 				/>
 				{renderToast()}
 				<Loader isOpen={isLoader} showBackdrop={true} />

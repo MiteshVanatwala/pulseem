@@ -2,15 +2,17 @@ import { Box, Checkbox, Dialog, Button, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import Groups from '../Components/Groups/Groups';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import {
 	coreProps,
 	FilterRecipientsDialogProps,
+	selectedFilterCampaignsProps,
 	smsProps,
 	testGroupDataProps,
 } from '../Types/WhatsappCampaign.types';
 import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
+import CampaignGroups from '../Components/Groups/CampaignGroups';
 
 const FilterRecipientsDialog = ({
 	classes,
@@ -23,20 +25,24 @@ const FilterRecipientsDialog = ({
 	selectedFilterGroups,
 	setFilterGroups,
 	onConfirmOrYes,
+	exceptionalDaysToggle,
+	exceptionalDays,
+	setExceptionalDaysToggle,
+	setExceptionalDays,
 }: FilterRecipientsDialogProps) => {
-	const [toggleReci, settoggleReci] = useState<boolean>(false);
-	const [exceptionalDays, setExceptionalDays] = useState<string>('');
 	const [RecipientsBool, setRecipientsBool] = useState<boolean>(false);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
-	const [snackbarRecipients, setsnackbarRecipients] = useState<boolean>(false);
-	const [RecipientsSnackbar, setRecipientsSnackbar] = useState<boolean>(false);
-	const [isFilterSelected, setIsFilterSelected] = useState<boolean>(false);
-
+	useState<selectedFilterCampaignsProps[]>(selectedFilterCampaigns);
 	const [selectedModalFilterCampaigns, setSelectedModalFilterCampaigns] =
-		useState<testGroupDataProps[]>(selectedFilterCampaigns);
+		useState<selectedFilterCampaignsProps[]>(selectedFilterCampaigns);
 	const [selectedModalFilterGroups, setSelectedModalFilterGroups] =
 		useState<testGroupDataProps[]>(selectedFilterGroups);
-
+	useEffect(() => {
+		setSelectedModalFilterCampaigns(selectedFilterCampaigns);
+	}, [selectedFilterCampaigns]);
+	useEffect(() => {
+		setSelectedModalFilterGroups(selectedFilterGroups);
+	}, [selectedFilterGroups]);
 	const { testGroups } = useSelector((state: { sms: smsProps }) => state.sms);
 	const { t: translator } = useTranslation();
 
@@ -52,60 +58,24 @@ const FilterRecipientsDialog = ({
 		}
 	};
 
-	const handleFilterConfirm = () => {
-		let formIsvalid = true;
-		if (toggleReci) {
-			formIsvalid = validationCheck();
-			if (formIsvalid) {
-				if (
-					selectedModalFilterGroups.length !== 0 ||
-					exceptionalDays !== '' ||
-					selectedModalFilterCampaigns.length !== 0
-				) {
-					setIsFilterSelected(true);
-					setsnackbarRecipients(true);
-				} else {
-					setIsFilterSelected(false);
-				}
-			}
-		} else {
-			if (
-				selectedModalFilterGroups.length !== 0 ||
-				exceptionalDays !== '' ||
-				selectedModalFilterCampaigns.length !== 0
-			) {
-				setsnackbarRecipients(true);
-				setIsFilterSelected(true);
-			} else {
-				setIsFilterSelected(false);
-			}
-		}
-	};
-
-	const validationCheck = () => {
-		if (exceptionalDays === '') {
-			setRecipientsBool(true);
-			setRecipientsSnackbar(true);
-			return false;
-		} else {
-			return true;
-		}
-	};
-
-	const callbackUpdateCampaignFilter = (campaigns: testGroupDataProps[]) => {
+	const callbackUpdateCampaignFilter = (
+		campaigns: selectedFilterCampaignsProps[]
+	) => {
 		setSelectedModalFilterCampaigns(campaigns);
 	};
 
-	const callbackFiltertedCampaigns = (campaign: testGroupDataProps) => {
+	const callbackFiltertedCampaigns = (
+		campaign: selectedFilterCampaignsProps
+	) => {
 		const found = selectedModalFilterCampaigns
-			.map((c) => {
-				return c.GroupID;
+			.map((campaign) => {
+				return campaign?.WACampaignID;
 			})
-			.includes(campaign.GroupID);
+			.includes(campaign.WACampaignID);
 		if (found) {
 			setSelectedModalFilterCampaigns(
 				selectedModalFilterCampaigns.filter(
-					(c) => c.GroupID !== campaign.GroupID
+					(campaignData) => campaignData.WACampaignID !== campaign.WACampaignID
 				)
 			);
 		} else {
@@ -186,11 +156,11 @@ const FilterRecipientsDialog = ({
 								}}>
 								<div className={classes.reciCheckoxContainer}>
 									<Checkbox
-										checked={toggleReci}
+										checked={exceptionalDaysToggle}
 										color='primary'
 										inputProps={{ 'aria-label': 'secondary checkbox' }}
 										onClick={() => {
-											settoggleReci(!toggleReci);
+											setExceptionalDaysToggle(!exceptionalDaysToggle);
 											setExceptionalDays('');
 										}}
 									/>
@@ -209,9 +179,9 @@ const FilterRecipientsDialog = ({
 										}}>
 										<input
 											type='text'
-											disabled={toggleReci ? false : true}
+											disabled={exceptionalDaysToggle ? false : true}
 											className={
-												toggleReci
+												exceptionalDaysToggle
 													? RecipientsBool
 														? clsx(classes.pulseActive, classes.error)
 														: clsx(classes.pulseActive, classes.success)
@@ -235,7 +205,7 @@ const FilterRecipientsDialog = ({
 									<div>
 										<div className={clsx(classes.sidebar)}>
 											<Groups
-												isFilterSelected={false}
+												isFilterSelected={selectedModalFilterGroups?.length > 0}
 												classes={classes}
 												showSortBy={false}
 												showSelectAll={false}
@@ -265,8 +235,10 @@ const FilterRecipientsDialog = ({
 									</div>
 									<div>
 										<div className={clsx(classes.sidebar)}>
-											<Groups
-												isFilterSelected={false}
+											<CampaignGroups
+												isFilterSelected={
+													selectedModalFilterCampaigns?.length > 0
+												}
 												classes={classes}
 												showSortBy={false}
 												showSelectAll={false}

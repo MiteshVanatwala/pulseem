@@ -1317,7 +1317,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontSize: '1rem',
 		fontWeight: 700,
 	},
-	campaignSummaryTextDetail: {},
+	campaignSummaryTextDetail: {
+		'& a': {
+			textDecoration: 'underline',
+			marginTop: '6px',
+			fontSize: '16px',
+			color: 'gray',
+			width: '50px',
+			cursor: 'pointer',
+		},
+	},
 	summaryModal: {
 		border: '2px solid #0371ad',
 		margin: '18px',
@@ -1329,6 +1338,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	campaignSummaryImportantText: {
 		textAlign: 'center',
 		color: '#DC3D1B',
+		'& span': {
+			'& a': {
+				color: '#0371ad',
+				fontWeight: 'bolder',
+				textDecoration: 'underline',
+			},
+		},
 	},
 
 	/* Management and report pages */
@@ -2572,5 +2588,30 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		wordWrap: 'break-word',
 		whiteSpace: 'pre-wrap',
 		width: 'calc(100% - 66px)',
+	},
+	summaryModalAccordion: {
+		color: '#1771ad',
+		fontFamily: 'OpenSansHebrew',
+		'& .MuiAccordionSummary-content': {
+			'& p': {
+				fontWeight: '500',
+				fontSize: '18px',
+			},
+		},
+		'& .MuiAccordionSummary-expandIcon': {
+			'& img': {
+				width: '24px',
+			},
+		},
+	},
+	summaryModalAccordionWrapper: {
+		
+	},
+	summaryModalAccordionDetails: {
+		listStyle: 'circle',
+		paddingLeft: '16px',
+		'& li': {
+			padding: '2px 0px 2px 2px',
+		},
 	},
 });

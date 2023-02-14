@@ -235,6 +235,7 @@ export type toastProps = {
 	INVALID_API_MISSING_KEY: toastKeyProps;
 	GENERAL_ERROR: toastKeyProps;
 	GROUP_ALREADY_EXIST: toastKeyProps;
+	CAMPAIGN_SEND_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {

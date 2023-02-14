@@ -59,7 +59,6 @@ import {
 	deleteTemplate,
 	duplicateTemplate,
 	getAllTemplates,
-	getSavedTemplatesById,
 	getSavedTemplatesPreviewById,
 	submitTemplateDirect,
 } from '../../../redux/reducers/whatsappSlice';

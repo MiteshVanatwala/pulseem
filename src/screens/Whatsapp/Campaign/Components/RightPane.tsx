@@ -12,13 +12,13 @@ import {
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-// import { DateField } from "./DateField/DateField";
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import { RightPaneProps, coreProps } from '../Types/WhatsappCampaign.types';
 import { FiClock } from 'react-icons/fi';
 import { CalendarIcon } from '../../../../assets/images/managment/index';
+import { DateField } from '../../../../components/managment';
 
 const RightPane = ({
 	classes,
@@ -36,7 +36,7 @@ const RightPane = ({
 	handleSelectChange,
 	isSpecialDateBefore,
 	setIsSpecialDateBefore,
-	setsendTime,
+	specialDatedropDown,
 }: ClassesType & RightPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
@@ -109,39 +109,17 @@ const RightPane = ({
 							style={{
 								pointerEvents: sendType === '2' ? 'auto' : 'none',
 							}}>
-							<KeyboardDatePicker
-								inputVariant='outlined'
-								className={clsx(classes.textField)}
-								inputProps={{
-									className: classes.datePickerInput,
-								}}
-								PopoverProps={{
-									dir: direction['isRTL'],
-								}}
-								variant='inline'
-								keyboardIcon={<CalendarIcon />}
-								format={'DD/MM/YYYY'}
-								margin='none'
+							<DateField
 								minDate={moment()}
-								placeholder={translator('notifications.date')}
-								initialFocusedDate={moment()}
+								classes={classes}
 								value={sendType === '2' ? sendDate : null}
 								onChange={handleDatePicker}
-								KeyboardButtonProps={{
-									'aria-label': 'change date',
-									className: classes.datePickerButton,
-								}}
-								cancelLabel={translator('common.cancel')}
-								okLabel={translator('common.confirm')}
-								id='datePicker'
-								disabled={sendType === '2' ? false : true}
-								onClose={() => setIsDatePickerOpen(false)}
-								open={isDatePickerOpen}
-								onClick={() => setIsDatePickerOpen(true)}
-								invalidDateMessage={translator('common.invalidDate')}
-								maxDateMessage={translator('common.maximalDateRequired')}
-								minDateMessage={translator('common.minimalDateRequired')}
-								autoOk={true}
+								placeholder={translator('notifications.date')}
+								timePickerOpen={true}
+								dateActive={sendType === '2' ? false : true}
+								onTimeChange={undefined}
+								timeActive={undefined}
+								buttons={undefined}
 							/>
 						</Box>
 						<Box
@@ -150,38 +128,19 @@ const RightPane = ({
 								marginTop: 10,
 								pointerEvents: sendType === '2' ? 'auto' : 'none',
 							}}>
-							<KeyboardTimePicker
-								disableToolbar={false}
-								inputVariant='outlined'
-								className={clsx(classes.textField, {
-									[classes.textFieldPlaceholder]: !sendDate,
-								})}
-								inputProps={{
-									className: classes.datePickerInput,
-								}}
-								PopoverProps={{
-									dir: direction['isRTL'],
-								}}
-								format={'HH:mm a'}
-								margin='none'
+							<DateField
+								minDate={moment()}
+								classes={classes}
+								value={sendType === '2' ? sendDate : null}
+								onTimeChange={handleTimePicker}
 								placeholder={translator('notifications.hour')}
-								initialFocusedDate={moment().hours(0).minutes(0)}
-								value={sendType === '2' ? sendTime : null}
-								keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
-								onChange={(date) => handleTimePicker(date)}
-								KeyboardButtonProps={{
-									'aria-label': 'change time',
-									className: classes.datePickerButton,
-								}}
-								cancelLabel={translator('common.cancel')}
-								okLabel={translator('common.confirm')}
+								isTimePicker={true}
 								ampm={false}
-								id='timePicker'
-								disabled={sendType === '2' ? false : true}
-								onClose={() => setIsTimePickerOpen(false)}
-								open={isTimePickerOpen || timePickerOpen}
-								onClick={() => setIsTimePickerOpen(true)}
-								autoOk={false}
+								timeActive={sendType === '2' ? false : true}
+								timePickerOpen={timePickerOpen}
+								onChange={undefined}
+								dateActive={undefined}
+								buttons={undefined}
 							/>
 						</Box>
 						<FormControlLabel
@@ -229,6 +188,15 @@ const RightPane = ({
 								<option value='2'>
 									{translator('mainReport.creationDay')}
 								</option>
+								{specialDatedropDown?.map(
+									(specialDate: string, index: number) => (
+										<option
+											key={'specialDate' + specialDate + index}
+											value={index + 3}>
+											{specialDate}
+										</option>
+									)
+								)}
 							</select>
 						</Box>
 
@@ -321,38 +289,24 @@ const RightPane = ({
 								pointerEvents: sendType === '3' ? 'auto' : 'none',
 								marginBottom: '1rem',
 							}}>
-							<KeyboardTimePicker
-								disableToolbar={false}
-								inputVariant='outlined'
-								className={clsx(classes.textField, {
-									[classes.textFieldPlaceholder]: !sendTime,
-								})}
-								inputProps={{
-									className: classes.datePickerInput,
-								}}
-								PopoverProps={{
-									dir: direction[isRTL?.toString()],
-								}}
-								format={'HH:mm a'}
-								margin='none'
-								placeholder={translator('notifications.hour')}
-								initialFocusedDate={moment().hours(0).minutes(0)}
+							<DateField
+								classes={classes}
 								value={sendType === '3' ? sendTime : null}
-								keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
-								onChange={(date) => handleRadioTime(date)}
-								KeyboardButtonProps={{
-									'aria-label': 'change time',
-									className: classes.datePickerButton,
+								onTimeChange={handleRadioTime}
+								placeholder={translator('notifications.hour')}
+								isTimePicker={true}
+								buttons={{
+									ok: translator('common.confirm'),
+									cancel: translator('common.cancel'),
 								}}
-								cancelLabel={translator('common.cancel')}
-								okLabel={translator('common.confirm')}
 								ampm={false}
-								id='timePicker'
+								timePickerOpen={timePickerOpen}
+								timeActive={sendType === '3' ? false : true}
 								disabled={sendType === '3' ? false : true}
-								onClose={() => setIsTimePickerOpen(false)}
-								open={isTimePickerOpen || timePickerOpen}
-								onClick={() => setIsTimePickerOpen(true)}
-								autoOk={false}
+								autoOk
+								minDate={undefined}
+								onChange={undefined}
+								dateActive={undefined}
 							/>
 						</Box>
 					</RadioGroup>

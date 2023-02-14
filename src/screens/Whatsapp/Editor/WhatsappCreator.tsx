@@ -670,11 +670,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle?.includes('dynamicField')) {
 			const selectionEnd = templateTextRef.current?.selectionEnd;
 			const textLength = templateTextRef.current?.textLength;
+			const updatedTemplateText = reOrderDynamicFieldValue(
+				addDynamicField(selectionEnd, textLength)
+			);
+			setDynamicFieldCount(getDynamicFieldIndex(updatedTemplateText)?.length);
 			setTemplateData({
 				...templateData,
-				templateText: reOrderDynamicFieldValue(
-					addDynamicField(selectionEnd, textLength)
-				),
+				templateText: updatedTemplateText,
 			});
 			templateTextRef.current?.focus();
 		} else if (button.buttonTitle?.includes('removalText')) {
@@ -735,6 +737,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const updateTemplateText = (text: string) => {
+		setDynamicFieldCount(getDynamicFieldIndex(text)?.length || 0);
 		setTemplateData({
 			...templateData,
 			templateText: reOrderDynamicFieldValue(text),
@@ -864,7 +867,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						savedTemplate={savedTemplate}
 						fileData={fileData}
 						onTemplateNameChange={(e) => onTemplateNameChange(e)}
-						onSavedTemplateChange={(templateId) => onSavedTemplateChange(templateId)}
+						onSavedTemplateChange={(templateId) =>
+							onSavedTemplateChange(templateId)
+						}
 						setFileData={(fileData) => uploadFile(fileData)}
 						savedTemplateList={savedTemplateList}
 					/>
