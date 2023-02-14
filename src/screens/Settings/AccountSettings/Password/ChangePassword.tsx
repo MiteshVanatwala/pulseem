@@ -140,9 +140,10 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
 
         Object.keys(passwordValidation).forEach((key: any) => {
             console.log(Object.values(passwordValidation));
+            //@ts-ignore
             if (passwordValidation[key] === false) {
                 missingRules.push(missingErrorsObj[key]);
-            }
+            }//@ts-ignore
             if (key === 'PasswordLength' && passwordValidation[key] < 8) {
                 missingRules.push(missingErrorsObj[key]);
             }
