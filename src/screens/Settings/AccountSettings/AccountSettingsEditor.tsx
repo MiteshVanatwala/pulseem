@@ -233,7 +233,6 @@ const AccountSettingsEditor = () => {
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
             OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
-            SetVerification={handleVerification}
           />
           <Divider style={{ marginTop: 35 }} />
           <FORM_ACCOUNT_DETAILS
