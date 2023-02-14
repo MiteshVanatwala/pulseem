@@ -416,7 +416,7 @@ const FORM_COMPANY_DETAILS = ({
                     </>
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} sm={3} md={4}>
                   <FormControlLabel
                     control={
                       <PulseemSwitch
@@ -447,8 +447,8 @@ const FORM_COMPANY_DETAILS = ({
                 <Grid
                   item
                   xs={12}
-                  sm={6}
-                  md={6}
+                  sm={3}
+                  md={4}
                   className={clsx(classes.dFlex, "selectWrapper")}
                   alignItems="center"
                 >
@@ -489,6 +489,59 @@ const FORM_COMPANY_DETAILS = ({
                       })}
                     </Select>
                   </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Box style={{
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                    alignItems: 'center',
+                    height: '100%'
+                  }}>
+                    <Button
+                      className={clsx(
+                        classes.btn,
+                        classes.btnNohover,
+                        classes.noBorder,
+                        classes.link,
+                        classes.textCapitalize,
+                        "link"
+                      )}
+                      onClick={() =>
+                        console.log('2')
+                        //handleVerification('cellphone')
+                      }
+                      startIcon={<MdMobileFriendly />}
+                      endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    >
+                      <>
+                        {t(
+                          "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                        )}
+                      </>
+                    </Button>
+                    <Button
+                      className={clsx(
+                        classes.btn,
+                        classes.btnNohover,
+                        classes.noBorder,
+                        classes.link,
+                        classes.textCapitalize,
+                        "link"
+                      )}
+                      onClick={() =>
+                        console.log('1')
+                        //handleVerification('email')
+                      }
+                      startIcon={<MdOutlineMarkEmailRead />}
+                      endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                    >
+                      <>
+                        {t(
+                          "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                        )}
+                      </>
+                    </Button>
+                  </Box>
                 </Grid>
                 <Grid
                   item

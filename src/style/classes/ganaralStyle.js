@@ -2696,7 +2696,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             fontSize: 15,
             color: '#FF0054',
             padding: '2px 0',
-            marginTop: 28,
+            // marginTop: 28,
             marginLeft: 0
           }
         }
