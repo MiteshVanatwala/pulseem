@@ -315,7 +315,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                             </Box>
                         </Grid>
                     </Grid>
-                    <Grid container>
+                    {errors?.length > 0 && <Grid container>
                         <Grid item xs={12}>
                             {t('settings.changePassword.passwordHint.title')}:
                             <ul>
@@ -324,7 +324,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                 })}
                             </ul>
                         </Grid>
-                    </Grid>
+                    </Grid>}
                 </Grid>
             </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
