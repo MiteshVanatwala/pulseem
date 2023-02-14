@@ -101,6 +101,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
         NumberChar: false
     } as ValidPassword);
     const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
+    const [errors, setErrors] = useState([]);
 
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
     const lowerCaseLetters = /[a-z]/g;
@@ -111,6 +112,13 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
     const dispatch = useDispatch();
 
     const handleConfirm = async () => {
+        const missingErrorsObj: any = {
+            LowerChar: t('settings.changePassword.passwordHint.lowerChar'),
+            SpecialChar: t('settings.changePassword.passwordHint.specialChar'),
+            UpperChar: t('settings.changePassword.passwordHint.upperChar'),
+            PasswordLength: t('settings.changePassword.passwordHint.length'),
+            NumberChar: t('settings.changePassword.passwordHint.number')
+        }
         let isValid = true;
         if (!loginPass.OldPassword || loginPass.OldPassword === '') {
             isValid = false;
@@ -128,12 +136,28 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
             isValid = false;
             setConfirmPassError(t("settings.changePassword.error.notMatch"));
         }
+        const missingRules: any = [];
 
-        if (isValid) {
-            setShowLoader(true);
-            const response = await dispatch(changePassword(loginPass));
-            handleResponses(response);
-            setShowLoader(false);
+        Object.keys(passwordValidation).forEach((key: any) => {
+            console.log(Object.values(passwordValidation));
+            if (passwordValidation[key] === false) {
+                missingRules.push(missingErrorsObj[key]);
+            }
+            if (key === 'PasswordLength' && passwordValidation[key] < 8) {
+                missingRules.push(missingErrorsObj[key]);
+            }
+        });
+
+        if (missingRules.length > 0) {
+            setErrors(missingRules);
+        }
+        else {
+            if (isValid) {
+                setShowLoader(true);
+                const response = await dispatch(changePassword(loginPass));
+                handleResponses(response);
+                setShowLoader(false);
+            }
         }
     }
 
@@ -289,6 +313,16 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                     }}
                                 />
                             </Box>
+                        </Grid>
+                    </Grid>
+                    <Grid container>
+                        <Grid item xs={12}>
+                            {t('settings.changePassword.passwordHint.title')}:
+                            <ul>
+                                {errors.map((err) => {
+                                    return <li>{err}</li>;
+                                })}
+                            </ul>
                         </Grid>
                     </Grid>
                 </Grid>
