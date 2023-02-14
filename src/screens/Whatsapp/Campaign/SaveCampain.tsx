@@ -31,7 +31,7 @@ import {
 	saveCampaignResponseProps,
 	saveCampaignResponsePayloadProps,
 	phoneNumberAPIProps,
-	CampaignDetailByIdProps,
+	CampaignDetailById,
 	ApiQuickSend,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
@@ -243,7 +243,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const setCampaignDetail = (templateList: savedTemplateListProps[]) => {
 		if (campaignID && templateList) {
 			(async () => {
-				const { payload: campaignData }: CampaignDetailByIdProps =
+				const { payload: campaignData }: CampaignDetailById =
 					await dispatch<any>(getCampaignDetailById(campaignID));
 				if (campaignData.Status === apiStatus.SUCCESS) {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);

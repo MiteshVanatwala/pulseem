@@ -11,8 +11,8 @@ import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import {
 	ApiGetCampaignSummary,
 	ApiGetCampaignSummaryPayloadData,
-	CampaignDetailByIdDataProps,
-	CampaignDetailByIdProps,
+	CampaignDetailByIdData,
+	CampaignDetailById,
 	SummaryModalProps,
 } from '../Types/WhatsappCampaign.types';
 import { useTheme } from '@mui/material/styles';
@@ -65,7 +65,7 @@ const SummaryModal = ({
 		useState<ApiGetCampaignSummaryPayloadData>();
 
 	const [campaignDetails, setCampaignDetails] =
-		useState<CampaignDetailByIdDataProps>();
+		useState<CampaignDetailByIdData>();
 	const [templateDetails, setTemplateDetails] =
 		useState<saveTemplateItemsProps>();
 
@@ -92,7 +92,7 @@ const SummaryModal = ({
 				if (campaignSummaryData?.Status === apiStatus?.SUCCESS) {
 					setCampaignSummary(campaignSummaryData?.Data);
 				}
-				const { payload: campaignData }: CampaignDetailByIdProps =
+				const { payload: campaignData }: CampaignDetailById =
 					await dispatch<any>(getCampaignDetailById(campaignID));
 				if (campaignData?.Status === apiStatus?.SUCCESS) {
 					setCampaignDetails(campaignData?.Data);

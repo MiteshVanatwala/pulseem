@@ -3,24 +3,24 @@ import DefaultScreen from '../../DefaultScreen';
 import WizardTitle from '../../../components/Wizard/WizardTitle';
 import { Grid } from '@material-ui/core';
 import {
-	APICreateGroupDataProps,
+	APICreateGroupData,
 	ApiCreateGroupPayload,
 	ApiSaveCampaignSettingsData,
-	ApiSaveCampaignSettingsProps,
+	ApiSaveCampaignSettings,
 	ApiSendCampaign,
-	campaignSettingsDataProps,
-	campaignSettingsPayloadDataProps,
+	campaignSettingsData,
+	campaignSettingsPayloadData,
 	createCombinedGroupData,
 	gropListAPIProps,
 	selectedFilterCampaignsProps,
 	smsReducerProps,
-	specialDateDropDownDataProps,
+	specialDateDropDownData,
 	testGroupDataProps,
-	uploadClientDataPayloadProps,
-	uploadClientDataProps,
+	uploadClientDataPayload,
+	uploadClientData,
 	uploadData,
-	whatsappCampaignNameFilterDataProps,
-	whatsappCampaignNameFilterPayloadDataProps,
+	whatsappCampaignNameFilterData,
+	whatsappCampaignNameFilterPayloadData,
 	WhatsappCampaignSecondProps,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
@@ -151,7 +151,7 @@ const SendCampaign = ({
 		if (campaignID) {
 			const {
 				payload: whatsappCampaignNameFilterData,
-			}: whatsappCampaignNameFilterDataProps = await dispatch<any>(
+			}: whatsappCampaignNameFilterData = await dispatch<any>(
 				getWhatsappCampaignNameFilter(campaignID)
 			);
 			if (whatsappCampaignNameFilterData?.Status === apiStatus.SUCCESS) {
@@ -163,7 +163,7 @@ const SendCampaign = ({
 	};
 
 	const getSpecialDateDropDown = async () => {
-		const specialDateDropDownData: specialDateDropDownDataProps =
+		const specialDateDropDownData: specialDateDropDownData =
 			await dispatch<any>(getAccountExtraData());
 		if (specialDateDropDownData?.payload) {
 			setSpecialDatedropDown(
@@ -177,7 +177,7 @@ const SendCampaign = ({
 	const setSendSetting = (
 		SendTypeID: number,
 		FutureDateTime: string | null,
-		SpecialSettings: campaignSettingsPayloadDataProps['SpecialSettings']
+		SpecialSettings: campaignSettingsPayloadData['SpecialSettings']
 	) => {
 		if (SendTypeID === 2 && FutureDateTime) {
 			setsendTime(moment(FutureDateTime));
@@ -193,10 +193,10 @@ const SendCampaign = ({
 
 	const getCampaignSettingData = async (
 		groupsData: testGroupDataProps[] | undefined,
-		campaignsData: whatsappCampaignNameFilterPayloadDataProps[] | undefined
+		campaignsData: whatsappCampaignNameFilterPayloadData[] | undefined
 	) => {
 		if (campaignID) {
-			const { payload: campaignSettings }: campaignSettingsDataProps =
+			const { payload: campaignSettings }: campaignSettingsData =
 				await dispatch<any>(getCampaignSettings(campaignID));
 			setIsLoader(false);
 			let apiGroups = campaignSettings?.Data?.Groups;
@@ -324,7 +324,7 @@ const SendCampaign = ({
 				sendhour: moment(sendTime).format('YYYY-MM-DD hh:mm'),
 			};
 		}
-		const { payload: saveCampaignSettingData }: ApiSaveCampaignSettingsProps =
+		const { payload: saveCampaignSettingData }: ApiSaveCampaignSettings =
 			await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));
 		if (showMessage) {
 			if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
@@ -457,8 +457,8 @@ const SendCampaign = ({
 			GroupName: groupName,
 			IsTestGroup: false,
 		};
-		let uploadClientData: uploadClientDataProps;
-		const { payload: createGroupData }: APICreateGroupDataProps =
+		let uploadClientData: uploadClientData;
+		const { payload: createGroupData }: APICreateGroupData =
 			await dispatch<any>(createGroup(requestPayload));
 		if (createGroupData?.StatusCode === 201 && createGroupData?.Message) {
 			if (uploadedAsFile) {
@@ -494,7 +494,7 @@ const SendCampaign = ({
 	};
 
 	const handleAddClientsResponse = async (
-		res: uploadClientDataPayloadProps,
+		res: uploadClientDataPayload,
 		groupID: string
 	) => {
 		switch (res?.StatusCode) {

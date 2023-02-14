@@ -424,7 +424,7 @@ export type gropListAPIProps = {
 	payload: testGroupDataProps[];
 };
 
-export type CampaignDetailByIdDataProps = {
+export type CampaignDetailByIdData = {
 	ClicksCount: number;
 	CreateDate: string;
 	CreditsPerSms: number;
@@ -444,28 +444,28 @@ export type CampaignDetailByIdDataProps = {
 	WACampaignID: number;
 };
 
-export type CampaignDetailByIdPayloadProps = {
-	Data: CampaignDetailByIdDataProps;
+export type CampaignDetailByIdPayload = {
+	Data: CampaignDetailByIdData;
 	Message: string;
 	Status: string;
 };
 
-export type CampaignDetailByIdProps = {
-	payload: CampaignDetailByIdPayloadProps;
+export type CampaignDetailById = {
+	payload: CampaignDetailByIdPayload;
 };
 
 export type createCombinedGroupData = {
 	payload: testGroupDataProps;
 };
 
-export type APIManualUploadDataPayloadProps = {
+export type APIManualUploadDataPayload = {
 	GroupID: number;
 	Reason: string;
 	Recipients: number;
 };
 
-export type APIManualUploadDataProps = {
-	payload: APIManualUploadDataPayloadProps;
+export type APIManualUploadData = {
+	payload: APIManualUploadDataPayload;
 };
 
 export type ApiSaveCampaignSettingsData = {
@@ -497,13 +497,13 @@ export type ApiSaveCampaignSettingsData = {
 	FutureDateTime?: string;
 };
 
-export type ApiSaveCampaignSettingsPayloadProps = {
+export type ApiSaveCampaignSettingsPayload = {
 	Message: string;
 	Status: string;
 };
 
-export type ApiSaveCampaignSettingsProps = {
-	payload: ApiSaveCampaignSettingsPayloadProps;
+export type ApiSaveCampaignSettings = {
+	payload: ApiSaveCampaignSettingsPayload;
 };
 
 export type ApiCreateGroupPayload= {
@@ -514,7 +514,7 @@ export type ApiCreateGroupPayload= {
 export type uploadDataClientsData = {
 	[key: string]: string;
 };
-export type uploadDataMappingProps = {
+export type uploadDataMapping = {
 	Index: number;
 	Title: string;
 };
@@ -522,19 +522,19 @@ export type uploadDataMappingProps = {
 export type uploadData = {
 	ClientsData: uploadDataClientsData[];
 	GroupIds: number[];
-	Mapping: uploadDataMappingProps[];
+	Mapping: uploadDataMapping[];
 };
 
-export type APICreateGroupDataPayloadProps = {
+export type APICreateGroupDataPayload = {
 	Message: string;
 	StatusCode: number;
 };
 
-export type APICreateGroupDataProps = {
-	payload: APICreateGroupDataPayloadProps;
+export type APICreateGroupData = {
+	payload: APICreateGroupDataPayload;
 };
 
-export type uploadClientDataPayloadProps = {
+export type uploadClientDataPayload = {
 	Message: string;
 	StatusCode: number;
 	Summary: {
@@ -551,19 +551,19 @@ export type uploadClientDataPayloadProps = {
 	};
 };
 
-export type uploadClientDataProps = {
-	payload: uploadClientDataPayloadProps;
+export type uploadClientData = {
+	payload: uploadClientDataPayload;
 };
 
-export type specialDateDropDownPayloadProps = {
+export type specialDateDropDownPayload = {
 	[key: string]: string;
 };
 
-export type specialDateDropDownDataProps = {
-	payload: specialDateDropDownPayloadProps;
+export type specialDateDropDownData = {
+	payload: specialDateDropDownPayload;
 };
 
-export type campaignSettingsPayloadDataProps = {
+export type campaignSettingsPayloadData = {
 	WACampaignID: number;
 	SendTypeID: number;
 	Groups: number[];
@@ -592,29 +592,29 @@ export type campaignSettingsPayloadDataProps = {
 	};
 };
 
-export type campaignSettingsPayloadProps = {
-	Data: campaignSettingsPayloadDataProps;
+export type campaignSettingsPayload = {
+	Data: campaignSettingsPayloadData;
 	Message: string;
 	Status: string;
 };
 
-export type campaignSettingsDataProps = {
-	payload: campaignSettingsPayloadProps;
+export type campaignSettingsData = {
+	payload: campaignSettingsPayload;
 };
 
-export type whatsappCampaignNameFilterPayloadDataProps = {
+export type whatsappCampaignNameFilterPayloadData = {
 	WACampaignID: number;
 	Name: string;
 };
 
-export type whatsappCampaignNameFilterPayloadProps = {
-	Data: whatsappCampaignNameFilterPayloadDataProps[];
+export type whatsappCampaignNameFilterPayload = {
+	Data: whatsappCampaignNameFilterPayloadData[];
 	Message: string;
 	Status: string;
 };
 
-export type whatsappCampaignNameFilterDataProps = {
-	payload: whatsappCampaignNameFilterPayloadProps;
+export type whatsappCampaignNameFilterData = {
+	payload: whatsappCampaignNameFilterPayload;
 };
 export type ApiGetCampaignSummaryPayloadData = {
 	ClientTotalCount: number;
