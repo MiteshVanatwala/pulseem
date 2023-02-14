@@ -468,7 +468,7 @@ export type APIManualUploadDataProps = {
 	payload: APIManualUploadDataPayloadProps;
 };
 
-export type ApiSaveCampaignSettingsDataProps = {
+export type ApiSaveCampaignSettingsData = {
 	WACampaignID: number;
 	SendTypeID: number;
 	Groups: number[];
