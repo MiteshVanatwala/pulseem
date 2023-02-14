@@ -175,11 +175,11 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
 
         if (e?.target.name === 'NewPassword') {
             const validPass = {
-                LowerChar: trimValue?.match(lowerCaseLetters),
-                SpecialChar: trimValue?.match(specialLetters),
-                UpperChar: trimValue?.match(upperCaseLetters),
+                LowerChar: !!trimValue?.match(lowerCaseLetters),
+                SpecialChar: !!trimValue?.match(specialLetters),
+                UpperChar: !!trimValue?.match(upperCaseLetters),
                 PasswordLength: trimValue.length + 1,
-                NumberChar: trimValue?.match(numbers),
+                NumberChar: !!trimValue?.match(numbers),
             } as ValidPassword;
 
             setPasswordValidation(validPass);
