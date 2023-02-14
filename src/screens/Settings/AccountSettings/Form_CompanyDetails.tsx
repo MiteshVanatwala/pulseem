@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormControlLabel,
   Grid,
   MenuItem,
   Select,
@@ -12,7 +11,6 @@ import {
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
-import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import { useDispatch, useSelector } from "react-redux";
 import {
   MdArrowBackIos,
@@ -245,14 +243,6 @@ const FORM_COMPANY_DETAILS = ({
           isIcon={false}
         />
         <Box className={"formContainer"}>
-          {/* <img src={DataAnalysis} className={'svg_data_analysis'} alt="" width="225" height="155" style={{
-            top: 121,
-            right: isRTL ? 'auto' : '93.14px',
-            left: isRTL ? '93.14px' : 'auto',
-            position: 'absolute',
-            transform: 'scaleX(1)'
-          }} /> */}
-          {/* <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> */}
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -407,187 +397,159 @@ const FORM_COMPANY_DETAILS = ({
                 className={clsx(classes.textField, classes.minWidth252)}
               />
             </Grid>
-            <Grid item xs={12}>
-              <Grid container className={"subform"}>
-                <Grid item xs={12}>
-                  <Typography className={clsx("subHeading")}>
-                    <>
-                      {t("settings.accountSettings.fixedComDetails.securitySettings")}
-                    </>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={3} md={4}>
-                  <FormControlLabel
-                    control={
-                      <PulseemSwitch
-                        switchType="ios"
-                        classes={classes}
-                        checked={companyDetails?.TwoFactorAuthEnabled === true}
-                        //@ts-ignore
-                        onColor="#0371ad"
-                        handleDiameter={20}
-                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                        height={15}
-                        width={40}
-                        className={clsx({ [classes.rtlSwitch]: isRTL })}
-                        id="switchIDS425"
-                        onChange={(e: any) => handleChange(e, "TwoFactorAuth")}
-                      />
-                    }
-                    label={
-                      <>
-                        {t(
-                          "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
-                        )}
-                      </>
-                    }
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={3}
-                  md={4}
-                  className={clsx(classes.dFlex, "selectWrapper")}
-                  alignItems="center"
-                >
-                  <Typography>
-                    <>
-                      {t(
-                        "settings.accountSettings.fixedComDetails.fields.sendMeCode"
-                      )}
-                    </>
-                  </Typography>
-                  <FormControl
-                    variant="outlined" className={classes.formControl}
-                    style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10 }}
-                  >
-                    <Select
-                      style={{
-                        height: 40
-                      }}
-                      disabled={!companyDetails?.TwoFactorAuthEnabled}
-                      autoWidth
-                      value={companyDetails?.TwoFactorAuthOptionID ?? 202}
-                      name="TwoFactorAuthOptionID"
-                      onChange={(e: any) => { handleTwoFactorOption(e) }}
-                    >
-                      {[
-                        { name: t("settings.accountSettings.auth.everyDay"), value: 101 },
-                        { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
-                      ].map((so, index) => {
-                        return (
-                          <MenuItem
-                            key={so.value}
-                            value={so.value}
-                            className={classes.dropDownItem}
-                          >
-                            {so.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={6} md={4}>
-                  <Box style={{
-                    display: 'flex',
-                    justifyContent: 'space-evenly',
-                    alignItems: 'center',
-                    height: '100%'
-                  }}>
-                    <Button
-                      className={clsx(
-                        classes.btn,
-                        classes.btnNohover,
-                        classes.noBorder,
-                        classes.link,
-                        classes.textCapitalize,
-                        "link"
-                      )}
-                      onClick={() =>
-                        console.log('2')
-                        //handleVerification('cellphone')
-                      }
-                      startIcon={<MdMobileFriendly />}
-                      endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    >
-                      <>
-                        {t(
-                          "settings.accountSettings.fixedComDetails.btnVerifyNumber"
-                        )}
-                      </>
-                    </Button>
-                    <Button
-                      className={clsx(
-                        classes.btn,
-                        classes.btnNohover,
-                        classes.noBorder,
-                        classes.link,
-                        classes.textCapitalize,
-                        "link"
-                      )}
-                      onClick={() =>
-                        console.log('1')
-                        //handleVerification('email')
-                      }
-                      startIcon={<MdOutlineMarkEmailRead />}
-                      endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    >
-                      <>
-                        {t(
-                          "settings.accountSettings.fixedComDetails.btnVerifyEmail"
-                        )}
-                      </>
-                    </Button>
-                  </Box>
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  className={clsx(
-                    classes.dFlex,
-                    classes.flexWrap,
-                    classes.spaceBetween
+          </Grid>
+        </Box>
+        <Title
+          Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
+          classes={classes}
+          isIcon={false}
+        />
+        <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
+          <Grid container className={"form"}>
+            <Grid
+              item
+              xs={12}
+              sm={3}
+              md={4}
+              className={clsx(classes.dFlex, classes.mt3, "selectWrapper")}
+              alignItems="center"
+            >
+              <Typography>
+                <>
+                  {t(
+                    "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
                   )}
+                </>
+              </Typography>
+              <FormControl
+                variant="outlined" className={classes.formControl}
+                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10 }}
+              >
+                <Select
+                  style={{
+                    height: 40
+                  }}
+                  disabled={!companyDetails?.TwoFactorAuthEnabled}
+                  autoWidth
+                  value={companyDetails?.TwoFactorAuthOptionID ?? 202}
+                  name="TwoFactorAuthOptionID"
+                  onChange={(e: any) => { handleTwoFactorOption(e) }}
                 >
-                  <Button
-                    className={clsx(
-                      classes.btn,
-                      classes.btnNohover,
-                      classes.noBorder,
-                      classes.link,
-                      classes.textCapitalize,
-                      "link"
-                    )}
-                    onClick={() =>
-                      setShowChangePassword(true)
-                    }
-                    startIcon={<UnLockIcon />}
-                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                  >
-                    <>
-                      {t("settings.accountSettings.fixedComDetails.btnChangePwd")}
-                    </>
-                  </Button>
-                </Grid>
-                <Grid item xs={12} className={classes.justifyContentEnd}>
-                  <Button
-                    variant='contained'
-                    size='medium'
-                    onClick={handleSave}
-                    endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-                    className={clsx(
-                      classes.mt5,
-                      classes.actionButton,
-                      classes.actionButtonLightGreen
-                    )}>
-                    {t('settings.accountSettings.fixedComDetails.btnUpdate')}
-                  </Button>
-                </Grid>
-              </Grid>
+                  {[
+                    { name: t("settings.accountSettings.auth.everyDay"), value: 101 },
+                    { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
+                  ].map((so, index) => {
+                    return (
+                      <MenuItem
+                        key={so.value}
+                        value={so.value}
+                        className={classes.dropDownItem}
+                      >
+                        {so.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </Grid>
+            <Grid item xs={12} sm={6} md={4} className={classes.mt3}>
+              <Box style={{
+                display: 'flex',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                height: '100%'
+              }}>
+                <Button
+                  className={clsx(
+                    classes.btn,
+                    classes.btnNohover,
+                    classes.noBorder,
+                    classes.link,
+                    classes.textCapitalize,
+                    "link"
+                  )}
+                  onClick={() =>
+                    console.log('2')
+                    //handleVerification('cellphone')
+                  }
+                  startIcon={<MdMobileFriendly />}
+                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                >
+                  <>
+                    {t(
+                      "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                    )}
+                  </>
+                </Button>
+                <Button
+                  className={clsx(
+                    classes.btn,
+                    classes.btnNohover,
+                    classes.noBorder,
+                    classes.link,
+                    classes.textCapitalize,
+                    "link"
+                  )}
+                  onClick={() =>
+                    console.log('1')
+                    //handleVerification('email')
+                  }
+                  startIcon={<MdOutlineMarkEmailRead />}
+                  endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                >
+                  <>
+                    {t(
+                      "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                    )}
+                  </>
+                </Button>
+              </Box>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              className={clsx(
+                classes.mt3,
+                classes.dFlex,
+                classes.flexWrap,
+                classes.spaceBetween
+              )}
+            >
+              <Button
+                className={clsx(
+                  classes.btn,
+                  classes.btnNohover,
+                  classes.noBorder,
+                  classes.link,
+                  classes.textCapitalize,
+                  "link"
+                )}
+                onClick={() =>
+                  setShowChangePassword(true)
+                }
+                startIcon={<UnLockIcon />}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+              >
+                <>
+                  {t("settings.accountSettings.fixedComDetails.btnChangePwd")}
+                </>
+              </Button>
+            </Grid>
+            <Grid item xs={12} className={classes.justifyContentEnd}>
+              <Button
+                variant='contained'
+                size='medium'
+                onClick={handleSave}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+                className={clsx(
+                  classes.mt5,
+                  classes.actionButton,
+                  classes.actionButtonLightGreen
+                )}>
+                {t('settings.accountSettings.fixedComDetails.btnUpdate')}
+              </Button>
+            </Grid>
+
           </Grid>
         </Box>
       </Box>
