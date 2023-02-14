@@ -274,6 +274,7 @@ export type saveTemplateItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
 };
@@ -339,6 +340,7 @@ export type templateListItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
 };

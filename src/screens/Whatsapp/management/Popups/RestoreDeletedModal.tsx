@@ -20,9 +20,9 @@ const RestoreDeletedModal = ({
 	onClose,
 	onConfirmOrYes,
 	title,
-	deletedCampaigns,
 	restoreIds,
 	setRestoreIds,
+	deletedCampaignListData
 }: RestoreDeletedModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -71,14 +71,14 @@ const RestoreDeletedModal = ({
 								<FormGroup
 									aria-label='position'
 									className={classes.restoreDeletedModalFormGroup}>
-									{deletedCampaigns?.map(
-										(campaign: { id: string; campaignName: string }) => (
+									{deletedCampaignListData?.map(
+										(campaign) => (
 											<FormControlLabel
 												className={classes.restoreDeletedModalFormLabel}
-												key={campaign.id}
-												value={campaign.id}
+												key={campaign.WACampaignID}
+												value={campaign.WACampaignID}
 												control={<Checkbox />}
-												label={campaign.campaignName}
+												label={campaign.Name}
 												labelPlacement='end'
 												onChange={(e: BaseSyntheticEvent) =>
 													onRestoreDeletedChange(

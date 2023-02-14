@@ -130,6 +130,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
 		[]
 	);
+	const [deletedCampaignListData, setDeletedCampaignListData] = useState<
+		campaignDataProps[]
+	>([]);
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 
@@ -146,41 +149,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 	let updatedButtonType: string = '';
 	let updatedFileData: string = '';
-
-	const deletedCampaigns: { id: string; campaignName: string }[] = [
-		{
-			id: '21',
-			campaignName: 'demo campaign 1',
-		},
-		{
-			id: '211',
-			campaignName: 'demo campaign 2',
-		},
-		{
-			id: '213',
-			campaignName: 'demo campaign 3',
-		},
-		{
-			id: '21564',
-			campaignName: 'demo campaign 4',
-		},
-		{
-			id: '26781',
-			campaignName: 'demo campaign 5',
-		},
-		{
-			id: '27801',
-			campaignName: 'demo campaign 6',
-		},
-		{
-			id: '23451',
-			campaignName: 'demo campaign 7',
-		},
-		{
-			id: '2231',
-			campaignName: 'demo campaign 8',
-		},
-	];
 
 	useEffect(() => {
 		setApiCampaignData();
@@ -532,7 +500,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	const renderCellIcons = (row: campaignDataProps) => {
 		const { Status, AutomationID, Groups } = row;
-
 		const iconsMap: ManagmentIconProps[] = [
 			{
 				key: 'send',
@@ -584,7 +551,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				key: 'groups',
 				buttonKey: 'groups',
 				icon: GroupsIcon,
-				disable: Groups?.length !== 0,
+				disable: !!!Groups,
 				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
@@ -749,11 +716,19 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			getAllCampaigns()
 		);
 		if (campaignData.payload.Status === 'Success') {
-			setCampaignListData(campaignData.payload?.Data?.Items);
-			setTableData(campaignData.payload?.Data?.Items);
+			const filteredCampaignData = campaignData.payload?.Data?.Items?.filter(
+				(campaign) => !campaign?.IsDeleted && campaign?.Status !== 5
+			);
+			const deletedCampaignData = campaignData.payload?.Data?.Items?.filter(
+				(campaign) => campaign?.IsDeleted && campaign?.Status === 5
+			);
+			setCampaignListData(filteredCampaignData);
+			setTableData(filteredCampaignData);
+			setDeletedCampaignListData(deletedCampaignData);
 			setIsLoader(false);
 		} else {
 			setCampaignListData([]);
+			setDeletedCampaignListData([]);
 			setTableData([]);
 			setIsLoader(false);
 		}
@@ -1007,9 +982,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				isOpen={isRestoreDeletedModal}
 				onClose={() => setIsRestoreDeletedModal(false)}
 				onConfirmOrYes={() => onRestoreDeleted()}
-				deletedCampaigns={deletedCampaigns}
 				restoreIds={restoreIds}
 				setRestoreIds={(ids: string[]) => setRestoreIds(ids)}
+				deletedCampaignListData={deletedCampaignListData}
 			/>
 
 			<AlertModal

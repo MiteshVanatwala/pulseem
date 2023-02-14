@@ -2490,6 +2490,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			whiteSpace: 'normal',
 		},
 	},
+	whatsappTemplateStatusCreated: {
+		color: '#0371AD',
+		fontWeight: 700,
+	},
 	whatsappTemplateStatusApproved: {
 		color: '#27AE60',
 		fontWeight: 700,

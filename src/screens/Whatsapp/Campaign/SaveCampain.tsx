@@ -250,6 +250,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
 					setUpdatedDynamicVariable(campaignData?.Data?.VariableValues);
+					setlinkCount(
+						campaignData?.Data?.VariableValues?.filter(
+							(variable) => variable?.FieldTypeId === 3
+						)?.length
+					);
 				}
 			})();
 		}
@@ -499,6 +504,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const resetDynamicFields = () => {
 		setDynamicVariable([]);
 		setUpdatedDynamicVariable([]);
+		setlinkCount(0);
 		setDynamicModalVariable(0);
 	};
 
@@ -626,6 +632,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		updatedDynamicVariable: updatedVariable[]
 	) => {
 		setUpdatedDynamicVariable(updatedDynamicVariable);
+		setlinkCount(
+			updatedDynamicVariable?.filter((variable) => variable?.FieldTypeId === 3)
+				?.length
+		);
 		setIsDynamcFieldModal(false);
 	};
 
