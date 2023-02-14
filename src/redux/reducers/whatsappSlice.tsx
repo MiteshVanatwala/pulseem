@@ -8,10 +8,10 @@ import {
 	TextMediaAndButton,
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
 import {
-	ApiCreateGroupPayloadProps,
-	ApiSaveCampaignSettingsDataProps,
+	ApiCreateGroupPayload,
+	ApiSaveCampaignSettingsData,
 	saveCampaignDataProps,
-	uploadDataProps,
+	uploadData,
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
 import { setUploadProgress } from './groupSlice';
@@ -162,7 +162,7 @@ export const saveCampaign = createAsyncThunk(
 
 export const saveCampaignSettings = createAsyncThunk(
 	'whatsAppCampaign/SaveWACampaignSettings',
-	async (data: ApiSaveCampaignSettingsDataProps, thunkAPI) => {
+	async (data: ApiSaveCampaignSettingsData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SaveWACampaignSettings`,
@@ -462,7 +462,7 @@ export const getCampaignDetailById = createAsyncThunk(
 
 export const createGroup = createAsyncThunk(
 	'Group/Create',
-	async (createGroupPayload: ApiCreateGroupPayloadProps, thunkAPI) => {
+	async (createGroupPayload: ApiCreateGroupPayload, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.put(
 				`Group/Create`,
@@ -478,7 +478,7 @@ export const createGroup = createAsyncThunk(
 
 export const addRecipients = createAsyncThunk(
 	'Client/Upload',
-	async (payload: uploadDataProps, thunkAPI) => {
+	async (payload: uploadData, thunkAPI) => {
 		try {
 			const response = await uploaderInstance.put(`Client/Upload`, payload, {
 				onUploadProgress: (progressEvent) => {
@@ -498,7 +498,7 @@ export const addRecipients = createAsyncThunk(
 
 export const addRecipient = createAsyncThunk(
 	'client/AddClients',
-	async (payload: uploadDataProps, thunkAPI) => {
+	async (payload: uploadData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`client/AddClients`,

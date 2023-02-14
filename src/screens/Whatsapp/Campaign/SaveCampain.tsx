@@ -23,7 +23,7 @@ import {
 	tagDataProps,
 	personalFieldDataProps,
 	personalFieldAPIProps,
-	updatedVariableProps,
+	updatedVariable,
 	landingPageDataProps,
 	landingPageAPIProps,
 	smsReducerProps,
@@ -179,7 +179,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	>([]);
 	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
-		updatedVariableProps[]
+		updatedVariable[]
 	>([]);
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
@@ -326,7 +326,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
 		const isAvaliable = updatedDynamicVariable?.find(
-			(dynamicVariable: updatedVariableProps) =>
+			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
 		);
 		return !!isAvaliable;
@@ -335,7 +335,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const getUpdatedVariableValue = (variable: string) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
 		const variableValue = updatedDynamicVariable?.find(
-			(dynamicVariable: updatedVariableProps) =>
+			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
 		)?.VariableValue;
 		return variableValue ? variableValue : variable;
@@ -623,7 +623,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onDynamcFieldModalSave = (
-		updatedDynamicVariable: updatedVariableProps[]
+		updatedDynamicVariable: updatedVariable[]
 	) => {
 		setUpdatedDynamicVariable(updatedDynamicVariable);
 		setIsDynamcFieldModal(false);

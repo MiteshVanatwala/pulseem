@@ -32,12 +32,12 @@ export type dynamicModalProps = {
 	isDynamcFieldModal: boolean;
 	onDynamcFieldModalClose: () => void;
 	onDynamcFieldModalSave: (
-		updatedDynamicVariable: updatedVariableProps[]
+		updatedDynamicVariable: updatedVariable[]
 	) => void;
 	personalFields: personalFieldDataProps;
 	dynamicModalVariable: number;
 	landingPageData: landingPageDataProps[];
-	dynamicVariable: updatedVariableProps[];
+	dynamicVariable: updatedVariable[];
 };
 
 export type campaignFielsProps = {
@@ -138,7 +138,7 @@ export type LeftPaneProps = {
 	setIsCreateNewGroup: (val: boolean) => void;
 	onManualUpload: (
 		groupName: string,
-		uploadData: uploadDataProps,
+		uploadData: uploadData,
 		uploadedAsFile: boolean
 	) => void;
 	exceptionalDaysToggle: boolean;
@@ -278,7 +278,7 @@ export type landingPageDataProps = {
 	PageHref: string;
 };
 
-export type updatedVariableProps = {
+export type updatedVariable = {
 	FieldTypeId: number;
 	VariableIndex: number;
 	VariableValue: string;
@@ -303,7 +303,7 @@ export type testGroupsProps = {
 export type saveCampaignDataProps = {
 	WACampaignID: number;
 	TemplateId: string;
-	Variables: updatedVariableProps[];
+	Variables: updatedVariable[];
 	name: string;
 	fromnumber: string;
 	IsTestCampaign: boolean;
@@ -440,7 +440,7 @@ export type CampaignDetailByIdDataProps = {
 	TotalSendPlan: number;
 	UniqueClicksCount: number;
 	UpdateDate: string;
-	VariableValues: updatedVariableProps[];
+	VariableValues: updatedVariable[];
 	WACampaignID: number;
 };
 
@@ -454,7 +454,7 @@ export type CampaignDetailByIdProps = {
 	payload: CampaignDetailByIdPayloadProps;
 };
 
-export type createCombinedGroupProps = {
+export type createCombinedGroupData = {
 	payload: testGroupDataProps;
 };
 
@@ -506,12 +506,12 @@ export type ApiSaveCampaignSettingsProps = {
 	payload: ApiSaveCampaignSettingsPayloadProps;
 };
 
-export type ApiCreateGroupPayloadProps = {
+export type ApiCreateGroupPayload= {
 	GroupName: string;
 	IsTestGroup: boolean;
 };
 
-export type uploadDataClientsDataProps = {
+export type uploadDataClientsData = {
 	[key: string]: string;
 };
 export type uploadDataMappingProps = {
@@ -519,8 +519,8 @@ export type uploadDataMappingProps = {
 	Title: string;
 };
 
-export type uploadDataProps = {
-	ClientsData: uploadDataClientsDataProps[];
+export type uploadData = {
+	ClientsData: uploadDataClientsData[];
 	GroupIds: number[];
 	Mapping: uploadDataMappingProps[];
 };

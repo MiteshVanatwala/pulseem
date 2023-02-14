@@ -13,7 +13,7 @@ import { Close } from '@material-ui/icons';
 import {
 	dynamicButtonProps,
 	dynamicModalProps,
-	updatedVariableProps,
+	updatedVariable,
 } from '../Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import DynamicModalFields from './DynamicModalFields';
@@ -39,7 +39,7 @@ const DynamicModal = ({
 		'whatsappCampaign.pField'
 	);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
-		updatedVariableProps[]
+		updatedVariable[]
 	>([]);
 
 	const onClose = () => {
@@ -115,7 +115,7 @@ const DynamicModal = ({
 		isTrackLink: boolean = false
 	) => {
 		const isVariableUpdated = updatedDynamicVariable?.find(
-			(updatedVariable: updatedVariableProps) =>
+			(updatedVariable: updatedVariable) =>
 				updatedVariable.VariableIndex === dynamicModalVariable
 		);
 		if (!!isVariableUpdated) {
@@ -148,7 +148,7 @@ const DynamicModal = ({
 
 	const getFieldValueByID = (fieldID: number) => {
 		const value = updatedDynamicVariable?.find(
-			(updatedVariable: updatedVariableProps) =>
+			(updatedVariable: updatedVariable) =>
 				updatedVariable.VariableIndex === dynamicModalVariable &&
 				updatedVariable.FieldTypeId === fieldID
 		)?.VariableValue;

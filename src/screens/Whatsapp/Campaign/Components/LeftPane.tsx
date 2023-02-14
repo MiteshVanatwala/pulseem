@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
 	LeftPaneProps,
-	uploadDataProps,
+	uploadData,
 } from '../Types/WhatsappCampaign.types';
 import AlertModal from '../../Editor/Popups/AlertModal';
 import FilterRecipientsDialog from '../Popups/FilterRecipientsDialog';
@@ -117,7 +117,7 @@ const LeftPane = ({
 					}}
 					onDone={(
 						groupName: string,
-						res: uploadDataProps,
+						res: uploadData,
 						uploadedAsFile: boolean
 					) => {
 						onManualUpload(groupName, res, uploadedAsFile);

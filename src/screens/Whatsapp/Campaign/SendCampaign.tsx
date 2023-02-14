@@ -4,14 +4,13 @@ import WizardTitle from '../../../components/Wizard/WizardTitle';
 import { Grid } from '@material-ui/core';
 import {
 	APICreateGroupDataProps,
-	ApiCreateGroupPayloadProps,
-	ApiGetCampaignSummary,
-	ApiSaveCampaignSettingsDataProps,
+	ApiCreateGroupPayload,
+	ApiSaveCampaignSettingsData,
 	ApiSaveCampaignSettingsProps,
 	ApiSendCampaign,
 	campaignSettingsDataProps,
 	campaignSettingsPayloadDataProps,
-	createCombinedGroupProps,
+	createCombinedGroupData,
 	gropListAPIProps,
 	selectedFilterCampaignsProps,
 	smsReducerProps,
@@ -19,7 +18,7 @@ import {
 	testGroupDataProps,
 	uploadClientDataPayloadProps,
 	uploadClientDataProps,
-	uploadDataProps,
+	uploadData,
 	whatsappCampaignNameFilterDataProps,
 	whatsappCampaignNameFilterPayloadDataProps,
 	WhatsappCampaignSecondProps,
@@ -44,7 +43,6 @@ import {
 	getAllGroups,
 	getCampaignSettings,
 	getWhatsappCampaignNameFilter,
-	getWhatsAppCampaignSummary,
 	saveCampaignSettings,
 	sendCampaign,
 } from '../../../redux/reducers/whatsappSlice';
@@ -298,7 +296,7 @@ const SendCampaign = ({
 		showMessage: boolean = true,
 		ApiSelectedGroups: testGroupDataProps[] = selectedGroups
 	) => {
-		let saveCampaignSettingsPayload: ApiSaveCampaignSettingsDataProps = {
+		let saveCampaignSettingsPayload: ApiSaveCampaignSettingsData = {
 			WACampaignID: Number(campaignID),
 			SendTypeID: Number(sendType),
 			Groups: ApiSelectedGroups?.map((group) => group.GroupID),
@@ -415,7 +413,7 @@ const SendCampaign = ({
 				),
 			};
 			setIsLoader(true);
-			const createdGroupData: createCombinedGroupProps = await dispatch<any>(
+			const createdGroupData: createCombinedGroupData = await dispatch<any>(
 				createCombinedGroup(combinedGroupPayload)
 			);
 			await getApiGroupsData();
@@ -451,11 +449,11 @@ const SendCampaign = ({
 
 	const onManualUpload = async (
 		groupName: string,
-		uploadData: uploadDataProps,
+		uploadData: uploadData,
 		uploadedAsFile: boolean
 	) => {
 		setIsLoader(true);
-		let requestPayload: ApiCreateGroupPayloadProps = {
+		let requestPayload: ApiCreateGroupPayload = {
 			GroupName: groupName,
 			IsTestGroup: false,
 		};
@@ -463,7 +461,8 @@ const SendCampaign = ({
 		const { payload: createGroupData }: APICreateGroupDataProps =
 			await dispatch<any>(createGroup(requestPayload));
 		if (createGroupData?.StatusCode === 201 && createGroupData?.Message) {
-			if (uploadedAsFile === true) {
+			if (uploadedAsFile) {
+				// If data is more than 5000 rows we will upload as single file
 				uploadClientData = await dispatch<any>(
 					addRecipients({
 						...uploadData,
@@ -471,6 +470,7 @@ const SendCampaign = ({
 					})
 				);
 			} else {
+				// If data is less than 5000 rows we will upload data in format of JSON
 				uploadClientData = await dispatch<any>(
 					addRecipient({
 						...uploadData,
