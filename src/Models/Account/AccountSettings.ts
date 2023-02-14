@@ -1,0 +1,31 @@
+export interface AccountSettings {
+    SubAccountId: number;
+    LoginUserName: string;
+    AccountID: number | null;
+    CompanyAdmin: boolean;
+    CompanyName: string;
+    ContactName: string;
+    Email: string;
+    CellPhone: string;
+    Telephone: string;
+    City: string;
+    Address: string;
+    ZipCode: number | null;
+    BirthDate: Date | string | null;
+    DefaultFromMail: string;
+    DefaultFromName: string;
+    DefaultCellNumber: string;
+    MaxMailSendingForMonth: number | null;
+    MaxSMSSendingForMonth: number | null;
+    BulkEmail: number | null;
+    BulkSMS: number | null;
+    BulkMMS: number | null;
+    UnsubscribeType: boolean;
+    IsSmsImmediateUnsubscribeLink: boolean;
+    TwoFactorAuthEnabled: boolean | null;
+    TwoFactorAuthOptionID: number | null;
+    TwoFactorAuthTestMethodID: number | null;
+    TwoFactorAuthRetries: number | null;
+    TwoFactorAuthOverrideDateTime: Date | string | null;
+    ExpiryDate: Date | string | null;
+}

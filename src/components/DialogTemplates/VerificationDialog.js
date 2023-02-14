@@ -15,7 +15,7 @@ import { renderHtml } from '../../helpers/functions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 
-const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, variant = 'email', ...props }) => {
+const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     const { username } = useSelector(state => state.user)

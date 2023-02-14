@@ -15,9 +15,11 @@ import { TablePagination, ManagmentIcon } from '../../../../components/managment
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
-import { preferredOrder, formatDateTime, smsStatusNumberToString } from '../../../../helpers/exportHelper';
+import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
+import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
 import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
+
 
 const SmsReplies = ({ classes, ...other }) => {
     const dispatch = useDispatch();
@@ -31,11 +33,11 @@ const SmsReplies = ({ classes, ...other }) => {
     const [clientToEdit, setClientToEdit] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
     const [selectedClients, setSelectedClients] = useState([]);
-    const { smsReplies, extraData } = useSelector(state => state.sms);
-    const { ToastMessages } = useSelector(state => state.client);
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
+    const { ToastMessages } = useSelector(state => state.client);
+    const { smsReplies, extraData } = useSelector(state => state.sms);
+    const { subAccountAllGroups } = useSelector((state) => state.group);
     const { accountFeatures, windowSize, isRTL } = useSelector(state => state.core);
-    const { groupData } = useSelector((state) => state.group);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -157,8 +159,13 @@ const SmsReplies = ({ classes, ...other }) => {
         setShowLoader(true);
         let exportData = await dispatch(getSmsReplies({ ...request, IsExport: true }));
         let orderList = exportData?.payload;
-        orderList = preferredOrder(smsReplies?.Data, Object.keys(exportColumnHeader));
+        orderList = preferredOrder(orderList?.Data, Object.keys(exportColumnHeader));
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
+        orderList = replaceNull(orderList, 'FirstName', '');
+        orderList = replaceNull(orderList, 'LastName', '');
+        orderList = replaceNull(orderList, 'Cellphone', '');
+        orderList = replaceNull(orderList, 'Email', '');
+        orderList = replaceNull(orderList, 'CreationDate', '');
         orderList = await formatDateTime(orderList);
         exportFile({
             data: orderList,
@@ -174,7 +181,7 @@ const SmsReplies = ({ classes, ...other }) => {
             <>
                 <Grid item className={clsx(classes.groupsLableContainer, classes.mb15)} >
                     <Typography className={classes.groupsLable}>
-                        {`${smsReplies?.Message} ${t('common.Clients')}`}
+                        {`${smsReplies?.Message ?? 0} ${t('common.Clients')}`}
                     </Typography>
                 </Grid>
                 <TableContainer className={classes.tableStyle}>
@@ -255,7 +262,7 @@ const SmsReplies = ({ classes, ...other }) => {
                                     title={`${FirstName} ${LastName}`}
                                 >{FirstName} {LastName}</Typography>
                             </Box>
-                            <Box className={ClientID > 0 ? null : classes.disabled} style={{width: '30%'}}>
+                            <Box className={ClientID > 0 ? null : classes.disabled} style={{ width: '30%' }}>
                                 <ManagmentIcon
                                     disableHover={true}
                                     key='edit'
@@ -267,8 +274,11 @@ const SmsReplies = ({ classes, ...other }) => {
                                         setShowLoader(true);
                                         setSelectedClients([row.ClientID]);
                                         const recipientRequest = await dispatch(getClientsById([row.ClientID]));
-                                        const clientToEdit = recipientRequest?.payload?.Data[0];
-                                        setClientToEdit(clientToEdit);
+                                        const cToEdit = recipientRequest?.payload?.Data[0];
+                                        setClientToEdit(cToEdit);
+                                        if (!subAccountAllGroups || subAccountAllGroups?.length === 0) {
+                                            await dispatch(getGroupsBySubAccountId());
+                                        }
                                         setDialog(DialogType.EDIT_RECIPIENT);
                                         setShowLoader(false);
                                     }}
@@ -327,6 +337,11 @@ const SmsReplies = ({ classes, ...other }) => {
             switch (dialog) {
                 case DialogType.EDIT_RECIPIENT: {
                     let mappedGroups = [];
+                    if (clientToEdit && clientToEdit?.GroupIds?.length > 0) {
+                        mappedGroups = clientToEdit?.GroupIds?.split(',')?.map(function (x) {
+                            return parseInt(x, 10);
+                        });
+                    }
 
                     return <AddRecipientPopup
                         classes={classes}
@@ -336,7 +351,7 @@ const SmsReplies = ({ classes, ...other }) => {
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
-                        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
+                        Groups={subAccountAllGroups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
                         DialogType={DialogType}
                         selectedGroups={mappedGroups}
                         setDialog={setDialog}

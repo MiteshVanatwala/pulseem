@@ -20,6 +20,7 @@ import recipient from './Recipient.json'
 import group from './group.json'
 import mmsreport from './MMSReport.json'
 import languages from './languages.json'
+import settings from './Settings.json'
 
 export const en = {
   automations,
@@ -43,5 +44,6 @@ export const en = {
   recipient,
   group,
   mmsreport,
-  languages
+  languages,
+  settings
 }

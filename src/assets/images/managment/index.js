@@ -22,6 +22,7 @@ import { ReactComponent as PageArrowIcon } from './page_arrow.svg'
 import AddRecipient from './addRecipient.png'
 import AddRecipients from './addRecipients.png'
 import Reset from './reset.png'
+import List from './List'
 import CloseIcon from './x.png'
 import Word from './doc.png'
 import File from './file.png'
@@ -62,5 +63,6 @@ export {
   Excel,
   Pdf,
   Ppt,
-  Txt
+  Txt,
+  List as ListIcon
 }
