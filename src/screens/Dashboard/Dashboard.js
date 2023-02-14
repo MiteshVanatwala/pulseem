@@ -25,7 +25,7 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(() => {
     const initialize = async () => {
-      if (document.referrer.toLocaleLowerCase().includes('login.aspx') || document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx')) {
+      if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
         const member = accountSettings?.SubAccountSettings?.MembershipDetails;
         setMember(member);
         if (member?.PasswordExpired === true) {
