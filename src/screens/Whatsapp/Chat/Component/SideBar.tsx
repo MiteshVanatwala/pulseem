@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import Icon from './Icon';
-import { contacts, lastMessage } from './data';
+import { lastMessage } from './data';
 import {
 	APIWhatsappChatSidebarContactsItemsProps,
-	APIWhatsappChatSidebarContactsProps,
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
@@ -15,16 +14,10 @@ import {
 	TextField,
 } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { phoneNumberAPIProps } from '../../Campaign/Types/WhatsappCampaign.types';
-import {
-	getWhatsappChatContactsByPhoneNumber,
-	userPhoneNumbers,
-} from '../../../../redux/reducers/whatsappSlice';
 import { useDispatch } from 'react-redux';
-import { apiStatus } from '../../Constant';
 import moment from 'moment';
 
 const SideBar = ({
@@ -32,13 +25,15 @@ const SideBar = ({
 	isMobileSideBar,
 	setIsMobileSideBar,
 	handleChatId,
+	activeUser,
+	getPhoneNumber,
+	onActiveUserChange,
+	sideChatContacts,
+	filteredSideChatContacts,
+	setFilteredSideChatContacts,
+	phoneNumbersList,
+	handleUserStatus,
 }: WhatsappChatSideBarProps) => {
-	const [sideChatContacts, setSideChatContacts] = useState<
-		APIWhatsappChatSidebarContactsItemsProps[]
-	>([]);
-	const [filteredSideChatContacts, setFilteredSideChatContacts] =
-		useState<APIWhatsappChatSidebarContactsItemsProps[]>(sideChatContacts);
-
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
@@ -58,18 +53,11 @@ const SideBar = ({
 	}));
 	const muiclasses = useStyles();
 
-	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
-	const [activeUser, setActiveUser] = useState<string>('16067520281');
 	const formatTime = (timeString: string) => {
 		let splitTimeString = timeString.split(':');
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
 	};
 
-	const [userStatus, setUserStatus] = useState<string>('Open');
-	const handleUserStatus = (e: BaseSyntheticEvent) => {
-		e.preventDefault();
-		setUserStatus(e.target.value);
-	};
 	const getStatusClass = (status: number) => {
 		switch (status) {
 			case 1:
@@ -82,38 +70,6 @@ const SideBar = ({
 			default:
 				break;
 		}
-	};
-
-	useEffect(() => {
-		getPhoneNumber();
-	}, []);
-
-	const setAPIWhatsAppChatContacts = async (activeUser: string) => {
-		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsProps =
-			await dispatch<any>(getWhatsappChatContactsByPhoneNumber(activeUser));
-		console.log(whatsAppChatContactsData);
-		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
-			setSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
-			setFilteredSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
-		} else {
-			setSideChatContacts([]);
-			setFilteredSideChatContacts([]);
-		}
-	};
-
-	const getPhoneNumber = async () => {
-		const { payload: phoneNumberData }: phoneNumberAPIProps =
-			await dispatch<any>(userPhoneNumbers());
-		if (phoneNumberData?.Data?.length > 0) {
-			setActiveUser(phoneNumberData?.Data[0]);
-			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0]);
-		}
-		setPhoneNumbersList(phoneNumberData?.Data);
-	};
-
-	const onActiveUserChange = (e: BaseSyntheticEvent) => {
-		setActiveUser(e.target.value?.replace(/\D/g, ''));
-		setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
 	};
 
 	const handleSearch = (e: BaseSyntheticEvent) => {
@@ -143,9 +99,11 @@ const SideBar = ({
 			setFilterBySelected(e.target.value);
 		}
 
-		result = sideChatContacts.filter((data) => {
-			return data.ConversationStatusId === value;
-		});
+		result = sideChatContacts.filter(
+			(data: APIWhatsappChatSidebarContactsItemsProps) => {
+				return data.ConversationStatusId === value;
+			}
+		);
 		setFilteredSideChatContacts(result);
 	};
 
@@ -204,10 +162,14 @@ const SideBar = ({
 							variant='standard'
 							style={{ fontSize: '12px' }}
 							onChange={(e) => handleFilter(e)}>
-							<MenuItem value={0}>All Status</MenuItem>
-							<MenuItem value={1}>Open</MenuItem>
-							<MenuItem value={2}>Pending</MenuItem>
-							<MenuItem value={3}>Solved</MenuItem>
+							<MenuItem value={0}>
+								{translator('whatsappChat.allStatus')}
+							</MenuItem>
+							<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
+							<MenuItem value={2}>
+								{translator('whatsappChat.pending')}
+							</MenuItem>
+							<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
 						</Select>
 					</span>
 					<div className={`${classes.whatsappChat} sidebar__actions`}>
@@ -247,10 +209,9 @@ const SideBar = ({
 							<Link
 								className={`${classes.whatsappChat} sidebar-contact`}
 								// to={`/chat/${contact.PhoneNumber}`}
+								key={i}
 								to={''}
-								onClick={(e) =>
-									handleChatId(e, contact.PhoneNumber, activeUser)
-								}>
+								onClick={(e) => handleChatId(e, contact)}>
 								<div
 									className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}>
 									<img
@@ -270,7 +231,7 @@ const SideBar = ({
 										</h2>
 										<span
 											className={`${classes.whatsappChat} sidebar-contact__time`}>
-											<span style={{ paddingRight: '10px' }}>
+											<span className={classes.whatsappSidebarStatusPadding}>
 												<Select
 													classes={{ root: muiclasses.selectSection }}
 													className={clsx(
@@ -279,12 +240,21 @@ const SideBar = ({
 													)}
 													autoWidth
 													value={contact.ConversationStatusId}
+													// value={userStatusId}
 													variant='standard'
 													style={{ fontSize: '12px' }}
-													onChange={(e) => handleUserStatus(e)}>
-													<MenuItem value={1}>Open</MenuItem>
-													<MenuItem value={2}>Pending</MenuItem>
-													<MenuItem value={3}>Solved</MenuItem>
+													onChange={(e) =>
+														handleUserStatus(e, contact.PhoneNumber)
+													}>
+													<MenuItem value={1}>
+														{translator('whatsappChat.open')}
+													</MenuItem>
+													<MenuItem value={2}>
+														{translator('whatsappChat.pending')}
+													</MenuItem>
+													<MenuItem value={3}>
+														{translator('whatsappChat.solved')}
+													</MenuItem>
 												</Select>
 											</span>
 

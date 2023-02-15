@@ -2541,30 +2541,32 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	whatsappChatStatusSelect: {
 		borderRadius: '22px',
-		paddingLeft: '8px',
+		paddingLeft: '12px',
+		textAlign: 'center',
+		fontWeight: 'bold',
 		minWidth: '77px',
 		'& .MuiSelect-select.MuiSelect-select': {
-			padding: '2px 24px 2px 0px',
+			padding: isRTL ? '2px 0px 2px 0px' : '2px 24px 2px 0px',
 		},
 		'&.open': {
-			border: '2px solid #E74C3C',
-			color: '#E74C3C',
+			backgroundColor: '#F6DDE1',
+			color: '#FD4445',
 			'& .MuiSelect-icon': {
-				color: '#E74C3C',
+				color: '#FD4445',
 			},
 		},
 		'&.pending': {
-			border: '2px solid #F59A23',
-			color: '#F59A23',
+			backgroundColor: '#F6EFE0',
+			color: '#FEBF1E',
 			'& .MuiSelect-icon': {
-				color: '#F59A23',
+				color: '#FEBF1E',
 			},
 		},
 		'&.solved': {
-			border: '2px solid #27AE60',
-			color: '#27AE60',
+			backgroundColor: '#DCEDE7',
+			color: '#3AAD67',
 			'& .MuiSelect-icon': {
-				color: '#27AE60',
+				color: '#3AAD67',
 			},
 		},
 	},
@@ -2572,15 +2574,24 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		borderRadius: '22px',
 		backgroundColor: '#c0c0c0',
 		paddingLeft: '8px',
+		textAlign: 'center',
+		fontWeight: 'bold',
 		minWidth: '80px',
-		border: '2px solid #5A5A5A',
 		color: '#5A5A5A',
 		'& .MuiSelect-icon': {
 			color: '#5A5A5A',
 		},
 		'& .MuiSelect-select.MuiSelect-select': {
-			padding: '8px 24px 8px 0px',
+			padding: isRTL ? '8px 0px 8px 0px' : '8px 24px 8px 0px',
 		},
+	},
+	whatsappSidebarStatusPadding: {
+		paddingRight: isRTL ? 'unset' : '10px',
+		paddingLeft: isRTL ? '10px' : 'unset',
+	},
+	whatsappChatUiStatusPadding: {
+		paddingLeft: isRTL ? 'unset' : 12,
+		paddingRight: isRTL ? 12 : 'unset',
 	},
 	pdfFileName: {
 		wordWrap: 'break-word',

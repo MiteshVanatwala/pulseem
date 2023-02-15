@@ -495,6 +495,60 @@ export const getWhatsappChat = createAsyncThunk(
 	}
 );
 
+export const getInboundWhatsappChatStatus = createAsyncThunk(
+	'WhatsAppChat/GetInboudSessionStatus',
+	async (
+		data: {
+			activePhoneNumber: string;
+			activeUserNumber: string;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetInboudSessionStatus`,
+				{
+					PhoneNumber: data.activePhoneNumber,
+					UserNumber: data.activeUserNumber,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const manageWhatsappChatCoversationStatus = createAsyncThunk(
+	'WhatsAppChat/ManageWhatsAppConversationStatus',
+	async (
+		data: {
+			ClientNumber: string;
+			Sendernumber: string;
+			StatusId: number;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/ManageWhatsAppConversationStatus`,
+				{
+					Sendernumber: data.Sendernumber,
+					ClientNumber: data.ClientNumber,
+					StatusId: data.StatusId,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiErrorProps;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {

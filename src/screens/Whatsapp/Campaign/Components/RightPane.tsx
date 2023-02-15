@@ -166,9 +166,10 @@ const RightPane = ({
 								margin='none'
 								placeholder={translator('notifications.hour')}
 								initialFocusedDate={moment().hours(0).minutes(0)}
-								value={sendType === '2' ? sendTime : null}
+								value={sendType === '2' ? sendDate : null}
 								keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
 								onChange={(date) => handleTimePicker(date)}
+								// onChange={(e) => console.log('clicked alert', e)}
 								KeyboardButtonProps={{
 									'aria-label': 'change time',
 									className: classes.datePickerButton,

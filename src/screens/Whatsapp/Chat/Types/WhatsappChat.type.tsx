@@ -26,19 +26,27 @@ export type WhatsappChatUiProps = {
 	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
 	setDynamicModalVariable: (dynamicModalVariable: number) => void;
 	savedTemplate: string;
-	chatPhoneNumber: string;
-	chatUserPhoneNumber: string;
+	chatContacts: any;
+	activeUser: string;
+	filteredSideChatContacts: any;
+	whatsappChatSession: any;
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 };
 
 export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
-	handleChatId: (
-		e: BaseSyntheticEvent,
-		Phone: string,
-		UserPhone: string
-	) => void;
+	handleChatId: (e: BaseSyntheticEvent, Contacts: any) => void;
+	activeUser: string;
+	setActiveUser: (activeUser: string) => void;
+	getPhoneNumber: () => void;
+	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	sideChatContacts: any;
+	filteredSideChatContacts: any;
+	setFilteredSideChatContacts: (filteredSideChatContacts: any) => void;
+	phoneNumbersList: any;
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 };
 
 export type chatModalProps = {
@@ -88,4 +96,52 @@ export type APIWhatsappChatSidebarContactsPayloadProps = {
 
 export type APIWhatsappChatSidebarContactsProps = {
 	payload: APIWhatsappChatSidebarContactsPayloadProps;
+};
+
+export type APIWhatsappChatVariablesProps = {
+	'1': string;
+	'2': string;
+};
+
+export type APIWhatsappChatTextProps = {
+	body: string;
+};
+
+export type APIWhatsappChatTypesProps = {
+	text: APIWhatsappChatTextProps;
+};
+
+export type APIWhatsappChatTemplateDataProps = {
+	types: APIWhatsappChatTypesProps;
+	variables: APIWhatsappChatVariablesProps;
+};
+
+export type APIWhatsappChatItemsProps = {
+	IsInbound: null | boolean;
+	IsTemplate: boolean;
+	MediaUrl: string;
+	Message: string;
+	MessageDate: string;
+	MessageDateText: null | string;
+	SmsStatus: string;
+	SmsStatusId: number;
+	TemplateData: APIWhatsappChatTemplateDataProps;
+};
+
+export type APIWhatsappChatDataProps = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatItemsProps[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APIWhatsappChatPayloadProps = {
+	Data: APIWhatsappChatDataProps;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatProps = {
+	payload: APIWhatsappChatPayloadProps;
 };
