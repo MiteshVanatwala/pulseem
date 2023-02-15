@@ -193,7 +193,7 @@ export const BaseDialog = ({
   const RenderContent = () => {
     return (
       <Stack
-        style={{ border: 'none' }}
+        style={{ border: 'none', marginTop: 0 }}
         dir={direction[isRTL]}
         className={clsx(classes.dialogContent, contentStyle)}
       >
