@@ -31,12 +31,7 @@ export const getSettingsItem = (
 	title: <img alt='settings' src={SettingsLogo} className={style} />,
 	href: '/Pulseem/AccountSettings.aspx',
 	options: [
-		{
-			title: t('master.RadMenuItemResource2.Text'),
-			href: '/Pulseem/AccountSettings.aspx?fromreact=true',
-			iconSrc: SettingsMenuIcon,
-			isShow: true,
-		},
+		{ key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: '/react/AccountSettings', iconSrc: SettingsMenuIcon, isShow: true },
 		{
 			title: t('master.linkAccountBilling.Text'),
 			href: '/Pulseem/AccountBilling.aspx?fromreact=true',

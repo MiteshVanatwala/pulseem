@@ -49,10 +49,14 @@ const WhatsappInbound = ({ classes }) => {
     const [request, setRequest] = useState(defaultRequest);
 
     const getInboundData = async () => {
+        setShowLoader(true);
         await dispatch(getInboundReport({ ...request, PageSize: rowsPerPage, PageIndex: page }));
+        setShowLoader(false);
     }
     const getInboundDataById = async (id) => {
+        setShowLoader(true);
         console.log(id);
+        setShowLoader(false);
     }
     useEffect(() => {
         if (id && id > 0) {
@@ -61,7 +65,6 @@ const WhatsappInbound = ({ classes }) => {
         else {
             getInboundData();
         }
-        setShowLoader(false);
     }, [request, page, rowsPerPage]);
 
     const renderHeader = () => {

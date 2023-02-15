@@ -2091,7 +2091,7 @@ const Groups = ({ classes }) => {
         >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
-                <Title Text={t('recipient.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
+                <Title Text={t('recipient.logPageHeaderResource1.Text')} classes={classes} />
                 {renderSearchSection()}
                 {windowSize !== 'xs' ? renderManagmentLine() :
                     <Box

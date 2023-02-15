@@ -640,7 +640,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.templateManagement')}
-				Classes={classes.whatsappTemplateTitle}
+				classes={classes}
 				ContainerStyle={{}}
 				Element={null}
 			/>

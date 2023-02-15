@@ -49,10 +49,11 @@ export const Dialog = ({
   const renderExitButton = () => {
     return (
       <>
-        {props.exit ? null : <Box
+        {props.exit ? props.exit : <Box
           onClick={onExit}
           className={clsx(
             classes.dialogExitButton,
+            classes.btnBgExitDialog,
             {
               [classes.dialogExitButtonRTL]: isRTL,
               [classes.dialogExitButtonLTR]: !isRTL

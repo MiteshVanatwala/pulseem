@@ -666,7 +666,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				<Grid item>
 					<Title
 						Text={translator('whatsappCampaign.header')}
-						Classes={classes.WhatsappCampainP1Title}
+						classes={classes}
 						ContainerStyle={{}}
 						Element={null}
 					/>
