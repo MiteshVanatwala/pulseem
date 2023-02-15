@@ -452,7 +452,7 @@ const FORM_COMPANY_DETAILS = ({
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} md={4} className={classes.mt3}>
+            {/* <Grid item xs={12} sm={6} md={4} className={classes.mt3}>
               <Box style={{
                 display: 'flex',
                 justifyContent: 'space-evenly',
@@ -504,7 +504,7 @@ const FORM_COMPANY_DETAILS = ({
                   </>
                 </Button>
               </Box>
-            </Grid>
+            </Grid> */}
             <Grid
               item
               xs={12}
