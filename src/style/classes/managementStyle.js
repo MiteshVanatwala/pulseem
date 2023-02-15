@@ -1116,6 +1116,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingTop: 20,
   },
   link: {
+    fontSize: 16,
     textDecoration: 'underline',
     margin: '0 5px',
     cursor: 'pointer'

@@ -172,6 +172,7 @@ const AccountSettingsEditor = () => {
     <DefaultScreen
       currentPage="settings"
       subPage="accountSettings"
+      key="accountSettings"
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
