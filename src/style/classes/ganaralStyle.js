@@ -2690,7 +2690,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
             }
           },
           '& .MuiTypography-body1': {
-            color: '#979797'
+            color: '#000'
           },
           '& .link': {
             fontSize: 15,
