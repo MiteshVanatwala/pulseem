@@ -455,7 +455,7 @@ export const getCampaignDetailById = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -472,7 +472,7 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -498,7 +498,7 @@ export const getWhatsappChat = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -524,7 +524,7 @@ export const getInboundWhatsappChatStatus = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}

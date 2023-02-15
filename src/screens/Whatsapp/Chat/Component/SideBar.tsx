@@ -208,7 +208,6 @@ const SideBar = ({
 						(contact: APIWhatsappChatSidebarContactsItemsProps, i: number) => (
 							<Link
 								className={`${classes.whatsappChat} sidebar-contact`}
-								// to={`/chat/${contact.PhoneNumber}`}
 								key={i}
 								to={''}
 								onClick={(e) => handleChatId(e, contact)}>
@@ -240,7 +239,6 @@ const SideBar = ({
 													)}
 													autoWidth
 													value={contact.ConversationStatusId}
-													// value={userStatusId}
 													variant='standard'
 													style={{ fontSize: '12px' }}
 													onChange={(e) =>

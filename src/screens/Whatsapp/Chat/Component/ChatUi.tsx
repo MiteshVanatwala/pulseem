@@ -1,15 +1,10 @@
 import Icon from './Icon';
 import { allMessages, dates, user } from './data';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import {
-	BaseSyntheticEvent,
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
 	APIWhatsappChatItemsProps,
+	APIWhatsappChatProps,
 	WhatsappChatUiProps,
 } from '../Types/WhatsappChat.type';
 import {
@@ -22,7 +17,6 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
-// import EmojiPicker from 'emoji-picker-react';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import Highlighter from 'react-highlight-words';
 import {
@@ -37,7 +31,6 @@ import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import { apiStatus } from '../../Constant';
 import { useDispatch } from 'react-redux';
 import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
-import React from 'react';
 
 const ChatUi = ({
 	classes,
@@ -56,14 +49,12 @@ const ChatUi = ({
 	savedTemplate,
 	chatContacts,
 	activeUser,
-	filteredSideChatContacts,
 	whatsappChatSession,
 	handleUserStatus,
 }: WhatsappChatUiProps) => {
 	const [allWhatsappChat, setAllWhatsappChat] = useState<
 		APIWhatsappChatItemsProps[]
 	>([]);
-	console.log('Test Data --->', allWhatsappChat);
 	const [activePhoneNumber, setActivePhoneNumber] =
 		useState<string>(activeUser);
 	const [activeUserNumber, setActiveUserNumber] =
@@ -80,7 +71,6 @@ const ChatUi = ({
 	const [chatTimer, setChatTimer] = useState<string>(time);
 	const setUpdateTime = () => {
 		let time = new Date().toLocaleTimeString('en-US');
-		// .replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, '$1$3');
 		setChatTimer(time);
 	};
 
@@ -157,17 +147,13 @@ const ChatUi = ({
 
 	useEffect(() => {
 		getAPIAllWhatsappChat();
-		// const interval = setInterval(setUpdateTime, 1000);
-		// return () => {
-		// 	clearInterval(interval);
-		// };
 	}, []);
 
 	const getAPIAllWhatsappChat = async () => {
-		const allWhatsAppChatData: any = await dispatch<any>(
+		const allWhatsAppChatData: APIWhatsappChatProps = await dispatch<any>(
 			getWhatsappChat({ activePhoneNumber, activeUserNumber })
 		);
-		console.log(allWhatsAppChatData);
+
 		if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
 			setAllWhatsappChat(allWhatsAppChatData.payload.Data.Items);
 		} else {
@@ -368,7 +354,7 @@ const ChatUi = ({
 								</p>
 							)}
 							<div className={`${classes.whatsappChat} chat__msg-group`}>
-								{messages.map((message: any, msgIndex: any) => {
+								{messages.map((message: any, msgIndex: number) => {
 									const assignRef = () =>
 										dateIndex === dates.length - 1 &&
 										msgIndex === messages.length - 1
@@ -377,77 +363,75 @@ const ChatUi = ({
 									return (
 										<>
 											{message.image ? (
-												// <div
-												// 	key={msgIndex}
-												// 	className={`${
-												// 		classes.whatsappChat
-												// 	} chat__msg chat__img-wrapper ${
-												// 		message.sender
-												// 			? `${classes.whatsappChat} chat__msg--rxd`
-												// 			: `${classes.whatsappChat} chat__msg--sent`
-												// 	}`}
-												// 	ref={assignRef()}>
-												// 	<img
-												// 		src={AccountUser}
-												// 		alt=''
-												// 		className={`${classes.whatsappChat} chat__img`}
-												// 	/>
-												// 	<span
-												// 		className={`${classes.whatsappChat} chat__msg-footer`}>
-												// 		<span>{formatTime(message.time)}</span>
-												// 		{!message.sender && (
-												// 			<Icon
-												// 				id={
-												// 					message?.status === 'sent'
-												// 						? 'singleTick'
-												// 						: 'doubleTick'
-												// 				}
-												// 				aria-label={message?.status}
-												// 				className={`${
-												// 					classes.whatsappChat
-												// 				} chat__msg-status-icon ${
-												// 					message?.status === 'read'
-												// 						? `${classes.whatsappChat} chat__msg-status-icon--blue`
-												// 						: ''
-												// 				}`}
-												// 			/>
-												// 		)}
-												// 	</span>
+												<div
+													key={msgIndex}
+													className={`${
+														classes.whatsappChat
+													} chat__msg chat__img-wrapper ${
+														message.sender
+															? `${classes.whatsappChat} chat__msg--rxd`
+															: `${classes.whatsappChat} chat__msg--sent`
+													}`}
+													ref={assignRef()}>
+													<img
+														src={AccountUser}
+														alt=''
+														className={`${classes.whatsappChat} chat__img`}
+													/>
+													<span
+														className={`${classes.whatsappChat} chat__msg-footer`}>
+														<span>{formatTime(message.time)}</span>
+														{!message.sender && (
+															<Icon
+																id={
+																	message?.status === 'sent'
+																		? 'singleTick'
+																		: 'doubleTick'
+																}
+																aria-label={message?.status}
+																className={`${
+																	classes.whatsappChat
+																} chat__msg-status-icon ${
+																	message?.status === 'read'
+																		? `${classes.whatsappChat} chat__msg-status-icon--blue`
+																		: ''
+																}`}
+															/>
+														)}
+													</span>
 
-												// 	<button
-												// 		aria-label='Message options'
-												// 		className={`${classes.whatsappChat} chat__msg-options`}>
-												// 		<Icon
-												// 			id='downArrow'
-												// 			className={`${classes.whatsappChat} chat__msg-options-icon`}
-												// 		/>
-												// 	</button>
-												// </div>
-												<></>
+													<button
+														aria-label='Message options'
+														className={`${classes.whatsappChat} chat__msg-options`}>
+														<Icon
+															id='downArrow'
+															className={`${classes.whatsappChat} chat__msg-options-icon`}
+														/>
+													</button>
+												</div>
 											) : message.sender ? (
-												// <p
-												// 	key={msgIndex}
-												// 	className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}
-												// 	ref={assignRef()}>
-												// 	<span>{message.content}</span>
-												// 	<span
-												// 		className={`${classes.whatsappChat} chat__msg-filler`}>
-												// 		{' '}
-												// 	</span>
-												// 	<span
-												// 		className={`${classes.whatsappChat} chat__msg-footer`}>
-												// 		{formatTime(message.time)}
-												// 	</span>
-												// 	<button
-												// 		aria-label='Message options'
-												// 		className={`${classes.whatsappChat} chat__msg-options`}>
-												// 		<Icon
-												// 			id='downArrow'
-												// 			className={`${classes.whatsappChat} chat__msg-options-icon`}
-												// 		/>
-												// 	</button>
-												// </p>
-												<></>
+												<p
+													key={msgIndex}
+													className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}
+													ref={assignRef()}>
+													<span>{message.content}</span>
+													<span
+														className={`${classes.whatsappChat} chat__msg-filler`}>
+														{' '}
+													</span>
+													<span
+														className={`${classes.whatsappChat} chat__msg-footer`}>
+														{formatTime(message.time)}
+													</span>
+													<button
+														aria-label='Message options'
+														className={`${classes.whatsappChat} chat__msg-options`}>
+														<Icon
+															id='downArrow'
+															className={`${classes.whatsappChat} chat__msg-options-icon`}
+														/>
+													</button>
+												</p>
 											) : (
 												<p
 													key={msgIndex}
@@ -486,192 +470,6 @@ const ChatUi = ({
 														/>
 													</button>
 												</p>
-
-												// <div className={classes.whatsappMobileConversation}>
-												// 	<div className='conversation-container'>
-												// 		{(templateText ||
-												// 			buttonType === 'callToAction') && (
-												// 			<>
-												// 				<div
-												// 					className={`${classes.whatsappMobileMessage} sent`}
-												// 					id='conversation-text-preview'>
-												// 					{templateText?.length > 0 && (
-												// 						<div
-												// 							className={
-												// 								classes.whatsappMobileMessageTextAndImage
-												// 							}>
-												// 							{getFileType() === fileTypes.IMAGE &&
-												// 								fileData?.length > 0 && (
-												// 									<img
-												// 										src={fileData}
-												// 										alt='uploaded-file-preview'
-												// 									/>
-												// 								)}
-												// 							{getFileType() === fileTypes.VIDEO &&
-												// 								fileData?.length > 0 && (
-												// 									<a
-												// 										href={fileData}
-												// 										target='_blank'
-												// 										rel='noreferrer'>
-												// 										<img
-												// 											className='video-preview-img'
-												// 											src={Video}
-												// 											alt='uploaded-file-preview'
-												// 										/>
-												// 									</a>
-												// 								)}
-												// 							{getFileType() === fileTypes.DOCUMENT &&
-												// 								fileData?.length > 0 && (
-												// 									<Grid container alignItems='center'>
-												// 										<img
-												// 											className='pdf-preview-img'
-												// 											src={PDF}
-												// 											alt='uploaded-file-preview'
-												// 										/>
-												// 										<div
-												// 											className={classes.pdfFileName}>
-												// 											{fileData
-												// 												?.split('/')
-												// 												[
-												// 													fileData?.split('/')?.length -
-												// 														1
-												// 												]?.substring(0, 18) + '...'}
-												// 										</div>
-												// 										<a
-												// 											href={fileData}
-												// 											target='_blank'
-												// 											rel='noreferrer'>
-												// 											<img
-												// 												className='download-preview-img'
-												// 												src={Download}
-												// 												alt='uploaded-file-preview'
-												// 											/>
-												// 										</a>
-												// 									</Grid>
-												// 								)}
-												// 							<pre>{templateText}</pre>
-												// 						</div>
-												// 					)}
-												// 					{buttonType === 'callToAction' &&
-												// 						templateButtons?.length > 0 && (
-												// 							<div
-												// 								className={
-												// 									classes.callToActionButtonsWrapper
-												// 								}
-												// 								style={{
-												// 									borderTop:
-												// 										templateText?.length <= 0
-												// 											? '0px'
-												// 											: '1px solid #cbcbcb',
-												// 									margin:
-												// 										templateText?.length <= 0
-												// 											? '0px -8px 0px -8px'
-												// 											: '4px 0px 0px 0px',
-												// 									padding:
-												// 										templateText?.length <= 0
-												// 											? '0px 8px 0px 8px'
-												// 											: '0px 0px 0px 0px',
-												// 								}}>
-												// 								{templateButtons?.map(
-												// 									(
-												// 										button:
-												// 											| quickReplyButtonProps
-												// 											| callToActionRowProps
-												// 									) => (
-												// 										<Grid item key={button.id}>
-												// 											{button.typeOfAction ===
-												// 											'phonenumber' ? (
-												// 												<a
-												// 													target='_blank'
-												// 													href={`tel:${getValueByFieldName(
-												// 														button,
-												// 														'whatsapp.phoneNumber'
-												// 													)}`}
-												// 													rel='noreferrer'>
-												// 													<i
-												// 														className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
-												// 													<span
-												// 														className={
-												// 															classes.callToActionButtonText
-												// 														}>
-												// 														{getValueByFieldName(
-												// 															button,
-												// 															'whatsapp.phoneButtonText'
-												// 														)}
-												// 													</span>
-												// 												</a>
-												// 											) : (
-												// 												<a
-												// 													href={getValueByFieldName(
-												// 														button,
-												// 														'whatsapp.websiteURL'
-												// 													)}
-												// 													target='_blank'
-												// 													rel='noreferrer'>
-												// 													<i
-												// 														className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
-												// 													<span
-												// 														className={
-												// 															classes.callToActionButtonText
-												// 														}>
-												// 														{getValueByFieldName(
-												// 															button,
-												// 															'whatsapp.websiteButtonText'
-												// 														)}
-												// 													</span>
-												// 												</a>
-												// 											)}
-												// 										</Grid>
-												// 									)
-												// 								)}
-												// 							</div>
-												// 						)}
-												// 				</div>
-												// 			</>
-												// 		)}
-												// 		{buttonType === 'quickReply' && (
-												// 			<>
-												// 				<div
-												// 					className={classes.quickReplyButtonWrapper}>
-												// 					{templateButtons?.map(
-												// 						(
-												// 							button:
-												// 								| quickReplyButtonProps
-												// 								| callToActionRowProps
-												// 						) => (
-												// 							<div
-												// 								key={button.id}
-												// 								className={`${classes.whatsappMobileMessage} sent quick-reply-button`}
-												// 								style={{
-												// 									margin: '2px 0px 0px 0px',
-												// 									borderRadius: '5px',
-												// 									padding: '4px 8px',
-												// 									width:
-												// 										getValueByFieldName(
-												// 											button,
-												// 											'whatsapp.websiteButtonText'
-												// 										)?.length <= templateText?.length
-												// 											? quickReplyWidth
-												// 											: '',
-												// 								}}>
-												// 								<span
-												// 									className={
-												// 										classes.quickReplyButtonText
-												// 									}>
-												// 									{getValueByFieldName(
-												// 										button,
-												// 										'whatsapp.websiteButtonText'
-												// 									)}
-												// 								</span>
-												// 							</div>
-												// 						)
-												// 					)}
-												// 				</div>
-												// 			</>
-												// 		)}
-												// 	</div>
-												// </div>
-												// <></>
 											)}
 										</>
 									);
@@ -713,4 +511,4 @@ const ChatUi = ({
 	);
 };
 
-export default React.memo(ChatUi);
+export default ChatUi;

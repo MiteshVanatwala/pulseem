@@ -3,6 +3,9 @@ import SideBar from './Component/SideBar';
 import './css/index.css';
 import DefaultScreen from '../../DefaultScreen';
 import {
+	APIWhatsappChatConversationStatusProps,
+	APIWhatsappChatSessionDataProps,
+	APIWhatsappChatSessionProps,
 	APIWhatsappChatSidebarContactsItemsProps,
 	APIWhatsappChatSidebarContactsProps,
 	WhatsappChatProps,
@@ -52,7 +55,17 @@ import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isLoader, setIsLoader] = useState<boolean>(false);
-	const [chatContacts, setChatContacts] = useState<any>([]);
+	const [chatContacts, setChatContacts] =
+		useState<APIWhatsappChatSidebarContactsItemsProps>({
+			ConversationStatusId: 0,
+			IsTemplate: false,
+			IsUnsubscribed: false,
+			LastMessage: '',
+			LastMessageDate: '',
+			PhoneNumber: '',
+			Unread: 0,
+			UserName: '',
+		});
 	const [activeUser, setActiveUser] = useState<string>('16067520281');
 	const [sideChatContacts, setSideChatContacts] = useState<
 		APIWhatsappChatSidebarContactsItemsProps[]
@@ -63,7 +76,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		useState<string>(activeUser);
 	const [activeUserNumber, setActiveUserNumber] =
 		useState<string>('918657485699');
-	const [whatsappChatSession, setWhatsappChatSession] = useState<any>([]);
+	const [whatsappChatSession, setWhatsappChatSession] =
+		useState<APIWhatsappChatSessionDataProps>({
+			IsIn24Window: false,
+			ExpiryTime: '',
+		});
 
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
 		e.preventDefault();
@@ -170,46 +187,45 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		Sendernumber: string,
 		ClientNumber: string
 	) => {
-		const whatsAppChatConversationStatusData: any = await dispatch<any>(
-			manageWhatsappChatCoversationStatus({
-				ClientNumber,
-				Sendernumber,
-				StatusId,
-			})
-		);
-		console.log(whatsAppChatConversationStatusData);
-		// if (
-		// 	whatsAppChatConversationStatusData.payload.Status === apiStatus.SUCCESS
-		// ) {
-		// 	setAllWhatsappChat(whatsAppChatConversationStatusData.payload.Data.Items);
-		// } else {
-		// 	setAllWhatsappChat([]);
-		// }
+		const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusProps =
+			await dispatch<any>(
+				manageWhatsappChatCoversationStatus({
+					ClientNumber,
+					Sendernumber,
+					StatusId,
+				})
+			);
+		console.log('Conversation Status', whatsAppChatConversationStatusData);
 	};
 
 	const setAPIInboundChatStatus = async () => {
-		const whatsAppChatSessionStatus: any = await dispatch<any>(
-			getInboundWhatsappChatStatus({ activePhoneNumber, activeUserNumber })
-		);
-		console.log(whatsAppChatSessionStatus);
+		const whatsAppChatSessionStatus: APIWhatsappChatSessionProps =
+			await dispatch<any>(
+				getInboundWhatsappChatStatus({ activePhoneNumber, activeUserNumber })
+			);
 		if (whatsAppChatSessionStatus.payload.Status === apiStatus.SUCCESS) {
 			setWhatsappChatSession(whatsAppChatSessionStatus.payload.Data);
 		} else {
-			setWhatsappChatSession([]);
+			setWhatsappChatSession({
+				IsIn24Window: false,
+				ExpiryTime: '',
+			});
 		}
 	};
 
 	const setAPIWhatsAppChatContacts = async (activeUser: string) => {
+		setIsLoader(true);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsProps =
 			await dispatch<any>(getWhatsappChatContactsByPhoneNumber(activeUser));
-		console.log(whatsAppChatContactsData);
 
 		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
 			setSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
 			setFilteredSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
+			setIsLoader(false);
 		} else {
 			setSideChatContacts([]);
 			setFilteredSideChatContacts([]);
+			setIsLoader(false);
 		}
 	};
 
@@ -437,10 +453,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
-	const handleChatId = (e: BaseSyntheticEvent, contacts: any) => {
+	const handleChatId = (
+		e: BaseSyntheticEvent,
+		contacts: APIWhatsappChatSidebarContactsItemsProps
+	) => {
 		e.preventDefault();
 		setChatContacts(contacts);
-		console.log('Chat Id', filteredSideChatContacts);
 	};
 
 	return (
@@ -505,11 +523,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					}
 					dynamicVariable={updatedDynamicVariable}
 				/>
+				<Loader isOpen={isLoader} showBackdrop={true} />
 			</DefaultScreen>
 		</>
 	);
 };
 
 export default WhatsappChat;
-
-// const ChatMemo = React.memo(ChatUi);
