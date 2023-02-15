@@ -62,6 +62,7 @@ import {
 } from '../Editor/Types/WhatsappCreator.types';
 import { useNavigate, useParams } from 'react-router-dom';
 import AlertModal from '../Editor/Popups/AlertModal';
+import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 
 const SendCampaign = ({
 	classes,
@@ -101,6 +102,9 @@ const SendCampaign = ({
 	const [daysBeforeAfter, setdaysBeforeAfter] = useState<string>('');
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
+	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState<boolean>(false);
+	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
+		useState<boolean>(false);
 	const [newGroupName, setNewGroupName] = useState<string>('');
 
 	const [activeTab, setActiveTab] = useState<'group' | 'manual'>(tabs.GROUP);
@@ -180,7 +184,7 @@ const SendCampaign = ({
 		SpecialSettings: campaignSettingsPayloadData['SpecialSettings']
 	) => {
 		if (SendTypeID === 2 && FutureDateTime) {
-			setsendTime(moment(FutureDateTime));
+			handleSendDate(moment(FutureDateTime));
 		} else if (SendTypeID === 3 && SpecialSettings) {
 			setdaysBeforeAfter(SpecialSettings?.Day?.toString() || '');
 			setsendTime(moment(SpecialSettings?.SendHour));
@@ -203,7 +207,12 @@ const SendCampaign = ({
 			let apiFilterGroups = campaignSettings?.Data?.SendExeptional?.Groups;
 			let apiFilterCampaigns =
 				campaignSettings?.Data?.SendExeptional?.Campaigns;
-			setSendType(campaignSettings?.Data?.SendTypeID?.toString());
+			let SendTypeID = campaignSettings?.Data?.SendTypeID;
+			if (SendTypeID === 1 || SendTypeID === 2 || SendTypeID === 3) {
+				setSendType(campaignSettings?.Data?.SendTypeID?.toString());
+			} else {
+				setSendType('1');
+			}
 			setSendSetting(
 				campaignSettings?.Data?.SendTypeID,
 				campaignSettings?.Data?.FutureDateTime,
@@ -296,52 +305,56 @@ const SendCampaign = ({
 		showMessage: boolean = true,
 		ApiSelectedGroups: testGroupDataProps[] = selectedGroups
 	) => {
-		let saveCampaignSettingsPayload: ApiSaveCampaignSettingsData = {
-			WACampaignID: Number(campaignID),
-			SendTypeID: Number(sendType),
-			Groups: ApiSelectedGroups?.map((group) => group.GroupID),
-			SendExeptional: {
-				IsExceptionalGroups: selectedFilterGroups?.length > 0 ? true : false,
-				Groups: selectedFilterGroups?.map((group) => group.GroupID),
-				IsExceptionSmsCampaigns:
-					selectedFilterCampaigns?.length > 0 ? true : false,
-				Campaigns: selectedFilterCampaigns?.map(
-					(campaign) => campaign.WACampaignID
-				),
-				ExceptionalDays: exceptionalDaysToggle ? Number(exceptionalDays) : 0,
-			},
-		};
-		if (sendType === '2') {
-			saveCampaignSettingsPayload['FutureDateTime'] = `${moment(
-				sendDate
-			).format('YYYY-MM-DD hh:mm:ss')}`;
-		}
-		if (sendType === '3') {
-			saveCampaignSettingsPayload['specialsettings'] = {
-				datefieldid: Number(spectialDateFieldID),
-				day: Number(daysBeforeAfter),
-				intervaltypeid: isSpecialDateBefore ? -1 : 1,
-				sendhour: moment(sendTime).format('YYYY-MM-DD hh:mm'),
+		if (validateSendSetting()) {
+			let saveCampaignSettingsPayload: ApiSaveCampaignSettingsData = {
+				WACampaignID: Number(campaignID),
+				SendTypeID: Number(sendType),
+				Groups: ApiSelectedGroups?.map((group) => group.GroupID),
+				SendExeptional: {
+					IsExceptionalGroups: selectedFilterGroups?.length > 0 ? true : false,
+					Groups: selectedFilterGroups?.map((group) => group.GroupID),
+					IsExceptionSmsCampaigns:
+						selectedFilterCampaigns?.length > 0 ? true : false,
+					Campaigns: selectedFilterCampaigns?.map(
+						(campaign) => campaign.WACampaignID
+					),
+					ExceptionalDays: exceptionalDaysToggle ? Number(exceptionalDays) : 0,
+				},
 			};
-		}
-		const { payload: saveCampaignSettingData }: ApiSaveCampaignSettings =
-			await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));
-		if (showMessage) {
-			if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
-				setToastMessage(ToastMessages.CAMPAIGN_SAVE_SUCCESS);
-			} else {
-				saveCampaignSettingData?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: saveCampaignSettingData?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
+			if (sendType === '2') {
+				saveCampaignSettingsPayload['FutureDateTime'] = `${moment(
+					sendDate
+				).format('YYYY-MM-DD hh:mm:ss')}`;
+			}
+			if (sendType === '3') {
+				saveCampaignSettingsPayload['specialsettings'] = {
+					datefieldid: Number(spectialDateFieldID),
+					day: Number(daysBeforeAfter),
+					intervaltypeid: isSpecialDateBefore ? -1 : 1,
+					sendhour: moment(sendTime).format('YYYY-MM-DD hh:mm'),
+				};
+			}
+			const { payload: saveCampaignSettingData }: ApiSaveCampaignSettings =
+				await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));
+			if (showMessage) {
+				if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
+					setToastMessage(ToastMessages.CAMPAIGN_SAVE_SUCCESS);
+				} else {
+					saveCampaignSettingData?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: saveCampaignSettingData?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+				}
 			}
 		}
 	};
 
 	const onCampaignSend = async () => {
-		setIsSummaryModal(true);
+		if (validateSendSetting()) {
+			setIsSummaryModal(true);
+		}
 	};
 
 	const onDeleteClick = () => {
@@ -375,7 +388,7 @@ const SendCampaign = ({
 				onDeleteClick();
 				break;
 			case buttons.EXIT:
-				console.log(buttons.EXIT);
+				setIsExitCampaignOpen(true);
 				break;
 			case buttons.SAVE:
 				onCampaignSave();
@@ -525,21 +538,72 @@ const SendCampaign = ({
 			}
 		}
 	};
+	const validateSendSetting = () => {
+		if (sendType === '1' || sendType === '2' || sendType === '3') {
+			if (sendType === '1') {
+				return true;
+			}
+			if (sendType === '2') {
+				if (sendDate) {
+					return true;
+				} else {
+					setGroupSendValidationErrors(['Date and Time - required field']);
+					setIsValidationAlert(true);
+					return false;
+				}
+			}
+			if (sendType === '3') {
+				let errors: string[] = [];
+				let isValidated: boolean = true;
+				if (sendTime) {
+					errors?.push('Time - required field');
+					isValidated = false;
+				}
+				if (daysBeforeAfter === '') {
+					errors?.push('Days - required field');
+					isValidated = false;
+				}
+				if (spectialDateFieldID === '0') {
+					errors?.push('Special Day - required field');
+					isValidated = false;
+				}
+				if (!isValidated) {
+					setGroupSendValidationErrors(errors);
+					setIsValidationAlert(true);
+				}
+				return isValidated;
+			}
+		} else {
+			setGroupSendValidationErrors([
+				'When would you like to send? - required field',
+			]);
+			setIsValidationAlert(true);
+			return false;
+		}
+	};
 
 	const onSummarySend = async () => {
 		setIsLoader(true);
 		if (campaignID) {
-			const { Status, Message }: ApiSendCampaign = await dispatch<any>(
-				sendCampaign({ WACampaignID: Number(campaignID) })
-			);
+			const { payload: sendCampaignData }: ApiSendCampaign =
+				await dispatch<any>(sendCampaign({ WACampaignID: Number(campaignID) }));
 			setIsLoader(false);
-			if (Status === apiStatus.SUCCESS) {
+			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
+				setIsSummaryModal(false);
+				setIsSendCampaignSuccessOpen(true);
 			} else {
-				Message
-					? setToastMessage({ ...ToastMessages.ERROR, message: Message })
+				sendCampaignData?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: sendCampaignData?.Message,
+					  })
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
+	};
+
+	const onExitCampaign = () => {
+		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 	};
 
 	return (
@@ -622,6 +686,14 @@ const SendCampaign = ({
 					onConfirmOrYes={onSummarySend}
 					selectedGroups={selectedGroups}
 					selectedFilterGroups={selectedFilterGroups}
+					selectedFilterCampaigns={selectedFilterCampaigns}
+					sendType={sendType}
+					sendDate={sendDate}
+					sendTime={sendTime}
+					isSpecialDateBefore={isSpecialDateBefore}
+					daysBeforeAfter={daysBeforeAfter}
+					specialDatedropDown={specialDatedropDown}
+					spectialDateFieldID={spectialDateFieldID}
 				/>
 				<ValidationAlert
 					classes={classes}
@@ -638,6 +710,22 @@ const SendCampaign = ({
 					subtitle={translator('whatsapp.alertModal.DeleteTitle')}
 					type='delete'
 					onConfirmOrYes={() => onDeleteCampaign()}
+				/>
+				<AlertModal
+					classes={classes}
+					isOpen={isExitCampaignOpen}
+					onClose={() => setIsExitCampaignOpen(false)}
+					title={translator('whatsappManagement.LeaveCampaignCreation')}
+					subtitle={translator('whatsappManagement.LeaveCampaignCreationDesc')}
+					type='delete'
+					onConfirmOrYes={() => onExitCampaign()}
+				/>
+				<SendCampaignSuccess
+					classes={classes}
+					isOpen={isSendCampaignSuccessOpen}
+					onBackToHome={() => navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)}
+					onBackToCampaigns={() => navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)}
+					onClose={() => setIsSendCampaignSuccessOpen(false)}
 				/>
 				{renderToast()}
 				<Loader isOpen={isLoader} showBackdrop={true} />

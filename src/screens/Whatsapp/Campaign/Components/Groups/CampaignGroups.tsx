@@ -40,7 +40,6 @@ const CampaignGroups = ({
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	console.log('selectedFilterCampaigns::', selectedList);
 	const { t: translator } = useTranslation();
 	const [groupNameSearch, setGroupNameSearch] = useState<string>('');
 

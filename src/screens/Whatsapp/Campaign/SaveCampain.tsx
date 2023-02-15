@@ -81,7 +81,12 @@ import {
 	getTestGroups,
 } from '../../../redux/reducers/smsSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import { apiStatus, resetToastData, whatsappRoutes } from '../Constant';
+import {
+	apiStatus,
+	buttons,
+	resetToastData,
+	whatsappRoutes,
+} from '../Constant';
 import AlertModal from '../Editor/Popups/AlertModal';
 import { useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
@@ -159,6 +164,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
+	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
@@ -600,31 +606,42 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onOkTestSending = async (isSingle: boolean = false) => {
-		if (validateSaveCampaign()) {
-			const { payload: quickSendData }: ApiQuickSend = await dispatch<any>(
-				quickSend({
-					WACampaignID: Number(campaignID) || 0,
-					TestGroupsIds: isSingle
-						? Number(testSendOneContact)
-						: selectedTestGroup?.map((group) => group?.GroupID),
-				})
-			);
-			if (quickSendData?.Status === apiStatus.SUCCESS) {
-				setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
-				setSelectedTestGroup([]);
+		let campaignIdForTestSend: number | null = Number(campaignID);
+		if (!campaignID) {
+			const saveCampaign = await onSaveCampaign(false);
+			campaignIdForTestSend = saveCampaign?.WACampaignId || null;
+		}
+		if (campaignIdForTestSend) {
+			if (validateSaveCampaign()) {
+				const { payload: quickSendData }: ApiQuickSend = await dispatch<any>(
+					quickSend({
+						WACampaignID: campaignIdForTestSend || 0,
+						TestGroupsIds: isSingle
+							? Number(testSendOneContact)
+							: selectedTestGroup?.map((group) => group?.GroupID),
+					})
+				);
+				if (quickSendData?.Status === apiStatus.SUCCESS) {
+					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
+					setSelectedTestGroup([]);
+					if (!campaignID) {
+						navigate(
+							`/react/whatsapp/campaign/edit/page1/${campaignIdForTestSend}`
+						);
+					}
+				} else {
+					quickSendData?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: quickSendData?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+				}
+				setIsTestGroupModal(false);
 			} else {
-				quickSendData?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: quickSendData?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
+				setIsTestGroupModal(false);
+				setIsValidationAlert(true);
 			}
-			console.log(quickSendData);
-			setIsTestGroupModal(false);
-		} else {
-			setIsTestGroupModal(false);
-			setIsValidationAlert(true);
 		}
 	};
 
@@ -654,19 +671,24 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		return payload;
 	};
 
-	const onSaveCampaign = async () => {
+	const onSaveCampaign = async (showSuccess: boolean = true) => {
 		if (validateSaveCampaign()) {
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
 
 			if (data.Status === apiStatus.SUCCESS) {
-				setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
+				if (showSuccess) {
+					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
+				}
+				return data?.Data;
 			} else {
 				data?.Message
 					? setToastMessage({ ...ToastMessages.ERROR, message: data?.Message })
 					: setToastMessage(ToastMessages.ERROR);
+				return null;
 			}
 		} else {
 			setIsValidationAlert(true);
+			return null;
 		}
 	};
 
@@ -691,16 +713,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
-			case 'Save':
+			case buttons.SAVE:
 				onSaveCampaign();
 				break;
-			case 'Delete':
+			case buttons.DELETE:
 				onDeleteClick();
+				break;
+			case buttons.EXIT:
+				setIsExitCampaignOpen(true);
 				break;
 
 			default:
 				break;
 		}
+	};
+	const onExitCampaign = () => {
+		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 	};
 
 	return (
@@ -1097,6 +1125,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
 				type='delete'
 				onConfirmOrYes={() => onDeleteCampaign()}
+			/>
+			<AlertModal
+				classes={classes}
+				isOpen={isExitCampaignOpen}
+				onClose={() => setIsExitCampaignOpen(false)}
+				title={translator('whatsappManagement.LeaveCampaignCreation')}
+				subtitle={translator('whatsappManagement.LeaveCampaignCreationDesc')}
+				type='delete'
+				onConfirmOrYes={() => onExitCampaign()}
 			/>
 		</DefaultScreen>
 	);

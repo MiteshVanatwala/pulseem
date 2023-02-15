@@ -113,7 +113,7 @@ const LeftPane = ({
 				<UploadXL
 					classes={classes}
 					areaStyle={{
-						height: 493,
+						height: 422,
 					}}
 					onDone={(
 						groupName: string,

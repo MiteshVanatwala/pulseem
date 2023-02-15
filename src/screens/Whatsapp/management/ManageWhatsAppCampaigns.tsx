@@ -698,7 +698,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 
 	const onRestoreDeleted = async () => {
 		setIsPreviewCampaignOpen(false);
-		console.log('onRestoreDeleted');
 	};
 
 	const onSearch = async () => {
@@ -715,12 +714,12 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const campaignData: campaignListAPIProps = await dispatch<any>(
 			getAllCampaigns()
 		);
-		if (campaignData.payload.Status === 'Success') {
+		if (campaignData.payload.Status === apiStatus.SUCCESS) {
 			const filteredCampaignData = campaignData.payload?.Data?.Items?.filter(
-				(campaign) => !campaign?.IsDeleted && campaign?.Status !== 5
+				(campaign) => !campaign?.IsDeleted
 			);
 			const deletedCampaignData = campaignData.payload?.Data?.Items?.filter(
-				(campaign) => campaign?.IsDeleted && campaign?.Status === 5
+				(campaign) => campaign?.IsDeleted
 			);
 			setCampaignListData(filteredCampaignData);
 			setTableData(filteredCampaignData);

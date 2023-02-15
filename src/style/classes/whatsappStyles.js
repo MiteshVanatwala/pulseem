@@ -1309,13 +1309,19 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		justifyContent: 'space-between',
 	},
 	campaignSummaryTextTitle: {
+		fontFamily: 'Assistant',
+		fontWeight: '600',
 		color: '#1771ad',
 		fontSize: '20px',
 		marginBottom: '7px',
 	},
 	campaignSummaryTextDesc: {
+		fontFamily: 'OpenSansHebrew-Bold',
 		fontSize: '1rem',
 		fontWeight: 700,
+		padding: '0px 43px 0px 0px',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis'
 	},
 	campaignSummaryTextDetail: {
 		'& a': {
@@ -1338,6 +1344,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	campaignSummaryImportantText: {
 		textAlign: 'center',
 		color: '#DC3D1B',
+		fontSize: '16px',
 		'& span': {
 			'& a': {
 				color: '#0371ad',
@@ -2608,14 +2615,53 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 	},
-	summaryModalAccordionWrapper: {
-		
-	},
+	summaryModalAccordionWrapper: {},
 	summaryModalAccordionDetails: {
 		listStyle: 'circle',
 		paddingLeft: '16px',
 		'& li': {
 			padding: '2px 0px 2px 2px',
 		},
+	},
+	summaryModalAccordionUl: {
+		color: '#0371ad',
+		fontFamily: 'OpenSansHebrew-Bold',
+		fontSize: '16px',
+		listStyle: 'disc',
+		paddingLeft: '22px',
+	},
+	summaryModalAccordionLi: {
+		padding: '0px 6px 0px 6px',
+	},
+	summaryModalAccordionUlImage: {
+		width: '17px',
+	},
+	summaryModalAccordionLiContentTitle: {
+		padding: '10px 8px 8px 0px',
+	},
+	summaryModalAccordionLiContent: {
+		fontFamily: 'Assistant',
+		fontSize: '15px',
+		color: '#000000de',
+		fontWeight: '600',
+		display: 'flex',
+		padding: '8px 0px 8px 0px',
+		borderTop: '1px solid rgba(0,0,0,0.1)',
+	},
+	summaryModalContent: {
+		maxHeight: '528px',
+		padding: '8px 4px 0px 4px',
+		color: '#525252',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+		overflowY: 'auto',
+	},
+	summaryModalAccordionGroupFilter: {
+		padding: '14px 0px 14px 0px',
+		borderTop: '1px solid rgba(0,0,0,0.1)',
+	},
+	summaryModalAccordionCampaignFilter: {
+		padding: '14px 0px 14px 0px',
+		borderTop: '1px solid rgba(0,0,0,0.1)',
 	},
 });

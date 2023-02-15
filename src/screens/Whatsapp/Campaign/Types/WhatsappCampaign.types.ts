@@ -31,9 +31,7 @@ export type dynamicModalProps = {
 	classes: ClassesType['classes'];
 	isDynamcFieldModal: boolean;
 	onDynamcFieldModalClose: () => void;
-	onDynamcFieldModalSave: (
-		updatedDynamicVariable: updatedVariable[]
-	) => void;
+	onDynamcFieldModalSave: (updatedDynamicVariable: updatedVariable[]) => void;
 	personalFields: personalFieldDataProps;
 	dynamicModalVariable: number;
 	landingPageData: landingPageDataProps[];
@@ -59,6 +57,14 @@ export type validationAlertModalProps = {
 	onClose: () => void;
 	title: string;
 	requiredFields: string[];
+};
+
+export type SendCampaignSuccessModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onBackToHome: () => void;
+	onBackToCampaigns: () => void;
+	onClose: () => void;
 };
 
 export type infoModalProps = {
@@ -212,6 +218,14 @@ export type SummaryModalProps = {
 	onConfirmOrYes: () => void;
 	selectedGroups: testGroupDataProps[];
 	selectedFilterGroups: testGroupDataProps[];
+	selectedFilterCampaigns: selectedFilterCampaignsProps[];
+	sendType: string;
+	sendDate: MaterialUiPickersDate | null;
+	sendTime: MaterialUiPickersDate | null;
+	isSpecialDateBefore: boolean;
+	daysBeforeAfter: string;
+	specialDatedropDown: string[];
+	spectialDateFieldID: string;
 };
 
 export type tagDataProps = {
@@ -506,7 +520,7 @@ export type ApiSaveCampaignSettings = {
 	payload: ApiSaveCampaignSettingsPayload;
 };
 
-export type ApiCreateGroupPayload= {
+export type ApiCreateGroupPayload = {
 	GroupName: string;
 	IsTestGroup: boolean;
 };
@@ -640,9 +654,13 @@ export type ApiGetCampaignSummary = {
 	payload: ApiGetCampaignSummaryPayload;
 };
 
-export type ApiSendCampaign = {
+export type ApiSendCampaignPayload = {
 	Message: string;
 	Status: string;
+};
+
+export type ApiSendCampaign = {
+	payload: ApiSendCampaignPayload;
 };
 
 export type ApiQuickSendPayload = {

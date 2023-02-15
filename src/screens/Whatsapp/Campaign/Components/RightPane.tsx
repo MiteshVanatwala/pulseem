@@ -39,17 +39,11 @@ const RightPane = ({
 	specialDatedropDown,
 }: ClassesType & RightPaneProps) => {
 	const { t: translator } = useTranslation();
-	const [isDatePickerOpen, setIsDatePickerOpen] = useState<boolean>(false);
-	const [isTimePickerOpen, setIsTimePickerOpen] = useState<boolean>(false);
 
 	const { windowSize, isRTL, language } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	moment.locale(language);
-	const direction: any = {
-		true: 'rtl',
-		false: 'ltr',
-	};
 
 	return (
 		<div>
@@ -135,7 +129,7 @@ const RightPane = ({
 								onTimeChange={handleTimePicker}
 								placeholder={translator('notifications.hour')}
 								isTimePicker={true}
-								ampm={false}
+								ampm={true}
 								timeActive={sendType === '2' ? false : true}
 								timePickerOpen={timePickerOpen}
 								onChange={undefined}
@@ -299,7 +293,7 @@ const RightPane = ({
 									ok: translator('common.confirm'),
 									cancel: translator('common.cancel'),
 								}}
-								ampm={false}
+								ampm={true}
 								timePickerOpen={timePickerOpen}
 								timeActive={sendType === '3' ? false : true}
 								disabled={sendType === '3' ? false : true}
