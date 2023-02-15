@@ -32,9 +32,7 @@ import {
 	commonAPIResponseProps,
 	coreProps,
 	deleteTemplateAPIProps,
-	getTemplateByIdAPIProps,
 	quickReplyButtonProps,
-	savedTemplateAPIProps,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -59,7 +57,6 @@ import {
 	deleteTemplate,
 	duplicateTemplate,
 	getAllTemplates,
-	getSavedTemplatesById,
 	getSavedTemplatesPreviewById,
 	submitTemplateDirect,
 } from '../../../redux/reducers/whatsappSlice';
@@ -378,24 +375,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		)?.TemplateId;
 	};
 
-	const onPreview = async (templateId: string) => {
-		const templateData: getTemplateByIdAPIProps = await dispatch<any>(
-			getSavedTemplatesById(templateId)
+	const onPreview = async (id: string) => {
+		const templateData = templateListData?.find(
+			(template) => template?.Id === Number(id)
 		);
-		if (templateData.payload.Status === apiStatus.SUCCESS) {
-			const templates = templateData.payload?.Data;
-			if (templates) {
-				const templateData = templates;
-				onSavedTemplateChange(templateData?.Data);
-			}
+		if (templateData) {
+			onSavedTemplateChange(templateData?.Data);
 			setIsPreviewTemplateOpen(true);
-		} else {
-			templateData?.payload?.Message
-				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: templateData?.payload?.Message,
-				  })
-				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 

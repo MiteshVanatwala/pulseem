@@ -36,7 +36,7 @@ export const getCommonFeatures = createAsyncThunk(
 			const response = await PulseemReactInstance.get(
 				`GetSubAccountWithFeatureAndSettings`
 			);
-			return JSON.parse(response.data);
+			return response.data;
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
 		}
@@ -640,7 +640,7 @@ export const smsSlice = createSlice({
       state.testGroups.length && state.testGroups.forEach((c) => c.IsTestGroup = true);
     })
     builder.addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-      state.commonSettings = payload
+      state.commonSettings = payload?.Data
     })
     builder.addCase(getFinishedCampaigns.fulfilled, (state, { payload }) => {
       state.finishedCampaigns = payload
