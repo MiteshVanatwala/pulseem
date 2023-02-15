@@ -509,6 +509,8 @@ const UploadXL = ({
 
             setFileToUpload(null);
             setTimeout(() => {
+                setgroupNameInput("");
+                settotalRecords(0);
                 setLoader(false);
             }, 1000);
         }
@@ -603,7 +605,7 @@ const UploadXL = ({
                             <Typography className={classes.bodyInfo}>i</Typography>
                         </Tooltip>
                     </Box>
-                    <Box style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
+                    <Box style={{ minHeight: "200px", maxWidth: "700px", overflowX: "scroll" }} key="columnAdjustment">
                         <table
                             style={{
                                 borderCollapse: "collapse",
