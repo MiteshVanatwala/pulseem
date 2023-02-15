@@ -27,8 +27,8 @@
 	"pending": "Pending",
 	"received": "Received",
 	"rejected": "Rejected",
-	"finished": "Finished",
-	"sending": "Sent",
+	"finished": "Sent",
+	"sending": "Sending",
 	"canceled": "Canceled",
 	"CreatedOnlyforPulseem": "Created Only for Pulseem"
 }

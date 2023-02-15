@@ -500,6 +500,9 @@ export type ApiSaveCampaignSettingsData = {
 		ExceptionalDays?: number;
 	};
 	RandomSettings?: {
+		/**
+		 * RandomAmount is a user number to whom you want to send a message
+		 **/
 		RandomAmount?: number;
 	};
 	specialsettings?: {

@@ -1319,9 +1319,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew-Bold',
 		fontSize: '1rem',
 		fontWeight: 700,
-		padding: '0px 43px 0px 0px',
+		padding: isRTL ? '0px 0px 0px 24px' : '0px 43px 0px 0px',
 		overflow: 'hidden',
-		textOverflow: 'ellipsis'
+		textOverflow: 'ellipsis',
 	},
 	campaignSummaryTextDetail: {
 		'& a': {

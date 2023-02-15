@@ -334,11 +334,14 @@ const SummaryModal = ({
 										<>{translator('whatsappCampaign.when')}</>
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
-										{sendType === '1' && <>Send Now</>}
-										{sendType === '2' && moment(sendDate)?.format('LLLL')}
+										{sendType === '1' && <>{translator("sms.SendNow")}</>}
+										{sendType === '2' &&
+											moment(sendDate)?.format('dddd , MMMM Do YYYY, h:mm a')}
 										{sendType === '3' &&
-											`${daysBeforeAfter} Days ${
-												isSpecialDateBefore ? 'Before' : 'After'
+											`${daysBeforeAfter} ${translator('mainReport.days')} ${
+												isSpecialDateBefore
+													? translator('mainReport.before')
+													: translator('mainReport.after')
 											} ${getSpecialDay()} day at ${moment(sendTime)?.format(
 												'hh:mm a'
 											)}`}

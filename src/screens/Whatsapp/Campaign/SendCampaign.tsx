@@ -476,6 +476,7 @@ const SendCampaign = ({
 		if (createGroupData?.StatusCode === 201 && createGroupData?.Message) {
 			if (uploadedAsFile) {
 				// If data is more than 5000 rows we will upload as single file
+				// To upload data method will be **addRecipients**
 				uploadClientData = await dispatch<any>(
 					addRecipients({
 						...uploadData,
@@ -484,6 +485,7 @@ const SendCampaign = ({
 				);
 			} else {
 				// If data is less than 5000 rows we will upload data in format of JSON
+				// To upload data method will be **addRecipient**
 				uploadClientData = await dispatch<any>(
 					addRecipient({
 						...uploadData,
@@ -552,10 +554,11 @@ const SendCampaign = ({
 					return false;
 				}
 			}
+			console.log('sendTime::', sendTime);
 			if (sendType === '3') {
 				let errors: string[] = [];
 				let isValidated: boolean = true;
-				if (sendTime) {
+				if (!sendTime) {
 					errors?.push('Time - required field');
 					isValidated = false;
 				}
