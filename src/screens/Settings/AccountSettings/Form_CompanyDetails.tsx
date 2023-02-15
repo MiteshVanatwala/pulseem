@@ -131,8 +131,6 @@ const FORM_COMPANY_DETAILS = ({
 
   useEffect(() => {
     setCompanyDetails(Settings);
-    if (Settings)
-      handleQueryString2FA();
   }, [Settings]);
 
   useEffect(() => {
@@ -172,7 +170,7 @@ const FORM_COMPANY_DETAILS = ({
     if (name === "TwoFactorAuth") {
       const req = {
         ...companyDetails,
-        TwoFactorAuthEnabled: !!!companyDetails?.TwoFactorAuthEnabled,
+        TwoFactorAuthEnabled: true,
       };
       on2FAUpdate({ ...req } as AccountSettings);
 
@@ -429,7 +427,6 @@ const FORM_COMPANY_DETAILS = ({
                   style={{
                     height: 40
                   }}
-                  disabled={!companyDetails?.TwoFactorAuthEnabled}
                   autoWidth
                   value={companyDetails?.TwoFactorAuthOptionID ?? 202}
                   name="TwoFactorAuthOptionID"
