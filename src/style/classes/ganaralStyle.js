@@ -1873,6 +1873,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
 
   settingsContainer: {
+    height: '100%',
     marginBottom: 68,
     background: '#fff',
     marginTop: 30,
@@ -1885,6 +1886,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         fontSize: 20
       }
     },
+    '& .link': {
+      fontSize: 15,
+      color: '#FF0054',
+      padding: '2px 0',
+      marginTop: 28,
+      marginLeft: 0
+    },
     '& .containerBody': {
       position: 'relative',
       paddingBottom: 48,
@@ -1892,7 +1900,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,
       border: "2px solid #F0F5FF",
-
       '& .settingsWrapper': {
         paddingLeft: 31,
         '& .mgmtTitle': {

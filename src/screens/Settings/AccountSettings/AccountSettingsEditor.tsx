@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box } from "@material-ui/core";
+import { Box, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Title } from "../../../components/managment/Title";
 import DefaultScreen from "../../DefaultScreen";
@@ -14,18 +14,25 @@ import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { Loader } from "../../../components/Loader/Loader";
 import { logout } from "../../../helpers/Api/PulseemReactAPI";
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import {
+  MdArrowBackIos,
+  MdArrowForwardIos,
+  MdMobileFriendly,
+  MdOutlineMarkEmailRead,
+} from "react-icons/md";
 
 const AccountSettingsEditor = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { classes } = useCore();
+  const { isRTL } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
   const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
   const [verificationStep, setVerificationStep] = useState(0);
-    const [settingRequest, setSettingRequest] = useState<AccountSettings | null>({
+  const [settingRequest, setSettingRequest] = useState<AccountSettings | null>({
     SubAccountId: -1,
     LoginUserName: '',
     AccountID: -1,
@@ -170,8 +177,52 @@ const AccountSettingsEditor = () => {
     >
       {toastMessage && renderToast()}
       <Box className={clsx(classes.settingsContainer)}>
-        <Box className="head">
+        <Box className={clsx("head", classes.flexSpaceBetween)}>
           <Title Text={t("settings.accountSettings.title")} classes={classes} />
+          <Box style={{ marginInlineStart: 'auto' }}>
+            <Button
+              className={clsx(
+                classes.btn,
+                classes.btnNohover,
+                classes.noBorder,
+                classes.link,
+                classes.textCapitalize,
+                "link"
+              )}
+              onClick={() =>
+                SetVerification('cellphone')
+              }
+              startIcon={<MdMobileFriendly />}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            >
+              <>
+                {t(
+                  "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                )}
+              </>
+            </Button>
+            <Button
+              className={clsx(
+                classes.btn,
+                classes.btnNohover,
+                classes.noBorder,
+                classes.link,
+                classes.textCapitalize,
+                "link"
+              )}
+              onClick={() =>
+                SetVerification('email')
+              }
+              startIcon={<MdOutlineMarkEmailRead />}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            >
+              <>
+                {t(
+                  "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                )}
+              </>
+            </Button>
+          </Box>
         </Box>
         <Box className={"containerBody"}>
           <FORM_COMPANY_DETAILS
@@ -179,7 +230,6 @@ const AccountSettingsEditor = () => {
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
             OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
-            SetVerification={handleVerification}
           />
           <FORM_ACCOUNT_DETAILS
             setToastMessage={setToastMessage}
