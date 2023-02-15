@@ -28,10 +28,10 @@ export const coreSlice = createSlice({
       state.isClal = action.payload;
     },
     setAccountFeatures: (state, action) => {
-      const data = action.payload;
+      const data = action.payload?.Data;
       state.accountSettings = data;
-      state.accountFeatures = data.Account.AccountFeatures.map(String);
-      setCookie("accountSettings", action.payload)
+      state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
+      setCookie("accountSettings", data)
       setCookie("accountFeatures", data.Account.AccountFeatures.map(String));
     },
     setLanguage: (state, action) => {
