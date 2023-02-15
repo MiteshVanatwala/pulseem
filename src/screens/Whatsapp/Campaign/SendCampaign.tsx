@@ -232,7 +232,7 @@ const SendCampaign = ({
 			setTimeout(() => {
 				setToastMessage('');
 			}, 4000);
-			return <Toast data={toastMessage} onClose='' />;
+			return <Toast data={toastMessage} />;
 		}
 		return null;
 	};

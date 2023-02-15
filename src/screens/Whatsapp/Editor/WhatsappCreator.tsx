@@ -221,7 +221,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			setTimeout(() => {
 				resetToast();
 			}, 4000);
-			return <Toast data={toastMessage} onClose={undefined} />;
+			return <Toast data={toastMessage} />;
 		}
 		return null;
 	};
