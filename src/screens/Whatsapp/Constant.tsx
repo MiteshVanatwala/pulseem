@@ -1,3 +1,4 @@
+
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
 import {
 	campaignStatusProps,
@@ -347,7 +348,7 @@ export const statusesByName: statusByNameProps = {
 	Rejected: 'whatsappManagement.rejected',
 	Approved: 'whatsappManagement.approved',
 	Received: 'whatsappManagement.received',
-	CreatedOnlyforPulseem: 'whatsappManagement.CreatedOnlyforPulseem',
+	Created: 'common.Created',
 };
 
 export const campaignStatus: campaignStatusProps = {

@@ -40,7 +40,7 @@ import {
 	personalFieldAPIProps,
 	personalFieldDataProps,
 	phoneNumberAPIProps,
-	updatedVariableProps,
+	updatedVariable,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import DynamicModal from '../Campaign/Popups/DynamicModal';
 import {
@@ -89,7 +89,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	});
 	const [dynamicVariable, setDynamicVariable] = useState<string[]>([]);
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
-		updatedVariableProps[]
+		updatedVariable[]
 	>([]);
 	const initialQuickReplyButtons = [
 		{
@@ -431,7 +431,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	};
 	const onDynamcFieldModalSave = (
-		updatedDynamicVariable: updatedVariableProps[]
+		updatedDynamicVariable: updatedVariable[]
 	) => {
 		setUpdatedDynamicVariable(updatedDynamicVariable);
 		setIsDynamcFieldModal(false);

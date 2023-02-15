@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { Grid, Tooltip } from '@material-ui/core';
 import { ClassesType } from '../../../Classes.types';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { LeftPaneProps, smsProps } from '../Types/WhatsappCampaign.types';
-import ColumnAdjustmentModal from '../Popups/ColumnAdjustmentModal';
+import {
+	LeftPaneProps,
+	uploadData,
+} from '../Types/WhatsappCampaign.types';
 import AlertModal from '../../Editor/Popups/AlertModal';
 import FilterRecipientsDialog from '../Popups/FilterRecipientsDialog';
-import ManualUpload from './ManualUpload';
 import GroupSelector from './GroupSelector';
 import { tabs } from '../../Constant';
+import UploadXL from '../../../../components/Files/UploadXL';
+import { UploadSettings } from '../../../Groups/tempConstants';
 
 const LeftPane = ({
 	classes,
@@ -31,32 +33,24 @@ const LeftPane = ({
 	onFilter,
 	isCreateNewGroup,
 	setIsCreateNewGroup,
+	onManualUpload,
+	exceptionalDaysToggle,
+	exceptionalDays,
+	setExceptionalDaysToggle,
+	setExceptionalDays,
 }: ClassesType & LeftPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
 	const [alertModalSubtitle, setAlertModalSubtitle] = useState<string>('');
-	const [highlighted, setHighlighted] = useState<boolean>(false);
-	const [areaData, setAreaData] = useState<string>('');
-	const [contacts, setContacts] = useState<number[]>([]);
-	const [totalRecords, setTotalRecords] = useState<number>(0);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [isFilterSelected, setIsFilterSelected] = useState<boolean>(false);
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
-	const [isColumnAdjustmentModal, setIsColumnAdjustmentModal] =
-		useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
-	const [typedData, setTypedData] = useState<string[][]>([
-		['Demo', 'Title', 'Name'],
-	]);
-	const [initialHeadState, setInitialHeadState] = useState<string[]>([
-		'Adjust Title',
-		'Adjust Title',
-		'Adjust Title',
-	]);
-	const [headers, setHeaders] = useState<string[]>(initialHeadState);
 
-	const handleCombined = () => {};
-
+	const onFilterSave = () => {
+		setIsFilterModal(false);
+		onFilter();
+	};
 	return (
 		<Grid
 			container
@@ -116,21 +110,23 @@ const LeftPane = ({
 				</Grid>
 			</Grid>
 			{activeTab === tabs.MANUAL && (
-				<ManualUpload
+				<UploadXL
 					classes={classes}
-					highlighted={highlighted}
-					areaData={areaData}
-					setHighlighted={setHighlighted}
-					setAreaData={setAreaData}
-					setContacts={setContacts}
-					setTypedData={setTypedData}
-					setTotalRecords={setTotalRecords}
-					totalRecords={totalRecords}
-					setInitialHeadState={setInitialHeadState}
-					setHeaders={setHeaders}
-					setIsColumnAdjustmentModal={setIsColumnAdjustmentModal}
-					setAlertModalSubtitle={setAlertModalSubtitle}
-					setIsAlert={setIsAlert}
+					areaStyle={{
+						height: 422,
+					}}
+					onDone={(
+						groupName: string,
+						res: uploadData,
+						uploadedAsFile: boolean
+					) => {
+						onManualUpload(groupName, res, uploadedAsFile);
+					}}
+					settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
+					setToastMessage={() => {}}
+					placeHolder={'recipient.addRecTextareaPlaceholder'}
+					tooltipText='recipient.bulkRecUpldTooltipText'
+					onlyMapping={true}
 				/>
 			)}
 			<Grid item md={12} xs={12}>
@@ -141,7 +137,11 @@ const LeftPane = ({
 						testGroupList={testGroupList}
 						allGroupList={allGroupList}
 						selectedGroups={selectedGroups}
-						isFilterSelected={isFilterSelected}
+						isFilterSelected={
+							selectedFilterGroups?.length > 0 ||
+							selectedFilterCampaigns?.length > 0 ||
+							(exceptionalDaysToggle && exceptionalDays?.length > 0)
+						}
 						isCreateNewGroup={isCreateNewGroup}
 						newGroupName={newGroupName}
 						allGroupsSelected={allGroupsSelected}
@@ -155,14 +155,6 @@ const LeftPane = ({
 					/>
 				)}
 			</Grid>
-			<ColumnAdjustmentModal
-				classes={classes}
-				isColumnAdjustmentModal={isColumnAdjustmentModal}
-				onColumnAdjustmentModalClose={() => setIsColumnAdjustmentModal(false)}
-				headers={headers}
-				setheaders={setHeaders}
-				typedData={typedData}
-			/>
 			<FilterRecipientsDialog
 				isFilterModal={isFilterModal}
 				onFilterModalClose={() => setIsFilterModal(false)}
@@ -173,7 +165,11 @@ const LeftPane = ({
 				setFilterCampaigns={setFilterCampaigns}
 				selectedFilterGroups={selectedFilterGroups}
 				setFilterGroups={setFilterGroups}
-				onConfirmOrYes={onFilter}
+				onConfirmOrYes={onFilterSave}
+				exceptionalDaysToggle={exceptionalDaysToggle}
+				exceptionalDays={exceptionalDays}
+				setExceptionalDaysToggle={setExceptionalDaysToggle}
+				setExceptionalDays={setExceptionalDays}
 			/>
 			<AlertModal
 				classes={classes}

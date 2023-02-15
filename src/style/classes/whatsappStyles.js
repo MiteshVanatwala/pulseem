@@ -1309,15 +1309,30 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		justifyContent: 'space-between',
 	},
 	campaignSummaryTextTitle: {
+		fontFamily: 'Assistant',
+		fontWeight: '600',
 		color: '#1771ad',
 		fontSize: '20px',
 		marginBottom: '7px',
 	},
 	campaignSummaryTextDesc: {
+		fontFamily: 'OpenSansHebrew-Bold',
 		fontSize: '1rem',
 		fontWeight: 700,
+		padding: isRTL ? '0px 0px 0px 24px' : '0px 43px 0px 0px',
+		overflow: 'hidden',
+		textOverflow: 'ellipsis',
 	},
-	campaignSummaryTextDetail: {},
+	campaignSummaryTextDetail: {
+		'& a': {
+			textDecoration: 'underline',
+			marginTop: '6px',
+			fontSize: '16px',
+			color: 'gray',
+			width: '50px',
+			cursor: 'pointer',
+		},
+	},
 	summaryModal: {
 		border: '2px solid #0371ad',
 		margin: '18px',
@@ -1329,6 +1344,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	campaignSummaryImportantText: {
 		textAlign: 'center',
 		color: '#DC3D1B',
+		fontSize: '16px',
+		'& span': {
+			'& a': {
+				color: '#0371ad',
+				fontWeight: 'bolder',
+				textDecoration: 'underline',
+			},
+		},
 	},
 
 	/* Management and report pages */
@@ -2474,6 +2497,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			whiteSpace: 'normal',
 		},
 	},
+	whatsappTemplateStatusCreated: {
+		color: '#0371AD',
+		fontWeight: 700,
+	},
 	whatsappTemplateStatusApproved: {
 		color: '#27AE60',
 		fontWeight: 700,
@@ -2597,5 +2624,69 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		wordWrap: 'break-word',
 		whiteSpace: 'pre-wrap',
 		width: 'calc(100% - 66px)',
+	},
+	summaryModalAccordion: {
+		color: '#1771ad',
+		fontFamily: 'OpenSansHebrew',
+		'& .MuiAccordionSummary-content': {
+			'& p': {
+				fontWeight: '500',
+				fontSize: '18px',
+			},
+		},
+		'& .MuiAccordionSummary-expandIcon': {
+			'& img': {
+				width: '24px',
+			},
+		},
+	},
+	summaryModalAccordionWrapper: {},
+	summaryModalAccordionDetails: {
+		listStyle: 'circle',
+		paddingLeft: '16px',
+		'& li': {
+			padding: '2px 0px 2px 2px',
+		},
+	},
+	summaryModalAccordionUl: {
+		color: '#0371ad',
+		fontFamily: 'OpenSansHebrew-Bold',
+		fontSize: '16px',
+		listStyle: 'disc',
+		paddingLeft: '22px',
+	},
+	summaryModalAccordionLi: {
+		padding: '0px 6px 0px 6px',
+	},
+	summaryModalAccordionUlImage: {
+		width: '17px',
+	},
+	summaryModalAccordionLiContentTitle: {
+		padding: '10px 8px 8px 0px',
+	},
+	summaryModalAccordionLiContent: {
+		fontFamily: 'Assistant',
+		fontSize: '15px',
+		color: '#000000de',
+		fontWeight: '600',
+		display: 'flex',
+		padding: '8px 0px 8px 0px',
+		borderTop: '1px solid rgba(0,0,0,0.1)',
+	},
+	summaryModalContent: {
+		maxHeight: '528px',
+		padding: '8px 4px 0px 4px',
+		color: '#525252',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+		overflowY: 'auto',
+	},
+	summaryModalAccordionGroupFilter: {
+		padding: '14px 0px 14px 0px',
+		borderTop: '1px solid rgba(0,0,0,0.1)',
+	},
+	summaryModalAccordionCampaignFilter: {
+		padding: '14px 0px 14px 0px',
+		borderTop: '1px solid rgba(0,0,0,0.1)',
 	},
 });

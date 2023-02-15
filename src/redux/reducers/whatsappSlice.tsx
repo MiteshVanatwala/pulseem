@@ -7,17 +7,24 @@ import {
 	TextMedia,
 	TextMediaAndButton,
 } from '../../screens/Whatsapp/Editor/Types/JSON.types';
-import { saveCampaignDataProps } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import {
+	ApiCreateGroupPayload,
+	ApiSaveCampaignSettingsData,
+	saveCampaignDataProps,
+	uploadData,
+} from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
+import { setUploadProgress } from './groupSlice';
 
-type ApiErrorProps = {
+type ApiError = {
 	message: string;
 };
 
-type ApiGetSavedTemplatesDataProps = {
+type ApiGetSavedTemplatesData = {
 	templateStatus: number;
 };
 
-type ApiSubmitTemplatesDataProps =
+type ApiSubmitTemplatesData =
 	| TextMediaAndButton
 	| QuickReply
 	| CallToAction
@@ -25,40 +32,11 @@ type ApiSubmitTemplatesDataProps =
 	| JSONPropsText
 	| undefined;
 
-type ApiSaveCampaignSettingsDataProps = {
-	WACampaignID: number;
-	SendTypeID: number;
-	Groups: number[];
-	SendExeptional?: {
-		/**
-		 * To Send Campaign on particlar occation with dates and groups.
-		 * (for example, If you want to send campaign on particular date
-		 * and you have selected groups but you don't want to send last
-		 * campaign recipients then you can add here)
-		 **/
-		IsExceptionalroups?: boolean;
-		Groups?: number[];
-		IsExceptionSmsCampaigns?: boolean;
-		Campaigns?: number[];
-		ExceptionalDays?: number;
-	};
-	RandomSettings?: {
-		RandomAmount?: number;
-	};
-	specialsettings?: {
-		datefieldid?: number;
-		day?: number;
-		intervaltypeid?: number;
-		sendhour?: string;
-	};
-	FutureDateTime?: string;
-};
-
-type ApiSendCampaignDataProps = {
+type ApiSendCampaignData = {
 	WACampaignID: number;
 };
 
-type apiCombineGroupProps = {
+type apiCombineGroup = {
 	GroupIds: number[];
 	GroupName: string;
 	SubAccountID: number;
@@ -66,7 +44,7 @@ type apiCombineGroupProps = {
 
 export const getSavedTemplates = createAsyncThunk(
 	'WhatsAppTemplate/GetWhatsAppTemplate',
-	async (data: ApiGetSavedTemplatesDataProps, thunkAPI) => {
+	async (data: ApiGetSavedTemplatesData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`WhatsAppTemplate/GetWhatsAppTemplate`,
@@ -75,7 +53,7 @@ export const getSavedTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -91,7 +69,7 @@ export const getSavedTemplatesById = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -108,7 +86,7 @@ export const getSavedTemplatesPreviewById = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -116,7 +94,7 @@ export const getSavedTemplatesPreviewById = createAsyncThunk(
 
 export const submitTemplates = createAsyncThunk(
 	'WhatsAppTemplate/SubmitWhatsAppTemplate',
-	async (data: ApiSubmitTemplatesDataProps, thunkAPI) => {
+	async (data: ApiSubmitTemplatesData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`WhatsAppTemplate/SubmitWhatsAppTemplate`,
@@ -125,7 +103,7 @@ export const submitTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -142,7 +120,7 @@ export const uploadMedia = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -150,7 +128,7 @@ export const uploadMedia = createAsyncThunk(
 
 export const saveTemplates = createAsyncThunk(
 	'whatsAppCampaign/SaveWhatsAppTemplate',
-	async (data: ApiSubmitTemplatesDataProps, thunkAPI) => {
+	async (data: ApiSubmitTemplatesData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SaveWhatsAppTemplate`,
@@ -159,7 +137,7 @@ export const saveTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -176,7 +154,7 @@ export const saveCampaign = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -184,7 +162,7 @@ export const saveCampaign = createAsyncThunk(
 
 export const saveCampaignSettings = createAsyncThunk(
 	'whatsAppCampaign/SaveWACampaignSettings',
-	async (data: ApiSaveCampaignSettingsDataProps, thunkAPI) => {
+	async (data: ApiSaveCampaignSettingsData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SaveWACampaignSettings`,
@@ -193,7 +171,39 @@ export const saveCampaignSettings = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getCampaignSettings = createAsyncThunk(
+	'whatsAppCampaign/GetCampaignSettings',
+	async (campaignID: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetCampaignSettings/${campaignID}`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getWhatsappCampaignNameFilter = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsappCampaignNameFilter',
+	async (campaignID: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetWhatsappCampaignNameFilter`
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -201,16 +211,15 @@ export const saveCampaignSettings = createAsyncThunk(
 
 export const sendCampaign = createAsyncThunk(
 	'whatsAppCampaign/Send',
-	async (data: ApiSendCampaignDataProps, thunkAPI) => {
+	async (data: ApiSendCampaignData, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/Send`,
 				data
 			);
-
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -225,7 +234,7 @@ export const userPhoneNumbers = createAsyncThunk(
 			);
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -240,7 +249,7 @@ export const deleteTemplate = createAsyncThunk(
 			);
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -255,7 +264,7 @@ export const duplicateTemplate = createAsyncThunk(
 			);
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -271,7 +280,7 @@ export const getAllTemplates = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -288,7 +297,7 @@ export const submitTemplateDirect = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -304,7 +313,7 @@ export const getAllCampaigns = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -319,7 +328,7 @@ export const deleteCampaign = createAsyncThunk(
 			);
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -334,7 +343,7 @@ export const duplicateCampaign = createAsyncThunk(
 			);
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -350,7 +359,7 @@ export const getAllReports = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -365,24 +374,24 @@ export const getAllGroups = createAsyncThunk(
 			);
 			return JSON.parse(response.data);
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
 );
 
 export const createCombinedGroup = createAsyncThunk(
-	'smsCampaign/CreateCombinedGroup',
-	async (groupsData: apiCombineGroupProps, thunkAPI) => {
+	'Group/CreateCombinedGroup',
+	async (groupsData: apiCombineGroup, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`smsCampaign/CreateCombinedGroup`,
+				`Group/CreateCombinedGroup`,
 				groupsData
 			);
 
-			return response.data;
+			return JSON.parse(response.data);
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -430,7 +439,7 @@ export const getCampaignSettingsById = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -543,7 +552,109 @@ export const manageWhatsappChatCoversationStatus = createAsyncThunk(
 
 			return response.data;
 		} catch (error) {
-			const err = error as ApiErrorProps;
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const createGroup = createAsyncThunk(
+	'Group/Create',
+	async (createGroupPayload: ApiCreateGroupPayload, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(
+				`Group/Create`,
+				createGroupPayload
+			);
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const addRecipients = createAsyncThunk(
+	'Client/Upload',
+	async (payload: uploadData, thunkAPI) => {
+		try {
+			const response = await uploaderInstance.put(`Client/Upload`, payload, {
+				onUploadProgress: (progressEvent) => {
+					const { loaded, total } = progressEvent;
+					let percent = Math.floor((loaded * 100) / total);
+					thunkAPI.dispatch(setUploadProgress(percent));
+				},
+			});
+
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const addRecipient = createAsyncThunk(
+	'client/AddClients',
+	async (payload: uploadData, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`client/AddClients`,
+				payload
+			);
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getAccountExtraData = createAsyncThunk(
+	'smsCampaign/GetAccountExtraData',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`smsCampaign/GetAccountExtraData`
+			);
+			return JSON.parse(response.data);
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getWhatsAppCampaignSummary = createAsyncThunk(
+	'whatsAppCampaign/GetWhatsAppCampaignSummary',
+	async (campaignID: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`whatsAppCampaign/GetWhatsAppCampaignSummary/${campaignID}`
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const quickSend = createAsyncThunk(
+	'whatsAppCampaign/QuickSend',
+	async (
+		data: { WACampaignID: number; TestGroupsIds: number[] | number },
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/QuickSend`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
 			return thunkAPI.rejectWithValue({ error: err.message });
 		}
 	}
@@ -603,6 +714,54 @@ export const whatsappSlice = createSlice({
 				severity: 'success',
 				color: 'success',
 				message: 'Campaign cloned succesfully',
+				showAnimtionCheck: true,
+			},
+			INVALID_RECIPIENTS: {
+				severity: 'error',
+				color: 'error',
+				message: 'sms.noRecipientToUpdate',
+				showAnimtionCheck: false,
+			},
+			DATE_PASS: {
+				severity: 'error',
+				color: 'error',
+				message: 'smsReport.pastDateSelected',
+				showAnimtionCheck: false,
+			},
+			CAMPAIGN_SAVE_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign saved succesfully',
+				showAnimtionCheck: true,
+			},
+			UPLOAD_CLIENT_DATA_SUCEESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'campaigns.newsLetterEditor.success',
+				showAnimtionCheck: false,
+			},
+			INVALID_API_MISSING_KEY: {
+				severity: 'error',
+				color: 'error',
+				message: 'campaigns.newsLetterEditor.errors.invaliApiKey',
+				showAnimtionCheck: false,
+			},
+			GENERAL_ERROR: {
+				severity: 'error',
+				color: 'error',
+				message: 'campaigns.newsLetterEditor.errors.generalError',
+				showAnimtionCheck: false,
+			},
+			GROUP_ALREADY_EXIST: {
+				severity: 'error',
+				color: 'error',
+				message: 'group.alreadyExist',
+				showAnimtionCheck: false,
+			},
+			CAMPAIGN_SEND_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign send succesfully',
 				showAnimtionCheck: true,
 			},
 		},

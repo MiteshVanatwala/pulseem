@@ -60,7 +60,6 @@ const GroupSelector = ({
 		}
 		setAllGroupsSelected(!allGroupsSelected);
 	};
-	console.log(showTestGroups);
 
 	const onShowTestGroup = async (showTestGroups: boolean) => {
 		if (!showTestGroups && testGroupList?.length > 0) {
@@ -100,7 +99,7 @@ const GroupSelector = ({
 					<div className={classes.createGroupContainer}>
 						<Checkbox
 							// It will be available when user selects two or more groups.(it is for creating new group combining two or more groups)
-							disabled={selectedGroups.length <= 2}
+							disabled={selectedGroups.length < 2}
 							checked={isCreateNewGroup}
 							color='primary'
 							inputProps={{ 'aria-label': 'secondary checkbox' }}
