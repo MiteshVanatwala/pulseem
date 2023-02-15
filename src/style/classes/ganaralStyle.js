@@ -1591,7 +1591,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   groupName: {
     display: "block",
     fontSize: "32px",
-    width: "700px",
+    width: "100%",
     "@media screen and (max-width: 768px)": {
       width: "100%",
       fontSize: "22px",

@@ -104,19 +104,19 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.emails"),
             classes: cellStyle,
-            className: classes.flex2,
+            className: classes.flex3,
             align: "center",
         },
         {
             label: t("recipient.sms/mms"),
             classes: cellStyle,
-            className: clsx(classes.flex2, classes.textUppercase, classes.maxWidth325),
+            className: clsx(classes.flex3, classes.textUppercase),
             align: "center",
         },
         {
             label: "",
             classes: cellStyle,
-            className: clsx(classes.flex4, classes.maxWidth450),
+            className: clsx(classes.flex5),
             align: "center",
         },
     ];
@@ -783,7 +783,7 @@ const Groups = ({ classes }) => {
                     />
                 </TableCell>
 
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.maxWidth325)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
                     <FlexGrid
                         gridArr={[
                             {
@@ -1037,7 +1037,7 @@ const Groups = ({ classes }) => {
                 <TableCell
                     classes={noBorderCellStyle}
                     align="center"
-                    className={clsx(classes.flex4, classes.maxWidth450)}
+                    className={clsx(classes.flex5)}
                 >
                     <FlexGrid
                         gridArr={[
