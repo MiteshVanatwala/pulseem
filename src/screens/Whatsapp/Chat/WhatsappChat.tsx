@@ -195,7 +195,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					StatusId,
 				})
 			);
-		console.log('Conversation Status', whatsAppChatConversationStatusData);
 	};
 
 	const setAPIInboundChatStatus = async () => {
