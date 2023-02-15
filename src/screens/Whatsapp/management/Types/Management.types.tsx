@@ -1,4 +1,5 @@
 import { ClassesType } from '../../../Classes.types';
+import { campaignDataProps } from '../../Campaign/Types/WhatsappCampaign.types';
 
 export type paginationProps = {
 	classes: ClassesType['classes'];
@@ -17,9 +18,9 @@ export type RestoreDeletedModalProps = {
 	onClose: () => void;
 	onConfirmOrYes: () => void;
 	title: string;
-	deletedCampaigns: { id: string; campaignName: string }[];
 	restoreIds: string[];
 	setRestoreIds: (ids: string[]) => void;
+	deletedCampaignListData: campaignDataProps[];
 };
 
 export type apiTemplateRowDataProps = {

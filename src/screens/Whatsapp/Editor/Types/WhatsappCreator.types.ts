@@ -228,6 +228,14 @@ export type toastProps = {
 	DELETE_TEMPLATE_SUCCESS: toastKeyProps;
 	SUBMIT_CAMPAIGN_SUCCESS: toastKeyProps;
 	DUPLICATE_CAMPAIGN_SUCCESS: toastKeyProps;
+	INVALID_RECIPIENTS: toastKeyProps;
+	DATE_PASS: toastKeyProps;
+	CAMPAIGN_SAVE_SUCCESS: toastKeyProps;
+	UPLOAD_CLIENT_DATA_SUCEESS: toastKeyProps;
+	INVALID_API_MISSING_KEY: toastKeyProps;
+	GENERAL_ERROR: toastKeyProps;
+	GROUP_ALREADY_EXIST: toastKeyProps;
+	CAMPAIGN_SEND_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -266,6 +274,7 @@ export type saveTemplateItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
 };
@@ -331,6 +340,7 @@ export type templateListItemsProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
 };

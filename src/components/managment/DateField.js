@@ -12,17 +12,17 @@ export const DateField = ({
   minDate,
   classes,
   value,
-  onChange = () => null,
-  onTimeChange = () => null,
+  onChange,
+  onTimeChange,
   placeholder = '',
   isTimePicker = false,
-  buttons = null,
+  buttons,
   ampm = true,
   maximumDate = undefined,
   timePickerOpen = false,
   rootStyle = null,
-  timeActive = null,
-  dateActive = null,
+  timeActive,
+  dateActive,
   toolbarDisabled = true,
   isRoundedOnMobile = false,
   ...props
@@ -63,8 +63,8 @@ export const DateField = ({
         'aria-label': 'change time',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons && buttons.cancel}
-      oklabel={buttons && buttons.ok}
+      cancellabel={buttons && buttons?.cancel}
+      oklabel={buttons && buttons?.ok}
       ampm={ampm}
       id="timePicker"
       disabled={timeActive}
@@ -108,8 +108,8 @@ export const DateField = ({
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons && buttons.cancel}
-      oklabel={buttons && buttons.ok}
+      cancellabel={buttons && buttons?.cancel}
+      oklabel={buttons && buttons?.ok}
       id="datePicker"
       maxDate={maximumDate}
       disabled={dateActive}

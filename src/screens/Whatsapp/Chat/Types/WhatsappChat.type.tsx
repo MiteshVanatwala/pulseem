@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
-import { updatedVariableProps } from '../../Campaign/Types/WhatsappCampaign.types';
+import { updatedVariable } from '../../Campaign/Types/WhatsappCampaign.types';
 import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
 
 export type WhatsappChatProps = {
@@ -22,7 +22,7 @@ export type WhatsappChatUiProps = {
 	isTemplateModal: boolean;
 	setIsTemplateModal: (isTemplateModal: boolean) => void;
 	dynamicVariable: string[];
-	updatedDynamicVariable: updatedVariableProps[];
+	updatedDynamicVariable: updatedVariable[];
 	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
 	setDynamicModalVariable: (dynamicModalVariable: number) => void;
 	savedTemplate: string;

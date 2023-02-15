@@ -9,6 +9,8 @@
 	"duplicateCampaign": "Duplicate Campaign",
 	"duplicateDesc": "Do you want to duplicate this template?",
 	"duplicateCampaignDesc": "Do you want to duplicate this campaign?",
+	"LeaveCampaignCreation": "Leave Campaign Creation",
+	"LeaveCampaignCreationDesc": "Would you like to save your changes before exiting?",
 	"createTemplate": "Create Template",
 	"deleteTemplate": "Delete Template",
 	"createCampaign": "Create Campaign",
@@ -25,8 +27,8 @@
 	"pending": "Pending",
 	"received": "Received",
 	"rejected": "Rejected",
-	"finished": "Finished",
-	"sending": "Sent",
+	"finished": "Sent",
+	"sending": "Sending",
 	"canceled": "Canceled",
 	"CreatedOnlyforPulseem": "Created Only for Pulseem"
 }

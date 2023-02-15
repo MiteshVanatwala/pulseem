@@ -70,8 +70,7 @@ export const getTemplateNameById = (
 ) => {
 	return (
 		savedTemplateList?.find(
-			(template: savedTemplateListProps) =>
-				template.TemplateId === templateId
+			(template: savedTemplateListProps) => template.TemplateId === templateId
 		)?.TemplateName || null
 	);
 };

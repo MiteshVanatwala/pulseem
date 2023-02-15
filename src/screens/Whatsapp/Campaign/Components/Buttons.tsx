@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
-import { Button, Box } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { BsTrash } from 'react-icons/bs';
 import { useTranslation } from 'react-i18next';
 import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
 import { coreProps } from '../Types/WhatsappCampaign.types';
-import useRedirect from '../../../../helpers/Routes/Redirect';
 import { buttons } from '../../Constant';
+import { useNavigate } from 'react-router-dom';
 
 const Buttons = ({
 	classes,
@@ -20,11 +20,10 @@ const Buttons = ({
 		(state: { core: coreProps }) => state.core
 	);
 	const [isFromAutomation, setIsFromAutomation] = useState<boolean>(false);
-	const Redirect = useRedirect();
+	const navigate = useNavigate();
 
 	const handlePreviousPage = () => {
-		// Redirect({ url: `/react/sms/edit/${id}` });
-		alert('Redirect to previous page');
+		navigate(-1);
 	};
 
 	return (
