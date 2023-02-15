@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import Icon from './Icon';
 import { lastMessage } from './data';
 import {
-	APIWhatsappChatSidebarContactsItemsProps,
+	APIWhatsappChatSidebarContactsItemsData,
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
@@ -18,7 +18,6 @@ import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
-import moment from 'moment';
 
 const SideBar = ({
 	classes,
@@ -77,8 +76,7 @@ const SideBar = ({
 		let result = [];
 
 		result = sideChatContacts.filter(
-			(data: APIWhatsappChatSidebarContactsItemsProps) => {
-				// return data.PhoneNumber.search(value) != -1;
+			(data: APIWhatsappChatSidebarContactsItemsData) => {
 				return (
 					data.UserName?.toLowerCase()?.includes(value) ||
 					data.LastMessage?.toLowerCase()?.includes(value) ||
@@ -100,7 +98,7 @@ const SideBar = ({
 		}
 
 		result = sideChatContacts.filter(
-			(data: APIWhatsappChatSidebarContactsItemsProps) => {
+			(data: APIWhatsappChatSidebarContactsItemsData) => {
 				return data.ConversationStatusId === value;
 			}
 		);
@@ -205,7 +203,7 @@ const SideBar = ({
 				</div>
 				<div className={`${classes.whatsappChat} sidebar__contacts`}>
 					{filteredSideChatContacts.map(
-						(contact: APIWhatsappChatSidebarContactsItemsProps, i: number) => (
+						(contact: APIWhatsappChatSidebarContactsItemsData, i: number) => (
 							<Link
 								className={`${classes.whatsappChat} sidebar-contact`}
 								key={i}

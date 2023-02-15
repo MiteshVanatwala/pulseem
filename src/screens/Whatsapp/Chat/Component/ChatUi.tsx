@@ -3,8 +3,8 @@ import { allMessages, dates, user } from './data';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
-	APIWhatsappChatItemsProps,
-	APIWhatsappChatProps,
+	APIWhatsappChatItemsData,
+	APIWhatsappChatData,
 	WhatsappChatUiProps,
 } from '../Types/WhatsappChat.type';
 import {
@@ -53,7 +53,7 @@ const ChatUi = ({
 	handleUserStatus,
 }: WhatsappChatUiProps) => {
 	const [allWhatsappChat, setAllWhatsappChat] = useState<
-		APIWhatsappChatItemsProps[]
+		APIWhatsappChatItemsData[]
 	>([]);
 	const [activePhoneNumber, setActivePhoneNumber] =
 		useState<string>(activeUser);
@@ -150,7 +150,7 @@ const ChatUi = ({
 	}, []);
 
 	const getAPIAllWhatsappChat = async () => {
-		const allWhatsAppChatData: APIWhatsappChatProps = await dispatch<any>(
+		const allWhatsAppChatData: APIWhatsappChatData = await dispatch<any>(
 			getWhatsappChat({ activePhoneNumber, activeUserNumber })
 		);
 

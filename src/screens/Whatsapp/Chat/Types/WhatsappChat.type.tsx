@@ -26,10 +26,10 @@ export type WhatsappChatUiProps = {
 	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
 	setDynamicModalVariable: (dynamicModalVariable: number) => void;
 	savedTemplate: string;
-	chatContacts: APIWhatsappChatSidebarContactsItemsProps;
+	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	activeUser: string;
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsProps[];
-	whatsappChatSession: APIWhatsappChatSessionDataProps;
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	whatsappChatSession: APIWhatsappChatSessionData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 };
 
@@ -39,16 +39,16 @@ export type WhatsappChatSideBarProps = {
 	setIsMobileSideBar: () => void;
 	handleChatId: (
 		e: BaseSyntheticEvent,
-		Contacts: APIWhatsappChatSidebarContactsItemsProps
+		Contacts: APIWhatsappChatSidebarContactsItemsData
 	) => void;
 	activeUser: string;
 	setActiveUser: (activeUser: string) => void;
 	getPhoneNumber: () => void;
 	onActiveUserChange: (e: BaseSyntheticEvent) => void;
-	sideChatContacts: APIWhatsappChatSidebarContactsItemsProps[];
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsProps[];
+	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	setFilteredSideChatContacts: (
-		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsProps[]
+		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[]
 	) => void;
 	phoneNumbersList: string[];
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
@@ -74,7 +74,7 @@ export type AllIconProps = {
 	[key: string]: (props: AllIconComponentProps) => JSX.Element;
 };
 
-export type APIWhatsappChatSidebarContactsItemsProps = {
+export type APIWhatsappChatSidebarContactsItemsData = {
 	ConversationStatusId: number;
 	IsTemplate: boolean;
 	IsUnsubscribed: boolean;
@@ -85,43 +85,43 @@ export type APIWhatsappChatSidebarContactsItemsProps = {
 	UserName: string;
 };
 
-export type APIWhatsappChatSidebarContactsDataProps = {
+export type APIWhatsappChatSidebarContactsMainData = {
 	Count: number;
 	CurrentPage: number;
-	Items: APIWhatsappChatSidebarContactsItemsProps[];
+	Items: APIWhatsappChatSidebarContactsItemsData[];
 	PageSize: number;
 	TotalRecord: number;
 };
 
-export type APIWhatsappChatSidebarContactsPayloadProps = {
-	Data: APIWhatsappChatSidebarContactsDataProps;
+export type APIWhatsappChatSidebarContactsPayloadData = {
+	Data: APIWhatsappChatSidebarContactsMainData;
 	Message: string;
 	Status: string;
 };
 
-export type APIWhatsappChatSidebarContactsProps = {
-	payload: APIWhatsappChatSidebarContactsPayloadProps;
+export type APIWhatsappChatSidebarContactsData = {
+	payload: APIWhatsappChatSidebarContactsPayloadData;
 };
 
-export type APIWhatsappChatVariablesProps = {
+export type APIWhatsappChatVariablesData = {
 	'1': string;
 	'2': string;
 };
 
-export type APIWhatsappChatTextProps = {
+export type APIWhatsappChatTextData = {
 	body: string;
 };
 
-export type APIWhatsappChatTypesProps = {
-	text: APIWhatsappChatTextProps;
+export type APIWhatsappChatTypesData = {
+	text: APIWhatsappChatTextData;
 };
 
-export type APIWhatsappChatTemplateDataProps = {
-	types: APIWhatsappChatTypesProps;
-	variables: APIWhatsappChatVariablesProps;
+export type APIWhatsappChatTemplateData = {
+	types: APIWhatsappChatTypesData;
+	variables: APIWhatsappChatVariablesData;
 };
 
-export type APIWhatsappChatItemsProps = {
+export type APIWhatsappChatItemsData = {
 	IsInbound: null | boolean;
 	IsTemplate: boolean;
 	MediaUrl: string;
@@ -130,54 +130,48 @@ export type APIWhatsappChatItemsProps = {
 	MessageDateText: null | string;
 	SmsStatus: string;
 	SmsStatusId: number;
-	TemplateData: APIWhatsappChatTemplateDataProps;
+	TemplateData: APIWhatsappChatTemplateData;
 };
 
-export type APIWhatsappChatDataProps = {
+export type APIWhatsappChatMainData = {
 	Count: number;
 	CurrentPage: number;
-	Items: APIWhatsappChatItemsProps[];
+	Items: APIWhatsappChatItemsData[];
 	PageSize: number;
 	TotalRecord: number;
 };
 
-export type APIWhatsappChatPayloadProps = {
-	Data: APIWhatsappChatDataProps;
+export type APIWhatsappChatPayloadData = {
+	Data: APIWhatsappChatMainData;
 	Message: string;
 	Status: string;
 };
 
-export type APIWhatsappChatProps = {
-	payload: APIWhatsappChatPayloadProps;
+export type APIWhatsappChatData = {
+	payload: APIWhatsappChatPayloadData;
 };
 
-export type APIWhatsappChatSessionDataProps = {
+export type APIWhatsappChatSessionData = {
 	ExpiryTime: string;
 	IsIn24Window: boolean;
 };
 
-export type APIWhatsappChatSessionPayloadProps = {
-	Data: APIWhatsappChatSessionDataProps;
+export type APIWhatsappChatSessionPayloadData = {
+	Data: APIWhatsappChatSessionData;
 	Message: string;
 	Status: string;
 };
 
-export type APIWhatsappChatSessionProps = {
-	payload: APIWhatsappChatSessionPayloadProps;
+export type APIWhatsappChatSession = {
+	payload: APIWhatsappChatSessionPayloadData;
 };
 
-export type APIWhatsappChatConversationStatusDataProps = {
+export type APIWhatsappChatConversationStatusPayloadData = {
 	Status: string;
 	Message: string;
 	Data: null;
 };
 
-export type APIWhatsappChatConversationStatusPayloadProps = {
-	Data: APIWhatsappChatConversationStatusDataProps;
-	Message: string;
-	Status: string;
-};
-
-export type APIWhatsappChatConversationStatusProps = {
-	payload: APIWhatsappChatConversationStatusPayloadProps;
+export type APIWhatsappChatConversationStatusData = {
+	payload: APIWhatsappChatConversationStatusPayloadData;
 };

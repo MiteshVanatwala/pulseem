@@ -3,11 +3,11 @@ import SideBar from './Component/SideBar';
 import './css/index.css';
 import DefaultScreen from '../../DefaultScreen';
 import {
-	APIWhatsappChatConversationStatusProps,
-	APIWhatsappChatSessionDataProps,
-	APIWhatsappChatSessionProps,
-	APIWhatsappChatSidebarContactsItemsProps,
-	APIWhatsappChatSidebarContactsProps,
+	APIWhatsappChatConversationStatusData,
+	APIWhatsappChatSessionData,
+	APIWhatsappChatSession,
+	APIWhatsappChatSidebarContactsItemsData,
+	APIWhatsappChatSidebarContactsData,
 	WhatsappChatProps,
 } from './Types/WhatsappChat.type';
 import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
@@ -56,7 +56,7 @@ import { Loader } from '../../../components/Loader/Loader';
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [chatContacts, setChatContacts] =
-		useState<APIWhatsappChatSidebarContactsItemsProps>({
+		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
 			IsTemplate: false,
 			IsUnsubscribed: false,
@@ -68,16 +68,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		});
 	const [activeUser, setActiveUser] = useState<string>('16067520281');
 	const [sideChatContacts, setSideChatContacts] = useState<
-		APIWhatsappChatSidebarContactsItemsProps[]
+		APIWhatsappChatSidebarContactsItemsData[]
 	>([]);
 	const [filteredSideChatContacts, setFilteredSideChatContacts] =
-		useState<APIWhatsappChatSidebarContactsItemsProps[]>(sideChatContacts);
+		useState<APIWhatsappChatSidebarContactsItemsData[]>(sideChatContacts);
 	const [activePhoneNumber, setActivePhoneNumber] =
 		useState<string>(activeUser);
 	const [activeUserNumber, setActiveUserNumber] =
 		useState<string>('918657485699');
 	const [whatsappChatSession, setWhatsappChatSession] =
-		useState<APIWhatsappChatSessionDataProps>({
+		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
 			ExpiryTime: '',
 		});
@@ -187,7 +187,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		Sendernumber: string,
 		ClientNumber: string
 	) => {
-		const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusProps =
+		const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusData =
 			await dispatch<any>(
 				manageWhatsappChatCoversationStatus({
 					ClientNumber,
@@ -198,7 +198,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	};
 
 	const setAPIInboundChatStatus = async () => {
-		const whatsAppChatSessionStatus: APIWhatsappChatSessionProps =
+		const whatsAppChatSessionStatus: APIWhatsappChatSession =
 			await dispatch<any>(
 				getInboundWhatsappChatStatus({ activePhoneNumber, activeUserNumber })
 			);
@@ -214,7 +214,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const setAPIWhatsAppChatContacts = async (activeUser: string) => {
 		setIsLoader(true);
-		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsProps =
+		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
 			await dispatch<any>(getWhatsappChatContactsByPhoneNumber(activeUser));
 
 		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
@@ -454,7 +454,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const handleChatId = (
 		e: BaseSyntheticEvent,
-		contacts: APIWhatsappChatSidebarContactsItemsProps
+		contacts: APIWhatsappChatSidebarContactsItemsData
 	) => {
 		e.preventDefault();
 		setChatContacts(contacts);

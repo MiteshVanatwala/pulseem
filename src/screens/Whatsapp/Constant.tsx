@@ -1,4 +1,3 @@
-
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
 import {
 	campaignStatusProps,
@@ -358,3 +357,9 @@ export const campaignStatus: campaignStatusProps = {
 	4: 'Finished',
 	5: 'Canceled',
 };
+
+export enum whatsappChatStatuses {
+	OPEN = 'Open',
+	PENDING = 'Pending',
+	SOLVED = 'Solved',
+}
