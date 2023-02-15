@@ -166,5 +166,6 @@ export const PulseemFeatures = {
   REMOVE_SMS_UNSUBSCRIBE_LINK: '39',
   OTPSUGGESTION: '40',
   BEE_EDITOR: '41',
-  REVENUE: '42'
+  REVENUE: '42',
+  BEE_AMP: '43'
 }
