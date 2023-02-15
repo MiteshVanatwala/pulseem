@@ -425,7 +425,6 @@ const SimplyClubPupup = ({
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
-                childrenStyle={{ margin: 0 }}
                 className={classes.sidebar}
 
                 renderButtons={
@@ -571,7 +570,7 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Username}
-                                className={clsx(classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
+                                className={clsx(classes.textField, classes.minWidth252, { [classes.textFieldError]: !!error })}
                                 inputProps={{ autocomplete: "new-password" }}
                                 onChange={handleChange}
                             />
@@ -596,7 +595,7 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Password}
-                                className={clsx(classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
+                                className={clsx(classes.textField, classes.minWidth252, { [classes.textFieldError]: !!error })}
                                 inputProps={{ autocomplete: "new-password" }}
                                 onChange={handleChange}
                                 InputProps={{

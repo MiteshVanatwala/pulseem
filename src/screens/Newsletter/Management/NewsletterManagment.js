@@ -34,7 +34,7 @@ import EmailVerification from '../../Verification/EmailVerification';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog.tsx';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const NewsletterManagnentScreen = ({ classes }) => {
 

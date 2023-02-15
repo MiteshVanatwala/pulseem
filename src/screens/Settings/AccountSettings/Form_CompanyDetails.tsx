@@ -34,7 +34,7 @@ import {
   CompanyDetailsType,
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog";
 import useCore from "../../../helpers/hooks/Core";
 
 const Form_CompanyDetails = ({
@@ -47,7 +47,6 @@ const Form_CompanyDetails = ({
   const dispatch = useDispatch();
   const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
-
 
   const [dialogType, setDialogType] = useState<{
     type: string;
@@ -189,7 +188,7 @@ const Form_CompanyDetails = ({
 
   const handleSave = () => {
     if (isValidPayload()) {
-      let response = dispatch(() => { }); //updateCompanyDetails()
+      let response = dispatch(() => {}); //updateCompanyDetails()
       handleResponses(response);
     }
   };
@@ -222,17 +221,15 @@ const Form_CompanyDetails = ({
 
   return (
     <>
-      <Box
-        style={{ marginTop: 34.5, paddingInline: 17.2 }}
-        className={"settingsWrapper"}
-      >
+      <Box style={{ marginTop: 34.5 }} className={"settingsWrapper"}>
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
           classes={classes}
           isIcon={false}
           ContainerStyle={{
-            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
-              }`,
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${
+              isRTL ? 0 : "14.69px"
+            }`,
           }}
         />
         <Box className={"formContainer"}>
@@ -522,9 +519,7 @@ const Form_CompanyDetails = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    setSmsVerificationPopup(true)
-                  }
+                  onClick={() => setSmsVerificationPopup(true)}
                   startIcon={<MdMobileFriendly />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
@@ -543,9 +538,7 @@ const Form_CompanyDetails = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    setEmailVerificationPopup(true)
-                  }
+                  onClick={() => setEmailVerificationPopup(true)}
                   startIcon={<MdOutlineMarkEmailRead />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
@@ -575,8 +568,20 @@ const Form_CompanyDetails = ({
         </Box>
       </Box>
       {RenderDialog()}
-      {emailVerificationPopup && <VerificationDialog classes={classes} variant="email" isOpen={emailVerificationPopup} onClose={() => setEmailVerificationPopup(false)} />}
-      {smsVerificationPopup && <VerificationDialog classes={classes} variant="sms" isOpen={smsVerificationPopup} onClose={() => setSmsVerificationPopup(false)} />}
+      {emailVerificationPopup && (
+        <VerificationDialog
+          variant="email"
+          isOpen={emailVerificationPopup}
+          onClose={() => setEmailVerificationPopup(false)}
+        />
+      )}
+      {smsVerificationPopup && (
+        <VerificationDialog
+          variant="sms"
+          isOpen={smsVerificationPopup}
+          onClose={() => setSmsVerificationPopup(false)}
+        />
+      )}
     </>
   );
 };

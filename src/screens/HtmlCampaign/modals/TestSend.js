@@ -11,6 +11,7 @@ import GroupTags from "../../../components/Groups/GroupTags";
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSelector } from "react-redux";
 import Toast from '../../../components/Toast/Toast.component';
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 const TestSend = ({
     classes,
@@ -124,20 +125,20 @@ const TestSend = ({
 
     const renderToast = () => {
         if (toastMessage) {
-          setTimeout(() => {
-            setToastMessage(null);
-          }, 4000);
-          return (
-            <Toast data={toastMessage} />
-          );
+            setTimeout(() => {
+                setToastMessage(null);
+            }, 4000);
+            return (
+                <Toast data={toastMessage} />
+            );
         }
         return null;
-      }
+    }
     return !isOpen ? (<></>) :
         (
             <>
                 {renderToast()}
-                <Dialog
+                <BaseDialog
                     classes={classes}
                     customContainerStyle={classes.dialogZindex}
                     open={isOpen}
@@ -164,7 +165,7 @@ const TestSend = ({
                             radioOptions={radios}
                         />
                     </Box>
-                </Dialog>
+                </BaseDialog>
             </>
         );
 }

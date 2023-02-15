@@ -853,7 +853,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: '2px 10px',
     fontWeight: 'bold',
     background: '#fff',
-    maxWidth: 250,
+    maxWidth: 300,
     color: '#000',
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
@@ -869,7 +869,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& .MuiButton-startIcon': {
       marginTop: '-2px',
-      width: 30
+      width: 30,
+      '& svg': {
+        fontSize: 20
+      }
     },
     '& .MuiButton-endIcon': {
       width: 30
@@ -911,7 +914,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   buttonField: {
     borderRadius: "5px",
-    border: "1px solid #bbb",
+    // border: "1px solid #bbb",
     outline: "none",
     padding: "8px 12px 8px 4px",
     fontSize: "16px",
@@ -921,7 +924,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   buttonFieldRemoval: {
     borderRadius: "5px",
-    border: "1px solid #bbb",
+    // border: "1px solid #bbb",
+    maxWidth: '100px !important',
     outline: "none",
     padding: "8px",
     width: 100,
@@ -995,7 +999,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "-4px",
     justifyContent: "flex-end",
     alignItems: "center",
-    color: "#1c82b2",
+    color: "#ff3343",
     fontSize: "12px",
     padding: "10px",
     border: "1px solid #ced4da",
@@ -1039,15 +1043,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 14,
     color: "white",
     padding: "5px 15px 5px 15px",
-    backgroundColor: "#1c82b2",
+    backgroundColor: "#ff3343",
     cursor: "pointer",
-    borderColor: "#1c82b2",
+    borderColor: "#ff3343",
     textTransform: "none",
     "&$disabled": {
       cursor: "not-allowed !important",
     },
     "&:hover": {
-      backgroundColor: "#1c82b2",
+      backgroundColor: "#ff334",
     },
     "&:first-child": {
       marginInlineStart: 5,
@@ -1707,13 +1711,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dropCon: {
     marginBottom: "8px",
-    border: "1px solid #1c82b2",
+    border: "1px solid #ff3343",
     boxShadow: "0 3px 5px 1px #e0dada",
     borderRadius: "15px",
     backgroundColor: "#fff",
     padding: "10px",
     width: "100%",
-    color: "#1c82b2",
+    color: "#ff3343",
     textAlign: "center",
   },
   listDiv: {
@@ -1791,10 +1795,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopRightRadius: 10,
     border: '3px solid #fff',
     borderBottom: 'none',
+    '&.alignCenter': {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }
   },
   currentActiveTab: {
     background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     color: "#fff !important",
+    '& svg': {
+      color: '#fff'
+    }
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
@@ -1819,6 +1831,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: '#fff',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    // '& .head': {
+    //   background: '#F0F5FF',
+    //   borderTopLeftRadius: 10,
+    //   borderTopRightRadius: 10,
+    // },
     '& .mgmtTitle': {
       fontSize: 22
     },
@@ -1856,6 +1873,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .bodyBlock': {
         paddingInline: 10
       },
+      '& .selectWrapper': {
+        height: 'auto',
+        '& .MuiSelect-root': {
+          padding: '7px 0 11px 0'
+        },
+        '& .MuiTypography-body1': {
+          marginLeft: isRTL ? 12 : 0
+          // marginRight: isRTL ? 0 : 12,
+          // marginLeft: isRTL ? 12 : 0
+        }
+      },
       '& .textBoxWrapper': {
         // paddingTop: 30,
         '& .MuiTypography-body1': {
@@ -1864,10 +1892,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         '& .MuiTextField-root': {
           paddingBottom: 2,
           maxWidth: 245,
+          '&.fullWidth': {
+            maxWidth: '100%'
+          },
           '& input': {
             padding: 0
           }
-        }
+        },
       }
     }
   },
@@ -1892,9 +1923,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderBottomLeftRadius: 20,
       borderBottomRightRadius: 20,
       border: "2px solid #F0F5FF",
-
+      paddingInline: 17.2,
       '& .settingsWrapper': {
-        paddingLeft: 31,
         '& .mgmtTitle': {
           fontSize: 18
         },
@@ -2065,11 +2095,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   addManualDiv: {
-    padding: "8px !important",
-    backgroundColor: "#51AA51 !important",
-    color: "#fff !important",
-    marginInlineEnd: "6px !important",
-    borderRadius: "6px !important",
+    // padding: "8px !important",
+    // backgroundColor: "#51AA51 !important",
+    // color: "#fff !important",
+    // marginInlineEnd: "6px !important",
+    // borderRadius: "6px !important",
     cursor: "pointer !important",
     "@media screen and (max-width: 768px)": {
       fontSize: "10px !important",
@@ -2109,15 +2139,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "space-between",
     fontSize: 14,
-    border: "1px solid #277bff",
+    border: "1px solid #ff3343",
     padding: "8px",
     marginInlineEnd: "8px",
     borderRadius: "4px",
     cursor: "pointer",
-    color: "#277bff",
+    color: "#ff3343",
     "&:hover": {
       color: "#ffffff",
-      backgroundColor: "#277bff",
+      backgroundColor: "#ff3343",
     },
   },
 
@@ -2324,7 +2354,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   switchDiv: {
     display: "flex",
-
+    marginLeft: 11,
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginInlineStart: "0px",
@@ -2884,11 +2914,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
 
   textFieldError: {
-    "& .MuiInputBase-root": {
-      "& input": {
-        borderBottom: '2px solid red'
-      }
-    }
+    borderBottom: '1px solid #ff3343 !important'
+    // "& .MuiInputBase-root": {
+    //   "& input": {
+    //     borderBottom: '2px solid red'
+    //   }
+    // }
   },
   inputSwitch: {
     // position: 'relative !important',

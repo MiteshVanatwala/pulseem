@@ -551,6 +551,17 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 0,
     padding: 0,
   },
+
+  underlinedSelOptns: {
+    paddingBlock: 5,
+    marginInline: 12,
+    borderBottom: '1px solid #d1d1d1',
+    '&:hover': {
+      cursor: 'pointer',
+      color: '#ff3343'
+    }
+  },
+
   tableStyle: {
     overflowX: "clip",
     border: "2px solid #F0F5FF",

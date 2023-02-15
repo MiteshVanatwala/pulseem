@@ -106,15 +106,6 @@ const BulkStatus = () => {
           <Typography className={classes.f20}>
             {RenderHtml(t("common.contactSupportForBilling"))}
           </Typography>
-          <Box className={clsx(classes.mt25, classes.flexColCenter)}>
-            <Button
-              variant='contained'
-              size='small'
-              className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton
-              )} onClick={handleDialogClose}>{t("common.Ok")}</Button>
-          </Box>
         </Grid >
       ),
       onConfirm: () => handleDialogClose()

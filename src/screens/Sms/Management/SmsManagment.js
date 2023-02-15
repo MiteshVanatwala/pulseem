@@ -26,7 +26,7 @@ import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog.tsx';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';

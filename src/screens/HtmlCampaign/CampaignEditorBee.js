@@ -45,6 +45,8 @@ import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
 /* END Bee */
 import { sitePrefix } from '../../config';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -189,9 +191,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         size='small'
         variant='contained'
         className={clsx(
-          classes.confirmButton,
-          classes.dialogConfirmButton,
-          classes.dialogButtonCenter
+          classes.btn,
+          classes.btnRounded,
+          classes.middle
         )}
         onClick={() => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }}
       >
@@ -549,7 +551,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       let dialog = {
         showDivider: false,
         icon: (
-          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+          <IoMdImages />
         ),
         title: t("common.imageGallery"),
         content: (
@@ -563,7 +565,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -571,10 +573,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showGallery}
           onClose={() => { setShowGallery(false); }}
+          onCancel={() => { setShowGallery(false); }}
           onConfirm={() => { setShowGallery(false); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -597,7 +600,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -605,10 +608,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
+          onCancel={() => { setShowDocuments(false); }}
           onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -620,26 +624,23 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button
           onClick={() =>
             saveDesign(false, null, true)}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
           style={{ margin: '8px' }}
-          startIcon={<BiSave />}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           color="primary"
         >{t("common.save")}
         </Button>
         <Button onClick={saveDesign}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.continue')}</Button>
@@ -650,13 +651,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button
           onClick={() =>
             saveDesign(false, null, true)}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
           startIcon={<BiSave />}
           color="primary"
@@ -665,13 +665,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button onClick={() => {
           saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);
         }}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.backToAutomation')}</Button>
