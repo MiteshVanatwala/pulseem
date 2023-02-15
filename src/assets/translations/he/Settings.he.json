@@ -1,0 +1,98 @@
+{
+  "accountSettings": {
+    "title": "הגדרות חשבון",
+    "fixedComDetails": {
+      "title": "פרטי חברה קבועים",
+      "fields": {
+        "compName": "שם החברה",
+        "contactName": "איש קשר/אשת קשר",
+        "mobile": "סלולרי",
+        "enableTwoFactorAuth": "הפעלת אימות דו שלבי",
+        "sendMeCode": "שליחת קוד"
+      },
+      "errors": {
+        "invalidEmail": "אימייל לא תקין",
+        "reqEmail": "אימייל הוא חובה",
+        "invalidMobile": "הנייד לא עובד",
+        "reqMobile": "נייד הוא חובה",
+        "reqCompName": "נדרש שם חברה",
+        "reqContctName": "נדרש שם איש קשר"
+      },
+      "securitySettings": "הגדרות אבטחת חשבון",
+      "btnChangePwd": "שינוי סיסמא",
+      "btnUpdate": "שמירת הגדרות",
+      "btnVerifyEmail": "אימות כתובת אימייל לשליחה",
+      "btnVerifyNumber": "אימות מספר לשליחה"
+    },
+    "actDetails": {
+      "title": "פרטי חשבון",
+      "fields": {
+        "fromPhoneNumber": "מאת מספר טלפון",
+        "unsubSettings": "אפשרויות הסרת נמענים",
+        "smsUnsubLink": "קישור הסרה SMS",
+        "unsubByEmailOrCell": "הסרה לפי דואר אלקטרוני או סלולרי",
+        "unsubByEmailAndCell": "הסרת דואר אלקטרוני ומספר סלולרי",
+        "regSmsUnsubLink": "קישור הסרה רגיל",
+        "imdSmsUnsubLink": "קישור הסרה מיידי (ללא אימות)"
+      },
+      "btnUpdate": "שמירת פרטים"
+    },
+    "auth": {
+      "everyDay": "כל יום",
+      "everyTwoWeeks": "כל שבועיים",
+      "activatedSuccessfuly": "הפעלת אימות דו-שלבי בוצעה בהצלחה!",
+      "inActivetedSuccessfuly": "כיבוי אימות דו-שלבי בוצעה בהצלחה!",
+      "notSaved": "הפעלת אימות דו שלבי לא נשמרה. אנא פנה לתמיכה."
+    },
+    "savedSuccessfuly": "ההגדרות נשמרו בהצלחה!"
+  },
+  "billingSettings": {
+    "title": "הגדרות פרטי חיוב",
+    "titleBillingInfo": "פרטי חיוב",
+    "fields": {
+      "compRegNumber": "מספר ח.פ.",
+      "invoiceEmail": "דואל לחשבוניות",
+      "invoiceLang": "שפת חשבוניות",
+      "cardNumber": "מס' כרטיס",
+      "expMonth": "תוקף חודש",
+      "expYear": "תוקף שנה",
+      "secCode": "CVV לא תקין",
+      "id": "ת.ז"
+    },
+    "errors": {
+      "invalidCardNum": "מספר כרטיס אשראי לא תקין",
+      "invalidMonth": "תוקף לא תקין",
+      "invalidYear": "תוקף לא תקין",
+      "invalidCvv": "CVV לא תקין",
+      "invalidId": "מספר תעודת זהות לא תקין בצע"
+    },
+    "btnUpdate": "עדכן פרטי חיוב",
+    "btnAddCard": "הוסף כרטיס אשראי"
+  },
+  "changePassword": {
+    "title": "שנה סיסמא",
+    "subTitle": "הזן את הסיסמא הישנה והקלד את הסיסמא החדשה",
+    "oldPassword": "סיסמא ישנה",
+    "newPassword": "סיסמא חדשה",
+    "confirmPassword": "אימות סיסמא",
+    "error": {
+      "required": "שדה חובה",
+      "notMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"
+    },
+    "responses": {
+      "201": "הסיסמא שונתה בהצלחה!",
+      "403": "סיסמא שגויה",
+      "406": "כל השדות הם שדות חובה!",
+      "407": "סיסמת האימות אינה תואמת לסיסמא החדשה!",
+      "408": "הסיסמא המקורית אינה נכונה!"
+    },
+    "passwordHint": {
+      "title": "על הסיסמא להכיל",
+      "length": "לפחות 8 תווים",
+      "specialChar": "תו מיוחד",
+      "upperChar": "אות גדולה באנגלית",
+      "lowerChar": "אות קטנה באנגלית",
+      "number": "מספר"
+    }
+  }
+}

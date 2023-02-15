@@ -28,9 +28,9 @@ export const coreSlice = createSlice({
       state.isClal = action.payload;
     },
     setAccountFeatures: (state, action) => {
-      const data = action.payload?.Data;
-      state.accountSettings = data;
-      state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
+      const data=action.payload?.Data;
+      state.accountSettings=data;
+      state.accountFeatures=data?.Account?.AccountFeatures?.map(String);
       setCookie("accountSettings", data)
       setCookie("accountFeatures", data.Account.AccountFeatures.map(String));
     },

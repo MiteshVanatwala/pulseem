@@ -1088,7 +1088,7 @@ const SmsManagnentScreen = ({ classes }) => {
 			containerClass={clsx(classes.management, classes.mb50)}>
 			<Title
 				Text={t('sms.PageResource1.Title')}
-				Classes={classes.managementTitle}
+				classes={classes}
 			/>
 			{renderSearchLine()}
 			{renderManagmentLine()}

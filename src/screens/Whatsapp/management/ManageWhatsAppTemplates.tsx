@@ -607,7 +607,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			setTimeout(() => {
 				resetToast();
 			}, 4000);
-			return <Toast data={toastMessage} onClose={undefined} />;
+			return <Toast data={toastMessage} />;
 		}
 		return null;
 	};
@@ -622,7 +622,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.templateManagement')}
-				Classes={classes.whatsappTemplateTitle}
+				classes={classes}
 				ContainerStyle={{}}
 				Element={null}
 			/>

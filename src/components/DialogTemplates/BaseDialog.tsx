@@ -15,8 +15,7 @@ import { useSelector } from "react-redux";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
-import { ManagmentIcon } from "../managment/index";
-import { CloseIcon } from "../../assets/images/managment/index";
+import { CgClose } from "react-icons/cg";
 
 export const BaseDialog = ({
   childrenPadding = true,
@@ -55,20 +54,28 @@ export const BaseDialog = ({
 
   const onExit = () => {
     onCancel?.();
-    onClose?.();
   };
 
-  const RenderExitButton = () => {
-    return (
-      <Box onClick={onExit} className={clsx(classes.solidDialogExitButton)}>
-        <ManagmentIcon classes={classes} icon={CloseIcon} uIcon={null} style={{paddingTop: '0.2rem'}} />
-      </Box>
+  const RenderExitButton = () =>
+    exitButton ?? (
+      <Stack
+        onClick={onExit}
+        className={clsx(classes.dialogExitButton, classes.f20, {
+          [classes.dialogExitButtonRTL]: isRTL,
+          [classes.dialogExitButtonLTR]: !isRTL,
+        })}
+        justifyContent="center"
+        alignItems="center"
+        alignSelf="center"
+      >
+        <CgClose />
+      </Stack>
     );
-  };
 
   const RenderTitleDefault = () => (
     <>
       <Typography
+        style={{ textAlign: 'center', marginTop: 15, color: "#000" }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -87,7 +94,7 @@ export const BaseDialog = ({
     return showDefaultButtons ? (
       <Grid
         container
-        spacing={4}
+        spacing={2}
         className={clsx(
           classes.dialogButtonsContainer,
           isRTL ? classes.rowReverse : null
@@ -95,27 +102,30 @@ export const BaseDialog = ({
       >
         <Grid item>
           <Button
-            name="btnConfirm"
-            variant="contained"
-            size="small"
+            variant='contained'
+            size='small'
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
-            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
-          >
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogConfirmButton
+            )}>
             <>{t(confirmText)}</>
           </Button>
         </Grid>
         <Grid item>
           <Button
-            variant="contained"
-            size="small"
+            variant='contained'
+            size='small'
             onClick={(e: React.MouseEvent<HTMLElement>) => {
               if (onClose) {
                 onClose();
               }
               return false;
             }}
-            className={clsx(classes.dialogButton, classes.dialogCancelButton)}
-          >
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogCancelButton
+            )}>
             <>{t(cancelText)}</>
           </Button>
         </Grid>
@@ -133,8 +143,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-            ? "calc(65vh)"
-            : "calc(45vh)",
+              ? "calc(65vh)"
+              : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}
