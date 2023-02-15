@@ -211,6 +211,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const handleSearchInput = (value, key, type) => {
     let { sms = {}, email = {}, whatsapp = {} } = searchData || {};
+
     if (key !== 'ShowContent') {
       type === 'sms' ? setPageSms(1) : setPageEmail(1);
     }
@@ -530,7 +531,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes.managementTitle} />
+      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} classes={classes} />
       {renderTabs()}
       <ConfirmRadioDialog
         classes={classes}

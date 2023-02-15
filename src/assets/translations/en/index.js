@@ -20,6 +20,7 @@ import recipient from './Recipient.json';
 import group from './group.json';
 import mmsreport from './MMSReport.json';
 import languages from './languages.json';
+import settings from './Settings.json'
 import whatsapp from './WhatsappCreator.json';
 import whatsappCampaign from './WhatsappCampaign.json';
 import whatsappManagement from './WhatsappManagement.json';
@@ -49,6 +50,7 @@ export const en = {
 	group,
 	mmsreport,
 	languages,
+	settings,
 	whatsapp,
 	whatsappCampaign,
 	whatsappManagement,

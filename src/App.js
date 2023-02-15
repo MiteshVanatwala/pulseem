@@ -72,24 +72,24 @@ import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAp
 import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
 import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
 import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
+import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 
 const renderRoutes = (classes, redirect) => {
 	const transferUrl =
 		(url = '', param = '') =>
-		() => {
-			const { campaignID, automationID, id, notificationID } = useParams();
-			const addParam = {
-				campaign: campaignID,
-				automation: automationID,
-				notification: notificationID,
-				id: id,
-			};
+			() => {
+				const { campaignID, automationID, id, notificationID } = useParams();
+				const addParam = {
+					campaign: campaignID,
+					automation: automationID,
+					notification: notificationID,
+					id: id,
+				};
 
-			window.location.href = `https://www.pulseem.co.il/${url}${
-				addParam[param] || ''
-			}`;
-			return <></>;
-		};
+				window.location.href = `https://www.pulseem.co.il/${url}${addParam[param] || ''
+					}`;
+				return <></>;
+			};
 	return (
 		<Routes>
 			<Route
@@ -295,6 +295,12 @@ const renderRoutes = (classes, redirect) => {
 			<Route
 				path={whatsappRoutes.CHAT}
 				element={<WhatsappChat classes={classes} />}
+			/>
+			{/* Settings */}
+			<Route
+				exact
+				path={`/react/AccountSettings`}
+				element={<AccountSettingsEditor classes={classes} />}
 			/>
 
 			<Route
@@ -532,20 +538,20 @@ const App = ({ screenSize }) => {
 				certthumbprint: billingTypeId,
 				role: isAdmin,
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone':
-					phone = '',
+				phone = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality':
-					locality = 'he-IL',
+				locality = 'he-IL',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince':
-					imageURL = '',
+				imageURL = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri':
-					isWhiteLabel = '',
+				isWhiteLabel = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision':
-					cameFromSubAccount = '',
+				cameFromSubAccount = '',
 				// 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name':
-					basename = '',
+				basename = '',
 				'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
-					isAllowSwitchAccount = '',
+				isAllowSwitchAccount = '',
 			} = jwt;
 
 			dispatch(

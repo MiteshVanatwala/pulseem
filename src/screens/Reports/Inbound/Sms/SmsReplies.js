@@ -4,21 +4,22 @@ import moment from 'moment';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
 import { ClientStatus } from '../../../../helpers/Constants';
-import { EditIcon, ExportIcon, SearchIcon } from '../../../../assets/images/managment/index';
+import { EditIcon, ExportIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
-import { TablePagination, ManagmentIcon, DateField } from '../../../../components/managment/index';
+import { TablePagination, ManagmentIcon } from '../../../../components/managment/index';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
-import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
-import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
+import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
+import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
+import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
 import SearchLine from '../SearchLine';
+
 
 const SmsReplies = ({ classes, ...other }) => {
     const dispatch = useDispatch();
@@ -32,18 +33,24 @@ const SmsReplies = ({ classes, ...other }) => {
     const [clientToEdit, setClientToEdit] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
     const [selectedClients, setSelectedClients] = useState([]);
-    const { smsReplies, extraData } = useSelector(state => state.sms);
-    const { ToastMessages } = useSelector(state => state.client);
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
-    const { accountFeatures, windowSize } = useSelector(state => state.core);
-    const { groupData } = useSelector((state) => state.group);
+    const { ToastMessages } = useSelector(state => state.client);
+    const { smsReplies, extraData } = useSelector(state => state.sms);
+    const { subAccountAllGroups } = useSelector((state) => state.group);
+    const { accountFeatures, windowSize, isRTL } = useSelector(state => state.core);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const { id } = useParams();
+    const priorDate = moment().subtract(30, 'days').utcOffset(0);
+
+    const defaultsDates = {
+        from: priorDate,
+        to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
+    }
     const defaultRequest = {
-        FromDate: null,
-        ToDate: null,
+        FromDate: defaultsDates.from,
+        ToDate: defaultsDates.to,
         FromNumber: '',
         ToNumber: '',
         Text: '',
@@ -59,10 +66,14 @@ const SmsReplies = ({ classes, ...other }) => {
 
 
     const getReplies = async () => {
+        setShowLoader(true);
         await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
+        setShowLoader(false);
     }
     const getRepliesById = async () => {
+        setShowLoader(true);
         await dispatch(getSmsRepliesById(id));
+        setShowLoader(false);
     }
 
     useEffect(() => {
@@ -80,7 +91,6 @@ const SmsReplies = ({ classes, ...other }) => {
         else {
             getReplies();
         }
-        setShowLoader(false);
     }, [request, page, rowsPerPage])
 
     useEffect(() => {
@@ -126,7 +136,6 @@ const SmsReplies = ({ classes, ...other }) => {
         "Cellphone": t('common.cellphone'),
         "CreationDate": t('common.CreationDate'),
         "SmsStatus": t('common.smsStatus'),
-        "Status": t('common.Status'),
         "ExtraField1": t('common.ExtraField1'),
         "ExtraField2": t('common.ExtraField2'),
         "ExtraField3": t('common.ExtraField3'),
@@ -184,7 +193,7 @@ const SmsReplies = ({ classes, ...other }) => {
             <>
                 <Grid item className={clsx(classes.groupsLableContainer, classes.mb15)} >
                     <Typography className={classes.groupsLable}>
-                        {`${smsReplies?.Message} ${t('common.Clients')}`}
+                        {`${smsReplies?.Message ?? 0} ${t('common.Clients')}`}
                     </Typography>
                 </Grid>
                 <TableContainer className={classes.tableStyle}>
@@ -201,10 +210,9 @@ const SmsReplies = ({ classes, ...other }) => {
         return (
             <TableHead>
                 <TableRow classes={rowStyle}>
-                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('common.SentFromNumber')}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.clientName')}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.clientName')} ({t('common.SentFromNumber')})</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('common.ToNumber')}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.smsStatus")}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.emailStatus")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.ReplyDate")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex5} align='center' >{t("common.messageContent")}</TableCell>
                 </TableRow>
@@ -227,16 +235,9 @@ const SmsReplies = ({ classes, ...other }) => {
             </TableBody>
         )
     }
-    const statusToText = (status, type) => {
-        let translatedStatus = status;
-        if (type === 'email') {
-            translatedStatus = ClientStatus.Email.find((x) => { return x.id === status });
-            translatedStatus = translatedStatus ?? { value: 'common.noEmail' };
-        }
-        else {
-            translatedStatus = ClientStatus.Sms.find((x) => { return x.id === status });
-            translatedStatus = translatedStatus ?? { value: 'common.noSms' };
-        }
+    const statusToText = (status) => {
+        let translatedStatus = ClientStatus.Sms.find((x) => { return x.id === status });
+        translatedStatus = translatedStatus ?? { value: 'common.noSms' };
         return t(translatedStatus?.value);
     }
 
@@ -245,11 +246,8 @@ const SmsReplies = ({ classes, ...other }) => {
             ClientID,
             FirstName,
             LastName,
-            Email,
             CellPhone,
-            CreationDate,
             SmsStatus,
-            Status,
             ReplyDate,
             ReplyText,
             VirtualNumber
@@ -263,42 +261,36 @@ const SmsReplies = ({ classes, ...other }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={classes.flex2}>
-                    <Typography className={classes.font18}>{VirtualNumber}</Typography>
-                </TableCell>
-                <TableCell
-                    classes={cellBodyStyle}
-                    align='center'
                     className={clsx(classes.flex2, classes.ellipsisText)}>
                     <Grid
+                        item
                         key={'edit'}
-                        style={{ maxWidth: 100 }}
-                        item>
+                        style={{ width: '100%' }}
+                    >
                         <Box className={classes.dFlex}>
-                            <Box>
+                            <Box style={{ width: '70%', textAlign: isRTL ? 'right' : 'left' }}>
                                 <Typography className={classes.font18}>{CellPhone}</Typography>
-                                <Typography className={clsx(classes.font13, classes.ellipsisText)}
-                                    style={{ maxWidth: 80 }}
+                                <Typography className={clsx(classes.font14, classes.ellipsisText)}
                                     title={`${FirstName} ${LastName}`}
                                 >{FirstName} {LastName}</Typography>
                             </Box>
-                            <Box>
+                            <Box className={ClientID > 0 ? null : classes.disabled} style={{ width: '30%' }}>
                                 <ManagmentIcon
                                     disableHover={true}
                                     key='edit'
                                     classes={classes}
                                     icon={EditIcon}
-                                    iconClass={clsx(
-                                        classes.smallIcon,
-                                        ClientID > 0 ? null : classes.disabled)
-                                    }
+                                    iconClass={clsx(classes.smallIcon)}
                                     rootClass={classes.paddingIcon}
                                     onClick={async () => {
                                         setShowLoader(true);
                                         setSelectedClients([row.ClientID]);
                                         const recipientRequest = await dispatch(getClientsById([row.ClientID]));
-                                        const clientToEdit = recipientRequest?.payload?.Data[0];
-                                        setClientToEdit(clientToEdit);
+                                        const cToEdit = recipientRequest?.payload?.Data[0];
+                                        setClientToEdit(cToEdit);
+                                        if (!subAccountAllGroups || subAccountAllGroups?.length === 0) {
+                                            await dispatch(getGroupsBySubAccountId());
+                                        }
                                         setDialog(DialogType.EDIT_RECIPIENT);
                                         setShowLoader(false);
                                     }}
@@ -311,13 +303,13 @@ const SmsReplies = ({ classes, ...other }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {statusToText(SmsStatus, 'sms')}
+                    <Typography className={classes.font18}>{VirtualNumber}</Typography>
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {statusToText(Status, 'email')}
+                    {statusToText(SmsStatus)}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
@@ -357,6 +349,11 @@ const SmsReplies = ({ classes, ...other }) => {
             switch (dialog) {
                 case DialogType.EDIT_RECIPIENT: {
                     let mappedGroups = [];
+                    if (clientToEdit && clientToEdit?.GroupIds?.length > 0) {
+                        mappedGroups = clientToEdit?.GroupIds?.split(',')?.map(function (x) {
+                            return parseInt(x, 10);
+                        });
+                    }
 
                     return <AddRecipientPopup
                         classes={classes}
@@ -366,7 +363,7 @@ const SmsReplies = ({ classes, ...other }) => {
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
-                        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
+                        Groups={subAccountAllGroups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
                         DialogType={DialogType}
                         selectedGroups={mappedGroups}
                         setDialog={setDialog}
@@ -487,8 +484,8 @@ const SmsReplies = ({ classes, ...other }) => {
                 setDialog(null);
                 break;
             }
-                setShowLoader(false);
         }
+        setShowLoader(false);
     }
     //#endregion
 

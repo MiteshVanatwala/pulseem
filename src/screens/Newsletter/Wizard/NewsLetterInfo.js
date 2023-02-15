@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button } from '@material-ui/core'
+import { IoMdImages } from 'react-icons/io';
+import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, Checkbox, FormControlLabel } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,7 +19,7 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
-import { getCookie } from '../../../helpers/Functions/cookies';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { BiSave } from 'react-icons/bi'
@@ -138,7 +139,7 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { accountSettings } = useSelector((state) => state.core);
+    const { accountSettings, isRTL } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -202,6 +203,10 @@ const NewsLetterInfo = ({ classes }) => {
     const [confirmDelete, setConfirmDelete] = useState(false)
     const [confirmExit, setConfirmExit] = useState(false)
     const [verPopupOpen, setVerPopupOpen] = useState(false)
+    const [dialogType, setDialogType] = useState(null)
+
+    const [hideCautionNewMessage, setHideCautionNewMessage] = useState(false)
+    const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
     const accountFeatures = getCookie("accountFeatures")
@@ -381,6 +386,26 @@ const NewsLetterInfo = ({ classes }) => {
         if (e.target.value.length < maxCharLimits[e.target.name]) {
             setErrors({ ...errors, [e.target.name]: '' })
             setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
+        }
+    }
+
+    const handleHideNewCautionMessage = (e) => {
+        setHideCautionNewMessage(e);
+        if (e === true) {
+            setCookie("showCautionOldEditor", "false");
+        }
+        else {
+            setCookie("showCautionOldEditor", "true");
+        }
+    }
+
+    const handleHideOldCautionMessage = (e) => {
+        setHideCautionOldMessage(e);
+        if (e === true) {
+            setCookie("showCautionNewEditor", "false");
+        }
+        else {
+            setCookie("showCautionNewEditor", "true");
         }
     }
 
@@ -797,6 +822,8 @@ const NewsLetterInfo = ({ classes }) => {
 
     const renderButtons = () => {
         const wizardButtons = [];
+        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
         if (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
             wizardButtons.push(<>
                 <Button
@@ -829,7 +856,8 @@ const NewsLetterInfo = ({ classes }) => {
         }
         else {
             if (id !== null && campaingnValues.IsNewEditor === true) {
-                wizardButtons.push(<Button onClick={() => handleSubmit(true, false, true)}
+                wizardButtons.push(<Button
+                    onClick={() => handleSubmit(true, false, true)}
                     variant='contained'
                     size='medium'
                     className={clsx(
@@ -842,19 +870,20 @@ const NewsLetterInfo = ({ classes }) => {
                 >{t('master.continueToNewEditor')}</Button>)
             }
             else {
-                wizardButtons.push(<>
-                    <Button onClick={() => handleSubmit(true, false, false)}
-                        variant='contained'
-                        size='medium'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen,
-                            classes.backButton
-                        )}
-                        style={{ marginInlineStart: '8px' }}
-                        color="primary"
-                    >{t('common.saveAndContinue')}</Button>
-                    {(id === null || id === undefined) && <Button onClick={() => handleSubmit(true, false, true)}
+                wizardButtons.push(<><Button
+                    onClick={() => showCautionOldEditor ? setDialogType({ type: "cautionNewEditor" }) : handleSubmit(true, false, false)}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton
+                    )}
+                    style={{ marginInlineStart: '8px' }}
+                    color="primary"
+                >{t('common.saveAndContinue')}</Button>
+                    {(id === null || id === undefined) && <Button
+                        onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
                         variant='contained'
                         size='medium'
                         className={clsx(
@@ -871,12 +900,148 @@ const NewsLetterInfo = ({ classes }) => {
         return wizardButtons.map((b) => b);
     }
 
+    const getCautionNewEditorDialog = (data = {}) => {
+        return {
+            title: '',
+            showDivider: false,
+            icon: false,
+            exit: <Box
+                onClick={() => setDialogType(null)}
+                className={clsx(
+                    classes.dialogExitButton,
+                    classes.btnNoBgExitDialog,
+                    classes.f25,
+                    {
+                        [classes.dialogExitButtonRTL]: !isRTL,
+                        [classes.dialogExitButtonLTR]: isRTL
+                    }
+                )}>
+                x
+            </Box>,
+            contentStyle: classes.noBorder,
+            content: (
+                <Grid container>
+                    <Grid item xs={12} className={clsx(classes.mb4)} style={{ textAlign: 'center' }}>
+                        <Typography className={clsx(classes.pbt5, classes.f25)}>
+                            {t('campaigns.newsLetterMgmt.payAttention')}
+                            {/* Pay attention! */}
+                        </Typography>
+                        <Typography className={classes.f20}>
+                            {t('campaigns.newsLetterMgmt.newsLetterWizard.continueEditingInNewEditor')}
+                        </Typography>
+                        <Typography className={classes.f20}>
+                            {t('campaigns.newsLetterMgmt.newsLetterWizard.recreateInOldEditor')}
+                        </Typography>
+
+                        <Box className={classes.mt15}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={hideCautionNewMessage}
+                                        onChange={() => handleHideNewCautionMessage(!hideCautionNewMessage)}
+                                        name="checkedB"
+                                        color="primary"
+                                    />
+                                }
+                                label={t('notifications.implementDialog.dontShowThisMessage')}
+                            />
+                        </Box>
+                    </Grid>
+                </Grid>
+            ),
+            onConfirm: async () => {
+                handleSubmit(true, false, false)
+                setDialogType(null)
+            }
+        }
+    }
+
+    const getCautionOldEditorDialog = (data = {}) => {
+        return {
+            title: '',
+            showDivider: false,
+            icon: false,
+            exit: <Box
+                onClick={() => setDialogType(null)}
+                className={clsx(
+                    classes.dialogExitButton,
+                    classes.btnNoBgExitDialog,
+                    classes.f25,
+                    {
+                        [classes.dialogExitButtonRTL]: !isRTL,
+                        [classes.dialogExitButtonLTR]: isRTL
+                    }
+                )}>
+                x
+            </Box>,
+            contentStyle: classes.noBorder,
+            content: (
+                <Grid container>
+                    <Grid item xs={12} className={clsx(classes.mb4)} style={{ textAlign: 'center' }}>
+                        <Typography className={clsx(classes.pbt5, classes.f25)}>
+                            {t('campaigns.newsLetterMgmt.payAttention')}
+                            {/* Pay attention! */}
+                        </Typography>
+                        <Typography className={classes.f20}>
+                            {t('campaigns.newsLetterMgmt.newsLetterWizard.continueEditingInOldEditor')}
+                        </Typography>
+                        <Typography className={classes.f20}>
+                            {t('campaigns.newsLetterMgmt.newsLetterWizard.recreateInNewEditor')}
+                        </Typography>
+
+                        <Box className={classes.mt15}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={hideCautionOldMessage}
+                                        onChange={() => handleHideOldCautionMessage(!hideCautionOldMessage)}
+                                        name="checkedB"
+                                        color="primary"
+                                    />
+                                }
+                                label={t('notifications.implementDialog.dontShowThisMessage')}
+                            />
+                        </Box>
+                    </Grid>
+                </Grid>
+            ),
+            onConfirm: async () => {
+                handleSubmit(true, false, true)
+                setDialogType(null)
+            }
+        }
+    }
+
+
+    const renderDialog = () => {
+        const { data, type } = dialogType || {}
+
+        const dialogContent = {
+            cautionNewEditor: getCautionNewEditorDialog(data),
+            cautionOldEditor: getCautionOldEditorDialog(data),
+        }
+
+        const currentDialog = dialogContent[type] || {}
+        return (
+            dialogType && <BaseDialog
+                classes={classes}
+                open={dialogType}
+                onCancel={() => setDialogType(null)}
+                onClose={() => setDialogType(null)}
+                renderButtons={currentDialog.renderButtons || null}
+                {...currentDialog}>
+                {currentDialog.content}
+            </BaseDialog>
+        )
+    }
+
     return (
         <DefaultScreen
             currentPage="Campaingn Settings"
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
+            {renderDialog()}
             {showGalleryModal()}
             {renderToast()}
             <Typography className={classes.managementTitle}>

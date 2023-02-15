@@ -42,7 +42,7 @@
     "Text": "דוחות"
   },
   "RadMenuItemResource2": {
-    "Text": "פרטי חשבון"
+    "Text": "הגדרות חשבון"
   },
   "RadMenuItemResource20": {
     "Text": "עזרה"
@@ -375,7 +375,6 @@
   "guides": "מדריכים",
   "implementScript": "הטמעת סקריפט",
   "pulseemSystem": "מערכת פולסים ",
-  "smsReplies": "ד\"ח משובים",
   "newEditor": "עורך חדש",
   "siteTracking": "מעקב אתרים",
   "continueToNewEditor": "שמור והמשך לעורך החדש",

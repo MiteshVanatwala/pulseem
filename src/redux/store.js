@@ -20,6 +20,7 @@ import reportSlice from './reducers/reportSlice';
 import ConnectorsSlice from './reducers/ConnectorsSlice';
 import galleryReducer from './reducers/gallerySlice'
 import whatsappReducer from './reducers/whatsappSlice'
+import AccountSettingsSlice from './reducers/AccountSettingsSlice';
 
 export default configureStore({
   reducer: {
@@ -43,6 +44,7 @@ export default configureStore({
     report: reportSlice,
     connectors: ConnectorsSlice,
     gallery: galleryReducer,
-    whatsapp: whatsappReducer
+    whatsapp: whatsappReducer,
+    accountSettings: AccountSettingsSlice
   },
 });

@@ -624,6 +624,15 @@
         "desc": "מעתה תוכלו לשלוח דרך אימייל זה ללא צורך באימות חוזר",
         "btnTxt": "המשך ל קמפיינים"
       }
+    },
+    "payAttention": "שימו לב!",
+    "campMadewithOldEditor": "קמפיין זה נוצר בעורך הישן",
+    "chooseNewEditorToCreateCamp": "על מנת להשתמש בעורך החדש יש ללחוץ על “יצירת קמפיין” ולבחור בעורך החדש",
+    "newsLetterWizard": {
+      "continueEditingInOldEditor": "במידה ויצרתם קמפיין בעורך החדש לא ניתן להמשיך את העריכה בעורך הישן",
+      "recreateInOldEditor": "יהיה עליכם ליצור את הקמפיין מחדש בעורך הישן",
+      "continueEditingInNewEditor": "במידה ויצרתם קמפיין בעורך הישן לא ניתן להמשיך את העריכה בעורך החדש",
+      "recreateInNewEditor": "יהיה עליכם ליצור את הקמפיין מחדש בעורך החדש"
     }
   },
   "newsLetterSendSettings": {
