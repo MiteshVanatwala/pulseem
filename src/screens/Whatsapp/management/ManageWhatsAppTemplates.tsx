@@ -32,9 +32,7 @@ import {
 	commonAPIResponseProps,
 	coreProps,
 	deleteTemplateAPIProps,
-	getTemplateByIdAPIProps,
 	quickReplyButtonProps,
-	savedTemplateAPIProps,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -59,7 +57,6 @@ import {
 	deleteTemplate,
 	duplicateTemplate,
 	getAllTemplates,
-	getSavedTemplatesById,
 	getSavedTemplatesPreviewById,
 	submitTemplateDirect,
 } from '../../../redux/reducers/whatsappSlice';
@@ -184,8 +181,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					arrow={true}
 					style={{ fontSize: 18, fontWeight: 'bold' }}
 					placement={'top'}
-					title={<Typography noWrap={false}>{row.TemplateName}</Typography>}
-					text={row.TemplateName}
+					title={
+						<Typography noWrap={false}>{row?.FriendlyTemplateName}</Typography>
+					}
+					text={row?.FriendlyTemplateName}
 					children={undefined}
 					icon={undefined}
 				/>
@@ -200,8 +199,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
-						[classes.recipientsStatusStopped]:
-							status === 'CreatedOnlyforPulseem',
+						[classes.whatsappTemplateStatusCreated]: status === 'Created',
 						[classes.whatsappTemplateStatusApproved]: status === 'Approved',
 						[classes.whatsappTemplateStatusPending]: status === 'Pending',
 						[classes.whatsappTemplateStatusReceived]: status === 'Received',
@@ -377,29 +375,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		)?.TemplateId;
 	};
 
-	const onPreview = async (templateId: string) => {
-		const previewTemplateId = getTemplateIdFromId(templateId);
-		if (previewTemplateId) {
-			const templateData: templateListAPIProps = await dispatch<any>(
-				getSavedTemplatesPreviewById({
-					templateId: previewTemplateId,
-				})
-			);
-			if (templateData.payload.Status === apiStatus.SUCCESS) {
-				const templates = templateData.payload?.Data?.Items;
-				if (templates && templates?.length > 0) {
-					const templateData = templates[0];
-					onSavedTemplateChange(templateData?.Data);
-				}
-				setIsPreviewTemplateOpen(true);
-			} else {
-				templateData?.payload?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: templateData?.payload?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
-			}
+	const onPreview = async (id: string) => {
+		const templateData = templateListData?.find(
+			(template) => template?.Id === Number(id)
+		);
+		if (templateData) {
+			onSavedTemplateChange(templateData?.Data);
+			setIsPreviewTemplateOpen(true);
 		}
 	};
 

@@ -10,7 +10,7 @@ import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import Highlighter from 'react-highlight-words';
 import {
 	tagDataProps,
-	updatedVariableProps,
+	updatedVariable,
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { Stack } from '@mui/material';
@@ -52,7 +52,7 @@ const ChatUi = ({
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
 		const isAvaliable = updatedDynamicVariable?.find(
-			(dynamicVariable: updatedVariableProps) =>
+			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
 		);
 		return !!isAvaliable;
@@ -64,7 +64,7 @@ const ChatUi = ({
 	const getUpdatedVariableValue = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
 		const variableValue = updatedDynamicVariable?.find(
-			(dynamicVariable: updatedVariableProps) =>
+			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
 		)?.VariableValue;
 		return variableValue ? variableValue : variable;

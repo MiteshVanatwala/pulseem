@@ -232,7 +232,7 @@ export const getRoutes = (
 		title: 'Whatsapp',
 		pageTitle: t('whatsapp.Title'),
 		iconUnicode: '\ue181',
-		href: '/react/WhatsappCampaigns',
+		href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
 		isShow: true,
 		icon: <img alt='Sms' src={SmsIcon} />,
 		options: [

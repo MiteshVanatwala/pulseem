@@ -59,7 +59,7 @@ const GroupsList = ({
 						primary={group.GroupName}
 					/>
 					<ListItemSecondaryAction className={'groupText'}>
-						{group['GroupID']?.toLocaleString()}{' '}
+						{group['Recipients']?.toLocaleString()}{' '}
 						<>
 							{group['Recipients'] !== 1
 								? translator('notifications.recipients')

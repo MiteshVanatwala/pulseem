@@ -37,10 +37,10 @@ const UploadXL = ({
     classes,
     areaStyle,
     placeHolder = "sms.dragXlOrCsv",
-    onDone = () => null,
+    onDone,
     uploadToGroups = [],
     setToastMessage,
-    settings = null,
+    settings,
     tooltipText = "smsReport.manualTotalTooltip",
     onlyMapping = false,
     extraButtons = <></>
@@ -74,12 +74,12 @@ const UploadXL = ({
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
-            const exist = settings.Fields.filter((e) => {
+            const exist = settings?.Fields.filter((e) => {
                 return e.value === ed;
             });
 
             if (exist <= 0 && extraData[ed] !== '') {
-                settings.Fields.push({
+                settings?.Fields.push({
                     isdisabled: false,
                     idx: -1,
                     value: ed,
@@ -87,7 +87,7 @@ const UploadXL = ({
                 });
             }
         });
-        let fields = settings.Fields.map((e, idx) => {
+        let fields = settings?.Fields.map((e, idx) => {
             if (e.label && e.label !== '') {
                 return {
                     isdisabled: false,
@@ -526,7 +526,7 @@ const UploadXL = ({
         setcolumnValidate(false);
         let groupNameExist = false;
 
-        if (settings.ShowGroupName) {
+        if (settings?.ShowGroupName) {
             groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
             if (groupNameInput === "") {
                 isValid = false;
@@ -567,7 +567,7 @@ const UploadXL = ({
             ),
             content: (
                 <Box className={classes.dialogBox}>
-                    {settings.ShowGroupName && <div className={classes.manualModal}>
+                    {settings?.ShowGroupName && <div className={classes.manualModal}>
                         <Typography className={classes.inputLabel}>
                             {t("common.GroupName")}:
                         </Typography>
