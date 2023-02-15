@@ -129,7 +129,7 @@ const RightPane = ({
 								onTimeChange={handleTimePicker}
 								placeholder={translator('notifications.hour')}
 								isTimePicker={true}
-								ampm={true}
+								ampm={false}
 								timeActive={sendType === '2' ? false : true}
 								timePickerOpen={timePickerOpen}
 								onChange={undefined}
@@ -293,7 +293,7 @@ const RightPane = ({
 									ok: translator('common.confirm'),
 									cancel: translator('common.cancel'),
 								}}
-								ampm={true}
+								ampm={false}
 								timePickerOpen={timePickerOpen}
 								timeActive={sendType === '3' ? false : true}
 								disabled={sendType === '3' ? false : true}
