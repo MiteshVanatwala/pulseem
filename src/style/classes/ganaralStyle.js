@@ -2607,7 +2607,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   settingsContainer: {
     marginBottom: 68,
     background: '#fff',
-    marginTop: 30,
+    marginTop: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     '& .head': {
