@@ -108,6 +108,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
+	const [page, setPage] = useState<number>(1);
+	const [ispagination, setIsPaginbation] = useState<boolean>(false);
+	const pagesize = 20;
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
@@ -256,6 +259,30 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				break;
 		}
 	};
+
+	const handelInfiniteScroll = async () => {
+		console.log('scrollHeight' + document.documentElement.scrollHeight);
+		console.log('innerHeight' + window.innerHeight);
+		console.log('scrollTop' + document.documentElement.scrollTop);
+		try {
+			if (
+				window.innerHeight + document.documentElement.scrollTop + 1 >=
+				document.documentElement.scrollHeight
+			) {
+				// setLoading(true);
+				setPage((prev) => prev + 1);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		window.addEventListener('scroll', handelInfiniteScroll);
+		return () => window.removeEventListener('scroll', handelInfiniteScroll);
+	}, []);
+
+	console.log('Height-->', document.documentElement.scrollHeight);
 
 	const getDynamicModalValues = async () => {
 		const staticPersonalField: personalFieldDataProps = {
