@@ -2698,5 +2698,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
-
+  passwordDialog: {
+    maxWidth: windowSize !== 'xs' ? '25vw' : null
+  }
 });
