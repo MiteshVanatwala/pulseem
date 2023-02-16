@@ -237,6 +237,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                 name="OldPassword"
                                 label=""
                                 variant="outlined"
+                                style={{ textAlign: 'left', direction: 'ltr' }}
                                 value={loginPass.OldPassword}
                                 className={clsx(classes.textField, classes.minWidth252, oldPassError !== '' ? classes.textFieldError : '')}
                                 inputProps={{ autocomplete: "old-password" }}
@@ -278,6 +279,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                         name="NewPassword"
                                         label=""
                                         variant="outlined"
+                                        style={{ textAlign: 'left', direction: 'ltr' }}
                                         value={loginPass.NewPassword}
                                         className={clsx(classes.textField, classes.minWidth252, newPassError !== '' ? classes.textFieldError : '')}
                                         inputProps={{ autocomplete: "new-password" }}
@@ -311,6 +313,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                     name="ConfirmPassword"
                                     label=""
                                     variant="outlined"
+                                    style={{ textAlign: 'left', direction: 'ltr' }}
                                     value={loginPass.ConfirmPassword}
                                     className={clsx(classes.textField, classes.minWidth252, confirmPassError !== '' ? classes.textFieldError : '')}
                                     inputProps={{ autocomplete: "new-password" }}
