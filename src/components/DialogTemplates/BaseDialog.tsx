@@ -42,6 +42,7 @@ export const BaseDialog = ({
   style = undefined,
   maxHeight = "",
   reduceTitle = false,
+  confirmDisabled = false
 }: DialogOptions) => {
   const direction: { [key: string]: string } = {
     true: "rtl",
@@ -106,6 +107,7 @@ export const BaseDialog = ({
           <Button
             variant='contained'
             size='small'
+            disabled={confirmDisabled}
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
             className={clsx(
               classes.solidDialogButton,

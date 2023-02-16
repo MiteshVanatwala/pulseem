@@ -101,6 +101,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
         NumberChar: false
     } as ValidPassword);
     const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
+    const [confirmButtonDisabled, setConfirmButtonDisabled] = useState<boolean>(false);
     const [errors, setErrors] = useState([]);
 
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
@@ -112,6 +113,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
     const dispatch = useDispatch();
 
     const handleConfirm = async () => {
+        setConfirmButtonDisabled(true);
         const missingErrorsObj: any = {
             LowerChar: t('settings.changePassword.passwordHint.lowerChar'),
             SpecialChar: t('settings.changePassword.passwordHint.specialChar'),
@@ -151,6 +153,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
 
         if (missingRules.length > 0) {
             setErrors(missingRules);
+            setConfirmButtonDisabled(false);
         }
         else {
             setErrors([]);
@@ -159,6 +162,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                 const response = await dispatch(changePassword(loginPass));
                 handleResponses(response);
                 setShowLoader(false);
+                setConfirmButtonDisabled(false);
             }
         }
     }
@@ -208,6 +212,8 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                 onClose={OnClose}
                 onCancel={OnClose}
                 onConfirm={handleConfirm}
+                disableBackdropClick={true}
+                confirmDisabled={confirmButtonDisabled}
                 title={t("settings.changePassword.title")}
                 showDivider={true}
             >

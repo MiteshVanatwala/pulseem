@@ -86,7 +86,8 @@
             "403": "Incorrect password",
             "406": "Password cannot be empty!",
             "407": "Confirmation password is not matched",
-            "408": "Invalid old password"
+            "408": "Invalid old password",
+            "409": "The new password must be different then the old one!"
         },
         "passwordHint": {
             "title": "The password must contain",
