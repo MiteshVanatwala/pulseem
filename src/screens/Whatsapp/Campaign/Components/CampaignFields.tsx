@@ -58,7 +58,7 @@ const CampaignFields = ({
 				onSavedTemplateChange(templateId);
 			}
 		} else {
-			onSavedTemplateChange("");
+			onSavedTemplateChange('');
 		}
 	};
 
@@ -139,7 +139,11 @@ const CampaignFields = ({
 							? clsx(classes.buttonField, classes.error)
 							: clsx(classes.buttonField, classes.success)
 					}
-					options={savedTemplateList.map((template) => template.TemplateName)}
+					options={savedTemplateList.map((template) =>
+						template.FriendlyTemplateName !== ''
+							? template.FriendlyTemplateName
+							: template.TemplateName
+					)}
 					renderInput={(params) => <TextField {...params} />}
 					onChange={onTemplateChange}
 					value={getTemplateNameById(savedTemplateList, savedTemplate)}

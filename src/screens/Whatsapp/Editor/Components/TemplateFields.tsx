@@ -3,13 +3,7 @@ import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { coreProps, TemplateFieldsProps } from '../Types/WhatsappCreator.types';
 import { ClassesType } from '../../../Classes.types';
-import {
-	TextField,
-	Typography,
-	MenuItem,
-	Grid,
-	Button,
-} from '@material-ui/core';
+import { TextField, Typography, Grid, Button } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import AlertModal from '../Popups/AlertModal';
 import { Autocomplete } from '@mui/material';
@@ -115,8 +109,10 @@ const TemplateFields = ({
 									? clsx(classes.buttonField, classes.error)
 									: clsx(classes.buttonField, classes.success)
 							}
-							options={savedTemplateList.map(
-								(template) => template.TemplateName
+							options={savedTemplateList.map((template) =>
+								template.FriendlyTemplateName !== ''
+									? template.FriendlyTemplateName
+									: template.TemplateName
 							)}
 							renderInput={(params) => <TextField {...params} />}
 							onChange={onTemplateChange}

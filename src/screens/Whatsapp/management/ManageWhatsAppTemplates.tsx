@@ -182,7 +182,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					style={{ fontSize: 18, fontWeight: 'bold' }}
 					placement={'top'}
 					title={
-						<Typography noWrap={false}>{row?.FriendlyTemplateName}</Typography>
+						<Typography noWrap={false}>
+							{row?.FriendlyTemplateName !== ''
+								? row?.FriendlyTemplateName
+								: row.TemplateName}
+						</Typography>
 					}
 					text={row?.FriendlyTemplateName}
 					children={undefined}

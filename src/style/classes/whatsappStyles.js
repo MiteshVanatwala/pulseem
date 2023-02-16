@@ -50,6 +50,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'@media screen and (max-width: 768px)': {
 			height: '110px',
 		},
+		'@media screen and (max-width: 556px)': {
+			display: 'flex',
+			height: 'auto',
+		},
+	},
+	whatsappEmoji: {
+		'@media screen and (max-width: 556px)': {
+			flexDirection: 'unset',
+			paddingLeft: '10px'
+		},
 	},
 	whatsappBaseButtons: {
 		display: 'flex',
@@ -59,6 +69,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'@media screen and (max-width: 540px)': {
 			flexDirection: 'column-reverse',
 			paddingInlineEnd: '8px',
+		},
+		'@media screen and (max-width: 556px)': {
+			display: 'contents',
+			flexDirection: 'unset',
 		},
 	},
 	WhatsappTextareaWrapper: {
@@ -108,7 +122,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textTransform: 'none',
 		marginInlineStart: 1,
 		marginInlineEnd: 1,
-		padding: '3px',
+		padding: '3px 6px',
 		fontSize: '12px',
 		'&$disabled': {
 			cursor: 'not-allowed !important',
@@ -244,9 +258,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 
 	whatsappMobileSection: {
 		width: '100%',
-		height: '100%',
+		height: '340px',
+		overflow: 'hidden',
 		display: 'flex',
-		alignItems: 'center',
+		alignItems: 'flex-start',
 		justifyContent: 'center',
 		'@media screen and (max-width: 768px)': {
 			alignItems: 'flex-start',

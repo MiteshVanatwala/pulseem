@@ -203,7 +203,11 @@ const WhatsappTemplateEditor = ({
 			</Box>
 
 			<Box className={classes.whatsappFuncDiv}>
-				<Box className={isRTL ? classes.emojiHe : classes.emoji}>
+				<Box
+					className={clsx(
+						isRTL ? classes.emojiHe : classes.emoji,
+						classes.whatsappEmoji
+					)}>
 					<>
 						<Tooltip
 							disableFocusListener

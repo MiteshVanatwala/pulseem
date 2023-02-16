@@ -673,6 +673,22 @@ export const quickSend = createAsyncThunk(
 	}
 );
 
+export const restoreWhatsAppCampaigns = createAsyncThunk(
+	'whatsAppCampaign/RestoreWhatsAppCampaigns',
+	async (data: number[], thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(
+				`whatsAppCampaign/RestoreWhatsAppCampaigns`,
+				data
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -775,6 +791,12 @@ export const whatsappSlice = createSlice({
 				severity: 'success',
 				color: 'success',
 				message: 'Campaign send succesfully',
+				showAnimtionCheck: true,
+			},
+			RESTORE_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign restored succesfully',
 				showAnimtionCheck: true,
 			},
 		},

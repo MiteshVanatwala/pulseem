@@ -216,6 +216,8 @@ export type savedTemplateListProps = {
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	FriendlyTemplateName: string;
+	IsAllowEdit: boolean;
 };
 
 export type toastProps = {
@@ -236,6 +238,7 @@ export type toastProps = {
 	GENERAL_ERROR: toastKeyProps;
 	GROUP_ALREADY_EXIST: toastKeyProps;
 	CAMPAIGN_SEND_SUCCESS: toastKeyProps;
+	RESTORE_CAMPAIGN_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -420,3 +423,13 @@ export type commonAPIResponsePayloadProps = {
 export type commonAPIResponseProps = {
 	payload: commonAPIResponsePayloadProps;
 };
+
+export type restoreCampaignPayloadData = {
+	Message: string;
+	Status: string;
+};
+
+export type restoreCampaignData = {
+	payload: restoreCampaignPayloadData;
+};
+
