@@ -24,32 +24,19 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(() => {
     const initialize = async () => {
-      const member = accountSettings?.SubAccountSettings?.MembershipDetails;
-      setMember(member);
-      if (member?.PasswordExpired === true) {
-        setShowChangePassword(true);
-        //logout();
-        //return false;
-      }
-      else {
-        if (member?.NextRequiredChange?.Days <= 14) {
-          setShowChangePassword(true);
+      if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
+        const member = accountSettings?.SubAccountSettings?.MembershipDetails;
+        setMember(member);
+        if (member?.PasswordExpired === true) {
+          logout();
+          return false;
+        }
+        else {
+          if (member?.NextRequiredChange?.Days <= 14) {
+            setShowChangePassword(true);
+          }
         }
       }
-
-      // if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
-      //   const member = accountSettings?.SubAccountSettings?.MembershipDetails;
-      //   setMember(member);
-      //   if (member?.PasswordExpired === true) {
-      //     logout();
-      //     return false;
-      //   }
-      //   else {
-      //     if (member?.NextRequiredChange?.Days <= 14) {
-      //       setShowChangePassword(true);
-      //     }
-      //   }
-      // }
     }
     if (accountSettings) {
       initialize();
