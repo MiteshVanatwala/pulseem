@@ -26,8 +26,8 @@ export type WhatsappChatUiProps = {
 	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
 	setDynamicModalVariable: (dynamicModalVariable: number) => void;
 	savedTemplate: string;
+	activePhoneNumber: string;
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
-	activeUser: string;
 	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	whatsappChatSession: APIWhatsappChatSessionData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
@@ -42,10 +42,10 @@ export type WhatsappChatSideBarProps = {
 		e: BaseSyntheticEvent,
 		Contacts: APIWhatsappChatSidebarContactsItemsData
 	) => void;
-	activeUser: string;
 	setActiveUser: (activeUser: string) => void;
 	getPhoneNumber: () => void;
 	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	setFilteredSideChatContacts: (
@@ -54,6 +54,7 @@ export type WhatsappChatSideBarProps = {
 	phoneNumbersList: string[];
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
+	activePhoneNumber: string;
 };
 
 export type chatModalProps = {

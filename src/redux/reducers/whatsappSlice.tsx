@@ -469,6 +469,9 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 				`WhatsAppChat/GetWhatsAppChatContacts`,
 				{
 					PhoneNumber: number,
+					IsPagination: true,
+					pageNo: 1,
+					pageSize: 20,
 				}
 			);
 

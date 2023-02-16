@@ -24,7 +24,6 @@ const SideBar = ({
 	isMobileSideBar,
 	setIsMobileSideBar,
 	handleChatId,
-	activeUser,
 	getPhoneNumber,
 	onActiveUserChange,
 	sideChatContacts,
@@ -33,6 +32,8 @@ const SideBar = ({
 	phoneNumbersList,
 	handleUserStatus,
 	getStatusClass,
+	chatContacts,
+	activePhoneNumber,
 }: WhatsappChatSideBarProps) => {
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
@@ -115,14 +116,14 @@ const SideBar = ({
 								disabled
 								className={clsx(classes.buttonField)}
 								onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
-								value={activeUser}
+								value={activePhoneNumber}
 							/>
 						) : (
 							<Select
 								type='text'
 								classes={{ root: muiclasses.selectRoot }}
 								onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
-								value={activeUser}>
+								value={activePhoneNumber}>
 								{phoneNumbersList?.length > 0 ? (
 									phoneNumbersList?.map((phone: string, index: number) => (
 										<MenuItem key={index} value={phone}>
@@ -194,7 +195,7 @@ const SideBar = ({
 							<Link
 								className={`${classes.whatsappChat} sidebar-contact`}
 								key={i}
-								to={''}
+								to={`/react/whatsapp/chat/${contact?.PhoneNumber}`}
 								onClick={(e) => handleChatId(e, contact)}>
 								<div
 									className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}>

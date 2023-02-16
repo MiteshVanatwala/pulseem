@@ -48,18 +48,14 @@ const ChatUi = ({
 	setDynamicModalVariable,
 	savedTemplate,
 	chatContacts,
-	activeUser,
 	whatsappChatSession,
 	handleUserStatus,
 	getStatusClass,
+	activePhoneNumber,
 }: WhatsappChatUiProps) => {
 	const [allWhatsappChat, setAllWhatsappChat] = useState<
 		APIWhatsappChatItemsData[]
 	>([]);
-	const [activePhoneNumber, setActivePhoneNumber] =
-		useState<string>(activeUser);
-	const [activeUserNumber, setActiveUserNumber] =
-		useState<string>('918657485699');
 
 	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
@@ -135,15 +131,19 @@ const ChatUi = ({
 
 	useEffect(() => {
 		getAPIAllWhatsappChat();
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [chatContacts?.PhoneNumber]);
 
 	const getAPIAllWhatsappChat = async () => {
 		const allWhatsAppChatData: APIWhatsappChatData = await dispatch<any>(
-			getWhatsappChat({ activePhoneNumber, activeUserNumber })
+			getWhatsappChat({
+				activePhoneNumber: activePhoneNumber,
+				activeUserNumber: chatContacts?.PhoneNumber,
+			})
 		);
 
 		if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
-			setAllWhatsappChat(allWhatsAppChatData.payload.Data.Items);
+			setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
 		} else {
 			setAllWhatsappChat([]);
 		}

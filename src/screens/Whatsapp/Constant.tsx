@@ -16,6 +16,7 @@ export const whatsappRoutes = {
 	EDIT_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/edit/page1/:campaignID',
 	EDIT_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/edit/page2/:campaignID',
 	CHAT: '/react/whatsapp/chat',
+	CHAT_CONVERSATION: '/react/whatsapp/chat/:contactID',
 };
 
 export const apiStatus = {
