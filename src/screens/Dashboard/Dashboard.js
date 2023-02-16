@@ -32,7 +32,7 @@ const DashboardScreen = ({ classes }) => {
           return false;
         }
         else {
-          if (member?.NextRequiredChange?.Days <= 14) {
+          if (member?.NextRequiredChange <= 14) {
             setShowChangePassword(true);
           }
         }
@@ -51,7 +51,7 @@ const DashboardScreen = ({ classes }) => {
   };
 
   const renderPasswordText = () => {
-    return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange?.Days ?? ''))
+    return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange ?? ''))
   }
 
   return (
