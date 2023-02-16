@@ -50,7 +50,7 @@ import {
 	getAccountExtraData,
 	getPreviousLandingData,
 } from '../../../redux/reducers/smsSlice';
-import { apiStatus, buttonTypes } from '../Constant';
+import { apiStatus, buttonTypes, whatsappChatStatuses } from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
@@ -241,6 +241,20 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const onActiveUserChange = (e: BaseSyntheticEvent) => {
 		setActiveUser(e.target.value?.replace(/\D/g, ''));
 		setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
+	};
+
+	const getStatusClass = (status: number) => {
+		switch (status) {
+			case 1:
+				return whatsappChatStatuses.OPEN;
+			case 2:
+				return whatsappChatStatuses.PENDING;
+			case 3:
+				return whatsappChatStatuses.SOLVED;
+
+			default:
+				break;
+		}
 	};
 
 	const getDynamicModalValues = async () => {
@@ -484,6 +498,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							setFilteredSideChatContacts={setFilteredSideChatContacts}
 							phoneNumbersList={phoneNumbersList}
 							handleUserStatus={handleUserStatus}
+							getStatusClass={getStatusClass}
 						/>
 						<ChatUi
 							isMobileSideBar={isMobileSideBar}
@@ -507,6 +522,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							filteredSideChatContacts={filteredSideChatContacts}
 							whatsappChatSession={whatsappChatSession}
 							handleUserStatus={handleUserStatus}
+							getStatusClass={getStatusClass}
 						/>
 					</div>
 				</div>

@@ -31,6 +31,7 @@ export type WhatsappChatUiProps = {
 	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	whatsappChatSession: APIWhatsappChatSessionData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
 };
 
 export type WhatsappChatSideBarProps = {
@@ -52,6 +53,7 @@ export type WhatsappChatSideBarProps = {
 	) => void;
 	phoneNumbersList: string[];
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
 };
 
 export type chatModalProps = {

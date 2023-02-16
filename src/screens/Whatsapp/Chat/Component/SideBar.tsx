@@ -14,11 +14,10 @@ import {
 	TextField,
 } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
-import { whatsappChatStatuses } from '../../Constant';
 
 const SideBar = ({
 	classes,
@@ -33,6 +32,7 @@ const SideBar = ({
 	setFilteredSideChatContacts,
 	phoneNumbersList,
 	handleUserStatus,
+	getStatusClass,
 }: WhatsappChatSideBarProps) => {
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
@@ -56,20 +56,6 @@ const SideBar = ({
 	const formatTime = (timeString: string) => {
 		let splitTimeString = timeString.split(':');
 		return `${splitTimeString[0]}:${splitTimeString[1]}`;
-	};
-
-	const getStatusClass = (status: number) => {
-		switch (status) {
-			case 1:
-				return whatsappChatStatuses.OPEN;
-			case 2:
-				return whatsappChatStatuses.PENDING;
-			case 3:
-				return whatsappChatStatuses.SOLVED;
-
-			default:
-				break;
-		}
 	};
 
 	const handleSearch = (e: BaseSyntheticEvent) => {

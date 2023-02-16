@@ -51,6 +51,7 @@ const ChatUi = ({
 	activeUser,
 	whatsappChatSession,
 	handleUserStatus,
+	getStatusClass,
 }: WhatsappChatUiProps) => {
 	const [allWhatsappChat, setAllWhatsappChat] = useState<
 		APIWhatsappChatItemsData[]
@@ -88,18 +89,6 @@ const ChatUi = ({
 		},
 	}));
 	const muiclasses = useStyles();
-	const getStatusClass = (status: number) => {
-		switch (status) {
-			case 1:
-				return whatsappChatStatuses.OPEN;
-			case 2:
-				return whatsappChatStatuses.PENDING;
-			case 3:
-				return whatsappChatStatuses.SOLVED;
-			default:
-				break;
-		}
-	};
 
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
