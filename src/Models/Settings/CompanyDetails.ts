@@ -1,5 +1,5 @@
-import { ClassNamesProps } from "@emotion/react";
 import React from "react";
+import { AccountSettings } from '../Account/AccountSettings';
 
 export type CompDtlErrorsType = {
   [key: string]: string;
@@ -15,23 +15,12 @@ export type CompDtlErrorsType = {
   SendCodeMethod: string;
 };
 
-export type CompanyDetailsType = {
-  CompanyName: string;
-  ContactName: string;
-  BirthDate: null | string;
-  Telephone: string;
-  Mobile: string;
-  Email: string;
-  Address: string;
-  City: string;
-  Zip: string;
-  TwoFactorAuth: boolean;
-  SendCodeMethod: string;
-};
-
 export type CompDtlPropTypes = {
   setToastMessage: React.Dispatch<React.SetStateAction<null>>;
   ToastMessages: {
     [key: string]: any;
   };
+  Settings: AccountSettings | null,
+  OnUpdate: Function,
+  SetVerification: Function
 };

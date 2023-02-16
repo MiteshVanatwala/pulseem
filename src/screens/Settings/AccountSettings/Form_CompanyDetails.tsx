@@ -20,65 +20,61 @@ import {
   MdMobileFriendly,
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
-import { UnLockIcon } from "../../../assets/images/settings";
+import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
 import { Title } from "../../../components/managment/Title";
-import Illustration_data_Analysis from "../../../assets/images/settings/Illustration_data_Analysis";
 import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
   IsValidEmail,
 } from "../../../helpers/Utils/Validations";
-import {
-  CompDtlErrorsType,
-  CompDtlPropTypes,
-  CompanyDetailsType,
-} from "../../../Models/Settings/CompanyDetails";
+import { CompDtlPropTypes } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog";
 import useCore from "../../../helpers/hooks/Core";
+import { AccountSettings } from "../../../Models/Account/AccountSettings";
+import {
+  resetTwoFA,
+  update2FASettings,
+} from "../../../redux/reducers/AccountSettingsSlice";
+import { useSearchParams } from "react-router-dom";
+import ChangePassword from "./Password/ChangePassword";
 
-const Form_CompanyDetails = ({
+const FORM_COMPANY_DETAILS = ({
   setToastMessage,
   ToastMessages,
+  Settings,
+  OnUpdate,
+  SetVerification,
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
+  const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
-  const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
-  const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
 
   const [dialogType, setDialogType] = useState<{
     type: string;
     data: any;
   } | null>(null);
 
-  const [companyDetails, setCompanyDetails] = useState<CompanyDetailsType>({
-    CompanyName: "",
-    ContactName: "",
-    BirthDate: null,
-    Telephone: "",
-    Mobile: "",
-    Email: "",
-    Address: "",
-    City: "",
-    Zip: "",
-    TwoFactorAuth: false,
-    SendCodeMethod: "",
-  });
+  const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
+  const [companyDetails, setCompanyDetails] = useState<AccountSettings>(
+    {} as AccountSettings
+  );
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [errors, setErrors] = useState<CompDtlErrorsType>({
+  const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
     ContactName: "",
     BirthDate: "",
     Telephone: "",
-    Mobile: "",
+    CellPhone: "",
     Email: "",
     Address: "",
     City: "",
-    Zip: "",
-    SendCodeMethod: "",
-  });
+    ZipCode: null,
+    TwoFactorAuthTestMethodID: null,
+  } as AccountSettings);
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -98,20 +94,22 @@ const Form_CompanyDetails = ({
         ),
       };
     }
-    if (!companyDetails.Mobile) {
+    if (!companyDetails.CellPhone) {
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        Mobile: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
+        CellPhone: t(
+          "settings.accountSettings.fixedComDetails.errors.reqMobile"
+        ),
       };
     } else if (
-      companyDetails.Mobile.length > 16 ||
-      companyDetails.Mobile.length < 9
+      companyDetails.CellPhone.length > 16 ||
+      companyDetails.CellPhone.length < 9
     ) {
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        Mobile: t(
+        CellPhone: t(
           "settings.accountSettings.fixedComDetails.errors.invalidMobile"
         ),
       };
@@ -139,14 +137,59 @@ const Form_CompanyDetails = ({
     return isValid;
   };
 
+  useEffect(() => {
+    Settings && setCompanyDetails({ ...Settings });
+    if (Settings) handleQueryString2FA();
+  }, [Settings]);
+
+  useEffect(() => {
+    if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== "") {
+      if (twoFAUpdated?.StatusCode === 201) {
+        setToastMessage(
+          twoFAUpdated?.Message === "Activated"
+            ? ToastMessages.TWO_FA_SAVED
+            : ToastMessages.TWO_FA_SAVED_INACTIVE
+        );
+      } else {
+        setToastMessage(ToastMessages.TWO_FA_NOT_SAVED);
+      }
+    }
+  }, [twoFAUpdated]);
+
+  const on2FAUpdate = (req: AccountSettings) => {
+    dispatch(update2FASettings(req)).then(() => {
+      setCompanyDetails(req);
+      OnUpdate(req, false);
+      dispatch(resetTwoFA());
+    });
+  };
+
+  const handleQueryString2FA = () => {
+    if (
+      searchParams.has("2fa") &&
+      Settings?.SubAccountId &&
+      !Settings.TwoFactorAuthEnabled &&
+      Settings?.SubAccountId > 0 &&
+      !Settings.TwoFactorAuthEnabled
+    ) {
+      searchParams.delete("2fa");
+      setSearchParams(searchParams);
+      const req = { ...companyDetails, TwoFactorAuthEnabled: true };
+      setCompanyDetails(req);
+      on2FAUpdate(req);
+    }
+  };
+
   const handleChange = (e: any, name = "") => {
+    //@ts-ignore
     !!errors?.[e?.target?.name] &&
       setErrors({ ...errors, [e.target.name]: "" });
     if (name === "TwoFactorAuth") {
-      setCompanyDetails({
+      const req = {
         ...companyDetails,
-        TwoFactorAuth: !companyDetails.TwoFactorAuth,
-      });
+        TwoFactorAuthEnabled: !!!companyDetails.TwoFactorAuthEnabled,
+      };
+      on2FAUpdate(req);
     } else if (name === "BirthDate") {
       setCompanyDetails({
         ...companyDetails,
@@ -164,32 +207,9 @@ const Form_CompanyDetails = ({
       });
     }
   };
-
-  const handleResponses = (response: any) => {
-    switch (response?.StatusCode || response?.payload?.StatusCode) {
-      case 201: {
-        break;
-      }
-      case 401: {
-        break;
-      }
-      case 405: {
-        break;
-      }
-      case 409: {
-        break;
-      }
-      case 500:
-      default: {
-        setToastMessage(ToastMessages?.GENERAL_ERROR);
-      }
-    }
-  };
-
   const handleSave = () => {
     if (isValidPayload()) {
-      let response = dispatch(() => {}); //updateCompanyDetails()
-      handleResponses(response);
+      OnUpdate(companyDetails, true);
     }
   };
 
@@ -219,6 +239,12 @@ const Form_CompanyDetails = ({
     );
   };
 
+  const handleTwoFactorOption = (e: any) => {
+    const req = { ...companyDetails, TwoFactorAuthOptionID: e?.target?.value };
+    setCompanyDetails(req);
+    on2FAUpdate(req);
+  };
+
   return (
     <>
       <Box style={{ marginTop: 34.5 }} className={"settingsWrapper"}>
@@ -233,7 +259,21 @@ const Form_CompanyDetails = ({
           }}
         />
         <Box className={"formContainer"}>
-          <Illustration_data_Analysis className={"svg_data_analysis"} />
+          <img
+            src={DataAnalysis}
+            className={"svg_data_analysis"}
+            alt=""
+            width="225"
+            height="155"
+            style={{
+              top: 121,
+              right: isRTL ? "auto" : "93.14px",
+              left: isRTL ? "93.14px" : "auto",
+              position: "absolute",
+              transform: "scaleX(1)",
+            }}
+          />
+          {/* <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> */}
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -299,7 +339,7 @@ const Form_CompanyDetails = ({
               <TextField
                 variant="outlined"
                 size="small"
-                name="Telehone"
+                name="Telephone"
                 value={companyDetails.Telephone}
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
@@ -315,16 +355,16 @@ const Form_CompanyDetails = ({
               <TextField
                 variant="outlined"
                 size="small"
-                name="Mobile"
-                value={companyDetails.Mobile}
+                name="CellPhone"
+                value={companyDetails.CellPhone}
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
-                error={!!errors.Mobile}
+                error={!!errors.CellPhone}
               />
-              {!!errors.Mobile && (
+              {!!errors.CellPhone && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
-                  {errors.Mobile}
+                  {errors.CellPhone}
                 </Typography>
               )}
             </Grid>
@@ -380,8 +420,10 @@ const Form_CompanyDetails = ({
               <TextField
                 variant="outlined"
                 size="small"
-                name="Zip"
-                value={companyDetails.Zip}
+                name="ZipCode"
+                value={
+                  companyDetails.ZipCode === 0 ? "" : companyDetails.ZipCode
+                }
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
@@ -400,7 +442,7 @@ const Form_CompanyDetails = ({
                     <PulseemSwitch
                       switchType="ios"
                       classes={classes}
-                      checked={companyDetails.TwoFactorAuth}
+                      checked={companyDetails.TwoFactorAuthEnabled === true}
                       onColor="#0371ad"
                       handleDiameter={20}
                       boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
@@ -438,37 +480,44 @@ const Form_CompanyDetails = ({
                 </Typography>
                 <FormControl
                   className={classes.formControl}
-                  style={{ width: "100%", maxHeight: 40 }}
+                  style={{
+                    width: "100%",
+                    maxHeight: 40,
+                    paddingInlineStart: 10,
+                  }}
                 >
                   <Select
+                    disabled={!companyDetails.TwoFactorAuthEnabled}
                     autoWidth
-                    value={companyDetails.SendCodeMethod}
+                    value={companyDetails.TwoFactorAuthOptionID ?? 202}
                     style={{
                       maxHeight: 40,
                       overflow: "hidden",
                       paddingLeft: 0,
                       paddingRight: 0,
                     }}
-                    name="SendCodeMethod"
-                    onChange={(e: any) => handleChange(e)}
+                    name="TwoFactorAuthOptionID"
+                    onChange={(e: any) => {
+                      handleTwoFactorOption(e);
+                    }}
                   >
-                    <MenuItem value="" className={classes.dropDownItem}>
-                      {t("common.Status")}
-                    </MenuItem>
                     {[
-                      "Option 1",
-                      "Option 2",
-                      "Option 3",
-                      "Option 4",
-                      "Option 5",
+                      {
+                        name: t("settings.accountSettings.auth.everyDay"),
+                        value: 101,
+                      },
+                      {
+                        name: t("settings.accountSettings.auth.everyTwoWeeks"),
+                        value: 202,
+                      },
                     ].map((so, index) => {
                       return (
                         <MenuItem
-                          key={index}
-                          value={index}
+                          key={so.value}
+                          value={so.value}
                           className={classes.dropDownItem}
                         >
-                          {so}
+                          {so.name}
                         </MenuItem>
                       );
                     })}
@@ -493,16 +542,7 @@ const Form_CompanyDetails = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    setDialogType({
-                      type: "changePwd",
-                      data: {
-                        title: t(
-                          "settings.accountSettings.fixedComDetails.btnChangePwd"
-                        ),
-                      },
-                    })
-                  }
+                  onClick={() => setShowChangePassword(true)}
                   startIcon={<UnLockIcon />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
@@ -519,7 +559,7 @@ const Form_CompanyDetails = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() => setSmsVerificationPopup(true)}
+                  onClick={() => SetVerification("cellphone")}
                   startIcon={<MdMobileFriendly />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
@@ -538,7 +578,7 @@ const Form_CompanyDetails = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() => setEmailVerificationPopup(true)}
+                  onClick={() => SetVerification("email")}
                   startIcon={<MdOutlineMarkEmailRead />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
@@ -568,22 +608,15 @@ const Form_CompanyDetails = ({
         </Box>
       </Box>
       {RenderDialog()}
-      {emailVerificationPopup && (
-        <VerificationDialog
-          variant="email"
-          isOpen={emailVerificationPopup}
-          onClose={() => setEmailVerificationPopup(false)}
-        />
-      )}
-      {smsVerificationPopup && (
-        <VerificationDialog
-          variant="sms"
-          isOpen={smsVerificationPopup}
-          onClose={() => setSmsVerificationPopup(false)}
+      {showChangePassword && (
+        <ChangePassword
+          SetToast={setToastMessage}
+          IsOpen={showChangePassword}
+          OnClose={() => setShowChangePassword(false)}
         />
       )}
     </>
   );
 };
 
-export default Form_CompanyDetails;
+export default FORM_COMPANY_DETAILS;

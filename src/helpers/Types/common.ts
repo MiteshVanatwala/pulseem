@@ -9,3 +9,6 @@ export type ERROR_TYPE = {
   message: string;
   showAnimtionCheck: boolean;
 } | null;
+export const VoidFunction: () => void = () => {
+  return false;
+};

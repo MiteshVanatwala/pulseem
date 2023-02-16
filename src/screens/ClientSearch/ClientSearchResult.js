@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import clsx from "clsx";
 import {
   Box,
@@ -30,7 +30,7 @@ import { setRowsPerPage } from "../../redux/reducers/coreSlice";
 import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
-import { Dialog } from '../../components/managment/index';
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import {
   AddClientsToGroup,
   deleteFromGroups,
@@ -50,7 +50,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { ExportFile } from "../../helpers/Export/ExportFile";
-import { FlatObject, HandleExportData } from "../../helpers/Export/ExportHelper";
+import { FlatObject, HandleExportData, DeletePropertyFromArrayObject } from "../../helpers/Export/ExportHelper";
 import { ClientStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -58,9 +58,8 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
-import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
-import { SwitchClientStatus } from "../../helpers/UI/TableText";
+import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
 import { sitePrefix } from "../../config";
 
 const useStyles = makeStyles({
@@ -95,7 +94,7 @@ const ClientSearchResult = ({ props, classes }) => {
     // email,
     // phone,
     rowsPerPage,
-    smsOldVersion,
+    // smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
@@ -121,6 +120,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [searchData, setSearchData] = useState(null);
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [clientToEdit, setClientToEdit] = useState(null);
   const [date, setDate] = useState({
     FromDate: null,
@@ -211,6 +211,25 @@ const ClientSearchResult = ({ props, classes }) => {
         }
       }
 
+      if (overwriteObject === null) {
+        overwriteObject = {
+          PageIndex: searchParams.get("PageIndex") ? parseInt(searchParams.get("PageIndex")) : null,
+          SearchTerm: searchParams.get("SearchTerm") ?? '',
+          Status: searchParams.get("Status") ? parseInt(searchParams.get("Status")) : null,
+          PageType: searchParams.get("PageType") ? parseInt(searchParams.get("PageType")) : null,
+          ReportType: searchParams.get("ReportType") ? parseInt(searchParams.get("ReportType")) : null,
+          TestStatusOfEmailElseSms: searchParams.get("TestStatusOfEmailElseSms") ? parseInt(searchParams.get("TestStatusOfEmailElseSms")) : null, // 0 or null = sms, 1 = email
+          Switch: searchParams.get("Switch"), // Not in use for now.
+          CountryOrRegion: searchParams.get("CountryOrRegion"),// Not in use for now.
+          GroupIds: searchParams.get("GroupIds").split(',').map((g) => { return parseInt(g) }), // List of 1 groupId
+          NodeID: searchParams.get("NodeID") ?? "", // Not in use for now
+          CampaignID: searchParams.get("CampaignID") ? parseInt(searchParams.get("CampaignID")) : null,
+          FromDate: searchParams.get("FromDate"),
+          ToDate: searchParams.get("ToDate"),
+          ResultTitle: searchParams.get("ResultTitle")
+        }
+      }
+
       let isSmsReport = false;
 
       if (document.referrer.toLowerCase().indexOf('smsmainreport') > -1 || overwriteObject?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -224,10 +243,10 @@ const ClientSearchResult = ({ props, classes }) => {
         PageSize: rowsPerPage,
         PageIndex: page,
         SearchTerm: "",
-        Status: location?.state?.Status ?? null,
-        PageType: location?.state?.PageType ?? null,
+        Status: location?.state?.Status ?? overwriteObject?.Status ?? null,
+        PageType: location?.state?.PageType ?? overwriteObject?.PageType ?? null,
         ReportType: isSmsReport ? 20 : 10,
-        TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
+        TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? overwriteObject?.TestStatusOfEmailElseSms ?? null,
         CampaignID: id,
         Switch: "",
         CountryOrRegion: "",
@@ -246,7 +265,7 @@ const ClientSearchResult = ({ props, classes }) => {
       let updatingObject = {
         "Status": t('common.Status'),
         "SmsStatus": t('common.smsStatus'),
-        "CreationDate": location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
+        "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
         "Email": t("common.Mail"),
@@ -261,17 +280,17 @@ const ClientSearchResult = ({ props, classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
         updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
       }
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
         updatingObject["snt_OpeningDate"] = t('common.OpenTime');
       }
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
-        location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
+      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
+        (searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
         updatingObject["SentDate"] = t('sms.sendingTime');
       }
       updatingObject = {
@@ -350,48 +369,61 @@ const ClientSearchResult = ({ props, classes }) => {
   const handleDownloadCsv = async (formatType) => {
     setDialog(null);
     setLoader(true);
+    setDialog(null);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
       const data = response.payload;
+      const promiseArray = [];
       if (data.StatusCode === 201) {
-        let orderList = await data.Clients.map((client) => {
-          let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
-          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
-          client.Status = t(tempStatus.value);
-          client.SmsStatus = t(tempSmsStatus.value);
-          return client;
-        }, []);
-
-        orderList = orderList.map((ol) => { return FlatObject(ol) });
-
-        let propertToDelete = [];
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-          propertToDelete.push("Revenue");
+        let orderList = [];
+        orderList = data.Clients.map((ol) => { return FlatObject(ol) });
+        if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          propertToDelete.push("SendDate");
+          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
         }
-        const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
-        const exportOptions = {
-          OrderItems: true,
-          FormatDate: true,
-          Statuses: ClientStatus,
-          Order: Object.keys(exportColumnHeader.current),
-          DeleteProperties: propertToDelete
-        };
-        const result = await HandleExportData(orderList, exportOptions);
+        Promise.all(promiseArray).then(() => {
+          const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: true,
+            Statuses: ClientStatus.Sms,
+            Order: Object.keys(exportColumnHeader.current),
+            DeleteProperties: ["Status"]
+          };
 
-        ExportFile({
-          data: result,
-          exportType: formatType,
-          fields: exportColumnHeader.current,
-          fileName: fileName
-        })
+          HandleExportData(orderList, exportOptions).then((result) => {
+            // Pay attention -> We set XLSX for better header's order.
+            // CSV not supporting numeric extra fields order.
+
+            ExportFile({
+              data: result,
+              exportType: formatType,
+              fields: exportColumnHeader.current,
+              fileName: fileName
+            });
+
+            // if (formatType === 'csv') {
+            //   ExportFile({
+            //     data: result,
+            //     exportType: formatType,
+            //     fields: exportColumnHeader.current,
+            //     fileName: fileName
+            //   });
+            // }
+            // else {
+            //   exportAsXLSX(result, exportColumnHeader.current, `${fileName}.XLSX`);
+            // }
+
+          });
+        });
       }
       else {
-        setToastMessage(t('common.errorOccured'));
+        setToastMessage(ToastMessages.GENERIC_ERROR);
       }
     }
     setLoader(false);
@@ -453,7 +485,7 @@ const ClientSearchResult = ({ props, classes }) => {
       type="number"
     />
   </Grid>
-  const FromDate = () => windowSize !== 'xs' ?
+  const EL_FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
         toolbarDisabled={false}
@@ -464,7 +496,7 @@ const ClientSearchResult = ({ props, classes }) => {
       />
     </Grid>
     : null
-  const ToDate = () => windowSize !== 'xs' ?
+  const EL_ToDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
         toolbarDisabled={false}
@@ -495,7 +527,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '4': {
       title: t("common.SendDate"),
@@ -515,7 +547,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '3': {
       title: t("client.subscribedOn"),
@@ -535,7 +567,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '8': {
       title: t("common.SendDate"),
@@ -555,7 +587,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [FromDate, ToDate]
+      filterComponents: [EL_FromDate, EL_ToDate]
     },
     '10': {
       title: t("common.ErrorEmail"),
@@ -596,26 +628,6 @@ const ClientSearchResult = ({ props, classes }) => {
         )
       },
       filterComponents: [Min, Max]
-    },
-    '17': {
-      title: t("common.campaignRevenue"),
-      sortKey: 'Number',
-      component: {
-        mobile: ({ Revenue = 0, ...rest }) => (<>
-          <Typography className={classes.bold}>
-            {t("common.campaignRevenue")}
-          </Typography>
-          <Typography>
-            {Revenue} {t("common.NIS")}
-          </Typography>
-        </>),
-        web: ({ Revenue = 0, ...rest }) => (
-          <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
-          </Typography>
-        )
-      },
-      // filterComponents: [Min, Max]
     },
   }
   const TABLE_HEAD = [
@@ -799,7 +811,6 @@ const ClientSearchResult = ({ props, classes }) => {
           message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
             getData();
-            //navigate(-1)
           }
         },
         'S_401': {
@@ -974,11 +985,11 @@ const ClientSearchResult = ({ props, classes }) => {
       <>
         <Box className={clsx(classes.flex, classes.spaceBetween)}>
           <Typography className={classes.managementTitle}>
-            {t("client.logPageHeaderResource1.Text")} {location?.state && location?.state?.ResultTitle ? " - " : ""} {location?.state?.ResultTitle}
+            {t("client.logPageHeaderResource1.Text")} {searchData?.ResultTitle ? " - " : ""} {searchData?.ResultTitle}
           </Typography>
-          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
-            if (location?.state && location?.state.PageProperty) {
-              navigate(`${sitePrefix}${location?.state.PageProperty.PageName}`, {
+          {window.history.state && <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
+            if (searchData?.PageProperty || searchData?.PageName) {
+              navigate(`/react/${searchData?.PageProperty?.PageName ?? searchData?.PageName}`, {
                 state: {
                   from: 'clientsearchresult'
                 }
@@ -990,6 +1001,7 @@ const ClientSearchResult = ({ props, classes }) => {
             }
           }
           }> {t("common.back")}</Typography>
+          }
         </Box>
         <Divider />
       </>
@@ -1142,7 +1154,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Grid>
         }
 
-        {location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
@@ -1151,12 +1163,13 @@ const ClientSearchResult = ({ props, classes }) => {
             </Box>
           </Grid>
         }
-        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
-          {revenueSummary && <SummaryRow
-            data={revenueSummary}
-            classes={classes} />
-          }
-        </Grid>}
+        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+          <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+            {revenueSummary && <SummaryRow
+              data={revenueSummary}
+              classes={classes} />
+            }
+          </Grid>}
       </Grid>
     );
   };
@@ -1329,10 +1342,10 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
-        return t(SwitchClientStatus(2, Status))
+        return t(ConvertClientStatus(Status, SourceType.EMAIL))
       }
       else if (Cellphone && !isEmail && Cellphone !== '') {
-        return t(SwitchClientStatus(1, SmsStatus))
+        return t(ConvertClientStatus(SmsStatus, SourceType.SMS))
       }
       return t("emailStatus.noStatus")
     }
@@ -1543,7 +1556,7 @@ const ClientSearchResult = ({ props, classes }) => {
       },
     };
     return (
-      <Dialog
+      <BaseDialog
         classes={classes}
         open={
           dialog === DialogType.CONFIRM_INVALID ||
@@ -1553,9 +1566,6 @@ const ClientSearchResult = ({ props, classes }) => {
         }
         // title={t("group.delete")}
         title={DialogObject[dialog]?.title || ''}
-        icon={<Box className={classes.dialogAlertIcon}>
-          !
-        </Box>}
         showDivider={true}
         onClose={DialogObject[dialog]?.onClose || ''}
         onCancel={DialogObject[dialog]?.onClose || ''}
@@ -1568,14 +1578,14 @@ const ClientSearchResult = ({ props, classes }) => {
             {DialogObject[dialog]?.bodyText || ''}
           </Typography>
         </Box>
-      </Dialog>
+      </BaseDialog>
     )
   }
   const renderTableBody = () => {
     let sortedData = data ?? null; // data : [];
     let rpp = parseInt(rowsPerPage)
     if (sortedData && sortData.length > 0) {
-      sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
+      sortedData = (searchData?.PageType) === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
     }
     if (PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title) {
       TABLE_HEAD.splice(2, 0, {
@@ -1658,7 +1668,6 @@ const ClientSearchResult = ({ props, classes }) => {
           open={showConfirmDialog}
           onCancel={() => setShowConfirmDialog(false)}
           onClose={() => setShowConfirmDialog(false)}
-          // onConfirm={() => handleConfirmExport()}
           {...dialog}>
           {dialog.content}
         </BaseDialog>
@@ -1707,6 +1716,7 @@ const ClientSearchResult = ({ props, classes }) => {
             Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
             DialogType={DialogType}
             selectedGroups={mappedGroups}
+            setDialog={setDialog}
             handleResponses={(response, actions) => { handleResponses(response, actions); }}
             onAddRecipient={(closeDialog = true) => {
               closeDialog && setDialog(null);

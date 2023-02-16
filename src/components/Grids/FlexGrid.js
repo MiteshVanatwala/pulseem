@@ -46,11 +46,11 @@ const FlexGrid = ({ gridArr = [],
             <Box className={`${localClasses.flexBox} ${classes.container}`} style={props.customStyle}>
                 {
                     gridArr.map((obj, idx) => {
-                        if(!obj.component){
+                        if (!obj.component) {
                             return <></>
                         }
                         return (
-                            <Box className={localClasses.iconBox} key={idx} onClick={() => obj.onClick?.()} style={{ cursor: obj.isDisabled ? 'not-allowed' : 'pointer' }}>
+                            <Box className={localClasses.iconBox} key={idx} onClick={(e) => obj.onClick?.(e)} style={{ cursor: obj.isDisabled ? 'not-allowed' : 'pointer' }}>
                                 {reverse &&
                                     <Typography variant={textVariant} align={alignText} className={obj.classes?.text || 0}>{obj.label}</Typography>
                                 }

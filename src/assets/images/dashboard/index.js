@@ -8,7 +8,7 @@ import Notes from './Notes.tsx'
 import Sms from './Sms.tsx'
 import Whatsapp from './Whatsapp.tsx'
 import NewBubbleIcon from './NewBubbleIcon'
-import Illustration_tipulseem from './Illustration_tipulseem'
+import IllustrationTipulseem from './pulseemTarget.png'
 import TooltipBubble from './TooltipBubble'
 
 export {
@@ -22,6 +22,6 @@ export {
     Sms as SmsIcon,
     Whatsapp as WhatsappIcon,
     NewBubbleIcon,
-    Illustration_tipulseem,
+    IllustrationTipulseem,
     TooltipBubble
 }

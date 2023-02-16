@@ -1,25 +1,11 @@
 import React from "react";
-
-export type AccountDetailsType = {
-  FromEmail: string;
-  FromName: string;
-  FromPhoneNumber: string;
-  UnsubType: string;
-  SmsUnsubLinkType: string;
-};
+import { AccountSettings } from '../Account/AccountSettings';
 
 export type AccDtlPropTypes = {
   setToastMessage: React.Dispatch<React.SetStateAction<null>>;
   ToastMessages: {
     [key: string]: any;
   };
+  Settings: AccountSettings | null,
+  OnUpdate: Function
 };
-
-// type AccDtlErrorsType={
-//   [key:string]:string;
-//   FromEmail: string;
-//   FromName: string;
-//   FromPhoneNumber: string;
-//   UnsubType: string;
-//   SmsUnsubLinkType: string;
-// }

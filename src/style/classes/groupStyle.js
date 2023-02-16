@@ -17,6 +17,8 @@ export const getGroupStyle = (windowSize, isRTL, theme) => ({
     grpDataBoxText: {
         padding: '11px 0px',
         fontSize: '0.9rem!important',
+        display: 'block',
+        textDecoration: 'none',
         "@media screen and (max-width: 1350px)": {
             fontSize: '14px'
         }
@@ -25,5 +27,8 @@ export const getGroupStyle = (windowSize, isRTL, theme) => ({
         "@media screen and (max-width: 1160px)": {
             fontSize: '13px'
         }
+    },
+    noDecoration: {
+        textDecoration: 'none'
     }
 });

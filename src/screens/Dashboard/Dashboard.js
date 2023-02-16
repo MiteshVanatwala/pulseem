@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import { getCookie } from '../../helpers/Functions/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
+import { sitePrefix } from '../../config';
 
 const DashboardScreen = ({ classes }) => {
   const dispatch = useDispatch();
@@ -52,7 +53,7 @@ const DashboardScreen = ({ classes }) => {
   }, [dispatch, accountSettings, TFAInit])
 
   const onConfirm2FA = () => {
-    window.location = '/Pulseem/AccountSettings.aspx?2fa=1'
+    window.location = `${sitePrefix}AccountSettings?2fa=1`
   }
   const onCancel2FA = () => {
     setShowTFA(false);

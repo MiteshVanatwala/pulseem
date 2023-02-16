@@ -1,6 +1,6 @@
 import React from "react";
 
-const Illustration_data_Analysis = (props: any) => {
+const ILLUSTRATION_DATA_ANALYSIS = (props: any) => {
   return (
     <svg
       width="250"
@@ -41,4 +41,4 @@ const Illustration_data_Analysis = (props: any) => {
   );
 };
 
-export default Illustration_data_Analysis;
+export default ILLUSTRATION_DATA_ANALYSIS;

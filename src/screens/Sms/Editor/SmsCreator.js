@@ -17,7 +17,7 @@ import { BsArrowClockwise, BsInfoCircle } from "react-icons/bs";
 import WizardTitle from '../../../components/Wizard/WizardTitle'
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,

@@ -30,7 +30,6 @@ import { useNavigate } from 'react-router-dom';
 import { setCookie, getCookie } from '../../../helpers/Functions/cookies';
 import { Title } from '../../../components/managment/Title';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import EmailVerification from '../../Verification/EmailVerification';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
@@ -222,10 +221,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const redirctToArchive = () => {
-    window.location = `${sitePrefix}Campaigns/Archive`
-  }
-
   const handleVerificationDialog = () => {
 
     setShowEmailVerDialog(true)
@@ -264,11 +259,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
         </Grid>}
         <Grid item xs={windowSize === 'xs' && 12}>
           <Button
+            component="a"
+            href={`${sitePrefix}Campaigns/Archive`}
             className={clsx(
               classes.btn,
               classes.btnRounded,
             )}
-            onClick={redirctToArchive}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(`${sitePrefix}Campaigns/Archive`)
+            }}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t('master.redirectToArchive')}

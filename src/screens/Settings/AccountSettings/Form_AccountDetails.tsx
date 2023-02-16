@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -15,43 +15,39 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { Title } from "../../../components/managment/Title";
 import Illustration_app_Settings from "../../../assets/images/settings/Illustration_app_Settings";
-import {
-  AccDtlPropTypes,
-  AccountDetailsType,
-} from "../../../Models/Settings/AccountDetails";
+import { AccDtlPropTypes } from "../../../Models/Settings/AccountDetails";
 import useCore from "../../../helpers/hooks/Core";
 import { IsNumberField } from "../../../helpers/Utils/Validations";
+import { AccountSettings } from "../../../Models/Account/AccountSettings";
 
-const Form_AccountDetails = ({
+const FORM_ACCOUNT_DETAILS = ({
   setToastMessage,
   ToastMessages,
+  Settings,
+  OnUpdate
 }: AccDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
 
-  const [accountDetails, setAccountDetails] = useState<AccountDetailsType>({
-    FromEmail: "",
-    FromName: "",
-    FromPhoneNumber: "",
-    UnsubType: "",
-    SmsUnsubLinkType: "",
-  });
-
-  // const [errors, setErrors] = useState<AccDtlErrorsType>({
-  //   FromEmail: "",
-  //   FromName: "",
-  //   FromPhoneNumber: "",
-  //   UnsubType: "",
-  //   SmsUnsubLinkType: "",
-  // });
+  const [accountDetails, setAccountDetails] = useState<AccountSettings>({
+    DefaultFromMail: "",
+    DefaultFromName: "",
+    DefaultCellNumber: "",
+    UnsubscribeType: false,
+    IsSmsImmediateUnsubscribeLink: false
+  } as AccountSettings);
 
   const isValidPayload = () => {
-    if (!accountDetails.FromEmail) {
+    if (!accountDetails.DefaultFromMail) {
     }
     return true;
   };
+
+  useEffect(() => {
+    setAccountDetails(Settings);
+  }, [Settings])
 
   const handleChange = (e: any, name = "") => {
     let actualValue = e?.target?.value;
@@ -63,31 +59,9 @@ const Form_AccountDetails = ({
     });
   };
 
-  const handleResponses = (response: any) => {
-    switch (response?.StatusCode || response?.payload?.StatusCode) {
-      case 201: {
-        break;
-      }
-      case 401: {
-        break;
-      }
-      case 405: {
-        break;
-      }
-      case 409: {
-        break;
-      }
-      case 500:
-      default: {
-        setToastMessage(ToastMessages.GENERAL_ERROR);
-      }
-    }
-  };
-
   const handleSave = () => {
     if (isValidPayload()) {
-      let response = dispatch(() => {}); //updateAccountDetails()
-      handleResponses(response);
+      OnUpdate(accountDetails);
     }
   };
 
@@ -114,8 +88,8 @@ const Form_AccountDetails = ({
             <TextField
               variant="outlined"
               size="small"
-              name="FromName"
-              value={accountDetails.FromName}
+              name="DefaultFromName"
+              value={accountDetails.DefaultFromName}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -127,8 +101,8 @@ const Form_AccountDetails = ({
             <TextField
               variant="outlined"
               size="small"
-              name="FromEmail"
-              value={accountDetails.FromEmail}
+              name="DefaultFromMail"
+              value={accountDetails.DefaultFromMail}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
             />
@@ -144,8 +118,8 @@ const Form_AccountDetails = ({
             <TextField
               variant="outlined"
               size="small"
-              name="FromPhoneNumber"
-              value={accountDetails.FromPhoneNumber}
+              name="DefaultCellNumber"
+              value={accountDetails.DefaultCellNumber}
               onKeyPress={IsNumberField}
               onChange={handleChange}
               className={clsx(classes.textField, classes.minWidth252)}
@@ -163,13 +137,15 @@ const Form_AccountDetails = ({
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={"textBoxWrapper"}>
               <RadioGroup
-                aria-label="quiz"
-                name="UnsubType"
-                value={accountDetails.UnsubType}
-                onChange={handleChange}
+                aria-label="UnsubscribeType"
+                name="UnsubscribeType"
+                value={!accountDetails.UnsubscribeType ? '0' : '1'}
+                onChange={() => {
+                  setAccountDetails({ ...accountDetails, UnsubscribeType: accountDetails.UnsubscribeType === false ? true : false })
+                }}
               >
                 <FormControlLabel
-                  value="best"
+                  value="0"
                   control={<Radio />}
                   label={
                     <>
@@ -180,7 +156,7 @@ const Form_AccountDetails = ({
                   }
                 />
                 <FormControlLabel
-                  value="worst"
+                  value="1"
                   control={<Radio />}
                   label={
                     <>
@@ -202,12 +178,14 @@ const Form_AccountDetails = ({
             <Grid item xs={12} sm={6} md={8} className={"textBoxWrapper"}>
               <RadioGroup
                 aria-label="quiz"
-                name="SmsUnsubLinkType"
-                value={accountDetails.SmsUnsubLinkType}
-                onChange={handleChange}
+                name="IsSmsImmediateUnsubscribeLink"
+                value={!accountDetails.IsSmsImmediateUnsubscribeLink ? '0' : '1'}
+                onChange={() => {
+                  setAccountDetails({ ...accountDetails, IsSmsImmediateUnsubscribeLink: accountDetails.IsSmsImmediateUnsubscribeLink === false ? true : false })
+                }}
               >
                 <FormControlLabel
-                  value="best"
+                  value="0"
                   control={<Radio />}
                   label={
                     <>
@@ -218,7 +196,7 @@ const Form_AccountDetails = ({
                   }
                 />
                 <FormControlLabel
-                  value="worst"
+                  value="1"
                   control={<Radio />}
                   label={
                     <>
@@ -249,4 +227,4 @@ const Form_AccountDetails = ({
     </Box>
   );
 };
-export default Form_AccountDetails;
+export default FORM_ACCOUNT_DETAILS;

@@ -21,8 +21,8 @@
       "securitySettings": "הגדרות אבטחת חשבון",
       "btnChangePwd": "שינוי סיסמא",
       "btnUpdate": "שמירת הגדרות",
-      "btnVerifyEmail": "Verification of email to send",
-      "btnVerifyNumber": "Verification of number to send"
+      "btnVerifyEmail": "אימות כתובת אימייל לשליחה",
+      "btnVerifyNumber": "אימות מספר לשליחה"
     },
     "actDetails": {
       "title": "פרטי חשבון",
@@ -36,7 +36,15 @@
         "imdSmsUnsubLink": "קישור הסרה מיידי (ללא אימות)"
       },
       "btnUpdate": "שמירת פרטים"
-    }
+    },
+    "auth": {
+      "everyDay": "כל יום",
+      "everyTwoWeeks": "כל שבועיים",
+      "activatedSuccessfuly": "הפעלת אימות דו-שלבי בוצעה בהצלחה!",
+      "inActivetedSuccessfuly": "כיבוי אימות דו-שלבי בוצעה בהצלחה!",
+      "notSaved": "הפעלת אימות דו שלבי לא נשמרה. אנא פנה לתמיכה."
+    },
+    "savedSuccessfuly": "ההגדרות נשמרו בהצלחה!"
   },
   "billingSettings": {
     "title": "הגדרות פרטי חיוב",
@@ -60,5 +68,23 @@
     },
     "btnUpdate": "עדכן פרטי חיוב",
     "btnAddCard": "הוסף כרטיס אשראי"
+  },
+  "changePassword": {
+    "title": "שנה סיסמא",
+    "subTitle": "הזן את הסיסמא הישנה והקלד את הסיסמא החדשה",
+    "oldPassword": "סיסמא ישנה",
+    "newPassword": "סיסמא חדשה",
+    "confirmPassword": "אימות סיסמא",
+    "error": {
+      "required": "שדה חובה",
+      "notMatch": "סיסמת האימות אינה תואמת לסיסמא החדשה"
+    },
+    "responses": {
+      "201": "הסיסמא שונתה בהצלחה!",
+      "403": "סיסמא שגויה",
+      "406": "כל השדות הם שדות חובה!",
+      "407": "סיסמת האימות אינה תואמת לסיסמא החדשה!",
+      "408": "הסיסמא המקורית אינה נכונה!"
+    }
   }
 }

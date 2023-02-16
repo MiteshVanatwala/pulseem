@@ -6,17 +6,19 @@
             "fields": {
                 "compName": "Company Name",
                 "contactName": "Contact Name",
-                "mobile": "Mobile",
+                "mobile": "Cellphone",
                 "enableTwoFactorAuth": "Enable two factor authentication",
                 "sendMeCode": "Send me a code"
             },
             "errors": {
                 "invalidEmail": "Invalid Email",
                 "reqEmail": "Email is required",
-                "invalidMobile": "Invalid Mobile",
-                "reqMobile": "Mobile is required",
+                "invalidMobile": "Invalid Cellphone",
+                "reqMobile": "Cellphone is required",
                 "reqCompName": "Company name is required",
-                "reqContctName": "Contact name is required"
+                "reqContctName": "Contact name is required",
+                "verifyEmail": "Please verify the default From Email",
+                "verifyPhone": "Please verify the default from Phone Number"
             },
             "securitySettings": "Security Settings",
             "btnChangePwd": "Change Password",
@@ -36,7 +38,15 @@
                 "imdSmsUnsubLink": "sms immediate unsubscribe link (no validation)"
             },
             "btnUpdate": "Update Account Details"
-        }
+        },
+        "auth": {
+            "everyDay": "Every Day",
+            "everyTwoWeeks": "Every Two Weeks",
+            "activatedSuccessfuly": "Two factor authentication activated!",
+            "inActivetedSuccessfuly": "Two factor authentication inactivated!",
+            "notSaved": "Two factor authentication was not saved. Please contact support."
+        },
+        "savedSuccessfuly": "Settings successfuly saved!"
     },
     "billingSettings": {
         "title": "Billing settings",
@@ -60,5 +70,23 @@
         },
         "btnUpdate": "Update billing",
         "btnAddCard": "Add credit card"
+    },
+    "changePassword": {
+        "title": "Change Password",
+        "subTitle": "Type the old password, then type the new one",
+        "oldPassword": "Old Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Connfirm Password",
+        "error": {
+            "required": "Required field",
+            "notMatch": "Password confirmation doesnt match"
+        },
+        "responses": {
+            "201": "Password has been changed successfuly!",
+            "403": "Incorrect password",
+            "406": "Password cannot be empty!",
+            "407": "Confirmation password is not matched",
+            "408": "Invalid old password"
+        }
     }
 }

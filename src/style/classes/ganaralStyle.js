@@ -1595,7 +1595,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   groupName: {
     display: "block",
     fontSize: "32px",
-    width: "700px",
+    width: "100%",
     "@media screen and (max-width: 768px)": {
       width: "100%",
       fontSize: "22px",
@@ -2914,89 +2914,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
 
   textFieldError: {
-    borderBottom: '1px solid #ff3343 !important'
-    // "& .MuiInputBase-root": {
-    //   "& input": {
-    //     borderBottom: '2px solid red'
-    //   }
-    // }
-  },
-  inputSwitch: {
-    // position: 'relative !important',
-    // display: 'inline-block !important',
-    // textAlign: 'left !important',
-    // opacity: 1,
-    // direction: 'ltr !important',
-    // borderRadius: '20px !important',
-    // transition: 'opacity 0.25s ease 0s !important',
-    // touchAction: 'none !important',
-    // webkitTapHighlightColor: 'rgba(0, 0, 0, 0) !important',
-    // userSelect: 'none !important',
-    // '& .react-switch-bg': {
-    //   height: 18,
-    //   width: 40,
-    //   margin: -9,
-    //   margin: 1.5,
-    //   sition: 'relative !important',
-    //   background: 'rgb(136, 136, 136) !important',
-    //   borderRadius: 20,
-    //   cursor: 'pointer !important',
-    //   transition: 'background 0.25s ease 0s !important',
-    // },
-    // '& .react-switch-handle': {
-    //   margin: '4px !important !important',
-    //   height: 14,
-    //   width: 14,
-    //   background: 'rgb(255, 255, 255) !important',
-    //   display: 'inline-block !important',
-    //   cursor: 'pointer !important',
-    //   borderRadius: '50% !important',
-    //   position: 'absolute !important',
-    //   transform: 'translateX(0px) !important',
-    //   top: 0,
-    //   outline: 0,
-    //   boxShadow: 'rgb(0 0 0 / 60%) 0px 1px 5px !important',
-    //   border: 0,
-    //   transition: 'background-color 0.25s ease 0s, transform 0.25s ease 0s, box-shadow 0.15s ease 0s !important',
-    // },
-    // '& input': {
-    //   border: 0,
-    //   clip: 'rect(0px, 0px, 0px, 0px) !important',
-    //   height: 1,
-    //   margin: -1,
-    //   overflow: 'hidden !important',
-    //   padding: '0 !important',
-    //   position: 'absolute !important',
-    //   width: '1 !important',
-    // },
-
-    // '& .MuiSwitch-switchBase': {
-    //   padding: 1,
-    //   '&$checked': {
-    //     transform: 'translateX(16px)',
-    //     color: '#fff',
-    //     '& + $track': {
-    //       backgroundColor: '#52d869',
-    //       opacity: 1,
-    //       border: 'none',
-    //     },
-    //   },
-    //   '&$focusVisible $thumb': {
-    //     color: '#52d869',
-    //     border: '6px solid #fff',
-    //   },
-    // },
-    // '& .MuiSwitch-thumb': {
-    //   width: 24,
-    //   height: 24,
-    // },
-    // '& .MuiSwitch-track': {
-    //   borderRadius: 26 / 2,
-    //   border: `1px solid grey`,
-    //   backgroundColor: 'grey',
-    //   opacity: 1,
-    //   transition: 'all .3s',
-    // },
+    border: 'none !important',
+    "& .MuiFormHelperText-contained": {
+      marginLeft: 0,
+      marginRight: 0,
+      width: '100%',
+      color: 'red'
+    },
+    "& .MuiInputBase-root": {
+      "& input": {
+        borderBottom: '2px solid red'
+      },
+    }
   },
   ltr: {
     direction: 'ltr'

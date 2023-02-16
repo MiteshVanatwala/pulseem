@@ -222,7 +222,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
               showGraphs ? (innerData.map((c, index) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
-                  <>
+                  <Box key={index}>
 
                     {index === 0 && <Divider />}
                     <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
@@ -247,7 +247,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                       </Box>
                     </Box>
                     {index === innerData.length - 1 && <Divider />}
-                  </>
+                  </Box>
                 )
               })) :
                 (

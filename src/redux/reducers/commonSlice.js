@@ -29,7 +29,7 @@ export const getCommonFeatures = createAsyncThunk(
         document.referrer.toLocaleLowerCase().indexOf('login') > -1 ||
         req?.companyName !== settings?.SubAccountName) {
         const response = await PulseemReactInstance.get(`GetSubAccountWithFeatureAndSettings`);
-        return JSON.parse(response.data)
+        return response.data
       }
       else {
         return settings
@@ -114,7 +114,7 @@ export const commonSlice = createSlice({
       })
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-        setCookie('accountSettings', payload);
+        setCookie('accountSettings', payload?.Data);
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;

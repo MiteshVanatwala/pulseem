@@ -215,7 +215,7 @@ export const TranslateKeys = (key: string, t: any) => {
         default: { return { key: 'adjustTitle', value: t("sms.adjustTitle") } }
     }
 }
-export const SwitchClientStatus = (statusType: SourceType, statusId: number) => {
+export const ConvertClientStatus = (statusType: SourceType, statusId: number) => {
     switch (statusType) {
         case SourceType.SMS: {
             switch (statusId.toString()) {
