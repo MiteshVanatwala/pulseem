@@ -2460,8 +2460,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		bottom: '3px',
 	},
 	chatTemplateModalTemplateDataWrapper: {
+		display: 'flex',
 		flexWrap: 'unset',
-		alignItems: 'flex-end',
+		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
 	chooseTemplateModalUl: {
@@ -2705,6 +2706,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		borderTop: '1px solid rgba(0,0,0,0.1)',
 	},
 	buttonWhatsappAutocomplete: {
-		padding: '10px 12px 10px 4px'
+		padding: '10px 12px 10px 4px',
+	},
+	calltoActionButtonChatWrapper: {
+		margin: '8px 0px 0px 0px',
+	},
+	calltoActionButtonChat: {
+		margin: '2px 0px 0px',
+		borderRadius: '5px',
+		padding: '3px 8px',
+		width: 'auto',
+		color: '#1c82b2',
+		backgroundColor: '#b7b7b7',
+		fontSize: '15px',
+		'&:hover': {
+			color: '#1c82b2',
+			fontSize: '15px',
+		},
 	},
 });

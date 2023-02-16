@@ -70,8 +70,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	>([]);
 	const [filteredSideChatContacts, setFilteredSideChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData[]>(sideChatContacts);
-	const [activePhoneNumber, setActivePhoneNumber] =
-		useState<string>('');
+	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
@@ -81,7 +80,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
 		e.preventDefault();
 
-		setWhatsappChatCoversationStatus(e.target.value, activePhoneNumber, ClientNumber);
+		setWhatsappChatCoversationStatus(
+			e.target.value,
+			activePhoneNumber,
+			ClientNumber
+		);
 	};
 
 	const { t: translator } = useTranslation();
@@ -191,6 +194,27 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					StatusId,
 				})
 			);
+		if (
+			whatsAppChatConversationStatusData?.payload?.Status === apiStatus.SUCCESS
+		) {
+			const updatedSideChatContacts = sideChatContacts?.map((contact) => {
+				if (contact?.PhoneNumber === ClientNumber) {
+					return { ...contact, ConversationStatusId: StatusId };
+				}
+				return contact;
+			});
+			const updatedFilterSideChatContacts = filteredSideChatContacts?.map(
+				(contact) => {
+					if (contact?.PhoneNumber === ClientNumber) {
+						return { ...contact, ConversationStatusId: StatusId };
+					}
+					return contact;
+				}
+			);
+
+			setSideChatContacts(updatedSideChatContacts);
+			setFilteredSideChatContacts(updatedFilterSideChatContacts);
+		}
 	};
 
 	const setAPIInboundChatStatus = async () => {

@@ -31,6 +31,7 @@ import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import { apiStatus, whatsappChatStatuses } from '../../Constant';
 import { useDispatch } from 'react-redux';
 import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
+import moment from 'moment';
 
 const ChatUi = ({
 	classes,
@@ -233,7 +234,7 @@ const ChatUi = ({
 					<Icon id='downArrow' />
 				</button>
 				<div className={`${classes.whatsappChat} chat__input-wrapper`}>
-					{whatsappChatSession.IsIn24Window ? (
+					{!whatsappChatSession.IsIn24Window ? (
 						<>
 							<button
 								aria-label='Emojis'
@@ -304,7 +305,7 @@ const ChatUi = ({
 							</Stack>
 						</div>
 					)}
-					{whatsappChatSession.IsIn24Window && (
+					{!whatsappChatSession.IsIn24Window && (
 						<button aria-label='Send message'>
 							<Icon
 								id='send'
