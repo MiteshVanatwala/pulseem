@@ -463,23 +463,12 @@ export const getCampaignDetailById = createAsyncThunk(
 
 export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 	'WhatsAppChat/GetWhatsAppChatContacts',
-	async (
-		number: string,
-		// data: {
-		// 	ispagination: boolean;
-		// 	page: number;
-		// 	pagesize: number;
-		// },
-		thunkAPI
-	) => {
+	async (number: string, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`WhatsAppChat/GetWhatsAppChatContacts`,
 				{
 					PhoneNumber: number,
-					// isPagination: data.ispagination,
-					// pageNo: data.page,
-					// pageSize: data.pagesize,
 				}
 			);
 
