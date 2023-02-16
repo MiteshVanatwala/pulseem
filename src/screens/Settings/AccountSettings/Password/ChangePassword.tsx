@@ -217,7 +217,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                 title={t("settings.changePassword.title")}
                 showDivider={true}
             >
-                <Grid container className={clsx(classes.mb4)} style={{ maxWidth: 'calc(25vw)' }}>
+                <Grid container className={clsx(classes.mb4, classes.passwordDialog)}>
                     <Grid item xs={12}>
                         <Typography>{Text ? Text : t("settings.changePassword.subTitle")}</Typography>
                     </Grid>
