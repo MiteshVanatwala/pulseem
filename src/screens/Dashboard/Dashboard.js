@@ -60,7 +60,6 @@ const DashboardScreen = ({ classes }) => {
       classes={classes}
       customStyle={classes.dashboard}>
       <Grid container>
-        <Button onClick={() => setShowChangePassword(true)}>Click</Button>
         <Grid item xs={12} sm={9} md={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
