@@ -17,7 +17,11 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useState, useMemo } from 'react';
 import SearchIcon from '@mui/material/IconButton/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
-import { getTemplateIdByName, getTemplateNameById } from '../../Common';
+import {
+	getTemplateIdByName,
+	getTemplateName,
+	getTemplateNameById,
+} from '../../Common';
 
 // const containsText = (text: any, searchText: any) =>
 // 	text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
@@ -136,13 +140,19 @@ const CampaignFields = ({
 					id='template-list'
 					className={
 						showValidation && savedTemplate?.length === 0
-							? clsx(classes.buttonField, classes.error)
-							: clsx(classes.buttonField, classes.success)
+							? clsx(
+									classes.buttonField,
+									classes.buttonWhatsappAutocomplete,
+									classes.error
+							  )
+							: clsx(
+									classes.buttonField,
+									classes.buttonWhatsappAutocomplete,
+									classes.success
+							  )
 					}
 					options={savedTemplateList.map((template) =>
-						template.FriendlyTemplateName !== ''
-							? template.FriendlyTemplateName
-							: template.TemplateName
+						getTemplateName(template)
 					)}
 					renderInput={(params) => <TextField {...params} />}
 					onChange={onTemplateChange}

@@ -7,7 +7,11 @@ import { TextField, Typography, Grid, Button } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import AlertModal from '../Popups/AlertModal';
 import { Autocomplete } from '@mui/material';
-import { getTemplateIdByName, getTemplateNameById } from '../../Common';
+import {
+	getTemplateIdByName,
+	getTemplateName,
+	getTemplateNameById,
+} from '../../Common';
 
 const TemplateFields = ({
 	classes,
@@ -106,13 +110,19 @@ const TemplateFields = ({
 							id='template-list'
 							className={
 								isCampaign
-									? clsx(classes.buttonField, classes.error)
-									: clsx(classes.buttonField, classes.success)
+									? clsx(
+											classes.buttonField,
+											classes.buttonWhatsappAutocomplete,
+											classes.error
+									  )
+									: clsx(
+											classes.buttonField,
+											classes.buttonWhatsappAutocomplete,
+											classes.success
+									  )
 							}
 							options={savedTemplateList.map((template) =>
-								template.FriendlyTemplateName !== ''
-									? template.FriendlyTemplateName
-									: template.TemplateName
+								getTemplateName(template)
 							)}
 							renderInput={(params) => <TextField {...params} />}
 							onChange={onTemplateChange}

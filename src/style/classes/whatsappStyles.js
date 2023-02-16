@@ -58,7 +58,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappEmoji: {
 		'@media screen and (max-width: 556px)': {
 			flexDirection: 'unset',
-			paddingLeft: '10px'
+			paddingLeft: '10px',
 		},
 	},
 	whatsappBaseButtons: {
@@ -2678,5 +2678,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	summaryModalAccordionCampaignFilter: {
 		padding: '14px 0px 14px 0px',
 		borderTop: '1px solid rgba(0,0,0,0.1)',
+	},
+	buttonWhatsappAutocomplete: {
+		padding: '10px 12px 10px 4px'
 	},
 });
