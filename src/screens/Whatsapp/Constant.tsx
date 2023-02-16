@@ -359,7 +359,7 @@ export const campaignStatus: campaignStatusProps = {
 };
 
 export enum whatsappChatStatuses {
-	OPEN = 'Open',
-	PENDING = 'Pending',
-	SOLVED = 'Solved',
+	OPEN = 'open',
+	PENDING = 'pending',
+	SOLVED = 'solved',
 }

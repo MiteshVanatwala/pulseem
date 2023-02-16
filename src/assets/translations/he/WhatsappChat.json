@@ -8,5 +8,9 @@
 	"open": "פתוח",
 	"pending": "בטיפול",
 	"solved": "טופל",
-	"allStatus": "הכל סטטוס"
+	"allStatus": "הכל סטטוס",
+	"choose": "בחר",
+	"chooseTemplate": "בחר תבנית",
+	"visitUs": "בקר אותנו",
+	"callUs": "צור קשר"
 }

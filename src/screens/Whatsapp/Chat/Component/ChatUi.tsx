@@ -28,7 +28,7 @@ import { Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { getVariableValue } from '../../Common';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
-import { apiStatus } from '../../Constant';
+import { apiStatus, whatsappChatStatuses } from '../../Constant';
 import { useDispatch } from 'react-redux';
 import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
 
@@ -91,12 +91,11 @@ const ChatUi = ({
 	const getStatusClass = (status: number) => {
 		switch (status) {
 			case 1:
-				return 'open';
+				return whatsappChatStatuses.OPEN;
 			case 2:
-				return 'pending';
+				return whatsappChatStatuses.PENDING;
 			case 3:
-				return 'solved';
-
+				return whatsappChatStatuses.SOLVED;
 			default:
 				break;
 		}

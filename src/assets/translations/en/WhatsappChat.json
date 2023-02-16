@@ -8,5 +8,9 @@
 	"open": "Open",
 	"pending": "Pending",
 	"solved": "Solved",
-	"allStatus": "All Status"
+	"allStatus": "All Status",
+	"choose": "Choose",
+	"chooseTemplate": "Choose Template",
+	"visitUs": "Visit Us",
+	"callUs": "Call Us"
 }

@@ -18,6 +18,7 @@ import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
+import { whatsappChatStatuses } from '../../Constant';
 
 const SideBar = ({
 	classes,
@@ -60,11 +61,11 @@ const SideBar = ({
 	const getStatusClass = (status: number) => {
 		switch (status) {
 			case 1:
-				return 'open';
+				return whatsappChatStatuses.OPEN;
 			case 2:
-				return 'pending';
+				return whatsappChatStatuses.PENDING;
 			case 3:
-				return 'solved';
+				return whatsappChatStatuses.SOLVED;
 
 			default:
 				break;
