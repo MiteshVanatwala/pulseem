@@ -35,6 +35,7 @@ import {
 	commonAPIResponseProps,
 	coreProps,
 	quickReplyButtonProps,
+	restoreCampaignData,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -68,6 +69,7 @@ import {
 	duplicateCampaign,
 	getAllCampaigns,
 	getSavedTemplatesPreviewById,
+	restoreWhatsAppCampaigns,
 } from '../../../redux/reducers/whatsappSlice';
 import InfoModal from './Popups/InfoModal';
 import { useNavigate } from 'react-router-dom';
@@ -551,7 +553,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				key: 'groups',
 				buttonKey: 'groups',
 				icon: GroupsIcon,
-				disable: !!!Groups,
+				disable: Groups?.length === 0 ? true : false,
 				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
@@ -697,7 +699,24 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onRestoreDeleted = async () => {
-		setIsPreviewCampaignOpen(false);
+		setIsRestoreDeletedModal(false);
+		setIsLoader(true);
+		const { payload: restoreCampaignData }: restoreCampaignData =
+			await dispatch<any>(
+				restoreWhatsAppCampaigns(restoreIds?.map((id) => Number(id)))
+			);
+		setIsLoader(false);
+		if (restoreCampaignData?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.RESTORE_CAMPAIGN_SUCCESS);
+			setApiCampaignData();
+		} else {
+			restoreCampaignData?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: restoreCampaignData?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	const onSearch = async () => {

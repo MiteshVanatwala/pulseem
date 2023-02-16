@@ -336,24 +336,29 @@ const SendCampaign = ({
 			}
 			const { payload: saveCampaignSettingData }: ApiSaveCampaignSettings =
 				await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));
-			if (showMessage) {
-				if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
+			if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
+				if (showMessage) {
 					setToastMessage(ToastMessages.CAMPAIGN_SAVE_SUCCESS);
-				} else {
-					saveCampaignSettingData?.Message
-						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: saveCampaignSettingData?.Message,
-						  })
-						: setToastMessage(ToastMessages.ERROR);
 				}
+				return saveCampaignSettingData?.Status;
+			} else {
+				saveCampaignSettingData?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: saveCampaignSettingData?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+				return apiStatus?.ERROR;
 			}
 		}
 	};
 
 	const onCampaignSend = async () => {
 		if (validateSendSetting()) {
-			setIsSummaryModal(true);
+			const saveCampaignData = await onCampaignSave(false);
+			if (saveCampaignData) {
+				setIsSummaryModal(true);
+			}
 		}
 	};
 
