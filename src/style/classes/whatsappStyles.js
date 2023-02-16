@@ -122,7 +122,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textTransform: 'none',
 		marginInlineStart: 1,
 		marginInlineEnd: 1,
-		padding: '3px',
+		padding: '3px 6px',
 		fontSize: '12px',
 		'&$disabled': {
 			cursor: 'not-allowed !important',
