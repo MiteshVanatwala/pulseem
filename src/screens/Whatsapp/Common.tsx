@@ -74,3 +74,7 @@ export const getTemplateNameById = (
 		)?.TemplateName || null
 	);
 };
+
+export const getTemplateName = (template: savedTemplateListProps) => {
+	return template?.TemplateName;
+};
