@@ -2367,6 +2367,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			alignItems: 'center',
 			borderBottom: '1px solid #EBEBEB',
 			cursor: 'pointer',
+			'&.active-contact': {
+				background: '#e7e7e7',
+			},
 		},
 		'&.sidebar-contact:hover': { backgroundColor: '#EBEBEB' },
 		'&.sidebar-contact__avatar-wrapper': {

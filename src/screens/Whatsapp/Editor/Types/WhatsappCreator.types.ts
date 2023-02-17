@@ -128,6 +128,12 @@ export type templateDataProps = {
 	templateButtons: quickReplyButtonProps[] | callToActionProps;
 };
 
+export type templatePreviewDataProps = {
+	templateData: templateDataProps;
+	buttonType: 'quickReply' | 'callToAction';
+	fileData: string;
+};
+
 export type WhatsappTipsProps = {
 	classes: ClassesType['classes'];
 };
@@ -432,4 +438,3 @@ export type restoreCampaignPayloadData = {
 export type restoreCampaignData = {
 	payload: restoreCampaignPayloadData;
 };
-

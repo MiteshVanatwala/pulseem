@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Icon from './Icon';
 import { lastMessage } from './data';
 import {
@@ -38,6 +38,7 @@ const SideBar = ({
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
+	const { contactID } = useParams();
 
 	const useStyles = makeStyles(() => ({
 		selectRoot: {
@@ -193,7 +194,14 @@ const SideBar = ({
 					{filteredSideChatContacts.map(
 						(contact: APIWhatsappChatSidebarContactsItemsData, i: number) => (
 							<Link
-								className={`${classes.whatsappChat} sidebar-contact`}
+								className={clsx(
+									`${classes.whatsappChat} sidebar-contact`,
+									`${
+										contactID &&
+										contact?.PhoneNumber === contactID &&
+										'active-contact'
+									}`
+								)}
 								key={i}
 								to={`/react/whatsapp/chat/${contact?.PhoneNumber}`}
 								onClick={(e) => handleChatId(e, contact)}>

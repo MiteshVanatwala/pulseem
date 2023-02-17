@@ -1,7 +1,7 @@
 import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { updatedVariable } from '../../Campaign/Types/WhatsappCampaign.types';
-import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
+import { savedTemplateListProps, savedTemplateTypesProps } from '../../Editor/Types/WhatsappCreator.types';
 
 export type WhatsappChatProps = {
 	classes: ClassesType['classes'];
@@ -115,16 +115,12 @@ export type APIWhatsappChatTextData = {
 	body: string;
 };
 
-export type APIWhatsappChatTypesData = {
-	text: APIWhatsappChatTextData;
-};
-
 export type APIWhatsappChatTemplateData = {
-	types: APIWhatsappChatTypesData;
+	types: savedTemplateTypesProps;
 	variables: APIWhatsappChatVariablesData;
 };
 
-export type APIWhatsappChatItemsData = {
+export type APIWhatsappChatDetailData = {
 	IsInbound: null | boolean;
 	IsTemplate: boolean;
 	MediaUrl: string;
@@ -136,10 +132,14 @@ export type APIWhatsappChatItemsData = {
 	TemplateData: APIWhatsappChatTemplateData;
 };
 
+export type APIWhatsappChatItemsData = {
+	[key: string]: APIWhatsappChatDetailData[];
+};
+
 export type APIWhatsappChatMainData = {
 	Count: number;
 	CurrentPage: number;
-	Items: APIWhatsappChatItemsData[];
+	Items: APIWhatsappChatItemsData;
 	PageSize: number;
 	TotalRecord: number;
 };
