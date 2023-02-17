@@ -101,8 +101,11 @@ export const getTemplatePreviewData = (
 			templateText: '',
 			templateButtons: [],
 		},
-		buttonType: 'quickReply',
-		fileData: '',
+		buttonType: '',
+		fileData: {
+			fileLink: '',
+			fileType: '',
+		},
 	};
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
@@ -210,7 +213,7 @@ export const getTemplatePreviewData = (
 			}
 		}
 		if (cardData?.media?.length > 0) {
-			templatePreviewData.fileData = cardData?.media[0];
+			templatePreviewData.fileData.fileLink = cardData?.media[0];
 		}
 	};
 
@@ -218,7 +221,8 @@ export const getTemplatePreviewData = (
 		const mediaData: savedTemplateMediaProps = templateData?.['media'];
 		templatePreviewData.templateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
-			templatePreviewData.fileData = mediaData?.media[0];
+			templatePreviewData.fileData.fileLink = mediaData?.media[0];
+			templatePreviewData.fileData.fileType = mediaData?.media_type;
 		}
 	};
 

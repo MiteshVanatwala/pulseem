@@ -24,6 +24,7 @@ import {
 	savedTemplateQuickReplyProps,
 	savedTemplateTextProps,
 	templateDataProps,
+	templatePreviewDataProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import { useDispatch } from 'react-redux';
 import {
@@ -35,7 +36,7 @@ import {
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
-import { getDynamicFields } from '../Common';
+import { getDynamicFields, getTemplatePreviewData } from '../Common';
 import {
 	landingPageAPIProps,
 	landingPageDataProps,
@@ -51,10 +52,12 @@ import {
 } from '../../../redux/reducers/smsSlice';
 import { apiStatus, buttonTypes, whatsappChatStatuses } from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
+import { useNavigate } from 'react-router-dom';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
+	const navigate = useNavigate();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
-	const [chatContacts, setChatContacts] =
+	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
 			IsTemplate: false,
@@ -79,6 +82,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
 		e.preventDefault();
+		e.stopPropagation();
 
 		setWhatsappChatCoversationStatus(
 			e.target.value,
@@ -97,7 +101,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		savedTemplateListProps[]
 	>([]);
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
-	const [fileData, setFileData] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileType: string;
+		fileLink: string;
+	}>({
+		fileType: '',
+		fileLink: '',
+	});
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
@@ -161,20 +171,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [landingPages, setLandingPages] = useState<landingPageDataProps[]>([]);
 	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
 	const [dynamicModalVariable, setDynamicModalVariable] = useState<number>(0);
-	let updatedTemplateData: templateDataProps = {
-		templateText: '',
-		templateButtons: [],
-	};
-	let updatedButtonType: string = '';
-	let updatedFileData: string = '';
 
 	useEffect(() => {
-		setAPIInboundChatStatus();
-		getPhoneNumber();
-		getSavedTemplateFields();
 		if (!personalFields || landingPages?.length <= 0) {
 			getDynamicModalValues();
 		}
+		getSavedTemplateFields();
+		(async () => {
+			await getPhoneNumber();
+			await setAPIInboundChatStatus();
+		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
 		 */
@@ -186,6 +192,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		Sendernumber: string,
 		ClientNumber: string
 	) => {
+		setIsLoader(true);
 		const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusData =
 			await dispatch<any>(
 				manageWhatsappChatCoversationStatus({
@@ -194,9 +201,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					StatusId,
 				})
 			);
+		setIsLoader(false);
 		if (
 			whatsAppChatConversationStatusData?.payload?.Status === apiStatus.SUCCESS
 		) {
+			if (activeChatContacts?.PhoneNumber === ClientNumber) {
+				setActiveChatContacts({
+					...activeChatContacts,
+					ConversationStatusId: StatusId,
+				});
+			}
 			const updatedSideChatContacts = sideChatContacts?.map((contact) => {
 				if (contact?.PhoneNumber === ClientNumber) {
 					return { ...contact, ConversationStatusId: StatusId };
@@ -222,7 +236,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			await dispatch<any>(
 				getInboundWhatsappChatStatus({
 					activePhoneNumber: activePhoneNumber,
-					activeUserNumber: chatContacts.PhoneNumber,
+					activeUserNumber: activeChatContacts.PhoneNumber,
 				})
 			);
 		if (whatsAppChatSessionStatus.payload.Status === apiStatus.SUCCESS) {
@@ -239,15 +253,18 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setIsLoader(true);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
 			await dispatch<any>(getWhatsappChatContactsByPhoneNumber(activeUser));
-
+		setIsLoader(false);
 		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
-			setSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
-			setFilteredSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
-			setIsLoader(false);
+			const contactData = whatsAppChatContactsData.payload.Data.Items;
+			const updatedActiveChat = contactData[0];
+			if (activeChatContacts?.PhoneNumber === '' && updatedActiveChat) {
+				setActiveChatContacts(updatedActiveChat);
+				navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
+				changeContactReadStatus(updatedActiveChat, contactData, contactData);
+			}
 		} else {
 			setSideChatContacts([]);
 			setFilteredSideChatContacts([]);
-			setIsLoader(false);
 		}
 	};
 
@@ -257,8 +274,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (phoneNumberData?.Data?.length > 0) {
 			setActivePhoneNumber(phoneNumberData?.Data[0]);
 			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0]);
+			setPhoneNumbersList(phoneNumberData?.Data);
+			return phoneNumberData?.Data;
 		}
-		setPhoneNumbersList(phoneNumberData?.Data);
+		setPhoneNumbersList([]);
+		return [];
 	};
 
 	const onActiveUserChange = (e: BaseSyntheticEvent) => {
@@ -312,171 +332,40 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		);
 		setSavedTemplateList(savedTemplate?.payload?.Data?.Items);
 	};
-	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
-		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
-		switch (buttonType) {
-			case 'quickReply':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					return {
-						id: uniqid(),
-						typeOfAction: '',
-						fields: [
-							{
-								fieldName: 'whatsapp.websiteButtonText',
-								type: 'text',
-								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-								value: button.title,
-							},
-						],
-					};
-				});
-				return buttonData ? buttonData : [];
-			case 'callToAction':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					if (button?.type === 'PHONE') {
-						return {
-							id: uniqid(),
-							typeOfAction: 'phonenumber',
-							fields: [
-								{
-									fieldName: 'whatsapp.phoneButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.country',
-									type: 'select',
-									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
-								},
-								{
-									fieldName: 'whatsapp.phoneNumber',
-									type: 'tel',
-									placeholder: 'whatsapp.phoneNumberPlaceholder',
-									value: button.phone,
-								},
-							],
-						};
-					} else {
-						return {
-							id: uniqid(),
-							typeOfAction: 'website',
-							fields: [
-								{
-									fieldName: 'whatsapp.websiteButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.websiteURL',
-									type: 'text',
-									placeholder: 'whatsapp.websiteURLPlaceholder',
-									value: button.url,
-								},
-							],
-						};
-					}
-				});
-				return buttonData ? buttonData : [];
-		}
-	};
-	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
-		const quickReplyData: savedTemplateQuickReplyProps =
-			templateData?.types['quick-reply'];
-		updatedButtonType = buttonTypes.QUICK_REPLY;
-		const buttonData = setButtonsData(
-			buttonTypes.QUICK_REPLY,
-			quickReplyData?.actions
-		);
-		updatedTemplateData.templateText = quickReplyData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
-
-	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
-		const callToActionData: savedTemplateCallToActionProps =
-			templateData?.types['call-to-action'];
-		updatedButtonType = 'callToAction';
-		const buttonData = setButtonsData(
-			'callToAction',
-			callToActionData?.actions
-		);
-		updatedTemplateData.templateText = callToActionData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
-
-	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
-		const cardData: savedTemplateCardProps = templateData?.types['card'];
-		updatedTemplateData.templateText = cardData?.title;
-		if (cardData?.actions?.length > 0) {
-			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-				updatedButtonType = buttonTypes.CALL_TO_ACTION;
-				const buttonData = setButtonsData(
-					buttonTypes.CALL_TO_ACTION,
-					cardData?.actions
-				);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			} else {
-				updatedButtonType = buttonTypes.QUICK_REPLY;
-				const buttonData = setButtonsData(
-					buttonTypes.QUICK_REPLY,
-					cardData?.actions
-				);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			}
-		}
-		if (cardData?.media?.length > 0) {
-			updatedFileData = cardData?.media[0];
-		}
-	};
-
-	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
-		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
-		updatedTemplateData.templateText = mediaData?.body;
-		if (mediaData?.media?.length > 0) {
-			updatedFileData = mediaData?.media[0];
-		}
-	};
-
-	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
-		const textData: savedTemplateTextProps = templateData?.types['text'];
-		updatedTemplateData.templateText = textData?.body;
-	};
-
-	const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
-		if ('quick-reply' in templateData?.types) {
-			saveQuickreplyTemplate(templateData);
-		}
-		if ('call-to-action' in templateData?.types) {
-			saveCallToActionTemplate(templateData);
-		} else if ('card' in templateData?.types) {
-			saveCardTemplate(templateData);
-		} else if ('media' in templateData?.types) {
-			saveMediaTemplate(templateData);
-		} else if ('text' in templateData?.types) {
-			saveTextTemplate(templateData);
-		}
-	};
 	const onChoose = (
 		template: savedTemplateListProps,
 		templateText: string | null
 	) => {
+		let templatePreviewData: templatePreviewDataProps = {
+			templateData: {
+				templateText: '',
+				templateButtons: [],
+			},
+			buttonType: '',
+			fileData: {
+				fileLink: '',
+				fileType: '',
+			},
+		};
 		setNewMessage(templateText || '');
 		setIsTemplateModal(false);
 		setSavedTemplate(template?.TemplateId);
 		const templateData: savedTemplateDataProps = template?.Data;
 		if (templateData) {
-			setUpdatedTemplateData(templateData);
+			templatePreviewData = getTemplatePreviewData(templateData?.types);
 		}
-		setFileData(updatedFileData);
-		setButtonType(updatedButtonType);
-		setTemplateData(updatedTemplateData);
-		setDynamicVariable(getDynamicFields(updatedTemplateData.templateText));
-		if (updatedButtonType === buttonTypes.QUICK_REPLY) {
-			setQuickReplyButtons(updatedTemplateData.templateButtons);
+		setFileData(templatePreviewData?.fileData);
+		setButtonType(templatePreviewData?.buttonType);
+		setTemplateData(templatePreviewData?.templateData);
+		setDynamicVariable(
+			getDynamicFields(templatePreviewData?.templateData?.templateText)
+		);
+		if (templatePreviewData?.buttonType === buttonTypes.QUICK_REPLY) {
+			setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
 		} else {
-			setCallToActionFieldRows(updatedTemplateData.templateButtons);
+			setCallToActionFieldRows(
+				templatePreviewData?.templateData.templateButtons
+			);
 		}
 		if (templateData?.variables) {
 			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
@@ -489,11 +378,37 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
+	const changeContactReadStatus = (
+		contacts: APIWhatsappChatSidebarContactsItemsData,
+		sideChatContactList: APIWhatsappChatSidebarContactsItemsData[] = sideChatContacts,
+		filterSideChatContactList: APIWhatsappChatSidebarContactsItemsData[] = filteredSideChatContacts
+	) => {
+		const updatedSideChatContacts = sideChatContactList?.map(
+			(sideChatContact) => {
+				if (sideChatContact?.PhoneNumber === contacts?.PhoneNumber) {
+					return { ...sideChatContact, Unread: 0 };
+				}
+				return sideChatContact;
+			}
+		);
+		const updatedFilteredSideChatContacts = filterSideChatContactList?.map(
+			(filteredSideChatContact) => {
+				if (filteredSideChatContact?.PhoneNumber === contacts?.PhoneNumber) {
+					return { ...filteredSideChatContact, Unread: 0 };
+				}
+				return filteredSideChatContact;
+			}
+		);
+		setSideChatContacts(updatedSideChatContacts);
+		setFilteredSideChatContacts(updatedFilteredSideChatContacts);
+	};
+
 	const handleChatId = (
 		e: BaseSyntheticEvent,
 		contacts: APIWhatsappChatSidebarContactsItemsData
 	) => {
-		setChatContacts(contacts);
+		setActiveChatContacts(contacts);
+		changeContactReadStatus(contacts);
 	};
 
 	return (
@@ -521,7 +436,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							phoneNumbersList={phoneNumbersList}
 							handleUserStatus={handleUserStatus}
 							getStatusClass={getStatusClass}
-							chatContacts={chatContacts}
+							chatContacts={activeChatContacts}
 						/>
 						<ChatUi
 							isMobileSideBar={isMobileSideBar}
@@ -540,7 +455,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							setIsDynamcFieldModal={setIsDynamcFieldModal}
 							setDynamicModalVariable={setDynamicModalVariable}
 							savedTemplate={savedTemplate}
-							chatContacts={chatContacts}
+							chatContacts={activeChatContacts}
 							activePhoneNumber={activePhoneNumber}
 							filteredSideChatContacts={filteredSideChatContacts}
 							whatsappChatSession={whatsappChatSession}

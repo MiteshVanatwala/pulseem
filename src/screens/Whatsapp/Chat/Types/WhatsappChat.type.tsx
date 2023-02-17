@@ -1,7 +1,10 @@
 import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { updatedVariable } from '../../Campaign/Types/WhatsappCampaign.types';
-import { savedTemplateListProps, savedTemplateTypesProps } from '../../Editor/Types/WhatsappCreator.types';
+import {
+	savedTemplateListProps,
+	savedTemplateTypesProps,
+} from '../../Editor/Types/WhatsappCreator.types';
 
 export type WhatsappChatProps = {
 	classes: ClassesType['classes'];
@@ -32,6 +35,13 @@ export type WhatsappChatUiProps = {
 	whatsappChatSession: APIWhatsappChatSessionData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
+};
+
+export type ChatTemplateProps = {
+	classes: ClassesType['classes'];
+	template: savedTemplateTypesProps;
+	msgIndex: number;
+	message: APIWhatsappChatDetailData;
 };
 
 export type WhatsappChatSideBarProps = {
@@ -177,4 +187,14 @@ export type APIWhatsappChatConversationStatusPayloadData = {
 
 export type APIWhatsappChatConversationStatusData = {
 	payload: APIWhatsappChatConversationStatusPayloadData;
+};
+
+export type APISendWhatsAppChatReqPayload = {
+	FromNumber: string;
+	ToNumberList: string;
+	IsFreeFormChat: boolean;
+	TextMessage?: string;
+	mediaUrl?: string;
+	TemplateId?: string;
+	Variables?: updatedVariable[];
 };

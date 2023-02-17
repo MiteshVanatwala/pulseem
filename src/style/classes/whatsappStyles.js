@@ -389,6 +389,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 			'& pre': {},
 		},
+		'&.whatsapp-chat': {
+			margin: '0',
+			maxWidth: '100%',
+		},
 		'&.quick-reply-button': {
 			backgroundColor: '#b7b7b7',
 			color: '#1c82b2',
@@ -412,7 +416,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		margin: '0px',
 		fontFamily: 'Assistant',
 		whiteSpace: 'pre-line',
-		background: '#e1ffc7',
+		background: '#dbf8c6',
 		padding: '8px',
 		borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
 		'& pre': {
@@ -420,6 +424,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			whiteSpace: 'pre-line',
 			margin: '0px',
 			fontFamily: 'Assistant',
+		},
+		'&.whatsapp-chat': {
+			padding: '0px',
 		},
 		'& img': {
 			width: '100%',

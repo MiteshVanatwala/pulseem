@@ -94,7 +94,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		templateButtons: [],
 	});
 	const [buttonType, setButtonType] = useState<string>('');
-	const [fileData, setFileData] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [templateListData, setTemplateListData] = useState<
 		templateListItemsProps[]
@@ -115,7 +121,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		templateButtons: [],
 	};
 	let updatedButtonType: string = '';
-	let updatedFileData: string = '';
+	let updatedFileData: {
+		fileLink: string;
+		fileType: string;
+	} = {
+		fileLink: '',
+		fileType: '',
+	};
 
 	useEffect(() => {
 		setApiTemplateData();
@@ -332,7 +344,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			}
 		}
 		if (cardData?.media?.length > 0) {
-			updatedFileData = cardData?.media[0];
+			updatedFileData.fileLink = cardData?.media[0];
 		}
 	};
 
@@ -340,7 +352,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
 		updatedTemplateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
-			updatedFileData = mediaData?.media[0];
+			updatedFileData.fileLink = mediaData?.media[0];
+			updatedFileData.fileType = mediaData?.media_type;
 		}
 	};
 

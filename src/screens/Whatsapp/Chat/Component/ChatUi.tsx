@@ -1,5 +1,5 @@
 import Icon from './Icon';
-import { allMessages, dates, user } from './data';
+import { user } from './data';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
@@ -27,18 +27,13 @@ import {
 import clsx from 'clsx';
 import { Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { getTemplatePreviewData, getVariableValue } from '../../Common';
+import { getVariableValue } from '../../Common';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
-import { apiStatus, fileTypes, whatsappChatStatuses } from '../../Constant';
+import { apiStatus } from '../../Constant';
 import { useDispatch } from 'react-redux';
 import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
-import moment from 'moment';
-import {
-	callToActionFieldProps,
-	callToActionRowProps,
-	quickReplyButtonProps,
-	quickReplyButtonsFieldProps,
-} from '../../Editor/Types/WhatsappCreator.types';
+import ChatTemplate from './ChatTemplate';
+import { Loader } from '../../../../components/Loader/Loader';
 
 const ChatUi = ({
 	classes,
@@ -66,14 +61,8 @@ const ChatUi = ({
 
 	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
+	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
-	const formatTime = (timeString: string) => {
-		return moment(timeString).format('hh:mm');
-		// if (timeString) {
-		// 	let splitTimeString = timeString?.split(':');
-		// 	return `${splitTimeString[0]}:${splitTimeString[1]}`;
-		// }
-	};
 	const time = new Date().toLocaleTimeString('en-US');
 	const [chatTimer, setChatTimer] = useState<string>(time);
 	const setUpdateTime = () => {
@@ -145,40 +134,21 @@ const ChatUi = ({
 	}, [chatContacts?.PhoneNumber]);
 
 	const getAPIAllWhatsappChat = async () => {
-		const allWhatsAppChatData: APIWhatsappChatData = await dispatch<any>(
-			getWhatsappChat({
-				activePhoneNumber: activePhoneNumber,
-				activeUserNumber: chatContacts?.PhoneNumber,
-			})
-		);
+		if (activePhoneNumber && chatContacts?.PhoneNumber) {
+			setIsLoader(true);
+			const allWhatsAppChatData: APIWhatsappChatData = await dispatch<any>(
+				getWhatsappChat({
+					activePhoneNumber: activePhoneNumber,
+					activeUserNumber: chatContacts?.PhoneNumber,
+				})
+			);
+			setIsLoader(false);
 
-		if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
-			setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
-		} else {
-			// setAllWhatsappChat([]);
-		}
-	};
-
-	const getValueByFieldName = (
-		button: quickReplyButtonProps | callToActionRowProps,
-		fieldName: string
-	) => {
-		return (
-			button.fields.find(
-				(field: quickReplyButtonsFieldProps | callToActionFieldProps) => {
-					return field.fieldName === fieldName;
-				}
-			)?.value || ''
-		);
-	};
-
-	const getFileType = (fileData: string) => {
-		if (fileData?.includes('.png') || fileData?.includes('.jpeg')) {
-			return fileTypes.IMAGE;
-		} else if (fileData?.includes('.pdf')) {
-			return fileTypes.DOCUMENT;
-		} else if (fileData?.includes('.mp4')) {
-			return fileTypes.VIDEO;
+			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
+				setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
+			} else {
+				// setAllWhatsappChat([]);
+			}
 		}
 	};
 
@@ -383,362 +353,14 @@ const ChatUi = ({
 											(
 												message: APIWhatsappChatDetailData,
 												msgIndex: number
-											) => {
-												const assignRef = () =>
-													dateIndex === dates?.length - 1 &&
-													msgIndex === Object.keys(allWhatsappChat)?.length - 1
-														? undefined
-														: undefined;
-												const { templateData, buttonType, fileData } =
-													getTemplatePreviewData(message?.TemplateData?.types);
-												return message?.IsTemplate ? (
-													<p
-														key={msgIndex}
-														className={`${classes.whatsappChat} chat__msg chat__msg--sent`}
-														ref={assignRef()}>
-														<span>{templateData?.templateText}</span>
-
-														<div className='conversation-container'>
-															{(templateData?.templateText ||
-																buttonType === 'callToAction') && (
-																<>
-																	<div
-																		className={`${classes.whatsappMobileMessage} sent`}
-																		id='conversation-text-preview'>
-																		{templateData?.templateText?.length > 0 && (
-																			<div
-																				className={
-																					classes.whatsappMobileMessageTextAndImage
-																				}>
-																				{getFileType(fileData) ===
-																					fileTypes.IMAGE &&
-																					fileData?.length > 0 && (
-																						<img
-																							src={fileData}
-																							alt='uploaded-file-preview'
-																						/>
-																					)}
-																				{getFileType(fileData) ===
-																					fileTypes.VIDEO &&
-																					fileData?.length > 0 && (
-																						<a
-																							href={fileData}
-																							target='_blank'
-																							rel='noreferrer'>
-																							<img
-																								className='video-preview-img'
-																								// src={Video}
-																								alt='uploaded-file-preview'
-																							/>
-																						</a>
-																					)}
-																				{getFileType(fileData) ===
-																					fileTypes.DOCUMENT &&
-																					fileData?.length > 0 && (
-																						<Grid container alignItems='center'>
-																							<img
-																								className='pdf-preview-img'
-																								// src={PDF}
-																								alt='uploaded-file-preview'
-																							/>
-																							<div
-																								className={classes.pdfFileName}>
-																								{fileData
-																									?.split('/')
-																									[
-																										fileData?.split('/')
-																											?.length - 1
-																									]?.substring(0, 18) + '...'}
-																							</div>
-																							<a
-																								href={fileData}
-																								target='_blank'
-																								rel='noreferrer'>
-																								<img
-																									className='download-preview-img'
-																									// src={Download}
-																									alt='uploaded-file-preview'
-																								/>
-																							</a>
-																						</Grid>
-																					)}
-																				<pre>{templateData?.templateText}</pre>
-																			</div>
-																		)}
-																		{buttonType === 'callToAction' &&
-																			templateData?.templateButtons?.length >
-																				0 && (
-																				<div
-																					className={
-																						classes.callToActionButtonsWrapper
-																					}
-																					style={{
-																						borderTop:
-																							templateData?.templateText
-																								?.length <= 0
-																								? '0px'
-																								: '1px solid #cbcbcb',
-																						margin:
-																							templateData?.templateText
-																								?.length <= 0
-																								? '0px -8px 0px -8px'
-																								: '4px 0px 0px 0px',
-																						padding:
-																							templateData?.templateText
-																								?.length <= 0
-																								? '0px 8px 0px 8px'
-																								: '0px 0px 0px 0px',
-																					}}>
-																					{templateData?.templateButtons?.map(
-																						(
-																							button:
-																								| quickReplyButtonProps
-																								| callToActionRowProps
-																						) => (
-																							<Grid item key={button.id}>
-																								{button.typeOfAction ===
-																								'phonenumber' ? (
-																									<a
-																										target='_blank'
-																										href={`tel:${getValueByFieldName(
-																											button,
-																											'whatsapp.phoneNumber'
-																										)}`}
-																										rel='noreferrer'>
-																										<i
-																											className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
-																										<span
-																											className={
-																												classes.callToActionButtonText
-																											}>
-																											{getValueByFieldName(
-																												button,
-																												'whatsapp.phoneButtonText'
-																											)}
-																										</span>
-																									</a>
-																								) : (
-																									<a
-																										href={getValueByFieldName(
-																											button,
-																											'whatsapp.websiteURL'
-																										)}
-																										target='_blank'
-																										rel='noreferrer'>
-																										<i
-																											className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
-																										<span
-																											className={
-																												classes.callToActionButtonText
-																											}>
-																											{getValueByFieldName(
-																												button,
-																												'whatsapp.websiteButtonText'
-																											)}
-																										</span>
-																									</a>
-																								)}
-																							</Grid>
-																						)
-																					)}
-																				</div>
-																			)}
-																	</div>
-																</>
-															)}
-															{buttonType === 'quickReply' && (
-																<>
-																	<div
-																		className={classes.quickReplyButtonWrapper}>
-																		{templateData?.templateButtons?.map(
-																			(
-																				button:
-																					| quickReplyButtonProps
-																					| callToActionRowProps
-																			) => (
-																				<div
-																					key={button.id}
-																					className={`${classes.whatsappMobileMessage} sent quick-reply-button`}
-																					style={{
-																						margin: '2px 0px 0px 0px',
-																						borderRadius: '5px',
-																						padding: '4px 8px',
-																						width:
-																							getValueByFieldName(
-																								button,
-																								'whatsapp.websiteButtonText'
-																							)?.length <=
-																							templateData?.templateText?.length
-																								? 'auto'
-																								: '',
-																					}}>
-																					<span
-																						className={
-																							classes.quickReplyButtonText
-																						}>
-																						{getValueByFieldName(
-																							button,
-																							'whatsapp.websiteButtonText'
-																						)}
-																					</span>
-																				</div>
-																			)
-																		)}
-																	</div>
-																</>
-															)}
-														</div>
-
-														<span
-															className={`${classes.whatsappChat} chat__msg-filler`}>
-															{' '}
-														</span>
-														<span
-															className={`${classes.whatsappChat} chat__msg-footer`}>
-															<span> {formatTime(message.MessageDate)} </span>
-															<Icon
-																id={
-																	message?.SmsStatusId === 2
-																		? 'singleTick'
-																		: 'doubleTick'
-																}
-																aria-label={'sent'}
-																className={`${
-																	classes.whatsappChat
-																} chat__msg-status-icon ${
-																	message?.SmsStatusId === 6
-																		? `${classes.whatsappChat} chat__msg-status-icon--blue`
-																		: ''
-																}`}
-															/>
-														</span>
-														<button
-															aria-label='Message options'
-															className={`${classes.whatsappChat} chat__msg-options`}>
-															<Icon
-																id='downArrow'
-																className={`${classes.whatsappChat} chat__msg-options-icon`}
-															/>
-														</button>
-													</p>
-												) : (
-													<>
-														{message?.MediaUrl &&
-														message?.MediaUrl?.length > 0 ? (
-															<div
-																key={msgIndex}
-																className={`${
-																	classes.whatsappChat
-																} chat__msg chat__img-wrapper ${
-																	!message.IsInbound
-																		? `${classes.whatsappChat} chat__msg--rxd`
-																		: `${classes.whatsappChat} chat__msg--sent`
-																}`}
-																ref={assignRef()}>
-																<img
-																	src={message?.MediaUrl}
-																	alt='media file'
-																	className={`${classes.whatsappChat} chat__img`}
-																/>
-																<span
-																	className={`${classes.whatsappChat} chat__msg-footer`}>
-																	<span>{formatTime(message.MessageDate)}</span>
-																	{message.IsInbound && (
-																		<Icon
-																			id={
-																				message?.SmsStatusId === 2
-																					? 'singleTick'
-																					: 'doubleTick'
-																			}
-																			aria-label={'sent'}
-																			className={`${
-																				classes.whatsappChat
-																			} chat__msg-status-icon ${
-																				message?.SmsStatusId === 6
-																					? `${classes.whatsappChat} chat__msg-status-icon--blue`
-																					: ''
-																			}`}
-																		/>
-																	)}
-																</span>
-
-																<button
-																	aria-label='Message options'
-																	className={`${classes.whatsappChat} chat__msg-options`}>
-																	<Icon
-																		id='downArrow'
-																		className={`${classes.whatsappChat} chat__msg-options-icon`}
-																	/>
-																</button>
-															</div>
-														) : message.IsInbound ? (
-															<p
-																key={msgIndex}
-																className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}
-																ref={assignRef()}>
-																<span>{message?.Message}</span>
-																<span
-																	className={`${classes.whatsappChat} chat__msg-filler`}>
-																	{' '}
-																</span>
-																<span
-																	className={`${classes.whatsappChat} chat__msg-footer`}>
-																	{formatTime(message.MessageDate)}
-																</span>
-																<button
-																	aria-label='Message options'
-																	className={`${classes.whatsappChat} chat__msg-options`}>
-																	<Icon
-																		id='downArrow'
-																		className={`${classes.whatsappChat} chat__msg-options-icon`}
-																	/>
-																</button>
-															</p>
-														) : (
-															<p
-																key={msgIndex}
-																className={`${classes.whatsappChat} chat__msg chat__msg--sent`}
-																ref={assignRef()}>
-																<span>{message.Message}</span>
-																<span
-																	className={`${classes.whatsappChat} chat__msg-filler`}>
-																	{' '}
-																</span>
-																<span
-																	className={`${classes.whatsappChat} chat__msg-footer`}>
-																	<span>
-																		{' '}
-																		{formatTime(message.MessageDate)}{' '}
-																	</span>
-																	<Icon
-																		id={
-																			message?.SmsStatusId === 2
-																				? 'singleTick'
-																				: 'doubleTick'
-																		}
-																		aria-label={'sent'}
-																		className={`${
-																			classes.whatsappChat
-																		} chat__msg-status-icon ${
-																			message?.SmsStatusId === 6
-																				? `${classes.whatsappChat} chat__msg-status-icon--blue`
-																				: ''
-																		}`}
-																	/>
-																</span>
-																<button
-																	aria-label='Message options'
-																	className={`${classes.whatsappChat} chat__msg-options`}>
-																	<Icon
-																		id='downArrow'
-																		className={`${classes.whatsappChat} chat__msg-options-icon`}
-																	/>
-																</button>
-															</p>
-														)}
-													</>
-												);
-											}
+											) => (
+												<ChatTemplate
+													classes={classes}
+													template={message?.TemplateData?.types}
+													msgIndex={msgIndex}
+													message={message}
+												/>
+											)
 										)}
 									</div>
 								</div>
@@ -773,6 +395,7 @@ const ChatUi = ({
 						onChoose(template, templateText)
 					}
 				/>
+				<Loader isOpen={isLoader} showBackdrop={true} />
 			</div>
 		</>
 	);

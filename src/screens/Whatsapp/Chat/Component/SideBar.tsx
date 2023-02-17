@@ -79,18 +79,17 @@ const SideBar = ({
 	const handleFilter = (e: BaseSyntheticEvent) => {
 		let result = [];
 		let value = e.target.value;
-		if (e.target.value === 0) {
-			getPhoneNumber();
-			setFilterBySelected(e.target.value);
-		} else {
-			setFilterBySelected(e.target.value);
-		}
+		setFilterBySelected(e.target.value);
 
-		result = sideChatContacts.filter(
-			(data: APIWhatsappChatSidebarContactsItemsData) => {
-				return data.ConversationStatusId === value;
-			}
-		);
+		if (e.target.value === 0) {
+			result = sideChatContacts;
+		} else {
+			result = sideChatContacts.filter(
+				(data: APIWhatsappChatSidebarContactsItemsData) => {
+					return data.ConversationStatusId === value;
+				}
+			);
+		}
 		setFilteredSideChatContacts(result);
 	};
 

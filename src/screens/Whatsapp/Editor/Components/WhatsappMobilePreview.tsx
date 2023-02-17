@@ -70,11 +70,14 @@ const WhatsappMobilePreview = ({
 	};
 
 	const getFileType = () => {
-		if (fileData?.includes('.png') || fileData?.includes('.jpeg')) {
+		if (
+			fileData?.fileLink?.includes('.png') ||
+			fileData?.fileLink?.includes('.jpeg')
+		) {
 			return fileTypes.IMAGE;
-		} else if (fileData?.includes('.pdf')) {
+		} else if (fileData?.fileLink?.includes('.pdf')) {
 			return fileTypes.DOCUMENT;
-		} else if (fileData?.includes('.mp4')) {
+		} else if (fileData?.fileLink?.includes('.mp4')) {
 			return fileTypes.VIDEO;
 		}
 	};
@@ -145,16 +148,16 @@ const WhatsappMobilePreview = ({
 																		classes.whatsappMobileMessageTextAndImage
 																	}>
 																	{getFileType() === fileTypes.IMAGE &&
-																		fileData?.length > 0 && (
+																		fileData?.fileLink?.length > 0 && (
 																			<img
-																				src={fileData}
+																				src={fileData?.fileLink}
 																				alt='uploaded-file-preview'
 																			/>
 																		)}
 																	{getFileType() === fileTypes.VIDEO &&
-																		fileData?.length > 0 && (
+																		fileData?.fileLink?.length > 0 && (
 																			<a
-																				href={fileData}
+																				href={fileData?.fileLink}
 																				target='_blank'
 																				rel='noreferrer'>
 																				<img
@@ -165,7 +168,7 @@ const WhatsappMobilePreview = ({
 																			</a>
 																		)}
 																	{getFileType() === fileTypes.DOCUMENT &&
-																		fileData?.length > 0 && (
+																		fileData?.fileLink?.length > 0 && (
 																			<Grid container alignItems='center'>
 																				<img
 																					className='pdf-preview-img'
@@ -173,14 +176,15 @@ const WhatsappMobilePreview = ({
 																					alt='uploaded-file-preview'
 																				/>
 																				<div className={classes.pdfFileName}>
-																					{fileData
+																					{fileData?.fileLink
 																						?.split('/')
 																						[
-																							fileData?.split('/')?.length - 1
+																							fileData?.fileLink?.split('/')
+																								?.length - 1
 																						]?.substring(0, 18) + '...'}
 																				</div>
 																				<a
-																					href={fileData}
+																					href={fileData?.fileLink}
 																					target='_blank'
 																					rel='noreferrer'>
 																					<img

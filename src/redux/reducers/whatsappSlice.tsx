@@ -15,6 +15,7 @@ import {
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
 import { setUploadProgress } from './groupSlice';
+import { APISendWhatsAppChatReqPayload } from '../../screens/Whatsapp/Chat/Types/WhatsappChat.type';
 
 type ApiError = {
 	message: string;
@@ -673,6 +674,23 @@ export const restoreWhatsAppCampaigns = createAsyncThunk(
 				`whatsAppCampaign/RestoreWhatsAppCampaigns`,
 				data
 			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const sendWhatsAppChat = createAsyncThunk(
+	'WhatsAppChat/SendWhatsAppChat',
+	async (data: APISendWhatsAppChatReqPayload, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/SendWhatsAppChat`,
+				data
+			);
+
 			return response.data;
 		} catch (error) {
 			const err = error as ApiError;

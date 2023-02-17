@@ -142,7 +142,7 @@ const TemplateFields = ({
 							className={classes.customFileUpload}
 							style={{
 								padding:
-									fileData?.length > 0
+									fileData?.fileLink?.length > 0
 										? '14px 15px 12px 7px'
 										: '17px 15px 15px 7px',
 							}}>
@@ -152,7 +152,7 @@ const TemplateFields = ({
 								accept='image/png, image/jpeg, application/pdf, video/mp4'
 								onChange={(e) => onFileUploadChange(e)}
 							/>
-							{fileData?.length > 0 ? (
+							{fileData?.fileLink?.length > 0 ? (
 								<div style={{ marginRight: 'auto', width: '100%' }}>
 									<Button
 										variant='contained'
@@ -164,10 +164,12 @@ const TemplateFields = ({
 											width: '100%',
 										}}
 										onClick={(e) => onFileDeselect(e)}>
-										{fileData
+										{fileData?.fileLink
 											?.split('/')
-											[fileData?.split('/')?.length - 1]?.substring(0, 25) +
-											'...'}
+											[fileData?.fileLink?.split('/')?.length - 1]?.substring(
+												0,
+												25
+											) + '...'}
 										&emsp;
 										<i className='zmdi zmdi-close'></i>
 									</Button>
@@ -178,7 +180,7 @@ const TemplateFields = ({
 						</label>
 
 						<Typography className={classes.buttonContent}>
-							{fileData?.length > 0 ? (
+							{fileData?.fileLink?.length > 0 ? (
 								<>
 									{isRTL
 										? `${fileSize} ${translator('whatsapp.totalSize')}`
