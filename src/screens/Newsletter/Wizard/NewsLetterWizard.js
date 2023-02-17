@@ -134,6 +134,11 @@ const useStyles = makeStyles({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        '& .MuiCheckbox-root': {
+            "@media screen and (max-width: 768px)": {
+                paddingInline: 0
+            },
+        }
     }
 })
 
@@ -144,7 +149,7 @@ const NewsLetterWizard = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { accountSettings, isRTL } = useSelector((state) => state.core);
+    const { accountSettings, isRTL, windowSize } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -503,7 +508,7 @@ const NewsLetterWizard = ({ classes }) => {
     const CampaignBox1 = () => (
         <Box py={3} className={classes.ps15}>
             <SimpleGrid
-                spacing={5}
+                spacing={{ xs: 2, sm: 5 }}
                 gridArr={[
                     {
                         content:
@@ -557,9 +562,6 @@ const NewsLetterWizard = ({ classes }) => {
                                 <Typography title={t("campaigns.newsLetterEditor.fromName")} className={classes.alignDir}>{t("campaigns.camapignName")}</Typography>
                                 <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} >
                                     <Select
-                                        style={{
-                                            minWidth: 245
-                                        }}
                                         labelId="FromEmail"
                                         id="FromEmail"
                                         displayEmpty
@@ -651,9 +653,6 @@ const NewsLetterWizard = ({ classes }) => {
                             <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>
                             <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} error={errors.FromEmail}>
                                 <Select
-                                    style={{
-                                        minWidth: 245
-                                    }}
                                     labelId="personalization"
                                     id="personalization"
                                     displayEmpty
@@ -854,7 +853,7 @@ const NewsLetterWizard = ({ classes }) => {
                         classes.btnRounded,
                         classes.backButton
                     )}
-                    style={{ marginInlineStart: '8px' }}
+                    style={{ margin: '8px' }}
                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >{t('common.continue')}</Button>
             </>);
@@ -867,7 +866,7 @@ const NewsLetterWizard = ({ classes }) => {
                         classes.btnRounded,
                         classes.backButton
                     )}
-                    style={{ marginInlineStart: '8px' }}
+                    style={{ margin: '8px', }}
                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >{t('master.continueToNewEditor')}</Button>)
             }
@@ -880,7 +879,7 @@ const NewsLetterWizard = ({ classes }) => {
                             classes.btnRounded,
                             classes.backButton
                         )}
-                        style={{ marginInlineStart: '8px' }}
+                        style={{ margin: '8px' }}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >{t('common.saveAndContinue')}</Button>
                     {(id === null || id === undefined) && <Button
@@ -890,7 +889,7 @@ const NewsLetterWizard = ({ classes }) => {
                             classes.btnRounded,
                             classes.backButton
                         )}
-                        style={{ marginInlineStart: '8px' }}
+                        style={{ margin: '8px' }}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >{t('master.continueToNewEditor')}</Button>}
                 </>)
@@ -1075,7 +1074,7 @@ const NewsLetterWizard = ({ classes }) => {
                         </Grid>
                     </Grid>
 
-                    <Box className={clsx(classes.flex, classes.ps15)} style={{ justifyContent: 'end', marginTop: 25 }}>
+                    <Box className={clsx({ [classes.flex]: windowSize !== 'xs' }, classes.ps15)} style={{ justifyContent: 'end', marginTop: 25 }}>
                         <WizardActions
                             classes={classes}
                             onBack={{
@@ -1085,13 +1084,10 @@ const NewsLetterWizard = ({ classes }) => {
                             additionalButtons={renderButtons()}
                         />
                     </Box>
-                    <Dialog
+                    <BaseDialog
                         classes={classes}
                         open={confirmExit}
                         title={t("campaigns.GridButtonColumnResource2.confirmExit")}
-                        icon={<Box className={classes.dialogAlertIcon}>
-                            !
-                        </Box>}
                         showDivider={true}
                         onClose={() => handleExit(false)}
                         onCancel={() => handleExit(null)}
@@ -1105,14 +1101,11 @@ const NewsLetterWizard = ({ classes }) => {
                                 {t("campaigns.GridButtonColumnResource2.confirmExitText")}
                             </Typography>
                         </Box>
-                    </Dialog>
-                    <Dialog
+                    </BaseDialog>
+                    <BaseDialog
                         classes={classes}
                         open={confirmDelete}
                         title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
-                        icon={<Box className={classes.dialogAlertIcon}>
-                            !
-                        </Box>}
                         showDivider={true}
                         onClose={() => setConfirmDelete(false)}
                         onCancel={() => setConfirmDelete(false)}
@@ -1125,7 +1118,7 @@ const NewsLetterWizard = ({ classes }) => {
                                 {t("campaigns.GridButtonColumnResource2.ConfirmText")}
                             </Typography>
                         </Box>
-                    </Dialog>
+                    </BaseDialog>
                     {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
                     <Loader isOpen={showLoader} />
                 </Box>

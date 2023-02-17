@@ -277,8 +277,6 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <Typography
             align='center'
             className={classes.pageTitle}
-            component="a"
-            href={data.ShortcutUrl}
             onClick={(e) => {
               e.preventDefault();
               Redirect({ url: data.ShortcutUrl })

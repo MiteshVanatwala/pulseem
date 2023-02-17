@@ -831,7 +831,7 @@ const NotificationEdit = ({ classes }) => {
     return (
       <>
         <Title
-          Text={(
+          Element={(
             <Box className='stepHead'>
               <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
                 <span >1</span>

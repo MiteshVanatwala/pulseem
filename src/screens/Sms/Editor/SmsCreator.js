@@ -644,8 +644,8 @@ const SmsCreator = ({ classes }) => {
 
   const renderFields = () => {
     return (
-      <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
-        <Grid item="true" xs={12} md={4} sm={12} className={clsx(classes.buttonForm, 'textBoxWrapper')}>
+      <Grid container spacing={2} className={classes.fieldDiv}>
+        <Grid item xs={12} md={4} sm={12} className={clsx(classes.buttonForm, 'textBoxWrapper')}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
           </Typography>
@@ -664,7 +664,7 @@ const SmsCreator = ({ classes }) => {
             {t("mainReport.campDesc")}
           </Typography>
         </Grid>
-        <Grid item="true" xs={12} md={4} sm={12} className={clsx(classes.buttonForm, 'textBoxWrapper')}>
+        <Grid item xs={12} md={4} sm={12} className={clsx(classes.buttonForm, 'textBoxWrapper')}>
           <Box className={classes.inputCampDiv}>
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
@@ -695,7 +695,7 @@ const SmsCreator = ({ classes }) => {
             {t("mainReport.campRemovalDesc")}
           </Typography>
         </Grid>
-        <Grid item="true" xs={12} md={4} sm={12} >
+        <Grid item xs={12} md={4} sm={12} >
           {restoreBool && removalNumber !== null ? (
             <Box className={clsx(classes.buttonForm, 'textBoxWrapper')}>
               <Typography className={clsx(classes.buttonHead)}>
@@ -774,7 +774,7 @@ const SmsCreator = ({ classes }) => {
     return (
       <Grid container className={clsx(classes.msgDiv)}>
         <Grid container>
-          <Grid item="true" xs={12} md={8} className={classes.boxDiv}>
+          <Grid item xs={12} md={8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
               {t("mainReport.yourMessage")}
             </Typography>
@@ -799,9 +799,9 @@ const SmsCreator = ({ classes }) => {
               </Typography>
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
-            <Box className={classes.funcDiv}>
+            <Box className={clsx(classes.funcDiv, classes.dFlex, classes.flexWrap)}>
               <Box
-                className={isRTL ? classes.emojiHe : classes.emoji}
+                className={clsx(windowSize === 'xs' ? classes.flex2 : classes.flex1, isRTL ? classes.emojiHe : classes.emoji)}
               >
                 {isRTL ? (
                   <>
@@ -855,7 +855,7 @@ const SmsCreator = ({ classes }) => {
                   boxStyles={{ alignItems: 'center' }}
                 />
               </Box>
-              <Box className={classes.baseButtons}>
+              <Box className={clsx(classes.flex2, classes.baseButtons)}>
                 <Tooltip
                   disableFocusListener
                   title={t("mainReport.removalMsgTooltip")}
@@ -888,7 +888,7 @@ const SmsCreator = ({ classes }) => {
                 </Tooltip>
                 }
               </Box>
-              <Box className={classes.endButtons}>
+              <Box className={clsx(classes.flex2, classes.endButtons)}>
                 <Box className={classes.selectMsg}>
                   <Tooltip
                     disableFocusListener
@@ -981,7 +981,7 @@ const SmsCreator = ({ classes }) => {
               </Box>
             </Box>
           </Grid>
-          <Grid item="true" xs={12} md={4} sm={12}>
+          <Grid item xs={12} md={4} sm={12}>
             <Box className={classes.switchDiv}>
               <FormControlLabel
                 control={
@@ -989,10 +989,6 @@ const SmsCreator = ({ classes }) => {
                     switchType='ios'
                     classes={classes}
                     checked={isLinksStatistics}
-                    onColor="#28a745"
-                    handleDiameter={30}
-                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
                     height={20}
                     width={48}
                     className={{ [classes.rtlSwitch]: isRTL }}
@@ -1044,10 +1040,6 @@ const SmsCreator = ({ classes }) => {
                 switchType='ios'
                 classes={classes}
                 checked={checked}
-                onColor="#28a745"
-                handleDiameter={30}
-                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
                 height={20}
                 width={48}
                 className={clsx({ [classes.rtlSwitch]: isRTL })}
@@ -1419,19 +1411,16 @@ const SmsCreator = ({ classes }) => {
   const renderButtons = () => {
     return (
       <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto", paddingBottom: 40 }} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
-        <Box>
-          <Button
-            className={clsx(
-              classes.btn,
-              classes.btnRounded
-            )}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            style={{ margin: '8px' }}
-            onClick={() => { setDialogType({ type: 'deleteSms' }) }}
-          >
-            <BsTrash style={{ fontSize: "25", marginInlineStart: 0 }} />
-          </Button>
-        </Box>
+        <Button
+          className={clsx(
+            classes.btn,
+            classes.btnRounded,
+          )}
+          style={{ margin: '8px' }}
+          onClick={() => { setDialogType({ type: 'deleteSms' }) }}
+        >
+          <BsTrash style={{ fontSize: "25", marginInlineStart: 0 }} />
+        </Button>
         <Button
           className={clsx(
             classes.btn,
@@ -1439,7 +1428,6 @@ const SmsCreator = ({ classes }) => {
             classes.backButton
           )}
           endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-          color="primary"
           style={{ margin: '8px' }}
           onClick={() => { setDialogType({ type: 'exit' }) }}>
           {t('mainReport.exitSms')}
@@ -1927,7 +1915,7 @@ const SmsCreator = ({ classes }) => {
     return (
       <>
         <Title
-          Text={(
+          Element={(
             <Box className='stepHead'>
               <Stack className={'stepNum'} justifyContent={'center'} alignItems={'center'}>
                 <span >1</span>
@@ -1958,7 +1946,7 @@ const SmsCreator = ({ classes }) => {
   return (
     <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true} containerClass={classes.editorCont}>
       <Box className={"head"}>
-        <Title Text={
+        <Title Element={
           <Box className={classes.flex}>
             {t("mainReport.smsCampaign")}
             <Tooltip
@@ -1988,7 +1976,7 @@ const SmsCreator = ({ classes }) => {
             spacing={windowSize === "xs" ? 0 : 3}
             className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
             style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
-            <Grid item sm={12} md={12} lg={8}>
+            <Grid item xs={12} sm={12} md={12} lg={8}>
               {renderFields()}
               {renderMsg()}
             </Grid >

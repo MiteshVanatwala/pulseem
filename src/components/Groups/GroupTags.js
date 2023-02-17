@@ -22,6 +22,7 @@ const GroupTags = ({ classes,
     },
     error = '',
     helperText = '',
+    containerStyle = {},
     ...props
 }) => {
     const { t } = useTranslation();
@@ -41,7 +42,7 @@ const GroupTags = ({ classes,
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box
-                style={{ minHeight: 40, maxHeight: 40 }}
+                style={{ minHeight: 40, maxHeight: 40, ...containerStyle }}
                 className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
                 onClick={() => onShowModal()}
             >

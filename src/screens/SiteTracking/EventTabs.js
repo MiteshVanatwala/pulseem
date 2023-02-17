@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
+import clsx from 'clsx';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 const EventTabs = ({ classes,
     setDialog,
@@ -62,8 +64,7 @@ const EventTabs = ({ classes,
                 return <></>
             })}
             <Box style={{ display: 'flex', flexDirection: 'row' }}>
-                <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }}>
-                    <AiOutlinePlusCircle className={classes.addOptionsIcon} />
+                <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }} className={clsx(classes.btn, classes.btnRounded)} endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                     {t("siteTracking.addEvent")}
                 </Button>
             </Box>
@@ -108,6 +109,7 @@ const EventTabs = ({ classes,
                         key={idx}
                         label={t(eo.value)}
                         classes={{ root: classes.minWidth100 }}
+                        className={clsx(classes.btnTab, { [classes.currentActiveTab]: tabValue === eo.key })}
                         value={eo.key}
                     />
                 })}

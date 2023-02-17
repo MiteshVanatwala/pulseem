@@ -26,7 +26,7 @@ const WizardActions = ({
     return (
         <Grid container style={innerStyle}>
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer, { [classes.flex]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: 40 }}>
+                <Box className={clsx(classes.wizardButtonContainer, { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: 40 }}>
                     {onBack &&
                         <Button onClick={() => { onBack?.callback() }}
                             className={clsx(
@@ -38,7 +38,7 @@ const WizardActions = ({
                             style={{ margin: '8px' }}
                         >{onBack?.text ?? t('notifications.back')}</Button>
                     }
-                    <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }} className={clsx({ [classes.flex]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })}>
+                    <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }} className={clsx({ [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })}>
                         {onDelete &&
                             <Button
                                 className={clsx(
@@ -120,7 +120,7 @@ const WizardActions = ({
                             <Button onClick={() => onSave(true)}
                                 className={clsx(
                                     classes.btn,
-                                    classes.backButton
+                                    classes.backButton,
                                 )}
                                 style={{ marginInlineStart: '8px' }}
                                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

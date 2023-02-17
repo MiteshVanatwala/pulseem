@@ -1,3 +1,5 @@
+import { height } from "@mui/system";
+
 const dialogWidth = {
   xs: "200px",
   sm: "350px",
@@ -834,7 +836,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
   },
   contentHead: {
-    color: "#157eaf",
+    color: "#ff3343",
     fontSize: "30px",
     "@media screen and (max-width: 768px)": {
       fontSize: "24px",
@@ -855,6 +857,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: '#fff',
     maxWidth: 300,
     color: '#000',
+    "@media screen and (max-width: 400px)": {
+      maxWidth: 200
+    },
     '&:hover': {
       background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
       color: '#fff',
@@ -1007,10 +1012,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   funcDiv: {
     width: "100%",
-    height: "60px",
+    height: "auto",
     boxSizing: "border-box",
-    display: "grid",
-    gridTemplateColumns: "auto auto auto auto",
     position: "relative",
     top: "-4px",
     padding: 5,
@@ -1019,9 +1022,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     borderBottomLeftRadius: ".25rem",
     borderBottomRightRadius: ".25rem",
-    "@media screen and (max-width: 768px)": {
-      height: "110px",
-    },
   },
   baseButtons: {
     display: "flex",
@@ -1029,6 +1029,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "space-evenly",
     height: "100%",
     borderInlineEnd: "1px solid grey",
+    "@media screen and (max-width: 768px)": {
+      borderInlineEnd: 'none'
+    },
     "@media screen and (max-width: 540px)": {
       flexDirection: "column-reverse",
       paddingInlineEnd: "8px",
@@ -1531,21 +1534,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 414px)": {
       top: 120,
       right: 42,
-      width: 260,
-      height: 205,
+      width: 'min-content',
+      height: 'auto',
     },
     "@media screen and (max-width: 360px)": {
       top: 105,
       right: 38,
-      width: 230,
-      height: 190,
+      width: 'min-content',
+      height: 'auto',
     },
     "@media screen and (max-width: 320px)": {
       top: 90,
       right: 38,
       left: "auto",
-      width: 200,
-      height: 165,
+      width: 'min-content',
+      height: 'auto',
     },
   },
   fromMe: {
@@ -1837,7 +1840,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     //   borderTopRightRadius: 10,
     // },
     '& .mgmtTitle': {
-      fontSize: 22
+      fontSize: 22,
+      width: '100%'
     },
     '& .containerBody': {
       paddingInline: 20,
@@ -1878,11 +1882,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         '& .MuiSelect-root': {
           padding: '7px 0 11px 0'
         },
+        '& .bottomAlignedSelect': {
+          '& .MuiSelect-root': {
+            padding: '11px 0px 2px 0'
+          },
+          '& .MuiInputAdornment-root': {
+            marginTop: 8
+          }
+        },
         '& .MuiTypography-body1': {
           marginLeft: isRTL ? 12 : 0
-          // marginRight: isRTL ? 0 : 12,
+          // marginRight isRTL ? 0 : 12,
           // marginLeft: isRTL ? 12 : 0
         }
+
       },
       '& .textBoxWrapper': {
         // paddingTop: 30,
@@ -2298,7 +2311,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInlineEnd: "0",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
-      borderRight: "1px solid black",
+      borderRight: "none",
     },
   },
   emojiHe: {
@@ -2342,8 +2355,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "100%",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column-reverse",
-      // borderRight: "1px solid black",
-    },
+      borderInlineStart: "1px solid black",
+      borderInlineStart: 'none'
+    }
   },
   radio: {
     display: "flex",

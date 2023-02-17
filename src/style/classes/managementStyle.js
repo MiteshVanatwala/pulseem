@@ -2088,16 +2088,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         '& .btnVerifyNew': {
           height: 50
         },
-        // '& .btnVerifyNewLtr': {
-        //   position: "absolute",
-        //   top: 0,
-        //   right: 10
-        // },
-        // '& .btnVerifyNewRtl': {
-        //   position: "absolute",
-        //   top: 0,
-        //   left: 10
-        // },
+        '& .btnVerifyNewLtr': {
+          position: "absolute",
+          top: 0,
+          right: 10
+        },
+        '& .btnVerifyNewRtl': {
+          position: "absolute",
+          top: 0,
+          left: 10
+        },
         '& .MuiDivider-root': {
           marginTop: 6,
           height: '1.3px',
