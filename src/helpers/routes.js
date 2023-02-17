@@ -99,7 +99,8 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
     options: [
       { key: 'create', title: t('master.RadMenuItemResource101.Text'), href: '/react/sms/create', isShow: true },
       { title: t('master.RadMenuItemResource102.Text'), href: '/react/SMSCampaigns', isShow: true },
-      { title: t('master.chatbotSMS'), href: '/Pulseem/SMSSmartResponses.aspx?fromreact=true', isShow: true }
+      { title: t('master.chatbotSMS'), href: '/Pulseem/SMSSmartResponses.aspx?fromreact=true', isShow: true },
+      { title: t('master.linkSMSResponsesReport.Text'), href: '/Pulseem/ResponsesReport.aspx?fromreact=true', isShow: true },
     ]
   },
   {
@@ -194,7 +195,7 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
       { key: 'directSendReport', title: t('report.DirectSendReport'), href: '/react/Reports/DirectSendReport', isShow: true },
       { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: '/react/Reports/DirectSendReport/Archive', isShow: true },
       { title: t('master.OpenedClickedReport'), href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
-      { key: 'inboundMessages', title: t('master.linkSMSResponsesReport.Text'), href: '/react/reports/Inbound', isShow: true },
+      // { key: 'inboundMessages', title: t('master.linkSMSResponsesReport.Text'), href: '/react/reports/Inbound', isShow: true },
     ]
   }
 ]

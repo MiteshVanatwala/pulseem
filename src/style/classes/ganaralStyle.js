@@ -2603,5 +2603,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   flexCenterOfCenter: {
     display: 'flex', width: '100%', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
+  },
+  passwordDialog: {
+    maxWidth: windowSize !== 'xs' ? '25vw' : null
   }
 });

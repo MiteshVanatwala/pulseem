@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Toast = ({ data, onClose }) => {
+const Toast = ({ data }) => {
     const { t } = useTranslation();
     const { language } = useSelector(state => state.core)
     const { isRTL } = useSelector(state => state.core);
