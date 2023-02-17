@@ -149,6 +149,44 @@ const ChatUi = ({
 		}
 	};
 
+	const chatHeaderContent = () => {
+		return (
+			<h2 className={`${classes.whatsappChat} chat__contact-name`}>
+				{' '}
+				{chatContacts.UserName || chatContacts.PhoneNumber || 'Pulseem'}
+				<span className={classes.whatsappChatUiStatusPadding}>
+					<Select
+						classes={{ root: muiclasses.selectSection }}
+						className={clsx(
+							classes.whatsappChatStatusSelect,
+							getStatusClass(chatContacts.ConversationStatusId)
+						)}
+						autoWidth
+						value={chatContacts.ConversationStatusId || ''}
+						variant='standard'
+						style={
+							chatContacts.ConversationStatusId
+								? {
+										fontSize: '12px',
+										padding: '8px 0px 8px 8px',
+										position: 'absolute',
+										borderRadius: '10px',
+										textAlign: 'center',
+								  }
+								: {
+										display: 'none',
+								  }
+						}
+						onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
+						<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
+						<MenuItem value={2}>{translator('whatsappChat.pending')}</MenuItem>
+						<MenuItem value={3}>{translator('whatsappChat.solved')}</MenuItem>
+					</Select>
+				</span>
+			</h2>
+		);
+	};
+
 	const chatHeader = () => {
 		return (
 			<header
@@ -170,43 +208,7 @@ const ChatUi = ({
 				</div>
 
 				<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
-					<h2 className={`${classes.whatsappChat} chat__contact-name`}>
-						{' '}
-						{chatContacts.UserName || chatContacts.PhoneNumber || 'Pulseem'}
-						<span className={classes.whatsappChatUiStatusPadding}>
-							<Select
-								classes={{ root: muiclasses.selectSection }}
-								className={clsx(
-									classes.whatsappChatStatusSelect,
-									getStatusClass(chatContacts.ConversationStatusId)
-								)}
-								autoWidth
-								value={chatContacts.ConversationStatusId || ''}
-								variant='standard'
-								style={
-									chatContacts.ConversationStatusId
-										? {
-												fontSize: '12px',
-												padding: '8px 0px 8px 8px',
-												position: 'absolute',
-												borderRadius: '10px',
-												textAlign: 'center',
-										  }
-										: {
-												display: 'none',
-										  }
-								}
-								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
-								<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
-								<MenuItem value={2}>
-									{translator('whatsappChat.pending')}
-								</MenuItem>
-								<MenuItem value={3}>
-									{translator('whatsappChat.solved')}
-								</MenuItem>
-							</Select>
-						</span>
-					</h2>
+					{chatHeaderContent()}
 					<p className={`${classes.whatsappChat} chat__contact-desc`}>
 						{user.typing
 							? translator('whatsappChat.type')
@@ -224,6 +226,88 @@ const ChatUi = ({
 		);
 	};
 
+	const chatFooterContent = () => {
+		return (
+			<div className={`${classes.whatsappChat} chat__input-wrapper`}>
+				{whatsappChatSession.IsIn24Window ? (
+					<>
+						<button
+							aria-label='Emojis'
+							onClick={() => setShowEmojis(!showEmojis)}>
+							<EmojiPicker
+								classes={classes}
+								OnSelectEmoji={(emoji: string) => {
+									onEmojiClick(emoji);
+								}}
+								boxStyles={{ alignItems: 'center' }}
+							/>
+						</button>
+						<button aria-label='chat' onClick={() => setIsTemplateModal(true)}>
+							<Icon
+								id='chat'
+								className={`${classes.whatsappChat} chat__input-icon ${
+									showEmojis
+										? `${classes.whatsappChat} chat__input-icon--highlight`
+										: ''
+								}`}
+							/>
+						</button>
+						<div
+							className={`${classes.whatsappChat} chat__input`}
+							data-text='Type a message'
+							contentEditable={savedTemplate?.length === 0 ? true : false}
+							suppressContentEditableWarning={
+								savedTemplate?.length === 0 ? true : false
+							}
+							onKeyUp={onEditableDivChange}>
+							<Highlighter
+								searchWords={dynamicVariable}
+								autoEscape={true}
+								textToHighlight={newMessage}
+								highlightTag={(tagData: tagDataProps) => highlightText(tagData)}
+							/>
+						</div>
+					</>
+				) : (
+					<div style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
+						<Stack
+							direction='row'
+							justifyContent='center'
+							alignItems='center'
+							spacing={2}>
+							<Typography color='textSecondary'>
+								<label style={{ fontSize: '20px' }}>
+									<>{translator('whatsappChat.conversation')}</>
+								</label>
+								<br />
+								<label style={{ fontSize: '15px' }}>
+									<>{translator('whatsappChat.cantSend')}</>
+								</label>
+							</Typography>
+
+							<Grid className={classes.manageTemplatesHeaderButtons}>
+								<Button
+									size='small'
+									className={'green'}
+									onClick={() => setIsTemplateModal(true)}>
+									<>{translator('whatsappChat.send')}</>
+								</Button>
+							</Grid>
+						</Stack>
+					</div>
+				)}
+				{whatsappChatSession.IsIn24Window && (
+					<button aria-label='Send message'>
+						<Icon
+							id='send'
+							className={`${classes.whatsappChat} chat__send-icon`}
+						/>
+					</button>
+				)}
+			</div>
+		);
+	};
+
 	const chatFooter = () => {
 		return (
 			<footer className={`${classes.whatsappChat} chat__footer`}>
@@ -232,88 +316,127 @@ const ChatUi = ({
 					aria-label='scroll down'>
 					<Icon id='downArrow' />
 				</button>
-				<div className={`${classes.whatsappChat} chat__input-wrapper`}>
-					{whatsappChatSession.IsIn24Window ? (
-						<>
-							<button
-								aria-label='Emojis'
-								onClick={() => setShowEmojis(!showEmojis)}>
-								<EmojiPicker
-									classes={classes}
-									OnSelectEmoji={(emoji: string) => {
-										onEmojiClick(emoji);
-									}}
-									boxStyles={{ alignItems: 'center' }}
-								/>
-							</button>
-							<button
-								aria-label='chat'
-								onClick={() => setIsTemplateModal(true)}>
-								<Icon
-									id='chat'
-									className={`${classes.whatsappChat} chat__input-icon ${
-										showEmojis
-											? `${classes.whatsappChat} chat__input-icon--highlight`
-											: ''
-									}`}
-								/>
-							</button>
-							<div
-								className={`${classes.whatsappChat} chat__input`}
-								data-text='Type a message'
-								contentEditable={savedTemplate?.length === 0 ? true : false}
-								suppressContentEditableWarning={
-									savedTemplate?.length === 0 ? true : false
-								}
-								onKeyUp={onEditableDivChange}>
-								<Highlighter
-									searchWords={dynamicVariable}
-									autoEscape={true}
-									textToHighlight={newMessage}
-									highlightTag={(tagData: tagDataProps) =>
-										highlightText(tagData)
-									}
-								/>
-							</div>
-						</>
-					) : (
-						<div style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
-							<Stack
-								direction='row'
-								justifyContent='center'
-								alignItems='center'
-								spacing={2}>
-								<Typography color='textSecondary'>
-									<label style={{ fontSize: '20px' }}>
-										<>{translator('whatsappChat.conversation')}</>
-									</label>
-									<br />
-									<label style={{ fontSize: '15px' }}>
-										<>{translator('whatsappChat.cantSend')}</>
-									</label>
-								</Typography>
-
-								<Grid className={classes.manageTemplatesHeaderButtons}>
-									<Button
-										size='small'
-										className={'green'}
-										onClick={() => setIsTemplateModal(true)}>
-										<>{translator('whatsappChat.send')}</>
-									</Button>
-								</Grid>
-							</Stack>
-						</div>
-					)}
-					{whatsappChatSession.IsIn24Window && (
-						<button aria-label='Send message'>
-							<Icon
-								id='send'
-								className={`${classes.whatsappChat} chat__send-icon`}
-							/>
-						</button>
-					)}
-				</div>
+				{chatFooterContent()}
 			</footer>
+		);
+	};
+
+	const chatConversationMessageContent = (messages: any, dateIndex: number) => {
+		return (
+			<div className={`${classes.whatsappChat} chat__msg-group`}>
+				{messages.map((message: any, msgIndex: number) => {
+					const assignRef = () =>
+						dateIndex === dates.length - 1 && msgIndex === messages.length - 1
+							? undefined
+							: undefined;
+					return (
+						<>
+							{message.image ? (
+								<div
+									key={msgIndex}
+									className={`${
+										classes.whatsappChat
+									} chat__msg chat__img-wrapper ${
+										message.sender
+											? `${classes.whatsappChat} chat__msg--rxd`
+											: `${classes.whatsappChat} chat__msg--sent`
+									}`}
+									ref={assignRef()}>
+									<img
+										src={AccountUser}
+										alt=''
+										className={`${classes.whatsappChat} chat__img`}
+									/>
+									<span className={`${classes.whatsappChat} chat__msg-footer`}>
+										<span>{formatTime(message.time)}</span>
+										{!message.sender && (
+											<Icon
+												id={
+													message?.status === 'sent'
+														? 'singleTick'
+														: 'doubleTick'
+												}
+												aria-label={message?.status}
+												className={`${
+													classes.whatsappChat
+												} chat__msg-status-icon ${
+													message?.status === 'read'
+														? `${classes.whatsappChat} chat__msg-status-icon--blue`
+														: ''
+												}`}
+											/>
+										)}
+									</span>
+
+									<button
+										aria-label='Message options'
+										className={`${classes.whatsappChat} chat__msg-options`}>
+										<Icon
+											id='downArrow'
+											className={`${classes.whatsappChat} chat__msg-options-icon`}
+										/>
+									</button>
+								</div>
+							) : message.sender ? (
+								<p
+									key={msgIndex}
+									className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}
+									ref={assignRef()}>
+									<span>{message.content}</span>
+									<span className={`${classes.whatsappChat} chat__msg-filler`}>
+										{' '}
+									</span>
+									<span className={`${classes.whatsappChat} chat__msg-footer`}>
+										{formatTime(message.time)}
+									</span>
+									<button
+										aria-label='Message options'
+										className={`${classes.whatsappChat} chat__msg-options`}>
+										<Icon
+											id='downArrow'
+											className={`${classes.whatsappChat} chat__msg-options-icon`}
+										/>
+									</button>
+								</p>
+							) : (
+								<p
+									key={msgIndex}
+									className={`${classes.whatsappChat} chat__msg chat__msg--sent`}
+									ref={assignRef()}>
+									<span>{message.content}</span>
+									<span className={`${classes.whatsappChat} chat__msg-filler`}>
+										{' '}
+									</span>
+									<span className={`${classes.whatsappChat} chat__msg-footer`}>
+										<span> {formatTime(message.time)} </span>
+										<Icon
+											id={
+												message?.status === 'sent' ? 'singleTick' : 'doubleTick'
+											}
+											aria-label={message?.status}
+											className={`${
+												classes.whatsappChat
+											} chat__msg-status-icon ${
+												message?.status === 'read'
+													? `${classes.whatsappChat} chat__msg-status-icon--blue`
+													: ''
+											}`}
+										/>
+									</span>
+									<button
+										aria-label='Message options'
+										className={`${classes.whatsappChat} chat__msg-options`}>
+										<Icon
+											id='downArrow'
+											className={`${classes.whatsappChat} chat__msg-options-icon`}
+										/>
+									</button>
+								</p>
+							)}
+						</>
+					);
+				})}
+			</div>
 		);
 	};
 
@@ -341,128 +464,7 @@ const ChatUi = ({
 									learn more.
 								</p>
 							)}
-							<div className={`${classes.whatsappChat} chat__msg-group`}>
-								{messages.map((message: any, msgIndex: number) => {
-									const assignRef = () =>
-										dateIndex === dates.length - 1 &&
-										msgIndex === messages.length - 1
-											? undefined
-											: undefined;
-									return (
-										<>
-											{message.image ? (
-												<div
-													key={msgIndex}
-													className={`${
-														classes.whatsappChat
-													} chat__msg chat__img-wrapper ${
-														message.sender
-															? `${classes.whatsappChat} chat__msg--rxd`
-															: `${classes.whatsappChat} chat__msg--sent`
-													}`}
-													ref={assignRef()}>
-													<img
-														src={AccountUser}
-														alt=''
-														className={`${classes.whatsappChat} chat__img`}
-													/>
-													<span
-														className={`${classes.whatsappChat} chat__msg-footer`}>
-														<span>{formatTime(message.time)}</span>
-														{!message.sender && (
-															<Icon
-																id={
-																	message?.status === 'sent'
-																		? 'singleTick'
-																		: 'doubleTick'
-																}
-																aria-label={message?.status}
-																className={`${
-																	classes.whatsappChat
-																} chat__msg-status-icon ${
-																	message?.status === 'read'
-																		? `${classes.whatsappChat} chat__msg-status-icon--blue`
-																		: ''
-																}`}
-															/>
-														)}
-													</span>
-
-													<button
-														aria-label='Message options'
-														className={`${classes.whatsappChat} chat__msg-options`}>
-														<Icon
-															id='downArrow'
-															className={`${classes.whatsappChat} chat__msg-options-icon`}
-														/>
-													</button>
-												</div>
-											) : message.sender ? (
-												<p
-													key={msgIndex}
-													className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}
-													ref={assignRef()}>
-													<span>{message.content}</span>
-													<span
-														className={`${classes.whatsappChat} chat__msg-filler`}>
-														{' '}
-													</span>
-													<span
-														className={`${classes.whatsappChat} chat__msg-footer`}>
-														{formatTime(message.time)}
-													</span>
-													<button
-														aria-label='Message options'
-														className={`${classes.whatsappChat} chat__msg-options`}>
-														<Icon
-															id='downArrow'
-															className={`${classes.whatsappChat} chat__msg-options-icon`}
-														/>
-													</button>
-												</p>
-											) : (
-												<p
-													key={msgIndex}
-													className={`${classes.whatsappChat} chat__msg chat__msg--sent`}
-													ref={assignRef()}>
-													<span>{message.content}</span>
-													<span
-														className={`${classes.whatsappChat} chat__msg-filler`}>
-														{' '}
-													</span>
-													<span
-														className={`${classes.whatsappChat} chat__msg-footer`}>
-														<span> {formatTime(message.time)} </span>
-														<Icon
-															id={
-																message?.status === 'sent'
-																	? 'singleTick'
-																	: 'doubleTick'
-															}
-															aria-label={message?.status}
-															className={`${
-																classes.whatsappChat
-															} chat__msg-status-icon ${
-																message?.status === 'read'
-																	? `${classes.whatsappChat} chat__msg-status-icon--blue`
-																	: ''
-															}`}
-														/>
-													</span>
-													<button
-														aria-label='Message options'
-														className={`${classes.whatsappChat} chat__msg-options`}>
-														<Icon
-															id='downArrow'
-															className={`${classes.whatsappChat} chat__msg-options-icon`}
-														/>
-													</button>
-												</p>
-											)}
-										</>
-									);
-								})}
-							</div>
+							{chatConversationMessageContent(messages, dateIndex)}
 						</div>
 					);
 				})}

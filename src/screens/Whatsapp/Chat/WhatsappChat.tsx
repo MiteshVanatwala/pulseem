@@ -70,8 +70,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	>([]);
 	const [filteredSideChatContacts, setFilteredSideChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData[]>(sideChatContacts);
-	const [activePhoneNumber, setActivePhoneNumber] =
-		useState<string>('');
+	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
 	const [whatsappChatSession, setWhatsappChatSession] =
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
@@ -81,7 +80,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
 		e.preventDefault();
 
-		setWhatsappChatCoversationStatus(e.target.value, activePhoneNumber, ClientNumber);
+		setWhatsappChatCoversationStatus(
+			e.target.value,
+			activePhoneNumber,
+			ClientNumber
+		);
 	};
 
 	const { t: translator } = useTranslation();
@@ -104,9 +107,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
-	const [page, setPage] = useState<number>(1);
-	const [ispagination, setIsPaginbation] = useState<boolean>(false);
-	const pagesize = 20;
+
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
