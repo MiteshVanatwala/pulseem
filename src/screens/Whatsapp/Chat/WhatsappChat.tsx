@@ -9,6 +9,8 @@ import {
 	APIWhatsappChatSidebarContactsItemsData,
 	APIWhatsappChatSidebarContactsData,
 	WhatsappChatProps,
+	APISendWhatsappChat,
+	APISendWhatsAppChatReqPayload,
 } from './Types/WhatsappChat.type';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
@@ -32,6 +34,7 @@ import {
 	getSavedTemplates,
 	getWhatsappChatContactsByPhoneNumber,
 	manageWhatsappChatCoversationStatus,
+	sendWhatsAppChat,
 	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
@@ -53,10 +56,12 @@ import {
 import { apiStatus, buttonTypes, whatsappChatStatuses } from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
+import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
@@ -96,9 +101,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
-	const [newMessage, setNewMessage] = useState<string>('');
+	const [newMessage, setNewMessage] = useState<string>('sas');
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
+	>([]);
+	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
+		string[]
 	>([]);
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [fileData, setFileData] = useState<{
@@ -347,6 +355,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				fileType: '',
 			},
 		};
+		setUpdatedDynamicVariable([]);
 		setNewMessage(templateText || '');
 		setIsTemplateModal(false);
 		setSavedTemplate(template?.TemplateId);
@@ -411,6 +420,48 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		changeContactReadStatus(contacts);
 	};
 
+	const validateDynamicVaraiable = () => {
+		let validationErrors = [];
+		let isValidated = true;
+		if (
+			savedTemplate?.length > 0 &&
+			getDynamicFields(newMessage)?.length !== updatedDynamicVariable?.length
+		) {
+			validationErrors.push('Please update all variable in the message');
+			isValidated = false;
+		}
+		if (newMessage?.length === 0) {
+			validationErrors.push('Message - required field');
+			isValidated = false;
+		}
+
+		if (!isValidated) {
+			setGroupSendValidationErrors(validationErrors);
+			setIsValidationAlert(true);
+		}
+		return isValidated;
+	};
+
+	const onChatSend = async () => {
+		if (validateDynamicVaraiable()) {
+			let chatReqPayload: APISendWhatsAppChatReqPayload = {
+				FromNumber: activePhoneNumber,
+				ToNumberList: activeChatContacts?.PhoneNumber,
+				IsFreeFormChat: savedTemplate?.length === 0 ? true : false,
+			};
+			if (savedTemplate?.length > 0) {
+				chatReqPayload.TemplateId = savedTemplate;
+				chatReqPayload.Variables = updatedDynamicVariable;
+			} else {
+				chatReqPayload.TextMessage = newMessage;
+				chatReqPayload.mediaUrl = '';
+			}
+			const sendWhatsappChat: APISendWhatsappChat = await dispatch<any>(
+				sendWhatsAppChat(chatReqPayload)
+			);
+		}
+	};
+
 	return (
 		<>
 			<DefaultScreen
@@ -461,6 +512,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							whatsappChatSession={whatsappChatSession}
 							handleUserStatus={handleUserStatus}
 							getStatusClass={getStatusClass}
+							onChatSend={onChatSend}
 						/>
 					</div>
 				</div>
@@ -477,6 +529,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					dynamicVariable={updatedDynamicVariable}
 				/>
 				<Loader isOpen={isLoader} showBackdrop={true} />
+				<ValidationAlert
+					classes={classes}
+					isOpen={isValidationAlert}
+					onClose={() => setIsValidationAlert(false)}
+					title={translator('whatsappCampaign.sendValidation')}
+					requiredFields={groupSendValidationErrors}
+				/>
 			</DefaultScreen>
 		</>
 	);

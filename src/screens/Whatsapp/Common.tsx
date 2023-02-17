@@ -21,12 +21,12 @@ const dynamicFieldL5 = new RegExp('^({{)[0-9](}})$');
 
 export const getDynamicFields = (text: string) => {
 	let indices = [];
-	for (let i = 0; i < text.length; i++) {
-		if (dynamicFieldL5.test(text.slice(i, i + 5))) {
-			indices.push(text.slice(i, i + 5));
+	for (let i = 0; i < text?.length; i++) {
+		if (dynamicFieldL5.test(text?.slice(i, i + 5))) {
+			indices.push(text?.slice(i, i + 5));
 		}
-		if (dynamicFieldL6.test(text.slice(i, i + 6))) {
-			indices.push(text.slice(i, i + 6));
+		if (dynamicFieldL6.test(text?.slice(i, i + 6))) {
+			indices.push(text?.slice(i, i + 6));
 		}
 	}
 	return indices;

@@ -54,6 +54,7 @@ const ChatUi = ({
 	whatsappChatSession,
 	handleUserStatus,
 	getStatusClass,
+	onChatSend,
 	activePhoneNumber,
 }: WhatsappChatUiProps) => {
 	const [allWhatsappChat, setAllWhatsappChat] =
@@ -125,7 +126,9 @@ const ChatUi = ({
 	};
 
 	const onEditableDivChange = (e: BaseSyntheticEvent) => {
-		setNewMessage(e.target.value);
+		e.preventDefault();
+		e.stopPropagation();
+		setNewMessage(e.target.textContent);
 	};
 
 	useEffect(() => {
@@ -261,23 +264,31 @@ const ChatUi = ({
 									}`}
 								/>
 							</button>
-							<div
-								className={`${classes.whatsappChat} chat__input`}
-								data-text='Type a message'
-								contentEditable={savedTemplate?.length === 0 ? true : false}
-								suppressContentEditableWarning={
-									savedTemplate?.length === 0 ? true : false
-								}
-								onKeyUp={onEditableDivChange}>
-								<Highlighter
-									searchWords={dynamicVariable}
-									autoEscape={true}
-									textToHighlight={newMessage}
-									highlightTag={(tagData: tagDataProps) =>
-										highlightText(tagData)
-									}
-								/>
-							</div>
+							{savedTemplate?.length !== 0 ? (
+								<>
+									<div className={`${classes.whatsappChat} chat__input`}>
+										<Highlighter
+											searchWords={dynamicVariable}
+											autoEscape={true}
+											textToHighlight={newMessage}
+											highlightTag={(tagData: tagDataProps) =>
+												highlightText(tagData)
+											}
+										/>
+									</div>
+								</>
+							) : (
+								<>
+									<div
+										className={`${classes.whatsappChat} chat__input`}
+										data-text='Type a message'
+										contentEditable={savedTemplate?.length === 0 ? true : false}
+										suppressContentEditableWarning={
+											savedTemplate?.length === 0 ? true : false
+										}
+										onKeyUp={onEditableDivChange}></div>
+								</>
+							)}
 						</>
 					) : (
 						<div style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
@@ -308,7 +319,7 @@ const ChatUi = ({
 						</div>
 					)}
 					{!whatsappChatSession.IsIn24Window && (
-						<button aria-label='Send message'>
+						<button aria-label='Send message' onClick={onChatSend}>
 							<Icon
 								id='send'
 								className={`${classes.whatsappChat} chat__send-icon`}

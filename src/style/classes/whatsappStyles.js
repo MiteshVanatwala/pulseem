@@ -2069,7 +2069,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__input-wrapper': {
 			padding: '10px',
-			height: '60px',
+			minHeight: '60px',
 			position: 'relative',
 			display: 'flex',
 			alignItems: 'center',
@@ -2123,7 +2123,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			borderRadius: '22px',
 			flex: '1',
 			height: '100%',
+			fontSize: '14px',
 			resize: 'none',
+			maxHeight: '172px',
+			overflowY: 'auto',
 		},
 		'&.chat__input::placeholder': {
 			color: 'rgb(153, 153, 153)',

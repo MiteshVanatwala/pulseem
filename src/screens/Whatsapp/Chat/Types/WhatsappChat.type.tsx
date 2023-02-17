@@ -35,6 +35,7 @@ export type WhatsappChatUiProps = {
 	whatsappChatSession: APIWhatsappChatSessionData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
+	onChatSend: () => void;
 };
 
 export type ChatTemplateProps = {
@@ -197,4 +198,8 @@ export type APISendWhatsAppChatReqPayload = {
 	mediaUrl?: string;
 	TemplateId?: string;
 	Variables?: updatedVariable[];
+};
+
+export type APISendWhatsappChat = {
+	// payload: APISendWhatsappChatPayload;
 };
