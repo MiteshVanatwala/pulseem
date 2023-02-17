@@ -34,6 +34,7 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     textTransform: 'none',
     whiteSpace: 'wrap',
     overflow: 'hidden',
+    height: '100%',
     fontSize: appBarTitleTextSize[windowSize],
     borderRadius: 0,
     flex: 1,
@@ -162,10 +163,12 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     justifyContent: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
+    height: '100%',
     '& .settingsContainer': {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      height: '100%',
       '& .MuiButtonBase-root': {
         fontWeight: 600
       },

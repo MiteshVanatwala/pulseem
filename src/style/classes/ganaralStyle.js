@@ -1917,6 +1917,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
 
   settingsContainer: {
+    height: '100%',
     marginBottom: 68,
     background: '#fff',
     marginTop: 30,
@@ -1928,6 +1929,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .mgmtTitle': {
         fontSize: 20
       }
+    },
+    '& .link': {
+      fontSize: 15,
+      color: '#FF0054',
+      padding: '2px 0',
+      marginTop: 28,
+      marginLeft: 0
     },
     '& .containerBody': {
       position: 'relative',
