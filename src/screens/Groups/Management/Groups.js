@@ -49,7 +49,7 @@ const Groups = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
-    const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, accountFeatures, CoreToastMessages } = useSelector(state => state.core)
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
     const rowsOptions = [6, 10, 20, 50];
@@ -1543,6 +1543,11 @@ const Groups = ({ classes }) => {
             message: '',
             Func: () => null
         },
+        'S_403': {
+            code: 403,
+            message: '',
+            Func: () => null
+        },
         'S_405': {
             code: 405,
             message: '',
@@ -1594,6 +1599,12 @@ const Groups = ({ classes }) => {
             case 401: {
                 actions?.S_401?.Func?.();
                 actions?.S_401?.message && setToastMessage(actions?.S_401?.message);
+                break;
+            }
+            case 403: {
+                setToastMessage(CoreToastMessages?.XSS_ERROR);
+                // actions?.403?.Func?.();
+                // actions?.403?.message && setToastMessage(CoreToastMessages?.XSS_ERROR);
                 break;
             }
             case 405: {
