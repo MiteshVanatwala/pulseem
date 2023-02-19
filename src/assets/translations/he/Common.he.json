@@ -600,5 +600,6 @@
   "TemplateVariables": "משתנים בתבנית",
   "templateId": "מזהה תבנית",
   "commingSoon": "בקרוב!",
-  "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים"
+  "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים",
+  "xssError": "המערכת לא תאפשר קוד Html, Scripts או כל שרשור אחר שהוא לא מחרוזת!"
 }

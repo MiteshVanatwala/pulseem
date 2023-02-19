@@ -27,6 +27,7 @@ const AccountSettingsEditor = () => {
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+  const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -113,7 +114,7 @@ const AccountSettingsEditor = () => {
 
   }
 
-  const handleResponses = (response: any) => {
+  const handleResponses = async (response: any) => {
     switch (response?.StatusCode || response?.payload?.StatusCode) {
       case 201: {
         setToastMessage(ToastMessages.SETTINGS_SAVED);
@@ -146,6 +147,11 @@ const AccountSettingsEditor = () => {
             break;
           }
         }
+        break;
+      }
+      case 403: {
+        setToastMessage(CoreToastMessages?.XSS_ERROR);
+        await dispatch(getAccountSettings());
         break;
       }
       case 200:

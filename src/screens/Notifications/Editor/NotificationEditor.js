@@ -112,7 +112,7 @@ const DashedInput = withStyles({
 const NotificationEditor = ({ classes, ...props }) => {
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
-  const { language } = useSelector(state => state.core)
+  const { language, CoreToastMessages } = useSelector(state => state.core)
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(state => state.core);
   moment.locale(language);
@@ -278,14 +278,25 @@ const NotificationEditor = ({ classes, ...props }) => {
 
     if (isValidNotification()) {
       if (modelToSave && modelToSave.ID > 0) {
-        await dispatch(updateNotification(modelToSave));
-        setToastMessage(toastMessages.SUCCESS);
-        if (isContinue) {
-          redirectAfterSave(modelToSave.ID);
+        const response = await dispatch(updateNotification(modelToSave));
+        if (response?.payload === "403") {
+          setToastMessage(CoreToastMessages.XSS_ERROR);
+          getData();
+          return false;
+        }
+        else {
+          setToastMessage(toastMessages.SUCCESS);
+          if (isContinue) {
+            redirectAfterSave(modelToSave.ID);
+          }
         }
       }
       else {
         dispatch(save(modelToSave)).then((response) => {
+          if (response?.payload === '-403' || response?.payload === -403) {
+            setToastMessage(CoreToastMessages.XSS_ERROR);
+            return false;
+          }
           if (params.create || window.location.pathname.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
               window.location.href = "/react/Notifications";
