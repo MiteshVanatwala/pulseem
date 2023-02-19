@@ -6,6 +6,7 @@ import {
   FormControlLabel,
   Grid,
   MenuItem,
+  OutlinedInput,
   Select,
   TextField,
   Typography,
@@ -408,7 +409,7 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            <Grid item xs={12} sm={3} md={4}  className={clsx(classes.mt3)}>
+            <Grid item xs={12} sm={3} md={4} className={clsx(classes.mt3)}>
               <FormControlLabel
                 control={
                   <PulseemSwitch
@@ -456,8 +457,22 @@ const FORM_COMPANY_DETAILS = ({
                 style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10 }}
               >
                 <Select
-                  style={{
-                    height: 40
+                  native
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 40
+                      },
+                    }
+                  }}
+                  input={<OutlinedInput />}
+                  inputProps={{
+                    'aria-label': 'Without label',
+                    style: {
+                      padding: 10,
+                      maxWidth: 210,
+                      paddingInlineStart: 15,
+                    }
                   }}
                   disabled={!companyDetails?.TwoFactorAuthEnabled}
                   autoWidth
@@ -470,13 +485,13 @@ const FORM_COMPANY_DETAILS = ({
                     { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
                   ].map((so, index) => {
                     return (
-                      <MenuItem
+                      <option
                         key={so.value}
                         value={so.value}
                         className={classes.dropDownItem}
                       >
                         {so.name}
-                      </MenuItem>
+                      </option>
                     );
                   })}
                 </Select>
