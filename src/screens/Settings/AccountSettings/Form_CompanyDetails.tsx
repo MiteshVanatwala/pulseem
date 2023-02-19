@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
   Grid,
   MenuItem,
   Select,
@@ -12,6 +13,7 @@ import {
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
+import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import {
   MdArrowBackIos,
   MdArrowForwardIos,
@@ -406,6 +408,34 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
+            <Grid item xs={12} sm={3} md={4}  className={clsx(classes.mt3)}>
+              <FormControlLabel
+                control={
+                  <PulseemSwitch
+                    switchType="ios"
+                    classes={classes}
+                    checked={companyDetails?.TwoFactorAuthEnabled === true}
+                    //@ts-ignore
+                    onColor="#0371ad"
+                    handleDiameter={20}
+                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                    height={15}
+                    width={40}
+                    className={clsx({ [classes.rtlSwitch]: isRTL })}
+                    id="switchIDS425"
+                    onChange={(e: any) => handleChange(e, "TwoFactorAuth")}
+                  />
+                }
+                label={
+                  <>
+                    {t(
+                      "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
+                    )}
+                  </>
+                }
+              />
+            </Grid>
             <Grid
               item
               xs={12}
