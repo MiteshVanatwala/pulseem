@@ -3158,96 +3158,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		color: '#555',
 		marginInlineEnd: '5px',
 	},
-	selectPlaceholderInput: {
-		height: '90%',
-		opacity: 1,
-		border: 'none',
-		boxShadow: 'none',
-		background: 'none',
-		width: '95%',
-		borderRadius: 5,
-		paddingLeft: 10,
-		fontSize: '0.9rem',
-		position: 'absolute',
-		pointerEvents: 'none',
-		'&::placeholder': {
-			color: '#bfbfbf'
-		}
-	},
-
-	selectInputFormControl: {
-		'&.MuiFormControl-root': {
-			marginInline: 3,
-			'& label': {
-				marginInline: 5
-			},
-			'& .outerborder': {
-				border: '1px solid #c4c4c4',
-				borderRadius: 5,
-				'& .MuiSelect-select': {
-					border: 'none !important'
-				},
-			},
-			'& .MuiSelect-select': {
-				minWidth: 200,
-				maxWidth: '100%',
-				border: '1px solid #c4c4c4',
-				borderRadius: 4,
-				paddingLeft: 10,
-				paddingRight: 10,
-			},
-			'& svg': {
-				left: isRTL ? 10 : 'auto',
-				right: isRTL ? 'auto' : 10,
-			}
-		}
-	},
-
-	dialogZindex: {
-		zIndex: '1000 !important'
-	},
-	testSendDialog: {
-		width: 440,
-		maxWidth: 440
-	},
-	containerFullHeight: {
-		minHeight: 'calc(100vh - 120px)',
-		height: 'calc(100vh - 120px)'
-	},
-	pb15: {
-		paddingBottom: 15
-	},
-	pb25: {
-		paddingBottom: 25
-	},
-	pbt10: {
-		paddingTop: 10,
-		paddingBottom: 10
-	},
-	pbt15: {
-		paddingTop: 15,
-		paddingBottom: 15
-	},
-	buttonMinWidth: {
-		minWidth: 167
-	},
-	textRed: {
-		color: '#c9302c'
-	},
-	commingSoon:
-	{
-		backgroundColor: "#dc3545",
-		padding: 5,
-		fontSize: 11,
-		color: "#fff",
-		borderRadius: 5,
-		fontWeight: 400,
-		marginInlineStart: "3px",
-		marginBottom: '0 !important'
-	},
-	flexCenterOfCenter: {
-		display: 'flex', width: '100%', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
-	},
 	settingsContainer: {
 		marginBottom: 68,
 		background: '#fff',
@@ -3342,4 +3252,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 			}
 		}
 	},
+	passwordDialog: {
+		maxWidth: windowSize !== 'xs' ? '25vw' : null
+	}
 });

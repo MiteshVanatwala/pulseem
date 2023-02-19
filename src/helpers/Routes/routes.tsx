@@ -458,20 +458,8 @@ export const getRoutes = (
 				isShow: true,
 			},
 			{
-				key: 'smsResponse',
-				title: t('master.smsReplies'),
-				href: '/react/reports/SmsReplies',
-				isShow: false,
-			},
-			{
-				key: 'smsResponse',
-				title: t('master.smsReplies'),
-				href: '/react/reports/SmsReplies',
-				isShow: false,
-			},
-			{
 				key: 'inboundMessages',
-				title: t('master.smsReplies'),
+				title: t('master.linkSMSResponsesReport.Text'),
 				href: '/react/Inbound/',
 				isShow: true,
 			},

@@ -1,6 +1,5 @@
-﻿export interface APIResponse {
-    new(_statusCode: number, _message: string): APIResponse;
+export interface PulseemResponse {
     StatusCode: number;
     Message: string;
-    Data: any | null;
+    Data: any;
 }
