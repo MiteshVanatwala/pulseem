@@ -82,7 +82,8 @@ const AccountSettingsSlice = createSlice({
                 403: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.403', showAnimtionCheck: false },
                 406: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.406', showAnimtionCheck: false },
                 407: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.407', showAnimtionCheck: false },
-                408: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.408', showAnimtionCheck: false }
+                408: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.408', showAnimtionCheck: false },
+                409: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.409', showAnimtionCheck: false }
             }
         },
         twoFAUpdated: {

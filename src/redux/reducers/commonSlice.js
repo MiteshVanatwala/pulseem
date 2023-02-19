@@ -116,7 +116,7 @@ export const commonSlice = createSlice({
       })
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-        setCookie('accountSettings', payload.Data);
+        setCookie('accountSettings', payload?.Data);
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;

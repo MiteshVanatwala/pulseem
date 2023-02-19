@@ -217,6 +217,7 @@ const FORM_ACCOUNT_DETAILS = ({
                   classes.actionButton,
                   classes.actionButtonLightGreen
                 )}>
+                {/* @ts-ignore */}
                 {t('settings.accountSettings.actDetails.btnUpdate')}
               </Button>
             </Grid>

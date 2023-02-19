@@ -240,6 +240,7 @@ const SearchLine = ({
                     onClick={handleSearch}
                     className={classes.searchButton}
                     endIcon={<SearchIcon />}>
+                    {/* @ts-ignore */}
                     {t('campaigns.btnSearchResource1.Text')}
                 </Button>
                 {windowSize !== 'xs' && <Link
@@ -248,6 +249,7 @@ const SearchLine = ({
                     underline='none'
                     onClick={() => setAdvanceSearch(!advanceSearch)}
                     className={clsx(localClasses.dBlock, classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
+                    {/* @ts-ignore */}
                     {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
                 </Link>
                 }
@@ -261,6 +263,7 @@ const SearchLine = ({
                     }}
                     className={classes.searchButton}
                     endIcon={<ClearIcon />}>
+                    {/* @ts-ignore */}
                     {t('common.clear')}
                 </Button>
             </Grid>
