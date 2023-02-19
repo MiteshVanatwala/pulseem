@@ -16,7 +16,9 @@
         "invalidMobile": "הנייד לא עובד",
         "reqMobile": "נייד הוא חובה",
         "reqCompName": "נדרש שם חברה",
-        "reqContctName": "נדרש שם איש קשר"
+        "reqContctName": "נדרש שם איש קשר",
+        "verifyEmail": "יש לאשר את כתובת המייל הדיפולטיבית",
+        "verifyPhone": "יש לאשר את מספר הנייד הדיפולטיבי"
       },
       "securitySettings": "הגדרות אבטחת חשבון",
       "btnChangePwd": "שינוי סיסמא",

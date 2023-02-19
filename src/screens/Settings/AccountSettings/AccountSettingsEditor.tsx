@@ -180,6 +180,7 @@ const AccountSettingsEditor = () => {
       <Box className={clsx(classes.settingsContainer)}>
         <Box className={clsx("head", classes.flexSpaceBetween)}>
           <Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
+            {/* @ts-ignore */}
             {t('settings.accountSettings.title')}
           </Typography>
           <Box style={{ marginInlineStart: 'auto' }}>

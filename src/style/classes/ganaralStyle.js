@@ -2700,5 +2700,33 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   passwordDialog: {
     maxWidth: windowSize !== 'xs' ? '25vw' : null
-  }
+  },
+  ribbonContainer: {
+    position: 'relative',
+    '& .wrap': {
+      width: 'inherit',
+      height: '58px',
+      position: 'absolute',
+      top: '-2px',
+      left: '1.5px',
+      overflow: 'hidden',
+      '& .ribbon': {
+        width: '45px',
+        height: '10px',
+        lineHeight: '10px',
+        position: 'absolute',
+        top: '8px',
+        right: isRTL ? 'auto' : '-10px',
+        left: isRTL ? '-10px' : 'auto',
+        zIndex: '2',
+        overflow: 'hidden',
+        transform: isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+        '-webkit-transform': isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+        boxShadow: '0px 0px 2px 1px #b7b7b7,  0px 21px 5px -18px rgba(0,0,0,0.6)',
+        background: '#ff0000',
+        textAlign: 'center',
+        fontSize: '0.5rem',
+      }
+    }
+  },
 });

@@ -546,6 +546,7 @@ const FORM_COMPANY_DETAILS = ({
                   classes.actionButton,
                   classes.actionButtonLightGreen
                 )}>
+                {/* @ts-ignore */}
                 {t('settings.accountSettings.fixedComDetails.btnUpdate')}
               </Button>
             </Grid>
