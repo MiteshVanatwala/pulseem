@@ -1207,13 +1207,13 @@ const SmsCreator = ({ classes, ...props }) => {
 			if (isSave) {
 				setToastMessage(ToastMessages.SUCCESS);
 				setTimeout(() => {
-					navigate(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+					navigate(`/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
 					setToastMessage(null);
 				}, 1500);
 			} else if (returnToAutomation) {
 				window.location = getAutomationReturnUrl(campaignId);
 			} else {
-				navigate(`/sms/send/${campaignId}`);
+				navigate(`/react/sms/send/${campaignId}`);
 			}
 		}
 		else {
@@ -1279,13 +1279,13 @@ const SmsCreator = ({ classes, ...props }) => {
 			if (response) {
 				dispatch(deleteSms(response.payload.SMSCampaignID));
 				handleClose();
-				navigate("/SMSCampaigns");
+				navigate("/react/SMSCampaigns");
 			}
 		}
 		else {
 			dispatch(deleteSms(-1));
 			handleClose();
-			navigate("/SMSCampaigns");
+			navigate("/react/SMSCampaigns");
 		}
 	};
 
@@ -1341,7 +1341,7 @@ const SmsCreator = ({ classes, ...props }) => {
 				}
 				else if (saveResponse.payload.Status === 2) {
 					setDialogType(null);
-					navigate("/SMSCampaigns");
+					navigate("/react/SMSCampaigns");
 
 				}
 				else {
@@ -1355,7 +1355,7 @@ const SmsCreator = ({ classes, ...props }) => {
 			}
 		}
 		else if (saveBeforeExit === false) {
-			navigate("/SMSCampaigns");
+			navigate("/react/SMSCampaigns");
 			setDialogType(null);
 		}
 	};
