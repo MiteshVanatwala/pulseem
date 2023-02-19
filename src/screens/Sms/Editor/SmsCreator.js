@@ -386,8 +386,8 @@ const SmsCreator = ({ classes, ...props }) => {
     if (smsCampaign && smsCampaign.FromNumber) {
       fromNumber = smsCampaign.FromNumber;
     }
-    else if (commonFeatures.payload.DefaultCellNumber !== "") {
-      fromNumber = commonFeatures.payload.DefaultCellNumber;
+    else if (commonFeatures.payload?.Data?.DefaultCellNumber !== "") {
+      fromNumber = commonFeatures.payload?.Data?.DefaultCellNumber;
     }
 
     const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
@@ -399,7 +399,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setcampaignNumber(fromNumber);
     setStaticNumber(virtualNumber.payload.Number);
     setremovalNumber(virtualNumber.payload.RemovalKey);
-    setstoredValue(commonFeatures.payload.DefaultCellNumber);
+    setstoredValue(commonFeatures.payload?.Data?.DefaultCellNumber);
     if (fromNumber !== virtualNumber.payload.Number) {
       setrestoreBool(false);
       setremovalMessageButtonDisabled(true);
@@ -598,7 +598,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setLoader(false);
     // setcampaignNumber(r.payload.DefaultCellNumber)
     setLoader(true);
-    let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
+    let response = await dispatch(getSMSVirtualNumber(r.payload?.Data.DefaultCellNumber));
     setLoader(false);
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
