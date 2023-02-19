@@ -193,6 +193,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
     }
 
     const handleResponses = (response: any) => {
+        setConfirmButtonDisabled(false);
         SetToast(ToastMessages.CHANGE_PASSWORD[response?.payload?.StatusCode]);
 
         if (response?.payload?.StatusCode === 201) {
