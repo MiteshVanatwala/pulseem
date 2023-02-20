@@ -387,7 +387,25 @@ const SmsReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={smsQuery.ShowTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
+          />
+          {/* <Switch
             checked={smsQuery.ShowTestCampaigns}
             onColor="#0371ad"
             handleDiameter={20}
@@ -399,12 +417,10 @@ const SmsReport = ({ classes }) => {
             width={40}
             className={clsx({ [classes.rtlSwitch]: isRTL })}
             onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
-          />
+          /> */}
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => handleSearch()}
             className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
@@ -413,8 +429,6 @@ const SmsReport = ({ classes }) => {
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => clearSearch()}
             className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>

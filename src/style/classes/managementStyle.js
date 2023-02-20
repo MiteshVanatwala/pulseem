@@ -147,6 +147,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   maxWidth450: {
     maxWidth: '450px !important'
   },
+  maxWidth500: {
+    maxWidth: '500px !important'
+  },
 
   wFitContent: {
     width: 'fit-content'
@@ -548,6 +551,17 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 0,
     padding: 0,
   },
+
+  underlinedSelOptns: {
+    paddingBlock: 5,
+    marginInline: 12,
+    borderBottom: '1px solid #d1d1d1',
+    '&:hover': {
+      cursor: 'pointer',
+      color: '#ff3343'
+    }
+  },
+
   tableStyle: {
     overflowX: "clip",
     border: "2px solid #F0F5FF",
@@ -644,7 +658,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         },
         '& .rowTitle': {
           textAlign: 'center',
-          alignItems: 'flex-start'
+          alignItems: 'flex-start',
+          "@media screen and (max-width: 768px)": {
+            textAlign: 'start'
+          },
         },
         '& .MuiTableCell-root': {
 
@@ -1999,6 +2016,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginRight: 5,
     marginInlineStart: 'auto',
     lineHeight: windowSize === 'xs' ? 1 : null,
+    "@media screen and (max-width: 540px)": {
+      marginTop: 5,
+      marginLeft: 38
+    },
   },
 
   carouselContainer: {
@@ -2067,16 +2088,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         '& .btnVerifyNew': {
           height: 50
         },
-        // '& .btnVerifyNewLtr': {
-        //   position: "absolute",
-        //   top: 0,
-        //   right: 10
-        // },
-        // '& .btnVerifyNewRtl': {
-        //   position: "absolute",
-        //   top: 0,
-        //   left: 10
-        // },
+        '& .btnVerifyNewLtr': {
+          position: "absolute",
+          top: 0,
+          right: 10
+        },
+        '& .btnVerifyNewRtl': {
+          position: "absolute",
+          top: 0,
+          left: 10
+        },
         '& .MuiDivider-root': {
           marginTop: 6,
           height: '1.3px',

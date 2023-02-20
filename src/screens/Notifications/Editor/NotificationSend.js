@@ -136,7 +136,7 @@ const NotificationSend = ({ classes }) => {
         return (
             <>
                 <Title
-                    Text={(
+                    Element={(
                         <Box className='stepHead'>
                             <span className={'stepNum'}>
                                 2

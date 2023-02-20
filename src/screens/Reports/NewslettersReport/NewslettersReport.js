@@ -485,8 +485,8 @@ const NewslettersReport = ({ classes }) => {
         {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
+              classes.btn,
+              classes.btnRounded,
               newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialog('exportFormat')}

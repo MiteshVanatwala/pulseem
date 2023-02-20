@@ -70,14 +70,10 @@ const PulseemSwitch = ({ classes, id, switchType, margin = 1, onChange = (par) =
                 }
                 checked={checked}
                 onChange={onChange}
-                onColor="#28a745"
                 checkedIcon={false}
                 uncheckedIcon={false}
-                handleDiameter={30}
                 height={20}
                 width={48}
-                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
                 id={id}
             />)
         }

@@ -484,7 +484,7 @@ const Groups = ({ classes }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={clsx(classes.flex2)}>
+                    className={clsx(classes.flex2, classes.maxWidth275)}>
                     <Grid container direction="row">
                         <Grid item sm={12 - iconsCells}>
                             {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })}
@@ -533,7 +533,7 @@ const Groups = ({ classes }) => {
                         }
                     </Grid>
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={classes.flex3}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.maxWidth325)}>
                     <FlexGrid
                         gridArr={[
                             {
