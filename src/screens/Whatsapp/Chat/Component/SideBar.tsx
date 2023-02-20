@@ -1,30 +1,21 @@
-import { Link, useParams } from 'react-router-dom';
 import Icon from './Icon';
-import { lastMessage } from './data';
 import {
 	APIWhatsappChatSidebarContactsItemsData,
 	WhatsappChatSideBarProps,
 } from '../Types/WhatsappChat.type';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import {
-	IconButton,
-	makeStyles,
-	MenuItem,
-	Select,
-	TextField,
-} from '@material-ui/core';
+import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import clsx from 'clsx';
-import { useDispatch } from 'react-redux';
+import SideHeaderContactDropDown from './SideHeaderContactDropDown';
+import SideBarContactList from './SideBarContactList';
 
 const SideBar = ({
 	classes,
 	isMobileSideBar,
 	setIsMobileSideBar,
 	handleChatId,
-	getPhoneNumber,
 	onActiveUserChange,
 	sideChatContacts,
 	filteredSideChatContacts,
@@ -32,21 +23,12 @@ const SideBar = ({
 	phoneNumbersList,
 	handleUserStatus,
 	getStatusClass,
-	chatContacts,
 	activePhoneNumber,
 }: WhatsappChatSideBarProps) => {
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
-	const dispatch = useDispatch();
-	const { contactID } = useParams();
 
 	const useStyles = makeStyles(() => ({
-		selectRoot: {
-			fontSize: '18px',
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
 		selectSection: {
 			'&:focus': {
 				backgroundColor: 'rgba(0,0,0,0)',
@@ -54,11 +36,6 @@ const SideBar = ({
 		},
 	}));
 	const muiclasses = useStyles();
-
-	const formatTime = (timeString: string) => {
-		let splitTimeString = timeString.split(':');
-		return `${splitTimeString[0]}:${splitTimeString[1]}`;
-	};
 
 	const handleSearch = (e: BaseSyntheticEvent) => {
 		let value = e.target.value.toLowerCase();
@@ -107,37 +84,12 @@ const SideBar = ({
 							className={`${classes.whatsappChat} avatar`}
 						/>
 					</div>
-					<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
-						&emsp;
-						{phoneNumbersList?.length === 1 ? (
-							<TextField
-								required
-								type='text'
-								disabled
-								className={clsx(classes.buttonField)}
-								onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
-								value={activePhoneNumber}
-							/>
-						) : (
-							<Select
-								type='text'
-								classes={{ root: muiclasses.selectRoot }}
-								onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
-								value={activePhoneNumber}>
-								{phoneNumbersList?.length > 0 ? (
-									phoneNumbersList?.map((phone: string, index: number) => (
-										<MenuItem key={index} value={phone}>
-											{phone}
-										</MenuItem>
-									))
-								) : (
-									<MenuItem key={'no-data-template'} disabled>
-										<>{translator('whatsapp.noTemplateAaliable')}</>
-									</MenuItem>
-								)}
-							</Select>
-						)}
-					</div>
+					<SideHeaderContactDropDown
+						classes={classes}
+						phoneNumbersList={phoneNumbersList}
+						onActiveUserChange={onActiveUserChange}
+						activePhoneNumber={activePhoneNumber}
+					/>
 					<span>
 						<Select
 							classes={{ root: muiclasses.selectSection }}
@@ -189,124 +141,13 @@ const SideBar = ({
 						onChange={(e) => handleSearch(e)}
 					/>
 				</div>
-				<div className={`${classes.whatsappChat} sidebar__contacts`}>
-					{filteredSideChatContacts.map(
-						(contact: APIWhatsappChatSidebarContactsItemsData, i: number) => (
-							<Link
-								className={clsx(
-									`${classes.whatsappChat} sidebar-contact`,
-									`${
-										contactID &&
-										contact?.PhoneNumber === contactID &&
-										'active-contact'
-									}`
-								)}
-								key={i}
-								to={`/react/whatsapp/chat/${contact?.PhoneNumber}`}
-								onClick={(e) => handleChatId(e, contact)}>
-								<div
-									className={`${classes.whatsappChat} sidebar-contact__avatar-wrapper`}>
-									<img
-										src={AccountUser}
-										alt={'profile_picture'}
-										className={`${classes.whatsappChat} avatar`}
-									/>
-								</div>
-								<div
-									className={`${classes.whatsappChat} sidebar-contact__content`}>
-									<div
-										className={`${classes.whatsappChat} sidebar-contact__top-content`}>
-										<h2
-											className={`${classes.whatsappChat} sidebar-contact__name`}>
-											{' '}
-											{contact.UserName || contact.PhoneNumber}{' '}
-										</h2>
-										<span
-											className={`${classes.whatsappChat} sidebar-contact__time`}>
-											<span className={classes.whatsappSidebarStatusPadding}>
-												<Select
-													classes={{ root: muiclasses.selectSection }}
-													className={clsx(
-														classes.whatsappChatStatusSelect,
-														getStatusClass(contact.ConversationStatusId)
-													)}
-													autoWidth
-													value={contact.ConversationStatusId}
-													variant='standard'
-													style={{ fontSize: '12px' }}
-													onChange={(e) =>
-														handleUserStatus(e, contact.PhoneNumber)
-													}>
-													<MenuItem value={1}>
-														{translator('whatsappChat.open')}
-													</MenuItem>
-													<MenuItem value={2}>
-														{translator('whatsappChat.pending')}
-													</MenuItem>
-													<MenuItem value={3}>
-														{translator('whatsappChat.solved')}
-													</MenuItem>
-												</Select>
-											</span>
-
-											{formatTime(
-												contact.LastMessageDate.split('T')[1].split('.')[0]
-											)}
-										</span>
-									</div>
-									<div
-										className={`${classes.whatsappChat} sidebar-contact__bottom-content`}>
-										<p
-											className={`${classes.whatsappChat} sidebar-contact__message-wrapper`}>
-											{lastMessage.status && (
-												<Icon
-													id={
-														lastMessage?.status === 'sent'
-															? 'singleTick'
-															: 'doubleTick'
-													}
-													aria-label={lastMessage?.status}
-													className={`${
-														classes.whatsappChat
-													} sidebar-contact__message-icon ${
-														lastMessage?.status === 'read'
-															? `${classes.whatsappChat} sidebar-contact__message-icon--blue`
-															: ''
-													}`}
-												/>
-											)}
-											<span
-												className={`${
-													classes.whatsappChat
-												} sidebar-contact__message ${
-													!!contact.Unread
-														? `${classes.whatsappChat} sidebar-contact__message--unread`
-														: ''
-												}`}>
-												{contact.LastMessage}
-											</span>
-										</p>
-										<div
-											className={`${classes.whatsappChat} sidebar-contact__icons`}>
-											{!!contact.Unread && (
-												<span
-													className={`${classes.whatsappChat} sidebar-contact__unread`}>
-													{contact.Unread}
-												</span>
-											)}
-											<button aria-label='sidebar-contact__btn'>
-												<Icon
-													id='downArrow'
-													className={`${classes.whatsappChat} sidebar-contact__icon sidebar-contact__icon--dropdown`}
-												/>
-											</button>
-										</div>
-									</div>
-								</div>
-							</Link>
-						)
-					)}
-				</div>
+				<SideBarContactList
+					classes={classes}
+					filteredSideChatContacts={filteredSideChatContacts}
+					handleChatId={handleChatId}
+					handleUserStatus={handleUserStatus}
+					getStatusClass={getStatusClass}
+				/>
 			</aside>
 		</>
 	);

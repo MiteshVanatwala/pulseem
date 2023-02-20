@@ -1,41 +1,21 @@
 import Icon from './Icon';
-import { user } from './data';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-	APIWhatsappChatItemsData,
 	APIWhatsappChatData,
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
-	displayCountDown,
 } from '../Types/WhatsappChat.type';
-import {
-	Button,
-	Grid,
-	IconButton,
-	Select,
-	MenuItem,
-	makeStyles,
-	Typography,
-} from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
-import Highlighter from 'react-highlight-words';
-import Countdown from 'react-countdown';
-import {
-	tagDataProps,
-	updatedVariable,
-} from '../../Campaign/Types/WhatsappCampaign.types';
-import clsx from 'clsx';
-import { Stack } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { getVariableValue } from '../../Common';
-import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import { apiStatus } from '../../Constant';
 import { useDispatch } from 'react-redux';
 import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
 import ChatTemplate from './ChatTemplate';
 import { Loader } from '../../../../components/Loader/Loader';
+import ChatFooterContent from './ChatFooterContent';
+import ChatHeaderContent from './ChatHeaderContent';
 
 const ChatUi = ({
 	classes,
@@ -63,80 +43,12 @@ const ChatUi = ({
 	setAPIInboundChatStatus,
 }: WhatsappChatUiProps) => {
 	const dispatch = useDispatch();
-	const { t: translator } = useTranslation();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
-	const [showEmojis, setShowEmojis] = useState<boolean>(false);
-	const time = new Date().toLocaleTimeString('en-US');
-	const [chatTimer, setChatTimer] = useState<string>(time);
-	const setUpdateTime = () => {
-		let time = new Date().toLocaleTimeString('en-US');
-		setChatTimer(time);
-	};
 
 	useEffect(() => {
 		const chatDiv = document.getElementById('chat-messages');
 		chatDiv?.scroll({ top: chatDiv?.scrollHeight, behavior: 'auto' });
 	}, [allWhatsappChat]);
-
-	const useStyles = makeStyles(() => ({
-		selectRoot: {
-			fontSize: '18px',
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-		selectSection: {
-			'&:focus': {
-				backgroundColor: 'rgba(0,0,0,0)',
-			},
-		},
-	}));
-	const muiclasses = useStyles();
-
-	const isUpdatedVaraiable = (variable: string) => {
-		let updatedVariable = getVariableValue(variable);
-		const isAvaliable = updatedDynamicVariable?.find(
-			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
-		);
-		return !!isAvaliable;
-	};
-	const openDynamcFieldModal = async (variable: string) => {
-		setDynamicModalVariable(Number(variable?.replace(/[{}]/g, '')));
-		setIsDynamcFieldModal(true);
-	};
-	const getUpdatedVariableValue = (variable: string) => {
-		let updatedVariable = getVariableValue(variable);
-		const variableValue = updatedDynamicVariable?.find(
-			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
-		)?.VariableValue;
-		return variableValue ? variableValue : variable;
-	};
-	const highlightText = (tagData: tagDataProps) => {
-		const isUpdated = isUpdatedVaraiable(tagData?.children);
-		return (
-			<strong
-				className={clsx(
-					classes.whatsappCampainHighlightText,
-					`${isUpdated && 'updated'}`
-				)}
-				onClick={() => openDynamcFieldModal(tagData?.children)}>
-				{isUpdated
-					? getUpdatedVariableValue(tagData?.children)
-					: tagData?.children}
-			</strong>
-		);
-	};
-	const onEmojiClick = (emoji: string) => {
-		setNewMessage(`${newMessage} ${emoji}`);
-	};
-
-	const onEditableDivChange = (e: BaseSyntheticEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		setNewMessage(e.target.textContent);
-	};
 
 	useEffect(() => {
 		getAPIAllWhatsappChat();
@@ -163,14 +75,6 @@ const ChatUi = ({
 		}
 	};
 
-	const countDown = ({ formatted }: displayCountDown) => {
-		return (
-			<span>
-				{formatted?.hours}:{formatted?.minutes}:{formatted?.seconds}
-			</span>
-		);
-	};
-
 	const chatHeader = () => {
 		return (
 			<header
@@ -191,62 +95,13 @@ const ChatUi = ({
 					/>
 				</div>
 
-				<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
-					<h2 className={`${classes.whatsappChat} chat__contact-name`}>
-						{' '}
-						{chatContacts.UserName || chatContacts.PhoneNumber || 'Pulseem'}
-						<span className={classes.whatsappChatUiStatusPadding}>
-							<Select
-								classes={{ root: muiclasses.selectSection }}
-								className={clsx(
-									classes.whatsappChatStatusSelect,
-									getStatusClass(chatContacts.ConversationStatusId)
-								)}
-								autoWidth
-								value={chatContacts.ConversationStatusId || ''}
-								variant='standard'
-								style={
-									chatContacts.ConversationStatusId
-										? {
-												fontSize: '12px',
-												padding: '8px 0px 8px 8px',
-												position: 'absolute',
-												borderRadius: '10px',
-												textAlign: 'center',
-										  }
-										: {
-												display: 'none',
-										  }
-								}
-								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
-								<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
-								<MenuItem value={2}>
-									{translator('whatsappChat.pending')}
-								</MenuItem>
-								<MenuItem value={3}>
-									{translator('whatsappChat.solved')}
-								</MenuItem>
-							</Select>
-						</span>
-					</h2>
-					<p className={`${classes.whatsappChat} chat__contact-desc`}>
-						{user.typing
-							? translator('whatsappChat.type')
-							: translator('whatsappChat.online')}
-					</p>
-				</div>
-
-				{whatsappChatSession.IsIn24Window && (
-					<div className={`${classes.whatsappChat} chat__actions`}>
-						<div
-							className={`${classes.whatsappChat} chat__action chat__action-icon`}>
-							<Countdown
-								date={whatsappChatSession?.ExpiryTime}
-								renderer={countDown}
-							/>
-						</div>
-					</div>
-				)}
+				<ChatHeaderContent
+					classes={classes}
+					whatsappChatSession={whatsappChatSession}
+					chatContacts={chatContacts}
+					handleUserStatus={handleUserStatus}
+					getStatusClass={getStatusClass}
+				/>
 			</header>
 		);
 	};
@@ -259,95 +114,19 @@ const ChatUi = ({
 					aria-label='scroll down'>
 					<Icon id='downArrow' />
 				</button>
-				<div className={`${classes.whatsappChat} chat__input-wrapper`}>
-					{whatsappChatSession.IsIn24Window || savedTemplate?.length > 0 ? (
-						<>
-							<button
-								aria-label='Emojis'
-								onClick={() => setShowEmojis(!showEmojis)}>
-								<EmojiPicker
-									classes={classes}
-									OnSelectEmoji={(emoji: string) => {
-										onEmojiClick(emoji);
-									}}
-									boxStyles={{ alignItems: 'center' }}
-								/>
-							</button>
-							<button
-								aria-label='chat'
-								onClick={() => setIsTemplateModal(true)}>
-								<Icon
-									id='chat'
-									className={`${classes.whatsappChat} chat__input-icon ${
-										showEmojis
-											? `${classes.whatsappChat} chat__input-icon--highlight`
-											: ''
-									}`}
-								/>
-							</button>
-							{savedTemplate?.length !== 0 ? (
-								<>
-									<div className={`${classes.whatsappChat} chat__input`}>
-										<Highlighter
-											searchWords={dynamicVariable}
-											autoEscape={true}
-											textToHighlight={newMessage}
-											highlightTag={(tagData: tagDataProps) =>
-												highlightText(tagData)
-											}
-										/>
-									</div>
-								</>
-							) : (
-								<>
-									<div
-										className={`${classes.whatsappChat} chat__input`}
-										data-text='Type a message'
-										contentEditable={savedTemplate?.length === 0 ? true : false}
-										suppressContentEditableWarning={
-											savedTemplate?.length === 0 ? true : false
-										}
-										onKeyUp={onEditableDivChange}></div>
-								</>
-							)}
-						</>
-					) : (
-						<div style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
-							<Stack
-								direction='row'
-								justifyContent='center'
-								alignItems='center'
-								spacing={2}>
-								<Typography color='textSecondary'>
-									<label style={{ fontSize: '20px' }}>
-										<>{translator('whatsappChat.conversation')}</>
-									</label>
-									<br />
-									<label style={{ fontSize: '15px' }}>
-										<>{translator('whatsappChat.cantSend')}</>
-									</label>
-								</Typography>
-
-								<Grid className={classes.manageTemplatesHeaderButtons}>
-									<Button
-										size='small'
-										className={'green'}
-										onClick={() => setIsTemplateModal(true)}>
-										<>{translator('whatsappChat.send')}</>
-									</Button>
-								</Grid>
-							</Stack>
-						</div>
-					)}
-					{(whatsappChatSession.IsIn24Window || savedTemplate?.length > 0) && (
-						<button aria-label='Send message' onClick={onChatSend}>
-							<Icon
-								id='send'
-								className={`${classes.whatsappChat} chat__send-icon`}
-							/>
-						</button>
-					)}
-				</div>
+				<ChatFooterContent
+					classes={classes}
+					updatedDynamicVariable={updatedDynamicVariable}
+					setDynamicModalVariable={setDynamicModalVariable}
+					setIsDynamcFieldModal={setIsDynamcFieldModal}
+					newMessage={newMessage}
+					setNewMessage={setNewMessage}
+					setIsTemplateModal={setIsTemplateModal}
+					savedTemplate={savedTemplate}
+					dynamicVariable={dynamicVariable}
+					whatsappChatSession={whatsappChatSession}
+					onChatSend={onChatSend}
+				/>
 			</footer>
 		);
 	};

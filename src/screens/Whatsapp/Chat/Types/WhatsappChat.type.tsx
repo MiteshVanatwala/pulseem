@@ -41,6 +41,46 @@ export type WhatsappChatUiProps = {
 	setAPIInboundChatStatus: () => void;
 };
 
+export type SideBarContactListProps = {
+	classes: ClassesType['classes'];
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	handleChatId: (
+		e: BaseSyntheticEvent,
+		Contacts: APIWhatsappChatSidebarContactsItemsData
+	) => void;
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
+};
+
+export type SideHeaderContactDropDownProps = {
+	classes: ClassesType['classes'];
+	phoneNumbersList: string[];
+	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	activePhoneNumber: string;
+};
+
+export type ChatHeaderContentProps = {
+	classes: ClassesType['classes'];
+	whatsappChatSession: APIWhatsappChatSessionData;
+	chatContacts: APIWhatsappChatSidebarContactsItemsData;
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
+};
+
+export type ChatFooterContentProps = {
+	classes: ClassesType['classes'];
+	updatedDynamicVariable: updatedVariable[];
+	setDynamicModalVariable: (dynamicModalVariable: number) => void;
+	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
+	newMessage: string;
+	setNewMessage: (newMessage: string) => void;
+	setIsTemplateModal: (isTemplateModal: boolean) => void;
+	savedTemplate: string;
+	dynamicVariable: string[];
+	whatsappChatSession: APIWhatsappChatSessionData;
+	onChatSend: () => void;
+};
+
 export type ChatTemplateProps = {
 	classes: ClassesType['classes'];
 	template: savedTemplateTypesProps;
