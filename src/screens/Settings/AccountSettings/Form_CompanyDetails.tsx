@@ -3,8 +3,10 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
   Grid,
   MenuItem,
+  OutlinedInput,
   Select,
   TextField,
   Typography,
@@ -12,6 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
+import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import {
   MdArrowBackIos,
   MdArrowForwardIos,
@@ -331,6 +334,7 @@ const FORM_COMPANY_DETAILS = ({
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
                 error={!!errors.CellPhone}
+                inputProps={{ maxLength: 13 }}
               />
               {!!errors.CellPhone && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -406,6 +410,34 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
+            <Grid item xs={12} sm={3} md={4} className={clsx(classes.mt3)}>
+              <FormControlLabel
+                control={
+                  <PulseemSwitch
+                    switchType="ios"
+                    classes={classes}
+                    checked={companyDetails?.TwoFactorAuthEnabled === true}
+                    //@ts-ignore
+                    onColor="#0371ad"
+                    handleDiameter={20}
+                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                    height={15}
+                    width={40}
+                    className={clsx({ [classes.rtlSwitch]: isRTL })}
+                    id="switchIDS425"
+                    onChange={(e: any) => handleChange(e, "TwoFactorAuth")}
+                  />
+                }
+                label={
+                  <>
+                    {t(
+                      "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
+                    )}
+                  </>
+                }
+              />
+            </Grid>
             <Grid
               item
               xs={12}
@@ -426,8 +458,22 @@ const FORM_COMPANY_DETAILS = ({
                 style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10 }}
               >
                 <Select
-                  style={{
-                    height: 40
+                  native
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 40
+                      },
+                    }
+                  }}
+                  input={<OutlinedInput />}
+                  inputProps={{
+                    'aria-label': 'Without label',
+                    style: {
+                      padding: 10,
+                      maxWidth: 210,
+                      paddingInlineStart: 15,
+                    }
                   }}
                   disabled={!companyDetails?.TwoFactorAuthEnabled}
                   autoWidth
@@ -440,13 +486,13 @@ const FORM_COMPANY_DETAILS = ({
                     { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
                   ].map((so, index) => {
                     return (
-                      <MenuItem
+                      <option
                         key={so.value}
                         value={so.value}
                         className={classes.dropDownItem}
                       >
                         {so.name}
-                      </MenuItem>
+                      </option>
                     );
                   })}
                 </Select>
@@ -546,6 +592,7 @@ const FORM_COMPANY_DETAILS = ({
                   classes.actionButton,
                   classes.actionButtonLightGreen
                 )}>
+                {/* @ts-ignore */}
                 {t('settings.accountSettings.fixedComDetails.btnUpdate')}
               </Button>
             </Grid>

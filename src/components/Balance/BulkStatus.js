@@ -149,7 +149,7 @@ const BulkStatus = ({ classes }) => {
   const showPackageDialogType = async (packageType) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
     dispatch(setAccountFeatures(settings.payload));
-    if (!settings.payload?.Data.Account.IsPaying) {
+    if (!settings?.payload?.Data?.Account?.IsPaying) {
       packageType = -1;
       setPackageType(-1);
     }

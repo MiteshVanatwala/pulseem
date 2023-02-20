@@ -36,10 +36,11 @@ import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/Inbound/Sms/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
-import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
+import NewsLetterInfo from './screens/Newsletter/Wizard/NewsLetterInfo';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
+import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -133,11 +134,11 @@ const renderRoutes = (classes, history) => {
       <Route
         exact
         path="/Campaigns/Create"
-        element={<NewsLetterWizard classes={classes} />}
+        element={<NewsLetterInfo classes={classes} />}
       />
       <Route
         path="/Campaigns/Create/:id"
-        element={<NewsLetterWizard classes={classes} />}
+        element={<NewsLetterInfo classes={classes} />}
       />
       <Route
         exact
@@ -380,8 +381,9 @@ const renderRoutes = (classes, history) => {
       />
       {/* Settings */}
       <Route
+        exact
         path={`/AccountSettings`}
-        element={transferUrl('/Pulseem/AccountSettings.aspx')}
+        element={<AccountSettingsEditor classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}

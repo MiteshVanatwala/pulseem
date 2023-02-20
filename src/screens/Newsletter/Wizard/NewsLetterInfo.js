@@ -133,7 +133,7 @@ const useStyles = makeStyles({
     }
 })
 
-const NewsLetterWizard = ({ classes }) => {
+const NewsLetterInfo = ({ classes }) => {
     const { id } = useParams();
     const queryParams = new URLSearchParams(window.location.search)
     const isNew = queryParams.get("new")
@@ -872,7 +872,8 @@ const NewsLetterWizard = ({ classes }) => {
                     )}
                     style={{ marginInlineStart: '8px' }}
                     color="primary"
-                >{t('master.continueToNewEditor')}</Button>)
+                >{t('master.continueToNewEditor')}
+                </Button>)
             }
             else {
                 wizardButtons.push(<><Button
@@ -894,11 +895,17 @@ const NewsLetterWizard = ({ classes }) => {
                         className={clsx(
                             classes.actionButton,
                             classes.actionButtonLightGreen,
-                            classes.backButton
+                            classes.backButton,
+                            classes.ribbonContainer
                         )}
                         style={{ marginInlineStart: '8px' }}
                         color="primary"
-                    >{t('master.continueToNewEditor')}</Button>}
+                    >
+                        {t('master.continueToNewEditor')}
+                        <div className="wrap">
+                            <span className="ribbon">{t('mainReport.newFeature')}</span>
+                        </div>
+                    </Button>}
                 </>)
             }
         }
@@ -1137,4 +1144,4 @@ const NewsLetterWizard = ({ classes }) => {
     )
 }
 
-export default NewsLetterWizard
+export default NewsLetterInfo

@@ -1,4 +1,5 @@
-import { Typography, Box } from "@material-ui/core";
+import { Typography, Divider, Box } from "@material-ui/core";
+import { ListIcon } from "../../assets/images/managment";
 import clsx from "clsx";
 
 interface TitleObject {
@@ -25,6 +26,7 @@ export const Title = ({
         classes.mgmtTitleContainer
       )}
     >
+      {/* {isIcon && <ListIcon className={classes.mr15} />} */}
       <Typography className={clsx(classes.managementTitle, "mgmtTitle")}>
         {Text}
       </Typography>

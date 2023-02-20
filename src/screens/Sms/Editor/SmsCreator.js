@@ -112,7 +112,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { language, windowSize, isRTL, accountFeatures } = useSelector(
+  const { language, windowSize, isRTL, accountFeatures, CoreToastMessages } = useSelector(
     (state) => state.core
   );
   const {
@@ -1226,6 +1226,10 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         case 8: {
           setDialogType({ type: "englishLetterDialog" });
+          break;
+        }
+        case 9: {
+          setToastMessage(CoreToastMessages.XSS_ERROR);
           break;
         }
         default: {

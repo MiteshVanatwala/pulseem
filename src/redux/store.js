@@ -21,7 +21,6 @@ import galleryReducer from './reducers/gallerySlice'
 import whatsappReducer from './reducers/whatsappSlice'
 import AccountSettingsSlice from './reducers/AccountSettingsSlice';
 
-
 export default configureStore({
   reducer: {
     core: coreReducer,

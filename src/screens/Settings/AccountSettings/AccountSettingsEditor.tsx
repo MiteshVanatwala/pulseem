@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Divider, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-// import { Title } from "../../../components/managment/Title";
+import { Title } from "../../../components/managment/Title";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,6 +27,7 @@ const AccountSettingsEditor = () => {
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+  const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -113,7 +114,7 @@ const AccountSettingsEditor = () => {
 
   }
 
-  const handleResponses = (response: any) => {
+  const handleResponses = async (response: any) => {
     switch (response?.StatusCode || response?.payload?.StatusCode) {
       case 201: {
         setToastMessage(ToastMessages.SETTINGS_SAVED);
@@ -148,6 +149,11 @@ const AccountSettingsEditor = () => {
         }
         break;
       }
+      case 403: {
+        setToastMessage(CoreToastMessages?.XSS_ERROR);
+        await dispatch(getAccountSettings());
+        break;
+      }
       case 200:
       case 500:
       default: {
@@ -180,6 +186,7 @@ const AccountSettingsEditor = () => {
       <Box className={clsx(classes.settingsContainer)}>
         <Box className={clsx("head", classes.flexSpaceBetween)}>
           <Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
+            {/* @ts-ignore */}
             {t('settings.accountSettings.title')}
           </Typography>
           <Box style={{ marginInlineStart: 'auto' }}>

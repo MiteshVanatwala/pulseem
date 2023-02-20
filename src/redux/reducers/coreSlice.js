@@ -22,7 +22,10 @@ export const coreSlice = createSlice({
     isAllowSwitchAccount: null,
     billingTypeId: null,
     // smsOldVersion: false,
-    accountSettings: null
+    accountSettings: null,
+    CoreToastMessages: {
+      XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
+    }
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -32,9 +35,9 @@ export const coreSlice = createSlice({
     setAccountFeatures: (state, action) => {
       const data = action.payload?.Data;
       state.accountSettings = data;
-      state.accountFeatures = data.Account.AccountFeatures.map(String);
+      state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
       setCookie("accountSettings", data)
-      setCookie("accountFeatures", data.Account.AccountFeatures.map(String));
+      setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
     },
     setLanguage: (state, action) => {
       state.language = action.payload

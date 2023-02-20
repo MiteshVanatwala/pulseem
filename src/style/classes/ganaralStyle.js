@@ -2604,7 +2604,129 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   flexCenterOfCenter: {
     display: 'flex', width: '100%', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
   },
+  settingsContainer: {
+    marginBottom: 68,
+    background: '#fff',
+    marginTop: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    '& .head': {
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      '& .mgmtTitle': {
+        fontSize: 20
+      }
+    },
+    '& .containerBody': {
+      position: 'relative',
+      paddingBottom: 48,
+      '& .settingsWrapper': {
+        paddingLeft: 31,
+        '& .mgmtTitle': {
+          fontSize: 18
+        },
+        '& .formContainer': {
+          position: 'relative',
+          paddingLeft: 15,
+          '& .form': {
+            background: '#fff',
+            zIndex: 100,
+            position: 'relative',
+          },
+          '& .svg_data_analysis': {
+            position: 'absolute',
+            right: 86.44,
+            left: 'auto',
+            top: 49.17,
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .svg_app_settings': {
+            position: 'absolute',
+            top: 121.3,
+            right: 93.14,
+            left: 'auto',
+            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
+          },
+          '& .subHeading': {
+            marginTop: 39,
+            color: '#000 !important',
+            fontWeight: 900
+          },
+          '& .MuiFormControl-root': {
+            '& .MuiSelect-root': {
+              padding: 0,
+              paddingInlineStart: 15,
+              '&:focus': {
+                background: 'none'
+              },
+              '& input': {
+                padding: 0
+              }
+            },
+            '& .subform': {
+              marginTop: 22,
+              '& .selectWrapper': {
+                height: 'auto',
+                '& .MuiTypography-body1': {
+                  marginLeft: isRTL ? 12 : 0
+                }
+              },
+
+            }
+          },
+          '& .MuiTypography-body1': {
+            color: '#000'
+          },
+          '& .link': {
+            fontSize: 15,
+            color: '#FF0054',
+            padding: '2px 0',
+            // marginTop: 28,
+            marginLeft: 0
+          }
+        }
+      },
+      '& .textBoxWrapper': {
+        paddingTop: 30,
+        paddingInlineEnd: 30,
+        '& .MuiTypography-body1': {
+          color: '#979797'
+        },
+        '& .MuiTextField-root': {
+          paddingBottom: 2,
+        }
+      }
+    }
+  },
   passwordDialog: {
     maxWidth: windowSize !== 'xs' ? '25vw' : null
-  }
+  },
+  ribbonContainer: {
+    position: 'relative',
+    '& .wrap': {
+      width: 'inherit',
+      height: '58px',
+      position: 'absolute',
+      top: '-2px',
+      left: '1.5px',
+      overflow: 'hidden',
+      '& .ribbon': {
+        width: '45px',
+        height: '10px',
+        lineHeight: '10px',
+        position: 'absolute',
+        top: '8px',
+        right: isRTL ? 'auto' : '-10px',
+        left: isRTL ? '-10px' : 'auto',
+        zIndex: '2',
+        overflow: 'hidden',
+        transform: isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+        '-webkit-transform': isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+        boxShadow: '0px 0px 2px 1px #b7b7b7,  0px 21px 5px -18px rgba(0,0,0,0.6)',
+        background: '#ff0000',
+        textAlign: 'center',
+        fontSize: '0.5rem',
+      }
+    }
+  },
 });

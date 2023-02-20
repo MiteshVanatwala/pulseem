@@ -16,9 +16,9 @@ export const getSettingsItem = (t, style = '', isAllowSwitchAccount) => ({
     src={SettingsLogo}
     className={style}
   />,
-  href: '/Pulseem/AccountSettings.aspx',
+  href: '/react/AccountSettings',
   options: [
-    { title: t('master.RadMenuItemResource2.Text'), href: '/Pulseem/AccountSettings.aspx?fromreact=true', iconSrc: SettingsMenuIcon, isShow: true },
+    { key: 'accountSettings', title: t('master.RadMenuItemResource2.Text'), href: '/react/AccountSettings', iconSrc: SettingsMenuIcon, isShow: true },
     { title: t('master.linkAccountBilling.Text'), href: '/Pulseem/AccountBilling.aspx?fromreact=true', iconSrc: DolarMenuIcon, isShow: true },
     { title: t('master.RadMenuItemResource3.Text'), href: '/Pulseem/AccountUsers.aspx?fromreact=true', iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
     { title: t('master.RadMenuItemResource4.Text'), href: '/Pulseem/AccountUsersReport.aspx?fromreact=true', iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount },

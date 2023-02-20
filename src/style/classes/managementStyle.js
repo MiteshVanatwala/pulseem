@@ -852,6 +852,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiInputLabel-formControl": {
       top: -7,
     },
+    "& .MuiSvgIcon-root.MuiSelect-icon.MuiSelect-iconOutlined": {
+      left: "auto !important",
+      right: "10px !important"
+    },
   },
   formControlSelect: {
     "& .MuiSelect-outlined.MuiSelect-outlined": {
@@ -1112,6 +1116,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingTop: 20,
   },
   link: {
+    fontSize: 16,
     textDecoration: 'underline',
     margin: '0 5px',
     cursor: 'pointer'
@@ -1789,16 +1794,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           }
         }
         ,
-        '& .btnVerifyNewLtr': {
-          position: "absolute",
-          top: 0,
-          right: 10
-        },
-        '& .btnVerifyNewRtl': {
-          position: "absolute",
-          top: 0,
-          left: 10
-        },
+        // '& .btnVerifyNewLtr': {
+        //   position: "absolute",
+        //   top: 0,
+        //   right: 10
+        // },
+        // '& .btnVerifyNewRtl': {
+        //   position: "absolute",
+        //   top: 0,
+        //   left: 10
+        // },
         '& .MuiDivider-root': {
           marginTop: 6,
           height: '1.3px',
