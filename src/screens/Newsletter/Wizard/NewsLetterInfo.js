@@ -871,7 +871,7 @@ const NewsLetterInfo = ({ classes }) => {
                 >
                     {t('master.continueToNewEditor')}
                     <div className="wrap">
-                        <span className="ribbon">{t('master.new')}</span>
+                        <span className="ribbon">{t('mainReport.newFeature')}</span>
                     </div>
                 </Button>)
             }
