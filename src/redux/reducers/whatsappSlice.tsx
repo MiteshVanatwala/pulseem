@@ -452,6 +452,109 @@ export const getCampaignDetailById = createAsyncThunk(
 			const response = await PulseemReactInstance.get(
 				`whatsAppCampaign/GetWhatsappCampaignDetail/${campaignID}`
 			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChatContacts',
+	async (number: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChatContacts`,
+				{
+					PhoneNumber: number,
+					IsPagination: true,
+					pageNo: 1,
+					pageSize: 20,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getWhatsappChat = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChat',
+	async (
+		data: {
+			activePhoneNumber: string;
+			activeUserNumber: string;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChat`,
+				{
+					PhoneNumber: data.activePhoneNumber,
+					UserNumber: data.activeUserNumber,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getInboundWhatsappChatStatus = createAsyncThunk(
+	'WhatsAppChat/GetInboudSessionStatus',
+	async (
+		data: {
+			activePhoneNumber: string;
+			activeUserNumber: string;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetInboudSessionStatus`,
+				{
+					PhoneNumber: data.activePhoneNumber,
+					UserNumber: data.activeUserNumber,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const manageWhatsappChatCoversationStatus = createAsyncThunk(
+	'WhatsAppChat/ManageWhatsAppConversationStatus',
+	async (
+		data: {
+			ClientNumber: string;
+			Sendernumber: string;
+			StatusId: number;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/ManageWhatsAppConversationStatus`,
+				{
+					Sendernumber: data.Sendernumber,
+					ClientNumber: data.ClientNumber,
+					StatusId: data.StatusId,
+				}
+			);
+
 			return response.data;
 		} catch (error) {
 			const err = error as ApiError;

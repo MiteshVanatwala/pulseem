@@ -4,5 +4,13 @@
 	"searchPlaceholder": "Search or start a new chat",
 	"conversation": "Conversation is closed.",
 	"cantSend": "You can not send messages in closed conversation.",
-	"send": "Send Template"
+	"send": "Send Template",
+	"open": "Open",
+	"pending": "Pending",
+	"solved": "Solved",
+	"allStatus": "All Status",
+	"choose": "Choose",
+	"chooseTemplate": "Choose Template",
+	"visitUs": "Visit Us",
+	"callUs": "Call Us"
 }

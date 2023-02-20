@@ -77,19 +77,20 @@ import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSet
 const renderRoutes = (classes, redirect) => {
 	const transferUrl =
 		(url = '', param = '') =>
-			() => {
-				const { campaignID, automationID, id, notificationID } = useParams();
-				const addParam = {
-					campaign: campaignID,
-					automation: automationID,
-					notification: notificationID,
-					id: id,
-				};
-
-				window.location.href = `https://www.pulseem.co.il/${url}${addParam[param] || ''
-					}`;
-				return <></>;
+		() => {
+			const { campaignID, automationID, id, notificationID } = useParams();
+			const addParam = {
+				campaign: campaignID,
+				automation: automationID,
+				notification: notificationID,
+				id: id,
 			};
+
+			window.location.href = `https://www.pulseem.co.il/${url}${
+				addParam[param] || ''
+			}`;
+			return <></>;
+		};
 	return (
 		<Routes>
 			<Route
@@ -294,6 +295,10 @@ const renderRoutes = (classes, redirect) => {
 
 			<Route
 				path={whatsappRoutes.CHAT}
+				element={<WhatsappChat classes={classes} />}
+			/>
+			<Route
+				path={whatsappRoutes.CHAT_CONVERSATION}
 				element={<WhatsappChat classes={classes} />}
 			/>
 			{/* Settings */}
@@ -538,20 +543,20 @@ const App = ({ screenSize }) => {
 				certthumbprint: billingTypeId,
 				role: isAdmin,
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone':
-				phone = '',
+					phone = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality':
-				locality = 'he-IL',
+					locality = 'he-IL',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince':
-				imageURL = '',
+					imageURL = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri':
-				isWhiteLabel = '',
+					isWhiteLabel = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision':
-				cameFromSubAccount = '',
+					cameFromSubAccount = '',
 				// 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin = '',
 				'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name':
-				basename = '',
+					basename = '',
 				'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
-				isAllowSwitchAccount = '',
+					isAllowSwitchAccount = '',
 			} = jwt;
 
 			dispatch(

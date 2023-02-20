@@ -63,7 +63,7 @@ const ChatTemplateModal = ({
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.alertModal}>
 					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-						Choose Template
+						{translator('whatsappChat.chooseTemplate')}
 					</div>
 					<Box className={classes.alertModalClose}>
 						<Close fontSize={'small'} onClick={onClose} />
@@ -111,7 +111,7 @@ const ChatTemplateModal = ({
 													onClick={() =>
 														onChoose(template, getTemplateText(template))
 													}>
-													<>Choose</>
+													<>{translator('whatsappChat.choose')}</>
 												</Button>
 											</Grid>
 										</Grid>
@@ -123,7 +123,7 @@ const ChatTemplateModal = ({
 													<i
 														className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
 													<span className={classes.callToActionButtonText}>
-														Visit Us
+														{translator('whatsappChat.callUs')}
 													</span>
 												</Button>
 											</Box>
@@ -132,7 +132,7 @@ const ChatTemplateModal = ({
 													<i
 														className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
 													<span className={classes.callToActionButtonText}>
-														Call Us
+														{translator('whatsappChat.callUs')}
 													</span>
 												</Button>
 											</Box>

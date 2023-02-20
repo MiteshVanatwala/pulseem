@@ -2,11 +2,17 @@ import ChatUi from './Component/ChatUi';
 import SideBar from './Component/SideBar';
 import './css/index.css';
 import DefaultScreen from '../../DefaultScreen';
-import { WhatsappChatProps } from './Types/WhatsappChat.type';
-import { BaseSyntheticEvent, useEffect, useMemo, useState } from 'react';
+import {
+	APIWhatsappChatConversationStatusData,
+	APIWhatsappChatSessionData,
+	APIWhatsappChatSession,
+	APIWhatsappChatSidebarContactsItemsData,
+	APIWhatsappChatSidebarContactsData,
+	WhatsappChatProps,
+} from './Types/WhatsappChat.type';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
 	buttonsDataProps,
-	callToActionFieldProps,
 	callToActionProps,
 	quickReplyButtonProps,
 	savedTemplateAPIProps,
@@ -20,7 +26,13 @@ import {
 	templateDataProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import { useDispatch } from 'react-redux';
-import { getSavedTemplates } from '../../../redux/reducers/whatsappSlice';
+import {
+	getInboundWhatsappChatStatus,
+	getSavedTemplates,
+	getWhatsappChatContactsByPhoneNumber,
+	manageWhatsappChatCoversationStatus,
+	userPhoneNumbers,
+} from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
 import { getDynamicFields } from '../Common';
@@ -29,6 +41,7 @@ import {
 	landingPageDataProps,
 	personalFieldAPIProps,
 	personalFieldDataProps,
+	phoneNumberAPIProps,
 	updatedVariable,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import DynamicModal from '../Campaign/Popups/DynamicModal';
@@ -36,9 +49,44 @@ import {
 	getAccountExtraData,
 	getPreviousLandingData,
 } from '../../../redux/reducers/smsSlice';
-import { buttonTypes } from '../Constant';
+import { apiStatus, buttonTypes, whatsappChatStatuses } from '../Constant';
+import { Loader } from '../../../components/Loader/Loader';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
+	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [chatContacts, setChatContacts] =
+		useState<APIWhatsappChatSidebarContactsItemsData>({
+			ConversationStatusId: 0,
+			IsTemplate: false,
+			IsUnsubscribed: false,
+			LastMessage: '',
+			LastMessageDate: '',
+			PhoneNumber: '',
+			Unread: 0,
+			UserName: '',
+		});
+	const [sideChatContacts, setSideChatContacts] = useState<
+		APIWhatsappChatSidebarContactsItemsData[]
+	>([]);
+	const [filteredSideChatContacts, setFilteredSideChatContacts] =
+		useState<APIWhatsappChatSidebarContactsItemsData[]>(sideChatContacts);
+	const [activePhoneNumber, setActivePhoneNumber] = useState<string>('');
+	const [whatsappChatSession, setWhatsappChatSession] =
+		useState<APIWhatsappChatSessionData>({
+			IsIn24Window: false,
+			ExpiryTime: '',
+		});
+
+	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
+		e.preventDefault();
+
+		setWhatsappChatCoversationStatus(
+			e.target.value,
+			activePhoneNumber,
+			ClientNumber
+		);
+	};
+
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
@@ -59,43 +107,41 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
+
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
 			typeOfAction: '',
 			fields: [
 				{
-					fieldName: translator('whatsapp.websiteButtonText'),
+					fieldName: 'whatsapp.websiteButtonText',
 					type: 'text',
-					placeholder: translator('whatsapp.websiteButtonTextPlaceholder'),
+					placeholder: 'whatsapp.websiteButtonTextPlaceholder',
 					value: '',
 				},
 			],
 		},
 	];
-	const phoneNumberField = useMemo<callToActionFieldProps[]>(
-		() => [
-			{
-				fieldName: translator('whatsapp.phoneButtonText'),
-				type: 'text',
-				placeholder: translator('whatsapp.phoneButtonTextPlaceholder'),
-				value: '',
-			},
-			{
-				fieldName: translator('whatsapp.country'),
-				type: 'select',
-				placeholder: 'Select Your Country Code',
-				value: '+972 Israel',
-			},
-			{
-				fieldName: translator('whatsapp.phoneNumber'),
-				type: 'tel',
-				placeholder: translator('whatsapp.phoneNumberPlaceholder'),
-				value: '',
-			},
-		],
-		[translator]
-	);
+	const phoneNumberField = [
+		{
+			fieldName: 'whatsapp.phoneButtonText',
+			type: 'text',
+			placeholder: 'whatsapp.phoneButtonTextPlaceholder',
+			value: '',
+		},
+		{
+			fieldName: 'whatsapp.country',
+			type: 'select',
+			placeholder: 'Select Your Country Code',
+			value: '+972 Israel',
+		},
+		{
+			fieldName: 'whatsapp.phoneNumber',
+			type: 'tel',
+			placeholder: 'whatsapp.phoneNumberPlaceholder',
+			value: '',
+		},
+	];
 	const initialFieldRow = {
 		id: uniqid(),
 		typeOfAction: 'phonenumber',
@@ -121,6 +167,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	let updatedFileData: string = '';
 
 	useEffect(() => {
+		setAPIInboundChatStatus();
+		getPhoneNumber();
 		getSavedTemplateFields();
 		if (!personalFields || landingPages?.length <= 0) {
 			getDynamicModalValues();
@@ -130,6 +178,85 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const setWhatsappChatCoversationStatus = async (
+		StatusId: number,
+		Sendernumber: string,
+		ClientNumber: string
+	) => {
+		const whatsAppChatConversationStatusData: APIWhatsappChatConversationStatusData =
+			await dispatch<any>(
+				manageWhatsappChatCoversationStatus({
+					ClientNumber,
+					Sendernumber,
+					StatusId,
+				})
+			);
+	};
+
+	const setAPIInboundChatStatus = async () => {
+		const whatsAppChatSessionStatus: APIWhatsappChatSession =
+			await dispatch<any>(
+				getInboundWhatsappChatStatus({
+					activePhoneNumber: activePhoneNumber,
+					activeUserNumber: chatContacts.PhoneNumber,
+				})
+			);
+		if (whatsAppChatSessionStatus.payload.Status === apiStatus.SUCCESS) {
+			setWhatsappChatSession(whatsAppChatSessionStatus.payload.Data);
+		} else {
+			setWhatsappChatSession({
+				IsIn24Window: false,
+				ExpiryTime: '',
+			});
+		}
+	};
+
+	const setAPIWhatsAppChatContacts = async (activeUser: string) => {
+		setIsLoader(true);
+		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
+			await dispatch<any>(getWhatsappChatContactsByPhoneNumber(activeUser));
+
+		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
+			setSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
+			setFilteredSideChatContacts(whatsAppChatContactsData.payload.Data.Items);
+			setIsLoader(false);
+		} else {
+			setSideChatContacts([]);
+			setFilteredSideChatContacts([]);
+			setIsLoader(false);
+		}
+	};
+
+	const getPhoneNumber = async () => {
+		const { payload: phoneNumberData }: phoneNumberAPIProps =
+			await dispatch<any>(userPhoneNumbers());
+		if (phoneNumberData?.Data?.length > 0) {
+			setActivePhoneNumber(phoneNumberData?.Data[0]);
+			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0]);
+		}
+		setPhoneNumbersList(phoneNumberData?.Data);
+	};
+
+	const onActiveUserChange = (e: BaseSyntheticEvent) => {
+		setActivePhoneNumber(e.target.value?.replace(/\D/g, ''));
+		setAPIWhatsAppChatContacts(e.target.value?.replace(/\D/g, ''));
+	};
+
+	const getStatusClass = (status: number) => {
+		switch (status) {
+			case 1:
+				return whatsappChatStatuses.OPEN;
+			case 2:
+				return whatsappChatStatuses.PENDING;
+			case 3:
+				return whatsappChatStatuses.SOLVED;
+
+			default:
+				break;
+		}
+	};
+
 	const getDynamicModalValues = async () => {
 		const staticPersonalField: personalFieldDataProps = {
 			Status: translator('common.Status'),
@@ -339,10 +466,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
-	const handleChatId = (e: BaseSyntheticEvent, id: number) => {
-		e.preventDefault();
-		console.log('Chat Id', id);
+	const handleChatId = (
+		e: BaseSyntheticEvent,
+		contacts: APIWhatsappChatSidebarContactsItemsData
+	) => {
+		setChatContacts(contacts);
 	};
+
 	return (
 		<>
 			<DefaultScreen
@@ -358,6 +488,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							classes={classes}
 							setIsMobileSideBar={() => setIsMobileSideBar(!isMobileSideBar)}
 							handleChatId={handleChatId}
+							activePhoneNumber={activePhoneNumber}
+							setActiveUser={setActivePhoneNumber}
+							getPhoneNumber={getPhoneNumber}
+							onActiveUserChange={onActiveUserChange}
+							sideChatContacts={sideChatContacts}
+							filteredSideChatContacts={filteredSideChatContacts}
+							setFilteredSideChatContacts={setFilteredSideChatContacts}
+							phoneNumbersList={phoneNumbersList}
+							handleUserStatus={handleUserStatus}
+							getStatusClass={getStatusClass}
+							chatContacts={chatContacts}
 						/>
 						<ChatUi
 							isMobileSideBar={isMobileSideBar}
@@ -376,6 +517,12 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							setIsDynamcFieldModal={setIsDynamcFieldModal}
 							setDynamicModalVariable={setDynamicModalVariable}
 							savedTemplate={savedTemplate}
+							chatContacts={chatContacts}
+							activePhoneNumber={activePhoneNumber}
+							filteredSideChatContacts={filteredSideChatContacts}
+							whatsappChatSession={whatsappChatSession}
+							handleUserStatus={handleUserStatus}
+							getStatusClass={getStatusClass}
 						/>
 					</div>
 				</div>
@@ -391,6 +538,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					}
 					dynamicVariable={updatedDynamicVariable}
 				/>
+				<Loader isOpen={isLoader} showBackdrop={true} />
 			</DefaultScreen>
 		</>
 	);

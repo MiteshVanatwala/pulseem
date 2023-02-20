@@ -26,13 +26,35 @@ export type WhatsappChatUiProps = {
 	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
 	setDynamicModalVariable: (dynamicModalVariable: number) => void;
 	savedTemplate: string;
+	activePhoneNumber: string;
+	chatContacts: APIWhatsappChatSidebarContactsItemsData;
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	whatsappChatSession: APIWhatsappChatSessionData;
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
 };
 
 export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
-	handleChatId: (e: BaseSyntheticEvent, chatId: number) => void;
+	handleChatId: (
+		e: BaseSyntheticEvent,
+		Contacts: APIWhatsappChatSidebarContactsItemsData
+	) => void;
+	setActiveUser: (activeUser: string) => void;
+	getPhoneNumber: () => void;
+	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	chatContacts: APIWhatsappChatSidebarContactsItemsData;
+	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	setFilteredSideChatContacts: (
+		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[]
+	) => void;
+	phoneNumbersList: string[];
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
+	activePhoneNumber: string;
 };
 
 export type chatModalProps = {
@@ -53,4 +75,106 @@ export type AllIconComponentProps = {
 
 export type AllIconProps = {
 	[key: string]: (props: AllIconComponentProps) => JSX.Element;
+};
+
+export type APIWhatsappChatSidebarContactsItemsData = {
+	ConversationStatusId: number;
+	IsTemplate: boolean;
+	IsUnsubscribed: boolean;
+	LastMessage: string;
+	LastMessageDate: string;
+	PhoneNumber: string;
+	Unread: number;
+	UserName: string;
+};
+
+//SidebarContacts Main inbound data types
+export type APIWhatsappChatSidebarContactsMainData = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatSidebarContactsItemsData[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APIWhatsappChatSidebarContactsPayloadData = {
+	Data: APIWhatsappChatSidebarContactsMainData;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatSidebarContactsData = {
+	payload: APIWhatsappChatSidebarContactsPayloadData;
+};
+
+// TemplateData Variables (PersonalField,Text,Link,LandingPage,Navigation)
+export type APIWhatsappChatVariablesData = {
+	'1': string;
+	'2': string;
+};
+
+//According to API inbound schema for template data types
+export type APIWhatsappChatTypesData = {
+	text: { body: string };
+};
+
+export type APIWhatsappChatTemplateData = {
+	types: APIWhatsappChatTypesData;
+	variables: APIWhatsappChatVariablesData;
+};
+
+export type APIWhatsappChatItemsData = {
+	IsInbound: null | boolean;
+	IsTemplate: boolean;
+	MediaUrl: string;
+	Message: string;
+	MessageDate: string;
+	MessageDateText: null | string;
+	SmsStatus: string;
+	SmsStatusId: number;
+	TemplateData: APIWhatsappChatTemplateData;
+};
+
+//Chat Main inbound data types
+export type APIWhatsappChatMainData = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatItemsData[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APIWhatsappChatPayloadData = {
+	Data: APIWhatsappChatMainData;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatData = {
+	payload: APIWhatsappChatPayloadData;
+};
+
+export type APIWhatsappChatSessionData = {
+	ExpiryTime: string;
+	IsIn24Window: boolean;
+};
+
+export type APIWhatsappChatSessionPayloadData = {
+	Data: APIWhatsappChatSessionData;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatSession = {
+	payload: APIWhatsappChatSessionPayloadData;
+};
+
+export type APIWhatsappChatConversationStatusPayloadData = {
+	Status: string;
+	Message: string;
+	Data: null;
+};
+
+export type APIWhatsappChatConversationStatusData = {
+	payload: APIWhatsappChatConversationStatusPayloadData;
 };
