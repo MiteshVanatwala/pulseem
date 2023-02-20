@@ -140,7 +140,7 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { accountSettings, isRTL } = useSelector((state) => state.core);
+    const { accountSettings, isRTL, CoreToastMessages } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -281,6 +281,10 @@ const NewsLetterInfo = ({ classes }) => {
                 setToastMessage(ToastMessages.INVALID_CAMPAIGN_ID)
                 break;
             }
+            case 403: {
+                setToastMessage(CoreToastMessages?.XSS_ERROR);
+                break;
+            }
             case 404: {
                 setToastMessage(ToastMessages.CAMPAIGN_NOT_FOUND)
                 break;
@@ -304,7 +308,7 @@ const NewsLetterInfo = ({ classes }) => {
                 break;
             }
             case 403: {
-                setToastMessage(ToastMessages.FILE_EXT_NOT_ALWD)
+                setToastMessage(CoreToastMessages.XSS_ERROR)
                 break;
             }
             case 406: {
@@ -438,7 +442,11 @@ const NewsLetterInfo = ({ classes }) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
-                handleSubmitNewsletterResponse(savedCampaign)
+                handleSubmitNewsletterResponse(savedCampaign);
+                if (savedCampaign?.StatusCode === 403) {
+                    return false;
+                }
+
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
