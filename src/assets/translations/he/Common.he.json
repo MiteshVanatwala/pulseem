@@ -601,5 +601,5 @@
   "templateId": "מזהה תבנית",
   "commingSoon": "בקרוב!",
   "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים",
-  "xssError": "המערכת לא תאפשר קוד Html, Scripts או כל שרשור אחר שהוא לא מחרוזת!"
+  "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!"
 }
