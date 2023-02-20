@@ -1278,20 +1278,23 @@ const NotificationManagement = ({ classes }) => {
       containerClass={classes.management}>
       <Box className={'topSection'}>
         <Title
-          Text={t('notifications.notificationManagement')} classes={classes}
-          ContainerStyle={{ display: 'flex', flexWrap: 'wrap' }}
+          classes={classes}
           Element={
-            <Button onClick={() => {
-              setCookie('scriptDialog', true);
-              setShowScriptDialog(true);
-            }
-            }
-              className={clsx(
-                classes.implementButtonFlex,
-                classes.btn, classes.btnRounded
-              )}
-              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
-            >{t('master.implementScript')}</Button>
+            <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
+              <Typography style={{ color: '#4D4D4D', fontSize: 29 }}>{t('notifications.notificationManagement')}</Typography>
+              <Button onClick={() => {
+                setCookie('scriptDialog', true);
+                setShowScriptDialog(true);
+              }
+              }
+                className={clsx(
+                  classes.implementButtonFlex,
+                  classes.btn, classes.btnRounded,
+                )}
+                style={{ alignSelf: 'flex-end' }}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+              >{t('master.implementScript')}</Button>
+            </Box>
           } />
         {renderSearchSection()}
       </Box>

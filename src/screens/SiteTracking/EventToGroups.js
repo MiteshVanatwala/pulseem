@@ -98,14 +98,13 @@ const EventToGroups = ({
         dispatch(deleteMetaData(currentEvent.id));
     }
 
-    return <Box id={currentEvent.id} className={classes.marginBlock20}
+    return <Box id={currentEvent.id} className={clsx(classes.dFlex, classes.flexWrap, classes.marginBlock20)}
         style={{
-            display: 'flex',
             flexDirection: windowSize === 'xs' ? 'column' : 'row',
             maxWidth: 1150
         }}>
         {showGroups()}
-        <Box>
+        <Box className={classes.flex1}>
 
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
@@ -113,13 +112,14 @@ const EventToGroups = ({
                 </Typography>
             </Box>
             <Box
-                className={classes.eventPageContainer}
+                className={clsx(classes.eventPageContainer, classes.flexWrap)}
+                style={{ width: '100%' }}
             >
-                <Box className={clsx(classes.flex, 'selectWrapper')}>
+                <Box className={clsx('selectWrapper', { [classes.w100]: windowSize === 'xs' })}>
                     <FormControl
                         // variant="outlined"
                         className={clsx(classes.selectInputFormControl)}
-                        style={{ minWidth: 100, marginTop: 12 }}>
+                        style={{ minWidth: 100, marginTop: 12, width: windowSize === 'xs' ? '100%' : 'auto' }}>
                         <Select
                             id="demo-simple-select-outlined"
                             name={currentEvent && currentEvent.operatorKey}
@@ -161,7 +161,7 @@ const EventToGroups = ({
                         </Select>
                     </FormControl>
                 </Box>
-                <Box style={{ width: '100%' }} className='textBoxWrapper'>
+                <Box style={{ width: '100%' }} className={clsx('textBoxWrapper', classes.dFlex, classes.flex1)}>
                     <TextField
                         placeholder={t("siteTracking.placeHolderAddPageUrl")}
                         className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null)}
@@ -171,15 +171,16 @@ const EventToGroups = ({
                         id={`input${currentEvent.id}`}
                         onChange={e => updateOperationData(e, "operatorValue", e.target.value)}
                         value={currentEvent && currentEvent.operatorValue}
-                        style={{ minWidth: 220, width: '100%' }}
+                        style={{ minWidth: windowSize === 'xs' ? 220 : '100%', width: '100%' }}
                     />
                 </Box>
             </Box>
         </Box>
-        <Box className={classes.arrowContainer}>
+        <Box className={(classes.arrowContainer)}>
             {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
         </Box>
-        <Box className={(classes.eventGroupsContainer)}>
+
+        <Box className={clsx(classes.eventGroupsContainer, classes.flex1, { [classes.mt2]: windowSize === 'sm' || windowSize === 'xs' })}>
             <Box style={{ width: eventsCount > 1 ? 'calc(100% - 64px)' : '100%' }}>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}

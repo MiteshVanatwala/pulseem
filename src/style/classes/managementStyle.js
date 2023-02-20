@@ -90,7 +90,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "bold",
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
     fontWeight: 300,
-    color: '#4D4D4D'
+    color: '#4D4D4D',
+    width: '100%'
   },
   tableRow: {
     marginBox: 20,
@@ -1317,6 +1318,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   pageTitle: {
     fontSize: shortcutFontSize.page[windowSize],
     lineHeight: 1,
+    color: '#FF0054',
+    textUnderlineOffset: '3px'
   },
   categoryLabel: {
     fontSize: shortcutFontSize.category[windowSize],

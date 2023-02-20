@@ -1947,7 +1947,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingInline: 17.2,
       '& .settingsWrapper': {
         '& .mgmtTitle': {
-          fontSize: 18
+          fontSize: 18,
+          width: '100%'
         },
         '& .formContainer': {
           position: 'relative',

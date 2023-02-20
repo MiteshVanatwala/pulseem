@@ -383,10 +383,14 @@ const renderRoutes = (classes) => {
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
-  screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
+    windowSize !== screenSize && dispatch(setWindowSize(screenSize))
+  }, [screenSize])
 
+
+
+  useEffect(() => {
     const initFeatures = async () => {
       const isClal = getCookie('isClal');
       if (!accountSettings) {

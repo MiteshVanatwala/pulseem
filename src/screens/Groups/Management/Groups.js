@@ -7,8 +7,8 @@ import {
     Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
-import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
-import { TablePagination, SearchField } from '../../../components/managment/index'
+import { SearchIcon, ExportIcon, PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
+import { TablePagination, SearchField, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import { useTranslation } from 'react-i18next';
@@ -116,7 +116,7 @@ const Groups = ({ classes }) => {
         {
             label: "",
             classes: cellStyle,
-            className: clsx(classes.flex5),
+            className: clsx(classes.flex6),
             align: "center",
         },
     ];
@@ -439,6 +439,147 @@ const Groups = ({ classes }) => {
         );
     };
 
+
+    const renderCellIcons = (row) => {
+        const {
+            ActiveCell,
+            ActiveEmails,
+            GroupID,
+            GroupName,
+            InvalidCell,
+            InvalidEmails,
+            RestrictedEmails,
+            RemovedCell,
+            RemovedEmails,
+            IsConnectedToWebForm,
+            AutomationID,
+            IsAutoResponder,
+            PendingClients,
+            PendingSmsClients,
+        } = row;
+
+        const iconsMap = [
+            {
+                key: 'preview',
+                uIcon: PreviewIcon,
+                lable: t("recipient.preview"),
+                remove: windowSize === 'xs',
+                rootClass: classes.paddingIcon,
+                disable: !((
+                    (ActiveEmails || 0) +
+                    (RemovedEmails || 0) +
+                    (RestrictedEmails || 0) +
+                    (InvalidEmails || 0) +
+                    (PendingClients || 0)
+                ) > 0
+                    ||
+                    (
+                        (ActiveCell || 0) +
+                        (RemovedCell || 0) +
+                        (InvalidCell || 0) +
+                        (PendingSmsClients || 0)
+                    ) > 0),
+                onClick:
+                    (e) => {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state: {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                GroupIds: [GroupID],
+                                ResultTitle: GroupName,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+            },
+            {
+                key: 'addRecipient',
+                uIcon: AddRecipient,
+                lable: t("recipient.addRecipient"),
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.ADD_RECIPIENT)
+                },
+            },
+            {
+                key: 'addRecipients',
+                uIcon: AddRecipients,
+                lable: t("recipient.addRecipients"),
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.ADD_RECIPIENTS)
+                },
+            },
+            {
+                key: 'reset',
+                uIcon: ResetIcon,
+                lable: t("recipient.reset"),
+                remove: windowSize === 'xs',
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.RESET_GROUP)
+                },
+            },
+            {
+                key: 'settings',
+                uIcon: SettingIcon,
+                lable: t("recipient.settings"),
+                remove: windowSize === 'xs',
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.EDIT_GROUP)
+                },
+                rootClass: classes.paddingIcon,
+            },
+            {
+                key: 'automation',
+                uIcon: AutomationIcon,
+                lable: t("recipient.automation"),
+                disable: !AutomationID,
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    if (AutomationID)
+                        window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
+                }
+            },
+            {
+                key: 'delete',
+                uIcon: DeleteIcon,
+                lable: t("recipient.delete"),
+                disable: (AutomationID || IsConnectedToWebForm || IsAutoResponder),
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
+                        setSelectedGroups([GroupID])
+                        setDialog(DialogType.DELETE_GROUP)
+                    }
+                },
+            }
+        ]
+        return (
+            <Grid
+                container
+                direction='row'
+                justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+                {iconsMap.map(icon => (
+                    <Grid
+                        className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
+                        key={icon.key}
+                        item >
+                        <ManagmentIcon
+                            classes={classes}
+                            {...icon}
+                            uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+        )
+    }
+
     const REDIRECT_OPTIONS = {
         ShowGroup: 0,
         ShowMails: 10,
@@ -462,14 +603,10 @@ const Groups = ({ classes }) => {
             RestrictedEmails,
             RemovedCell,
             RemovedEmails,
-            IsConnectedToWebForm,
-            AutomationID,
-            IsAutoResponder,
             CreationDate,
             UpdateDate,
             PendingClients,
             PendingSmsClients,
-            PendingEmails
         } = row;
         let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
             return e === true
@@ -1037,147 +1174,15 @@ const Groups = ({ classes }) => {
                 <TableCell
                     classes={noBorderCellStyle}
                     align="center"
-                    className={clsx(classes.flex5)}
+                    className={clsx(classes.flex6, classes.p0)}
                 >
-                    <FlexGrid
-                        gridArr={[
-                            {
-                                onClick:
-                                    (
-                                        (ActiveEmails || 0) +
-                                        (RemovedEmails || 0) +
-                                        (RestrictedEmails || 0) +
-                                        (InvalidEmails || 0) +
-                                        (PendingClients || 0)
-                                    ) > 0
-                                        ||
-                                        (
-                                            (ActiveCell || 0) +
-                                            (RemovedCell || 0) +
-                                            (InvalidCell || 0) +
-                                            (PendingSmsClients || 0)
-                                        ) > 0 ?
-                                        (e) => {
-                                            e.preventDefault();
-                                            navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                state: {
-                                                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
-                                                    GroupIds: [GroupID],
-                                                    ResultTitle: GroupName,
-                                                    PageProperty: pageProperty.current
-                                                }
-                                            })
-                                        } : VoidFunction,
-                                label: t("recipient.preview"),
-                                component: (
-                                    <IconWrapper iconName="preview" className={classes.mxAuto} />
-                                ),
-                                classes: {
-                                    text: clsx(classes.noWrap, classes.f09rem),
-                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
-                                        {
-                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
-                                            GroupIds: [GroupID],
-                                            ResultTitle: GroupName,
-                                            PageName: pageProperty?.current?.PageName
-                                        }
-                                    )}`
-                                },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.ADD_RECIPIENT)
-                                },
-                                label: t("recipient.addRecipient"),
-                                component: (
-                                    <IconWrapper
-                                        iconName="addRecipient"
-                                        className={classes.mxAuto}
-
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.ADD_RECIPIENTS)
-                                },
-                                label: t("recipient.addRecipients"),
-                                component: (
-                                    <IconWrapper
-                                        iconName="addRecipients"
-                                        className={classes.mxAuto}
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.RESET_GROUP)
-                                },
-                                label: t("recipient.reset"),
-                                component: (
-                                    <IconWrapper iconName="reset" className={classes.mxAuto} />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.EDIT_GROUP)
-                                },
-                                label: t("recipient.settings"),
-                                component: (
-                                    <IconWrapper iconName="settings" className={classes.mxAuto} />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            //TODO: Disable if !== null
-                            {
-                                label: t("recipient.automation"),
-                                component: (
-                                    <IconWrapper iconName="automation" className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-                                        onClick={() => {
-                                            if (AutomationID)
-                                                window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
-                                        }}
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, !AutomationID ? classes.disabled : null) },
-                                isDisabled: !AutomationID
-                            },
-                            {
-                                onClick: () => {
-                                    if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
-                                        setSelectedGroups([GroupID])
-                                        setDialog(DialogType.DELETE_GROUP)
-                                    }
-                                },
-                                label: t("recipient.delete"),
-                                component: (
-                                    <IconWrapper
-                                        iconName="delete"
-                                        className={(AutomationID || IsConnectedToWebForm || IsAutoResponder) ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, (AutomationID || IsConnectedToWebForm || IsAutoResponder) ? classes.disabled : null) },
-                                isDisabled: (AutomationID || IsConnectedToWebForm || IsAutoResponder)
-                            },
-                        ]}
-                        variant="body1"
-                        align="center"
-                    />
+                    {renderCellIcons(row)}
                 </TableCell>
             </TableRow>
         )
 
     }
+
     const renderPhoneRow = (row) => {
         const {
             ActiveCell,

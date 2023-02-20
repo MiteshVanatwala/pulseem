@@ -103,6 +103,7 @@ const IconWrapper = ({ iconName = "", onClick = () => false, ...props }) => {
       className={`${classes.box} ${props.className ?? ""}`}
       classes={props.classes}
       onClick={onClick}
+      style={{ paddingBlock: 12 }}
     >
       {icon.type === 1 ? <img src={icon.url} alt={icon.url} /> : <icon.comp width={18} height={20} />}
     </Box>

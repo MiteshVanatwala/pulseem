@@ -25,9 +25,9 @@ export const BaseDialog = ({
   icon = "",
   children,
   showDivider = false,
-  onClose,
-  onCancel,
-  onConfirm,
+  onClose = () => {},
+  onCancel = () => {},
+  onConfirm = () => {},
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -109,7 +109,6 @@ export const BaseDialog = ({
               classes.btnRounded,
               "saveFixedDetails"
             )}
-            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
           >
             <>{t(confirmText)}</>
@@ -177,8 +176,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-              ? "calc(65vh)"
-              : "calc(45vh)",
+            ? "calc(65vh)"
+            : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}
