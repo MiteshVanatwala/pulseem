@@ -40,5 +40,6 @@
   "2faTitle": "Hey",
   "2faDescription": "Would you like to add 2-factor authentication to your account?<br /><br />2-factor authentication will send a one-time password to your email <br/>when you log in and increase the security of your account with Pulseem.<br /><br />You can always add or remove this feature later in the Account Details section of your account",
   "purchaseNewsletter": "Purchase newsletter packages",
-  "purchaseSms": "Purchase sms packages"
+  "purchaseSms": "Purchase sms packages",
+  "changePassword": "<b>Pay attention!</b><br/>Your account's password was not changed at least since for the<br/> last 6 months, please change your Password.<br/>In case the password won't be change in the next two weeks, The account will be blocked<br/>And email with reset password instruction will be sent to the Email which defined in Account Settings page"
 }

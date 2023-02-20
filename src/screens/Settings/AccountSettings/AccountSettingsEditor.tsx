@@ -190,7 +190,7 @@ const AccountSettingsEditor = () => {
                 "link"
               )}
               onClick={() =>
-                SetVerification('cellphone')
+                handleVerification('cellphone')
               }
               startIcon={<MdMobileFriendly />}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -211,7 +211,7 @@ const AccountSettingsEditor = () => {
                 "link"
               )}
               onClick={() =>
-                SetVerification('email')
+                handleVerification('email')
               }
               startIcon={<MdOutlineMarkEmailRead />}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

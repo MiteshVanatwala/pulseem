@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -10,66 +10,57 @@ import RecipientChart from '../../components/Charts/RecipientChart';
 import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
-import { getCookie } from '../../helpers/Functions/cookies'
-import TFA from '../../components/DialogTemplates/TFA'
-import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
-import { sitePrefix } from '../../config';
+import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import Toast from "../../components/Toast/Toast.component";
+import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const DashboardScreen = ({ classes }) => {
-  const dispatch = useDispatch();
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
-  const [showTFA, setShowTFA] = useState(false);
-  const [TFAInit, setTFAInit] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [member, setMember] = useState(null);
 
   useEffect(() => {
-    const init2FA = () => {
-      try {
-        if (accountSettings && accountSettings.SubAccountSettings.TwoFactorAuthEnabled !== true) {
-          const userSelection = getCookie("2faPopupv2");
-          if (!userSelection && userSelection !== false) {
-            setShowTFA(true);
+    const initialize = async () => {
+      if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
+        const member = accountSettings?.SubAccountSettings?.MembershipDetails;
+        setMember(member);
+        if (member?.PasswordExpired === true) {
+          logout();
+          return false;
+        }
+        else {
+          if (member?.NextRequiredChange?.Days <= 14) {
+            setShowChangePassword(true);
           }
         }
-      } catch (e) {
-        console.error(e);
-        dispatch(sendToTeamChannel({
-          MethodName: 'init2FA',
-          ComponentName: 'Dashboard.js',
-          Text: e
-        }));
       }
     }
-
-    const initialize = () => {
-      if (document.referrer.toLocaleLowerCase().includes('login.aspx') || document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx')) {
-        init2FA();
-      }
-    }
-    if (accountSettings && !TFAInit) {
+    if (accountSettings) {
       initialize();
-      setTFAInit(true);
     }
-  }, [dispatch, accountSettings, TFAInit])
+  }, [accountSettings])
 
-  const onConfirm2FA = () => {
-    window.location = `${sitePrefix}AccountSettings?2fa=1`
-  }
-  const onCancel2FA = () => {
-    setShowTFA(false);
+  const renderToast = () => {
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+    return <Toast data={toastMessage} />;
+  };
+
+  const renderPasswordText = () => {
+    return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange?.Days ?? ''))
   }
 
   return (
     <DefaultScreen
       currentPage='dashboard'
       classes={classes}
-      customStyle={clsx(classes.dashboard)}>
-      <TFA classes={classes}
-        showTFA={showTFA}
-        onConfirm={onConfirm2FA}
-        onCancel={onCancel2FA} />
+      customStyle={classes.dashboard}>
       <Grid container>
-        <Grid item xs={12} sm={12} md={9} className={clsx(classes.pt20, classes.dashboardTop)}>
+        <Grid item xs={12} sm={9} md={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
               <BulkStatus classes={classes} />
@@ -96,7 +87,7 @@ const DashboardScreen = ({ classes }) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sm={12} md={3} className={clsx(classes.dashboardSide, classes.pt20)}>
+        <Grid item xs={12} sm={3} md={2} className={classes.dashboardSide}>
           <Shortcut
             windowSize={windowSize}
             classes={classes}
@@ -105,6 +96,14 @@ const DashboardScreen = ({ classes }) => {
           />
         </Grid>
       </Grid>
+      {toastMessage && renderToast()}
+      {showChangePassword && <ChangePassword
+        SetToast={setToastMessage}
+        IsOpen={showChangePassword}
+        OnClose={() => setShowChangePassword(false)}
+        Text={renderPasswordText()}
+      />
+      }
     </DefaultScreen>
   )
 }

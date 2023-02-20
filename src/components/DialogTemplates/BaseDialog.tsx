@@ -11,12 +11,12 @@ import {
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
 import { CgClose } from "react-icons/cg";
 import { IoAlertCircleOutline } from "react-icons/io5";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 export const BaseDialog = ({
   childrenPadding = true,
@@ -25,9 +25,9 @@ export const BaseDialog = ({
   icon = "",
   children,
   showDivider = false,
-  onClose = () => {},
-  onCancel = () => {},
-  onConfirm = () => {},
+  onClose,
+  onCancel,
+  onConfirm,
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -104,10 +104,13 @@ export const BaseDialog = ({
         <Grid item>
           <Button
             name="btnConfirm"
-            variant="contained"
-            size="small"
+            className={clsx(
+              classes.btn,
+              classes.btnRounded,
+              "saveFixedDetails"
+            )}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
-            className={clsx(classes.btn, classes.btnRounded)}
           >
             <>{t(confirmText)}</>
           </Button>
@@ -174,8 +177,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-            ? "calc(65vh)"
-            : "calc(45vh)",
+              ? "calc(65vh)"
+              : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}
