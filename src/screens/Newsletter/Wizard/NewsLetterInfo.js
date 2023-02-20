@@ -863,11 +863,17 @@ const NewsLetterInfo = ({ classes }) => {
                     className={clsx(
                         classes.actionButton,
                         classes.actionButtonLightGreen,
-                        classes.backButton
+                        classes.backButton,
+                        classes.ribbonContainer
                     )}
                     style={{ marginInlineStart: '8px' }}
                     color="primary"
-                >{t('master.continueToNewEditor')}</Button>)
+                >
+                    {t('master.continueToNewEditor')}
+                    <div className="wrap">
+                        <span className="ribbon">{t('mainReport.newFeature')}</span>
+                    </div>
+                </Button>)
             }
             else {
                 wizardButtons.push(<><Button
