@@ -61,6 +61,7 @@ const NotificationManagement = ({ classes }) => {
   const hideScriptDialog = (scriptDialogCookie === 'true')
   const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
   const [showLoader, setLoader] = useState(true);
+  const [forceShowImplementation, setForceShowImplementation] = useState(false);
   const refScriptCode = useRef(null);
   moment.locale(language)
 
@@ -174,7 +175,7 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const handleImplementScript = (value) => {
-    if (value) {
+    if (value && !forceShowImplementation) {
       setCookie('scriptDialog', scriptDialog, { maxAge: 2147483647 });
       dispatch(updateScriptPath(scriptPath));
     }
@@ -182,7 +183,7 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderImplementDialog = () => {
-    if (hideScriptDialog) {
+    if (hideScriptDialog && !forceShowImplementation) {
       return;
     }
 
@@ -201,9 +202,22 @@ const NotificationManagement = ({ classes }) => {
   const renderHeader = () => {
     return (
       <>
-        <Typography className={classes.managementTitle}>
-          {t('notifications.notificationManagement')}
-        </Typography>
+        <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+          <Typography className={classes.managementTitle}>
+            {t('notifications.notificationManagement')}
+          </Typography>
+          <Button
+            style={{ marginInlineStart: 'auto', height: 45, marginTop: 15 }}
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue
+            )}
+            onClick={() => { setForceShowImplementation(true); setShowScriptDialog(true) }}>
+            {t('master.implementScript')}
+          </Button>
+        </Box>
         <Divider />
       </>
     )
@@ -264,12 +278,6 @@ const NotificationManagement = ({ classes }) => {
       setSearchResults(sortData);
       setSearching(true);
       setPage(1);
-    }
-
-    const handleKeyPress = (e) => {
-      if (e.charCode === 13) {
-        handleSearch()
-      }
     }
 
     const handleFromDateChange = (value) => {

@@ -17,8 +17,8 @@
                 "reqMobile": "Cellphone is required",
                 "reqCompName": "Company name is required",
                 "reqContctName": "Contact name is required",
-                "verifyEmail": "Please verify the default From Email",
-                "verifyPhone": "Please verify the default from Phone Number"
+                "verifyEmail": "Please verify the typed Email",
+                "verifyPhone": "Please verify the typed Phone Number"
             },
             "securitySettings": "Security Settings",
             "btnChangePwd": "Change Password",

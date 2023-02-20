@@ -367,7 +367,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         <Typography variant='body1' className={clsx(classes.mt4, classes.mb15)}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
                         <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.buttonMinWidth, classes.mt6)} onClick={() => {
                             handleClose()
-                        }}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
+                        }}>{props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
                     </Box>
                 </Box>
             </Box >

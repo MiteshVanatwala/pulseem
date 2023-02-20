@@ -110,5 +110,6 @@
   "ExportLimitation": "Exported docs cannot contain more than 600K results",
   "clientName": "Client Name",
   "filterSearch": "Apply filter",
-  "closeFilterSearch": "Close filter"
+  "closeFilterSearch": "Close filter",
+  "virtualNumber": "Virtual Number"
 }
