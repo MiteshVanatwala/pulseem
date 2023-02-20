@@ -13,7 +13,7 @@
       "errors": {
         "invalidEmail": "אימייל לא תקין",
         "reqEmail": "אימייל הוא חובה",
-        "invalidMobile": "הנייד לא עובד",
+        "invalidMobile": "מספר נייד לא תקין",
         "reqMobile": "נייד הוא חובה",
         "reqCompName": "נדרש שם חברה",
         "reqContctName": "נדרש שם איש קשר",

@@ -165,6 +165,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                 setConfirmButtonDisabled(false);
             }
         }
+        setConfirmButtonDisabled(false);
     }
 
     const handleChange = (e: any) => {

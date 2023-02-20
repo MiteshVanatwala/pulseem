@@ -334,6 +334,7 @@ const FORM_COMPANY_DETAILS = ({
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
                 error={!!errors.CellPhone}
+                inputProps={{ maxLength: 13 }}
               />
               {!!errors.CellPhone && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
