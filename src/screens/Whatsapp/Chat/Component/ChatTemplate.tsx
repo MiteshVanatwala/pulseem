@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import Icon from './Icon';
 import PDF from '../../../../assets/images/pdf.png';
 import Video from '../../../../assets/images/video.png';
+import Download from '../../../../assets/images/download.png';
 
 const ChatTemplate = ({
 	classes,
@@ -87,11 +88,11 @@ const ChatTemplate = ({
 															alt='uploaded-file-preview'
 														/>
 														<div className={classes.pdfFileName}>
-															{fileData?.fileLink
-																?.split('/')
-																[
+															{
+																fileData?.fileLink?.split('/')[
 																	fileData?.fileLink?.split('/')?.length - 1
-																]?.substring(0, 18) + '...'}
+																]
+															}
 														</div>
 														<a
 															href={fileData?.fileLink}
@@ -99,7 +100,7 @@ const ChatTemplate = ({
 															rel='noreferrer'>
 															<img
 																className='download-preview-img'
-																// src={Download}
+																src={Download}
 																alt='uploaded-file-preview'
 															/>
 														</a>

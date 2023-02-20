@@ -7,6 +7,7 @@ import {
 	APIWhatsappChatData,
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
+	displayCountDown,
 } from '../Types/WhatsappChat.type';
 import {
 	Button,
@@ -20,6 +21,7 @@ import {
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import Highlighter from 'react-highlight-words';
+import Countdown from 'react-countdown';
 import {
 	tagDataProps,
 	updatedVariable,
@@ -56,10 +58,10 @@ const ChatUi = ({
 	getStatusClass,
 	onChatSend,
 	activePhoneNumber,
+	allWhatsappChat,
+	setAllWhatsappChat,
+	setAPIInboundChatStatus,
 }: WhatsappChatUiProps) => {
-	const [allWhatsappChat, setAllWhatsappChat] =
-		useState<APIWhatsappChatItemsData>();
-
 	const dispatch = useDispatch();
 	const { t: translator } = useTranslation();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
@@ -70,6 +72,11 @@ const ChatUi = ({
 		let time = new Date().toLocaleTimeString('en-US');
 		setChatTimer(time);
 	};
+
+	useEffect(() => {
+		const chatDiv = document.getElementById('chat-messages');
+		chatDiv?.scroll({ top: chatDiv?.scrollHeight, behavior: 'auto' });
+	}, [allWhatsappChat]);
 
 	const useStyles = makeStyles(() => ({
 		selectRoot: {
@@ -145,6 +152,7 @@ const ChatUi = ({
 					activeUserNumber: chatContacts?.PhoneNumber,
 				})
 			);
+			await setAPIInboundChatStatus();
 			setIsLoader(false);
 
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
@@ -153,6 +161,14 @@ const ChatUi = ({
 				// setAllWhatsappChat([]);
 			}
 		}
+	};
+
+	const countDown = ({ formatted }: displayCountDown) => {
+		return (
+			<span>
+				{formatted?.hours}:{formatted?.minutes}:{formatted?.seconds}
+			</span>
+		);
 	};
 
 	const chatHeader = () => {
@@ -220,12 +236,17 @@ const ChatUi = ({
 					</p>
 				</div>
 
-				<div className={`${classes.whatsappChat} chat__actions`}>
-					<div
-						className={`${classes.whatsappChat} chat__action chat__action-icon`}>
-						{chatTimer}
+				{whatsappChatSession.IsIn24Window && (
+					<div className={`${classes.whatsappChat} chat__actions`}>
+						<div
+							className={`${classes.whatsappChat} chat__action chat__action-icon`}>
+							<Countdown
+								date={whatsappChatSession?.ExpiryTime}
+								renderer={countDown}
+							/>
+						</div>
 					</div>
-				</div>
+				)}
 			</header>
 		);
 	};
@@ -239,7 +260,7 @@ const ChatUi = ({
 					<Icon id='downArrow' />
 				</button>
 				<div className={`${classes.whatsappChat} chat__input-wrapper`}>
-					{!whatsappChatSession.IsIn24Window ? (
+					{whatsappChatSession.IsIn24Window || savedTemplate?.length > 0 ? (
 						<>
 							<button
 								aria-label='Emojis'
@@ -318,7 +339,7 @@ const ChatUi = ({
 							</Stack>
 						</div>
 					)}
-					{!whatsappChatSession.IsIn24Window && (
+					{(whatsappChatSession.IsIn24Window || savedTemplate?.length > 0) && (
 						<button aria-label='Send message' onClick={onChatSend}>
 							<Icon
 								id='send'
@@ -333,7 +354,9 @@ const ChatUi = ({
 
 	const chatConversation = () => {
 		return (
-			<div className={`${classes.whatsappChat} chat__content`}>
+			<div
+				id='chat-messages'
+				className={`${classes.whatsappChat} chat__content`}>
 				{allWhatsappChat &&
 					Object.keys(allWhatsappChat)?.map(
 						(date: string, dateIndex: number) => {

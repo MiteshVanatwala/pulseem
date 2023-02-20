@@ -11,20 +11,15 @@ import {
 	WhatsappChatProps,
 	APISendWhatsappChat,
 	APISendWhatsAppChatReqPayload,
+	APIWhatsappChatItemsData,
 } from './Types/WhatsappChat.type';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
-	buttonsDataProps,
 	callToActionProps,
 	quickReplyButtonProps,
 	savedTemplateAPIProps,
-	savedTemplateCallToActionProps,
-	savedTemplateCardProps,
 	savedTemplateDataProps,
 	savedTemplateListProps,
-	savedTemplateMediaProps,
-	savedTemplateQuickReplyProps,
-	savedTemplateTextProps,
 	templateDataProps,
 	templatePreviewDataProps,
 } from '../Editor/Types/WhatsappCreator.types';
@@ -108,6 +103,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
+	const [allWhatsappChat, setAllWhatsappChat] =
+		useState<APIWhatsappChatItemsData>();
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [fileData, setFileData] = useState<{
 		fileType: string;
@@ -186,8 +183,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 		getSavedTemplateFields();
 		(async () => {
+			setIsLoader(true);
 			await getPhoneNumber();
-			await setAPIInboundChatStatus();
 		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
@@ -456,9 +453,30 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				chatReqPayload.TextMessage = newMessage;
 				chatReqPayload.mediaUrl = '';
 			}
-			const sendWhatsappChat: APISendWhatsappChat = await dispatch<any>(
-				sendWhatsAppChat(chatReqPayload)
-			);
+			setIsLoader(true);
+			const { payload: sendWhatsappChat }: APISendWhatsappChat =
+				await dispatch<any>(sendWhatsAppChat(chatReqPayload));
+			if (sendWhatsappChat?.Status === apiStatus?.SUCCESS) {
+				const sentChat = sendWhatsappChat?.Data?.Data?.Items;
+				if (allWhatsappChat && sentChat && sentChat?.TODAY?.length > 0) {
+					if (Object?.keys(allWhatsappChat)?.includes('TODAY')) {
+						setAllWhatsappChat({
+							...allWhatsappChat,
+							TODAY: [...allWhatsappChat?.TODAY, sentChat?.TODAY[0]],
+						});
+					} else {
+						setAllWhatsappChat({
+							...allWhatsappChat,
+							TODAY: [sentChat?.TODAY[0]],
+						});
+					}
+					setUpdatedDynamicVariable([]);
+					setDynamicVariable([]);
+					setNewMessage('');
+					setSavedTemplate('');
+				}
+			}
+			setIsLoader(false);
 		}
 	};
 
@@ -513,6 +531,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							handleUserStatus={handleUserStatus}
 							getStatusClass={getStatusClass}
 							onChatSend={onChatSend}
+							allWhatsappChat={allWhatsappChat}
+							setAllWhatsappChat={setAllWhatsappChat}
+							setAPIInboundChatStatus={setAPIInboundChatStatus}
 						/>
 					</div>
 				</div>

@@ -36,6 +36,9 @@ export type WhatsappChatUiProps = {
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
 	onChatSend: () => void;
+	allWhatsappChat: APIWhatsappChatItemsData | undefined;
+	setAllWhatsappChat: (whatsappChat: APIWhatsappChatItemsData) => void;
+	setAPIInboundChatStatus: () => void;
 };
 
 export type ChatTemplateProps = {
@@ -200,6 +203,33 @@ export type APISendWhatsAppChatReqPayload = {
 	Variables?: updatedVariable[];
 };
 
+export type APISendWhatsappChatData = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatItemsData;
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APISendWhatsappChatDataData = {
+	Data: APISendWhatsappChatData;
+};
+
+export type APISendWhatsappChatPayload = {
+	Status: string;
+	Message: string;
+	Data: APISendWhatsappChatDataData;
+};
+
 export type APISendWhatsappChat = {
-	// payload: APISendWhatsappChatPayload;
+	payload: APISendWhatsappChatPayload;
+};
+
+export type displayCountDown = {
+	formatted: {
+		days: string;
+		hours: string;
+		minutes: string;
+		seconds: string;
+	};
 };
