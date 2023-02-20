@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tooltip, Typography, ClickAwayListener } from "@material-ui/core";
+import { Tooltip, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,8 +17,6 @@ import { BsArrowClockwise } from "react-icons/bs";
 import queryString from 'query-string';
 import Title from '../../../components/Wizard/Title'
 import OTP from './OTP';
-import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
-import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
 
 import { useLocation, useNavigate, useParams } from "react-router";
@@ -35,9 +33,9 @@ import {
   getCampaignSumm,
   getCreditsforSMS,
   getTestGroups,
-  getCommonFeatures,
   getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
+import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import { Dialog } from "../../../components/managment/index";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
@@ -46,7 +44,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile, AiOutlineAlignLeft } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import Switch from "react-switch";
@@ -122,10 +120,10 @@ const SmsCreator = ({ classes, ...props }) => {
     accountId,
     getCampaignSum,
     smsSendResult,
-    commonSettings,
     testGroups,
     ToastMessages
   } = useSelector((state) => state.sms);
+  const { commonSettings } = useSelector((state) => state.common)
   const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
@@ -306,7 +304,7 @@ const SmsCreator = ({ classes, ...props }) => {
   }, [smsSendResult]);
 
   useEffect(() => {
-    if (commonSettings.SubAccountSettings) {
+    if (commonSettings?.SubAccountSettings) {
       siteTrackingLogic();
     }
   }, [commonSettings, smsModel]);

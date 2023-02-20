@@ -32,7 +32,7 @@ export const getCommonFeatures = createAsyncThunk(
         return response.data
       }
       else {
-        return settings
+        return { Data: settings }
       }
 
     } catch (error) {
@@ -103,7 +103,8 @@ export const commonSlice = createSlice({
     Folders: [],
     verifiedEmails: [],
     verifiedNumbers: [],
-    tokenAlive: true
+    tokenAlive: true,
+    commonSettings: {}
   },
   extraReducers: builder => {
     builder
@@ -116,6 +117,7 @@ export const commonSlice = createSlice({
       })
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+        state.commonSettings = payload?.Data;
         setCookie('accountSettings', payload?.Data);
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
