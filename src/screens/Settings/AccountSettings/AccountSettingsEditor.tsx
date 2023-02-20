@@ -270,6 +270,7 @@ const AccountSettingsEditor = () => {
         </Box>
       </Box>
       {emailVerificationPopup && <VerificationDialog
+        textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="email"
         isOpen={emailVerificationPopup}
@@ -280,6 +281,7 @@ const AccountSettingsEditor = () => {
           setVerificationStep(0);
         }} />}
       {smsVerificationPopup && <VerificationDialog
+        textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="sms"
         value={verificationStep > 0 && cellphoneToVerify}
