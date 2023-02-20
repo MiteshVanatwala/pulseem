@@ -33,7 +33,9 @@ const AccountSettingsEditor = () => {
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
   const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
   const [verificationStep, setVerificationStep] = useState(0);
-  const [settingRequest, setSettingRequest] = useState<AccountSettings | null>({
+  const [emailToVerify, setEmailToVerify] = useState<string>('');
+  const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
+  const [settingRequest, setSettingRequest] = useState<AccountSettings>({
     SubAccountId: -1,
     LoginUserName: '',
     AccountID: -1,
@@ -107,14 +109,14 @@ const AccountSettingsEditor = () => {
       }
       catch (ex) { }
       finally {
-        handleResponses(response);
+        handleResponses(response, updatedObject);
         setShowLoader(false);
       }
     }
 
   }
 
-  const handleResponses = async (response: any) => {
+  const handleResponses = async (response: any, updatedObject: AccountSettings) => {
     switch (response?.StatusCode || response?.payload?.StatusCode) {
       case 201: {
         setToastMessage(ToastMessages.SETTINGS_SAVED);
@@ -134,13 +136,29 @@ const AccountSettingsEditor = () => {
             setToastMessage(ToastMessages.INVALID_CELLPHONE);
             break;
           }
+          case 'AuthCompanyEmail': {
+            setEmailToVerify(updatedObject.Email);
+            setVerificationStep(1);
+            setToastMessage(ToastMessages.VERIFY_EMAIL);
+            handleVerification('email');
+            break;
+          }
+          case 'AuthCompanyCellphone': {
+            setCellphoneToVerify(updatedObject.CellPhone);
+            setVerificationStep(1);
+            setToastMessage(ToastMessages.VERIFY_CELLPHONE);
+            handleVerification('cellphone');
+            break;
+          }
           case 'AuthEmail': {
+            setEmailToVerify(settingRequest.DefaultFromMail);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_EMAIL);
             handleVerification('email');
             break;
           }
           case 'AuthCellphone': {
+            setCellphoneToVerify(settingRequest.DefaultCellNumber);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_CELLPHONE);
             handleVerification('cellphone');
@@ -255,7 +273,7 @@ const AccountSettingsEditor = () => {
         classes={classes}
         variant="email"
         isOpen={emailVerificationPopup}
-        value={verificationStep > 0 && settingRequest?.DefaultFromMail}
+        value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
         onClose={() => {
           setEmailVerificationPopup(false);
@@ -264,7 +282,7 @@ const AccountSettingsEditor = () => {
       {smsVerificationPopup && <VerificationDialog
         classes={classes}
         variant="sms"
-        value={verificationStep > 0 && settingRequest?.DefaultCellNumber}
+        value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
         isOpen={smsVerificationPopup}
         onClose={() => {
