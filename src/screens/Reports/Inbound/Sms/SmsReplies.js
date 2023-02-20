@@ -129,29 +129,14 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const exportColumnHeader = {
-        "ClientID": t('client.ClientId'),
+        // "ClientID": t('client.ClientId'),
+        "VirtualNumber": t('report.virtualNumber'),
+        "CellPhone": t('common.cellphone'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
-        "Email": t('common.Email'),
-        "Cellphone": t('common.cellphone'),
-        "CreationDate": t('common.CreationDate'),
-        "SmsStatus": t('common.smsStatus'),
-        "ExtraField1": t('common.ExtraField1'),
-        "ExtraField2": t('common.ExtraField2'),
-        "ExtraField3": t('common.ExtraField3'),
-        "ExtraField4": t('common.ExtraField4'),
-        "ExtraField5": t('common.ExtraField5'),
-        "ExtraField6": t('common.ExtraField6'),
-        "ExtraField7": t('common.ExtraField7'),
-        "ExtraField8": t('common.ExtraField8'),
-        "ExtraField9": t('common.ExtraField9'),
-        "ExtraField10": t('common.ExtraField10'),
-        "ExtraField11": t('common.ExtraField11'),
-        "ExtraField12": t('common.ExtraField12'),
-        "ExtraField13": t('common.ExtraField13'),
         "ReplyDate": t('common.ReplyDate'),
         "ReplyText": t('common.ReplyText'),
-
+        "CampaignName": t('common.CampaignName')
     }
 
     const handleDownloadCsv = async (formatType) => {
@@ -163,9 +148,9 @@ const SmsReplies = ({ classes, ...other }) => {
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
         orderList = replaceNull(orderList, 'FirstName', '');
         orderList = replaceNull(orderList, 'LastName', '');
-        orderList = replaceNull(orderList, 'Cellphone', '');
-        orderList = replaceNull(orderList, 'Email', '');
-        orderList = replaceNull(orderList, 'CreationDate', '');
+        orderList = replaceNull(orderList, 'CellPhone', '');
+        orderList = replaceNull(orderList, 'CampaignName', '');
+
         orderList = await formatDateTime(orderList);
         exportFile({
             data: orderList,
