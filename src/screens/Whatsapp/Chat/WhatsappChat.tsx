@@ -56,7 +56,7 @@ import {
 	whatsappChatStatuses,
 } from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import Toast from '../../../components/Toast/Toast.component';
 
@@ -104,6 +104,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
+	const { contactID } = useParams();
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
@@ -288,10 +289,21 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
 			const contactData = whatsAppChatContactsData.payload.Data.Items;
 			const updatedActiveChat = contactData[0];
-			if (activeChatContacts?.PhoneNumber === '' && updatedActiveChat) {
-				setActiveChatContacts(updatedActiveChat);
-				navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
-				changeContactReadStatus(updatedActiveChat, contactData, contactData);
+			if (contactID) {
+				const activeContact = contactData?.find(
+					(contact) => contact?.PhoneNumber === contactID
+				);
+				if (activeContact) {
+					setActiveChatContacts(activeContact);
+					navigate(`/react/whatsapp/chat/${activeContact?.PhoneNumber}`);
+					changeContactReadStatus(activeContact, contactData, contactData);
+				}
+			} else {
+				if (activeChatContacts?.PhoneNumber === '' && updatedActiveChat) {
+					setActiveChatContacts(updatedActiveChat);
+					navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
+					changeContactReadStatus(updatedActiveChat, contactData, contactData);
+				}
 			}
 		} else {
 			setSideChatContacts([]);
@@ -469,7 +481,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (validateDynamicVaraiable()) {
 			let chatReqPayload: APISendWhatsAppChatReqPayload = {
 				FromNumber: activePhoneNumber,
-				ToNumberList: activeChatContacts?.PhoneNumber,
+				ToNumber: activeChatContacts?.PhoneNumber,
 				IsFreeFormChat: savedTemplate?.length === 0 ? true : false,
 			};
 			if (savedTemplate?.length > 0) {
@@ -535,7 +547,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				classes={classes}
 				customPadding={false}
 				containerClass={null}>
-				{renderToast()}
+				{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
 				<div className={`${classes.whatsappChat} app`}>
 					<div className={`${classes.whatsappChat} app-content`}>
 						<SideBar
@@ -582,6 +594,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							allWhatsappChat={allWhatsappChat}
 							setAllWhatsappChat={setAllWhatsappChat}
 							setAPIInboundChatStatus={setAPIInboundChatStatus}
+							setWhatsappChatSession={setWhatsappChatSession}
+							setUpdatedDynamicVariable={setUpdatedDynamicVariable}
+							setDynamicVariable={setDynamicVariable}
+							setSavedTemplate={setSavedTemplate}
 						/>
 					</div>
 				</div>

@@ -39,6 +39,10 @@ export type WhatsappChatUiProps = {
 	allWhatsappChat: APIWhatsappChatItemsData | undefined;
 	setAllWhatsappChat: (whatsappChat: APIWhatsappChatItemsData) => void;
 	setAPIInboundChatStatus: () => void;
+	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
+	setUpdatedDynamicVariable: (updatedDynamicVariable: updatedVariable[]) => void;
+	setDynamicVariable: (dynamicVariable: string[]) => void;
+	setSavedTemplate: (template: string) => void;
 };
 
 export type SideBarContactListProps = {
@@ -65,6 +69,7 @@ export type ChatHeaderContentProps = {
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
+	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
 };
 
 export type ChatFooterContentProps = {
@@ -235,7 +240,7 @@ export type APIWhatsappChatConversationStatusData = {
 
 export type APISendWhatsAppChatReqPayload = {
 	FromNumber: string;
-	ToNumberList: string;
+	ToNumber: string;
 	IsFreeFormChat: boolean;
 	TextMessage?: string;
 	mediaUrl?: string;

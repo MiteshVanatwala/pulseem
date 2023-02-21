@@ -14,6 +14,7 @@ const ChatHeaderContent = ({
 	chatContacts,
 	getStatusClass,
 	handleUserStatus,
+	setWhatsappChatSession,
 }: ChatHeaderContentProps) => {
 	const { t: translator } = useTranslation();
 
@@ -36,6 +37,14 @@ const ChatHeaderContent = ({
 		return (
 			<span>
 				{formatted?.hours}:{formatted?.minutes}:{formatted?.seconds}
+			</span>
+		);
+	};
+
+	const onTimerComplete = (data: any) => {
+		return (
+			<span>
+				{/* {formatted?.hours}:{formatted?.minutes}:{formatted?.seconds} */}
 			</span>
 		);
 	};
@@ -92,6 +101,7 @@ const ChatHeaderContent = ({
 						<Countdown
 							date={whatsappChatSession?.ExpiryTime}
 							renderer={countDown}
+							onComplete={onTimerComplete}
 						/>
 					</div>
 				</div>

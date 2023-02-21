@@ -41,6 +41,10 @@ const ChatUi = ({
 	allWhatsappChat,
 	setAllWhatsappChat,
 	setAPIInboundChatStatus,
+	setWhatsappChatSession,
+	setUpdatedDynamicVariable,
+	setDynamicVariable,
+	setSavedTemplate,
 }: WhatsappChatUiProps) => {
 	const dispatch = useDispatch();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
@@ -65,6 +69,10 @@ const ChatUi = ({
 				})
 			);
 			await setAPIInboundChatStatus();
+			setUpdatedDynamicVariable([]);
+			setDynamicVariable([]);
+			setNewMessage('');
+			setSavedTemplate('');
 			setIsLoader(false);
 
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
@@ -101,6 +109,7 @@ const ChatUi = ({
 					chatContacts={chatContacts}
 					handleUserStatus={handleUserStatus}
 					getStatusClass={getStatusClass}
+					setWhatsappChatSession={setWhatsappChatSession}
 				/>
 			</header>
 		);
