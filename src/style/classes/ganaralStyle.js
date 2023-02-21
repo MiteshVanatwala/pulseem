@@ -77,6 +77,34 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 			background: '#999',
 		},
 	},
+	ribbonContainer: {
+		position: 'relative',
+		'& .wrap': {
+			width: 'inherit',
+			height: '58px',
+			position: 'absolute',
+			top: '0px',
+			left: '0px',
+			overflow: 'hidden',
+			'& .ribbon': {
+				width: '45px',
+				height: '10px',
+				lineHeight: '10px',
+				position: 'absolute',
+				top: '5px',
+				right: isRTL ? 'auto' : '-14px',
+				left: isRTL ? '-14px' : 'auto',
+				zIndex: '2',
+				overflow: 'hidden',
+				transform: isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+				'-webkit-transform': isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+				boxShadow: '0px 0px 2px 1px #b7b7b7,  0px 21px 5px -18px rgba(0,0,0,0.6)',
+				background: '#ff0000',
+				textAlign: 'center',
+				fontSize: '0.5rem',
+			}
+		}
+	},
 	dialogCustomSize: {
 		height: '40vh',
 		width: windowSize === 'lg' || windowSize === 'xl' ? '550px' : null,
@@ -2771,4 +2799,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 			}
 		}
 	},
+	passwordDialog: {
+		maxWidth: windowSize !== 'xs' ? '25vw' : null
+	}
 });

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector, useDispatch } from 'react-redux'
-import { Grid } from '@material-ui/core';
+import { useSelector } from 'react-redux'
+import { Button, Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
 import BulkStatus from '../../components/Balance/BulkStatus';
@@ -17,7 +17,6 @@ import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const DashboardScreen = ({ classes }) => {
-  const dispatch = useDispatch();
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
@@ -34,7 +33,7 @@ const DashboardScreen = ({ classes }) => {
           return false;
         }
         else {
-          if (member?.NextRequiredChange?.Days <= 14) {
+          if (member?.NextRequiredChange <= 14) {
             setShowChangePassword(true);
           }
         }
@@ -53,7 +52,7 @@ const DashboardScreen = ({ classes }) => {
   };
 
   const renderPasswordText = () => {
-    return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange?.Days ?? ''))
+    return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange ?? ''))
   }
 
   return (

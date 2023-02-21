@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI'
-import { APIResponse } from '../../Models/APIResponse';
+import { PulseemResponse } from '../../Models/APIResponse';
 import { AccountSettings } from '../../Models/Account/AccountSettings';
 import { LoginPassword } from '../../Models/Account/Password';
 
@@ -66,7 +66,7 @@ const AccountSettingsSlice = createSlice({
             StatusCode: 200,
             Message: '',
             Data: {} as AccountSettings,
-        } as APIResponse,
+        } as PulseemResponse,
         ToastMessages: {
             GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
             SETTINGS_SAVED: { severity: 'success', color: 'success', message: 'settings.accountSettings.savedSuccessfuly', showAnimtionCheck: false },
@@ -82,14 +82,15 @@ const AccountSettingsSlice = createSlice({
                 403: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.403', showAnimtionCheck: false },
                 406: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.406', showAnimtionCheck: false },
                 407: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.407', showAnimtionCheck: false },
-                408: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.408', showAnimtionCheck: false }
+                408: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.408', showAnimtionCheck: false },
+                409: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.409', showAnimtionCheck: false }
             }
         },
         twoFAUpdated: {
             StatusCode: 200,
             Message: '',
             Data: ''
-        } as APIResponse
+        } as PulseemResponse
     },
     reducers: {
         resetTwoFA: (state) => {
@@ -97,7 +98,7 @@ const AccountSettingsSlice = createSlice({
                 StatusCode: 200,
                 Message: '',
                 Data: ''
-            } as APIResponse
+            } as PulseemResponse
         },
     },
     extraReducers: (builder) => {

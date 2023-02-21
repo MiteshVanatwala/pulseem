@@ -463,7 +463,7 @@ const NewsLetterInfo = ({ classes }) => {
                         window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                         return false;
                     }
-                    navigate(`/Campaigns`);
+                    navigate(`/react/Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
@@ -480,7 +480,7 @@ const NewsLetterInfo = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        navigate('/Campaigns');
+        navigate('/react/Campaigns');
     }
     const renderToast = () => {
         if (toastMessage) {
@@ -816,7 +816,7 @@ const NewsLetterInfo = ({ classes }) => {
                 window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                 return false;
             }
-            navigate('/Campaigns');
+            navigate('/react/Campaigns');
         }
     }
 
@@ -863,11 +863,17 @@ const NewsLetterInfo = ({ classes }) => {
                     className={clsx(
                         classes.actionButton,
                         classes.actionButtonLightGreen,
-                        classes.backButton
+                        classes.backButton,
+                        classes.ribbonContainer
                     )}
                     style={{ marginInlineStart: '8px' }}
                     color="primary"
-                >{t('master.continueToNewEditor')}</Button>)
+                >
+                    {t('master.continueToNewEditor')}
+                    <div className="wrap">
+                        <span className="ribbon">{t('mainReport.newFeature')}</span>
+                    </div>
+                </Button>)
             }
             else {
                 wizardButtons.push(<><Button
