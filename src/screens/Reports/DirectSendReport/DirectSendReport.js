@@ -321,11 +321,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
               className={clsx(classes.tab, classes.tablistRoot)}
               classes={{ indicator: classes.hideIndicator }}
             >
-
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} value={0} />
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} value={1} />
             </Tabs>
-            {/* </TabList> */}
             <Grid item>
               {!isArchive && <Button
                 onClick={() => {

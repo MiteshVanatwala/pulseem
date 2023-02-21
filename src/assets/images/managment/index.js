@@ -10,7 +10,6 @@ import ShareIcon from './share.png'
 import CopyIcon from './Copy.tsx'
 import EmbedCodeIcon from './embed_code.png'
 import SurveryResultsIcon from './SurveryResults.tsx'
-import DeleteRecipient from './deleteRecipient.png'
 import DeleteEmail from './deleteEmail.png'
 import DeletePhone from './deletePhone.png'
 import { ReactComponent as ExportIcon } from './export.svg'
@@ -35,7 +34,9 @@ import Excel from './xls.png'
 import Pdf from './pdf.png'
 import Ppt from './ppt.png'
 import Txt from './txt.png'
-
+import RemoveEmail from './RemoveEmail.tsx'
+import RemovePhone from './RemovePhone.tsx'
+import DeleteRecipient from './DeleteRecipient.tsx'
 export {
   AutomationIcon,
   DeleteIcon,
@@ -56,7 +57,6 @@ export {
   EmbedCodeIcon,
   SurveryResultsIcon,
   CloseIcon,
-  DeleteRecipient,
   DeleteEmail,
   DeletePhone,
   AddRecipient,
@@ -72,7 +72,8 @@ export {
   GroupRemoval,
   ResetIcon,
   SettingIcon,
-  SendIcon
-  // ReportsIcon
-
+  SendIcon,
+  RemoveEmail,
+  RemovePhone,
+  DeleteRecipient
 }

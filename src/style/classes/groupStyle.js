@@ -30,5 +30,11 @@ export const getGroupStyle = (windowSize, isRTL, theme) => ({
     },
     noDecoration: {
         textDecoration: 'none'
+    },
+    groupNameCell: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
-});
+})

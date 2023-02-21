@@ -497,7 +497,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: 'white'
     },
     management: {
-        maxWidth: 1500,
+        maxWidth: 1600,
         '&.MuiContainer-root': {
             // marginLeft: 207
         },

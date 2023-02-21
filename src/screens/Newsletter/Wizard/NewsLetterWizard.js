@@ -1051,7 +1051,7 @@ const NewsLetterWizard = ({ classes }) => {
                     <Divider />
                     <Grid container spacing={3} className={classes.ps15}>
                         {/* Additional Text */}
-                        <Grid item xs={12} sm={5}>
+                        <Grid item xs={12} sm={5} >
                             <AdditionalText
                                 classes={classes}
                                 localClasses={localClasses}

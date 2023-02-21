@@ -116,7 +116,7 @@ const Groups = ({ classes }) => {
         {
             label: "",
             classes: cellStyle,
-            className: clsx(classes.flex6),
+            className: clsx(classes.flex5),
             align: "center",
         },
     ];
@@ -389,8 +389,8 @@ const Groups = ({ classes }) => {
         }
 
         return (
-            <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-                {windowSize !== 'xs' && <Grid item sm={2}>
+            <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
+                {windowSize !== 'xs' && <Grid item sm={2} className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.flexJustifyCenter : ''}>
                     <Checkbox
                         color="primary"
                         checked={selectedGroups && selectedGroups.includes(GroupID)}
@@ -621,7 +621,7 @@ const Groups = ({ classes }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={clsx(classes.flex2, classes.maxWidth275)}>
+                    className={clsx(classes.flex2)}>
                     <Grid container direction="row">
                         <Grid item sm={12 - iconsCells}>
                             {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })}
@@ -670,7 +670,7 @@ const Groups = ({ classes }) => {
                         }
                     </Grid>
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.maxWidth325)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
                     <FlexGrid
                         gridArr={[
                             {
@@ -1174,7 +1174,7 @@ const Groups = ({ classes }) => {
                 <TableCell
                     classes={noBorderCellStyle}
                     align="center"
-                    className={clsx(classes.flex6, classes.p0)}
+                    className={clsx(classes.flex5, classes.p0)}
                 >
                     {renderCellIcons(row)}
                 </TableCell>

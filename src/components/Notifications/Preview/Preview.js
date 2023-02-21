@@ -263,6 +263,8 @@ export const Preview = (
           <Tabs
             value={previewDeviceSelected}
             onChange={handleDeviceChange}
+            className={clsx(classes.tab, classes.tablistRoot)}
+            classes={{ indicator: classes.hideIndicator }}
             variant="fullWidth"
             scrollButtons="off"
             aria-label="scrollable force tabs example"

@@ -604,7 +604,10 @@ const SiteTrackingEditor = ({ classes }) => {
                 <Title
                     Element={
                         <Box className={clsx(classes.flex, classes.spaceBetween, classes.flexWrap)}>
-                            <Typography>
+                            <Typography
+                                style={{ width: 'auto' }}
+                                className={clsx(classes.managementTitle, "mgmtTitle")}
+                            >
                                 {t("siteTracking.title")}
                             </Typography>
                             <Button

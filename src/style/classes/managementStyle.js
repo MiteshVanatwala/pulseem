@@ -1871,7 +1871,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   maxHeightReponsive: {
     "@media screen and (max-width: 1170px)": {
-      maxHeight: "150px !important",
+      // maxHeight: "150px !important",
       textAlign: isRTL ? "right" : "left",
     },
   },

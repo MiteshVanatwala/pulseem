@@ -26,7 +26,7 @@ const WizardActions = ({
     return (
         <Grid container style={innerStyle}>
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer, { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: 40 }}>
+                <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: 40 }}>
                     {onBack &&
                         <Button onClick={() => { onBack?.callback() }}
                             className={clsx(

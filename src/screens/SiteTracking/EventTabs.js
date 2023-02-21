@@ -4,7 +4,7 @@ import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Tab, Button, Box, Link, Divider } from '@material-ui/core'
+import { Grid, Tab, Button, Box, Link, Divider, Tabs } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
@@ -100,20 +100,21 @@ const EventTabs = ({ classes,
             alignItems='center'
             className={classes.borderBottom1}
             item xs={12}>
-            <TabList
+            <Tabs
+                value={tabValue}
                 onChange={handleEventTab}
-                indicatorColor="primary"
+                className={clsx(classes.tab, classes.tablistRoot)}
+                classes={{ indicator: classes.hideIndicator }}
             >
                 {EventsOptions.map((eo, idx) => {
                     return <Tab
                         key={idx}
                         label={t(eo.value)}
-                        classes={{ root: classes.minWidth100 }}
-                        className={clsx(classes.btnTab, { [classes.currentActiveTab]: tabValue === eo.key })}
+                        classes={{ root: classes.btnTab, selected: classes.currentActiveTab }}
                         value={eo.key}
                     />
                 })}
-            </TabList>
+            </Tabs>
         </Grid>
         <TabPanel key={0} value={'PAGE_VIEW'} index={0} className={classes.p0}>
             {renderPageView()}

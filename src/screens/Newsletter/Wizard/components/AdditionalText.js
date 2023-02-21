@@ -35,7 +35,7 @@ export const AdditionalText = ({
             <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.dontSee_clickHere_mail")} align="left">{t("campaigns.newsLetterEditor.dontSee_clickHere_mail")}</Typography>
             </Grid>
-            <Grid xs={12} sm={7}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"
@@ -70,7 +70,7 @@ export const AdditionalText = ({
             <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.printMail")} align="left">{t("campaigns.newsLetterEditor.printMail")}</Typography>
             </Grid>
-            <Grid xs={12} sm={7}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="position" name="PrintLocation" defaultValue="2">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"
@@ -93,7 +93,7 @@ export const AdditionalText = ({
         </Grid>
         {/* Remove Customer from mail list */}
         <Grid container className={clsx(localClasses.contentCenter, classes.pt15)}>
-            <Grid xs={2} sm={1}>
+            <Grid xs={2} sm={1} >
                 <Checkbox
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -105,7 +105,7 @@ export const AdditionalText = ({
             <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.removeCustomerFromMail")} align="left">{t("campaigns.newsLetterEditor.removeCustomerFromMail")}</Typography>
             </Grid>
-            <Grid xs={12} sm={7}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="position" name="UnsubscribeLocation" defaultValue="2">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"
@@ -140,7 +140,7 @@ export const AdditionalText = ({
             <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.updateCustomerInfo")} align="left">{t("campaigns.newsLetterEditor.updateCustomerInfo")}</Typography>
             </Grid>
-            <Grid xs={12} sm={7}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="position" name="UpdateClient" defaultValue="2">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"

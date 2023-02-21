@@ -333,7 +333,7 @@ const MmsManagnentScreen = ({ classes }) => {
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
-            className={icon.disable && classes.disabledCursor}
+            className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
             key={icon.key}
             item >
             <ManagmentIcon

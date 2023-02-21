@@ -14,7 +14,7 @@ import {
   makeStyles,
   Divider
 } from "@material-ui/core";
-import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
+import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
 import {
   TablePagination,
@@ -61,6 +61,8 @@ import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
 import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
 import { sitePrefix } from "../../config";
+import { Title } from "../../components/managment/Title";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 const useStyles = makeStyles({
   groupName: {
@@ -983,27 +985,34 @@ const ClientSearchResult = ({ props, classes }) => {
   const renderHeader = () => {
     return (
       <>
-        <Box className={clsx(classes.flex, classes.spaceBetween)}>
-          <Typography className={classes.managementTitle}>
+        <Box className={clsx(classes.flex, classes.spaceBetween, classes.flexWrap)} >
+          <Typography
+            style={{ width: 'auto' }}
+            className={clsx(classes.managementTitle, "mgmtTitle")}
+          >
             {t("client.logPageHeaderResource1.Text")} {searchData?.ResultTitle ? " - " : ""} {searchData?.ResultTitle}
           </Typography>
-          {window.history.state && <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => {
-            if (searchData?.PageProperty || searchData?.PageName) {
-              navigate(`/react/${searchData?.PageProperty?.PageName ?? searchData?.PageName}`, {
-                state: {
-                  from: 'clientsearchresult'
+          {window.history.state &&
+            <Button
+              className={clsx(classes.btn, classes.btnRounded)}
+              onClick={() => {
+                if (searchData?.PageProperty || searchData?.PageName) {
+                  navigate(`/react/${searchData?.PageProperty?.PageName ?? searchData?.PageName}`, {
+                    state: {
+                      from: 'clientsearchresult'
+                    }
+                  })
                 }
-              })
-            }
-            else {
-              sessionStorage.removeItem('searchData');
-              window.history.back()
-            }
-          }
-          }> {t("common.back")}</Typography>
+                else {
+                  sessionStorage.removeItem('searchData');
+                  window.history.back()
+                }
+              }
+              }
+              startIcon={!isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
+            > {t("common.back")}</Button>
           }
         </Box>
-        <Divider />
       </>
     );
   };
@@ -1019,26 +1028,28 @@ const ClientSearchResult = ({ props, classes }) => {
   const renderSearchLine = () => {
     if (windowSize === "xs") {
       return (
-        <SearchField
-          classes={classes}
-          value={searchStr}
-          onChange={(e) => setSearchStr(e.target.value)}
-          onClick={() => {
-            handleSearch({
-              ...searchData,
-              PageIndex: 1,
-              PageSize: rowsPerPage,
-              SearchTerm: searchStr
-            });
-            setPage(1);
-          }}
-          onKeyPress={handleKeyPress}
-          placeholder={t("appbar.search")}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={searchStr}
+            onChange={(e) => setSearchStr(e.target.value)}
+            onClick={() => {
+              handleSearch({
+                ...searchData,
+                PageIndex: 1,
+                PageSize: rowsPerPage,
+                SearchTerm: searchStr
+              });
+              setPage(1);
+            }}
+            onKeyPress={handleKeyPress}
+            placeholder={t("appbar.search")}
+          />
+        </Grid>
       );
     }
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant="outlined"
@@ -1053,8 +1064,6 @@ const ClientSearchResult = ({ props, classes }) => {
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
         <Grid item>
           <Button
-            size="large"
-            variant="contained"
             onClick={() => {
               handleSearch({
                 ...searchData,
@@ -1069,8 +1078,8 @@ const ClientSearchResult = ({ props, classes }) => {
               setPage(1);
               handleFilter();
             }}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
@@ -1079,16 +1088,14 @@ const ClientSearchResult = ({ props, classes }) => {
           searchData?.SearchTerm && (
             <Grid item>
               <Button
-                size="large"
-                variant="contained"
                 onClick={() => {
                   handleSearch({ ...searchData, SearchTerm: "", ...filterSearch });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();
                 }}
-                className={classes.searchButton}
-                endIcon={<ClearIcon />}
+                className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+                endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
               >
                 {t("common.clear")}
               </Button>
@@ -1103,23 +1110,20 @@ const ClientSearchResult = ({ props, classes }) => {
       <Grid container spacing={2} className={classes.linePadding} style={{ width: '100%' }}>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
-            variant="contained"
-            size="medium"
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
+              classes.btn, classes.btnRounded
             )}
             onClick={() => setDialog(DialogType.ADD_GROUP)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t("group.new")}
           </Button>
         </Grid>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
-            variant="contained"
-            size="medium"
-            className={clsx(classes.actionButton, classes.actionButtonRed)}
+            className={clsx(classes.btn, classes.btnRounded)}
             onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           >
             {t("recipient.unsubscribe")}
           </Button>
@@ -1127,11 +1131,9 @@ const ClientSearchResult = ({ props, classes }) => {
         {windowSize !== "xs" && (
           <Grid item>
             <Button
-              variant="contained"
-              size="medium"
-              className={clsx(classes.actionButton, classes.actionButtonRed)}
-              // onClick={() => selectedClients.length === 0 ? setToastMessage(ToastMessages.CLIENT_ZERO_SELECT) : setDialog(DialogType.CONFIRM_INVALID)}
+              className={clsx(classes.btn, classes.btnRounded)}
               onClick={() => setDialog(DialogType.CONFIRM_INVALID)}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
               {t("client.makeInvalid")}
             </Button>
@@ -1140,14 +1142,11 @@ const ClientSearchResult = ({ props, classes }) => {
         {
           accountFeatures?.indexOf('13') === -1 && <Grid item xs={windowSize === "xs" && 12}>
             <Button
-              variant="contained"
-              size="medium"
               className={clsx(
-                classes.actionButton,
-                classes.actionButtonGreen
+                classes.btn, classes.btnRounded
               )}
               onClick={() => setDialog(DialogType.EXPORT_FORMAT)}
-              startIcon={<ExportIcon />}
+              endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
               {t("campaigns.exportFile")}
             </Button>
@@ -1273,7 +1272,7 @@ const ClientSearchResult = ({ props, classes }) => {
       const iconsMap = [
         {
           key: 'edit',
-          icon: EditIcon,
+          uIcon: EditIcon,
           lable: t("common.edit"),
           rootClass: classes.paddingIcon,
           onClick: async () => {
@@ -1291,7 +1290,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         {
           key: 'deleteFromGroups',
-          icon: DeleteRecipient,
+          uIcon: DeleteRecipient,
           lable: t("recipient.deleteFromGroups"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1301,7 +1300,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         {
           key: 'deleteFromEmail',
-          icon: DeleteEmail,
+          uIcon: RemoveEmail,
           lable: t("recipient.deleteEmail"),
           rootClass: classes.paddingIcon,
           onClick: () => {
@@ -1311,7 +1310,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         {
           key: 'deleteFromPhone',
-          icon: DeletePhone,
+          uIcon: RemovePhone,
           lable: t("recipient.deletePhone"),
           remove: windowSize === 'xs',
           rootClass: classes.paddingIcon,
@@ -1328,12 +1327,13 @@ const ClientSearchResult = ({ props, classes }) => {
           justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
           {iconsMap.map(icon => (
             <Grid
-              className={icon.disable && classes.disabledCursor}
+              className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
               key={icon.key}
               item >
               <ManagmentIcon
                 classes={classes}
                 {...icon}
+                uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
               />
             </Grid>
           ))}
@@ -1625,13 +1625,15 @@ const ClientSearchResult = ({ props, classes }) => {
             className: windowSize === "xs" && classes.dNone,
           }}
         >
-          <TableBody>
-            {!sortedData || sortedData.length === 0 ?
-              <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
-                <Typography>{t("common.NoDataTryFilter")}</Typography>
-              </Box> :
-              sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
-          </TableBody>
+          <Box className='tableBodyContainer'>
+            <TableBody>
+              {!sortedData || sortedData.length === 0 ?
+                <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+                  <Typography>{t("common.NoDataTryFilter")}</Typography>
+                </Box> :
+                sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
+            </TableBody>
+          </Box>
         </DataTable>
         <TablePagination
           classes={classes}
@@ -1763,9 +1765,14 @@ const ClientSearchResult = ({ props, classes }) => {
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
+      <Box className={'topSection'}>
+        <Title
+          classes={classes}
+          Element={renderHeader()}
+        />
+        {renderSearchLine()}
+      </Box>
       {toastMessage && renderToast()}
-      {renderHeader()}
-      {renderSearchLine()}
       {windowSize !== "xs" ? renderManagmentLine() : null}
       {renderTableBody()}
       {renderConfirmDialog()}
