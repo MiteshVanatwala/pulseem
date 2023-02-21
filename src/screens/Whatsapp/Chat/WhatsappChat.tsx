@@ -22,8 +22,9 @@ import {
 	savedTemplateListProps,
 	templateDataProps,
 	templatePreviewDataProps,
+	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	getInboundWhatsappChatStatus,
 	getSavedTemplates,
@@ -48,13 +49,23 @@ import {
 	getAccountExtraData,
 	getPreviousLandingData,
 } from '../../../redux/reducers/smsSlice';
-import { apiStatus, buttonTypes, whatsappChatStatuses } from '../Constant';
+import {
+	apiStatus,
+	buttonTypes,
+	resetToastData,
+	whatsappChatStatuses,
+} from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
+import Toast from '../../../components/Toast/Toast.component';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [activeChatContacts, setActiveChatContacts] =
@@ -105,6 +116,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	>([]);
 	const [allWhatsappChat, setAllWhatsappChat] =
 		useState<APIWhatsappChatItemsData>();
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [fileData, setFileData] = useState<{
 		fileType: string;
@@ -233,24 +246,37 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 			setSideChatContacts(updatedSideChatContacts);
 			setFilteredSideChatContacts(updatedFilterSideChatContacts);
+		} else {
+			whatsAppChatConversationStatusData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: whatsAppChatConversationStatusData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
 	const setAPIInboundChatStatus = async () => {
-		const whatsAppChatSessionStatus: APIWhatsappChatSession =
+		const { payload: whatsAppChatSessionStatus }: APIWhatsappChatSession =
 			await dispatch<any>(
 				getInboundWhatsappChatStatus({
 					activePhoneNumber: activePhoneNumber,
 					activeUserNumber: activeChatContacts.PhoneNumber,
 				})
 			);
-		if (whatsAppChatSessionStatus.payload.Status === apiStatus.SUCCESS) {
-			setWhatsappChatSession(whatsAppChatSessionStatus.payload.Data);
+		if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
+			setWhatsappChatSession(whatsAppChatSessionStatus?.Data);
 		} else {
 			setWhatsappChatSession({
 				IsIn24Window: false,
 				ExpiryTime: '',
 			});
+			whatsAppChatSessionStatus?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: whatsAppChatSessionStatus?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
@@ -456,6 +482,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			setIsLoader(true);
 			const { payload: sendWhatsappChat }: APISendWhatsappChat =
 				await dispatch<any>(sendWhatsAppChat(chatReqPayload));
+			setIsLoader(false);
 			if (sendWhatsappChat?.Status === apiStatus?.SUCCESS) {
 				const sentChat = sendWhatsappChat?.Data?.Data?.Items;
 				if (allWhatsappChat && sentChat && sentChat?.TODAY?.length > 0) {
@@ -475,9 +502,29 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					setNewMessage('');
 					setSavedTemplate('');
 				}
+			} else {
+				sendWhatsappChat?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: sendWhatsappChat?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
 			}
-			setIsLoader(false);
 		}
+	};
+
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} />;
+		}
+		return null;
 	};
 
 	return (
@@ -488,6 +535,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				classes={classes}
 				customPadding={false}
 				containerClass={null}>
+				{renderToast()}
 				<div className={`${classes.whatsappChat} app`}>
 					<div className={`${classes.whatsappChat} app-content`}>
 						<SideBar
