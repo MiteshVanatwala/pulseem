@@ -58,6 +58,7 @@
     "react-hook-form": "^7.39.3",
     "react-i18next": "^11.8.10",
     "react-icons": "^4.7.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-modal": "^3.16.1",
     "react-number-format": "^4.6.3",
     "react-papaparse": "^3.17.1",

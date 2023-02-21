@@ -12,6 +12,7 @@ import {
 	APISendWhatsappChat,
 	APISendWhatsAppChatReqPayload,
 	APIWhatsappChatItemsData,
+	ContactsPaginationSetting,
 } from './Types/WhatsappChat.type';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
@@ -89,6 +90,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
 			ExpiryTime: '',
+			Hour: '0',
+			Minute: '0',
+			Second: '0',
 		});
 
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
@@ -189,6 +193,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
 	const [dynamicModalVariable, setDynamicModalVariable] = useState<number>(0);
 
+	const [contactsPaginationSetting, setContactsPaginationSetting] =
+		useState<ContactsPaginationSetting>({
+			PageNo: 1,
+			PageSize: 20,
+			hasMore: true,
+		});
+
 	useEffect(() => {
 		if (!personalFields || landingPages?.length <= 0) {
 			getDynamicModalValues();
@@ -269,6 +280,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			setWhatsappChatSession({
 				IsIn24Window: false,
 				ExpiryTime: '',
+				Hour: '0',
+				Minute: '0',
+				Second: '0',
 			});
 			whatsAppChatSessionStatus?.Message
 				? setToastMessage({
@@ -282,7 +296,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const setAPIWhatsAppChatContacts = async (activeUser: string) => {
 		setIsLoader(true);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
-			await dispatch<any>(getWhatsappChatContactsByPhoneNumber(activeUser));
+			await dispatch<any>(
+				getWhatsappChatContactsByPhoneNumber({
+					PhoneNumber: activeUser,
+					IsPagination: true,
+					pageNo: contactsPaginationSetting?.PageNo,
+					pageSize: contactsPaginationSetting?.PageSize,
+				})
+			);
 		setIsLoader(false);
 		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
 			const contactData = whatsAppChatContactsData.payload.Data.Items;
@@ -511,6 +532,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					setDynamicVariable([]);
 					setNewMessage('');
 					setSavedTemplate('');
+					const inputElement = document.getElementById('free-from-input');
+					if (inputElement && savedTemplate?.length === 0) {
+						inputElement.innerText = '';
+					}
 				}
 			} else {
 				sendWhatsappChat?.Message
@@ -535,6 +560,60 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			return <Toast data={toastMessage} />;
 		}
 		return null;
+	};
+
+	const fetchMoreContacts = async (
+		searchText: string,
+		isPaginationReset: boolean = false
+	) => {
+		if (activePhoneNumber && activePhoneNumber?.length > 0) {
+			if (isPaginationReset) {
+				setIsLoader(true);
+			}
+			const {
+				payload: whatsAppChatContactsData,
+			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+				getWhatsappChatContactsByPhoneNumber({
+					PhoneNumber: activePhoneNumber,
+					IsPagination: true,
+					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
+					pageSize: contactsPaginationSetting?.PageSize,
+					Searchtext: searchText,
+				})
+			);
+			setIsLoader(false);
+			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
+				setContactsPaginationSetting({
+					...contactsPaginationSetting,
+					hasMore: true,
+					PageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
+				});
+				if (isPaginationReset) {
+					const listDivElement = document.getElementById('contact-list-div');
+					if (listDivElement) {
+						listDivElement.scrollTop = 0;
+					}
+					setSideChatContacts(whatsAppChatContactsData?.Data?.Items);
+					setFilteredSideChatContacts(whatsAppChatContactsData?.Data?.Items);
+				} else {
+					setSideChatContacts([
+						...sideChatContacts,
+						...whatsAppChatContactsData?.Data?.Items,
+					]);
+					setFilteredSideChatContacts([
+						...filteredSideChatContacts,
+						...whatsAppChatContactsData?.Data?.Items,
+					]);
+				}
+			} else {
+				if (whatsAppChatContactsData?.Message === 'No Data Found') {
+					setContactsPaginationSetting({
+						...contactsPaginationSetting,
+						hasMore: false,
+					});
+				}
+			}
+		}
 	};
 
 	return (
@@ -564,6 +643,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							handleUserStatus={handleUserStatus}
 							getStatusClass={getStatusClass}
 							chatContacts={activeChatContacts}
+							fetchMoreContacts={fetchMoreContacts}
+							contactsPaginationSetting={contactsPaginationSetting}
+							fetchSearchedContacts={fetchMoreContacts}
 						/>
 						<ChatUi
 							isMobileSideBar={isMobileSideBar}

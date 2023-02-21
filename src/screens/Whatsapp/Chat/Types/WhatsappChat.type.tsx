@@ -40,7 +40,9 @@ export type WhatsappChatUiProps = {
 	setAllWhatsappChat: (whatsappChat: APIWhatsappChatItemsData) => void;
 	setAPIInboundChatStatus: () => void;
 	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
-	setUpdatedDynamicVariable: (updatedDynamicVariable: updatedVariable[]) => void;
+	setUpdatedDynamicVariable: (
+		updatedDynamicVariable: updatedVariable[]
+	) => void;
 	setDynamicVariable: (dynamicVariable: string[]) => void;
 	setSavedTemplate: (template: string) => void;
 };
@@ -54,6 +56,8 @@ export type SideBarContactListProps = {
 	) => void;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
+	fetchMoreContacts: () => void;
+	contactsPaginationSetting: ContactsPaginationSetting;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -114,6 +118,12 @@ export type WhatsappChatSideBarProps = {
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
 	activePhoneNumber: string;
+	fetchMoreContacts: (searchText: string) => void;
+	contactsPaginationSetting: ContactsPaginationSetting;
+	fetchSearchedContacts: (
+		searchText: string,
+		isPaginationReset: boolean
+	) => void;
 };
 
 export type chatModalProps = {
@@ -220,6 +230,15 @@ export type APIWhatsappChatData = {
 export type APIWhatsappChatSessionData = {
 	ExpiryTime: string;
 	IsIn24Window: boolean;
+	Hour: string;
+	Minute: string;
+	Second: string;
+};
+
+export type ContactsPaginationSetting = {
+	PageNo: number;
+	PageSize: number;
+	hasMore: boolean;
 };
 
 export type APIWhatsappChatSessionPayloadData = {
@@ -281,4 +300,18 @@ export type displayCountDown = {
 		minutes: string;
 		seconds: string;
 	};
+};
+
+export type APIGetWhatsappChatContactsReq = {
+	PhoneNumber: string;
+	IsPagination: boolean;
+	pageNo: number;
+	pageSize: number;
+	Searchtext?: string;
+};
+
+export type Timer = {
+	Hour: number;
+	Minute: number;
+	Second: number;
 };

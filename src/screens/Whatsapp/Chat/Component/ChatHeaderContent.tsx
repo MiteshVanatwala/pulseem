@@ -1,12 +1,14 @@
 import {
 	ChatHeaderContentProps,
 	displayCountDown,
+	Timer,
 } from '../Types/WhatsappChat.type';
 import clsx from 'clsx';
 import { MenuItem, Select, makeStyles } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import Countdown from 'react-countdown';
 import { user } from './data';
+import { useEffect, useState } from 'react';
 
 const ChatHeaderContent = ({
 	classes,
@@ -32,11 +34,63 @@ const ChatHeaderContent = ({
 		},
 	}));
 	const muiclasses = useStyles();
+	const [isTimerover, setIsTimerOver] = useState<boolean>(false);
+	const [timer, setTimer] = useState<Timer>({
+		Hour: Number(whatsappChatSession?.Hour),
+		Minute: Number(whatsappChatSession?.Minute),
+		Second: Number(whatsappChatSession?.Second),
+	});
 
-	const countDown = ({ formatted }: displayCountDown) => {
+	useEffect(() => {
+		let timerID = setInterval(() => tickTimer(), 1000);
+		return () => clearInterval(timerID);
+	});
+
+	useEffect(() => {
+		setTimer({
+			Hour: Number(whatsappChatSession?.Hour),
+			Minute: Number(whatsappChatSession?.Minute),
+			Second: Number(whatsappChatSession?.Second),
+		});
+	}, [whatsappChatSession]);
+
+	const tickTimer = () => {
+		if (isTimerover) return;
+		if (timer.Hour === 0 && timer.Minute === 0 && timer.Second === 0)
+			setIsTimerOver(true);
+		else if (timer.Minute === 0 && timer.Second === 0)
+			setTimer({
+				Hour: timer.Hour - 1,
+				Minute: 59,
+				Second: 59,
+			});
+		else if (timer.Second === 0)
+			setTimer({
+				Hour: timer.Hour,
+				Minute: timer.Minute - 1,
+				Second: 59,
+			});
+		else
+			setTimer({
+				Hour: timer.Hour,
+				Minute: timer.Minute,
+				Second: timer.Second - 1,
+			});
+	};
+
+	const resetTimer = () => {
+		setTimer({
+			Hour: 0,
+			Minute: 0,
+			Second: 0,
+		});
+		setIsTimerOver(false);
+	};
+
+	const countDown = () => {
 		return (
 			<span>
-				{formatted?.hours}:{formatted?.minutes}:{formatted?.seconds}
+				{timer?.Hour}:{timer?.Minute}:{timer?.Second}
 			</span>
 		);
 	};
@@ -98,11 +152,7 @@ const ChatHeaderContent = ({
 				<div className={`${classes.whatsappChat} chat__actions`}>
 					<div
 						className={`${classes.whatsappChat} chat__action chat__action-icon`}>
-						<Countdown
-							date={whatsappChatSession?.ExpiryTime}
-							renderer={countDown}
-							onComplete={onTimerComplete}
-						/>
+						{countDown()}
 					</div>
 				</div>
 			)}

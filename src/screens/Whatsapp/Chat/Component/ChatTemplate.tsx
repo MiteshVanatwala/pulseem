@@ -277,6 +277,26 @@ const ChatTemplate = ({
 					) : message.IsInbound ? (
 						<p
 							key={msgIndex}
+							className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}>
+							<span>{message?.Message}</span>
+							<span className={`${classes.whatsappChat} chat__msg-filler`}>
+								{' '}
+							</span>
+							<span className={`${classes.whatsappChat} chat__msg-footer`}>
+								{formatTime(message.MessageDate)}
+							</span>
+							<button
+								aria-label='Message options'
+								className={`${classes.whatsappChat} chat__msg-options`}>
+								<Icon
+									id='downArrow'
+									className={`${classes.whatsappChat} chat__msg-options-icon`}
+								/>
+							</button>
+						</p>
+					) : (
+						<p
+							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--sent`}>
 							<span>{message.Message}</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
@@ -293,26 +313,6 @@ const ChatTemplate = ({
 											: ''
 									}`}
 								/>
-							</span>
-							<button
-								aria-label='Message options'
-								className={`${classes.whatsappChat} chat__msg-options`}>
-								<Icon
-									id='downArrow'
-									className={`${classes.whatsappChat} chat__msg-options-icon`}
-								/>
-							</button>
-						</p>
-					) : (
-						<p
-							key={msgIndex}
-							className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}>
-							<span>{message?.Message}</span>
-							<span className={`${classes.whatsappChat} chat__msg-filler`}>
-								{' '}
-							</span>
-							<span className={`${classes.whatsappChat} chat__msg-footer`}>
-								{formatTime(message.MessageDate)}
 							</span>
 							<button
 								aria-label='Message options'
