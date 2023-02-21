@@ -5,9 +5,7 @@ export const getSmsData = createAsyncThunk(
 	'smsCampaign/getAllSmsCampaigns',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/getAllSmsCampaigns`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/getAllSmsCampaigns`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -19,9 +17,7 @@ export const getSMSVirtualNumber = createAsyncThunk(
 	'smsCampaign/GetAccountVirtualNumber',
 	async (number, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetAccountVirtualNumber/${number}`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -42,9 +38,7 @@ export const getTestGroups = createAsyncThunk(
 	'smsCampaign/GetTestGroups',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetTestGroups`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetTestGroups`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -55,9 +49,7 @@ export const getPreviousLandingData = createAsyncThunk(
 	'smsCampaign/GetLastLandingPages',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetLastLandingPages`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetLastLandingPages`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -68,9 +60,7 @@ export const getPreviousCampaignData = createAsyncThunk(
 	'smsCampaign/GetLastCampaings',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetLastCampaings`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetLastCampaings`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -81,9 +71,7 @@ export const getAccountExtraData = createAsyncThunk(
 	'smsCampaign/GetAccountExtraData',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetAccountExtraData`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetAccountExtraData`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -94,9 +82,7 @@ export const getGroupsBySubAccountId = createAsyncThunk(
 	'smsCampaign/GetGroupsBySubAccountId',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetGroupsBySubAccountId`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetGroupsBySubAccountId`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -122,9 +108,7 @@ export const getSmsByID = createAsyncThunk(
 	'smsCampaign/GetSmsCampaignById',
 	async (id, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetSmsCampaignById/${id}`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetSmsCampaignById/${id}`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -136,10 +120,7 @@ export const getSMSDirectReport = createAsyncThunk(
 	'directReport/GetSmsDirectReport',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`directReport/GetSmsDirectReport`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`directReport/GetSmsDirectReport`, data);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -151,10 +132,7 @@ export const getArchiveSMSDirectReport = createAsyncThunk(
 	'directReport/GetArchiveSmsDirect',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`directReport/GetArchiveSmsDirect`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`directReport/GetArchiveSmsDirect`, data);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -188,10 +166,7 @@ export const saveManualClients = createAsyncThunk(
 	'smsCampaign/SaveManualClients',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/SaveManualClients`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/SaveManualClients`, data);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -203,10 +178,7 @@ export const exportSMSDirectReport = createAsyncThunk(
 	'directReport/ExportSmsDirectReport',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`directReport/ExportSmsDirectReport`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`directReport/ExportSmsDirectReport`, data);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -230,10 +202,7 @@ export const restoreSms = createAsyncThunk(
 	'smsCampaign/restoreSmsCampaigns',
 	async (deletedsms, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.put(
-				`smsCampaign/restoreSmsCampaigns`,
-				deletedsms
-			);
+			const response = await PulseemReactInstance.put(`smsCampaign/restoreSmsCampaigns`, deletedsms);
 			return response.data;
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -245,9 +214,7 @@ export const deleteSms = createAsyncThunk(
 	'smsCampaign/DeleteById',
 	async (id, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.delete(
-				`smsCampaign/DeleteById/${id}`
-			);
+			const response = await PulseemReactInstance.delete(`smsCampaign/DeleteById/${id}`);
 			return response.data;
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -259,9 +226,7 @@ export const duplicteSms = createAsyncThunk(
 	'smsCampaign/cloneSmsCampaign',
 	async (id, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.put(
-				`smsCampaign/cloneSmsCampaign/${id}`
-			);
+			const response = await PulseemReactInstance.put(`smsCampaign/cloneSmsCampaign/${id}`);
 			return response.data;
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -272,9 +237,7 @@ export const smsDelete = createAsyncThunk(
 	'smsCampaign/deleteSmsCampaign',
 	async (id, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/deleteSmsCampaign/${id}`
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/deleteSmsCampaign/${id}`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -286,9 +249,7 @@ export const getSmsAuthorizationData = createAsyncThunk(
 	'authorization/getAuthorizeNumbers',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`authorization/getAuthorizeNumbers`
-			);
+			const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -300,10 +261,7 @@ export const getAuthorizeNumbers = createAsyncThunk(
 	'GetRelatedSubAccountNumber',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`authorization/getAuthorizeNumbers`,
-				{ subID: -1 }
-			);
+			const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -338,10 +296,7 @@ export const getSmsReport = createAsyncThunk(
 	'reports/SmsReport',
 	async (query, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`reports/SmsReport`,
-				query
-			);
+			const response = await PulseemReactInstance.post(`reports/SmsReport`, query);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -365,9 +320,7 @@ export const getCampaignSumm = createAsyncThunk(
 	'smsCampaign/GetCampaignSummary',
 	async (id, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetCampaignSummary/${id}`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetCampaignSummary/${id}`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -379,10 +332,7 @@ export const smsSave = createAsyncThunk(
 	'smsCampaign/Save',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/Save`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/Save`, data);
 
 			return JSON.parse(response.data);
 		} catch (error) {
@@ -394,10 +344,7 @@ export const smsSaveGroup = createAsyncThunk(
 	'smsCampaign/SaveQuickSendGroups',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/SaveQuickSendGroups`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/SaveQuickSendGroups`, data);
 
 			return JSON.parse(response.data);
 		} catch (error) {
@@ -409,10 +356,7 @@ export const saveSmsCampSettings = createAsyncThunk(
 	'smsCampaign/SaveCampaignSettings',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/SaveCampaignSettings`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/SaveCampaignSettings`, data);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -423,10 +367,7 @@ export const smsCombinedGroup = createAsyncThunk(
 	'smsCampaign/CreateCombinedGroup',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/CreateCombinedGroup`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/CreateCombinedGroup`, data);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -437,10 +378,7 @@ export const smsQuick = createAsyncThunk(
 	'smsCampaign/QuickSend',
 	async (data, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/QuickSend`,
-				data
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/QuickSend`, data);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -452,9 +390,7 @@ export const exportSmsReport = createAsyncThunk(
 	'report/ExportSmsReport',
 	async (demo = false, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`report/ExportSmsReport/${demo}`
-			);
+			const response = await PulseemReactInstance.post(`report/ExportSmsReport/${demo}`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -465,9 +401,7 @@ export const getFinishedCampaigns = createAsyncThunk(
 	'smsCampaign/GetFinishedSmsCampaigns',
 	async (_, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetFinishedSmsCampaigns`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetFinishedSmsCampaigns`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -478,9 +412,7 @@ export const getCampaignSettings = createAsyncThunk(
 	'smsCampaign/GetCampaignSettings',
 	async (campaignId, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.get(
-				`smsCampaign/GetCampaignSettings/${campaignId}`
-			);
+			const response = await PulseemReactInstance.get(`smsCampaign/GetCampaignSettings/${campaignId}`);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -492,10 +424,7 @@ export const sendSms = createAsyncThunk(
 	'smsCampaign/Send',
 	async (sendData, thunkAPI) => {
 		try {
-			const response = await PulseemReactInstance.post(
-				`smsCampaign/Send`,
-				sendData
-			);
+			const response = await PulseemReactInstance.post(`smsCampaign/Send`, sendData);
 			return JSON.parse(response.data);
 		} catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -637,7 +566,7 @@ export const smsSlice = createSlice({
 			state.testGroups.length && state.testGroups.forEach((c) => c.IsTestGroup = true);
 		})
 		builder.addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-			state.commonSettings = payload.Data
+			state.commonSettings = payload?.Data
 		})
 		builder.addCase(getFinishedCampaigns.fulfilled, (state, { payload }) => {
 			state.finishedCampaigns = payload
@@ -670,7 +599,9 @@ export const smsSlice = createSlice({
 			state.smsCampaignSettings = action.error;
 		});
 		builder.addCase(getSmsReplies.fulfilled, (state, { payload }) => {
-			state.smsReplies = payload;
+			if (!payload.IsExport) {
+				state.smsReplies = payload;
+			}
 		});
 
 		// builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))

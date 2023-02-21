@@ -147,6 +147,7 @@ export type APIWhatsappChatSidebarContactsItemsData = {
 	UserName: string;
 };
 
+//SidebarContacts Main inbound data types
 export type APIWhatsappChatSidebarContactsMainData = {
 	Count: number;
 	CurrentPage: number;
@@ -165,13 +166,15 @@ export type APIWhatsappChatSidebarContactsData = {
 	payload: APIWhatsappChatSidebarContactsPayloadData;
 };
 
+// TemplateData Variables (PersonalField,Text,Link,LandingPage,Navigation)
 export type APIWhatsappChatVariablesData = {
 	'1': string;
 	'2': string;
 };
 
-export type APIWhatsappChatTextData = {
-	body: string;
+//According to API inbound schema for template data types
+export type APIWhatsappChatTypesData = {
+	text: { body: string };
 };
 
 export type APIWhatsappChatTemplateData = {
@@ -195,6 +198,7 @@ export type APIWhatsappChatItemsData = {
 	[key: string]: APIWhatsappChatDetailData[];
 };
 
+//Chat Main inbound data types
 export type APIWhatsappChatMainData = {
 	Count: number;
 	CurrentPage: number;

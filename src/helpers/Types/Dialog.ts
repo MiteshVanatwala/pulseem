@@ -24,6 +24,7 @@ export type DialogOptions = {
   exitButton?: any;
   maxHeight?: string | number | undefined;
   reduceTitle?: boolean;
+  confirmDisabled?: boolean;
 };
 
 export type Slide_PropTypes = {

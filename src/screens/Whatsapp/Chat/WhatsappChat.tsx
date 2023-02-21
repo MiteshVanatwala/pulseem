@@ -136,9 +136,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
-	const [page, setPage] = useState<number>(1);
-	const [ispagination, setIsPaginbation] = useState<boolean>(false);
-	const pagesize = 20;
+
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),

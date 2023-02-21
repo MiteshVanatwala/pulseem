@@ -152,7 +152,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
-	const [from, setFrom] = useState<string>('16062028751');
+	const [from, setFrom] = useState<string>('');
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
