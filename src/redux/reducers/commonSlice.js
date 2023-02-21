@@ -96,6 +96,17 @@ export const getAuthorizeNumbers = createAsyncThunk(
     }
   })
 
+export const getTwoFactorAuthValues = createAsyncThunk(
+  'getTwoFactorAuthValues', async (authType, thunkAPI) => {
+    try {
+      const response = await instence.get(`authorization/GetTwoFactorAuthValues/${authType}`);
+      response.data.authType = authType;
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const commonSlice = createSlice({
   name: 'common',
@@ -104,7 +115,9 @@ export const commonSlice = createSlice({
     verifiedEmails: [],
     verifiedNumbers: [],
     tokenAlive: true,
-    commonSettings: {}
+    commonSettings: {},
+    twoFactorAuthEmails: [],
+    twoFactorAuthNumbers: []
   },
   extraReducers: builder => {
     builder
@@ -122,6 +135,14 @@ export const commonSlice = createSlice({
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;
+    })
+    builder.addCase(getTwoFactorAuthValues.fulfilled, (state, { payload }) => {
+      if (payload?.authType === 1) {
+        state.twoFactorAuthEmails = payload?.Data;
+      }
+      else {
+        state.twoFactorAuthNumbers = payload?.Data;
+      }
     })
   }
 })

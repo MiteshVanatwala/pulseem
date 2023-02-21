@@ -46,7 +46,11 @@
       "inActivetedSuccessfuly": "כיבוי אימות דו-שלבי בוצעה בהצלחה!",
       "notSaved": "הפעלת אימות דו שלבי לא נשמרה. אנא פנה לתמיכה."
     },
-    "savedSuccessfuly": "ההגדרות נשמרו בהצלחה!"
+    "savedSuccessfuly": "ההגדרות נשמרו בהצלחה!",
+    "2fa": {
+      "addEmail": "הוסף מייל לאימות דו שלבי",
+      "addNumber": "הוסף מספר לאימות דו שלבי"
+  }
   },
   "billingSettings": {
     "title": "הגדרות פרטי חיוב",

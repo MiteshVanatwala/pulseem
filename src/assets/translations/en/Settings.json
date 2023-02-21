@@ -46,7 +46,11 @@
             "inActivetedSuccessfuly": "Two factor authentication inactivated!",
             "notSaved": "Two factor authentication was not saved. Please contact support."
         },
-        "savedSuccessfuly": "Settings successfuly saved!"
+        "savedSuccessfuly": "Settings successfuly saved!",
+        "2fa": {
+            "addEmail": "Add 2FA Email",
+            "addNumber": "Add 2FA Number"
+        }
     },
     "billingSettings": {
         "title": "Billing settings",

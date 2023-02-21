@@ -32,6 +32,8 @@ const AccountSettingsEditor = () => {
   const [showLoader, setShowLoader] = useState(true);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
   const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
+  const [tfaEmailVerification, setTfaEmailVerification] = useState(false);
+  const [tfaSmsVerification, setTfaSmsVerification] = useState(false);
   const [verificationStep, setVerificationStep] = useState(0);
   const [emailToVerify, setEmailToVerify] = useState<string>('');
   const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
@@ -182,14 +184,27 @@ const AccountSettingsEditor = () => {
   };
 
   const handleVerification = (type: string) => {
-    if (!type || type === '') {
-      return false;
+    switch (type) {
+      case 'cellphone': {
+        setSmsVerificationPopup(true);
+        break;
+      }
+      case 'email': {
+        setEmailVerificationPopup(true);
+        break;
+      }
+      case 'email2fa': {
+        setTfaEmailVerification(true);
+        break;
+      }
+      case 'sms2fa': {
+        setTfaSmsVerification(true);
+        break;
+      }
+      default: {
+        return false;
+      }
     }
-    if (type === 'cellphone')
-      setSmsVerificationPopup(true);
-    else if (type === 'email')
-      setEmailVerificationPopup(true);
-
   }
 
   return (
@@ -259,6 +274,14 @@ const AccountSettingsEditor = () => {
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
             OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
+            onShowTwoFactorAuth={(variant: string) => {
+              if (variant === 'smsTFA') {
+                setTfaSmsVerification(true);
+              }
+              else {
+                setTfaEmailVerification(true);
+              }
+            }}
           />
           <Divider style={{ marginTop: 35 }} />
           <FORM_ACCOUNT_DETAILS
@@ -269,6 +292,18 @@ const AccountSettingsEditor = () => {
           />
         </Box>
       </Box>
+      {tfaEmailVerification && <VerificationDialog
+        variant="emailTFA"
+        textButtonOnSuccess={t('common.close')}
+        classes={classes}
+        isOpen={tfaEmailVerification}
+        value={verificationStep > 0 && emailToVerify}
+        step={verificationStep}
+        onClose={() => {
+          setEmailVerificationPopup(false);
+          setVerificationStep(0);
+        }}
+      />}
       {emailVerificationPopup && <VerificationDialog
         textButtonOnSuccess={t('common.close')}
         classes={classes}

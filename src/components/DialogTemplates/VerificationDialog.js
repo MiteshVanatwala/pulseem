@@ -5,7 +5,7 @@ import { Dialog } from '../../components/managment/index'
 import 'moment/locale/he'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonSlice';
+import { newAuthorizeEmail, verifyEmailCode, getTwoFactorAuthValues } from '../../redux/reducers/commonSlice';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
 import { MdOutlineMarkEmailRead } from 'react-icons/md';
 import {
@@ -20,7 +20,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     const { username } = useSelector(state => state.user)
-    const { verifiedEmails, verifiedNumbers } = useSelector(state => state.common);
+    const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [verificationStep, setVerificationStep] = useState(step)
     const [verificationError, setVerificationError] = useState(null)
@@ -34,16 +34,43 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
 
 
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
-    const SLIDE_HEIGHTS = [25, 20, 20, 20, 20]
+    const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
 
     useEffect(() => {
-        variant === 'email' && dispatch(getAuthorizedEmails());
-        if (variant === 'sms') {
-
-            const handleVerificationDialog = async () => {
-                await dispatch(getAuthorizeNumbers());
+        switch (variant) {
+            case "email": {
+                const handleVerificationDialog = async () => {
+                    await dispatch(getAuthorizedEmails());
+                }
+                handleVerificationDialog();
+                break;
             }
-            handleVerificationDialog()
+            case "sms": {
+                const handleVerificationDialog = async () => {
+                    await dispatch(getAuthorizeNumbers());
+                }
+                handleVerificationDialog()
+                break;
+            }
+            case "emailTFA": {
+                const handleVerificationDialog = async () => {
+                    await dispatch(getAuthorizedEmails());
+                    await dispatch(getTwoFactorAuthValues(1));
+                }
+                handleVerificationDialog()
+                break;
+            }
+            case "numberTFA": {
+                const handleVerificationDialog = async () => {
+                    await dispatch(getAuthorizeNumbers());
+                    await dispatch(getTwoFactorAuthValues(2));
+                }
+                handleVerificationDialog()
+                break;
+            }
+            default: {
+                break;
+            }
         }
     }, [])
 
@@ -77,6 +104,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         setAuthorizedTypeDisabled(false);
         variant === 'email' && dispatch(getAuthorizedEmails());
         variant === 'sms' && dispatch(getAuthorizeNumbers());
+        variant === 'emailTFA' && dispatch(getTwoFactorAuthValues(1));
+        variant === 'numberTFA' && dispatch(getTwoFactorAuthValues(2));
     }
 
     const handleVerifyCode = async () => {
@@ -193,8 +222,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     }
 
     const EMAIL_MODULE = () => {
-        //let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
-
         const EMAIL_SLIDE_1 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
@@ -253,7 +280,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 </Box>
             </Box >
         )
-
         const EMAIL_SLIDE_2 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide secondSlide' >
@@ -309,7 +335,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 </Box>
             </Box>
         )
-
         const EMAIL_SLIDE_3 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide'>
@@ -574,6 +599,204 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
 
     }
 
+    const EMAIL_TFA_MODULE = () => {
+        const SLIDE_1 = () => (
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+                <Box className='cSlide firstSlide'>
+                    <Box pb={1}>
+                        {/* <Box pb={1} className={classes.textCenter}> */}
+                        <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
+                            {t('campaigns.newsLetterMgmt.emailVerification.popupTitle')}
+                        </Typography>
+                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
+                            {t('campaigns.newsLetterMgmt.emailVerification.popupDesc1')}
+                        </Typography>
+                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
+                            {t('campaigns.newsLetterMgmt.emailVerification.popupDesc2')}
+                        </Typography>
+                        <Divider />
+                    </Box>
+                    <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <Typography className={clsx(classes.pb25, classes.bold)} variant='h6'>{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                            <Button
+                                style={{ height: 50 }}
+                                className={clsx(
+                                    classes.actionButton,
+                                    classes.actionButtonDarkBlue
+                                )}
+                                onClick={() => {
+                                    setSelectedVerificationContact('')
+                                    setVerificationError({ Number: '' })
+                                    NextSlide()
+                                }}
+                            >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.addNewToVerify')}</Button>
+                        </Box>
+                        <Box className={clsx('contactDataBox', classes.sidebar)}>
+                            {
+                                twoFactorAuthEmails.map((obj) => {
+                                    const isOptIn = verifiedEmails.find((v) => { return v?.Number === obj?.AuthValue })
+                                    return (
+                                        <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')}>
+                                            <Avatar className={isOptIn ? classes.checkIcon : classes.redIcon}>
+                                                <div className={clsx(classes.avatarIcon)}>
+                                                    {isOptIn ? '\uE134' : '\uE0A7'}
+                                                </div>
+                                            </Avatar>
+                                            <Typography className='emailText' title={obj.Number}>{obj.AuthValue} </Typography>
+                                            {!isOptIn && <Typography className={clsx(classes.link, 'emailVerLink')}
+                                                onClick={() => {
+                                                    setSelectedVerificationContact(obj?.AuthValue);
+                                                    setVerificationError({ Number: '' })
+                                                    NextSlide()
+                                                    setAuthorizedTypeDisabled(true);
+                                                }}
+                                            >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifyEmailAddr')}</Typography>}
+                                        </Box>
+                                    )
+                                })
+                            }
+                        </Box>
+                    </Box>
+                </Box>
+            </Box >
+        )
+        const SLIDE_2 = () => (
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+                <Box className='cFlexSlide secondSlide' >
+                    <Box className='titleDescBox'>
+                        <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
+                        <Box className='desc'>
+                            <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>
+                            <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc2')}</Typography>
+                        </Box>
+                    </Box>
+                    <Box className={classes.flexColumn}>
+                        <Box>
+                            <TextField
+                                variant='outlined'
+                                size='small'
+                                value={selectedVerificationContact}
+                                inputProps={{
+                                    disabled: authorizedTypeDisabled,
+                                    className: classes.textColorBlue
+                                }}
+                                onChange={(e) => {
+                                    !!verificationError?.email && setVerificationError({ email: '' })
+                                    setSelectedVerificationContact(e.target.value?.trim())
+                                }}
+                                className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
+                                placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
+                                error={!!verificationError?.Number}
+                            />
+                        </Box>
+                        <Box mt={2}>
+                            <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
+                                onClick={() => {
+                                    if (selectedVerificationContact) {
+                                        const isOptIn = verifiedEmails.find((v) => { return v?.Number === selectedVerificationContact });
+
+                                        if (isOptIn) {
+                                            alert(1);
+                                            //TODO: Insert
+                                        }
+                                        else {
+                                            if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                                                handleSendCode(selectedVerificationContact)
+                                                NextSlide()
+                                            }
+                                            else {
+                                                setVerificationError({ Number: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error1') })
+                                            }
+                                        }
+                                    }
+                                    else
+                                        setVerificationError({ Number: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error2') })
+                                }}
+                            >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.btnText')}</Button>
+                            <Typography className='error' variant="body1">{verificationError?.Number}</Typography>
+                        </Box>
+                    </Box>
+                    <Box>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')}</Typography>
+                        <Typography variant='body1'>{renderHtml(t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs'))}</Typography>
+                    </Box>
+                </Box>
+            </Box>
+        )
+        const SLIDE_3 = () => (
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+                <Box className='cFlexSlide'>
+                    <Box>
+                        <Typography variant='h4' className={classes.bold}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.title')}</Typography>
+                        <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc1')}</Typography>
+                        <Typography variant='body1' mt={1}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc2')}</Typography>
+                    </Box>
+                    <Box className={clsx(classes.flexColumn, classes.mt20)}>
+                        <Box>
+                            <TextField
+                                variant='outlined'
+                                size='small'
+                                className={clsx(classes.textField, classes.maxWidth400)}
+                                onChange={(e) => {
+                                    !!verificationError?.code && setVerificationError({ code: '' })
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
+                                        setVerificationCode(e.target.value)
+                                    }
+                                }}
+                                placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
+                                error={!!verificationError?.code}
+                                value={verificationCode}
+                            />
+                        </Box>
+                        <Box mt={2}>
+                            <Button
+                                className={clsx(classes.actionButton, classes.actionButtonDarkBlue, classes.buttonMinWidth, userCodeConfirmed ? classes.disabled : null)}
+                                onClick={() => {
+                                    if (verificationCode) {
+                                        handleVerifyCode();
+                                    }
+                                    else {
+                                        setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2') })
+                                    }
+                                }}
+                            >
+                                {userCodeConfirmed ? <CircularProgress size={31} style={{ color: '#FFF' }} /> : t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
+                            </Button>
+                            <Typography className='error' variant="body1">{verificationError?.code}</Typography>
+                        </Box>
+                    </Box>
+                    <Box>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={clsx(classes.link, resendDisabled ? classes.disabled : null)} onClick={() => handleSendCode(selectedVerificationContact, true)}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span>{resendDisabled && resendInterval !== 0 && resendInterval !== 10 && <span>{resendInterval}</span>}</Typography>
+                        <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
+                    </Box>
+                </Box>
+            </Box>
+        )
+        const SLIDE_SUCCESS = () => (
+            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
+                <Box className='cFlexSlide'>
+                    <Box>
+                        <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.title')}</Typography>
+                        <Typography variant='body1' className={clsx(classes.mt4, classes.mb15)}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
+                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.buttonMinWidth, classes.mt6)} onClick={() => {
+                            handleClose()
+                        }}>{props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
+                    </Box>
+                </Box>
+            </Box >
+        )
+
+        return (
+            <Box className={clsx(classes.carouselContainer, classes.sidebar)} style={{ height: `${SLIDE_HEIGHTS[verificationStep]}rem`, transition: 'height .5s' }}>
+                {SLIDE_1()}
+                {SLIDE_2()}
+                {SLIDE_3()}
+                {SLIDE_SUCCESS()}
+            </Box>
+        )
+    }
+
     const Popup = (data = '') => ({
         title: '',
         icon: (
@@ -585,6 +808,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         content: (<>
             {variant === 'email' && EMAIL_MODULE()}
             {variant === 'sms' && SMS_MODULE()}
+            {variant === 'emailTFA' && EMAIL_TFA_MODULE()}
+            {/* {variant === 'numberTFA' && SMS_TFA_MODULE()} */}
         </>
 
         ),
