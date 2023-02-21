@@ -342,6 +342,7 @@ const SmsReplies = ({ classes, ...other }) => {
                         setDialog={setDialog}
                         handleResponses={(response, actions) => { handleResponses(response, actions); }}
                         onAddRecipient={(closeDialog = true) => {
+                            getReplies();
                             closeDialog && setDialog(null);
                         }}
                         recipientData={clientToEdit}
