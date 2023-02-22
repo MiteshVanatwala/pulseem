@@ -46,6 +46,7 @@ const ChatUi = ({
 	setUpdatedDynamicVariable,
 	setDynamicVariable,
 	setSavedTemplate,
+	activeChatContacts,
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 
@@ -142,6 +143,7 @@ const ChatUi = ({
 					dynamicVariable={dynamicVariable}
 					whatsappChatSession={whatsappChatSession}
 					onChatSend={onChatSend}
+					activeChatContacts={activeChatContacts}
 				/>
 			</footer>
 		);

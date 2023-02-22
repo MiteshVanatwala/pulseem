@@ -678,6 +678,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							setUpdatedDynamicVariable={setUpdatedDynamicVariable}
 							setDynamicVariable={setDynamicVariable}
 							setSavedTemplate={setSavedTemplate}
+							activeChatContacts={activeChatContacts}
 						/>
 					</div>
 				</div>
