@@ -16,6 +16,7 @@ import ChatTemplate from './ChatTemplate';
 import { Loader } from '../../../../components/Loader/Loader';
 import ChatFooterContent from './ChatFooterContent';
 import ChatHeaderContent from './ChatHeaderContent';
+import { useTranslation } from 'react-i18next';
 
 const ChatUi = ({
 	classes,
@@ -42,6 +43,8 @@ const ChatUi = ({
 	setAllWhatsappChat,
 	setAPIInboundChatStatus,
 }: WhatsappChatUiProps) => {
+	const { t: translator } = useTranslation();
+
 	const dispatch = useDispatch();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 
@@ -156,9 +159,7 @@ const ChatUi = ({
 												id='lock'
 												className={`${classes.whatsappChat} chat__encryption-icon`}
 											/>
-											Messages are end-to-end encrypted. No one outside of this
-											chat, not even WhatsApp, can read or listen to them. Click
-											to learn more.
+											{translator('whatsappChat.endEncrypt')}
 										</p>
 									)}
 									<div className={`${classes.whatsappChat} chat__msg-group`}>

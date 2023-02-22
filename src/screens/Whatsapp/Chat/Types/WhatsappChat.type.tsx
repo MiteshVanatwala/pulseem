@@ -235,7 +235,7 @@ export type APIWhatsappChatConversationStatusData = {
 
 export type APISendWhatsAppChatReqPayload = {
 	FromNumber: string;
-	ToNumberList: string;
+	ToNumber: string;
 	IsFreeFormChat: boolean;
 	TextMessage?: string;
 	mediaUrl?: string;

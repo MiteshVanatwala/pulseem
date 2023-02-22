@@ -443,7 +443,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		if (validateDynamicVaraiable()) {
 			let chatReqPayload: APISendWhatsAppChatReqPayload = {
 				FromNumber: activePhoneNumber,
-				ToNumberList: activeChatContacts?.PhoneNumber,
+				ToNumber: activeChatContacts?.PhoneNumber,
 				IsFreeFormChat: savedTemplate?.length === 0 ? true : false,
 			};
 			if (savedTemplate?.length > 0) {
