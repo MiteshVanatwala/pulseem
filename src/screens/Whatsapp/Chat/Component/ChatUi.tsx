@@ -50,9 +50,8 @@ const ChatUi = ({
 	activeChatContacts,
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
-
 	const dispatch = useDispatch();
-	const { t: translator } = useTranslation();
+
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const useStyles = makeStyles(() => ({
 		selectRoot: {
