@@ -134,7 +134,21 @@ const ChatFooterContent = ({
 								)}
 							</>
 						) : filteredSideChatContacts?.length === 0 && !isContactLoader ? (
-							<div className={classes.noContactDiv}>No Contacts available</div>
+							<div
+								className={classes.noContactDiv}
+								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
+								<Stack
+									direction='row'
+									justifyContent='center'
+									alignItems='center'
+									spacing={2}>
+									<Typography color='textSecondary'>
+										<label style={{ fontSize: '22px' }}>
+											<>No Chats Available</>
+										</label>
+									</Typography>
+								</Stack>
+							</div>
 						) : (
 							<div
 								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
