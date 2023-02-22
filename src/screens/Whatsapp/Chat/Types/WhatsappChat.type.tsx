@@ -48,6 +48,7 @@ export type WhatsappChatUiProps = {
 	setDynamicVariable: (dynamicVariable: string[]) => void;
 	setSavedTemplate: (template: string) => void;
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
+	isContactLoader: boolean;
 };
 
 export type SideBarContactListProps = {
@@ -90,6 +91,8 @@ export type ChatFooterContentProps = {
 	whatsappChatSession: APIWhatsappChatSessionData;
 	onChatSend: () => void;
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	isContactLoader: boolean;
 };
 
 export type ChatTemplateProps = {

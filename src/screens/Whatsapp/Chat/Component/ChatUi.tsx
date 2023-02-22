@@ -48,6 +48,8 @@ const ChatUi = ({
 	setDynamicVariable,
 	setSavedTemplate,
 	activeChatContacts,
+	filteredSideChatContacts,
+	isContactLoader,
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
@@ -200,6 +202,8 @@ const ChatUi = ({
 					whatsappChatSession={whatsappChatSession}
 					onChatSend={onChatSend}
 					activeChatContacts={activeChatContacts}
+					filteredSideChatContacts={filteredSideChatContacts}
+					isContactLoader={isContactLoader}
 				/>
 			</footer>
 		);
