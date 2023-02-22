@@ -343,6 +343,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					changeContactReadStatus(updatedActiveChat, contactData, contactData);
 				}
 			}
+			setContactsPaginationSetting({
+				...contactsPaginationSetting,
+				hasMore: true,
+				PageNo: 1,
+			});
 		} else {
 			setContactsPaginationSetting({
 				...contactsPaginationSetting,
