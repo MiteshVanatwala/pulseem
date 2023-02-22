@@ -127,13 +127,6 @@ const SideBar = ({
 							<Icon id='back' />
 						</button>
 					</div>
-					<div className={`${classes.whatsappChat} sidebar__actions`}>
-						<IconButton
-							className={classes.whatsappChatBarButton}
-							onClick={setIsMobileSideBar}>
-							<FaBars />
-						</IconButton>
-					</div>
 					<input
 						className={`${classes.whatsappChat} search`}
 						placeholder={translator('whatsappChat.searchPlaceholder')}

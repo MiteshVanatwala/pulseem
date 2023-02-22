@@ -695,7 +695,7 @@ export const restoreWhatsAppCampaigns = createAsyncThunk(
 	}
 );
 
-export const sendWhatsAppChat = createAsyncThunk(
+export const sendWhatsAppMessage = createAsyncThunk(
 	'WhatsAppChat/SendWhatsAppChat',
 	async (data: APISendWhatsAppChatReqPayload, thunkAPI) => {
 		try {

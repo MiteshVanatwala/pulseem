@@ -31,7 +31,7 @@ import {
 	getSavedTemplates,
 	getWhatsappChatContactsByPhoneNumber,
 	manageWhatsappChatCoversationStatus,
-	sendWhatsAppChat,
+	sendWhatsAppMessage,
 	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
@@ -512,7 +512,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			}
 			setIsLoader(true);
 			const { payload: sendWhatsappChat }: APISendWhatsappChat =
-				await dispatch<any>(sendWhatsAppChat(chatReqPayload));
+				await dispatch<any>(sendWhatsAppMessage(chatReqPayload));
 			setIsLoader(false);
 			if (sendWhatsappChat?.Status === apiStatus?.SUCCESS) {
 				const sentChat = sendWhatsappChat?.Data?.Data?.Items;

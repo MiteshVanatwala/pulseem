@@ -1,12 +1,10 @@
 import {
 	ChatHeaderContentProps,
-	displayCountDown,
 	Timer,
 } from '../Types/WhatsappChat.type';
 import clsx from 'clsx';
 import { MenuItem, Select, makeStyles } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import Countdown from 'react-countdown';
 import { user } from './data';
 import { useEffect, useState } from 'react';
 
@@ -54,6 +52,13 @@ const ChatHeaderContent = ({
 		});
 	}, [whatsappChatSession]);
 
+	useEffect(() => {
+		if (isTimerover) {
+			onTimerComplete();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isTimerover]);
+
 	const tickTimer = () => {
 		if (isTimerover) return;
 		if (timer.Hour === 0 && timer.Minute === 0 && timer.Second === 0)
@@ -78,29 +83,24 @@ const ChatHeaderContent = ({
 			});
 	};
 
-	const resetTimer = () => {
-		setTimer({
-			Hour: 0,
-			Minute: 0,
-			Second: 0,
-		});
-		setIsTimerOver(false);
-	};
-
 	const countDown = () => {
 		return (
 			<span>
-				{timer?.Hour}:{timer?.Minute}:{timer?.Second}
+				{timer?.Hour?.toString()?.padStart(2, '0')}:
+				{timer?.Minute?.toString()?.padStart(2, '0')}:
+				{timer?.Second?.toString()?.padStart(2, '0')}
 			</span>
 		);
 	};
 
-	const onTimerComplete = (data: any) => {
-		return (
-			<span>
-				{/* {formatted?.hours}:{formatted?.minutes}:{formatted?.seconds} */}
-			</span>
-		);
+	const onTimerComplete = () => {
+		setWhatsappChatSession({
+			ExpiryTime: '',
+			IsIn24Window: false,
+			Hour: '0',
+			Minute: '0',
+			Second: '0',
+		});
 	};
 
 	return (

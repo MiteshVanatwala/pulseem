@@ -828,6 +828,22 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontSize: '12px',
 	},
 
+	templateListWrapper: {},
+	templateListModal: {
+		border: '2px solid #0371ad',
+		margin: '18px',
+		borderRadius: '4px',
+		padding: '14px 26px',
+		direction: isRTL ? 'rtl' : 'ltr',
+		position: 'relative',
+	},
+	templateListModalContent: {
+		padding: '8px 4px 0px 4px',
+		color: '#525252',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+	},
+
 	filterModal: {
 		border: '2px solid #0371ad',
 		margin: '18px',
