@@ -28,6 +28,7 @@ const SideBar = ({
 	fetchMoreContacts,
 	fetchSearchedContacts,
 	contactsPaginationSetting,
+	isLoader
 }: WhatsappChatSideBarProps) => {
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
@@ -142,6 +143,7 @@ const SideBar = ({
 					getStatusClass={getStatusClass}
 					fetchMoreContacts={() => fetchMoreContacts(searchText)}
 					contactsPaginationSetting={contactsPaginationSetting}
+					isLoader={isLoader}
 				/>
 			</aside>
 		</>

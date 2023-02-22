@@ -2753,4 +2753,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			fontSize: '15px',
 		},
 	},
+	noContactDiv: {
+		textAlign: 'center',
+		paddingTop: '12px',
+		color: '#00000099',
+	},
 });

@@ -64,6 +64,7 @@ import { apiStatus, resetToastData, statusesByName } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
+import { getTemplateName } from '../Common';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -193,13 +194,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					arrow={true}
 					style={{ fontSize: 18, fontWeight: 'bold' }}
 					placement={'top'}
-					title={
-						<Typography noWrap={false}>
-							{row?.FriendlyTemplateName !== ''
-								? row?.FriendlyTemplateName
-								: row.TemplateName}
-						</Typography>
-					}
+					title={<Typography noWrap={false}>{getTemplateName(row)}</Typography>}
 					text={row?.FriendlyTemplateName}
 					children={undefined}
 					icon={undefined}

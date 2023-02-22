@@ -37,7 +37,9 @@ export type WhatsappChatUiProps = {
 	getStatusClass: (status: number) => string | undefined;
 	onChatSend: () => void;
 	allWhatsappChat: APIWhatsappChatItemsData | undefined;
-	setAllWhatsappChat: (whatsappChat: APIWhatsappChatItemsData) => void;
+	setAllWhatsappChat: (
+		whatsappChat: APIWhatsappChatItemsData | undefined
+	) => void;
 	setAPIInboundChatStatus: () => void;
 	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
 	setUpdatedDynamicVariable: (
@@ -59,6 +61,7 @@ export type SideBarContactListProps = {
 	getStatusClass: (status: number) => string | undefined;
 	fetchMoreContacts: () => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
+	isLoader: boolean;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -71,9 +74,6 @@ export type SideHeaderContactDropDownProps = {
 export type ChatHeaderContentProps = {
 	classes: ClassesType['classes'];
 	whatsappChatSession: APIWhatsappChatSessionData;
-	chatContacts: APIWhatsappChatSidebarContactsItemsData;
-	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
-	getStatusClass: (status: number) => string | undefined;
 	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
 };
 
@@ -108,7 +108,6 @@ export type WhatsappChatSideBarProps = {
 		Contacts: APIWhatsappChatSidebarContactsItemsData
 	) => void;
 	setActiveUser: (activeUser: string) => void;
-	getPhoneNumber: () => void;
 	onActiveUserChange: (e: BaseSyntheticEvent) => void;
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
@@ -126,6 +125,7 @@ export type WhatsappChatSideBarProps = {
 		searchText: string,
 		isPaginationReset: boolean
 	) => void;
+	isLoader: boolean;
 };
 
 export type chatModalProps = {

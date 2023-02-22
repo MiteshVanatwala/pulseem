@@ -6,7 +6,7 @@ import {
 	WhatsappChatUiProps,
 	APIWhatsappChatDetailData,
 } from '../Types/WhatsappChat.type';
-import { IconButton } from '@material-ui/core';
+import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
 import ChatTemplateModal from '../Popups/ChatTemplateModal';
 import { apiStatus } from '../../Constant';
@@ -15,6 +15,7 @@ import { getWhatsappChat } from '../../../../redux/reducers/whatsappSlice';
 import ChatTemplate from './ChatTemplate';
 import { Loader } from '../../../../components/Loader/Loader';
 import ChatFooterContent from './ChatFooterContent';
+import clsx from 'clsx';
 import ChatHeaderContent from './ChatHeaderContent';
 import { useTranslation } from 'react-i18next';
 
@@ -51,7 +52,22 @@ const ChatUi = ({
 	const { t: translator } = useTranslation();
 
 	const dispatch = useDispatch();
+	const { t: translator } = useTranslation();
 	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const useStyles = makeStyles(() => ({
+		selectRoot: {
+			fontSize: '18px',
+			'&:focus': {
+				backgroundColor: 'rgba(0,0,0,0)',
+			},
+		},
+		selectSection: {
+			'&:focus': {
+				backgroundColor: 'rgba(0,0,0,0)',
+			},
+		},
+	}));
+	const muiclasses = useStyles();
 
 	useEffect(() => {
 		const chatDiv = document.getElementById('chat-messages');
@@ -82,7 +98,7 @@ const ChatUi = ({
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
 				setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
 			} else {
-				// setAllWhatsappChat([]);
+				setAllWhatsappChat(undefined);
 			}
 		}
 	};
@@ -107,15 +123,56 @@ const ChatUi = ({
 					/>
 				</div>
 
-				{Number(whatsappChatSession.Hour) > 0 &&
+				<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
+					<h2 className={`${classes.whatsappChat} chat__contact-name`}>
+						{' '}
+						{chatContacts.UserName || chatContacts.PhoneNumber || 'Pulseem'}
+						<span className={classes.whatsappChatUiStatusPadding}>
+							<Select
+								classes={{ root: muiclasses.selectSection }}
+								className={clsx(
+									classes.whatsappChatStatusSelect,
+									getStatusClass(chatContacts.ConversationStatusId)
+								)}
+								autoWidth
+								value={chatContacts.ConversationStatusId || ''}
+								variant='standard'
+								style={
+									chatContacts.ConversationStatusId
+										? {
+												fontSize: '12px',
+												padding: '8px 0px 8px 8px',
+												position: 'absolute',
+												borderRadius: '10px',
+												textAlign: 'center',
+										  }
+										: {
+												display: 'none',
+										  }
+								}
+								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
+								<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
+								<MenuItem value={2}>
+									{translator('whatsappChat.pending')}
+								</MenuItem>
+								<MenuItem value={3}>
+									{translator('whatsappChat.solved')}
+								</MenuItem>
+							</Select>
+						</span>
+					</h2>
+					<p className={`${classes.whatsappChat} chat__contact-desc`}>
+						{translator('whatsappChat.online')}
+					</p>
+				</div>
+
+				{whatsappChatSession?.IsIn24Window &&
+					Number(whatsappChatSession.Hour) > 0 &&
 					Number(whatsappChatSession.Minute) > 0 &&
 					Number(whatsappChatSession.Second) > 0 && (
 						<ChatHeaderContent
 							classes={classes}
 							whatsappChatSession={whatsappChatSession}
-							chatContacts={chatContacts}
-							handleUserStatus={handleUserStatus}
-							getStatusClass={getStatusClass}
 							setWhatsappChatSession={setWhatsappChatSession}
 						/>
 					)}

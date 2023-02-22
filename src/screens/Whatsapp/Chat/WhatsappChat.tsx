@@ -293,8 +293,27 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	};
 
-	const setAPIWhatsAppChatContacts = async (activeUser: string) => {
+	const setAPIWhatsAppChatContacts = async (
+		activeUser: string,
+		isInitial: boolean = false
+	) => {
 		setIsLoader(true);
+		if (!isInitial) {
+			setSideChatContacts([]);
+			setFilteredSideChatContacts([]);
+			setActiveChatContacts({
+				ConversationStatusId: 0,
+				IsTemplate: false,
+				IsUnsubscribed: false,
+				LastMessage: '',
+				LastMessageDate: '',
+				PhoneNumber: '',
+				Unread: 0,
+				UserName: '',
+			});
+			setAllWhatsappChat(undefined);
+		}
+		setActivePhoneNumber(activeUser);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
 			await dispatch<any>(
 				getWhatsappChatContactsByPhoneNumber({
@@ -325,6 +344,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			}
 		} else {
+			setContactsPaginationSetting({
+				...contactsPaginationSetting,
+				hasMore: false,
+				PageNo: 1,
+			});
 			setSideChatContacts([]);
 			setFilteredSideChatContacts([]);
 		}
@@ -335,7 +359,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			await dispatch<any>(userPhoneNumbers());
 		if (phoneNumberData?.Data?.length > 0) {
 			setActivePhoneNumber(phoneNumberData?.Data[0]);
-			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0]);
+			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
 			setPhoneNumbersList(phoneNumberData?.Data);
 			return phoneNumberData?.Data;
 		}
@@ -634,7 +658,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							handleChatId={handleChatId}
 							activePhoneNumber={activePhoneNumber}
 							setActiveUser={setActivePhoneNumber}
-							getPhoneNumber={getPhoneNumber}
 							onActiveUserChange={onActiveUserChange}
 							sideChatContacts={sideChatContacts}
 							filteredSideChatContacts={filteredSideChatContacts}
@@ -646,6 +669,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							fetchMoreContacts={fetchMoreContacts}
 							contactsPaginationSetting={contactsPaginationSetting}
 							fetchSearchedContacts={fetchMoreContacts}
+							isLoader={isLoader}
 						/>
 						<ChatUi
 							isMobileSideBar={isMobileSideBar}
