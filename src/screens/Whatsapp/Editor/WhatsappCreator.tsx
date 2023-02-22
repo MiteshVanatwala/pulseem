@@ -440,12 +440,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		if (templateData.payload.Status === apiStatus.SUCCESS) {
 			if (templateData?.payload?.Data?.Data && templates) {
 				const templateData = templates?.Data;
-				const templateName = templates?.TemplateName;
+				const templateName = templates?.FriendlyTemplateName || '';
 				if (templateData) {
 					setUpdatedTemplateData(templateData);
 				}
 				setSavedTemplate(templateId);
-				setTemplateName(templateName || '');
+				setTemplateName(templateName);
 				setFileData(updatedFileData);
 				setButtonType(updatedButtonType);
 				setTemplateData(updatedTemplateData);

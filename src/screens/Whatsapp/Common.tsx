@@ -89,6 +89,12 @@ export const getTemplateNameById = (
 };
 
 export const getTemplateName = (template: savedTemplateListProps) => {
+	if (
+		template?.FriendlyTemplateName &&
+		template?.FriendlyTemplateName?.length > 0
+	) {
+		return template?.FriendlyTemplateName;
+	}
 	return template?.TemplateName;
 };
 

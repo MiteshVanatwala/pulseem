@@ -224,7 +224,7 @@ export type savedTemplateDataProps = {
 };
 
 export type savedTemplateListProps = {
-	CreatedDate: string;
+	CreatedDate: string | null;
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
 	Status: string;
