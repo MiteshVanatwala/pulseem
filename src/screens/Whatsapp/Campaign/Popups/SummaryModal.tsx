@@ -38,6 +38,7 @@ import {
 	saveTemplateItemsProps,
 	templateDataProps,
 	templateListAPIProps,
+	templatePreviewDataProps,
 } from '../../Editor/Types/WhatsappCreator.types';
 import { apiStatus } from '../../Constant';
 import uniqid from 'uniqid';
@@ -45,6 +46,7 @@ import WhatsappMobilePreview from '../../Editor/Components/WhatsappMobilePreview
 import downArrow from '../../../../assets/images/down-arrow.svg';
 import upArrow from '../../../../assets/images/up-arrow.svg';
 import moment from 'moment';
+import { getTemplatePreviewData } from '../../Common';
 
 const SummaryModal = ({
 	classes,
@@ -86,7 +88,13 @@ const SummaryModal = ({
 		templateButtons: [],
 	});
 	const [buttonType, setButtonType] = useState<string>('');
-	const [fileData, setFileData] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
 
 	let updatedTemplateData: templateDataProps = {
 		templateText: '',
@@ -129,152 +137,24 @@ const SummaryModal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen, campaignID]);
 
-	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
-		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
-		switch (buttonType) {
-			case 'quickReply':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					return {
-						id: uniqid(),
-						typeOfAction: '',
-						fields: [
-							{
-								fieldName: 'whatsapp.websiteButtonText',
-								type: 'text',
-								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-								value: button.title,
-							},
-						],
-					};
-				});
-				return buttonData ? buttonData : [];
-			case 'callToAction':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					if (button?.type === 'PHONE') {
-						return {
-							id: uniqid(),
-							typeOfAction: 'phonenumber',
-							fields: [
-								{
-									fieldName: 'whatsapp.phoneButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.country',
-									type: 'select',
-									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
-								},
-								{
-									fieldName: 'whatsapp.phoneNumber',
-									type: 'tel',
-									placeholder: 'whatsapp.phoneNumberPlaceholder',
-									value: button.phone,
-								},
-							],
-						};
-					} else {
-						return {
-							id: uniqid(),
-							typeOfAction: 'website',
-							fields: [
-								{
-									fieldName: 'whatsapp.websiteButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.websiteURL',
-									type: 'text',
-									placeholder: 'whatsapp.websiteURLPlaceholder',
-									value: button.url,
-								},
-							],
-						};
-					}
-				});
-				return buttonData ? buttonData : [];
-		}
-	};
-
-	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
-		const quickReplyData: savedTemplateQuickReplyProps =
-			templateData?.types['quick-reply'];
-		updatedButtonType = 'quickReply';
-		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
-		updatedTemplateData.templateText = quickReplyData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
-
-	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
-		const callToActionData: savedTemplateCallToActionProps =
-			templateData?.types['call-to-action'];
-		updatedButtonType = 'callToAction';
-		const buttonData = setButtonsData(
-			'callToAction',
-			callToActionData?.actions
-		);
-		updatedTemplateData.templateText = callToActionData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
-
-	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
-		const cardData: savedTemplateCardProps = templateData?.types['card'];
-		updatedTemplateData.templateText = cardData?.title;
-		if (cardData?.actions?.length > 0) {
-			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-				updatedButtonType = 'callToAction';
-				const buttonData = setButtonsData('callToAction', cardData?.actions);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			} else {
-				updatedButtonType = 'quickReply';
-				const buttonData = setButtonsData('quickReply', cardData?.actions);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			}
-		}
-		if (cardData?.media?.length > 0) {
-			updatedFileData = cardData?.media[0];
-		}
-	};
-
-	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
-		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
-		updatedTemplateData.templateText = mediaData?.body;
-		if (mediaData?.media?.length > 0) {
-			updatedFileData = mediaData?.media[0];
-		}
-	};
-
-	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
-		const textData: savedTemplateTextProps = templateData?.types['text'];
-		updatedTemplateData.templateText = textData?.body;
-	};
-
-	const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
-		if ('quick-reply' in templateData?.types) {
-			saveQuickreplyTemplate(templateData);
-		}
-		if ('call-to-action' in templateData?.types) {
-			saveCallToActionTemplate(templateData);
-		} else if ('card' in templateData?.types) {
-			saveCardTemplate(templateData);
-		} else if ('media' in templateData?.types) {
-			saveMediaTemplate(templateData);
-		} else if ('text' in templateData?.types) {
-			saveTextTemplate(templateData);
-		}
-	};
-
 	const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
+		let templatePreviewData: templatePreviewDataProps = {
+			templateData: {
+				templateText: '',
+				templateButtons: [],
+			},
+			buttonType: '',
+			fileData: {
+				fileLink: '',
+				fileType: '',
+			},
+		};
 		if (templateData) {
-			setUpdatedTemplateData(templateData);
+			templatePreviewData = getTemplatePreviewData(templateData?.types);
 		}
-		setFileData(updatedFileData);
-		setButtonType(updatedButtonType);
-		setTemplateData(updatedTemplateData);
+		setFileData(templatePreviewData?.fileData);
+		setButtonType(templatePreviewData?.buttonType);
+		setTemplateData(templatePreviewData?.templateData);
 	};
 
 	const getSpecialDay = () => {
@@ -334,7 +214,7 @@ const SummaryModal = ({
 										<>{translator('whatsappCampaign.when')}</>
 									</span>
 									<span className={classes.campaignSummaryTextDesc}>
-										{sendType === '1' && <>{translator("sms.SendNow")}</>}
+										{sendType === '1' && <>{translator('sms.SendNow')}</>}
 										{sendType === '2' &&
 											moment(sendDate)?.format('dddd , MMMM Do YYYY, h:mm a')}
 										{sendType === '3' &&
