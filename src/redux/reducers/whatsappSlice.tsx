@@ -15,6 +15,10 @@ import {
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
 import { setUploadProgress } from './groupSlice';
+import {
+	APIGetWhatsappChatContactsReq,
+	APISendWhatsAppChatReqPayload,
+} from '../../screens/Whatsapp/Chat/Types/WhatsappChat.type';
 
 type ApiError = {
 	message: string;
@@ -452,6 +456,119 @@ export const getCampaignDetailById = createAsyncThunk(
 			const response = await PulseemReactInstance.get(
 				`whatsAppCampaign/GetWhatsappCampaignDetail/${campaignID}`
 			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChatContacts',
+	async (
+		{
+			PhoneNumber,
+			IsPagination,
+			pageNo,
+			pageSize,
+			Searchtext
+		}: APIGetWhatsappChatContactsReq,
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChatContacts`,
+				{
+					PhoneNumber,
+					IsPagination,
+					pageNo,
+					pageSize,
+					Searchtext
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getWhatsappChat = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChat',
+	async (
+		data: {
+			activePhoneNumber: string;
+			activeUserNumber: string;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChat`,
+				{
+					PhoneNumber: data.activePhoneNumber,
+					UserNumber: data.activeUserNumber,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const getInboundWhatsappChatStatus = createAsyncThunk(
+	'WhatsAppChat/GetInboudSessionStatus',
+	async (
+		data: {
+			activePhoneNumber: string;
+			activeUserNumber: string;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetInboudSessionStatus`,
+				{
+					PhoneNumber: data.activePhoneNumber,
+					UserNumber: data.activeUserNumber,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const manageWhatsappChatCoversationStatus = createAsyncThunk(
+	'WhatsAppChat/ManageWhatsAppConversationStatus',
+	async (
+		data: {
+			ClientNumber: string;
+			Sendernumber: string;
+			StatusId: number;
+		},
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/ManageWhatsAppConversationStatus`,
+				{
+					Sendernumber: data.Sendernumber,
+					ClientNumber: data.ClientNumber,
+					StatusId: data.StatusId,
+				}
+			);
+
 			return response.data;
 		} catch (error) {
 			const err = error as ApiError;
@@ -551,6 +668,39 @@ export const quickSend = createAsyncThunk(
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/QuickSend`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const restoreWhatsAppCampaigns = createAsyncThunk(
+	'whatsAppCampaign/RestoreWhatsAppCampaigns',
+	async (data: number[], thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.put(
+				`whatsAppCampaign/RestoreWhatsAppCampaigns`,
+				data
+			);
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const sendWhatsAppMessage = createAsyncThunk(
+	'WhatsAppChat/SendWhatsAppChat',
+	async (data: APISendWhatsAppChatReqPayload, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/SendWhatsAppChat`,
 				data
 			);
 
@@ -664,6 +814,12 @@ export const whatsappSlice = createSlice({
 				severity: 'success',
 				color: 'success',
 				message: 'Campaign send succesfully',
+				showAnimtionCheck: true,
+			},
+			RESTORE_CAMPAIGN_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'Campaign restored succesfully',
 				showAnimtionCheck: true,
 			},
 		},

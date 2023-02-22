@@ -127,7 +127,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		templateText: '',
 		templateButtons: [],
 	});
-	const [fileData, setFileData] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [quickReplyButtons, setQuickReplyButtons] = useState<
@@ -145,7 +151,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		templateButtons: [],
 	};
 	let updatedButtonType: string = '';
-	let updatedFileData: string = '';
+	let updatedFileData: {
+		fileLink: string;
+		fileType: string;
+	} = {
+		fileLink: '',
+		fileType: '',
+	};
 
 	enum ActionButtons {
 		QuickReply = 'quickReply',
@@ -207,7 +219,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			templateText: '',
 			templateButtons: [],
 		});
-		setFileData('');
+		setFileData({
+			fileLink: '',
+			fileType: '',
+		});
 		setQuickReplyButtons(initialQuickReplyButtons);
 		setCallToActionFieldRows([initialFieldRow]);
 	};
@@ -235,12 +250,21 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				uploadMedia(myFormData)
 			);
 			if (uploadedFile.payload?.Data?.length > 0) {
-				setFileData(uploadedFile.payload?.Data);
+				setFileData({
+					fileLink: uploadedFile.payload?.Data,
+					fileType: '',
+				});
 			} else {
-				setFileData('');
+				setFileData({
+					fileLink: '',
+					fileType: '',
+				});
 			}
 		} else {
-			setFileData('');
+			setFileData({
+				fileLink: '',
+				fileType: '',
+			});
 		}
 	};
 
@@ -351,7 +375,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			}
 		}
 		if (cardData?.media?.length > 0) {
-			updatedFileData = cardData?.media[0];
+			updatedFileData.fileLink = cardData?.media[0];
 		}
 	};
 
@@ -359,7 +383,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
 		updatedTemplateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
-			updatedFileData = mediaData?.media[0];
+			updatedFileData.fileLink = mediaData?.media[0];
+			updatedFileData.fileType = mediaData?.media_type;
 		}
 	};
 
@@ -415,12 +440,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		if (templateData.payload.Status === apiStatus.SUCCESS) {
 			if (templateData?.payload?.Data?.Data && templates) {
 				const templateData = templates?.Data;
-				const templateName = templates?.TemplateName;
+				const templateName = templates?.FriendlyTemplateName || '';
 				if (templateData) {
 					setUpdatedTemplateData(templateData);
 				}
 				setSavedTemplate(templateId);
-				setTemplateName(templateName || '');
+				setTemplateName(templateName);
 				setFileData(updatedFileData);
 				setButtonType(updatedButtonType);
 				setTemplateData(updatedTemplateData);
@@ -530,7 +555,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					media: {
 						body: templateData.templateText,
 						media_type: 'image',
-						media: [fileData],
+						media: [fileData?.fileLink],
 					},
 				},
 			},
@@ -572,7 +597,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 							?.replace(/Reply “remove” to unsubscribe/g, '')
 							.replace(/להסרה השב “הסר”/g, ''),
 						subtitle: getSubtitle(),
-						media: [fileData],
+						media: [fileData?.fileLink],
 						actions:
 							buttonType === 'quickReply'
 								? getQuickReplyActions()
@@ -585,14 +610,14 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		if (
 			templateText?.length > 0 &&
 			buttonType.length > 0 &&
-			fileData?.length > 0
+			fileData?.fileLink?.length > 0
 		) {
 			return requestJSON.textMediaAndButton;
 		} else if (templateText?.length > 0 && buttonType === 'quickReply') {
 			return requestJSON.quickReply;
 		} else if (templateText?.length > 0 && buttonType === 'callToAction') {
 			return requestJSON.callToAction;
-		} else if (templateText?.length > 0 && fileData?.length > 0) {
+		} else if (templateText?.length > 0 && fileData?.fileLink?.length > 0) {
 			return requestJSON.textMedia;
 		} else if (templateText?.length > 0) {
 			return requestJSON.text;

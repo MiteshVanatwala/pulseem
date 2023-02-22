@@ -1,7 +1,10 @@
 import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
 import { updatedVariable } from '../../Campaign/Types/WhatsappCampaign.types';
-import { savedTemplateListProps } from '../../Editor/Types/WhatsappCreator.types';
+import {
+	savedTemplateListProps,
+	savedTemplateTypesProps,
+} from '../../Editor/Types/WhatsappCreator.types';
 
 export type WhatsappChatProps = {
 	classes: ClassesType['classes'];
@@ -26,13 +29,106 @@ export type WhatsappChatUiProps = {
 	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
 	setDynamicModalVariable: (dynamicModalVariable: number) => void;
 	savedTemplate: string;
+	activePhoneNumber: string;
+	chatContacts: APIWhatsappChatSidebarContactsItemsData;
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	whatsappChatSession: APIWhatsappChatSessionData;
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
+	onChatSend: () => void;
+	allWhatsappChat: APIWhatsappChatItemsData | undefined;
+	setAllWhatsappChat: (
+		whatsappChat: APIWhatsappChatItemsData | undefined
+	) => void;
+	setAPIInboundChatStatus: () => void;
+	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
+	setUpdatedDynamicVariable: (
+		updatedDynamicVariable: updatedVariable[]
+	) => void;
+	setDynamicVariable: (dynamicVariable: string[]) => void;
+	setSavedTemplate: (template: string) => void;
+	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
+	isContactLoader: boolean;
+};
+
+export type SideBarContactListProps = {
+	classes: ClassesType['classes'];
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	handleChatId: (
+		e: BaseSyntheticEvent,
+		Contacts: APIWhatsappChatSidebarContactsItemsData
+	) => void;
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
+	fetchMoreContacts: () => void;
+	contactsPaginationSetting: ContactsPaginationSetting;
+	isLoader: boolean;
+};
+
+export type SideHeaderContactDropDownProps = {
+	classes: ClassesType['classes'];
+	phoneNumbersList: string[];
+	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	activePhoneNumber: string;
+};
+
+export type ChatHeaderContentProps = {
+	classes: ClassesType['classes'];
+	whatsappChatSession: APIWhatsappChatSessionData;
+	setWhatsappChatSession: (chatSession: APIWhatsappChatSessionData) => void;
+};
+
+export type ChatFooterContentProps = {
+	classes: ClassesType['classes'];
+	updatedDynamicVariable: updatedVariable[];
+	setDynamicModalVariable: (dynamicModalVariable: number) => void;
+	setIsDynamcFieldModal: (isDynamcFieldModal: boolean) => void;
+	newMessage: string;
+	setNewMessage: (newMessage: string) => void;
+	setIsTemplateModal: (isTemplateModal: boolean) => void;
+	savedTemplate: string;
+	dynamicVariable: string[];
+	whatsappChatSession: APIWhatsappChatSessionData;
+	onChatSend: () => void;
+	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	isContactLoader: boolean;
+};
+
+export type ChatTemplateProps = {
+	classes: ClassesType['classes'];
+	template: savedTemplateTypesProps;
+	msgIndex: number;
+	message: APIWhatsappChatDetailData;
 };
 
 export type WhatsappChatSideBarProps = {
 	classes: ClassesType['classes'];
 	isMobileSideBar: boolean;
 	setIsMobileSideBar: () => void;
-	handleChatId: (e: BaseSyntheticEvent, chatId: number) => void;
+	handleChatId: (
+		e: BaseSyntheticEvent,
+		Contacts: APIWhatsappChatSidebarContactsItemsData
+	) => void;
+	setActiveUser: (activeUser: string) => void;
+	onActiveUserChange: (e: BaseSyntheticEvent) => void;
+	chatContacts: APIWhatsappChatSidebarContactsItemsData;
+	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	setFilteredSideChatContacts: (
+		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[]
+	) => void;
+	phoneNumbersList: string[];
+	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
+	getStatusClass: (status: number) => string | undefined;
+	activePhoneNumber: string;
+	fetchMoreContacts: (searchText: string) => void;
+	contactsPaginationSetting: ContactsPaginationSetting;
+	fetchSearchedContacts: (
+		searchText: string,
+		isPaginationReset: boolean
+	) => void;
+	isLoader: boolean;
 };
 
 export type chatModalProps = {
@@ -53,4 +149,174 @@ export type AllIconComponentProps = {
 
 export type AllIconProps = {
 	[key: string]: (props: AllIconComponentProps) => JSX.Element;
+};
+
+export type APIWhatsappChatSidebarContactsItemsData = {
+	ConversationStatusId: number;
+	IsTemplate: boolean;
+	IsUnsubscribed: boolean;
+	LastMessage: string;
+	LastMessageDate: string;
+	PhoneNumber: string;
+	Unread: number;
+	UserName: string;
+};
+
+//SidebarContacts Main inbound data types
+export type APIWhatsappChatSidebarContactsMainData = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatSidebarContactsItemsData[];
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APIWhatsappChatSidebarContactsPayloadData = {
+	Data: APIWhatsappChatSidebarContactsMainData;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatSidebarContactsData = {
+	payload: APIWhatsappChatSidebarContactsPayloadData;
+};
+
+// TemplateData Variables (PersonalField,Text,Link,LandingPage,Navigation)
+export type APIWhatsappChatVariablesData = {
+	'1': string;
+	'2': string;
+};
+
+//According to API inbound schema for template data types
+export type APIWhatsappChatTypesData = {
+	text: { body: string };
+};
+
+export type APIWhatsappChatTemplateData = {
+	types: savedTemplateTypesProps;
+	variables: APIWhatsappChatVariablesData;
+};
+
+export type APIWhatsappChatDetailData = {
+	IsInbound: null | boolean;
+	IsTemplate: boolean;
+	MediaUrl: string;
+	Message: string;
+	MessageDate: string;
+	MessageDateText: null | string;
+	SmsStatus: string;
+	SmsStatusId: number;
+	TemplateData: APIWhatsappChatTemplateData;
+};
+
+export type APIWhatsappChatItemsData = {
+	[key: string]: APIWhatsappChatDetailData[];
+};
+
+//Chat Main inbound data types
+export type APIWhatsappChatMainData = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatItemsData;
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APIWhatsappChatPayloadData = {
+	Data: APIWhatsappChatMainData;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatData = {
+	payload: APIWhatsappChatPayloadData;
+};
+
+export type APIWhatsappChatSessionData = {
+	ExpiryTime: string;
+	IsIn24Window: boolean;
+	Hour: string;
+	Minute: string;
+	Second: string;
+};
+
+export type ContactsPaginationSetting = {
+	PageNo: number;
+	PageSize: number;
+	hasMore: boolean;
+};
+
+export type APIWhatsappChatSessionPayloadData = {
+	Data: APIWhatsappChatSessionData;
+	Message: string;
+	Status: string;
+};
+
+export type APIWhatsappChatSession = {
+	payload: APIWhatsappChatSessionPayloadData;
+};
+
+export type APIWhatsappChatConversationStatusPayloadData = {
+	Status: string;
+	Message: string;
+	Data: null;
+};
+
+export type APIWhatsappChatConversationStatusData = {
+	payload: APIWhatsappChatConversationStatusPayloadData;
+};
+
+export type APISendWhatsAppChatReqPayload = {
+	FromNumber: string;
+	ToNumber: string;
+	IsFreeFormChat: boolean;
+	TextMessage?: string;
+	mediaUrl?: string;
+	TemplateId?: string;
+	Variables?: updatedVariable[];
+};
+
+export type APISendWhatsappChatData = {
+	Count: number;
+	CurrentPage: number;
+	Items: APIWhatsappChatItemsData;
+	PageSize: number;
+	TotalRecord: number;
+};
+
+export type APISendWhatsappChatDataData = {
+	Data: APISendWhatsappChatData;
+};
+
+export type APISendWhatsappChatPayload = {
+	Status: string;
+	Message: string;
+	Data: APISendWhatsappChatDataData;
+};
+
+export type APISendWhatsappChat = {
+	payload: APISendWhatsappChatPayload;
+};
+
+export type displayCountDown = {
+	formatted: {
+		days: string;
+		hours: string;
+		minutes: string;
+		seconds: string;
+	};
+};
+
+export type APIGetWhatsappChatContactsReq = {
+	PhoneNumber: string;
+	IsPagination: boolean;
+	pageNo: number;
+	pageSize: number;
+	Searchtext?: string;
+};
+
+export type Timer = {
+	Hour: number;
+	Minute: number;
+	Second: number;
 };

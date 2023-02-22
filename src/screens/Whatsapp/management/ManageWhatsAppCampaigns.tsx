@@ -35,6 +35,7 @@ import {
 	commonAPIResponseProps,
 	coreProps,
 	quickReplyButtonProps,
+	restoreCampaignData,
 	savedTemplateCallToActionProps,
 	savedTemplateCardProps,
 	savedTemplateDataProps,
@@ -68,6 +69,7 @@ import {
 	duplicateCampaign,
 	getAllCampaigns,
 	getSavedTemplatesPreviewById,
+	restoreWhatsAppCampaigns,
 } from '../../../redux/reducers/whatsappSlice';
 import InfoModal from './Popups/InfoModal';
 import { useNavigate } from 'react-router-dom';
@@ -107,7 +109,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		templateButtons: [],
 	});
 	const [buttonType, setButtonType] = useState<string>('');
-	const [fileData, setFileData] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
 
 	const [tableData, setTableData] = useState<campaignDataProps[]>([]);
 
@@ -148,7 +156,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		templateButtons: [],
 	};
 	let updatedButtonType: string = '';
-	let updatedFileData: string = '';
+	let updatedFileData: {
+		fileLink: string;
+		fileType: string;
+	} = {
+		fileLink: '',
+		fileType: ''
+	};
 
 	useEffect(() => {
 		setApiCampaignData();
@@ -383,7 +397,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			}
 		}
 		if (cardData?.media?.length > 0) {
-			updatedFileData = cardData?.media[0];
+			updatedFileData.fileLink = cardData?.media[0];
 		}
 	};
 
@@ -391,7 +405,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
 		updatedTemplateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
-			updatedFileData = mediaData?.media[0];
+			updatedFileData.fileLink = mediaData?.media[0];
+			updatedFileData.fileType = mediaData?.media_type;
 		}
 	};
 
@@ -551,7 +566,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				key: 'groups',
 				buttonKey: 'groups',
 				icon: GroupsIcon,
-				disable: !!!Groups,
+				disable: Groups?.length === 0 ? true : false,
 				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
 				remove: windowSize === 'xs',
 				rootClass: classes.paddingIcon,
@@ -697,7 +712,24 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onRestoreDeleted = async () => {
-		setIsPreviewCampaignOpen(false);
+		setIsRestoreDeletedModal(false);
+		setIsLoader(true);
+		const { payload: restoreCampaignData }: restoreCampaignData =
+			await dispatch<any>(
+				restoreWhatsAppCampaigns(restoreIds?.map((id) => Number(id)))
+			);
+		setIsLoader(false);
+		if (restoreCampaignData?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.RESTORE_CAMPAIGN_SUCCESS);
+			setApiCampaignData();
+		} else {
+			restoreCampaignData?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: restoreCampaignData?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
 	};
 
 	const onSearch = async () => {

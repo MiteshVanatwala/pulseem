@@ -64,6 +64,7 @@ import { apiStatus, resetToastData, statusesByName } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
+import { getTemplateName } from '../Common';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -94,7 +95,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		templateButtons: [],
 	});
 	const [buttonType, setButtonType] = useState<string>('');
-	const [fileData, setFileData] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [templateListData, setTemplateListData] = useState<
 		templateListItemsProps[]
@@ -115,7 +122,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		templateButtons: [],
 	};
 	let updatedButtonType: string = '';
-	let updatedFileData: string = '';
+	let updatedFileData: {
+		fileLink: string;
+		fileType: string;
+	} = {
+		fileLink: '',
+		fileType: '',
+	};
 
 	useEffect(() => {
 		setApiTemplateData();
@@ -181,9 +194,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					arrow={true}
 					style={{ fontSize: 18, fontWeight: 'bold' }}
 					placement={'top'}
-					title={
-						<Typography noWrap={false}>{row?.FriendlyTemplateName}</Typography>
-					}
+					title={<Typography noWrap={false}>{getTemplateName(row)}</Typography>}
 					text={row?.FriendlyTemplateName}
 					children={undefined}
 					icon={undefined}
@@ -328,7 +339,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			}
 		}
 		if (cardData?.media?.length > 0) {
-			updatedFileData = cardData?.media[0];
+			updatedFileData.fileLink = cardData?.media[0];
 		}
 	};
 
@@ -336,7 +347,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
 		updatedTemplateData.templateText = mediaData?.body;
 		if (mediaData?.media?.length > 0) {
-			updatedFileData = mediaData?.media[0];
+			updatedFileData.fileLink = mediaData?.media[0];
+			updatedFileData.fileType = mediaData?.media_type;
 		}
 	};
 

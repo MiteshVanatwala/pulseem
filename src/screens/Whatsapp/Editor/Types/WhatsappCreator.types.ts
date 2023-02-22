@@ -29,7 +29,10 @@ export type TemplateFieldsProps = {
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
 	onSavedTemplateChange: (templateId: string) => void;
-	fileData: string;
+	fileData: {
+		fileLink: string;
+		fileType: string;
+	};
 	setFileData: (fileData: File | undefined) => void;
 	savedTemplateList: savedTemplateListProps[];
 };
@@ -74,7 +77,10 @@ export type whatsappMobilePreviewProps = {
 	classes: ClassesType['classes'];
 	templateData: templateDataProps;
 	buttonType: string;
-	fileData: string;
+	fileData: {
+		fileLink: string;
+		fileType: string;
+	};
 };
 
 export type ButtonsProps = {
@@ -126,6 +132,15 @@ export type quickReplyButtonProps = {
 export type templateDataProps = {
 	templateText: string;
 	templateButtons: quickReplyButtonProps[] | callToActionProps;
+};
+
+export type templatePreviewDataProps = {
+	templateData: templateDataProps;
+	buttonType: 'quickReply' | 'callToAction' | '';
+	fileData: {
+		fileLink: string;
+		fileType: string;
+	};
 };
 
 export type WhatsappTipsProps = {
@@ -209,13 +224,15 @@ export type savedTemplateDataProps = {
 };
 
 export type savedTemplateListProps = {
-	CreatedDate: string;
+	CreatedDate: string | null;
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
 	Status: string;
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
+	FriendlyTemplateName: string;
+	IsAllowEdit: boolean;
 };
 
 export type toastProps = {
@@ -236,6 +253,7 @@ export type toastProps = {
 	GENERAL_ERROR: toastKeyProps;
 	GROUP_ALREADY_EXIST: toastKeyProps;
 	CAMPAIGN_SEND_SUCCESS: toastKeyProps;
+	RESTORE_CAMPAIGN_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {
@@ -419,4 +437,13 @@ export type commonAPIResponsePayloadProps = {
 
 export type commonAPIResponseProps = {
 	payload: commonAPIResponsePayloadProps;
+};
+
+export type restoreCampaignPayloadData = {
+	Message: string;
+	Status: string;
+};
+
+export type restoreCampaignData = {
+	payload: restoreCampaignPayloadData;
 };

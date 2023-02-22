@@ -38,7 +38,6 @@ import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
-	buttonsDataProps,
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
@@ -46,14 +45,10 @@ import {
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	savedTemplateAPIProps,
-	savedTemplateCallToActionProps,
-	savedTemplateCardProps,
 	savedTemplateDataProps,
 	savedTemplateListProps,
-	savedTemplateMediaProps,
-	savedTemplateQuickReplyProps,
-	savedTemplateTextProps,
 	templateDataProps,
+	templatePreviewDataProps,
 	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
 import Highlighter from 'react-highlight-words';
@@ -74,7 +69,7 @@ import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
-import { getDynamicFields } from '../Common';
+import { getDynamicFields, getTemplatePreviewData } from '../Common';
 import {
 	getAccountExtraData,
 	getPreviousLandingData,
@@ -157,7 +152,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
 	const [campaignName, setCampaignName] = useState<string>('');
-	const [from, setFrom] = useState<string>('16067520281');
+	const [from, setFrom] = useState<string>('');
 	const [showValidation, setShowValidation] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [isTestGroupModal, setIsTestGroupModal] = useState<boolean>(false);
@@ -168,7 +163,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
-	const [fileData, setFileData] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateData, setTemplateData] = useState<templateDataProps>({
@@ -213,13 +214,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
-
-	let updatedTemplateData: templateDataProps = {
-		templateText: '',
-		templateButtons: [],
-	};
-	let updatedButtonType: string = '';
-	let updatedFileData: string = '';
 
 	const getSavedTemplateFields = async () => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
@@ -368,145 +362,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		);
 	};
 
-	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
-		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
-		switch (buttonType) {
-			case 'quickReply':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					return {
-						id: uniqid(),
-						typeOfAction: '',
-						fields: [
-							{
-								fieldName: 'whatsapp.websiteButtonText',
-								type: 'text',
-								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-								value: button.title,
-							},
-						],
-					};
-				});
-				return buttonData ? buttonData : [];
-			case 'callToAction':
-				buttonData = data?.map((button: buttonsDataProps) => {
-					if (button?.type === 'PHONE') {
-						return {
-							id: uniqid(),
-							typeOfAction: 'phonenumber',
-							fields: [
-								{
-									fieldName: 'whatsapp.phoneButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.country',
-									type: 'select',
-									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
-								},
-								{
-									fieldName: 'whatsapp.phoneNumber',
-									type: 'tel',
-									placeholder: 'whatsapp.phoneNumberPlaceholder',
-									value: button.phone,
-								},
-							],
-						};
-					} else {
-						return {
-							id: uniqid(),
-							typeOfAction: 'website',
-							fields: [
-								{
-									fieldName: 'whatsapp.websiteButtonText',
-									type: 'text',
-									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
-									value: button.title,
-								},
-								{
-									fieldName: 'whatsapp.websiteURL',
-									type: 'text',
-									placeholder: 'whatsapp.websiteURLPlaceholder',
-									value: button.url,
-								},
-							],
-						};
-					}
-				});
-				return buttonData ? buttonData : [];
-		}
-	};
-
-	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
-		const quickReplyData: savedTemplateQuickReplyProps =
-			templateData?.types['quick-reply'];
-		updatedButtonType = 'quickReply';
-		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
-		updatedTemplateData.templateText = quickReplyData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
-
-	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
-		const callToActionData: savedTemplateCallToActionProps =
-			templateData?.types['call-to-action'];
-		updatedButtonType = 'callToAction';
-		const buttonData = setButtonsData(
-			'callToAction',
-			callToActionData?.actions
-		);
-		updatedTemplateData.templateText = callToActionData?.body;
-		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-	};
-
-	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
-		const cardData: savedTemplateCardProps = templateData?.types['card'];
-		updatedTemplateData.templateText = cardData?.title;
-		if (cardData?.actions?.length > 0) {
-			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-				updatedButtonType = 'callToAction';
-				const buttonData = setButtonsData('callToAction', cardData?.actions);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			} else {
-				updatedButtonType = 'quickReply';
-				const buttonData = setButtonsData('quickReply', cardData?.actions);
-				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
-			}
-		}
-		if (cardData?.media?.length > 0) {
-			updatedFileData = cardData?.media[0];
-		}
-	};
-
-	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
-		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
-		updatedTemplateData.templateText = mediaData?.body;
-		if (mediaData?.media?.length > 0) {
-			updatedFileData = mediaData?.media[0];
-		}
-	};
-
-	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
-		const textData: savedTemplateTextProps = templateData?.types['text'];
-		updatedTemplateData.templateText = textData?.body;
-	};
-
-	const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
-		if ('quick-reply' in templateData?.types) {
-			saveQuickreplyTemplate(templateData);
-		}
-		if ('call-to-action' in templateData?.types) {
-			saveCallToActionTemplate(templateData);
-		} else if ('card' in templateData?.types) {
-			saveCardTemplate(templateData);
-		} else if ('media' in templateData?.types) {
-			saveMediaTemplate(templateData);
-		} else if ('text' in templateData?.types) {
-			saveTextTemplate(templateData);
-		}
-	};
-
 	const resetDynamicFields = () => {
 		setDynamicVariable([]);
 		setUpdatedDynamicVariable([]);
@@ -521,22 +376,36 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		resetDynamicFields();
 
 		setSavedTemplate(TemplateId);
+		let templatePreviewData: templatePreviewDataProps = {
+			templateData: {
+				templateText: '',
+				templateButtons: [],
+			},
+			buttonType: '',
+			fileData: {
+				fileLink: '',
+				fileType: '',
+			},
+		};
 		const savedTemplateData: savedTemplateListProps | undefined =
 			templateList?.find((template) => template.TemplateId === TemplateId);
 		const templateData: savedTemplateDataProps | undefined =
 			savedTemplateData?.Data;
 		if (templateData) {
-			setUpdatedTemplateData(templateData);
+			templatePreviewData = getTemplatePreviewData(templateData?.types);
 		}
-		setFileData(updatedFileData);
-		// setTemplateName(savedTemplateData?.TemplateName || '');
-		setButtonType(updatedButtonType);
-		setTemplateData(updatedTemplateData);
-		setDynamicVariable(getDynamicFields(updatedTemplateData.templateText));
-		if (updatedButtonType === 'quickReply') {
-			setQuickReplyButtons(updatedTemplateData.templateButtons);
+		setFileData(templatePreviewData?.fileData);
+		setButtonType(templatePreviewData?.buttonType);
+		setTemplateData(templatePreviewData?.templateData);
+		setDynamicVariable(
+			getDynamicFields(templatePreviewData?.templateData.templateText)
+		);
+		if (templatePreviewData?.buttonType === 'quickReply') {
+			setQuickReplyButtons(templatePreviewData?.templateData.templateButtons);
 		} else {
-			setCallToActionFieldRows(updatedTemplateData.templateButtons);
+			setCallToActionFieldRows(
+				templatePreviewData?.templateData.templateButtons
+			);
 		}
 		if (templateData?.variables) {
 			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
@@ -821,7 +690,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													) =>
 														(field.fieldName === 'whatsapp.websiteButtonText' ||
 															field.fieldName ===
-															'whatsapp.phoneButtonText') && (
+																'whatsapp.phoneButtonText') && (
 															<Box
 																key={button.id}
 																className={
@@ -1099,8 +968,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				isQuickReplyOpen={isQuickReplyOpen}
 				closeQuickReply={() => setIsQuickReplyOpen(false)}
 				quickReplyButtons={quickReplyButtons}
-				setQuickReplyButtons={() => { }}
-				updateTemplateData={() => { }}
+				setQuickReplyButtons={() => {}}
+				updateTemplateData={() => {}}
 				templateButtons={templateData.templateButtons}
 				isEditable={false}
 			/>
@@ -1112,8 +981,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
 				phoneNumberField={phoneNumberField}
 				websiteField={websiteField}
-				addMore={() => { }}
-				updateTemplateData={() => { }}
+				addMore={() => {}}
+				updateTemplateData={() => {}}
 				isEditable={false}
 			/>
 

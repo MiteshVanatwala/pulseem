@@ -3,17 +3,15 @@ import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { coreProps, TemplateFieldsProps } from '../Types/WhatsappCreator.types';
 import { ClassesType } from '../../../Classes.types';
-import {
-	TextField,
-	Typography,
-	MenuItem,
-	Grid,
-	Button,
-} from '@material-ui/core';
+import { TextField, Typography, Grid, Button } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import AlertModal from '../Popups/AlertModal';
 import { Autocomplete } from '@mui/material';
-import { getTemplateIdByName, getTemplateNameById } from '../../Common';
+import {
+	getTemplateIdByName,
+	getTemplateName,
+	getTemplateNameById,
+} from '../../Common';
 
 const TemplateFields = ({
 	classes,
@@ -112,11 +110,19 @@ const TemplateFields = ({
 							id='template-list'
 							className={
 								isCampaign
-									? clsx(classes.buttonField, classes.error)
-									: clsx(classes.buttonField, classes.success)
+									? clsx(
+											classes.buttonField,
+											classes.buttonWhatsappAutocomplete,
+											classes.error
+									  )
+									: clsx(
+											classes.buttonField,
+											classes.buttonWhatsappAutocomplete,
+											classes.success
+									  )
 							}
-							options={savedTemplateList.map(
-								(template) => template.TemplateName
+							options={savedTemplateList.map((template) =>
+								getTemplateName(template)
 							)}
 							renderInput={(params) => <TextField {...params} />}
 							onChange={onTemplateChange}
@@ -136,7 +142,7 @@ const TemplateFields = ({
 							className={classes.customFileUpload}
 							style={{
 								padding:
-									fileData?.length > 0
+									fileData?.fileLink?.length > 0
 										? '14px 15px 12px 7px'
 										: '17px 15px 15px 7px',
 							}}>
@@ -146,7 +152,7 @@ const TemplateFields = ({
 								accept='image/png, image/jpeg, application/pdf, video/mp4'
 								onChange={(e) => onFileUploadChange(e)}
 							/>
-							{fileData?.length > 0 ? (
+							{fileData?.fileLink?.length > 0 ? (
 								<div style={{ marginRight: 'auto', width: '100%' }}>
 									<Button
 										variant='contained'
@@ -158,10 +164,12 @@ const TemplateFields = ({
 											width: '100%',
 										}}
 										onClick={(e) => onFileDeselect(e)}>
-										{fileData
+										{fileData?.fileLink
 											?.split('/')
-											[fileData?.split('/')?.length - 1]?.substring(0, 25) +
-											'...'}
+											[fileData?.fileLink?.split('/')?.length - 1]?.substring(
+												0,
+												25
+											) + '...'}
 										&emsp;
 										<i className='zmdi zmdi-close'></i>
 									</Button>
@@ -172,7 +180,7 @@ const TemplateFields = ({
 						</label>
 
 						<Typography className={classes.buttonContent}>
-							{fileData?.length > 0 ? (
+							{fileData?.fileLink?.length > 0 ? (
 								<>
 									{isRTL
 										? `${fileSize} ${translator('whatsapp.totalSize')}`

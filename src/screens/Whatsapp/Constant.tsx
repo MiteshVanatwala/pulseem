@@ -1,4 +1,3 @@
-
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
 import {
 	campaignStatusProps,
@@ -17,6 +16,7 @@ export const whatsappRoutes = {
 	EDIT_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/edit/page1/:campaignID',
 	EDIT_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/edit/page2/:campaignID',
 	CHAT: '/react/whatsapp/chat',
+	CHAT_CONVERSATION: '/react/whatsapp/chat/:contactID',
 };
 
 export const apiStatus = {
@@ -358,3 +358,9 @@ export const campaignStatus: campaignStatusProps = {
 	4: 'Finished',
 	5: 'Canceled',
 };
+
+export enum whatsappChatStatuses {
+	OPEN = 'open',
+	PENDING = 'pending',
+	SOLVED = 'solved',
+}
