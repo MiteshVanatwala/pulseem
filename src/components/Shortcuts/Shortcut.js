@@ -259,13 +259,12 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             root: classes.shortcutButton
           }}>
           <Box className={clsx(classes.flex, classes.hAuto)}>
-            {windowSize !== 'xs' && windowSize !== 'sm' && <IconButton
+            <IconButton
               id="editIcon"
               className={clsx(classes.shortcutEditIcon)}
               onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index)}>
               {'\uE09C'}
             </IconButton>
-            }
             <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5, classes.flex1,)} onClick={() => {
               Redirect({ url: data.ShortcutUrl })
             }}>{t(data.CategoryName)}</Typography>

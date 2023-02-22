@@ -67,7 +67,7 @@ const BulkStatus = () => {
       let dialog = {};
       let availablePack = null;
 
-      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account.IsPaying) {
+      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType.type === -1 || !accountSettings.Account?.IsPaying) {
         dialog = renderBillingSupportDialog();
       }
       else {
@@ -136,7 +136,7 @@ const BulkStatus = () => {
   const showPackageDialogType = async (packageType) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
     dispatch(setAccountFeatures(settings.payload));
-    if (!settings.payload.Account.IsPaying) {
+    if (!settings.payload.Account?.IsPaying) {
       packageType = { type: -1, title: '' };
       setPackageType(packageType);
     }

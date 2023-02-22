@@ -1319,11 +1319,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: shortcutFontSize.page[windowSize],
     lineHeight: 1,
     color: '#FF0054',
-    textUnderlineOffset: '3px'
+    textDecoration: 'none'
   },
   categoryLabel: {
     fontSize: shortcutFontSize.category[windowSize],
     lineHeight: 1,
+    marginInlineStart: windowSize !== 'xs' && windowSize !== 'sm' ? 18 : 0,
+
   },
   carouselPaper: {
     borderRadius: 10,
@@ -1405,9 +1407,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "none !important",
     background: '#F0F5FF',
     height: 50,
+    minHeight: 50,
     color: "#0371AD",
     fontSize: 20,
     padding: '10px 0 0 20px',
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+      height: 'auto',
+    },
     '& .title': {
       fontSize: 20,
       color: '#000'

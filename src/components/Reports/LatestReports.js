@@ -14,6 +14,7 @@ import { sitePrefix } from '../../config/index';
 
 const LatestReports = ({ classes, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
+  const { windowSize } = useSelector(state => state.core);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
   const dateTimeFormat = 'DD/MM/YY, HH:mm';
@@ -217,13 +218,12 @@ const LatestReports = ({ classes, t, isRTL }) => {
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
         <Box className={clsx(!showGraphs ? classes.tabPanel : null, classes.spaceBetween, classes.flexJustifyCenter, classes.flexWrap)}>
-          <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1)}>
+          <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1, classes.mlr10)}>
             {
               showGraphs ? (innerData.map((c, index) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
-                  <Box key={index}>
-
+                  <Box key={index} className={classes.w100}>
                     {index === 0 && <Divider />}
                     <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
                       <Box className={clsx(classes.flex2, classes.paddingSides15)}>
@@ -261,7 +261,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
             }
           </Box>
           {showGraphs &&
-            <Box className={classes.flex1}>
+            <Box className={clsx(classes.flex1, classes.mlr10)}>
               <Box className={classes.barChart}>
                 <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
               </Box>
@@ -299,12 +299,15 @@ const LatestReports = ({ classes, t, isRTL }) => {
                 {updatedOnText}
               </Typography>
             </Box>
-            <Box>
+            <Box className={{ [classes.w100]: windowSize === 'xs' }}>
               <Tabs
                 value={tabValue}
                 onChange={(e, value) => handleTabValue(value)}
                 className={clsx(classes.ml15, classes.tab, classes.tablistRoot)}
                 classes={{ indicator: classes.hideIndicator }}
+              // scrollableX={true}
+              // variant="scrollable"
+              // orientation="horizontal"
               >
                 <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
                 <Tab label={t('appBar.sms.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />

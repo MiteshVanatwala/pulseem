@@ -1783,7 +1783,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         background: '#fff',
         borderRadius: 10
-      }
+      },
+    },
+    '& .MuiTabs-scroller': {
+      overflow: 'scroll !important'
     }
   },
   btnTab: {

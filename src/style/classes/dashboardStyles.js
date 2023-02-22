@@ -51,9 +51,9 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     },
     shortcutTitle: {
         maxHeight: 39,
-        // maxWidth: 285,
         borderTopLeftRadius: 20,
-        borderTopRightRadius: 20
+        borderTopRightRadius: 20,
+        paddingTop: 0
     },
     shortcutSubtitle: {
         fontSize: windowSize === 'xs' ? 16 : 18,
@@ -63,6 +63,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     },
     shortcutBox: {
         borderRadius: 20,
+        background: '#fff',
         marginBottom: 19,
         marginTop: 28,
         overflow: 'hidden',
@@ -73,6 +74,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         width: shortcutBoxWidth[windowSize],
         height: '100%',
         maxHeight: '780px',
+        marginTop: windowSize !== 'xs' ? 49 : '',
         ['@media (max-width:1280px)']: {
             maxHeight: 'calc(100% - 65px)',
             width: '100%'
@@ -118,7 +120,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         textAlign: 'center'
     },
     shortcutButton: {
-        height: '92px',
+        height: windowSize !== 'xs' && windowSize !== 'sm' ? 'auto' : 92,
         width: '85%',
         background: '#fff',
         borderRadius: '20px',
@@ -183,6 +185,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         fontSize: 18,
         color: '#FF0054',
         padding: 0,
+        display: windowSize !== 'xs' && windowSize !== 'sm' ? 'none' : 'block',
     },
     shortcutLabel: {
         display: 'flex',
