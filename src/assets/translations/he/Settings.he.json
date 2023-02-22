@@ -49,7 +49,9 @@
     "savedSuccessfuly": "ההגדרות נשמרו בהצלחה!",
     "2fa": {
       "addEmail": "הוסף מייל לאימות דו שלבי",
-      "addNumber": "הוסף מספר לאימות דו שלבי"
+      "addNumber": "הוסף מספר לאימות דו שלבי",
+      "addToFromEmailToSend": "האם לאשר אימייל זה גם לשליחת דיוור?",
+      "addToFromNumberToSend": "האם לאשר מספר זה גם לשליחת דיוור?"
   }
   },
   "billingSettings": {

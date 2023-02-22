@@ -3,6 +3,7 @@ import { instence } from '../../helpers/api'
 import { PulseemResponse } from '../../Models/APIResponse';
 import { AccountSettings } from '../../Models/Account/AccountSettings';
 import { LoginPassword } from '../../Models/Account/Password';
+import { TwoFactorAuthAllowed } from '../../Models/Auth/TwoFactorAuth';
 
 export const getAccountSettings = createAsyncThunk(
     'AccountSettings/Get',
@@ -58,6 +59,48 @@ export const changePassword = createAsyncThunk('AccountSettings/ChangePassword',
         }
     }
 );
+
+export const addTwoFactorAuthValues = createAsyncThunk(
+    'AddTwoFactorAuthValue', async (authObject: TwoFactorAuthAllowed, thunkAPI) => {
+        try {
+            const response = await instence.post(`authorization/AddTwoFactorAuthValue`, authObject);
+            response.data.authType = authObject.AuthType;
+            return response.data
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const deleteAuthorizationValue = createAsyncThunk(
+    'DeleteAuthorizationValue', async (authObject: TwoFactorAuthAllowed, thunkAPI) => {
+        try {
+            const response = await instence.post(`authorization/DeleteAuthorizationValue`, authObject);
+            return response.data
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const checkEmailAuthorization = createAsyncThunk(
+    'CheckEmailAuthorization', async (value: string, thunkAPI) => {
+        try {
+            const response = await instence.get(`authorization/CheckEmailAuthorization/${value}`);
+            return response.data
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const deleteAuthorization2FA = createAsyncThunk(
+    'DeleteAuthorization2FA', async (value: string, thunkAPI) => {
+        try {
+            const response = await instence.get(`authorization/DeleteAuthorization2FA/${value}`);
+            return response.data
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 const AccountSettingsSlice = createSlice({
     name: 'AccountSettings',

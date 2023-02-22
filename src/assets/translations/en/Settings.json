@@ -49,7 +49,9 @@
         "savedSuccessfuly": "Settings successfuly saved!",
         "2fa": {
             "addEmail": "Add 2FA Email",
-            "addNumber": "Add 2FA Number"
+            "addNumber": "Add 2FA Number",
+            "addToFromEmailToSend": "Add this Email to allowed From Email list?",
+            "addToFromNumberToSend": "Add this Number to allowed From Number list?"
         }
     },
     "billingSettings": {

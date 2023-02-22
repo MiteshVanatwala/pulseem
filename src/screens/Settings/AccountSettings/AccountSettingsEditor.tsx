@@ -300,7 +300,7 @@ const AccountSettingsEditor = () => {
         value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
         onClose={() => {
-          setEmailVerificationPopup(false);
+          setTfaEmailVerification(false);
           setVerificationStep(0);
         }}
       />}
@@ -315,6 +315,18 @@ const AccountSettingsEditor = () => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
         }} />}
+      {tfaSmsVerification && <VerificationDialog
+        variant="smsTFA"
+        textButtonOnSuccess={t('common.close')}
+        classes={classes}
+        isOpen={tfaSmsVerification}
+        value={verificationStep > 0 && cellphoneToVerify}
+        step={verificationStep}
+        onClose={() => {
+          setTfaSmsVerification(false);
+          setVerificationStep(0);
+        }}
+      />}
       {smsVerificationPopup && <VerificationDialog
         textButtonOnSuccess={t('common.close')}
         classes={classes}
