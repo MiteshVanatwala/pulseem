@@ -12,6 +12,7 @@ import {
 	APISendWhatsappChat,
 	APISendWhatsAppChatReqPayload,
 	APIWhatsappChatItemsData,
+	ContactsPaginationSetting,
 } from './Types/WhatsappChat.type';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
@@ -22,14 +23,15 @@ import {
 	savedTemplateListProps,
 	templateDataProps,
 	templatePreviewDataProps,
+	toastProps,
 } from '../Editor/Types/WhatsappCreator.types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	getInboundWhatsappChatStatus,
 	getSavedTemplates,
 	getWhatsappChatContactsByPhoneNumber,
 	manageWhatsappChatCoversationStatus,
-	sendWhatsAppChat,
+	sendWhatsAppMessage,
 	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
@@ -48,13 +50,23 @@ import {
 	getAccountExtraData,
 	getPreviousLandingData,
 } from '../../../redux/reducers/smsSlice';
-import { apiStatus, buttonTypes, whatsappChatStatuses } from '../Constant';
+import {
+	apiStatus,
+	buttonTypes,
+	resetToastData,
+	whatsappChatStatuses,
+} from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
+import Toast from '../../../components/Toast/Toast.component';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [activeChatContacts, setActiveChatContacts] =
@@ -78,6 +90,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		useState<APIWhatsappChatSessionData>({
 			IsIn24Window: false,
 			ExpiryTime: '',
+			Hour: '0',
+			Minute: '0',
+			Second: '0',
 		});
 
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
@@ -93,6 +108,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
+	const { contactID } = useParams();
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
@@ -105,6 +121,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	>([]);
 	const [allWhatsappChat, setAllWhatsappChat] =
 		useState<APIWhatsappChatItemsData>();
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [fileData, setFileData] = useState<{
 		fileType: string;
@@ -122,9 +140,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
-	const [page, setPage] = useState<number>(1);
-	const [ispagination, setIsPaginbation] = useState<boolean>(false);
-	const pagesize = 20;
+
 	const initialQuickReplyButtons = [
 		{
 			id: uniqid(),
@@ -176,6 +192,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [landingPages, setLandingPages] = useState<landingPageDataProps[]>([]);
 	const [phoneNumbersList, setPhoneNumbersList] = useState<string[]>([]);
 	const [dynamicModalVariable, setDynamicModalVariable] = useState<number>(0);
+
+	const [contactsPaginationSetting, setContactsPaginationSetting] =
+		useState<ContactsPaginationSetting>({
+			PageNo: 1,
+			PageSize: 20,
+			hasMore: true,
+		});
 
 	useEffect(() => {
 		if (!personalFields || landingPages?.length <= 0) {
@@ -233,39 +256,73 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 			setSideChatContacts(updatedSideChatContacts);
 			setFilteredSideChatContacts(updatedFilterSideChatContacts);
+		} else {
+			whatsAppChatConversationStatusData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: whatsAppChatConversationStatusData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
 	const setAPIInboundChatStatus = async () => {
-		const whatsAppChatSessionStatus: APIWhatsappChatSession =
+		const { payload: whatsAppChatSessionStatus }: APIWhatsappChatSession =
 			await dispatch<any>(
 				getInboundWhatsappChatStatus({
 					activePhoneNumber: activePhoneNumber,
 					activeUserNumber: activeChatContacts.PhoneNumber,
 				})
 			);
-		if (whatsAppChatSessionStatus.payload.Status === apiStatus.SUCCESS) {
-			setWhatsappChatSession(whatsAppChatSessionStatus.payload.Data);
+		if (whatsAppChatSessionStatus?.Status === apiStatus.SUCCESS) {
+			setWhatsappChatSession(whatsAppChatSessionStatus?.Data);
 		} else {
 			setWhatsappChatSession({
 				IsIn24Window: false,
 				ExpiryTime: '',
+				Hour: '0',
+				Minute: '0',
+				Second: '0',
 			});
+			whatsAppChatSessionStatus?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: whatsAppChatSessionStatus?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
 
 	const setAPIWhatsAppChatContacts = async (activeUser: string) => {
 		setIsLoader(true);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
-			await dispatch<any>(getWhatsappChatContactsByPhoneNumber(activeUser));
+			await dispatch<any>(
+				getWhatsappChatContactsByPhoneNumber({
+					PhoneNumber: activeUser,
+					IsPagination: true,
+					pageNo: contactsPaginationSetting?.PageNo,
+					pageSize: contactsPaginationSetting?.PageSize,
+				})
+			);
 		setIsLoader(false);
 		if (whatsAppChatContactsData.payload.Status === apiStatus.SUCCESS) {
 			const contactData = whatsAppChatContactsData.payload.Data.Items;
 			const updatedActiveChat = contactData[0];
-			if (activeChatContacts?.PhoneNumber === '' && updatedActiveChat) {
-				setActiveChatContacts(updatedActiveChat);
-				navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
-				changeContactReadStatus(updatedActiveChat, contactData, contactData);
+			if (contactID) {
+				const activeContact = contactData?.find(
+					(contact) => contact?.PhoneNumber === contactID
+				);
+				if (activeContact) {
+					setActiveChatContacts(activeContact);
+					navigate(`/react/whatsapp/chat/${activeContact?.PhoneNumber}`);
+					changeContactReadStatus(activeContact, contactData, contactData);
+				}
+			} else {
+				if (activeChatContacts?.PhoneNumber === '' && updatedActiveChat) {
+					setActiveChatContacts(updatedActiveChat);
+					navigate(`/react/whatsapp/chat/${updatedActiveChat?.PhoneNumber}`);
+					changeContactReadStatus(updatedActiveChat, contactData, contactData);
+				}
 			}
 		} else {
 			setSideChatContacts([]);
@@ -455,7 +512,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			}
 			setIsLoader(true);
 			const { payload: sendWhatsappChat }: APISendWhatsappChat =
-				await dispatch<any>(sendWhatsAppChat(chatReqPayload));
+				await dispatch<any>(sendWhatsAppMessage(chatReqPayload));
+			setIsLoader(false);
 			if (sendWhatsappChat?.Status === apiStatus?.SUCCESS) {
 				const sentChat = sendWhatsappChat?.Data?.Data?.Items;
 				if (allWhatsappChat && sentChat && sentChat?.TODAY?.length > 0) {
@@ -474,9 +532,87 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					setDynamicVariable([]);
 					setNewMessage('');
 					setSavedTemplate('');
+					const inputElement = document.getElementById('free-from-input');
+					if (inputElement && savedTemplate?.length === 0) {
+						inputElement.innerText = '';
+					}
+				}
+			} else {
+				sendWhatsappChat?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: sendWhatsappChat?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		}
+	};
+
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} />;
+		}
+		return null;
+	};
+
+	const fetchMoreContacts = async (
+		searchText: string,
+		isPaginationReset: boolean = false
+	) => {
+		if (activePhoneNumber && activePhoneNumber?.length > 0) {
+			if (isPaginationReset) {
+				setIsLoader(true);
+			}
+			const {
+				payload: whatsAppChatContactsData,
+			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+				getWhatsappChatContactsByPhoneNumber({
+					PhoneNumber: activePhoneNumber,
+					IsPagination: true,
+					pageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
+					pageSize: contactsPaginationSetting?.PageSize,
+					Searchtext: searchText,
+				})
+			);
+			setIsLoader(false);
+			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
+				setContactsPaginationSetting({
+					...contactsPaginationSetting,
+					hasMore: true,
+					PageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
+				});
+				if (isPaginationReset) {
+					const listDivElement = document.getElementById('contact-list-div');
+					if (listDivElement) {
+						listDivElement.scrollTop = 0;
+					}
+					setSideChatContacts(whatsAppChatContactsData?.Data?.Items);
+					setFilteredSideChatContacts(whatsAppChatContactsData?.Data?.Items);
+				} else {
+					setSideChatContacts([
+						...sideChatContacts,
+						...whatsAppChatContactsData?.Data?.Items,
+					]);
+					setFilteredSideChatContacts([
+						...filteredSideChatContacts,
+						...whatsAppChatContactsData?.Data?.Items,
+					]);
+				}
+			} else {
+				if (whatsAppChatContactsData?.Message === 'No Data Found') {
+					setContactsPaginationSetting({
+						...contactsPaginationSetting,
+						hasMore: false,
+					});
 				}
 			}
-			setIsLoader(false);
 		}
 	};
 
@@ -488,6 +624,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				classes={classes}
 				customPadding={false}
 				containerClass={null}>
+				{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
 				<div className={`${classes.whatsappChat} app`}>
 					<div className={`${classes.whatsappChat} app-content`}>
 						<SideBar
@@ -506,6 +643,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							handleUserStatus={handleUserStatus}
 							getStatusClass={getStatusClass}
 							chatContacts={activeChatContacts}
+							fetchMoreContacts={fetchMoreContacts}
+							contactsPaginationSetting={contactsPaginationSetting}
+							fetchSearchedContacts={fetchMoreContacts}
 						/>
 						<ChatUi
 							isMobileSideBar={isMobileSideBar}
@@ -534,6 +674,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							allWhatsappChat={allWhatsappChat}
 							setAllWhatsappChat={setAllWhatsappChat}
 							setAPIInboundChatStatus={setAPIInboundChatStatus}
+							setWhatsappChatSession={setWhatsappChatSession}
+							setUpdatedDynamicVariable={setUpdatedDynamicVariable}
+							setDynamicVariable={setDynamicVariable}
+							setSavedTemplate={setSavedTemplate}
 						/>
 					</div>
 				</div>

@@ -42,6 +42,10 @@ const ChatUi = ({
 	allWhatsappChat,
 	setAllWhatsappChat,
 	setAPIInboundChatStatus,
+	setWhatsappChatSession,
+	setUpdatedDynamicVariable,
+	setDynamicVariable,
+	setSavedTemplate,
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 
@@ -68,6 +72,10 @@ const ChatUi = ({
 				})
 			);
 			await setAPIInboundChatStatus();
+			setUpdatedDynamicVariable([]);
+			setDynamicVariable([]);
+			setNewMessage('');
+			setSavedTemplate('');
 			setIsLoader(false);
 
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
@@ -98,13 +106,18 @@ const ChatUi = ({
 					/>
 				</div>
 
-				<ChatHeaderContent
-					classes={classes}
-					whatsappChatSession={whatsappChatSession}
-					chatContacts={chatContacts}
-					handleUserStatus={handleUserStatus}
-					getStatusClass={getStatusClass}
-				/>
+				{Number(whatsappChatSession.Hour) > 0 &&
+					Number(whatsappChatSession.Minute) > 0 &&
+					Number(whatsappChatSession.Second) > 0 && (
+						<ChatHeaderContent
+							classes={classes}
+							whatsappChatSession={whatsappChatSession}
+							chatContacts={chatContacts}
+							handleUserStatus={handleUserStatus}
+							getStatusClass={getStatusClass}
+							setWhatsappChatSession={setWhatsappChatSession}
+						/>
+					)}
 			</header>
 		);
 	};

@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Box, Button, Grid, Typography } from '@material-ui/core';
 import Icon from './Icon';
 import { Stack } from '@mui/material';
 import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
@@ -80,17 +80,19 @@ const ChatFooterContent = ({
 			<div className={`${classes.whatsappChat} chat__input-wrapper`}>
 				{whatsappChatSession.IsIn24Window || savedTemplate?.length > 0 ? (
 					<>
-						<button
-							aria-label='Emojis'
-							onClick={() => setShowEmojis(!showEmojis)}>
-							<EmojiPicker
-								classes={classes}
-								OnSelectEmoji={(emoji: string) => {
-									onEmojiClick(emoji);
-								}}
-								boxStyles={{ alignItems: 'center' }}
-							/>
-						</button>
+						{savedTemplate?.length === 0 && (
+							<button
+								aria-label='Emojis'
+								onClick={() => setShowEmojis(!showEmojis)}>
+								<EmojiPicker
+									classes={classes}
+									OnSelectEmoji={(emoji: string) => {
+										onEmojiClick(emoji);
+									}}
+									boxStyles={{ alignItems: 'center' }}
+								/>
+							</button>
+						)}
 						<button aria-label='chat' onClick={() => setIsTemplateModal(true)}>
 							<Icon
 								id='chat'
@@ -102,29 +104,27 @@ const ChatFooterContent = ({
 							/>
 						</button>
 						{savedTemplate?.length !== 0 ? (
-							<>
-								<div className={`${classes.whatsappChat} chat__input`}>
-									<Highlighter
-										searchWords={dynamicVariable}
-										autoEscape={true}
-										textToHighlight={newMessage}
-										highlightTag={(tagData: tagDataProps) =>
-											highlightText(tagData)
-										}
-									/>
-								</div>
-							</>
-						) : (
-							<>
-								<div
-									className={`${classes.whatsappChat} chat__input`}
-									data-text='Type a message'
-									contentEditable={savedTemplate?.length === 0 ? true : false}
-									suppressContentEditableWarning={
-										savedTemplate?.length === 0 ? true : false
+							<Box className={`${classes.whatsappChat} chat__input m`}>
+								<Highlighter
+									searchWords={dynamicVariable}
+									autoEscape={true}
+									textToHighlight={newMessage}
+									highlightTag={(tagData: tagDataProps) =>
+										highlightText(tagData)
 									}
-									onKeyUp={onEditableDivChange}></div>
-							</>
+								/>
+							</Box>
+						) : (
+							<div
+								className={`${classes.whatsappChat} chat__input s`}
+								id={'free-from-input'}
+								data-text='Type a message'
+								contentEditable={savedTemplate?.length === 0 ? true : false}
+								suppressContentEditableWarning={
+									savedTemplate?.length === 0 ? true : false
+								}
+								onKeyUp={onEditableDivChange}
+							/>
 						)}
 					</>
 				) : (

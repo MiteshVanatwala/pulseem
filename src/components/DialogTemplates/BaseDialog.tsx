@@ -7,7 +7,6 @@ import {
   Dialog,
   Paper,
   Divider,
-  Box,
 } from "@material-ui/core";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
@@ -23,9 +22,9 @@ export const BaseDialog = ({
   title = "",
   children,
   showDivider = false,
-  onClose = () => {},
-  onCancel = () => {},
-  onConfirm = () => {},
+  onClose = () => { },
+  onCancel = () => { },
+  onConfirm = () => { },
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -40,6 +39,7 @@ export const BaseDialog = ({
   style = undefined,
   maxHeight = "",
   reduceTitle = false,
+  confirmDisabled = false
 }: DialogOptions) => {
   const direction: { [key: string]: string } = {
     true: "rtl",
@@ -104,6 +104,7 @@ export const BaseDialog = ({
           <Button
             variant='contained'
             size='small'
+            disabled={confirmDisabled}
             onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
             className={clsx(
               classes.solidDialogButton,

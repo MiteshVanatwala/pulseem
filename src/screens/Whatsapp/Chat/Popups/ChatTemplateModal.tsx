@@ -263,8 +263,9 @@ const ChatTemplateModal = ({
 				fullScreen={fullScreen}
 				open={isOpen}
 				onClose={onClose}
-				aria-labelledby='responsive-dialog-title'>
-				<div className={classes.alertModal}>
+				aria-labelledby='responsive-dialog-title'
+				className={classes.templateListWrapper}>
+				<div className={classes.templateListModal}>
 					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
 						{translator('whatsappChat.chooseTemplate')}
 					</div>
@@ -276,7 +277,7 @@ const ChatTemplateModal = ({
 							<InfoOutlined fontSize={'small'} onClick={onClose} />
 						</Box>
 					</Box>
-					<div className={classes.alertModalContent}>
+					<div className={classes.templateListModalContent}>
 						<ul className={classes.chooseTemplateModalUl}>
 							{savedTemplateList?.map(
 								(template: savedTemplateListProps, index: number) => (

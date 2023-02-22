@@ -132,6 +132,7 @@ const SendCampaign = ({
 		 * know what is the initial value that is the reason we kept it here in
 		 * if condition
 		 */
+		checkCampaignID();
 		if (!testGroupList || testGroupList?.length === 0) {
 			dispatch(getTestGroups());
 		}
@@ -150,6 +151,12 @@ const SendCampaign = ({
 		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const checkCampaignID = () => {
+		if (!campaignID) {
+			navigate(whatsappRoutes.CREATE_CAMPAIGN_PAGE1);
+		}
+	};
 
 	const getFilterCampaign = async () => {
 		if (campaignID) {

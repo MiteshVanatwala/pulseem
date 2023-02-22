@@ -6,10 +6,11 @@ import {
 import AccountUser from '../../../../assets/images/acc-user.jpg';
 import { IconButton, makeStyles, MenuItem, Select } from '@material-ui/core';
 import { FaBars } from 'react-icons/fa';
-import { BaseSyntheticEvent, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import SideBarContactList from './SideBarContactList';
+import useDebounce from '../Hook/useDebounce';
 
 const SideBar = ({
 	classes,
@@ -24,9 +25,19 @@ const SideBar = ({
 	handleUserStatus,
 	getStatusClass,
 	activePhoneNumber,
+	fetchMoreContacts,
+	fetchSearchedContacts,
+	contactsPaginationSetting,
 }: WhatsappChatSideBarProps) => {
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
+	const [searchText, setSearchText] = useState<string>('');
+	const debouncedValue = useDebounce<string>(searchText, 500);
+
+	useEffect(() => {
+		fetchSearchedContacts(searchText, true);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [debouncedValue]);
 
 	const useStyles = makeStyles(() => ({
 		selectSection: {
@@ -38,19 +49,7 @@ const SideBar = ({
 	const muiclasses = useStyles();
 
 	const handleSearch = (e: BaseSyntheticEvent) => {
-		let value = e.target.value.toLowerCase();
-		let result = [];
-
-		result = sideChatContacts.filter(
-			(data: APIWhatsappChatSidebarContactsItemsData) => {
-				return (
-					data.UserName?.toLowerCase()?.includes(value) ||
-					data.LastMessage?.toLowerCase()?.includes(value) ||
-					data.PhoneNumber?.includes(value)
-				);
-			}
-		);
-		setFilteredSideChatContacts(result);
+		setSearchText(e.target.value.toLowerCase());
 	};
 
 	const handleFilter = (e: BaseSyntheticEvent) => {
@@ -128,17 +127,11 @@ const SideBar = ({
 							<Icon id='back' />
 						</button>
 					</div>
-					<div className={`${classes.whatsappChat} sidebar__actions`}>
-						<IconButton
-							className={classes.whatsappChatBarButton}
-							onClick={setIsMobileSideBar}>
-							<FaBars />
-						</IconButton>
-					</div>
 					<input
 						className={`${classes.whatsappChat} search`}
 						placeholder={translator('whatsappChat.searchPlaceholder')}
 						onChange={(e) => handleSearch(e)}
+						value={searchText}
 					/>
 				</div>
 				<SideBarContactList
@@ -147,6 +140,8 @@ const SideBar = ({
 					handleChatId={handleChatId}
 					handleUserStatus={handleUserStatus}
 					getStatusClass={getStatusClass}
+					fetchMoreContacts={() => fetchMoreContacts(searchText)}
+					contactsPaginationSetting={contactsPaginationSetting}
 				/>
 			</aside>
 		</>

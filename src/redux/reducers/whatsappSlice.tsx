@@ -15,7 +15,10 @@ import {
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
 import { setUploadProgress } from './groupSlice';
-import { APISendWhatsAppChatReqPayload } from '../../screens/Whatsapp/Chat/Types/WhatsappChat.type';
+import {
+	APIGetWhatsappChatContactsReq,
+	APISendWhatsAppChatReqPayload,
+} from '../../screens/Whatsapp/Chat/Types/WhatsappChat.type';
 
 type ApiError = {
 	message: string;
@@ -464,15 +467,25 @@ export const getCampaignDetailById = createAsyncThunk(
 
 export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 	'WhatsAppChat/GetWhatsAppChatContacts',
-	async (number: string, thunkAPI) => {
+	async (
+		{
+			PhoneNumber,
+			IsPagination,
+			pageNo,
+			pageSize,
+			Searchtext
+		}: APIGetWhatsappChatContactsReq,
+		thunkAPI
+	) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`WhatsAppChat/GetWhatsAppChatContacts`,
 				{
-					PhoneNumber: number,
-					IsPagination: true,
-					pageNo: 1,
-					pageSize: 20,
+					PhoneNumber,
+					IsPagination,
+					pageNo,
+					pageSize,
+					Searchtext
 				}
 			);
 
@@ -682,7 +695,7 @@ export const restoreWhatsAppCampaigns = createAsyncThunk(
 	}
 );
 
-export const sendWhatsAppChat = createAsyncThunk(
+export const sendWhatsAppMessage = createAsyncThunk(
 	'WhatsAppChat/SendWhatsAppChat',
 	async (data: APISendWhatsAppChatReqPayload, thunkAPI) => {
 		try {

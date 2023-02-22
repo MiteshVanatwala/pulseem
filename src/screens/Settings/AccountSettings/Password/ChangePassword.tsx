@@ -101,6 +101,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
         NumberChar: false
     } as ValidPassword);
     const [showPasswordTip, setShowPasswordTip] = useState<boolean>(false);
+    const [confirmButtonDisabled, setConfirmButtonDisabled] = useState<boolean>(false);
     const [errors, setErrors] = useState([]);
 
     const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
@@ -112,6 +113,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
     const dispatch = useDispatch();
 
     const handleConfirm = async () => {
+        setConfirmButtonDisabled(true);
         const missingErrorsObj: any = {
             LowerChar: t('settings.changePassword.passwordHint.lowerChar'),
             SpecialChar: t('settings.changePassword.passwordHint.specialChar'),
@@ -139,7 +141,6 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
         const missingRules: any = [];
 
         Object.keys(passwordValidation).forEach((key: any) => {
-            console.log(Object.values(passwordValidation));
             //@ts-ignore
             if (passwordValidation[key] === false) {
                 missingRules.push(missingErrorsObj[key]);
@@ -159,8 +160,10 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                 const response = await dispatch(changePassword(loginPass));
                 handleResponses(response);
                 setShowLoader(false);
+                setConfirmButtonDisabled(false);
             }
         }
+        setConfirmButtonDisabled(false);
     }
 
     const handleChange = (e: any) => {
@@ -208,10 +211,12 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                 onClose={OnClose}
                 onCancel={OnClose}
                 onConfirm={handleConfirm}
+                disableBackdropClick={true}
+                confirmDisabled={confirmButtonDisabled}
                 title={t("settings.changePassword.title")}
                 showDivider={true}
             >
-                <Grid container className={clsx(classes.mb4)} style={{ maxWidth: 'calc(25vw)' }}>
+                <Grid container className={clsx(classes.mb4, classes.passwordDialog)}>
                     <Grid item xs={12}>
                         <Typography>{Text ? Text : t("settings.changePassword.subTitle")}</Typography>
                     </Grid>
@@ -231,6 +236,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                 name="OldPassword"
                                 label=""
                                 variant="outlined"
+                                style={{ textAlign: 'left', direction: 'ltr' }}
                                 value={loginPass.OldPassword}
                                 className={clsx(classes.textField, classes.minWidth252, oldPassError !== '' ? classes.textFieldError : '')}
                                 inputProps={{ autocomplete: "old-password" }}
@@ -272,6 +278,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                         name="NewPassword"
                                         label=""
                                         variant="outlined"
+                                        style={{ textAlign: 'left', direction: 'ltr' }}
                                         value={loginPass.NewPassword}
                                         className={clsx(classes.textField, classes.minWidth252, newPassError !== '' ? classes.textFieldError : '')}
                                         inputProps={{ autocomplete: "new-password" }}
@@ -305,6 +312,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                                     name="ConfirmPassword"
                                     label=""
                                     variant="outlined"
+                                    style={{ textAlign: 'left', direction: 'ltr' }}
                                     value={loginPass.ConfirmPassword}
                                     className={clsx(classes.textField, classes.minWidth252, confirmPassError !== '' ? classes.textFieldError : '')}
                                     inputProps={{ autocomplete: "new-password" }}
