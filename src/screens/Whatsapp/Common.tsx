@@ -72,7 +72,8 @@ export const getTemplateIdByName = (
 	return (
 		savedTemplateList?.find(
 			(template: savedTemplateListProps) =>
-				template.TemplateName === templateName
+				template.TemplateName === templateName ||
+				template.FriendlyTemplateName === templateName
 		)?.TemplateId || null
 	);
 };

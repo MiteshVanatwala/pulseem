@@ -542,8 +542,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onSaveCampaign = async (showSuccess: boolean = true) => {
 		if (validateSaveCampaign()) {
+			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
-
+			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
@@ -564,8 +565,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onSubmit = async (e: BaseSyntheticEvent) => {
 		e.preventDefault();
 		if (validateSaveCampaign()) {
+			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
-
+			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
 					`/react/whatsapp/campaign/edit/page2/${data.Data.WACampaignId}`

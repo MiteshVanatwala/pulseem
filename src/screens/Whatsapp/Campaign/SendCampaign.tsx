@@ -598,13 +598,13 @@ const SendCampaign = ({
 	};
 
 	const onSummarySend = async () => {
+		setIsSummaryModal(false);
 		setIsLoader(true);
 		if (campaignID) {
 			const { payload: sendCampaignData }: ApiSendCampaign =
 				await dispatch<any>(sendCampaign({ WACampaignID: Number(campaignID) }));
 			setIsLoader(false);
 			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
-				setIsSummaryModal(false);
 				setIsSendCampaignSuccessOpen(true);
 			} else {
 				sendCampaignData?.Message
