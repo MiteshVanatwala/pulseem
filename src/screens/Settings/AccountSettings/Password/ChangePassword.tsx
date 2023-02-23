@@ -141,7 +141,6 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
         const missingRules: any = [];
 
         Object.keys(passwordValidation).forEach((key: any) => {
-            console.log(Object.values(passwordValidation));
             //@ts-ignore
             if (passwordValidation[key] === false) {
                 missingRules.push(missingErrorsObj[key]);
@@ -153,7 +152,6 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
 
         if (missingRules.length > 0) {
             setErrors(missingRules);
-            setConfirmButtonDisabled(false);
         }
         else {
             setErrors([]);

@@ -21,5 +21,6 @@ export type CompDtlPropTypes = {
         [key: string]: any;
     };
     Settings: AccountSettings | null,
-    OnUpdate: Function
+    OnUpdate: Function,
+    onShowTwoFactorAuth: Function
 };
