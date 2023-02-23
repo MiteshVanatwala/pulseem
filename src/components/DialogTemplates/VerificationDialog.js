@@ -41,11 +41,15 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     const [userCodeConfirmed, setUserCodeConfirmed] = useState(false);
     const [addToFromEmailToSend, setAddToFromEmailToSend] = useState(false);
     const [addToFromNumberToSend, setAddToFromNumberToSend] = useState(false);
-
+    const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+    const [deleteValue, setDeleteValue] = useState(null);
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
     const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
 
     useEffect(() => {
+        setDeleteValue(null);
+        setAddToFromEmailToSend(false);
+        setAddToFromNumberToSend(false);
         switch (variant) {
             case "email": {
                 const handleVerificationDialog = async () => {
@@ -62,7 +66,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 break;
             }
             case "emailTFA": {
-                setAddToFromEmailToSend(false);
+
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizedEmails());
                     await dispatch(getTwoFactorAuthValues(1));
@@ -71,7 +75,6 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 break;
             }
             case "smsTFA": {
-                setAddToFromNumberToSend(false);
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizeNumbers());
                     await dispatch(getTwoFactorAuthValues(2));
@@ -144,7 +147,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                     break;
                 }
                 case 403: {
-                    setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match') })
+                    setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match') });
+                    break;
                 }
                 default: {
                     break;
@@ -307,17 +311,21 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 }
                 break;
             }
+            default: {
+                break;
+            }
         }
     }
 
-    const removeValue = async (val) => {
-        const response = await dispatch(deleteAuthorization2FA(val));
+    const removeValue = async () => {
+        const response = await dispatch(deleteAuthorization2FA(deleteValue));
         if (response?.payload?.StatusCode === 201) {
             await dispatch(getTwoFactorAuthValues(variant === 'emailTFA' ? 1 : 2));
         }
         else {
             setVerificationError({ Number: t('common.ErrorOccured') })
         }
+        setShowConfirmDelete(false);
     }
 
     const EMAIL_MODULE = () => {
@@ -742,7 +750,11 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                         <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }} key={`verificationNumber${obj.ID}`}>
                                             <Typography className='emailText'>{obj.AuthValue} </Typography>
                                             {idx > 0 && <Button
-                                                onClick={() => removeValue(obj.AuthValue)}
+                                                onClick={() => {
+                                                    setShowConfirmDelete(true);
+                                                    setDeleteValue(obj.AuthValue)
+                                                }
+                                                }
                                                 className={clsx(classes.f14)}
                                                 style={{
                                                     textTransform: 'capitalize',
@@ -954,7 +966,10 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                             <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }}>
                                                 <Typography className='emailText' title={obj.Number} style={{ fontSize: 16 }}>{obj.AuthValue} </Typography>
                                                 {idx > 0 && <Button
-                                                    onClick={() => removeValue(obj.AuthValue)}
+                                                    onClick={() => {
+                                                        setShowConfirmDelete(true);
+                                                        setDeleteValue(obj.AuthValue);
+                                                    }}
                                                     className={clsx(classes.f14)}
                                                     style={{
                                                         textTransform: 'capitalize',
@@ -1175,15 +1190,30 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     })
 
     return (
-        <BaseDialog
-            classes={classes}
-            contentStyle={classes.maxWidth900}
-            open={isOpen}
-            onClose={handleClose}
-            renderButtons={Popup().renderButtons || null}
-            {...Popup()}>
-            {Popup().content}
-        </BaseDialog>
+        <>
+            <BaseDialog
+                classes={classes}
+                contentStyle={classes.maxWidth900}
+                open={showConfirmDelete}
+                onClose={() => {
+                    setDeleteValue(null);
+                    setShowConfirmDelete(false);
+                }}
+                onConfirm={removeValue}
+                title={t('settings.accountSettings.2fa.deleteValueTitle')}
+            >
+                {t("settings.accountSettings.2fa.deleteValueDescription")}
+            </BaseDialog>
+            <BaseDialog
+                classes={classes}
+                contentStyle={classes.maxWidth900}
+                open={isOpen}
+                onClose={handleClose}
+                renderButtons={Popup().renderButtons || null}
+                {...Popup()}>
+                {Popup().content}
+            </BaseDialog>
+        </>
     )
 }
 

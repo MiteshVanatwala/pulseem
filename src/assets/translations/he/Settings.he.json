@@ -52,6 +52,8 @@
       "addNumber": "הוסף מספר לאימות דו שלבי",
       "addToFromEmailToSend": "האם לאשר אימייל זה גם לשליחת דיוור?",
       "addToFromNumberToSend": "האם לאשר מספר זה גם לשליחת דיוור?",
+      "deleteValueTitle":"אישור הסרה",
+      "deleteValueDescription": "האם אתה בטוח שברצונך להסיר ערך זה מרשימת האימות הדו שלבי?",
       "email": {
         "firstSlide": {
           "title": "אימות כתובת דוא\"ל לאימות דו שלבי",
