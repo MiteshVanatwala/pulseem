@@ -451,7 +451,9 @@ const SendCampaign = ({
 			}
 			await onCampaignSave(false, [createdGroupData?.payload]);
 		} else {
-			setGroupSendValidationErrors(['Group name - required field']);
+			setGroupSendValidationErrors([
+				translator('whatsappCampaign.selectGroup'),
+			]);
 			setIsValidationAlert(true);
 		}
 	};
@@ -561,7 +563,9 @@ const SendCampaign = ({
 				if (sendDate) {
 					return true;
 				} else {
-					setGroupSendValidationErrors(['Date and Time - required field']);
+					setGroupSendValidationErrors([
+						translator('whatsappCampaign.timeAndDate'),
+					]);
 					setIsValidationAlert(true);
 					return false;
 				}
@@ -571,15 +575,15 @@ const SendCampaign = ({
 				let errors: string[] = [];
 				let isValidated: boolean = true;
 				if (!sendTime) {
-					errors?.push('Time - required field');
+					errors?.push(translator('whatsappCampaign.timeAndDate'));
 					isValidated = false;
 				}
 				if (daysBeforeAfter === '') {
-					errors?.push('Days - required field');
+					errors?.push(translator('whatsappCampaign.timeAndDate'));
 					isValidated = false;
 				}
 				if (spectialDateFieldID === '0') {
-					errors?.push('Special Day - required field');
+					errors?.push(translator('whatsappCampaign.timeAndDate'));
 					isValidated = false;
 				}
 				if (!isValidated) {
@@ -590,7 +594,7 @@ const SendCampaign = ({
 			}
 		} else {
 			setGroupSendValidationErrors([
-				'When would you like to send? - required field',
+				translator('whatsappCampaign.timeAndDate'),
 			]);
 			setIsValidationAlert(true);
 			return false;

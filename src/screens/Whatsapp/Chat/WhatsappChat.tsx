@@ -313,7 +313,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				UserName: '',
 			});
 			setAllWhatsappChat(undefined);
-			navigate(whatsappRoutes.CHAT)
+			navigate(whatsappRoutes.CHAT);
 		}
 		setActivePhoneNumber(activeUser);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
@@ -512,7 +512,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			savedTemplate?.length > 0 &&
 			getDynamicFields(newMessage)?.length !== updatedDynamicVariable?.length
 		) {
-			validationErrors.push('Please update all variable in the message');
+			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
 			isValidated = false;
 		}
 		if (newMessage?.length === 0) {
