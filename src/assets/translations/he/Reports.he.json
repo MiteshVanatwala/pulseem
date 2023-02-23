@@ -112,5 +112,6 @@
   "filterSearch": "החל סינון",
   "closeFilterSearch": "סגור סינון",
   "errorReason": "סיבת השגיאה",
-  "smsReplies": "דו\"ח SMS נכנסים"
+  "smsReplies": "דו\"ח SMS נכנסים",
+  "virtualNumber": "מספר וירטואלי"
 }

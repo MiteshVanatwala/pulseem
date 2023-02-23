@@ -21,7 +21,7 @@ const SendCampaignSuccess = ({
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.alertModal}>
 					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-						{translator('campaigns.campaignIsOnItsWay')}
+						<>{translator('campaigns.campaignIsOnItsWay')}</>
 					</div>
 					<Box className={classes.alertModalClose}>
 						<Close fontSize={'small'} onClick={onClose} />
@@ -40,10 +40,10 @@ const SendCampaignSuccess = ({
 							/>
 							<Typography
 								className={clsx(classes.fontBold, classes.font24, classes.mt2)}>
-								{translator('campaigns.weSent')}
+								<>{translator('campaigns.weSent')}</>
 							</Typography>
 							<Typography className={clsx(classes.font18, classes.mt2)}>
-								{translator('campaigns.campaignIsOnItsWay')}
+								<>{translator('campaigns.campaignIsOnItsWay')}</>
 							</Typography>
 						</Box>
 					</div>
@@ -65,7 +65,7 @@ const SendCampaignSuccess = ({
 								)}
 								style={{ margin: '8px' }}
 								color='primary'>
-								{translator('common.backToHome')}
+								<>{translator('common.backToHome')}</>
 							</Button>
 						</Grid>
 						<Grid item>
@@ -82,7 +82,7 @@ const SendCampaignSuccess = ({
 								)}
 								style={{ margin: '8px' }}
 								color='primary'>
-								{translator('common.backToCampaigns')}
+								<>{translator('common.backToCampaigns')}</>
 							</Button>
 						</Grid>
 					</Grid>

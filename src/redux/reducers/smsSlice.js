@@ -14,26 +14,14 @@ export const getSmsData = createAsyncThunk(
 );
 
 export const getSMSVirtualNumber = createAsyncThunk(
-	'smsCampaign/GetAccountVirtualNumber',
-	async (number, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
-			return JSON.parse(response.data);
-		} catch (error) {
-			return thunkAPI.rejectWithValue({ error: error.message });
-		}
-	}
-);
-
-export const getCommonFeatures = createAsyncThunk(
-	'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.get(`GetSubAccountWithFeatureAndSettings`);
-			return response.data
-		} catch (error) {
-			return thunkAPI.rejectWithValue({ error: error.message });
-		}
-	})
+  'smsCampaign/GetAccountVirtualNumber', async (number, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 export const getTestGroups = createAsyncThunk(
 	'smsCampaign/GetTestGroups',
 	async (_, thunkAPI) => {
@@ -245,20 +233,8 @@ export const smsDelete = createAsyncThunk(
 	}
 );
 
-export const getSmsAuthorizationData = createAsyncThunk(
-	'authorization/getAuthorizeNumbers',
-	async (_, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`);
-			return JSON.parse(response.data);
-		} catch (error) {
-			return thunkAPI.rejectWithValue({ error: error.message });
-		}
-	}
-);
-
 export const getAuthorizeNumbers = createAsyncThunk(
-	'GetRelatedSubAccountNumber',
+	'getAuthorizeNumbers',
 	async (_, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
@@ -497,7 +473,6 @@ export const smsSlice = createSlice({
 		getCampaignSum: [],
 		finishedCampaigns: [],
 		testGroups: [],
-		commonSettings: {},
 		directSmsReport: {},
 		// archiveDirectSmsReport: {},
 		directSmsReportError: '',
@@ -538,9 +513,6 @@ export const smsSlice = createSlice({
 		builder.addCase(getSmsData.rejected, (state, action) => {
 			state.smsDataError = action.error.message
 		})
-		builder.addCase(getSmsAuthorizationData.fulfilled, (state, { payload }) => {
-			state.authorizationData = payload
-		})
 		builder.addCase(getCampaignSumm.fulfilled, (state, { payload }) => {
 			state.getCampaignSum = payload
 		})
@@ -564,9 +536,6 @@ export const smsSlice = createSlice({
 		builder.addCase(getTestGroups.fulfilled, (state, { payload }) => {
 			state.testGroups = payload;
 			state.testGroups.length && state.testGroups.forEach((c) => c.IsTestGroup = true);
-		})
-		builder.addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-			state.commonSettings = payload?.Data
 		})
 		builder.addCase(getFinishedCampaigns.fulfilled, (state, { payload }) => {
 			state.finishedCampaigns = payload

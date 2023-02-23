@@ -775,9 +775,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			if (templateID) {
 				requestJSON.id = Number(templateID);
 			}
+			setIsLoader(true);
 			let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
 				submitTemplates(requestJSON)
 			);
+			setIsLoader(false);
 			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
 				setIsSubmitCampaignOpen(false);
 				setToastMessage(ToastMessages.SAVE_SUCCESS);
@@ -837,14 +839,16 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const onSubmitCampaign = async () => {
 		let requestJSON = getRequestJSON(false);
 		if (requestJSON) {
+			setIsSubmitCampaignOpen(false);
 			if (templateID) {
 				requestJSON.id = Number(templateID);
 			}
+			setIsLoader(true);
 			let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
 				submitTemplates(requestJSON)
 			);
+			setIsLoader(false);
 			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
-				setIsSubmitCampaignOpen(false);
 				setToastMessage(ToastMessages.SUCCESS);
 				resetFields();
 				navigate('/react/whatsapp/template/create');
@@ -857,7 +861,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				} else {
 					setToastMessage(ToastMessages.ERROR);
 				}
-				setIsSubmitCampaignOpen(false);
 			}
 		}
 	};

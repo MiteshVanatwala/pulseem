@@ -17,8 +17,9 @@ import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
 import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 import { ExportFile } from '../../../../helpers/Export/ExportFile';
-import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
+import { HandleExportData, ReplaceNull } from '../../../../helpers/Export/ExportHelper';
 import SearchLine from '../SearchLine';
+import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
 
 
 const SmsReplies = ({ classes, ...other }) => {
@@ -33,11 +34,11 @@ const SmsReplies = ({ classes, ...other }) => {
     const [clientToEdit, setClientToEdit] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
     const [selectedClients, setSelectedClients] = useState([]);
-    const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
+    // const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { ToastMessages } = useSelector(state => state.client);
     const { smsReplies, extraData } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { accountFeatures, windowSize, isRTL } = useSelector(state => state.core);
+    const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -100,8 +101,7 @@ const SmsReplies = ({ classes, ...other }) => {
     }, [isSearching]);
 
     const handlePageChange = (val) => {
-        setRowsPerPage(val);
-        setRequest({ ...request, PageSize: val });
+        dispatch(setRowsPerPage(val))
     }
 
     const renderHeader = () => {
@@ -129,29 +129,14 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const exportColumnHeader = {
-        "ClientID": t('client.ClientId'),
+        // "ClientID": t('client.ClientId'),
+        "VirtualNumber": t('report.virtualNumber'),
+        "CellPhone": t('common.cellphone'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
-        "Email": t('common.Email'),
-        "Cellphone": t('common.cellphone'),
-        "CreationDate": t('common.CreationDate'),
-        "SmsStatus": t('common.smsStatus'),
-        "ExtraField1": t('common.ExtraField1'),
-        "ExtraField2": t('common.ExtraField2'),
-        "ExtraField3": t('common.ExtraField3'),
-        "ExtraField4": t('common.ExtraField4'),
-        "ExtraField5": t('common.ExtraField5'),
-        "ExtraField6": t('common.ExtraField6'),
-        "ExtraField7": t('common.ExtraField7'),
-        "ExtraField8": t('common.ExtraField8'),
-        "ExtraField9": t('common.ExtraField9'),
-        "ExtraField10": t('common.ExtraField10'),
-        "ExtraField11": t('common.ExtraField11'),
-        "ExtraField12": t('common.ExtraField12'),
-        "ExtraField13": t('common.ExtraField13'),
         "ReplyDate": t('common.ReplyDate'),
         "ReplyText": t('common.ReplyText'),
-
+        "CampaignName": t('common.CampaignName')
     }
 
     const handleDownloadCsv = async (formatType) => {
@@ -175,6 +160,12 @@ const SmsReplies = ({ classes, ...other }) => {
                 },
                 []
             );
+
+            result = ReplaceNull(result, 'FirstName', '');
+            result = ReplaceNull(result, 'LastName', '');
+            result = ReplaceNull(result, 'CellPhone', '');
+            result = ReplaceNull(result, 'CampaignName', '');
+
             ExportFile({
                 data: result,
                 fileName: `SmsRepliesReport${id ? '_' + id : ''}`,
@@ -237,7 +228,7 @@ const SmsReplies = ({ classes, ...other }) => {
     }
     const statusToText = (status) => {
         let translatedStatus = ClientStatus.Sms.find((x) => { return x.id === status });
-        translatedStatus = translatedStatus ?? { value: 'common.noSms' };
+        translatedStatus = translatedStatus ?? { value: 'emailStatus.noStatus' };
         return t(translatedStatus?.value);
     }
 
@@ -309,7 +300,7 @@ const SmsReplies = ({ classes, ...other }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {statusToText(SmsStatus)}
+                    {ClientID > 0 ? statusToText(SmsStatus) : t("emailStatus.noStatus")}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
@@ -369,6 +360,7 @@ const SmsReplies = ({ classes, ...other }) => {
                         setDialog={setDialog}
                         handleResponses={(response, actions) => { handleResponses(response, actions); }}
                         onAddRecipient={(closeDialog = true) => {
+                            getReplies();
                             closeDialog && setDialog(null);
                         }}
                         recipientData={clientToEdit}

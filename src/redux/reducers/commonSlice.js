@@ -36,7 +36,7 @@ export const getCommonFeatures = createAsyncThunk(
         return response.data
       }
       else {
-        return settings
+        return { Data: settings }
       }
     } catch (error) {
 			return thunkAPI.rejectWithValue({ error: error.message });
@@ -100,19 +100,26 @@ export const verifyEmailCode = createAsyncThunk(
 );
 
 export const getAuthorizeNumbers = createAsyncThunk(
-	'GetRelatedSubAccountNumber',
-	async (_, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.get(
-				`authorization/getAuthorizeNumbers`,
-				{ subID: -1 }
-			);
-			return JSON.parse(response.data);
-		} catch (error) {
-			return thunkAPI.rejectWithValue({ error: error.message });
-		}
-	}
-);
+  'GetRelatedSubAccountNumber', async (_, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const getTwoFactorAuthValues = createAsyncThunk(
+  'getTwoFactorAuthValues', async (authType, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`authorization/GetTwoFactorAuthValues/${authType}`);
+      response.data.authType = authType;
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const commonSlice = createSlice({
   name: 'common',
@@ -120,7 +127,10 @@ export const commonSlice = createSlice({
     Folders: [],
     verifiedEmails: [],
     verifiedNumbers: [],
-    tokenAlive: true
+    tokenAlive: true,
+    commonSettings: {},
+    twoFactorAuthEmails: [],
+    twoFactorAuthNumbers: []
   },
   extraReducers: builder => {
     builder
@@ -133,10 +143,19 @@ export const commonSlice = createSlice({
       })
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+        state.commonSettings = payload?.Data;
         setCookie('accountSettings', payload?.Data);
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;
+    })
+    builder.addCase(getTwoFactorAuthValues.fulfilled, (state, { payload }) => {
+      if (payload?.authType === 1) {
+        state.twoFactorAuthEmails = payload?.Data;
+      }
+      else {
+        state.twoFactorAuthNumbers = payload?.Data;
+      }
     })
   }
 })

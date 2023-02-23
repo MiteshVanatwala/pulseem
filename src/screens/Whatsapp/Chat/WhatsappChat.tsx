@@ -55,6 +55,7 @@ import {
 	buttonTypes,
 	resetToastData,
 	whatsappChatStatuses,
+	whatsappRoutes,
 } from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -312,6 +313,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				UserName: '',
 			});
 			setAllWhatsappChat(undefined);
+			navigate(whatsappRoutes.CHAT)
 		}
 		setActivePhoneNumber(activeUser);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =

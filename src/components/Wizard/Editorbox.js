@@ -17,7 +17,6 @@ import {
     getAccountExtraData,
     getCreditsforSMS,
     getTestGroups,
-    getCommonFeatures,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
@@ -31,6 +30,7 @@ import Switch from "react-switch";
 import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
+import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -97,10 +97,11 @@ const Editorbox = ({
     const {
         extraData,
         testGroups,
-        commonSettings,
         previousLandingData,
         previousCampaignData,
     } = useSelector((state) => state.sms);
+    const { commonSettings } = useSelector(state => state.common)
+
     const [dialogType, setDialogType] = useState(null)
     const [alignment, setAlignment] = useState('right');
     const [editmenuClick, seteditmenuClick] = useState(false);

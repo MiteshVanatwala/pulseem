@@ -218,6 +218,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
             >
                 <Grid container className={clsx(classes.mb4, classes.passwordDialog)}>
                     <Grid item xs={12}>
+                        {/* @ts-ignore */}
                         <Typography>{Text ? Text : t("settings.changePassword.subTitle")}</Typography>
                     </Grid>
                     {/* Old Password */}
@@ -227,6 +228,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                         classes.mt4,
                     )}>
                         <Grid item xs={6}>
+                            {/* @ts-ignore */}
                             <Typography>{t("settings.changePassword.oldPassword")}:</Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -256,6 +258,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                     )}>
                         <Grid item xs={6}>
                             <Box className={classes.flex1} >
+                                {/* @ts-ignore */}
                                 <Typography>{t("settings.changePassword.newPassword")}:</Typography>
                             </Box>
 
@@ -300,7 +303,8 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                         classes.mt4,
                     )}>
                         <Grid item xs={6}>
-                            <Box className={classes.flex1} >
+                            <Box className={classes.flex1}>
+                                {/* @ts-ignore */}
                                 <Typography>{t("settings.changePassword.confirmPassword")}:</Typography>
                             </Box>
                         </Grid>
@@ -327,6 +331,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
                     </Grid>
                     {errors?.length > 0 && <Grid container>
                         <Grid item xs={12}>
+                            {/* @ts-ignore */}
                             <Typography className={classes.red}>{t('settings.changePassword.passwordHint.title')}:</Typography>
                             <Typography className={classes.red}>
                                 {errors.map((err, idx) => {

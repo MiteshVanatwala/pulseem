@@ -164,46 +164,6 @@ const FORM_ACCOUNT_DETAILS = ({
                 />
               </RadioGroup>
             </Grid>
-            <Grid item xs={12} sm={6} md={3} className={"textBoxWrapper"}>
-              <Typography>
-                <>
-                  {t("settings.accountSettings.actDetails.fields.smsUnsubLink")}
-                </>
-              </Typography>
-            </Grid>
-            <Grid item xs={12} sm={6} md={8} className={"textBoxWrapper"}>
-              <RadioGroup
-                aria-label="quiz"
-                name="IsSmsImmediateUnsubscribeLink"
-                value={!accountDetails?.IsSmsImmediateUnsubscribeLink ? '0' : '1'}
-                onChange={() => {
-                  setAccountDetails({ ...accountDetails, IsSmsImmediateUnsubscribeLink: accountDetails?.IsSmsImmediateUnsubscribeLink === false ? true : false } as AccountSettings)
-                }}
-              >
-                <FormControlLabel
-                  value="0"
-                  control={<Radio color="primary" />}
-                  label={
-                    <>
-                      {t(
-                        "settings.accountSettings.actDetails.fields.regSmsUnsubLink"
-                      )}
-                    </>
-                  }
-                />
-                <FormControlLabel
-                  value="1"
-                  control={<Radio color="primary" />}
-                  label={
-                    <>
-                      {t(
-                        "settings.accountSettings.actDetails.fields.imdSmsUnsubLink"
-                      )}
-                    </>
-                  }
-                />
-              </RadioGroup>
-            </Grid>
             <Grid item xs={12} className={classes.justifyContentEnd}>
               <Button
                 variant='contained'
@@ -215,6 +175,7 @@ const FORM_ACCOUNT_DETAILS = ({
                   classes.actionButton,
                   classes.actionButtonLightGreen
                 )}>
+                {/* @ts-ignore */}
                 {t('settings.accountSettings.actDetails.btnUpdate')}
               </Button>
             </Grid>
