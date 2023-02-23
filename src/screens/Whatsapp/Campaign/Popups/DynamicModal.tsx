@@ -248,7 +248,7 @@ const DynamicModal = ({
 							backgroundColor: '#d63511',
 							color: 'white',
 						}}>
-						{translator('whatsappCampaign.exit')}
+						<>{translator('whatsappCampaign.exit')}</>
 					</Button>
 					<Button
 						onClick={() => onSave()}
@@ -260,7 +260,7 @@ const DynamicModal = ({
 							backgroundColor: '#1e8a22',
 							color: 'white',
 						}}>
-						{translator('whatsappCampaign.save')}
+						<>{translator('whatsappCampaign.save')}</>
 					</Button>
 				</DialogActions>
 			</Dialog>

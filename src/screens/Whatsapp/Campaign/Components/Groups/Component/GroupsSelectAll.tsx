@@ -40,6 +40,7 @@ const GroupsSelectAll = ({
 			<ListItemText
 				className={'groupText'}
 				title={translator('notifications.selectAll')}
+				//@ts-ignore
 				primary={translator('notifications.selectAll')}
 			/>
 		</ListItem>

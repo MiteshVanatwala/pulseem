@@ -218,10 +218,9 @@ const SummaryModal = ({
 										{sendType === '2' &&
 											moment(sendDate)?.format('dddd , MMMM Do YYYY, h:mm a')}
 										{sendType === '3' &&
-											`${daysBeforeAfter} ${translator('mainReport.days')} ${
-												isSpecialDateBefore
-													? translator('mainReport.before')
-													: translator('mainReport.after')
+											`${daysBeforeAfter} ${translator('mainReport.days')} ${isSpecialDateBefore
+												? translator('mainReport.before')
+												: translator('mainReport.after')
 											} ${getSpecialDay()} day at ${moment(sendTime)?.format(
 												'hh:mm a'
 											)}`}
@@ -243,8 +242,8 @@ const SummaryModal = ({
 												setdetailsHide(!detailsHide);
 											}}>
 											{detailsHide
-												? translator('sms.smsSummaryDetails')
-												: translator('sms.smsSummaryClose')}
+												? <>{translator('sms.smsSummaryDetails')}</>
+												: <>{translator('sms.smsSummaryClose')}</>}
 										</Link>
 									</span>
 								</Box>

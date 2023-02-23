@@ -55,7 +55,9 @@ const InboundMessages = ({ classes }: ClassesType) => {
                                         key={it.key}
                                         value={it.value}
                                         classes={{ root: clsx(classes.minWidth100, it.isNewFeature ? localClasses.flexItems : null) }}
+                                        //@ts-ignore
                                         icon={it.isNewFeature ? <span className={classes.commingSoon}>{translator('common.commingSoon')}</span> : ''}
+                                        //@ts-ignore
                                         label={it.isNewFeature ? <span style={{ marginInlineEnd: 5 }}>{translator(it.name)}</span> : translator(it.name)}
                                     />
                                 })

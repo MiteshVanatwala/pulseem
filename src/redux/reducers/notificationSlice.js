@@ -174,17 +174,6 @@ export const updateNotification = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-
-export const saveNotification = createAsyncThunk(
-  'notification/SaveNotification/', async (data, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.post(`notification/SaveNotification`, data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
 export const save = createAsyncThunk(
   'notification/Save/', async (data, thunkAPI) => {
     try {

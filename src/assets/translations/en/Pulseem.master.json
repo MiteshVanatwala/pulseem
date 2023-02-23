@@ -42,7 +42,7 @@
     "Text": "Reports"
   },
   "RadMenuItemResource2": {
-    "Text": "Account Details"
+    "Text": "Account Settings"
   },
   "RadMenuItemResource20": {
     "Text": "Help"
@@ -381,5 +381,6 @@
   "newEditor": "New Editor",
   "siteTracking": "Site Tracking",
   "continueToNewEditor": "Save and Continue with new editor",
-  "whatsapp": "Whatsapp"
+  "whatsapp": "Whatsapp",
+  "responses": "Responses"
 }

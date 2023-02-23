@@ -152,7 +152,7 @@ const ChatUi = ({
 										  }
 								}
 								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
-								<MenuItem value={1}>{translator('whatsappChat.open')}</MenuItem>
+								<MenuItem value={1}><>{translator('whatsappChat.open')}</></MenuItem>
 								<MenuItem value={2}>
 									{translator('whatsappChat.pending')}
 								</MenuItem>
@@ -163,7 +163,7 @@ const ChatUi = ({
 						</span>
 					</h2>
 					<p className={`${classes.whatsappChat} chat__contact-desc`}>
-						{translator('whatsappChat.online')}
+						<>{translator('whatsappChat.online')}</>
 					</p>
 				</div>
 
@@ -234,7 +234,7 @@ const ChatUi = ({
 												id='lock'
 												className={`${classes.whatsappChat} chat__encryption-icon`}
 											/>
-											{translator('whatsappChat.endEncrypt')}
+											<>{translator('whatsappChat.endEncrypt')}</>
 										</p>
 									)}
 									<div className={`${classes.whatsappChat} chat__msg-group`}>

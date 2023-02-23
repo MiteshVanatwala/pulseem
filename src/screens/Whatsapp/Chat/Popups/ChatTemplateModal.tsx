@@ -267,7 +267,7 @@ const ChatTemplateModal = ({
 				className={classes.templateListWrapper}>
 				<div className={classes.templateListModal}>
 					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-						{translator('whatsappChat.chooseTemplate')}
+						<>{translator('whatsappChat.chooseTemplate')}</>
 					</div>
 					<Box className={classes.alertModalClose}>
 						<Close fontSize={'small'} onClick={onClose} />

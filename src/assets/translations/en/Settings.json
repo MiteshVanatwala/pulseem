@@ -17,8 +17,8 @@
                 "reqMobile": "Cellphone is required",
                 "reqCompName": "Company name is required",
                 "reqContctName": "Contact name is required",
-                "verifyEmail": "Please verify the default From Email",
-                "verifyPhone": "Please verify the default from Phone Number"
+                "verifyEmail": "Please verify the typed Email",
+                "verifyPhone": "Please verify the typed Phone Number"
             },
             "securitySettings": "Security Settings",
             "btnChangePwd": "Change Password",
@@ -46,7 +46,31 @@
             "inActivetedSuccessfuly": "Two factor authentication inactivated!",
             "notSaved": "Two factor authentication was not saved. Please contact support."
         },
-        "savedSuccessfuly": "Settings successfuly saved!"
+        "savedSuccessfuly": "Settings successfuly saved!",
+        "2fa": {
+            "addEmail": "Add 2FA Email",
+            "addNumber": "Add 2FA Number",
+            "addToFromEmailToSend": "Do you wish to verify this Email for sending campaigns as well?",
+            "addToFromNumberToSend": "Do you wish to verify this Cellphone number for sending campaigns as well? ",
+            "email": {
+                "firstSlide": {
+                    "title": "Verification of Email for Two Factor Authentication",
+                    "descirption": "For security reason, we are obliged to make sure that the Email you entered for Two Factor Authentication, is owned by you. This is a one-time process for each submission number."
+                },
+                "successSlide": {
+                    "title": ""
+                }
+            },
+            "cellphone": {
+                "firstSlide": {
+                    "title": "Verification of Cellphone for Two Factor Authentication",
+                    "descirption": "For security reason, we are obliged to make sure that the Cellphone Number you entered for Two Factor Authentication, is owned by you. This is a one-time process for each submission number."
+                },
+                "successSlide": {
+                    "title": ""
+                }
+            }
+        }
     },
     "billingSettings": {
         "title": "Billing settings",

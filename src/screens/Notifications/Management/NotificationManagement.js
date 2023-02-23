@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip
+  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip, Divider
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -21,7 +21,7 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getSubAccountApiKey, getSubAccountRegistrations
+  getScriptPath, getSubAccountApiKey, updateScriptPath, getSubAccountRegistrations
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -32,7 +32,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { Title } from '../../../components/managment/Title';
+// import { Title } from '../../../components/managment/Title';
 import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
 
 const NotificationManagement = ({ classes }) => {
@@ -62,8 +62,10 @@ const NotificationManagement = ({ classes }) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const scriptDialogCookie = getCookie('scriptDialog')
-  const [showScriptDialog, setShowScriptDialog] = useState(scriptDialogCookie)
+  const hideScriptDialog = (scriptDialogCookie === 'true')
+  const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
   const [showLoader, setLoader] = useState(true);
+  const [forceShowImplementation, setForceShowImplementation] = useState(false);
   const refScriptCode = useRef(null);
   moment.locale(language)
 
@@ -178,8 +180,16 @@ const NotificationManagement = ({ classes }) => {
     }
   }
 
+  const handleImplementScript = (value) => {
+    if (value && !forceShowImplementation) {
+      setCookie('scriptDialog', scriptDialog, { maxAge: 2147483647 });
+      dispatch(updateScriptPath(scriptPath));
+    }
+    setShowScriptDialog(false)
+  }
+
   const renderImplementDialog = () => {
-    if (showScriptDialog === "false") {
+    if (hideScriptDialog && !forceShowImplementation) {
       return;
     }
 
@@ -193,6 +203,30 @@ const NotificationManagement = ({ classes }) => {
         {dialog.content}
       </BaseDialog>
     );
+  }
+
+  const renderHeader = () => {
+    return (
+      <>
+        <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+          <Typography className={classes.managementTitle}>
+            {t('notifications.notificationManagement')}
+          </Typography>
+          <Button
+            style={{ marginInlineStart: 'auto', height: 45, marginTop: 15 }}
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue
+            )}
+            onClick={() => { setForceShowImplementation(true); setShowScriptDialog(true) }}>
+            {t('master.implementScript')}
+          </Button>
+        </Box>
+        <Divider />
+      </>
+    )
   }
 
   const clearSearch = () => {
@@ -1277,7 +1311,7 @@ const NotificationManagement = ({ classes }) => {
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
-      <Title
+      {/* <Title
         Text={t('notifications.notificationManagement')} classes={classes}
         ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
         Element={
@@ -1291,7 +1325,8 @@ const NotificationManagement = ({ classes }) => {
               classes.actionButton,
               classes.implementButtonFlex,
               classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
-        } />
+        } /> */}
+      {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

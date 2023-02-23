@@ -112,5 +112,6 @@
   "filterSearch": "Apply filter",
   "closeFilterSearch": "Close filter",
   "errorReason": "Error reason",
-  "smsReplies": "SMS Incoming report"
+  "smsReplies": "SMS Incoming report",
+  "virtualNumber": "Virtual Number"
 }

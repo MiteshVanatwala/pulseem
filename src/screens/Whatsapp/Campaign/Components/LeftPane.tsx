@@ -63,7 +63,7 @@ const LeftPane = ({
 				</span>
 				<Tooltip
 					disableFocusListener
-					title={translator('smsReport.whomtoSendTip')}
+					title={<>{translator('smsReport.whomtoSendTip')}</>}
 					classes={{ tooltip: classes.customWidth }}>
 					<span className={classes.bodyInfo}>i</span>
 				</Tooltip>
@@ -103,7 +103,7 @@ const LeftPane = ({
 					</span>
 					<Tooltip
 						disableFocusListener
-						title={translator('smsReport.manualTip')}
+						title={<>{translator('smsReport.manualTip')}</>}
 						classes={{ tooltip: classes.customWidth }}>
 						<span className={classes.bodyInfo}>i</span>
 					</Tooltip>
@@ -123,7 +123,7 @@ const LeftPane = ({
 						onManualUpload(groupName, res, uploadedAsFile);
 					}}
 					settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
-					setToastMessage={() => {}}
+					setToastMessage={() => { }}
 					placeHolder={'recipient.addRecTextareaPlaceholder'}
 					tooltipText='recipient.bulkRecUpldTooltipText'
 					onlyMapping={true}
