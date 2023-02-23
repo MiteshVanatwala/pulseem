@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
+import ProductCatalog from '../ProductCatalog/ProductCatalog';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -54,6 +55,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
+            externalContentURLs: [{
+                name: "Saved Rows",
+                value: "saved-rows",
+                handle: 'saved-rows',
+                isLocal: true,
+                behaviors: {
+                  canEdit: true,
+                  canDelete: true,
+                },
+            }]
         },
         workspace:{
             type: 'mixed',
@@ -74,6 +85,23 @@ export const BeeConfig = (Options: ConfigOptions) => {
             }
         },
         contentDialog: {
+            externalContentURLs: {
+                label: 'Add Product Block',
+                handler: async function(resolve: any, reject: any, args: any) {
+                    const results = await openModal(ProductCatalog, { ...args, open: true }, classes);
+                    console.log(results)
+                    // const results = await openModal(ProductCatalog, {
+                    //     hasTitleBar: false,
+                    //     title: 'Set-up Dynamic Product'
+                    // })
+                    // if (results?.newValue) {
+                    //     resolve({ name: results?.newValue })
+                    // } else {
+                    //     reject('')
+                    // }
+                    resolve();
+                }
+            },
             saveRow: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
                     const results = await openModal(EditRow, args, classes);
@@ -152,7 +180,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onError: (errorMessage: any) => {
             console.log('onError ', errorMessage)
         },
-        onLoad: (jsonFile: any) => {
+        onLoad: async (jsonFile: any) => {
             console.log(jsonFile);
         },
         // Auto Save here

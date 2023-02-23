@@ -156,6 +156,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingLeft: summaryPadding[windowSize],
     overflowY: "auto",
   },
+  pl10: {
+    paddingLeft: 10,
+  },
+  pl30: {
+    paddingLeft: 30,
+  },
+  paddingSides10: {
+    paddingRight: 10,
+    paddingLeft: 10,
+  },
   paddingSides15: {
     paddingRight: 15,
     paddingLeft: 15,
@@ -332,6 +342,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt2rem: {
     paddingTop: "2rem",
   },
+  pt5: {
+    paddingTop: 5,
+  },
   pt10: {
     paddingTop: 10,
   },
@@ -346,6 +359,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pb0: {
     paddingBottom: 0
+  },
+  pb5: {
+    paddingBottom: 5,
   },
   pb10: {
     paddingBottom: 10,
@@ -401,6 +417,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   ml15: {
     marginInlineStart: 15,
+  },
+  mt5: {
+    marginTop: 5,
   },
   mt10: {
     marginTop: 10,
@@ -476,6 +495,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   bgLightGray: {
     backgroundColor: "rgba(242, 242, 242, 1)",
+  },
+  borderRadius30: {
+    borderRadius: "30px",
   },
   justifyBetween: {
     display: "flex",
@@ -2119,6 +2141,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "bold",
     maxWidth: graphTextWidth[windowSize],
   },
+  greyButtonWithRoundCorder: {
+    background: '#535353',
+    color: '#fff',
+    borderRadius: '20px'
+  },
   mt24: {
     marginTop: 24,
   },
@@ -2727,6 +2754,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         textAlign: 'center',
         fontSize: '0.5rem',
       }
+    }
+  },
+  productCatalogDialog: {
+    '& .MuiPaper-root': {
+      maxWidth: '70% !important',
+      width: '70% !important',
+      padding: '10px !important'
     }
   },
 });
