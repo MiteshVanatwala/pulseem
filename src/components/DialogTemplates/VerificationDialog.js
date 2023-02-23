@@ -426,11 +426,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                 onClick={() => {
                                     if (selectedVerificationContact) {
                                         if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-                                            handleSendCode(selectedVerificationContact).then((res) => {
-                                                if (res === 'true' || res === true) {
-                                                    NextSlide();
-                                                }
-                                            })
+                                            handleSendCode(selectedVerificationContact);
+                                            NextSlide();
                                         }
                                         else {
                                             setVerificationError({ Number: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error1') })
