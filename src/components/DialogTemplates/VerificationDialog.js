@@ -107,10 +107,10 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     const handleClose = (callback) => {
 
         if (verificationStep <= 3 && variant === 'emailTFA' && selectedVerificationContact && !addToFromEmailToSend) {
-            dispatch(deleteAuthorizationValue({ AuthType: 1, AuthValue: selectedVerificationContact }));
+            dispatch(deleteAuthorizationValue({ TwoFactorAuthTypeID: 1, AuthValue: selectedVerificationContact }));
         }
         if (verificationStep <= 3 && variant === 'smsTFA' && selectedVerificationContact && !addToFromNumberToSend) {
-            dispatch(deleteAuthorizationValue({ AuthType: 2, AuthValue: selectedVerificationContact }));
+            dispatch(deleteAuthorizationValue({ TwoFactorAuthTypeID: 2, AuthValue: selectedVerificationContact }));
         }
 
         callback?.()
@@ -129,7 +129,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
 
     const addTwoFactorValue = async (disableNextStep = false, type = 1) => {
         try {
-            const authResponse = await dispatch(addTwoFactorAuthValues({ AuthType: type, AuthValue: selectedVerificationContact, AddToFromValues: addToFromEmailToSend }))
+            const authResponse = await dispatch(addTwoFactorAuthValues({ TwoFactorAuthTypeID: type, AuthValue: selectedVerificationContact, AddToFromValues: addToFromEmailToSend }))
             if (disableNextStep) {
                 return authResponse?.payload;
             }
@@ -741,7 +741,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                     <>
                                         <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }} key={`verificationNumber${obj.ID}`}>
                                             <Typography className='emailText'>{obj.AuthValue} </Typography>
-                                            <Button
+                                            {idx > 0 && <Button
                                                 onClick={() => removeValue(obj.AuthValue)}
                                                 className={clsx(classes.f14)}
                                                 style={{
@@ -750,6 +750,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                                     paddingBottom: 0
                                                 }}
                                             >{t("common.remove")}</Button>
+                                            }
                                         </Box>
                                         {idx < twoFactorAuthNumbers.length - 1 && <Divider style={{ marginBottom: 6 }} />}
                                     </>
@@ -952,7 +953,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                         <>
                                             <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')} style={{ justifyContent: 'space-between', alignItems: 'center', height: 40 }}>
                                                 <Typography className='emailText' title={obj.Number} style={{ fontSize: 16 }}>{obj.AuthValue} </Typography>
-                                                <Button
+                                                {idx > 0 && <Button
                                                     onClick={() => removeValue(obj.AuthValue)}
                                                     className={clsx(classes.f14)}
                                                     style={{
@@ -961,6 +962,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                                         paddingBottom: 0
                                                     }}
                                                 >{t("common.remove")}</Button>
+                                                }
                                             </Box>
                                             {idx < twoFactorAuthEmails.length - 1 && <Divider style={{ marginBottom: 6 }} />}
                                         </>

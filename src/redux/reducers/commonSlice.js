@@ -100,7 +100,7 @@ export const getTwoFactorAuthValues = createAsyncThunk(
   'getTwoFactorAuthValues', async (authType, thunkAPI) => {
     try {
       const response = await instence.get(`authorization/GetTwoFactorAuthValues/${authType}`);
-      response.data.authType = authType;
+      response.data.TwoFactorAuthTypeID = authType;
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -137,7 +137,7 @@ export const commonSlice = createSlice({
       state.tokenAlive = payload;
     })
     builder.addCase(getTwoFactorAuthValues.fulfilled, (state, { payload }) => {
-      if (payload?.authType === 1) {
+      if (payload?.TwoFactorAuthTypeID === 1) {
         state.twoFactorAuthEmails = payload?.Data;
       }
       else {
