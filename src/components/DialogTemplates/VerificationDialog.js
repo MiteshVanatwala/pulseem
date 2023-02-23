@@ -5,10 +5,8 @@ import 'moment/locale/he'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { newAuthorizeEmail, verifyEmailCode, getTwoFactorAuthValues } from '../../redux/reducers/commonSlice';
-import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
-import {
-    getAuthorizeNumbers, sendVerificationCode, verifyCode
-} from '../../redux/reducers/smsSlice'
+import { getAuthorizedEmails, getAuthorizeNumbers } from '../../redux/reducers/commonSlice'
+import { sendVerificationCode, verifyCode } from '../../redux/reducers/smsSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { BaseDialog } from './BaseDialog';
@@ -385,7 +383,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         const EMAIL_SLIDE_2 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide secondSlide' >
-                    <Box className='titleDescBox'  style={{direction: isRTL ? 'ltr' : 'rtl'}}>
+                    <Box className='titleDescBox' style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
                         <Box className='desc'>
                             <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>
