@@ -78,7 +78,7 @@ const SearchLine = ({
     const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean | undefined>(false);
     const [advanceSearch, setAdvanceSearch] = useState<boolean | undefined>(false);
 
-    const { windowSize } = useSelector(
+    const { windowSize, isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
 
@@ -109,6 +109,11 @@ const SearchLine = ({
                 {dateFields()}
                 {windowSize !== 'xs' && <Grid item>
                     <TextField
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         type="tel"
                         variant='outlined'
                         size='small'
@@ -186,6 +191,11 @@ const SearchLine = ({
                         type="tel"
                         variant='outlined'
                         size='small'
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         value={searchRequest.FromNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
@@ -197,6 +207,11 @@ const SearchLine = ({
                         type="tel"
                         variant='outlined'
                         size='small'
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         value={searchRequest.ToNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
