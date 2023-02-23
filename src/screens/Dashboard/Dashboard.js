@@ -10,7 +10,6 @@ import RecipientChart from '../../components/Charts/RecipientChart';
 import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
-// import { getCookie } from '../../helpers/cookies'
 import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";

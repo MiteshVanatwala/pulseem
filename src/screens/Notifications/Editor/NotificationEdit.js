@@ -110,7 +110,7 @@ const NotificationEdit = ({ classes }) => {
 
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
-  const { language, isRTL } = useSelector(state => state.core)
+  const { language, isRTL, CoreToastMessages } = useSelector(state => state.core)
   const { t } = useTranslation();
   moment.locale(language);
   /* #endregion */

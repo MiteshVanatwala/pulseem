@@ -4,7 +4,7 @@ import {
   Button,
   FormControl,
   Grid,
-  MenuItem,
+  OutlinedInput,
   Select,
   TextField,
   Typography,
@@ -40,7 +40,8 @@ const FORM_COMPANY_DETAILS = ({
   setToastMessage,
   ToastMessages,
   Settings,
-  OnUpdate
+  OnUpdate,
+  onShowTwoFactorAuth
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
@@ -329,6 +330,7 @@ const FORM_COMPANY_DETAILS = ({
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
                 error={!!errors.CellPhone}
+                inputProps={{ maxLength: 13 }}
               />
               {!!errors.CellPhone && (
                 <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -421,11 +423,25 @@ const FORM_COMPANY_DETAILS = ({
               </Typography>
               <FormControl
                 variant="outlined" className={classes.formControl}
-                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10 }}
+                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10, maxWidth: 210 }}
               >
                 <Select
-                  style={{
-                    height: 40
+                  native
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 40
+                      },
+                    }
+                  }}
+                  input={<OutlinedInput />}
+                  inputProps={{
+                    'aria-label': 'Without label',
+                    style: {
+                      padding: 10,
+                      maxWidth: 210,
+                      paddingInlineStart: 15,
+                    }
                   }}
                   autoWidth
                   value={companyDetails?.TwoFactorAuthOptionID ?? 202}
@@ -437,22 +453,22 @@ const FORM_COMPANY_DETAILS = ({
                     { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
                   ].map((so, index) => {
                     return (
-                      <MenuItem
+                      <option
                         key={so.value}
                         value={so.value}
                         className={classes.dropDownItem}
                       >
                         {so.name}
-                      </MenuItem>
+                      </option>
                     );
                   })}
                 </Select>
               </FormControl>
             </Grid>
-            {/* <Grid item xs={12} sm={6} md={4} className={classes.mt3}>
+            <Grid item xs={12} sm={6} md={8} className={classes.mt3}>
               <Box style={{
                 display: 'flex',
-                justifyContent: 'space-evenly',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
                 height: '100%'
               }}>
@@ -465,16 +481,15 @@ const FORM_COMPANY_DETAILS = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    console.log('2')
-                    //handleVerification('cellphone')
-                  }
+                  onClick={() => {
+                    onShowTwoFactorAuth('smsTFA');
+                  }}
                   startIcon={<MdMobileFriendly />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   <>
                     {t(
-                      "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                      "settings.accountSettings.2fa.addNumber"
                     )}
                   </>
                 </Button>
@@ -487,21 +502,20 @@ const FORM_COMPANY_DETAILS = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    console.log('1')
-                    //handleVerification('email')
-                  }
+                  onClick={() => {
+                    onShowTwoFactorAuth('emailTFA');
+                  }}
                   startIcon={<MdOutlineMarkEmailRead />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   <>
                     {t(
-                      "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                      "settings.accountSettings.2fa.addEmail"
                     )}
                   </>
                 </Button>
               </Box>
-            </Grid> */}
+            </Grid>
             <Grid
               item
               xs={12}
@@ -543,6 +557,7 @@ const FORM_COMPANY_DETAILS = ({
                   classes.actionButton,
                   classes.actionButtonLightGreen
                 )}>
+                {/* @ts-ignore */}
                 {t('settings.accountSettings.fixedComDetails.btnUpdate')}
               </Button>
             </Grid>

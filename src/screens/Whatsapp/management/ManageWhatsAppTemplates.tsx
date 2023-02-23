@@ -415,9 +415,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: templateData?.payload?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: templateData?.payload?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
@@ -557,9 +557,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			submitData?.payload?.Message
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: submitData?.payload?.Message,
-				  })
+					...ToastMessages.ERROR,
+					message: submitData?.payload?.Message,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -575,9 +575,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			deleteData?.payload?.Error
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Error,
-				  })
+					...ToastMessages.ERROR,
+					message: deleteData?.payload?.Error,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -594,9 +594,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			setIsDuplicateTemplateOpen(false);
 			duplicateData?.payload?.Error
 				? setToastMessage({
-						...ToastMessages.ERROR,
-						message: duplicateData?.payload?.Error,
-				  })
+					...ToastMessages.ERROR,
+					message: duplicateData?.payload?.Error,
+				})
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -661,7 +661,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							label={
 								campainStatusSearch?.length > 0
 									? ''
-									: translator('whatsappManagement.status')
+									: <>{translator('whatsappManagement.status')}</>
 							}
 							className={classes.whatsappManagementbuttonField}
 							onChange={(e: BaseSyntheticEvent) =>
@@ -808,6 +808,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				classes={classes}
 				isOpen={isSubmitTemplateOpen}
 				onClose={() => setIsSubmitTemplateOpen(false)}
+				// @ts-config
 				title={translator('whatsapp.alertModal.ConfirmText')}
 				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
 				onConfirmOrYes={() => onSubmitTemplate()}

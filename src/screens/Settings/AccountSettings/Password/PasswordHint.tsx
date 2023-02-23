@@ -15,7 +15,8 @@ const PasswordHint = (
     const elemStyle = { fontSize: 16, marginTop: 5 };
 
     return <Box style={{ display: 'flex', flexDirection: 'column', width: '100%', direction: isRTL ? 'rtl' : 'ltr' }}>
-        <span className={classes.mb1}><b> {t('settings.changePassword.passwordHint.title')}</b></span>
+        {/* @ts-ignore */}
+        <span className={classes.mb1}><b>{t('settings.changePassword.passwordHint.title')}</b></span>
         <Grid container>
             <Grid item xs={6}>
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
@@ -23,6 +24,7 @@ const PasswordHint = (
                         {Password.PasswordLength >= 8 ? <BsCheck style={elemStyle} /> : <MdClear style={elemStyle} />}
                     </Box>
                     <Box>
+                        {/* @ts-ignore */}
                         {t('settings.changePassword.passwordHint.length')}
                     </Box>
                 </Box>
@@ -33,6 +35,7 @@ const PasswordHint = (
                         {Password.UpperChar ? <BsCheck style={elemStyle} /> : <MdClear style={elemStyle} />}
                     </Box>
                     <Box>
+                        {/* @ts-ignore */}
                         {t('settings.changePassword.passwordHint.upperChar')}
                     </Box>
                 </Box>
@@ -45,6 +48,7 @@ const PasswordHint = (
                         {Password.SpecialChar ? <BsCheck style={elemStyle} /> : <MdClear style={elemStyle} />}
                     </Box>
                     <Box>
+                        {/* @ts-ignore */}
                         {t('settings.changePassword.passwordHint.specialChar')}
                     </Box>
                 </Box>
@@ -55,6 +59,7 @@ const PasswordHint = (
                         {Password.LowerChar ? <BsCheck style={elemStyle} /> : <MdClear style={elemStyle} />}
                     </Box>
                     <Box>
+                        {/* @ts-ignore */}
                         {t('settings.changePassword.passwordHint.lowerChar')}
                     </Box>
                 </Box>
@@ -67,6 +72,7 @@ const PasswordHint = (
                         {Password.NumberChar ? <BsCheck style={elemStyle} /> : <MdClear style={elemStyle} />}
                     </Box>
                     <Box>
+                        {/* @ts-ignore */}
                         {t('settings.changePassword.passwordHint.number')}
                     </Box>
                 </Box>

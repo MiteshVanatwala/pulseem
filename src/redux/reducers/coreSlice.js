@@ -21,18 +21,22 @@ export const coreSlice = createSlice({
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
-    accountSettings: null
+    // smsOldVersion: false,
+    accountSettings: null,
+    CoreToastMessages: {
+      XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
+    }
   },
   reducers: {
     setIsClal: (state, action) => {
       state.isClal = action.payload;
     },
     setAccountFeatures: (state, action) => {
-      const data=action.payload?.Data;
-      state.accountSettings=data;
-      state.accountFeatures=data?.Account?.AccountFeatures?.map(String);
+      const data = action.payload?.Data;
+      state.accountSettings = data;
+      state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
       setCookie("accountSettings", data)
-      setCookie("accountFeatures", data.Account.AccountFeatures.map(String));
+      setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
     },
     setLanguage: (state, action) => {
       state.language = action.payload

@@ -26,12 +26,17 @@ const AccountSettingsEditor = () => {
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+  const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
   const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
+  const [tfaEmailVerification, setTfaEmailVerification] = useState(false);
+  const [tfaSmsVerification, setTfaSmsVerification] = useState(false);
   const [verificationStep, setVerificationStep] = useState(0);
-  const [settingRequest, setSettingRequest] = useState<AccountSettings | null>({
+  const [emailToVerify, setEmailToVerify] = useState<string>('');
+  const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
+  const [settingRequest, setSettingRequest] = useState<AccountSettings>({
     SubAccountId: -1,
     LoginUserName: '',
     AccountID: -1,
@@ -105,14 +110,14 @@ const AccountSettingsEditor = () => {
       }
       catch (ex) { }
       finally {
-        handleResponses(response);
+        handleResponses(response, updatedObject);
         setShowLoader(false);
       }
     }
 
   }
 
-  const handleResponses = (response: any) => {
+  const handleResponses = async (response: any, updatedObject: AccountSettings) => {
     switch (response?.StatusCode || response?.payload?.StatusCode) {
       case 201: {
         setToastMessage(ToastMessages.SETTINGS_SAVED);
@@ -132,19 +137,40 @@ const AccountSettingsEditor = () => {
             setToastMessage(ToastMessages.INVALID_CELLPHONE);
             break;
           }
+          case 'AuthCompanyEmail': {
+            setEmailToVerify(updatedObject.Email);
+            setVerificationStep(1);
+            setToastMessage(ToastMessages.VERIFY_EMAIL);
+            handleVerification('email');
+            break;
+          }
+          case 'AuthCompanyCellphone': {
+            setCellphoneToVerify(updatedObject.CellPhone);
+            setVerificationStep(1);
+            setToastMessage(ToastMessages.VERIFY_CELLPHONE);
+            handleVerification('cellphone');
+            break;
+          }
           case 'AuthEmail': {
+            setEmailToVerify(updatedObject.DefaultFromMail);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_EMAIL);
             handleVerification('email');
             break;
           }
           case 'AuthCellphone': {
+            setCellphoneToVerify(updatedObject.DefaultCellNumber);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_CELLPHONE);
             handleVerification('cellphone');
             break;
           }
         }
+        break;
+      }
+      case 403: {
+        setToastMessage(CoreToastMessages?.XSS_ERROR);
+        await dispatch(getAccountSettings());
         break;
       }
       case 200:
@@ -157,14 +183,27 @@ const AccountSettingsEditor = () => {
   };
 
   const handleVerification = (type: string) => {
-    if (!type || type === '') {
-      return false;
+    switch (type) {
+      case 'cellphone': {
+        setSmsVerificationPopup(true);
+        break;
+      }
+      case 'email': {
+        setEmailVerificationPopup(true);
+        break;
+      }
+      case 'email2fa': {
+        setTfaEmailVerification(true);
+        break;
+      }
+      case 'sms2fa': {
+        setTfaSmsVerification(true);
+        break;
+      }
+      default: {
+        return false;
+      }
     }
-    if (type === 'cellphone')
-      setSmsVerificationPopup(true);
-    else if (type === 'email')
-      setEmailVerificationPopup(true);
-
   }
 
   return (
@@ -179,6 +218,7 @@ const AccountSettingsEditor = () => {
       <Box className={clsx(classes.settingsContainer)}>
         <Box className={clsx("head", classes.flexSpaceBetween)}>
           <Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
+            {/* @ts-ignore */}
             {t('settings.accountSettings.title')}
           </Typography>
           <Box style={{ marginInlineStart: 'auto' }}>
@@ -233,6 +273,14 @@ const AccountSettingsEditor = () => {
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
             OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
+            onShowTwoFactorAuth={(variant: string) => {
+              if (variant === 'smsTFA') {
+                setTfaSmsVerification(true);
+              }
+              else {
+                setTfaEmailVerification(true);
+              }
+            }}
           />
           <Divider style={{ marginTop: 35 }} />
           <FORM_ACCOUNT_DETAILS
@@ -243,20 +291,46 @@ const AccountSettingsEditor = () => {
           />
         </Box>
       </Box>
+      {tfaEmailVerification && <VerificationDialog
+        variant="emailTFA"
+        textButtonOnSuccess={t('common.close')}
+        classes={classes}
+        isOpen={tfaEmailVerification}
+        value={verificationStep > 0 && emailToVerify}
+        step={verificationStep}
+        onClose={() => {
+          setTfaEmailVerification(false);
+          setVerificationStep(0);
+        }}
+      />}
       {emailVerificationPopup && <VerificationDialog
+        textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="email"
         isOpen={emailVerificationPopup}
-        value={verificationStep > 0 && settingRequest?.DefaultFromMail}
+        value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
         onClose={() => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
         }} />}
+      {tfaSmsVerification && <VerificationDialog
+        variant="smsTFA"
+        textButtonOnSuccess={t('common.close')}
+        classes={classes}
+        isOpen={tfaSmsVerification}
+        value={verificationStep > 0 && cellphoneToVerify}
+        step={verificationStep}
+        onClose={() => {
+          setTfaSmsVerification(false);
+          setVerificationStep(0);
+        }}
+      />}
       {smsVerificationPopup && <VerificationDialog
+        textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="sms"
-        value={verificationStep > 0 && settingRequest?.DefaultCellNumber}
+        value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
         isOpen={smsVerificationPopup}
         onClose={() => {

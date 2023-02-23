@@ -463,9 +463,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			} else {
 				deleteData?.payload?.Message
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: deleteData?.payload?.Message,
-					  })
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Message,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		} else {
@@ -501,9 +501,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				} else {
 					quickSendData?.Message
 						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: quickSendData?.Message,
-						  })
+							...ToastMessages.ERROR,
+							message: quickSendData?.Message,
+						})
 						: setToastMessage(ToastMessages.ERROR);
 				}
 				setIsTestGroupModal(false);
@@ -670,6 +670,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								lg={12}>
 								<div className={classes.whatsappCampainHighlightContent}>
 									<div className={classes.whatsappCampainHighlightTextWrapper}>
+										{/* @ts-ignore */}
 										<Highlighter
 											searchWords={dynamicVariable}
 											autoEscape={true}
@@ -692,7 +693,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													) =>
 														(field.fieldName === 'whatsapp.websiteButtonText' ||
 															field.fieldName ===
-																'whatsapp.phoneButtonText') && (
+															'whatsapp.phoneButtonText') && (
 															<Box
 																key={button.id}
 																className={
@@ -970,8 +971,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				isQuickReplyOpen={isQuickReplyOpen}
 				closeQuickReply={() => setIsQuickReplyOpen(false)}
 				quickReplyButtons={quickReplyButtons}
-				setQuickReplyButtons={() => {}}
-				updateTemplateData={() => {}}
+				setQuickReplyButtons={() => { }}
+				updateTemplateData={() => { }}
 				templateButtons={templateData.templateButtons}
 				isEditable={false}
 			/>
@@ -983,8 +984,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
 				phoneNumberField={phoneNumberField}
 				websiteField={websiteField}
-				addMore={() => {}}
-				updateTemplateData={() => {}}
+				addMore={() => { }}
+				updateTemplateData={() => { }}
 				isEditable={false}
 			/>
 

@@ -121,7 +121,7 @@ const GroupSelector = ({
 						</span>
 						<Tooltip
 							disableFocusListener
-							title={translator('mainReport.tooltipCreateGroup')}
+							title={<>{translator('mainReport.tooltipCreateGroup')}</>}
 							classes={{ tooltip: classes.customWidth }}
 							style={{ marginInlineStart: '5px' }}>
 							<span className={classes.bodyInfo}>i</span>
@@ -160,7 +160,7 @@ const GroupSelector = ({
 					<Tooltip
 						placement={'bottom'}
 						disableFocusListener
-						title={translator('smsReport.finalReciTip')}
+						title={<>{translator('smsReport.finalReciTip')}</>}
 						classes={{ tooltip: classes.customWidth }}
 						style={{ marginInlineStart: '5px' }}>
 						<span className={classes.bodyInfo}>i</span>
