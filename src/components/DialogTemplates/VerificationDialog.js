@@ -1109,7 +1109,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         </Box>
                         <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.buttonMinWidth, classes.mt6)} onClick={() => {
                             handleClose()
-                        }}>{props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
+                        }}>{t('common.continue')}</Button>
                     </Box>
                 </Box>
             </Box >
