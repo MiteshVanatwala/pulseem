@@ -14,7 +14,14 @@ import {
 import { renderHtml } from '../../helpers/functions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { BaseDialog } from './BaseDialog';
-import { addTwoFactorAuthValues, deleteAuthorizationValue, checkEmailAuthorization, deleteAuthorization2FA } from '../../redux/reducers/AccountSettingsSlice';
+import {
+    addTwoFactorAuthValues,
+    deleteAuthorizationValue,
+    checkEmailAuthorization,
+    deleteAuthorization2FA,
+    checkCellphoneAuthorization
+} from '../../redux/reducers/AccountSettingsSlice';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', step = 0, value, ...props }) => {
@@ -55,6 +62,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 break;
             }
             case "emailTFA": {
+                setAddToFromEmailToSend(false);
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizedEmails());
                     await dispatch(getTwoFactorAuthValues(1));
@@ -63,6 +71,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 break;
             }
             case "smsTFA": {
+                setAddToFromNumberToSend(false);
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizeNumbers());
                     await dispatch(getTwoFactorAuthValues(2));
@@ -100,6 +109,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         if (verificationStep <= 3 && variant === 'emailTFA' && selectedVerificationContact && !addToFromEmailToSend) {
             dispatch(deleteAuthorizationValue({ AuthType: 1, AuthValue: selectedVerificationContact }));
         }
+        if (verificationStep <= 3 && variant === 'smsTFA' && selectedVerificationContact && !addToFromNumberToSend) {
+            dispatch(deleteAuthorizationValue({ AuthType: 2, AuthValue: selectedVerificationContact }));
+        }
 
         callback?.()
         onClose?.()
@@ -115,9 +127,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         variant === 'smsTFA' && dispatch(getTwoFactorAuthValues(2));
     }
 
-    const addTwoFactorValue = async (disableNextStep = false) => {
+    const addTwoFactorValue = async (disableNextStep = false, type = 1) => {
         try {
-            const authResponse = await dispatch(addTwoFactorAuthValues({ AuthType: 1, AuthValue: selectedVerificationContact, AddToFromValues: addToFromEmailToSend }))
+            const authResponse = await dispatch(addTwoFactorAuthValues({ AuthType: type, AuthValue: selectedVerificationContact, AddToFromValues: addToFromEmailToSend }))
             if (disableNextStep) {
                 return authResponse?.payload;
             }
@@ -201,7 +213,12 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 setUserCodeConfirmed(false);
                 switch (result.payload.toLowerCase()) {
                     case 'ok': {
-                        NextSlide();
+                        if (variant === 'smsTFA') {
+                            addTwoFactorValue(false, 2);
+                        }
+                        else {
+                            NextSlide();
+                        }
                         break;
                     }
                     case 'notmatch': {
@@ -278,11 +295,17 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             }
             case 'sms':
             case 'smsTFA': {
-                dispatch(sendVerificationCode({ username, number: val })).then((result) => {
-                    setCodeResend(isResend);
-                    return result?.payload;
-                });
-                break
+                const res = await dispatch(checkCellphoneAuthorization(selectedVerificationContact));
+                if (res?.payload?.StatusCode === 404) {
+                    dispatch(sendVerificationCode({ username, number: val })).then((result) => {
+                        setCodeResend(isResend);
+                        return result?.payload;
+                    });
+                }
+                else if (res?.payload?.StatusCode === 201) {
+                    setVerificationStep(3);
+                }
+                break;
             }
         }
     }
@@ -306,10 +329,10 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
                             {t('campaigns.newsLetterMgmt.emailVerification.popupTitle')}
                         </Typography>
-                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
+                        <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {t('campaigns.newsLetterMgmt.emailVerification.popupDesc1')}
                         </Typography>
-                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
+                        <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {t('campaigns.newsLetterMgmt.emailVerification.popupDesc2')}
                         </Typography>
                         <Divider />
@@ -495,7 +518,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
                             {t('sms.verificationDialogTitle')}
                         </Typography>
-                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
+                        <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
                             {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
                         </Typography>
                         <Typography style={{ fontSize: 15, textDecoration: 'underline' }} className={classes.mt15}>
@@ -688,15 +711,12 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
                         <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
-                            {t('sms.verificationDialogTitle')}
+                            {t('settings.accountSettings.2fa.cellphone.firstSlide.title')}
                         </Typography>
-                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-                            {t('sms.verificationBody')} <b>{t('sms.oneTimeProcess')}</b>{' '}{t('sms.foreachSubmission')}
+                        <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
+                            {RenderHtml(t('settings.accountSettings.2fa.cellphone.firstSlide.descirption'))}
                         </Typography>
-                        <Typography style={{ fontSize: 15, textDecoration: 'underline' }} className={classes.mt15}>
-                            {t('sms.verificationNote')}
-                        </Typography>
-                        <Divider />
+                        <Divider style={{ marginTop: 15 }} />
                     </Box>
                     <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -747,8 +767,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                     <Box className='titleDescBox'>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
                         <Box className='desc'>
-                            <Typography variant='body1' >{t('sms.verificationBody')} {' '}<b>{t('sms.oneTimeProcess')}</b>
-                                {t('sms.foreachSubmission')}</Typography>
+                            <Typography style={{ fontSize: 16, color: '#000' }} variant="body1">
+                                {RenderHtml(t('settings.accountSettings.2fa.cellphone.firstSlide.descirption'))}
+                            </Typography>
                         </Box>
                     </Box>
                     <Box className={classes.flexColumn}>
@@ -776,12 +797,22 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                             <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
                                 onClick={() => {
                                     if (selectedVerificationContact) {
-                                        if (selectedVerificationContact.match(/^[0-9]+$/)) {
-                                            handleSendCode(selectedVerificationContact)
-                                            NextSlide()
+                                        const cellphoneAuth = verifiedNumbers.find((v) => { return v?.Number === selectedVerificationContact });
+
+                                        if (cellphoneAuth?.IsOptIn) {
+                                            setAddToFromNumberToSend(true);
+                                            addTwoFactorValue(true, 2).then((res) => {
+                                                setVerificationStep(verificationStep + 2);
+                                            })
                                         }
                                         else {
-                                            setVerificationError({ Number: t('sms.numberError') })
+                                            if (selectedVerificationContact.match(/^[0-9]+$/)) {
+                                                handleSendCode(selectedVerificationContact)
+                                                NextSlide()
+                                            }
+                                            else {
+                                                setVerificationError({ Number: t('sms.numberError') })
+                                            }
                                         }
                                     }
                                     else
@@ -853,7 +884,21 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4'>{t('sms.verificationSuccessful')}</Typography>
-                        <Typography variant='body1' className={classes.mt4}>{t('sms.verificationSuccessMessage')}</Typography>
+                        <Typography variant='body1' className={classes.mt4}>{t('settings.accountSettings.2fa.cellphone.successSlide.title')}</Typography>
+                        <Box>
+                            <FormControlLabel
+                                label={t("settings.accountSettings.2fa.addToFromNumberToSend")}
+                                control={
+                                    <Checkbox
+                                        color="primary"
+                                        checked={addToFromNumberToSend}
+                                        onClick={() => {
+                                            setAddToFromNumberToSend(!addToFromNumberToSend)
+                                        }}
+                                    />
+                                }
+                            />
+                        </Box>
                         <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt15, classes.buttonMinWidth)} onClick={() => {
                             handleClose()
                         }}>{t('common.continue')}</Button>
@@ -876,17 +921,13 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1}>
-                        {/* <Box pb={1} className={classes.textCenter}> */}
                         <Typography style={{ fontWeight: 700, padding: '0 0 10px 0', color: '#0a74a9' }} variant="h4">
-                            {t('campaigns.newsLetterMgmt.emailVerification.popupTitle')}
+                            {t('settings.accountSettings.2fa.email.firstSlide.title')}
                         </Typography>
-                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-                            {t('campaigns.newsLetterMgmt.emailVerification.popupDesc1')}
+                        <Typography style={{ fontSize: 15, color: '#000' }} variant="body1">
+                            {RenderHtml(t('settings.accountSettings.2fa.email.firstSlide.descirption'))}
                         </Typography>
-                        <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-                            {t('campaigns.newsLetterMgmt.emailVerification.popupDesc2')}
-                        </Typography>
-                        <Divider />
+                        <Divider style={{ marginTop: 15 }} />
                     </Box>
                     <Box style={{ position: 'relative', height: '70%', display: 'flex', flexDirection: 'column' }} >
                         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -968,7 +1009,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
 
                                         if (emailAuth?.IsOptIn) {
                                             setAddToFromEmailToSend(true);
-                                            addTwoFactorValue(true).then((res) => {
+                                            addTwoFactorValue(true, 1).then((res) => {
                                                 console.log(res);
                                                 setVerificationStep(verificationStep + 2);
                                             })
@@ -1051,7 +1092,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.title')}</Typography>
-                        <Typography variant='body1' className={clsx(classes.mt4, classes.mb15)}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
+                        <Typography variant='body1' className={clsx(classes.mt4, classes.mb15)}>{t('settings.accountSettings.2fa.email.successSlide.title')} </Typography>
                         <Box>
                             <FormControlLabel
                                 label={t("settings.accountSettings.2fa.addToFromEmailToSend")}

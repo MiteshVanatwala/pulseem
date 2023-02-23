@@ -100,6 +100,16 @@ export const deleteAuthorization2FA = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
+export const checkCellphoneAuthorization = createAsyncThunk(
+    'CheckCellphoneAuthorization', async (value: string, thunkAPI) => {
+        try {
+            const response = await instence.get(`authorization/CheckCellphoneAuthorization/${value}`);
+            return response.data
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 
 
 const AccountSettingsSlice = createSlice({
