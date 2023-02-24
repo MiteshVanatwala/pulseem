@@ -33,6 +33,7 @@ import {
 	phoneNumberAPIProps,
 	CampaignDetailById,
 	ApiQuickSend,
+	SubAccountSettings,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -94,6 +95,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
+	);
+
+	const SubAccountSettings = useSelector(
+		(state: {
+			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.commonSettings?.SubAccountSettings
 	);
 	const websiteField = [
 		{
@@ -161,6 +168,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
+	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
 	const [fileData, setFileData] = useState<{
@@ -188,6 +196,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
+
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
@@ -240,6 +249,24 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
+		const updatedVariableWithSiteLink = variable?.map((variable) => {
+			if (variable?.FieldTypeId === 3 && variable?.IsStatastic) {
+				if (checkSiteTrackingLink(variable?.VariableValue)) {
+					return {
+						...variable,
+						VariableValue: variable?.VariableValue.includes('?')
+							? variable?.VariableValue + '&ref=##ClientIDEnc##'
+							: variable?.VariableValue + '?ref=##ClientIDEnc##',
+					};
+				}
+				return variable;
+			}
+			return variable;
+		});
+		setUpdatedDynamicVariable(updatedVariableWithSiteLink);
+	};
+
 	const setCampaignDetail = (templateList: savedTemplateListProps[]) => {
 		if (campaignID && templateList) {
 			(async () => {
@@ -249,7 +276,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
-					setUpdatedDynamicVariable(campaignData?.Data?.VariableValues);
+					setUpdatedDynamicVariableWithLinks(
+						campaignData?.Data?.VariableValues
+					);
 					setlinkCount(
 						campaignData?.Data?.VariableValues?.filter(
 							(variable) => variable?.FieldTypeId === 3
@@ -307,6 +336,25 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setTestSendOneContact('');
 		setIsTestSend(false);
 		setSelectedTestGroup([]);
+	};
+
+	const checkSiteTrackingLink = (text: string) => {
+		if (
+			SubAccountSettings?.DomainAddress &&
+			SubAccountSettings?.DomainAddress !== ''
+		) {
+			const domainName = SubAccountSettings?.DomainAddress.replace(
+				'https://',
+				''
+			)
+				.replace('http://', '')
+				.replace('www.', '');
+			if (text.includes(domainName)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	};
 
 	const resetToast = () => {
@@ -517,7 +565,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onDynamcFieldModalSave = (
 		updatedDynamicVariable: updatedVariable[]
 	) => {
-		setUpdatedDynamicVariable(updatedDynamicVariable);
+		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
 		setlinkCount(
 			updatedDynamicVariable?.filter((variable) => variable?.FieldTypeId === 3)
 				?.length
@@ -927,11 +975,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							onFormButtonClick(buttonName)
 						}
 					/>
-				</Grid>
+			</Grid>
 			</form>
 
 			<Loader isOpen={isLoader} showBackdrop={true} />
-
 			<DynamicModal
 				classes={classes}
 				isDynamcFieldModal={isDynamcFieldModal}
@@ -943,6 +990,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onDynamcFieldModalSave(updatedDynamicVariable)
 				}
 				dynamicVariable={updatedDynamicVariable}
+				isTrackLink={isTrackLink}
+				setIsTrackLink={setIsTrackLink}
 			/>
 
 			<ValidationAlert
