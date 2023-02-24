@@ -305,6 +305,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   w25: {
     width: 25,
   },
+  minHeight50: {
+    minHeight: 50,
+  },
   maxHeight87: {
     maxHeight: "auto",
     "@media screen and (min-width: 600px)": {
@@ -1814,6 +1817,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff'
     }
   },
+
+  comingSoonTab: {
+    marginInlineStart: 10,
+    padding: '2px 10px',
+    borderRadius: 5,
+    borderBottomRightRadius: 0,
+    background: '#fff',
+    color: '#000'
+  },
+
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
     // height: "400px",

@@ -44,6 +44,7 @@ import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
 import { sitePrefix } from './config/index'
+import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 
 const renderRoutes = (classes) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -281,6 +282,11 @@ const renderRoutes = (classes) => {
         exact
         path={`${sitePrefix}Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Reports/ResponsesReports`}
+        element={<ResponsesReports />}
       />
       <Route
         path={`/EmailCampaignStatistics`}

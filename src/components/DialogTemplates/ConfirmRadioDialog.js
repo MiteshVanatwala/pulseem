@@ -11,12 +11,12 @@ const ConfirmRadioDialog = ({
     text = '',
     title = '',
     radioTitle = '',
-    options = null,
+    options = [],
     isOpen = false,
-    onCancel = () => null,
-    onConfirm = () => null,
+    onCancel = () => { },
+    onConfirm = (e) => { },
     defaultValue = "",
-    cookieName = null
+    cookieName = ""
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
@@ -42,7 +42,7 @@ const ConfirmRadioDialog = ({
                         </Typography>
                     </Box>
                     <Box className={clsx(classes.mt15, classes.mb10)}>{radioTitle}</Box>
-                    {options !== null && (<FormControl component="fieldset">
+                    {options.length > 0 && (<FormControl component="fieldset">
                         <RadioGroup
                             aria-label="value"
                             name="radioValue"
