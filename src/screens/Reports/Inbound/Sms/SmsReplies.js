@@ -19,6 +19,7 @@ import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
 import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
 import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
+import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
 
 
 const SmsReplies = ({ classes, ...other }) => {
@@ -33,11 +34,11 @@ const SmsReplies = ({ classes, ...other }) => {
     const [clientToEdit, setClientToEdit] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
     const [selectedClients, setSelectedClients] = useState([]);
-    const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
+    // const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { ToastMessages } = useSelector(state => state.client);
     const { smsReplies, extraData } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { accountFeatures, windowSize, isRTL } = useSelector(state => state.core);
+    const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -100,8 +101,7 @@ const SmsReplies = ({ classes, ...other }) => {
     }, [isSearching]);
 
     const handlePageChange = (val) => {
-        setRowsPerPage(val);
-        setRequest({ ...request, PageSize: val });
+        dispatch(setRowsPerPage(val))
     }
 
     const renderHeader = () => {
@@ -210,7 +210,7 @@ const SmsReplies = ({ classes, ...other }) => {
     }
     const statusToText = (status) => {
         let translatedStatus = ClientStatus.Sms.find((x) => { return x.id === status });
-        translatedStatus = translatedStatus ?? { value: 'common.noSms' };
+        translatedStatus = translatedStatus ?? { value: 'emailStatus.noStatus' };
         return t(translatedStatus?.value);
     }
 
@@ -282,7 +282,7 @@ const SmsReplies = ({ classes, ...other }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {statusToText(SmsStatus)}
+                    {ClientID > 0 ? statusToText(SmsStatus) : t("emailStatus.noStatus")}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
@@ -342,6 +342,7 @@ const SmsReplies = ({ classes, ...other }) => {
                         setDialog={setDialog}
                         handleResponses={(response, actions) => { handleResponses(response, actions); }}
                         onAddRecipient={(closeDialog = true) => {
+                            getReplies();
                             closeDialog && setDialog(null);
                         }}
                         recipientData={clientToEdit}
