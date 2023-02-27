@@ -128,6 +128,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         variant === 'sms' && dispatch(getAuthorizeNumbers());
         variant === 'emailTFA' && dispatch(getTwoFactorAuthValues(1));
         variant === 'smsTFA' && dispatch(getTwoFactorAuthValues(2));
+
+        setAddToFromEmailToSend(false);
+        setAddToFromNumberToSend(false);
     }
 
     const addTwoFactorValue = async (disableNextStep = false, type = 1) => {
