@@ -33,7 +33,7 @@ import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
-import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+import SmsReplies from './screens/Reports/Inbound/Sms/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
@@ -44,7 +44,8 @@ import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
 import { sitePrefix } from './config/index'
-import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
+// import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
+import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 
 const renderRoutes = (classes) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -283,11 +284,11 @@ const renderRoutes = (classes) => {
         path={`${sitePrefix}Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />
-      <Route
+      {/* <Route
         exact
         path={`${sitePrefix}Reports/ResponsesReports`}
         element={<ResponsesReports />}
-      />
+      /> */}
       <Route
         path={`/EmailCampaignStatistics`}
         component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
@@ -378,6 +379,21 @@ const renderRoutes = (classes) => {
         exact
         path={`${sitePrefix}SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}/reports/Inbound`}
+        element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}/reports/Inbound/:type`}
+        element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}/reports/Inbound/:type/:id`}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
         path="*" element={<PageNotFound classes={classes} />}

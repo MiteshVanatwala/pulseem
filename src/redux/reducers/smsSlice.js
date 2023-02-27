@@ -155,15 +155,15 @@ export const exportSMSDirectReport = createAsyncThunk(
     }
   })
 
-  export const exportArchiveSmsDirect = createAsyncThunk(
-    'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
-      try {
-        const response = await PulseemReactInstance.post(`directReport/ExportArchiveSmsDirect`, data);
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    })
+export const exportArchiveSmsDirect = createAsyncThunk(
+  'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`directReport/ExportArchiveSmsDirect`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 
 
@@ -370,6 +370,15 @@ export const IsOTPPassed = createAsyncThunk(
   'smsCampaign/IsOTPPassed', async (fromNumber, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`smsCampaign/IsOTPPassed/${fromNumber}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const getSmsRepliesById = createAsyncThunk(
+  'report/SmsReplies', async (id, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`report/SmsReplies/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
