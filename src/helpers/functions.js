@@ -207,7 +207,7 @@ export const whatsappStatusToString = (status) => {
         return "common.Sent";
       }
       case "3": { //Success
-        return "report.directReport.statuses.sentSuccessfuly";
+        return "common.delivered";
       }
       case "4": { // Failed
         return "common.failedStatus";

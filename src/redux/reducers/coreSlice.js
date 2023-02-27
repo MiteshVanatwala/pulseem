@@ -36,7 +36,16 @@ export const coreSlice = createSlice({
       const data = action.payload?.Data;
       state.accountSettings = data;
       state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
-      setCookie("accountSettings", data)
+      setCookie("accountSettings", {
+        Account: data?.Account,
+        AccountFeatures: data?.Account?.AccountFeatures,
+        DefaultLinkChars: data?.DefaultLinkChars,
+        DefaultCellNumber: data?.DefaultCellNumber,
+        DefaultFromMail: data?.DefaultFromMail,
+        DefaultFromName: data?.DefaultFromName,
+        SubAccountSettings: data?.SubAccountSettings,
+        SubAccountName: data?.SubAccountName
+      })
       setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
     },
     setLanguage: (state, action) => {
@@ -68,6 +77,6 @@ export const coreSlice = createSlice({
   }
 })
 
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setAccountFeatures, setAccountSettings } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setAccountFeatures } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

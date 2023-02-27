@@ -1735,8 +1735,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   carouselContainer: {
     display: 'flex',
     flexWrap: 'nowrap',
-    overflow: 'hidden',
-    height: 'min-content'
+    overflowX: 'hidden',
+    height: 'min-content',
+    paddingBottom: 10
   },
   carouselItem: {
     minWidth: '100%',
@@ -1770,11 +1771,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
       height: '100%',
       position: "relative",
+      padding: 10,
       '&.firstSlide': {
         '& .contactDataBox': {
           overflowX: 'clip',
           overflowY: 'auto',
-          height: 'calc(100% - 70px)'
+          height: 'calc(100% - 80px)'
         },
         '& .emailBox': {
           '& span': {

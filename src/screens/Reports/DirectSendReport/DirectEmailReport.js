@@ -327,6 +327,11 @@ const DirectEmailReportTab = ({
           <TextField
             type='tel'
             variant='outlined'
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             size='small'
             value={ToEmail}
             onChange={(e) => handleSearchInput(e.target.value, 'ToEmail', 'email')}
@@ -351,6 +356,11 @@ const DirectEmailReportTab = ({
             type='tel'
             variant='outlined'
             size='small'
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             value={FromEmail}
             onChange={(e) => handleSearchInput(e.target.value, 'FromEmail', 'email')}
             className={clsx(classes.textField, classes.minWidth252)}
@@ -362,6 +372,11 @@ const DirectEmailReportTab = ({
             type='tel'
             variant='outlined'
             size='small'
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             value={ToEmail}
             onChange={(e) => handleSearchInput(e.target.value, 'ToEmail', 'email')}
             className={clsx(classes.textField, classes.minWidth252)}
@@ -374,6 +389,11 @@ const DirectEmailReportTab = ({
             variant='outlined'
             size='small'
             value={ToName}
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.Recipient')}

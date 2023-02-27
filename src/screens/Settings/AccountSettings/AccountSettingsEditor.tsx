@@ -25,13 +25,15 @@ const AccountSettingsEditor = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { classes } = useCore();
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
   const [emailVerificationPopup, setEmailVerificationPopup] = useState(false);
+  const [tfaEmailVerification, setTfaEmailVerification] = useState(false);
+  const [tfaSmsVerification, setTfaSmsVerification] = useState(false);
   const [verificationStep, setVerificationStep] = useState(0);
   const [emailToVerify, setEmailToVerify] = useState<string>('');
   const [cellphoneToVerify, setCellphoneToVerify] = useState<string>('');
@@ -182,14 +184,27 @@ const AccountSettingsEditor = () => {
   };
 
   const handleVerification = (type: string) => {
-    if (!type || type === '') {
-      return false;
+    switch (type) {
+      case 'cellphone': {
+        setSmsVerificationPopup(true);
+        break;
+      }
+      case 'email': {
+        setEmailVerificationPopup(true);
+        break;
+      }
+      case 'email2fa': {
+        setTfaEmailVerification(true);
+        break;
+      }
+      case 'sms2fa': {
+        setTfaSmsVerification(true);
+        break;
+      }
+      default: {
+        return false;
+      }
     }
-    if (type === 'cellphone')
-      setSmsVerificationPopup(true);
-    else if (type === 'email')
-      setEmailVerificationPopup(true);
-
   }
 
   return (
@@ -202,7 +217,7 @@ const AccountSettingsEditor = () => {
     >
       {toastMessage && renderToast()}
       <Box className={clsx(classes.settingsContainer)}>
-        <Box className={clsx("head", classes.flexSpaceBetween)}>
+        <Box className={clsx("head", classes.flexSpaceBetween)} style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
           <Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
             {/* @ts-ignore */}
             {t('settings.accountSettings.title')}
@@ -259,6 +274,14 @@ const AccountSettingsEditor = () => {
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
             OnUpdate={(updatedObject: AccountSettings, sendRequest: boolean) => handleUpdate(updatedObject, 'company', sendRequest)}
+            onShowTwoFactorAuth={(variant: string) => {
+              if (variant === 'smsTFA') {
+                setTfaSmsVerification(true);
+              }
+              else {
+                setTfaEmailVerification(true);
+              }
+            }}
           />
           <Divider style={{ marginTop: 35 }} />
           <FORM_ACCOUNT_DETAILS
@@ -269,6 +292,18 @@ const AccountSettingsEditor = () => {
           />
         </Box>
       </Box>
+      {tfaEmailVerification && <VerificationDialog
+        variant="emailTFA"
+        textButtonOnSuccess={t('common.close')}
+        classes={classes}
+        isOpen={tfaEmailVerification}
+        value={verificationStep > 0 && emailToVerify}
+        step={verificationStep}
+        onClose={() => {
+          setTfaEmailVerification(false);
+          setVerificationStep(0);
+        }}
+      />}
       {emailVerificationPopup && <VerificationDialog
         textButtonOnSuccess={t('common.close')}
         classes={classes}
@@ -280,6 +315,18 @@ const AccountSettingsEditor = () => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
         }} />}
+      {tfaSmsVerification && <VerificationDialog
+        variant="smsTFA"
+        textButtonOnSuccess={t('common.close')}
+        classes={classes}
+        isOpen={tfaSmsVerification}
+        value={verificationStep > 0 && cellphoneToVerify}
+        step={verificationStep}
+        onClose={() => {
+          setTfaSmsVerification(false);
+          setVerificationStep(0);
+        }}
+      />}
       {smsVerificationPopup && <VerificationDialog
         textButtonOnSuccess={t('common.close')}
         classes={classes}

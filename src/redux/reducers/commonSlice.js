@@ -96,6 +96,17 @@ export const getAuthorizeNumbers = createAsyncThunk(
     }
   })
 
+export const getTwoFactorAuthValues = createAsyncThunk(
+  'getTwoFactorAuthValues', async (authType, thunkAPI) => {
+    try {
+      const response = await instence.get(`authorization/GetTwoFactorAuthValues/${authType}`);
+      response.data.TwoFactorAuthTypeID = authType;
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const commonSlice = createSlice({
   name: 'common',
@@ -104,7 +115,9 @@ export const commonSlice = createSlice({
     verifiedEmails: [],
     verifiedNumbers: [],
     tokenAlive: true,
-    commonSettings: {}
+    commonSettings: {},
+    twoFactorAuthEmails: [],
+    twoFactorAuthNumbers: []
   },
   extraReducers: builder => {
     builder
@@ -117,11 +130,29 @@ export const commonSlice = createSlice({
       })
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-        state.commonSettings = payload?.Data;
-        setCookie('accountSettings', payload?.Data);
+        const data = payload?.Data;
+        state.commonSettings = data;
+        setCookie("accountSettings", {
+          Account: data.Account,
+          AccountFeatures: data?.Account?.AccountFeatures,
+          DefaultLinkChars: data?.DefaultLinkChars,
+          DefaultCellNumber: data?.DefaultCellNumber,
+          DefaultFromMail: data?.DefaultFromMail,
+          DefaultFromName: data?.DefaultFromName,
+          SubAccountSettings: data?.SubAccountSettings,
+          SubAccountName: data?.SubAccountName
+        });
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;
+    })
+    builder.addCase(getTwoFactorAuthValues.fulfilled, (state, { payload }) => {
+      if (payload?.TwoFactorAuthTypeID === 1) {
+        state.twoFactorAuthEmails = payload?.Data;
+      }
+      else {
+        state.twoFactorAuthNumbers = payload?.Data;
+      }
     })
   }
 })

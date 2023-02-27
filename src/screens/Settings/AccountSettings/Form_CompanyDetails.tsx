@@ -3,18 +3,16 @@ import {
   Box,
   Button,
   FormControl,
-  FormControlLabel,
   Grid,
-  MenuItem,
   OutlinedInput,
   Select,
   TextField,
   Typography,
+  FormControlLabel
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
-import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import {
   MdArrowBackIos,
   MdArrowForwardIos,
@@ -37,17 +35,19 @@ import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
+import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 
 
 const FORM_COMPANY_DETAILS = ({
   setToastMessage,
   ToastMessages,
   Settings,
-  OnUpdate
+  OnUpdate,
+  onShowTwoFactorAuth
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -410,7 +410,7 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            <Grid item xs={12} sm={3} md={4} className={clsx(classes.mt3)}>
+            <Grid item xs={12} sm={3} md={2} className={clsx(classes.mt3)}>
               <FormControlLabel
                 control={
                   <PulseemSwitch
@@ -455,7 +455,7 @@ const FORM_COMPANY_DETAILS = ({
               </Typography>
               <FormControl
                 variant="outlined" className={classes.formControl}
-                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10 }}
+                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10, maxWidth: 210 }}
               >
                 <Select
                   native
@@ -475,7 +475,6 @@ const FORM_COMPANY_DETAILS = ({
                       paddingInlineStart: 15,
                     }
                   }}
-                  disabled={!companyDetails?.TwoFactorAuthEnabled}
                   autoWidth
                   value={companyDetails?.TwoFactorAuthOptionID ?? 202}
                   name="TwoFactorAuthOptionID"
@@ -498,10 +497,10 @@ const FORM_COMPANY_DETAILS = ({
                 </Select>
               </FormControl>
             </Grid>
-            {/* <Grid item xs={12} sm={6} md={4} className={classes.mt3}>
+            <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
-                display: 'flex',
-                justifyContent: 'space-evenly',
+                display: windowSize !== 'xs' ? 'flex' : 'block',
+                justifyContent: 'flex-end',
                 alignItems: 'center',
                 height: '100%'
               }}>
@@ -514,16 +513,15 @@ const FORM_COMPANY_DETAILS = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    console.log('2')
-                    //handleVerification('cellphone')
-                  }
+                  onClick={() => {
+                    onShowTwoFactorAuth('smsTFA');
+                  }}
                   startIcon={<MdMobileFriendly />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   <>
                     {t(
-                      "settings.accountSettings.fixedComDetails.btnVerifyNumber"
+                      "settings.accountSettings.2fa.addNumber"
                     )}
                   </>
                 </Button>
@@ -536,21 +534,20 @@ const FORM_COMPANY_DETAILS = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    console.log('1')
-                    //handleVerification('email')
-                  }
+                  onClick={() => {
+                    onShowTwoFactorAuth('emailTFA');
+                  }}
                   startIcon={<MdOutlineMarkEmailRead />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
                   <>
                     {t(
-                      "settings.accountSettings.fixedComDetails.btnVerifyEmail"
+                      "settings.accountSettings.2fa.addEmail"
                     )}
                   </>
                 </Button>
               </Box>
-            </Grid> */}
+            </Grid>
             <Grid
               item
               xs={12}
