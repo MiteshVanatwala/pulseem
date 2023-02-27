@@ -555,50 +555,43 @@ const SendCampaign = ({
 		}
 	};
 	const validateSendSetting = () => {
+		let isValidated: boolean = true;
+		let validationErrors: string[] = [];
+		if (selectedGroups?.length === 0) {
+			validationErrors.push(translator('group.zeroSelected'));
+			isValidated = false;
+		}
 		if (sendType === '1' || sendType === '2' || sendType === '3') {
-			if (sendType === '1') {
-				return true;
+			if (sendType === '1' && isValidated) {
+				isValidated = true;
 			}
 			if (sendType === '2') {
-				if (sendDate) {
-					return true;
+				if (sendDate && isValidated) {
+					isValidated = true;
 				} else {
-					setGroupSendValidationErrors([
-						translator('whatsappCampaign.timeAndDate'),
-					]);
-					setIsValidationAlert(true);
-					return false;
+					validationErrors.push(translator('whatsappCampaign.timeAndDate'));
+					isValidated = false;
 				}
 			}
-			console.log('sendTime::', sendTime);
-			if (sendType === '3') {
-				let errors: string[] = [];
-				let isValidated: boolean = true;
-				if (!sendTime) {
-					errors?.push(translator('whatsappCampaign.timeAndDate'));
+			if (sendType === '3' && isValidated) {
+				if (
+					!sendTime ||
+					daysBeforeAfter === '' ||
+					spectialDateFieldID === '0'
+				) {
+					validationErrors?.push(translator('whatsappCampaign.timeAndDate'));
 					isValidated = false;
 				}
-				if (daysBeforeAfter === '') {
-					errors?.push(translator('whatsappCampaign.timeAndDate'));
-					isValidated = false;
-				}
-				if (spectialDateFieldID === '0') {
-					errors?.push(translator('whatsappCampaign.timeAndDate'));
-					isValidated = false;
-				}
-				if (!isValidated) {
-					setGroupSendValidationErrors(errors);
-					setIsValidationAlert(true);
-				}
-				return isValidated;
 			}
 		} else {
-			setGroupSendValidationErrors([
-				translator('whatsappCampaign.timeAndDate'),
-			]);
-			setIsValidationAlert(true);
-			return false;
+			validationErrors.push(translator('whatsappCampaign.timeAndDate'));
+			isValidated = false;
 		}
+		if (!isValidated) {
+			setGroupSendValidationErrors(validationErrors);
+			setIsValidationAlert(true);
+		}
+		return isValidated;
 	};
 
 	const onSummarySend = async () => {
