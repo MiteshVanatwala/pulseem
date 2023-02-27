@@ -1736,7 +1736,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     flexWrap: 'nowrap',
     overflowX: 'hidden',
-    height: 'min-content'
+    height: 'min-content',
+    paddingBottom: 10
   },
   carouselItem: {
     minWidth: '100%',
@@ -1770,6 +1771,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
       height: '100%',
       position: "relative",
+      padding: 10,
       '&.firstSlide': {
         '& .contactDataBox': {
           overflowX: 'clip',
