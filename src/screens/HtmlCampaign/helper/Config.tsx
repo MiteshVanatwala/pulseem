@@ -158,14 +158,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
         // Auto Save here
         // onChange: (jsonFile: any, response: any) => {
         // console.log(response);
-            // const interval = setInterval(() => {
+        // const interval = setInterval(() => {
         //     SaveCampaign({
         //         campaignId: CampaignId,
         //         JsonData: jsonFile,
         //         HtmlData: null
         //     });
         //     clearInterval(interval);
-            // }, AUTO_SAVE_SECONDS);
+        // }, AUTO_SAVE_SECONDS);
         //}
         //#endregion
     }
