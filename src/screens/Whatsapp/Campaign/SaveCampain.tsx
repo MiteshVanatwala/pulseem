@@ -84,6 +84,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import {
 	apiStatus,
 	buttons,
+	fieldNameIds,
 	resetToastData,
 	whatsappRoutes,
 } from '../Constant';
@@ -255,7 +256,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
-			if (variable?.FieldTypeId === 3 && variable?.IsStatastic) {
+			if (
+				variable?.FieldTypeId === fieldNameIds?.LINK &&
+				variable?.IsStatastic
+			) {
 				if (
 					!variable.VariableValue.includes('ref') &&
 					checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
@@ -300,7 +304,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					);
 					setlinkCount(
 						campaignData?.Data?.VariableValues?.filter(
-							(variable) => variable?.FieldTypeId === 3
+							(variable) => variable?.FieldTypeId === fieldNameIds?.LINK
 						)?.length
 					);
 				}
@@ -567,8 +571,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	) => {
 		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
 		setlinkCount(
-			updatedDynamicVariable?.filter((variable) => variable?.FieldTypeId === 3)
-				?.length
+			updatedDynamicVariable?.filter(
+				(variable) => variable?.FieldTypeId === fieldNameIds?.LINK
+			)?.length
 		);
 		setIsDynamcFieldModal(false);
 	};

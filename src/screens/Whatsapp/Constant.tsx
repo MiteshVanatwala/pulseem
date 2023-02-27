@@ -40,6 +40,14 @@ export enum fieldNames {
 	NAVIGATION = 'navigation',
 }
 
+export enum fieldNameIds {
+	PERSONALFIELD = 1,
+	TEXT = 2,
+	LINK = 3,
+	LANDINGPAGE = 4,
+	NAVIGATION = 5,
+}
+
 export enum fileTypes {
 	DOCUMENT = 'document',
 	VIDEO = 'video',
