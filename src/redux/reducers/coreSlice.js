@@ -37,7 +37,7 @@ export const coreSlice = createSlice({
       state.accountSettings = data;
       state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
       setCookie("accountSettings", {
-        Account: settings.Account,
+        Account: data?.Account,
         AccountFeatures: data?.Account?.AccountFeatures,
         DefaultLinkChars: data?.DefaultLinkChars,
         DefaultCellNumber: data?.DefaultCellNumber,
