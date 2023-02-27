@@ -64,7 +64,6 @@ export const addTwoFactorAuthValues = createAsyncThunk(
     'AddTwoFactorAuthValue', async (authObject: TwoFactorAuthAllowed, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.post(`authorization/AddTwoFactorAuthValue`, authObject);
-            response.data.authType = authObject.AuthType;
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
