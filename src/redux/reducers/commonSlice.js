@@ -139,7 +139,7 @@ export const commonSlice = createSlice({
           DefaultCellNumber: data?.DefaultCellNumber,
           DefaultFromMail: data?.DefaultFromMail,
           DefaultFromName: data?.DefaultFromName,
-          SubAccountSettings: data.SubAccountSettings,
+          SubAccountSettings: data?.SubAccountSettings,
           SubAccountName: data?.SubAccountName
         });
       })

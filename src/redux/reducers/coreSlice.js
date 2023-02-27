@@ -43,7 +43,7 @@ export const coreSlice = createSlice({
         DefaultCellNumber: data?.DefaultCellNumber,
         DefaultFromMail: data?.DefaultFromMail,
         DefaultFromName: data?.DefaultFromName,
-        SubAccountSettings: data.SubAccountSettings,
+        SubAccountSettings: data?.SubAccountSettings,
         SubAccountName: data?.SubAccountName
       })
       setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
