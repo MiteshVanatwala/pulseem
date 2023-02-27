@@ -36,7 +36,11 @@ import {
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
-import { getDynamicFields, getTemplatePreviewData } from '../Common';
+import {
+	checkSiteTrackingLink,
+	getDynamicFields,
+	getTemplatePreviewData,
+} from '../Common';
 import {
 	landingPageAPIProps,
 	landingPageDataProps,
@@ -474,32 +478,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	};
 
-	const checkSiteTrackingLink = (text: string) => {
-		if (
-			SubAccountSettings?.DomainAddress &&
-			SubAccountSettings?.DomainAddress !== ''
-		) {
-			const domainName = SubAccountSettings?.DomainAddress.replace(
-				'https://',
-				''
-			)
-				.replace('http://', '')
-				.replace('www.', '');
-			if (text.includes(domainName)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
-
 	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
 			if (
 				variable?.FieldTypeId === fieldNameIds?.LINK &&
 				variable?.IsStatastic
 			) {
-				if (checkSiteTrackingLink(variable?.VariableValue)) {
+				if (
+					checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+				) {
 					return {
 						...variable,
 						VariableValue: variable?.VariableValue.includes('?')
