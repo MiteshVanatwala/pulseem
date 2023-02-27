@@ -45,7 +45,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
-        trackChanges: false,
+        trackChanges: true,
         autosave: 60,
         // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
@@ -158,14 +158,14 @@ export const BeeConfig = (Options: ConfigOptions) => {
         // Auto Save here
         // onChange: (jsonFile: any, response: any) => {
         // console.log(response);
-        // const interval = setInterval(() => {
+            // const interval = setInterval(() => {
         //     SaveCampaign({
         //         campaignId: CampaignId,
         //         JsonData: jsonFile,
         //         HtmlData: null
         //     });
         //     clearInterval(interval);
-        // }, AUTO_SAVE_SECONDS);
+            // }, AUTO_SAVE_SECONDS);
         //}
         //#endregion
     }
