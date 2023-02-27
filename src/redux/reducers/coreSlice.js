@@ -36,7 +36,16 @@ export const coreSlice = createSlice({
       const data = action.payload?.Data;
       state.accountSettings = data;
       state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
-      setCookie("accountSettings", { Account: data.Account, SubAccountSettings: data.SubAccountSettings, AccountFeatures: data?.Account?.AccountFeatures })
+      setCookie("accountSettings", {
+        Account: settings.Account,
+        AccountFeatures: data?.Account?.AccountFeatures,
+        DefaultLinkChars: data?.DefaultLinkChars,
+        DefaultCellNumber: data?.DefaultCellNumber,
+        DefaultFromMail: data?.DefaultFromMail,
+        DefaultFromName: data?.DefaultFromName,
+        SubAccountSettings: data.SubAccountSettings,
+        SubAccountName: data?.SubAccountName
+      })
       setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
     },
     setLanguage: (state, action) => {
