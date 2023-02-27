@@ -145,7 +145,7 @@ const ChatFooterContent = ({
 									spacing={2}>
 									<Typography color='textSecondary'>
 										<label style={{ fontSize: '22px' }}>
-											<>No Chats Available</>
+											<>{translator('whatsappChat.noChat')}</>
 										</label>
 									</Typography>
 								</Stack>

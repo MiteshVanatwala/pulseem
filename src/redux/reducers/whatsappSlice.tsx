@@ -473,7 +473,7 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 			IsPagination,
 			pageNo,
 			pageSize,
-			Searchtext
+			Searchtext,
 		}: APIGetWhatsappChatContactsReq,
 		thunkAPI
 	) => {
@@ -485,7 +485,7 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 					IsPagination,
 					pageNo,
 					pageSize,
-					Searchtext
+					Searchtext,
 				}
 			);
 
@@ -729,7 +729,7 @@ export const whatsappSlice = createSlice({
 			SAVE_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Template saved succesfully',
+				message: 'whatsappCampaign.saveTemplate',
 				showAnimtionCheck: true,
 			},
 			ERROR: {
@@ -741,31 +741,31 @@ export const whatsappSlice = createSlice({
 			SAVE_CAMPAIGN_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Campaign saved succesfully',
+				message: 'whatsappCampaign.saveCampaign',
 				showAnimtionCheck: true,
 			},
 			SUBMIT_CAMPAIGN_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Campaign submitted succesfully',
+				message: 'whatsappCampaign.submitTemplate',
 				showAnimtionCheck: true,
 			},
 			DELETE_CAMPAIGN_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Template deleted succesfully',
+				message: 'whatsappCampaign.deleteTemplate',
 				showAnimtionCheck: true,
 			},
 			DELETE_TEMPLATE_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Template created succesfully',
+				message: 'whatsappCampaign.createTemplate',
 				showAnimtionCheck: true,
 			},
 			DUPLICATE_CAMPAIGN_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Campaign cloned succesfully',
+				message: 'whatsappCampaign.cloneCampaign',
 				showAnimtionCheck: true,
 			},
 			INVALID_RECIPIENTS: {
@@ -783,7 +783,7 @@ export const whatsappSlice = createSlice({
 			CAMPAIGN_SAVE_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Campaign saved succesfully',
+				message: 'whatsappCampaign.saveCampaign',
 				showAnimtionCheck: true,
 			},
 			UPLOAD_CLIENT_DATA_SUCEESS: {
@@ -813,13 +813,13 @@ export const whatsappSlice = createSlice({
 			CAMPAIGN_SEND_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Campaign send succesfully',
+				message: 'whatsappCampaign.sendCampaign',
 				showAnimtionCheck: true,
 			},
 			RESTORE_CAMPAIGN_SUCCESS: {
 				severity: 'success',
 				color: 'success',
-				message: 'Campaign restored succesfully',
+				message: 'whatsappCampaign.restoreCampaign',
 				showAnimtionCheck: true,
 			},
 		},

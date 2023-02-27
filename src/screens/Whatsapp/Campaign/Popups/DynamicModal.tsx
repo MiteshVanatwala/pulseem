@@ -28,13 +28,15 @@ const DynamicModal = ({
 	landingPageData,
 	dynamicModalVariable,
 	dynamicVariable,
+	isTrackLink,
+	setIsTrackLink,
 }: dynamicModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 	const { t: translator } = useTranslation();
 
 	const [navApp, setNavApp] = React.useState<string>('');
-	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
+
 	const [activeDynamicButton, setActiveDynamicButton] = useState<string>(
 		'whatsappCampaign.pField'
 	);
@@ -118,6 +120,9 @@ const DynamicModal = ({
 			(updatedVariable: updatedVariable) =>
 				updatedVariable.VariableIndex === dynamicModalVariable
 		);
+		if (field === 'link') {
+			setIsTrackLink(isTrackLink);
+		}
 		if (!!isVariableUpdated) {
 			const newDynamicVariables = updatedDynamicVariable.map(
 				(updatedVariable) => {
@@ -233,7 +238,6 @@ const DynamicModal = ({
 							personalFields={personalFields}
 							landingPageData={landingPageData}
 							isTrackLink={isTrackLink}
-							setIsTrackLink={() => setIsTrackLink(!isTrackLink)}
 						/>
 					</Grid>
 				</Box>

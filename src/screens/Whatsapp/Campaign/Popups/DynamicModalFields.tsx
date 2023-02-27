@@ -38,7 +38,6 @@ const DynamicModalFields = ({
 	personalFields,
 	landingPageData,
 	isTrackLink,
-	setIsTrackLink,
 }: DynamicModalFieldsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -99,7 +98,7 @@ const DynamicModalFields = ({
 								}
 								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
 								checked={isTrackLink}
-								onChange={() => setIsTrackLink()}
+								onChange={() => setLinkInput(linkInput, !isTrackLink)}
 							/>
 						</FormGroup>
 						<Box>

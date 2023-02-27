@@ -72,6 +72,7 @@ export const getTemplateIdByName = (
 	return (
 		savedTemplateList?.find(
 			(template: savedTemplateListProps) =>
+				template.FriendlyTemplateName === templateName ||
 				template.TemplateName === templateName
 		)?.TemplateId || null
 	);
@@ -81,11 +82,19 @@ export const getTemplateNameById = (
 	savedTemplateList: savedTemplateListProps[],
 	templateId: string
 ) => {
-	return (
-		savedTemplateList?.find(
-			(template: savedTemplateListProps) => template.TemplateId === templateId
-		)?.TemplateName || null
+	const template = savedTemplateList?.find(
+		(template: savedTemplateListProps) => template.TemplateId === templateId
 	);
+	if (template) {
+		if (
+			template?.FriendlyTemplateName &&
+			template?.FriendlyTemplateName?.length > 0
+		) {
+			return template?.FriendlyTemplateName;
+		}
+		return template?.TemplateName;
+	}
+	return '';
 };
 
 export const getTemplateName = (template: savedTemplateListProps) => {

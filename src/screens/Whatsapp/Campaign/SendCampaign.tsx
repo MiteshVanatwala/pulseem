@@ -451,7 +451,9 @@ const SendCampaign = ({
 			}
 			await onCampaignSave(false, [createdGroupData?.payload]);
 		} else {
-			setGroupSendValidationErrors(['Group name - required field']);
+			setGroupSendValidationErrors([
+				translator('whatsappCampaign.selectGroup'),
+			]);
 			setIsValidationAlert(true);
 		}
 	};
@@ -553,58 +555,53 @@ const SendCampaign = ({
 		}
 	};
 	const validateSendSetting = () => {
+		let isValidated: boolean = true;
+		let validationErrors: string[] = [];
+		if (selectedGroups?.length === 0) {
+			validationErrors.push(translator('group.zeroSelected'));
+			isValidated = false;
+		}
 		if (sendType === '1' || sendType === '2' || sendType === '3') {
-			if (sendType === '1') {
-				return true;
+			if (sendType === '1' && isValidated) {
+				isValidated = true;
 			}
 			if (sendType === '2') {
-				if (sendDate) {
-					return true;
+				if (sendDate && isValidated) {
+					isValidated = true;
 				} else {
-					setGroupSendValidationErrors(['Date and Time - required field']);
-					setIsValidationAlert(true);
-					return false;
+					validationErrors.push(translator('whatsappCampaign.timeAndDate'));
+					isValidated = false;
 				}
 			}
-			console.log('sendTime::', sendTime);
-			if (sendType === '3') {
-				let errors: string[] = [];
-				let isValidated: boolean = true;
-				if (!sendTime) {
-					errors?.push('Time - required field');
+			if (sendType === '3' && isValidated) {
+				if (
+					!sendTime ||
+					daysBeforeAfter === '' ||
+					spectialDateFieldID === '0'
+				) {
+					validationErrors?.push(translator('whatsappCampaign.timeAndDate'));
 					isValidated = false;
 				}
-				if (daysBeforeAfter === '') {
-					errors?.push('Days - required field');
-					isValidated = false;
-				}
-				if (spectialDateFieldID === '0') {
-					errors?.push('Special Day - required field');
-					isValidated = false;
-				}
-				if (!isValidated) {
-					setGroupSendValidationErrors(errors);
-					setIsValidationAlert(true);
-				}
-				return isValidated;
 			}
 		} else {
-			setGroupSendValidationErrors([
-				'When would you like to send? - required field',
-			]);
-			setIsValidationAlert(true);
-			return false;
+			validationErrors.push(translator('whatsappCampaign.timeAndDate'));
+			isValidated = false;
 		}
+		if (!isValidated) {
+			setGroupSendValidationErrors(validationErrors);
+			setIsValidationAlert(true);
+		}
+		return isValidated;
 	};
 
 	const onSummarySend = async () => {
+		setIsSummaryModal(false);
 		setIsLoader(true);
 		if (campaignID) {
 			const { payload: sendCampaignData }: ApiSendCampaign =
 				await dispatch<any>(sendCampaign({ WACampaignID: Number(campaignID) }));
 			setIsLoader(false);
 			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
-				setIsSummaryModal(false);
 				setIsSendCampaignSuccessOpen(true);
 			} else {
 				sendCampaignData?.Message

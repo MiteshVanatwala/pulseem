@@ -33,6 +33,7 @@ import {
 	phoneNumberAPIProps,
 	CampaignDetailById,
 	ApiQuickSend,
+	SubAccountSettings,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -94,6 +95,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
+	);
+
+	const SubAccountSettings = useSelector(
+		(state: {
+			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.commonSettings?.SubAccountSettings
 	);
 	const websiteField = [
 		{
@@ -161,6 +168,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
+	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
 	const [fileData, setFileData] = useState<{
@@ -188,6 +196,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
+
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
@@ -240,6 +249,24 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
+		const updatedVariableWithSiteLink = variable?.map((variable) => {
+			if (variable?.FieldTypeId === 3 && variable?.IsStatastic) {
+				if (checkSiteTrackingLink(variable?.VariableValue)) {
+					return {
+						...variable,
+						VariableValue: variable?.VariableValue.includes('?')
+							? variable?.VariableValue + '&ref=##ClientIDEnc##'
+							: variable?.VariableValue + '?ref=##ClientIDEnc##',
+					};
+				}
+				return variable;
+			}
+			return variable;
+		});
+		setUpdatedDynamicVariable(updatedVariableWithSiteLink);
+	};
+
 	const setCampaignDetail = (templateList: savedTemplateListProps[]) => {
 		if (campaignID && templateList) {
 			(async () => {
@@ -249,7 +276,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
-					setUpdatedDynamicVariable(campaignData?.Data?.VariableValues);
+					setUpdatedDynamicVariableWithLinks(
+						campaignData?.Data?.VariableValues
+					);
 					setlinkCount(
 						campaignData?.Data?.VariableValues?.filter(
 							(variable) => variable?.FieldTypeId === 3
@@ -307,6 +336,25 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setTestSendOneContact('');
 		setIsTestSend(false);
 		setSelectedTestGroup([]);
+	};
+
+	const checkSiteTrackingLink = (text: string) => {
+		if (
+			SubAccountSettings?.DomainAddress &&
+			SubAccountSettings?.DomainAddress !== ''
+		) {
+			const domainName = SubAccountSettings?.DomainAddress.replace(
+				'https://',
+				''
+			)
+				.replace('http://', '')
+				.replace('www.', '');
+			if (text.includes(domainName)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
 	};
 
 	const resetToast = () => {
@@ -432,12 +480,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		if (campaignName?.length <= 0 || savedTemplate?.length <= 0) {
 			let validationErrors = [];
 			if (campaignName?.length <= 0 && savedTemplate?.length <= 0) {
-				validationErrors.push('Campaign name - required fields');
-				validationErrors.push('Template for sending - required fields');
+				validationErrors.push(translator('whatsappCampaign.setCampaign'));
+				validationErrors.push(translator('whatsappCampaign.selectTemplate'));
 			} else if (campaignName?.length <= 0) {
-				validationErrors.push('Campaign name - required fields');
+				validationErrors.push(translator('whatsappCampaign.setCampaign'));
 			} else if (savedTemplate?.length <= 0) {
-				validationErrors.push('Template for sending - required fields');
+				validationErrors.push(translator('whatsappCampaign.selectTemplate'));
 			}
 			setGroupSendValidationErrors([...validationErrors]);
 			setShowValidation(true);
@@ -463,9 +511,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			} else {
 				deleteData?.payload?.Message
 					? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Message,
-					})
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Message,
+					  })
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		} else {
@@ -501,9 +549,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				} else {
 					quickSendData?.Message
 						? setToastMessage({
-							...ToastMessages.ERROR,
-							message: quickSendData?.Message,
-						})
+								...ToastMessages.ERROR,
+								message: quickSendData?.Message,
+						  })
 						: setToastMessage(ToastMessages.ERROR);
 				}
 				setIsTestGroupModal(false);
@@ -517,7 +565,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onDynamcFieldModalSave = (
 		updatedDynamicVariable: updatedVariable[]
 	) => {
-		setUpdatedDynamicVariable(updatedDynamicVariable);
+		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
 		setlinkCount(
 			updatedDynamicVariable?.filter((variable) => variable?.FieldTypeId === 3)
 				?.length
@@ -542,8 +590,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onSaveCampaign = async (showSuccess: boolean = true) => {
 		if (validateSaveCampaign()) {
+			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
-
+			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
@@ -564,8 +613,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onSubmit = async (e: BaseSyntheticEvent) => {
 		e.preventDefault();
 		if (validateSaveCampaign()) {
+			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
-
+			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
 					`/react/whatsapp/campaign/edit/page2/${data.Data.WACampaignId}`
@@ -691,7 +741,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													) =>
 														(field.fieldName === 'whatsapp.websiteButtonText' ||
 															field.fieldName ===
-															'whatsapp.phoneButtonText') && (
+																'whatsapp.phoneButtonText') && (
 															<Box
 																key={button.id}
 																className={
@@ -925,11 +975,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							onFormButtonClick(buttonName)
 						}
 					/>
-				</Grid>
+			</Grid>
 			</form>
 
 			<Loader isOpen={isLoader} showBackdrop={true} />
-
 			<DynamicModal
 				classes={classes}
 				isDynamcFieldModal={isDynamcFieldModal}
@@ -941,6 +990,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onDynamcFieldModalSave(updatedDynamicVariable)
 				}
 				dynamicVariable={updatedDynamicVariable}
+				isTrackLink={isTrackLink}
+				setIsTrackLink={setIsTrackLink}
 			/>
 
 			<ValidationAlert
@@ -969,8 +1020,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				isQuickReplyOpen={isQuickReplyOpen}
 				closeQuickReply={() => setIsQuickReplyOpen(false)}
 				quickReplyButtons={quickReplyButtons}
-				setQuickReplyButtons={() => { }}
-				updateTemplateData={() => { }}
+				setQuickReplyButtons={() => {}}
+				updateTemplateData={() => {}}
 				templateButtons={templateData.templateButtons}
 				isEditable={false}
 			/>
@@ -982,8 +1033,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
 				phoneNumberField={phoneNumberField}
 				websiteField={websiteField}
-				addMore={() => { }}
-				updateTemplateData={() => { }}
+				addMore={() => {}}
+				updateTemplateData={() => {}}
 				isEditable={false}
 			/>
 
