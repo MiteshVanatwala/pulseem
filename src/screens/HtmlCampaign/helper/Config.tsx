@@ -56,7 +56,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
             defaultRows: false,
         },
         workspace:{
-            type: 'mixed',
+            type: 'default',
         },
         hooks: {
             getRows: {

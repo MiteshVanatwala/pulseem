@@ -27,7 +27,7 @@ import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import Gallery from '../../components/Gallery/Gallery.component';
-import { PulseemFolderType } from "../../model/PulseemFields/Fields";
+import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
 
@@ -40,6 +40,7 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { getCookie } from '../../helpers/Functions/cookies';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -260,6 +261,10 @@ const CampaignEditor = ({ classes, ...props }) => {
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
+      const accountFeatures = getCookie("accountFeatures")
+      if (accountFeatures.indexOf(PulseemFeatures.BEE_AMP) > -1) {
+        config.workspace.type = 'mixed';
+      }
 
       initTags();
 
