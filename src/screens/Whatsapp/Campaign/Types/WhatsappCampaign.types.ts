@@ -679,3 +679,10 @@ export type ApiQuickSendPayload = {
 export type ApiQuickSend = {
 	payload: ApiQuickSendPayload;
 };
+
+export type SiteTrackAlertModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	onOkay: () => void;
+};

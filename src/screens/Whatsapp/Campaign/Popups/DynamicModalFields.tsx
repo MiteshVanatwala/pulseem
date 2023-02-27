@@ -16,8 +16,11 @@ import {
 	DynamicModalFieldsProps,
 	coreProps,
 	landingPageDataProps,
+	SubAccountSettings,
 } from '../Types/WhatsappCampaign.types';
 import { useSelector } from 'react-redux';
+import SiteTrackAlert from './SiteTrackAlert';
+import { checkSiteTrackingLink } from '../../Common';
 
 const DynamicModalFields = ({
 	classes,
@@ -41,6 +44,26 @@ const DynamicModalFields = ({
 }: DynamicModalFieldsProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
+	const SubAccountSettings = useSelector(
+		(state: {
+			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.commonSettings?.SubAccountSettings
+	);
+	const [isSiteTrack, setIsSiteTrack] = useState(false);
+
+	const onTrackLinkToggle = () => {
+		if (isTrackLink && checkSiteTrackingLink(SubAccountSettings, linkInput)) {
+			setIsSiteTrack(true);
+		} else {
+			setLinkInput(linkInput, !isTrackLink);
+		}
+	};
+
+	const onSiteTrackOkay = () => {
+		setIsSiteTrack(false);
+		setLinkInput(linkInput, !isTrackLink);
+	};
+
 	return (
 		<>
 			{activeDynamicButton?.includes('pField') && (
@@ -98,7 +121,7 @@ const DynamicModalFields = ({
 								}
 								disabled={linkInput?.includes('##WHATSAPPUnsubscribelink##')}
 								checked={isTrackLink}
-								onChange={() => setLinkInput(linkInput, !isTrackLink)}
+								onChange={() => onTrackLinkToggle()}
 							/>
 						</FormGroup>
 						<Box>
@@ -191,6 +214,13 @@ const DynamicModalFields = ({
 					</Grid>
 				</Grid>
 			)}
+
+			<SiteTrackAlert
+				classes={classes}
+				isOpen={isSiteTrack}
+				onClose={() => setIsSiteTrack(false)}
+				onOkay={() => onSiteTrackOkay()}
+			/>
 		</>
 	);
 };

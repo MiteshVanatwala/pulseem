@@ -12,6 +12,7 @@ import {
 	templatePreviewDataProps,
 } from './Editor/Types/WhatsappCreator.types';
 import uniqid from 'uniqid';
+import { SubAccountSettings } from './Campaign/Types/WhatsappCampaign.types';
 
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -259,4 +260,24 @@ export const getTemplatePreviewData = (
 		}
 	}
 	return templatePreviewData;
+};
+
+export const checkSiteTrackingLink = (
+	SubAccountSettings: SubAccountSettings,
+	text: string
+): boolean => {
+	if (
+		SubAccountSettings?.DomainAddress &&
+		SubAccountSettings?.DomainAddress !== ''
+	) {
+		const domainName = SubAccountSettings?.DomainAddress.replace('https://', '')
+			.replace('http://', '')
+			.replace('www.', '');
+		if (text.includes(domainName)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	return false;
 };
