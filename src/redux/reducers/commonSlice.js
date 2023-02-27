@@ -133,7 +133,7 @@ export const commonSlice = createSlice({
         const data = payload?.Data;
         state.commonSettings = data;
         setCookie("accountSettings", {
-          Account: settings.Account,
+          Account: data.Account,
           AccountFeatures: data?.Account?.AccountFeatures,
           DefaultLinkChars: data?.DefaultLinkChars,
           DefaultCellNumber: data?.DefaultCellNumber,
