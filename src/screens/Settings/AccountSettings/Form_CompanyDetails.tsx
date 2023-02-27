@@ -45,7 +45,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -469,7 +469,7 @@ const FORM_COMPANY_DETAILS = ({
             </Grid>
             <Grid item xs={12} sm={6} md={8} className={classes.mt3}>
               <Box style={{
-                display: 'flex',
+                display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
                 height: '100%'

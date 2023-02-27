@@ -1735,7 +1735,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   carouselContainer: {
     display: 'flex',
     flexWrap: 'nowrap',
-    overflow: 'hidden',
+    overflowX: 'hidden',
     height: 'min-content'
   },
   carouselItem: {
