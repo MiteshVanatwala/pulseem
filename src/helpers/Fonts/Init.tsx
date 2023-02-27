@@ -14,7 +14,7 @@ export const FONTS = () => {
         customFonts: []
     } as font;
 
-    if (accountSettings.AccountFeatures.indexOf(44) > -1) { // EnableBeeGoogleFonts
+    if (accountSettings?.AccountFeatures?.indexOf(44) > -1) { // EnableBeeGoogleFonts
         allowedFonts.customFonts.push(googleFonts.Rubik);
     }
 
