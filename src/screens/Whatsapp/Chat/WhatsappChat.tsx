@@ -54,6 +54,7 @@ import {
 import {
 	apiStatus,
 	buttonTypes,
+	fieldNameIds,
 	resetToastData,
 	whatsappChatStatuses,
 	whatsappRoutes,
@@ -494,7 +495,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
-			if (variable?.FieldTypeId === 3 && variable?.IsStatastic) {
+			if (
+				variable?.FieldTypeId === fieldNameIds?.LINK &&
+				variable?.IsStatastic
+			) {
 				if (checkSiteTrackingLink(variable?.VariableValue)) {
 					return {
 						...variable,
