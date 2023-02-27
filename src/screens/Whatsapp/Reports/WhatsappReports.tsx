@@ -212,10 +212,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			state: {
 				...CLIENT_CONSTANTS.QUERY_PARAMS,
 				CampaignID: '537500',
-				ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+				// ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
 				PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
 				ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
-				PageProperty: GetPageNyName('reports/NewsletterReports'),
+				PageProperty: GetPageNyName('reports/WhatsappReports'),
 			},
 		});
 	};
@@ -470,7 +470,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											classes={cellStyle}
 											className={classes.flex2}
 											align='center'>
-											<>{}</>
+											<>{ }</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
@@ -556,9 +556,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 													</Grid>
 													<Grid
 														item
-														className={`${
-															report?.UniqueClicksCount >= 1 && 'underline'
-														}`}>
+														className={`${report?.UniqueClicksCount >= 1 && 'underline'
+															}`}>
 														{getTableTypographyCells(
 															translator('whatsappReport.unique'),
 															report.UniqueClicksCount,
@@ -586,9 +585,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												<Grid container justifyContent='space-around'>
 													<Grid
 														item
-														className={`${
-															report?.Removed >= 1 && 'underline'
-														}`}>
+														className={`${report?.Removed >= 1 && 'underline'
+															}`}>
 														{getTableTypographyCells(
 															translator('common.Removed'),
 															report.Removed,
