@@ -238,6 +238,12 @@ export const getRoutes = (
           href: `${sitePrefix}MmsCampaigns`,
           isShow: true,
         },
+        {
+          key: "smsResponse",
+          title: t("master.smsReplies"),
+          href: `${sitePrefix}reports/SmsReplies`,
+          isShow: false,
+        },
       ],
     },
     {
