@@ -1,35 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
+  DeleteIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, Switch, SearchField
+  TablePagination, ManagmentIcon, DateField, RestorDialogContent, Switch, SearchField
 } from '../../../components/managment/index'
 import {
   getAutomationsData, deleteAutomations, duplicateAutomations, restoreAutomations, activateAutomation
 } from '../../../redux/reducers/automationsSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { Title } from '../../../components/managment/Title';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
+  const Redirect = useNavigate();
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { automationsData, automationsDataError, automationsDeletedData } = useSelector(state => state.automations)
+  const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -46,9 +49,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch()
-  const history = useCtrlHistory()
   moment.locale(language)
-
 
   const getData = async () => {
     await dispatch(getAutomationsData())
@@ -59,17 +60,6 @@ const AutomationsManagnentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('automations.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('')
@@ -99,8 +89,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
           const lastUpdate = ActivatedOn ?
             moment(ActivatedOn, dateFormat).valueOf()
             : moment(ModifiedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -428,10 +418,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
         <CustomTooltip
           arrow
           isSimpleTooltip={false}
-          title={row.Name}
           classes={classes}
           interactive={true}
-          arrow={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
           text={row.Name}
@@ -597,13 +585,17 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
       getData()
       if (isEdit)
-        window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
+        Redirect({ url: `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`, openNewTab: true })
     } catch (err) {
-      console.log('AutomationManagment.ChangeStatus', err)
       setDialogType({
         type: "statusError",
         data: data.ID
       })
+      dispatch(sendToTeamChannel({
+        MethodName: 'handleActiveChange',
+        ComponentName: 'AutomationsManagement.js',
+        Text: err
+      }));
     }
     handleClose()
   }
@@ -794,21 +786,21 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (
     <DefaultScreen
       currentPage='automations'
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
+      containerClass={classes.management}>
+      <Title Text={t('automations.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

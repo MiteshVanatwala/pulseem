@@ -111,5 +111,6 @@
   "clientName": "Client Name",
   "filterSearch": "Apply filter",
   "closeFilterSearch": "Close filter",
-  "virtualNumber": "Virtual Number"
+  "virtualNumber": "Virtual Number",
+  "errorReason": "Error reason"
 }

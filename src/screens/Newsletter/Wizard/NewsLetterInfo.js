@@ -1,30 +1,30 @@
 import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { IoMdImages } from 'react-icons/io';
 import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, Checkbox, FormControlLabel } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
+import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import { Dialog } from "../../../components/managment/Dialog";
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
-import { makeId } from '../../../helpers/functions';
+import { RandomID } from '../../../helpers/Functions/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
-import { getCookie, setCookie } from '../../../helpers/cookies';
+import { getCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { BiSave } from 'react-icons/bi'
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { setCookie } from '../../../helpers/Functions/cookies';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -451,7 +451,7 @@ const NewsLetterInfo = ({ classes }) => {
 
                 if (isContiue) {
                     const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
-                    let redirectUrl = isBeeEditor ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
+                    let redirectUrl = isBeeEditor ? `/react/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
                             redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
@@ -476,10 +476,10 @@ const NewsLetterInfo = ({ classes }) => {
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
                     }
                     else {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}`)
                     }
                     initFilesAndCredits(saveInfo.CampaignID);
                 }
@@ -761,7 +761,7 @@ const NewsLetterInfo = ({ classes }) => {
                     FileName: fileName,
                     FolderType: PulseemFolderType.DOCUMENT,
                     FileURL: file,
-                    ID: makeId()
+                    ID: RandomID()
                 }
                 existsFiles.push(newFile);
             }
@@ -773,7 +773,6 @@ const NewsLetterInfo = ({ classes }) => {
         setIsSilenceUpdated(true);
         const response = await dispatch(getCreditsByFileTotalBytes({ ...campaingnValues, FilesProperties: [...existsFiles] }));
         handleGetNewsletterResponse(response.payload)
-
     }
     const showGalleryModal = () => {
         if (showGallery) {
@@ -781,7 +780,7 @@ const NewsLetterInfo = ({ classes }) => {
             dialog = renderGalleryDialog();
 
             return (
-                <Dialog
+                <BaseDialog
                     maxHeight="calc(70vh)"
                     disableBackdropClick={true}
                     style={{ minHeight: 400 }}
@@ -792,16 +791,13 @@ const NewsLetterInfo = ({ classes }) => {
                     onConfirm={handleGalleryConfirm}
                     {...dialog}>
                     {dialog.content}
-                </Dialog>
+                </BaseDialog>
             );
         }
     }
     const renderGalleryDialog = () => {
         return {
             showDivider: false,
-            icon: (
-                <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-            ),
             title: t("common.documentGallery"),
             content: (
                 <Gallery
@@ -1043,7 +1039,7 @@ const NewsLetterInfo = ({ classes }) => {
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <Dialog
+            dialogType && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onCancel={() => setDialogType(null)}
@@ -1051,7 +1047,7 @@ const NewsLetterInfo = ({ classes }) => {
                 renderButtons={currentDialog.renderButtons || null}
                 {...currentDialog}>
                 {currentDialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
 
@@ -1105,13 +1101,10 @@ const NewsLetterInfo = ({ classes }) => {
                     additionalButtons={renderButtons()}
                 />
             </Box>
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={confirmExit}
                 title={t("campaigns.GridButtonColumnResource2.confirmExit")}
-                icon={<Box className={classes.dialogAlertIcon}>
-                    !
-                </Box>}
                 showDivider={true}
                 onClose={() => handleExit(false)}
                 onCancel={() => handleExit(null)}
@@ -1125,14 +1118,11 @@ const NewsLetterInfo = ({ classes }) => {
                         {t("campaigns.GridButtonColumnResource2.confirmExitText")}
                     </Typography>
                 </Box>
-            </Dialog>
-            <Dialog
+            </BaseDialog>
+            <BaseDialog
                 classes={classes}
                 open={confirmDelete}
                 title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
-                icon={<Box className={classes.dialogAlertIcon}>
-                    !
-                </Box>}
                 showDivider={true}
                 onClose={() => setConfirmDelete(false)}
                 onCancel={() => setConfirmDelete(false)}
@@ -1145,11 +1135,11 @@ const NewsLetterInfo = ({ classes }) => {
                         {t("campaigns.GridButtonColumnResource2.ConfirmText")}
                     </Typography>
                 </Box>
-            </Dialog>
+            </BaseDialog>
             {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
             <Loader isOpen={showLoader} />
         </DefaultScreen >
     )
 }
 
-export default NewsLetterInfo
+export default NewsLetterInfo;

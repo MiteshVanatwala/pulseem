@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem, InputLabel
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem
 } from '@material-ui/core';
 import { TablePagination, DateField } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
@@ -16,13 +16,11 @@ import { getNewsletterDirectReport, getArchiveDirectReport } from '../../../redu
 import { reactivateEmail } from '../../../redux/reducers/clientSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { emailStatusToString, emailStatusColor } from '../../../helpers/functions';
+import { EmailStatus } from '../../../helpers/Constants';
+import { ConvertColorStatus, ConvertEmailStatusText, EllipsisText, SourceType } from '../../../helpers/UI/TableText';
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
-import { shortStr } from '../../../helpers/StringHelper';
 
 const RenderRow = ({
   classes,
@@ -45,9 +43,9 @@ const RenderRow = ({
       text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
     }
     if (dataType === 'status') {
-      text = t(emailStatusToString(data))
+      text = t(ConvertEmailStatusText(data))
       return (
-        <Typography style={{ color: emailStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+        <Typography style={{ color: ConvertColorStatus(data, SourceType.EMAIL), fontWeight: 600 }}>{text}</Typography>
       )
     }
 
@@ -94,7 +92,7 @@ const RenderRow = ({
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1, classes.ellipsisText)}
                     title={row.ExternalRef ? row.ExternalRef : t('report.None')}>
-                    {row.ExternalRef ? shortStr(row.ExternalRef, 25) : t('report.None')
+                    {row.ExternalRef ? EllipsisText(row.ExternalRef, 25) : t('report.None')
                     }</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>
                     {row.Attachments ? row.Attachments.split('##').map((link, index) => {
@@ -245,7 +243,7 @@ const DirectEmailReportTab = ({
       PageSize: rowsPerPage
     }
     let searchObjects = {};
-    Object.keys(param).map(item => {
+    Object.keys(param).forEach(item => {
       if (param[item]) {
         searchObjects[item] = param[item];
       }
@@ -347,7 +345,7 @@ const DirectEmailReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', Recipient = '', Reference = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', Reference = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
 
     return (
       <>
@@ -588,7 +586,6 @@ const DirectEmailReportTab = ({
       FromEmail,
       Status
     } = row
-
     return (
       <TableRow
         key={row.ID}
@@ -600,8 +597,8 @@ const DirectEmailReportTab = ({
               {renderNameCell({ SendID, Name, SendDate, UpdateDate, Status, CreatedDate })}
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-              <Typography style={{ color: emailStatusColor(Status) }}>
-                {t(emailStatusToString(Status))}
+              <Typography style={{ color: ConvertColorStatus(Status, SourceType.EMAIL) }}>
+                {t(ConvertEmailStatusText(Status))}
               </Typography>
             </Box>
           </Box>

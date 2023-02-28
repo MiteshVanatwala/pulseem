@@ -20,17 +20,12 @@ import ResponseModal from './modals/ResponseModal'
 import NoCreditsModal from './modals/NoCreditsModal'
 import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
-import { GiExitDoor } from 'react-icons/gi'
-import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
-import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
-import { IoMdImages } from 'react-icons/io';
-import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
@@ -44,6 +39,7 @@ import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -178,11 +174,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('common.systemNotice'),
       message: t("common.autoLogoutMessage"),
-      icon: (
-        <AiOutlineExclamationCircle
-          style={{ fontSize: 30, color: "#fff" }}
-        />
-      ),
       showDefaultButtons: false,
       renderButtons: () =>
       (<Button
@@ -361,7 +352,8 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
-          window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
           return false;
         }
         else if (saveRef.current?.showAnimation) {
@@ -392,7 +384,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
       message: t("mainReport.confirmSure"),
-      icon: <BsTrash />,
       onConfirm: () => deleteNewsletter(),
       onCancel: () => setDialog(null),
       onClose: () => setDialog(null)
@@ -412,7 +403,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('mainReport.handleExitTitle'),
       message: t("mainReport.leaveCampaign"),
-      icon: <GiExitDoor />,
       onClose: () => handleExitCampaign(false),
       onConfirm: () => handleExitCampaign(true),
       onCancel: () => setDialog(null)
@@ -548,9 +538,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (showGallery) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-        ),
         title: t("common.imageGallery"),
         content: (
           <Gallery
@@ -563,7 +550,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -574,7 +561,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           onConfirm={() => { setShowGallery(false); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -582,9 +569,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (showDocs) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-        ),
         title: t("common.documentGallery"),
         content: (
           <Gallery
@@ -597,7 +581,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -608,7 +592,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }

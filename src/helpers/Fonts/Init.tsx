@@ -1,4 +1,4 @@
-import { getCookie } from '../cookies';
+import { getCookie } from '../Functions/cookies';
 import { googleFonts } from './GoogleFonts';
 
 interface font {

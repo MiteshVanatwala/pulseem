@@ -6,8 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
-import { exportFile } from '../../../../helpers/exportFromJson';
-import { ClientStatus } from '../../../../helpers/PulseemArrays';
+import { ClientStatus } from '../../../../helpers/Constants';
 import { EditIcon, ExportIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
@@ -16,10 +15,11 @@ import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRa
 import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
-import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
-import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box } from '@material-ui/core'
+import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
+import { DeletePropertyFromArrayObject, HandleExportData, ReplaceNull } from '../../../../helpers/Export/ExportHelper';
+import { ExportFile } from '../../../../helpers/Export/ExportFile';
 
 
 const SmsReplies = ({ classes, ...other }) => {
@@ -142,23 +142,39 @@ const SmsReplies = ({ classes, ...other }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setShowLoader(true);
-        let exportData = await dispatch(getSmsReplies({ ...request, IsExport: true }));
-        let orderList = exportData?.payload;
-        orderList = preferredOrder(orderList?.Data, Object.keys(exportColumnHeader));
-        orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
-        orderList = replaceNull(orderList, 'FirstName', '');
-        orderList = replaceNull(orderList, 'LastName', '');
-        orderList = replaceNull(orderList, 'CellPhone', '');
-        orderList = replaceNull(orderList, 'CampaignName', '');
+        let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
+        let finalData = response?.payload;
+        finalData = ReplaceNull(finalData, 'FirstName', '');
+        finalData = ReplaceNull(finalData, 'LastName', '');
+        finalData = ReplaceNull(finalData, 'CellPhone', '');
+        finalData = ReplaceNull(finalData, 'CampaignName', '');
+        finalData = DeletePropertyFromArrayObject(finalData, 'Status');
 
-        orderList = await formatDateTime(orderList);
-        exportFile({
-            data: orderList,
-            fileName: `ResponsesReport${id ? '_' + id : ''}`,
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
-        setShowLoader(false)
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusDescription: true,
+            Statuses: ClientStatus.Sms,
+            ReplaceClientStatus: true,
+            ReplaceNull: true,
+            Order: Object.keys(exportColumnHeader)
+        };
+
+        try {
+            const result = await HandleExportData(finalData, exportOptions);
+
+            ExportFile({
+                data: result,
+                fileName: `ResponsesReport${id ? '_' + id : ''}`,
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (e) {
+            console.log(e);
+        }
+        finally {
+            setShowLoader(false);
+        }
     }
 
     const renderTable = () => {

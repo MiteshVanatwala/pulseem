@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer,
   TableCell, Link, FormControl, Select, MenuItem,
-  TableHead, TableRow, TextField, Typography, TableBody, InputLabel
+  TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
 import {
   TablePagination, DateField
@@ -17,11 +17,10 @@ import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/re
 import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/PulseemArrays';
-import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
+import { SmsStatus } from '../../../helpers/Constants';
+import { ConvertSmsStatusText, ConvertColorStatus, SourceType } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import { useSelector } from 'react-redux';
 
 const DirectSMSReportTab = ({
@@ -53,7 +52,7 @@ const DirectSMSReportTab = ({
   const handleSearch = async () => {
     setLoader(true);
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null, ShowContent = false } = sms || {};
+    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
     const param = {
       FromDate,
       ToDate,
@@ -68,7 +67,7 @@ const DirectSMSReportTab = ({
       ShowContent: sms.ShowContent ?? showContent
     }
     let searchObjects = {};
-    Object.keys(param).map(item => {
+    Object.keys(param).forEach(item => {
       if (param[item]) {
         searchObjects[item] = param[item];
       }
@@ -109,9 +108,9 @@ const DirectSMSReportTab = ({
       text = `${text.format('DD/MM/YYYY HH:mm')}`
     }
     if (dataType === 'status') {
-      text = t(smsStatusToString(text));
+      text = t(ConvertSmsStatusText(text));
       return (
-        <Typography style={{ color: smsStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+        <Typography style={{ color: ConvertColorStatus(data, SourceType.SMS), fontWeight: 600 }}>{text}</Typography>
       )
     }
 
@@ -564,8 +563,8 @@ const DirectSMSReportTab = ({
               {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-              <Typography style={{ color: smsStatusColor(STATUS) }}>
-                {t(smsStatusToString(STATUS))}
+              <Typography style={{ color: ConvertColorStatus(STATUS, SourceType.SMS) }}>
+                {t(ConvertSmsStatusText(STATUS))}
               </Typography>
             </Box>
           </Box>

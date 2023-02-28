@@ -6,18 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
-import { exportFile } from '../../../../helpers/exportFromJson';
-import { ClientStatus } from '../../../../helpers/PulseemArrays';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import { getInboundReport } from '../../../../redux/reducers/whatsappSlice';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportIcon } from '../../../../assets/images/managment/index';
 import { TablePagination } from '../../../../components/managment/index';
-import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../../helpers/exportHelper';
 import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
-import { renderHtml } from '../../../../helpers/utils';
+import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { ImWhatsapp } from 'react-icons/im';
+import { ExportFile } from '../../../../helpers/Export/ExportFile';
+import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
 
 const WhatsappInbound = ({ classes }) => {
     const dispatch = useDispatch();
@@ -112,11 +111,20 @@ const WhatsappInbound = ({ classes }) => {
         setShowLoader(true);
         request.IsExport = true;
         const response = await dispatch(getInboundReport(request));
-        let orderList = preferredOrder(response?.payload?.Data, Object.keys(exportColumnHeader));
-        orderList = await formatDateTime(orderList);
-        exportFile({
-            data: orderList,
-            fileName: `ResponsesReport${id ? '_' + id : ''}`,
+        let orderList = response?.payload?.Data;
+
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ReplaceNull: true,
+            Order: Object.keys(exportColumnHeader)
+        };
+
+        const result = await HandleExportData(orderList, exportOptions);
+
+        ExportFile({
+            data: result,
+            fileName: `Whatsapp_InboundReport`,
             exportType: formatType,
             fields: exportColumnHeader
         });
@@ -310,7 +318,7 @@ const WhatsappInbound = ({ classes }) => {
                 <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>) : <>
                 <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-                    <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
+                    <Typography style={{ fontSize: 30 }}>{RenderHtml(t('common.whatsappCommingSoon'))}</Typography>
                     <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
                 </Box>
             </>}

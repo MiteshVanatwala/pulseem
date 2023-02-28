@@ -12,7 +12,7 @@ import useCore from "../../../helpers/hooks/Core";
 import { getAccountSettings, updateDetails, updateSettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { Loader } from "../../../components/Loader/Loader";
-import { logout } from "../../../helpers/api";
+import { logout } from "../../../helpers/Api/PulseemReactAPI";
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import {
   MdArrowBackIos,
@@ -294,45 +294,62 @@ const AccountSettingsEditor = () => {
       </Box>
       {tfaEmailVerification && <VerificationDialog
         variant="emailTFA"
+        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
+        // @ts-ignore
         isOpen={tfaEmailVerification}
-        value={verificationStep > 0 && emailToVerify}
-        step={verificationStep}
+        Option={{
+          Step: verificationStep,
+          Value: verificationStep > 0 && emailToVerify
+        }}
         onClose={() => {
           setTfaEmailVerification(false);
           setVerificationStep(0);
         }}
       />}
       {emailVerificationPopup && <VerificationDialog
+        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="email"
+        // @ts-ignore
         isOpen={emailVerificationPopup}
-        value={verificationStep > 0 && emailToVerify}
-        step={verificationStep}
+        Option={{
+          Step: verificationStep,
+          Value: verificationStep > 0 && emailToVerify
+        }}
         onClose={() => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
         }} />}
       {tfaSmsVerification && <VerificationDialog
         variant="smsTFA"
+        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
+        // @ts-ignore
         isOpen={tfaSmsVerification}
-        value={verificationStep > 0 && cellphoneToVerify}
-        step={verificationStep}
+        // @ts-ignore
+        Option={{
+          Step: verificationStep,
+          Value: verificationStep > 0 && cellphoneToVerify
+        }}
         onClose={() => {
           setTfaSmsVerification(false);
           setVerificationStep(0);
         }}
       />}
       {smsVerificationPopup && <VerificationDialog
+        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
+        // @ts-ignore
         variant="sms"
-        value={verificationStep > 0 && cellphoneToVerify}
-        step={verificationStep}
+        Option={{
+          Step: verificationStep,
+          Value: verificationStep > 0 && cellphoneToVerify
+        }}
         isOpen={smsVerificationPopup}
         onClose={() => {
           setSmsVerificationPopup(false);

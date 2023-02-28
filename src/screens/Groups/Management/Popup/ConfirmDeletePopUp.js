@@ -1,18 +1,17 @@
 import PropTypes from 'prop-types';
-import clsx from "clsx";
 import {
     Typography,
     Box
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, handleDeleteGroup }) => {
 
     const { t } = useTranslation();
 
     return (
-        <Dialog
+        <BaseDialog
             classes={classes}
             open={isOpen}
             title={t("group.delete")}
@@ -31,7 +30,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
                     {t("group.deleteConfirm")}
                 </Typography>
             </Box>
-        </Dialog>
+        </BaseDialog>
     );
 };
 

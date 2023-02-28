@@ -2,6 +2,8 @@ import React, { useRef } from 'react';
 import clsx from 'clsx';
 import { Typography, Button, Box } from '@material-ui/core'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import useRedirect from '../../helpers/Routes/Redirect';
+
 
 export const ManagmentIcon = ({
   classes,
@@ -17,9 +19,11 @@ export const ManagmentIcon = ({
   href = '',
   type = '',
   text = '',
+  style= {},
   disableHover = false,
   onClick = () => null }) => {
   const buttonRef = useRef();
+  const Redirect = useRedirect();
 
   if (remove)
     return null
@@ -31,13 +35,21 @@ export const ManagmentIcon = ({
         disabled={!!disable || !!hide}
         size='small'
         style={{ backgroundColor: disableHover ? 'transparent' : null }}
-        onClick={() => onClick(buttonRef)}
+        onClick={() => {
+          if (href) {
+            Redirect({ url: href });
+          }
+          else {
+            onClick(buttonRef)
+          }
+        }}
         className={clsx({
           [classes.managmentIconHide]: hide
         })}>
         <Box
           component={href ? 'a' : 'div'}
           href={href}
+          style={style}
           className={clsx(disable && classes.disabledCursor,
             classes.managmentIconContainer,
             rootClass

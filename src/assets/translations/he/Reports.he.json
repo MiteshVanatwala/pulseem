@@ -111,5 +111,6 @@
   "clientName": "שם לקוח",
   "filterSearch": "החל סינון",
   "closeFilterSearch": "סגור סינון",
-  "virtualNumber": "מספר וירטואלי"
+  "virtualNumber": "מספר וירטואלי",
+  "errorReason": "סיבת השגיאה"
 }

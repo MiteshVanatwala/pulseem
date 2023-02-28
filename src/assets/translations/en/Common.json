@@ -2,6 +2,7 @@
   "ActionCompleted": "Action Completed",
   "AddPersonalization": "Add Personalization",
   "All": "All",
+  "Default": "Default",
   "Clicked": "Clicked",
   "Copyrights": "##Year## © All Rights Reserved by Pulseem LTD",
   "DateFormat": "mm/dd/yy",
@@ -571,6 +572,7 @@
   "back": "Back",
   "clientSubscriptionResultTitle": "Subscribers of Landing page ",
   "SelectFormat": "Select format",
+  "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>",
   "saveTemplate": "Save template",
   "exit": "Exit",
   "phone": "Phone",
@@ -605,5 +607,7 @@
   "commingSoon": "Comming soon!",
   "whatsappCommingSoon": "Comming Soon!<br/>Sending Whatsapp messages<br/>via Pulseem",
   "xssError": "Html, Scripts or other then a normal string does not allowed!",
-  "remove": "Remove"
+  "remove": "Remove",
+  "backToHome": "To Home page",
+  "backToCampaigns": "To Campaigns"
 }

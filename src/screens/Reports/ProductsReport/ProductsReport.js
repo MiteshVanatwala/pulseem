@@ -17,11 +17,11 @@ import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { GetProductReports } from '../../../redux/reducers/reportSlice';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
-import { preferredOrder } from '../../../helpers/exportHelper';
-import { exportFile } from '../../../helpers/exportFromJson';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
-import { renderHtml } from '../../../helpers/functions';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -138,13 +138,25 @@ const ProductsReport = ({ classes }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialogType(null);
         setLoader(true);
-        let orderList = preferredOrder(exportPRData, Object.keys(exportColumnHeader));
-        exportFile({
-            data: orderList,
-            fileName: 'productsReport',
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
+
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            Order: Object.keys(exportColumnHeader)
+        };
+
+        try {
+            const result = await HandleExportData(exportPRData, exportOptions);
+            ExportFile({
+                data: result,
+                fileName: 'productsReport',
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
         setLoader(false);
     }
     //  COMPONENTS  //
@@ -428,7 +440,7 @@ const ProductsReport = ({ classes }) => {
             </Typography>
             <Divider />
             <Grid item xs={12}>
-                <Typography>{renderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
+                <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
             </Grid>
             {renderFilter()}
             {renderManagmentLine()}

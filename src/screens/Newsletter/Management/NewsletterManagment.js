@@ -3,38 +3,40 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip, FormControlLabel, Checkbox
+  Grid, Button, TextField, Box, Tooltip, Checkbox, FormControl, FormGroup, FormControlLabel
 } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles';
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
   GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField, RestorDialogContent
+  TablePagination, ManagmentIcon, DateField, PopMassage, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
 } from '../../../redux/reducers/newsletterSlice'
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { getCookie, setCookie } from '../../../helpers/cookies'
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import { Title } from '../../../components/managment/Title';
 import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
+import { setCookie } from '../../../helpers/Functions/cookies';
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -51,15 +53,16 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [copyRef, setCopyRef] = useState(null)
   const [restoreArray, setRestoreArray] = useState([])
   const [showLoader, setLoader] = useState(true);
-  const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
+  const [duplicateOptions, setDuplicateOptions] = useState([])
 
   moment.locale(language)
+  const [verificationDialog, setVerificationDialog] = useState(false)
 
   const getData = () => {
     dispatch(getNewslatterData())
@@ -71,17 +74,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -116,8 +108,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -163,8 +155,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
+          onKeyPress={(e) => { handleSearch(); handleKeyPress(e) }}
           onClick={handleSearch}
-          onKeyPress={handleKeyPress}
+          // onKeyPress={}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -232,13 +225,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const redirctToArchive = () => {
-    window.location = '/react/Campaigns/Archive'
-  }
-
   const handleVerificationDialog = () => {
 
-    setShowEmailVerDialog(true)
+    setVerificationDialog(true)
   }
 
   const renderManagmentLine = () => {
@@ -248,8 +237,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => {
-              navigate('/Campaigns/Create');
+            component="a"
+            href='/react/Campaigns/Create'
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/react/Campaigns/Create');
             }}
             className={clsx(
               classes.actionButton,
@@ -281,7 +273,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={redirctToArchive}
+            component="a"
+            href='/react/Campaigns/Archive'
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/react/Campaigns/Archive')
+            }}
           >
             {t('master.redirectToArchive')}
           </Button>
@@ -349,7 +346,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        href: `/react/Campaigns/SendSettings/${CampaignID}`
+        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -369,7 +367,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         onClick: () => {
           if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
-            navigate(`/Campaigns/editor/${CampaignID}?fromreact=true`)
+            navigate(`/react/Campaigns/editor/${CampaignID}?fromreact=true`)
           }
           else {
             window.location = `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`
@@ -534,12 +532,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
-  const HtmlTooltip = withStyles((theme) => ({
-    tooltip: {
-      maxWidth: 220
-    },
-  }))(Tooltip);
-
   const renderNameCell = (row) => {
     let date = null
     let text = ''
@@ -678,7 +670,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
     } else {
       setRestoreArray([...restoreArray, CampaignID])
     }
+  }
 
+  const handleDuplicateOptions = (option) => {
+    let tempArray = [...duplicateOptions]
+    if (tempArray.indexOf(option) > -1) {
+      tempArray = tempArray.filter((opt) => opt !== option)
+    }
+    else {
+      tempArray = [...tempArray, option]
+    }
+    setDuplicateOptions(tempArray)
   }
 
   const handleHideDuplicateCationMessage = (e) => {
@@ -844,30 +846,90 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
   })
 
-  const getDuplicateDialog = (data = '') => ({
+  const getDuplicateDialog = (data, campaignName) => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('campaigns.dialogDuplicateContent')}
-      </Typography>
+      <>
+        <Typography align='center' className={classes.mb5}>{t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `"${campaignName}"`)}</Typography>
+        <FormControl>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Groups)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Groups) > -1}
+                />
+              }
+              label={t("common.Groups")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Filters)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Filters) > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.filters")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.SendDate)}
+                  checked={duplicateOptions.indexOf(CloneOptions.SendDate) > -1}
+                />
+              }
+              label={t("sms.sendingTime")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.SmsMarketing)}
+                  checked={duplicateOptions.indexOf(CloneOptions.SmsMarketing) > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}
+                />
+              }
+              label={t("smsReport.pulseSending")}
+            />
+          </FormGroup>
+        </FormControl>
+      </>
+      // <Typography style={{ fontSize: 18 }}>
+      //   {t('campaigns.dialogDuplicateContent')}
+      // </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
       setPage(1)
-      await dispatch(duplicteCampaign(data))
+      //BUG:Duplicate option smust be included 
+      console.log(data.CampaignID);
+      await dispatch(duplicteCampaign({ CampaignID: data.CampaignID, CloneOptions: duplicateOptions }))
       getData()
     }
   })
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}
+    const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(data) });
 
     const dialogContent = {
       restore: getRestorDialog(data),
@@ -879,14 +941,14 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
         renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
 
@@ -895,15 +957,21 @@ const NewsletterManagnentScreen = ({ classes }) => {
       currentPage='newsletter'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
+      <Title Text={t('campaigns.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      {showEmailVerDialog && <VerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
+
+      <VerificationDialog
+        classes={classes}
+        isOpen={verificationDialog}
+        onClose={() => setVerificationDialog(false)}
+        onCancel={() => setVerificationDialog(false)}
+      />
       <Loader isOpen={showLoader} />
-    </DefaultScreen>
+    </DefaultScreen >
   )
 }
 

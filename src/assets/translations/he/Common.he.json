@@ -2,6 +2,7 @@
   "ActionCompleted": "פעולה בוצעה",
   "AddPersonalization": "הוסף פרסונליזציה",
   "All": "הכל",
+  "Default": "ברירת מחדל",
   "Clicked": "הקליקו",
   "Copyrights": "##Year## © כל הזכויות שמורות לפולסים בע\"מ",
   "DateFormat": "dd/mm/yy",
@@ -568,6 +569,7 @@
   "clientSubscriptionResultTitle": "הרשמות לפי ",
   "OpenTime": "זמן פתיחה",
   "SelectFormat": "בחר פורמט",
+  "pageNotFound": "<h1>אווופס... 404!</h1><br/><p>הלכת לאיבוד :(</p><p>אל דאגה. השארנו את שורת תפריט הניווט כאן למעלה, במיוחד בשבילך :)</p>",
   "saveTemplate": "שמור תבנית",
   "exit": "צא",
   "phone": "טלפון",
@@ -602,5 +604,7 @@
   "commingSoon": "בקרוב!",
   "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים",
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
-  "remove": "הסר"
+  "remove": "הסר",
+  "backToHome": "לדף הבית",
+  "backToCampaigns": "לניהול קמפיינים"
 }

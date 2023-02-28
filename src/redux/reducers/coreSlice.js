@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { setCookie, getCookie } from '../../helpers/cookies'
+import { setCookie, getCookie } from '../../helpers/Functions/cookies'
 const rtlLanguages = ['he', 'ar']
 
 export const coreSlice = createSlice({
@@ -15,13 +15,12 @@ export const coreSlice = createSlice({
     isWhiteLabel: false,
     companyName: '',
     rowsPerPage: getCookie('rpp') || 6,
-    isClal: false,
+    isClal: null,
     accountFeatures: null,
     cameFromSubAccount: null,
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
-    // smsOldVersion: false,
     accountSettings: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
@@ -30,7 +29,6 @@ export const coreSlice = createSlice({
   reducers: {
     setIsClal: (state, action) => {
       state.isClal = action.payload;
-      setCookie("isClal", action.payload);
     },
     setAccountFeatures: (state, action) => {
       const data = action.payload?.Data;
@@ -70,10 +68,7 @@ export const coreSlice = createSlice({
       state.isAdmin = payload.isAdmin
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
-    },
-    // setSmsOldVersion: (state, action) => {
-    //   state.smsOldVersion = action.payload
-    // }
+    }
   }
 })
 

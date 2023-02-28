@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const deleteFromGroups = createAsyncThunk(
   'client/DeleteFromGroups', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`client/DeleteFromGroups/${id}`);
+      const response = await PulseemReactInstance.delete(`client/DeleteFromGroups/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,8 +14,8 @@ export const deleteFromGroups = createAsyncThunk(
 export const removeEmailClient = createAsyncThunk(
   'client/RemoveEmailClient', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`client/RemoveEmailClient/${id}`);
-      return JSON.parse(response.data)
+      const response = await PulseemReactInstance.put(`client/RemoveEmailClient/${id}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -24,8 +24,8 @@ export const removeEmailClient = createAsyncThunk(
 export const removeSmsClient = createAsyncThunk(
   'client/RemoveSmsClient', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`client/RemoveSmsClient/${id}`);
-      return JSON.parse(response.data)
+      const response = await PulseemReactInstance.put(`client/RemoveSmsClient/${id}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -34,7 +34,7 @@ export const removeSmsClient = createAsyncThunk(
 export const reactivateEmail = createAsyncThunk(
   'client/ReactivateEmail', async (payload, thunkAPI) => {
     try {
-      const response = await instence.put(`client/ReactivateEmail`, payload);
+      const response = await PulseemReactInstance.put(`client/ReactivateEmail`, payload);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -44,7 +44,7 @@ export const reactivateEmail = createAsyncThunk(
 export const reactivateSms = createAsyncThunk(
   'client/ReactivateSms', async (payload, thunkAPI) => {
     try {
-      const response = await instence.put(`client/ReactivateSms`, payload);
+      const response = await PulseemReactInstance.put(`client/ReactivateSms`, payload);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -54,7 +54,7 @@ export const reactivateSms = createAsyncThunk(
 export const makeInvalidClients = createAsyncThunk(
   'client/SetInvalidClients', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/SetInvalidClients`, payload);
+      const response = await PulseemReactInstance.post(`client/SetInvalidClients`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -64,7 +64,7 @@ export const makeInvalidClients = createAsyncThunk(
 export const searchAllClients = createAsyncThunk(
   'client/Get', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/Get`, payload);
+      const response = await PulseemReactInstance.post(`client/Get`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -74,7 +74,7 @@ export const searchAllClients = createAsyncThunk(
 export const searchAdvancedClients = createAsyncThunk(
   'client/Search', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/Search`, payload);
+      const response = await PulseemReactInstance.post(`client/Search`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -84,7 +84,7 @@ export const searchAdvancedClients = createAsyncThunk(
 export const AddClientsToGroup = createAsyncThunk(
   'client/AddClientsToGroup', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/AddClientsToGroup`, payload);
+      const response = await PulseemReactInstance.post(`client/AddClientsToGroup`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -94,7 +94,7 @@ export const AddClientsToGroup = createAsyncThunk(
 export const getExportData = createAsyncThunk(
   'client/GetExportData', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post('client/GetExportData', payload);
+      const response = await PulseemReactInstance.post('client/GetExportData', payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -104,7 +104,7 @@ export const getExportData = createAsyncThunk(
 export const setUnsubscribedClients = createAsyncThunk(
   'client/SetUnsubscribedClients', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/SetUnsubscribedClients`, { ...payload });
+      const response = await PulseemReactInstance.post(`client/SetUnsubscribedClients`, { ...payload });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -113,7 +113,7 @@ export const setUnsubscribedClients = createAsyncThunk(
 export const changeClientStatus = createAsyncThunk(
   'client/ChangeClientStatus', async (payload, thunkAPI) => {
     try {
-      const response = await instence.put(`client/ChangeClientStatus`, { ...payload });
+      const response = await PulseemReactInstance.put(`client/ChangeClientStatus`, { ...payload });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
