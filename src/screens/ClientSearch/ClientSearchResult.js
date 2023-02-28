@@ -1342,10 +1342,10 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
-        return t(ConvertClientStatus(Status, SourceType.EMAIL))
+        return t(ConvertClientStatus(SourceType.EMAIL, Status))
       }
       else if (Cellphone && !isEmail && Cellphone !== '') {
-        return t(ConvertClientStatus(SmsStatus, SourceType.SMS))
+        return t(ConvertClientStatus(SourceType.SMS, SmsStatus))
       }
       return t("emailStatus.noStatus")
     }
