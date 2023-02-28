@@ -19,7 +19,10 @@ const CLIENT_CONSTANTS = {
 		Revenue: 15,
 		ShowGroup: 16,
 		Product: 17,
-		SentToWhatsappCampaignID: 18,
+		WhatsappSentCount: 18,
+		WhatsappRead: 19,
+		WhatsappFailed: 20,
+		WhatsappRemoved: 21
 	},
 	SMS_STATUS: {
 		NoSms: -1,

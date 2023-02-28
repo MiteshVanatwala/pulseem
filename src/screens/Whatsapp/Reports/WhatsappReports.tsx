@@ -208,12 +208,17 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onTableCellClick = (cellName: string, campaignId: number) => {
+		const pageTypeRequest = {
+			"Failed": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed,
+			"Read": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRead,
+			"Sent": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount,
+			"Removed": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
+		} as any
 		navigate(CLIENT_CONSTANTS.BASEURL, {
 			state: {
 				...CLIENT_CONSTANTS.QUERY_PARAMS,
-				CampaignID: '537500',
-				// ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-				PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
+				CampaignID: campaignId,
+				PageType: pageTypeRequest[cellName],
 				ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
 				PageProperty: GetPageNyName('reports/WhatsappReports'),
 			},
