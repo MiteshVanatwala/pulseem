@@ -228,6 +228,20 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		/**
+		 * This will check that is current user is allowed to send freeform message
+		 * or not every 3 second.
+		 */
+		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {
+			let ChatStatusTimer = setInterval(
+				async () => await setAPIInboundChatStatus(),
+				3000
+			);
+			return () => clearInterval(ChatStatusTimer);
+		}
+	});
+
 	const setWhatsappChatCoversationStatus = async (
 		StatusId: number,
 		Sendernumber: string,
