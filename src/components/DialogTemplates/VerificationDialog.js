@@ -22,6 +22,7 @@ import {
     checkCellphoneAuthorization
 } from '../../redux/reducers/AccountSettingsSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { Loader } from '../Loader/Loader';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', step = 0, value, ...props }) => {
@@ -30,6 +31,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     const { username } = useSelector(state => state.user)
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
+    const [showLoader, setShowLoader] = useState(true);
     const [verificationStep, setVerificationStep] = useState(step)
     const [verificationError, setVerificationError] = useState(null)
     const [selectedVerificationContact, setSelectedVerificationContact] = useState(value)
@@ -54,6 +56,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             case "email": {
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizedEmails());
+                    setShowLoader(false);
                 }
                 handleVerificationDialog();
                 break;
@@ -61,6 +64,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             case "sms": {
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizeNumbers());
+                    setShowLoader(false);
                 }
                 handleVerificationDialog()
                 break;
@@ -70,6 +74,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizedEmails());
                     await dispatch(getTwoFactorAuthValues(1));
+                    setShowLoader(false);
                 }
                 handleVerificationDialog()
                 break;
@@ -78,6 +83,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizeNumbers());
                     await dispatch(getTwoFactorAuthValues(2));
+                    setShowLoader(false);
                 }
                 handleVerificationDialog()
                 break;
@@ -164,6 +170,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     }
 
     const handleVerifyCode = async () => {
+        setShowLoader(true);
         setUserCodeConfirmed(true);
         switch (variant) {
             //#region email
@@ -256,6 +263,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             //#endregion
             default: { break; }
         }
+        setShowLoader(false);
     }
 
     const handleResendInterval = () => {
@@ -284,6 +292,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     }, [codeResend])
 
     const handleSendCode = async (val, isResend = false) => {
+        setShowLoader(true);
         setResendDisalbed(isResend);
         switch (variant) {
             case 'email':
@@ -318,6 +327,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 break;
             }
         }
+        setShowLoader(false);
     }
 
     const removeValue = async () => {
@@ -1216,6 +1226,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 renderButtons={Popup().renderButtons || null}
                 {...Popup()}>
                 {Popup().content}
+                <Loader isOpen={showLoader} />
             </BaseDialog>
         </>
     )
