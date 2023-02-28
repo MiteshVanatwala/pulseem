@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translations/BeeEditor/Languages';
+import { FONTS } from '../../../helpers/Fonts/Init';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
@@ -55,7 +56,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
             emptyRows: true,
             defaultRows: false,
         },
-        workspace:{
+        editorFonts: FONTS(),
+        workspace: {
             type: 'mixed',
         },
         hooks: {
