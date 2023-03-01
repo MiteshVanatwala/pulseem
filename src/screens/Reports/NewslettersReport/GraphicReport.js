@@ -18,9 +18,11 @@ import { Loader } from '../../../components/Loader/Loader';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { useParams } from 'react-router-dom';
 import { sitePrefix } from '../../../config';
+import useCore from '../../../helpers/hooks/Core';
 
-const GraphicReport = ({ props, classes }) => {
+const GraphicReport = (props) => {
   const { isRTL } = useSelector(state => state.core)
+  const { classes } = useCore();
   const [tabValue, setTabValue] = useState(0);
   const Redirect = useRedirect();
   const [showLoader, setLoader] = useState(true);

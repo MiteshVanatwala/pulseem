@@ -46,10 +46,12 @@ import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageM
 import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
+import useCore from '../../../helpers/hooks/Core';
 
-const Groups = ({ classes }) => {
+const Groups = () => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
+    const { classes } = useCore();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);

@@ -28,12 +28,13 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import useCore from '../../../helpers/hooks/Core';
 
 
-const LandingPagesesManagmentScreen = ({ classes }) => {
+const LandingPagesesManagmentScreen = () => {
   const navigate = useNavigate()
   const { windowSize, rowsPerPage, accountFeatures, isRTL } = useSelector(state => state.core)
-
+  const { classes } = useCore();
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')

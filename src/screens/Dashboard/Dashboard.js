@@ -14,13 +14,15 @@ import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
+import useCore from '../../helpers/hooks/Core';
 
-const DashboardScreen = ({ classes }) => {
+const DashboardScreen = () => {
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [member, setMember] = useState(null);
+  const { classes } = useCore();
 
   useEffect(() => {
     const initialize = async () => {

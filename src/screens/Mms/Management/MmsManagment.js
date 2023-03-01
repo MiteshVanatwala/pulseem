@@ -25,11 +25,13 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import useCore from '../../../helpers/hooks/Core';
 
-const MmsManagnentScreen = ({ classes }) => {
+const MmsManagnentScreen = () => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { mmsData, mmsDeletedData } = useSelector(state => state.mms)
   const { t } = useTranslation()
+  const { classes } = useCore();
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
   const [campaineNameSearch, setCampaineNameSearch] = useState('')

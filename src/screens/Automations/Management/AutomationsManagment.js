@@ -28,10 +28,12 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import useCore from '../../../helpers/hooks/Core';
 
 
-const AutomationsManagnentScreen = ({ classes }) => {
+const AutomationsManagnentScreen = () => {
   const Redirect = useNavigate();
+  const { classes } = useCore();
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { automationsData, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()

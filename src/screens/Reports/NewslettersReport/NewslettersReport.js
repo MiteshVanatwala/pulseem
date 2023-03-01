@@ -30,12 +30,13 @@ import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import useCore from '../../../helpers/hooks/Core';
 
-const NewslettersReport = ({ classes }) => {
+const NewslettersReport = () => {
   const navigate = useNavigate()
   const { state } = useLocation();
   const from = state?.from || "/";
-
+  const { classes } = useCore();
   const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()

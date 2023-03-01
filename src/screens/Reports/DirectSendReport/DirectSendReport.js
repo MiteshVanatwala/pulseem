@@ -23,9 +23,11 @@ import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import useCore from '../../../helpers/hooks/Core';
 
-const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
+const DirectSendReport = ({ isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
+  const { classes } = useCore();
   const { showContent } = useSelector(state => state.report);
   const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);

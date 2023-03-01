@@ -8,7 +8,7 @@ import useRedirect from '../../helpers/Routes/Redirect';
 export const ManagmentIcon = ({
   classes,
   icon,
-  uIcon,
+  uIcon = "",
   lable = '',
   rootClass = '',
   iconClass = '',
@@ -19,7 +19,8 @@ export const ManagmentIcon = ({
   href = '',
   type = '',
   text = '',
-  onClick = () => null }) => {
+  onClick = () => { }
+}) => {
   const buttonRef = useRef();
   const Redirect = useRedirect();
 

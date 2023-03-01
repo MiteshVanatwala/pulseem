@@ -97,11 +97,11 @@ const AddRecipientPopup = ({ classes,
     onClose,
     windowSize,
     selectedGroups = [],
-    selectGroup,
+    selectGroup = () => { },
     ToastMessages,
-    onAddRecipient = () => null,
-    onRecipientAdded = () => null,
-    handleResponses = (response, actions) => null,
+    onAddRecipient = () => { },
+    onRecipientAdded = () => { },
+    handleResponses = (response, actions) => { },
     recipientData = null
 }) => {
     const { t } = useTranslation();

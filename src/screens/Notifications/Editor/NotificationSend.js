@@ -19,10 +19,12 @@ import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
+import useCore from '../../../helpers/hooks/Core';
 
-const NotificationSend = ({ classes }) => {
+const NotificationSend = () => {
     const { id } = useParams();
     const { t } = useTranslation();
+    const { classes } = useCore();
     const Redirect = useRedirect();
     const { notificationGroups } = useSelector(state => state.notification)
     /* #region  Component settings constatns */

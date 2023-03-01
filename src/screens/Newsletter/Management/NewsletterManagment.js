@@ -34,12 +34,14 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import useCore from '../../../helpers/hooks/Core';
 
-const NewsletterManagnentScreen = ({ classes }) => {
+const NewsletterManagnentScreen = () => {
 
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
+  const { classes } = useCore();
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
   const [campaineNameSearch, setCampaineNameSearch] = useState('')

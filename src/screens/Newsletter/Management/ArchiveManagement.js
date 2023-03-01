@@ -27,11 +27,13 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { sitePrefix } from '../../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import useCore from '../../../helpers/hooks/Core';
 
-const ArchiveManagementScreen = ({ classes }) => {
+const ArchiveManagementScreen = () => {
   const { accountFeatures, language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
+  const { classes } = useCore();
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
   const [campaineNameSearch, setCampaineNameSearch] = useState('')

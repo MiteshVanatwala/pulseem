@@ -32,12 +32,14 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import useCore from '../../../helpers/hooks/Core';
 
-const SmsManagnentScreen = ({ classes }) => {
+const SmsManagnentScreen = () => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
   const { smsData, smsDeletedData } = useSelector(state => state.sms)
   const { username } = useSelector(state => state.user)
   const { t } = useTranslation()
+  const { classes } = useCore();
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
   const [number, handleNumber] = useState('');

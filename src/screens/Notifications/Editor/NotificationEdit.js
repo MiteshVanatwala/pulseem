@@ -32,6 +32,7 @@ import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 import { Stack } from '@mui/material';
+import useCore from '../../../helpers/hooks/Core';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -106,10 +107,11 @@ const DashedInput = withStyles({
 
 })(TextField);
 
-const NotificationEdit = ({ classes }) => {
+const NotificationEdit = () => {
   const Redirect = useRedirect();
   const { id } = useParams();
   const location = useLocation();
+  const { classes } = useCore();
 
   /* #region  Component settings constatns */
   const dispatch = useDispatch();

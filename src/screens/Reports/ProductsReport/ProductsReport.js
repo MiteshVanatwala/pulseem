@@ -25,6 +25,7 @@ import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
+import useCore from '../../../helpers/hooks/Core';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -36,8 +37,9 @@ const DEFAULT_FILTER = {
     OrderByParameter: null
 }
 
-const ProductsReport = ({ classes }) => {
-    const navigate = useNavigate()
+const ProductsReport = () => {
+    const navigate = useNavigate();
+    const { classes } = useCore();
     const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
 
@@ -99,6 +101,7 @@ const ProductsReport = ({ classes }) => {
 
 
     //  HANDLERS  //
+    //BUG: REVENUE type REdirection to CSR 
     const getHrefs = (id) => ({
         Purchased: {
             title: t('report.ProductsReport.purchased'),

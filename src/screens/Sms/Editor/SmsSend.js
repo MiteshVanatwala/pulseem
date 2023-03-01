@@ -39,16 +39,18 @@ import { Title } from "../../../components/managment/Title";
 import { Stack } from "@mui/material";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
+import useCore from "../../../helpers/hooks/Core";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
 }
 
-const SmsSend = ({ classes, ...props }) => {
+const SmsSend = () => {
   //#region initialized states
   const { id } = useParams();
   const { t } = useTranslation();
   const Redirect = useRedirect();
+  const { classes } = useCore();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups, finishedCampaigns } = useSelector((state) => state.sms);
   const { subAccountAllGroups } = useSelector((state) => state.group);
 

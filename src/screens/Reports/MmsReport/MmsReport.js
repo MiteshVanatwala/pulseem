@@ -26,6 +26,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import useCore from '../../../helpers/hooks/Core';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -33,8 +34,9 @@ const DEFAULT_FILTER = {
     campaignName: ''
 }
 
-const MmsReport = ({ classes }) => {
+const MmsReport = () => {
     const navigate = useNavigate()
+    const { classes } = useCore();
     const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()

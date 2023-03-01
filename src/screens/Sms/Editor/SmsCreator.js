@@ -59,6 +59,7 @@ import { Stack } from "@mui/material";
 import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import useCore from "../../../helpers/hooks/Core";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -105,9 +106,10 @@ const defaultAccountExtraData = [
 ];
 
 
-const SmsCreator = ({ classes }) => {
+const SmsCreator = () => {
   const { t } = useTranslation();
   const { id, FromAutomation, NodeToEdit } = useParams();
+  const { classes } = useCore()
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();

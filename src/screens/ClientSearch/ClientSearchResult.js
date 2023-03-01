@@ -63,6 +63,7 @@ import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
 import { sitePrefix } from "../../config";
 import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import useCore from "../../helpers/hooks/Core";
 
 const useStyles = makeStyles({
   groupName: {
@@ -88,18 +89,16 @@ const useStyles = makeStyles({
     }
   }
 });
-const ClientSearchResult = ({ props, classes }) => {
+const ClientSearchResult = () => {
   const {
     accountFeatures,
     language,
     windowSize,
-    // email,
-    // phone,
     rowsPerPage,
-    // smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
+  const { classes } = useCore();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
   const { groupData, subAccountAllGroups } = useSelector((state) => state.group);

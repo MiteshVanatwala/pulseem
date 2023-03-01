@@ -29,6 +29,7 @@ import { sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
+import useCore from '../../../helpers/hooks/Core';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -142,12 +143,13 @@ const useStyles = makeStyles({
     }
 })
 
-const NewsLetterWizard = ({ classes }) => {
+const NewsLetterWizard = () => {
     const { id } = useParams();
     const queryParams = new URLSearchParams(window.location.search)
     const isNew = queryParams.get("new")
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
+    const { classes } = useCore();
 
     const { accountSettings, isRTL, windowSize } = useSelector((state) => state.core);
     const { t } = useTranslation();

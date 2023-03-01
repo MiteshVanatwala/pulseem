@@ -35,9 +35,11 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
 import { sitePrefix } from '../../../config/index';
+import useCore from '../../../helpers/hooks/Core';
 
-const NotificationManagement = ({ classes }) => {
+const NotificationManagement = () => {
   const Redirect = useRedirect();
+  const { classes } = useCore();
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { notificationData, subAccountApiKey } = useSelector(state => state.notification)
   const { t } = useTranslation()

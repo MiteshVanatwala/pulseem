@@ -43,7 +43,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
-import { sitePrefix } from './config/index'
+import { sitePrefix } from './config/index';
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 
@@ -64,21 +64,19 @@ const renderRoutes = (classes) => {
     <>
       <Route
         path={sitePrefix}
-        element={<DashboardScreen classes={classes} />}
+        element={<DashboardScreen />}
       />
       <Route
-
         path={`${sitePrefix}sms/create/`}
-        element={<SmsCreator classes={classes} />}
+        element={<SmsCreator />}
       />
       <Route
         path={`${sitePrefix}sms/edit/:id`}
-        element={<SmsCreator classes={classes} />}
+        element={<SmsCreator />}
       />
       <Route
-
         path={`${sitePrefix}sms/send/:id`}
-        element={<SmsSend classes={classes} />}
+        element={<SmsSend />}
       />
       <Route
         path={`${sitePrefix}SendCampaign/:campaignID`}
@@ -99,11 +97,11 @@ const renderRoutes = (classes) => {
       <Route
         path={`${sitePrefix}CampaignStatistics/:campaignID`}
         // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
-        element={<GraphicReport classes={classes} />}
+        element={<GraphicReport />}
       />
       <Route
         path={`${sitePrefix}Groups`}
-        element={<Groups classes={classes} />}
+        element={<Groups />}
       />
       <Route
         path={`/ClientSearch`}
@@ -125,35 +123,35 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}Campaigns`}
-        element={<NewsletterManagment classes={classes} />}
+        element={<NewsletterManagment />}
       />
       <Route
         exact
         path={`${sitePrefix}Campaigns/Create`}
-        element={<NewsLetterWizard classes={classes} />}
+        element={<NewsLetterWizard />}
       />
       <Route
         path={`${sitePrefix}Campaigns/Create/:id`}
-        element={<NewsLetterWizard classes={classes} />}
+        element={<NewsLetterWizard />}
       />
       <Route
         exact
         path={`${sitePrefix}Campaigns/editor`}
-        element={<CampaignEditorBee classes={classes} />}
+        element={<CampaignEditorBee />}
       />
       <Route
         path={`${sitePrefix}Campaigns/editor/:id`}
-        element={<CampaignEditorBee classes={classes} />}
+        element={<CampaignEditorBee />}
       />
       <Route
         exact
         path={`${sitePrefix}Campaigns/Archive`}
-        element={<ArchiveManagement classes={classes} />}
+        element={<ArchiveManagement />}
       />
       {/* SMS */}
       <Route
         path={`${sitePrefix}SMSCampaigns`}
-        element={<SmsManagment classes={classes} />}
+        element={<SmsManagment />}
       />
       <Route
         path={`/SMSSmartResponses`}
@@ -175,7 +173,7 @@ const renderRoutes = (classes) => {
       {/* MMS */}
       <Route
         path={`${sitePrefix}MmsCampaigns`}
-        element={<MmsManagment classes={classes} />}
+        element={<MmsManagment />}
       />
       <Route
         path="/CreateMmsCampaign"
@@ -201,15 +199,15 @@ const renderRoutes = (classes) => {
       />
       <Route
         path={`${sitePrefix}ClientSearchResult/:referrer/:id`}
-        element={<ClientSearchResult classes={classes} />}
+        element={<ClientSearchResult />}
       />
       <Route
         path={`${sitePrefix}ClientSearchResult`}
-        element={<ClientSearchResult classes={classes} />}
+        element={<ClientSearchResult />}
       />
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
-        element={<LandingPagesesManagment classes={classes} />}
+        element={<LandingPagesesManagment />}
       />
       <Route
         path={`/LandingPageWizard`}
@@ -222,7 +220,7 @@ const renderRoutes = (classes) => {
       {/* Reports */}
       <Route
         path={`${sitePrefix}Reports/NewsletterReports`}
-        element={<NewslettersReport classes={classes} />}
+        element={<NewslettersReport />}
       />
       <Route
         path={`/ClalReport`}
@@ -230,21 +228,21 @@ const renderRoutes = (classes) => {
       />
       <Route
         path={`${sitePrefix}Reports/SMSMainReport`}
-        element={<SmsReport classes={classes} />}
+        element={<SmsReport />}
       />
       <Route
         exact
         path={`${sitePrefix}Reports/SmsReplies/:id`}
-        element={<SmsReplies classes={classes} />}
+        element={<SmsReplies />}
       />
       <Route
         path={`${sitePrefix}Reports/MmsMainReport`}
-        element={<MmsReport classes={classes} />}
+        element={<MmsReport />}
       />
       <Route
         exact
         path={`${sitePrefix}Reports/ProductsReport`}
-        element={<ProductsReport classes={classes} />}
+        element={<ProductsReport />}
       />
       <Route
         path={`/AbTestsReport`}
@@ -277,12 +275,12 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport`}
-        element={<DirectSendReport classes={classes} isArchive={false} />}
+        element={<DirectSendReport isArchive={false} />}
       />
       <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport/Archive`}
-        element={<DirectSendReport classes={classes} isArchive={true} />}
+        element={<DirectSendReport isArchive={true} />}
       />
       {/* <Route
         exact
@@ -296,7 +294,7 @@ const renderRoutes = (classes) => {
       {/* Automations */}
       <Route
         path={`${sitePrefix}Automations`}
-        element={<AutomationManagment classes={classes} />}
+        element={<AutomationManagment />}
       />
       <Route
         path={`/CreateAutomations`}
@@ -319,33 +317,33 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}Notifications`}
-        element={<NotificationManagement classes={classes} />}
+        element={<NotificationManagement />}
       />
       <Route
         exact
         path={`${sitePrefix}Notification/create`}
-        element={<NotificationEdit classes={classes} />}
+        element={<NotificationEdit />}
       />
       <Route
         exact
         path={`${sitePrefix}Notification/edit/:id`}
-        element={<NotificationEdit classes={classes} />}
+        element={<NotificationEdit />}
       />
       <Route
         exact
         path={`${sitePrefix}Notification/send/:id`}
-        element={<NotificationSend classes={classes} />}
+        element={<NotificationSend />}
       />
       {/* Settings */}
       <Route
         exact
         path={`${sitePrefix}AccountSettings`}
-        element={<AccountSettingsEditor classes={classes} />}
+        element={<AccountSettingsEditor />}
       />
       <Route
         exact
         path={`${sitePrefix}BillingSettings`}
-        element={<BillingSettingsEditor classes={classes} />}
+        element={<BillingSettingsEditor />}
       />
       <Route
         path={`/AccountBilling`}
@@ -378,22 +376,22 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}SiteTracking`}
-        element={<SiteTrackingEditor classes={classes} />}
+        element={<SiteTrackingEditor />}
       />
       <Route
         exact
-        path={`${sitePrefix}/reports/Inbound`}
-        element={<InboundMessages classes={classes} />}
+        path={`${sitePrefix}reports/Inbound`}
+        element={<InboundMessages />}
       />
       <Route
         exact
-        path={`${sitePrefix}/reports/Inbound/:type`}
-        element={<InboundMessages classes={classes} />}
+        path={`${sitePrefix}reports/Inbound/:type`}
+        element={<InboundMessages />}
       />
       <Route
         exact
-        path={`${sitePrefix}/reports/Inbound/:type/:id`}
-        element={<InboundMessages classes={classes} />}
+        path={`${sitePrefix}reports/Inbound/:type/:id`}
+        element={<InboundMessages />}
       />
       <Route
         path="*" element={<PageNotFound classes={classes} />}
@@ -409,8 +407,6 @@ const App = ({ screenSize }) => {
   useEffect(() => {
     windowSize !== screenSize && dispatch(setWindowSize(screenSize))
   }, [screenSize])
-
-
 
   useEffect(() => {
     const initFeatures = async () => {

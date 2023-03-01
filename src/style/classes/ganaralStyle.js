@@ -1824,7 +1824,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 5,
     borderBottomRightRadius: 0,
     background: '#fff',
-    color: '#000'
+    color: '#000',
+    marginBottom: '0 !important'
   },
 
   areaManual: {
@@ -2602,6 +2603,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 375px)": {
       maxWidth: "calc(100% - 20px)",
     },
+  },
+  flexCenterOfCenter: {
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center'
   },
   //#region Dialog
   dialogIconContainer: {

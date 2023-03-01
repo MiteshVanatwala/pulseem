@@ -25,9 +25,11 @@ import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 import { Title } from '../../components/managment/Title';
 import { InputAdornment } from '@mui/material';
+import useCore from '../../helpers/hooks/Core';
 
-const SiteTrackingEditor = ({ classes }) => {
+const SiteTrackingEditor = () => {
     const { isRTL, windowSize } = useSelector(state => state.core);
+    const { classes } = useCore();
     const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);

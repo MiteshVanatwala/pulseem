@@ -47,12 +47,14 @@ import { useParams } from 'react-router-dom';
 import { sitePrefix } from '../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import useCore from '../../helpers/hooks/Core';
 
-const CampaignEditor = ({ classes, ...props }) => {
+const CampaignEditor = ({ ...props }) => {
   //#region State
   const { t } = useTranslation();
   const dispatch = useDispatch()
   const params = useParams();
+  const { classes } = useCore();
   const editorRef = useRef(null);
   const saveRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
