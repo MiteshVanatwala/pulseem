@@ -172,11 +172,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
             const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null } = newsletterSettings;
             const Groups = subAccountAllGroups;
+            let selecteddGroup = [];
 
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
-            GroupList.length > 0 && setSelectedGroups(Groups.filter((c) => GroupList.indexOf(c.GroupID) > -1));
+
+            selecteddGroup = Groups?.filter((c) => GroupList?.indexOf(c.GroupID) > -1)
+            selecteddGroup.length > 0 && setSelectedGroups(selecteddGroup);
+
             setFilterValues({
                 ...filterValues,
                 toggleReci: ExceptionalDays !== '' && ExceptionalDays > 0,
