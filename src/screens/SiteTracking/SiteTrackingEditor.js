@@ -552,7 +552,7 @@ const SiteTrackingEditor = ({ classes }) => {
                         classes={classes}
                         subTitle={t("siteTracking.setUp")}
                         topZero={false}
-                    />
+                        ShowDivider={true} />
                 </Grid>
                 <Grid item xs={5} style={{ alignItems: 'center', display: 'flex', marginTop: -10 }}>
                     <Button

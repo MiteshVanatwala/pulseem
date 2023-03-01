@@ -636,7 +636,7 @@ const MmsReport = ({ classes }) => {
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
-            <Title Text={t('common.MMSReports')} Classes={classes.managementTitle} />
+            <Title Text={t('common.MMSReports')} Classes={classes} ShowDivider={true} />
             {renderFilter()}
             {renderManagmentLine()}
             <DataTable

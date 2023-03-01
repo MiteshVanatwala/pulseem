@@ -520,7 +520,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes.managementTitle} />
+      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes} ShowDivider={true} />
       {renderTabs()}
       <ConfirmRadioDialog
         classes={classes}

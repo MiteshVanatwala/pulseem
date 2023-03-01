@@ -612,7 +612,7 @@ const BillingSettingsEditor = () => {
       {toastMessage && renderToast()}
       <Box className={classes.settingsContainer}>
         <Box className="head">
-          <Title Text={t("settings.billingSettings.title")} classes={classes} />
+          <Title Text={t("settings.billingSettings.title")} Classes={classes} ShowDivider={true} />
         </Box>
         <Box className={"containerBody"}>{FormBillingInformation()}</Box>
       </Box>

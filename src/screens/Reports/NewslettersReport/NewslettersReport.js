@@ -1021,7 +1021,7 @@ const NewslettersReport = ({ classes }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes.managementTitle} />
+      <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes} ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

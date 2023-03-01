@@ -1286,7 +1286,7 @@ const NotificationManagement = ({ classes }) => {
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       <Title
-        Text={t('notifications.notificationManagement')} Classes={classes.managementTitle}
+        Text={t('notifications.notificationManagement')} Classes={classes}
         ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
         Element={
           <Button onClick={() => {
@@ -1299,7 +1299,7 @@ const NotificationManagement = ({ classes }) => {
               classes.actionButton,
               classes.implementButtonFlex,
               classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
-        } />
+        } ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

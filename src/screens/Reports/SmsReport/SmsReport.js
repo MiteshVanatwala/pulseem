@@ -787,7 +787,7 @@ const SmsReport = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
-      <Title Text={t('common.SMSReports')} Classes={classes.managementTitle} />
+      <Title Text={t('common.SMSReports')} Classes={classes} ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

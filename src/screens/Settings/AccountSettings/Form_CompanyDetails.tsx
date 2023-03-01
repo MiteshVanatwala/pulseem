@@ -246,7 +246,6 @@ const FORM_COMPANY_DETAILS = ({
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
           Classes={classes}
-          ContainerStyle={null}
           Element={null}
         />
         <Box className={"formContainer"}>
