@@ -1,5 +1,7 @@
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
 import {
+	AllCampaignReq,
+	AllTemplateReq,
 	campaignStatusProps,
 	statusByNameProps,
 	statusProps,
@@ -372,3 +374,20 @@ export enum whatsappChatStatuses {
 	PENDING = 'pending',
 	SOLVED = 'solved',
 }
+
+export const allTemplateInitialPagination: AllTemplateReq = {
+	templateName: '',
+	templateStatus: 0,
+	isPagination: true,
+	pageNo: 1,
+	pageSize: 6,
+};
+
+export const allCampaignInitialPagination: AllCampaignReq = {
+	campaignName: '',
+	fromDate: null,
+	toDate: null,
+	isPagination: true,
+	pageNo: 1,
+	pageSize: 6,
+};

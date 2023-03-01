@@ -364,10 +364,10 @@ export type templateListItemsProps = {
 };
 
 export type templateListDataProps = {
-	Error: string;
+	CurrentPage: number;
+	PageSize: number;
 	Count: number;
-	Message: string;
-	Status: number;
+	TotalRecord: number;
 	Items: saveTemplateItemsProps[];
 };
 
