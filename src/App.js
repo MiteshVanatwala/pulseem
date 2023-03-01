@@ -367,7 +367,7 @@ const renderRoutes = (classes, redirect) => {
       {/* Settings */}
       <Route
         exact
-        path={`/AccountSettings`}
+        path={`/react/AccountSettings`}
         element={<AccountSettingsEditor classes={classes} />}
       />
       <Route

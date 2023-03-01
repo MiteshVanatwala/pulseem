@@ -846,7 +846,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
   })
 
-  const getDuplicateDialog = (data, campaignName) => ({
+  const getDuplicateDialog = (campaignId, campaignName) => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
     content: (
@@ -920,9 +920,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       clearSearch()
       handleClose()
       setPage(1)
-      //BUG:Duplicate option smust be included 
-      console.log(data.CampaignID);
-      await dispatch(duplicteCampaign({ CampaignID: data.CampaignID, CloneOptions: duplicateOptions }))
+      await dispatch(duplicteCampaign({ CampaignID: campaignId, CloneOptions: duplicateOptions }))
       getData()
     }
   })

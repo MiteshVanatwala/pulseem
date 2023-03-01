@@ -12,8 +12,7 @@ import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import { saveCampaignInfo } from "../../../../redux/reducers/campaignEditorSlice";
-import { sendCampaign } from "../../../../redux/reducers/newsletterSlice";
+import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 
 const SummaryDialog = ({ classes,
     isOpen = false,

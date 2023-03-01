@@ -122,7 +122,7 @@ export const changeClientStatus = createAsyncThunk(
 export const getClientsById = createAsyncThunk(
   'client/GetClientsById', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/GetClientsById`, payload);
+      const response = await PulseemReactInstance.post(`client/GetClientsById`, payload);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

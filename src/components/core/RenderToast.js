@@ -10,7 +10,6 @@ const RenderToast = ({ toastMessage = null, time = 3000 }) => {
     }, time)
 
     useEffect(() => {
-        console.log("message", toastMessage)
         setMessage(toastMessage)
         cancelToast()
     }, [toastMessage])

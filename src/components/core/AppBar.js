@@ -254,9 +254,12 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
           item={route}
           chosen={route.key === currentPage}
           showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
-          //onInnerClick={navigate}
-          onInnerClick={() => Redirect({ url: route.href })}
-          onMainClick={null}
+          onInnerClick={() => {
+            Redirect({ url: route.href })
+          }}
+          onMainClick={() => {
+            Redirect({ url: route.href })
+          }}
         />
       ))}
       {/* Side menu */}
@@ -271,6 +274,12 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         <AppBarItem
           classes={classes}
           item={settings}
+          onInnerClick={() => {
+            Redirect({ url: settings.href })
+          }}
+          onMainClick={() => {
+            Redirect({ url: settings.href })
+          }}
         />
         <LanguageSelector classes={classes} />
         {!cameFromSubAccount && isAdmin !== '' && <AppBarItem

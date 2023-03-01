@@ -28,8 +28,7 @@ const SmsMarketingDialog = ({
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
-    const { verifiedNumbers } = useSelector(state => state.common);
-    const { commonSettings } = useSelector(state => state.sms);
+    const { verifiedNumbers, commonSettings } = useSelector(state => state.common);
 
     const [smsModel, setSmsModel] = useState({ ...smsMarketingModel })
     const [linkToUpdate, setLinkToUpdate] = useState(null);
@@ -102,12 +101,20 @@ const SmsMarketingDialog = ({
 
     }
     const handleFromNumber = (value) => {
+        if (!value) {
+            return;
+        }
         setSmsModel({ ...smsModel, FromNumber: value });
-        if (value.length > 8) {
-            const isVerified = verifiedNumbers.find((number) => {
-                return number?.Number === value;
-            });
-            setNumberVerified(isVerified);
+        if (value === commonSettings?.DefaultCellNumber) {
+            setNumberVerified(true);
+        }
+        else {
+            if (value.length > 8) {
+                const isVerified = verifiedNumbers.find((number) => {
+                    return number?.Number === value;
+                });
+                setNumberVerified(isVerified);
+            }
         }
     }
     const handleUpdate = (model) => {

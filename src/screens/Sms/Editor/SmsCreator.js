@@ -358,7 +358,6 @@ const SmsCreator = ({ classes }) => {
     if (!commonSettings || Object.keys(commonSettings).length === 0)
       await dispatch(getCommonFeatures());
     setInitFromNumber(true);
-    setIsPageLoaded(true);
   }
 
   useEffect(() => {
@@ -390,6 +389,7 @@ const SmsCreator = ({ classes }) => {
         setrestoreBool(false);
         setremovalMessageButtonDisabled(true);
       }
+      setIsPageLoaded(true);
       setLoader(false);
     }
 

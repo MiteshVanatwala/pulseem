@@ -74,37 +74,6 @@ export const testSend = createAsyncThunk(
         }
     });
 
-export const saveCampaignInfo = createAsyncThunk(
-    'CampaignEditor/CreateOrUpdate', async (campaign, thunkAPI) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const response = await PulseemReactInstance.post(`CampaignEditor/CreateOrUpdate`, campaign);
-                resolve(JSON.parse(response.data))
-            } catch (error) {
-                reject(thunkAPI.rejectWithValue({ error: error.message }));
-            }
-        })
-    });
-
-export const getCampaignInfo = createAsyncThunk(
-    'CampaignEditor/GetCampaignInfo', async (campaignId, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.get(`CampaignEditor/GetCampaignInfo/${campaignId}`);
-            return response.data
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-export const getCreditsByFileTotalBytes = createAsyncThunk(
-    'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
-        try {
-            const response = await PulseemReactInstance.post(`CampaignEditor/GetCreditsByFileTotalBytes`, campaign);
-            return response.data
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-
 export const getBeeToken = createAsyncThunk(
     '/CampaignEditor/GetBeeToken/', async (_, thunkAPI) => {
         try {
@@ -121,8 +90,6 @@ export const campaignEditorSlice = createSlice({
         beeToken: null,
         campaign: null,
         userBlocks: null,
-        campaignInfo: [],
-        newsletterInfo: [],
         ToastMessages: {
             CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
             RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
@@ -149,12 +116,7 @@ export const campaignEditorSlice = createSlice({
             .addCase(getBeeToken.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;
             })
-            .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
-                state.campaignInfo = payload?.Message;
-            })
-            .addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
-                state.campaignInfo = payload?.Message;
-            })
+
     }
 })
 

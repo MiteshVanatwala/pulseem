@@ -21,10 +21,10 @@ import * as XLSX from 'xlsx';
 import Title from '../../../components/Wizard/Title'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
-  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
+  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
-import { getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
+import { getGroupsBySubAccountId, combinedGroup } from "../../../redux/reducers/groupSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
@@ -462,7 +462,7 @@ const SmsSend = ({ classes, ...props }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    await dispatch(smsCombinedGroup(payload));
+    await dispatch(combinedGroup(payload));
     await dispatch(getGroupsBySubAccountId());
     settoggleChecked(false);
     setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);

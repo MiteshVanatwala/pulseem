@@ -7,7 +7,7 @@ import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
-import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice';
+import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";

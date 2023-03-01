@@ -73,8 +73,9 @@ const FORM_ACCOUNT_DETAILS = ({
     >
       <Title
         Text={t("settings.accountSettings.actDetails.title")}
-        classes={classes}
-        isIcon={false}
+        Classes={classes}
+        ContainerStyle={null}
+        Element={null}
       />
       <Box className={"formContainer"}>
         {/* <Illustration_app_Settings className={"svg_app_settings"} /> */}

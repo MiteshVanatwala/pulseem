@@ -19,7 +19,6 @@ import {
     getTestGroups,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
-import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -97,10 +96,10 @@ const Editorbox = ({
     const {
         extraData,
         testGroups,
-        commonSettings,
         previousLandingData,
         previousCampaignData,
     } = useSelector((state) => state.sms);
+    const { commonSettings } = useSelector(state => state.common);
     const [dialogType, setDialogType] = useState(null)
     const [alignment, setAlignment] = useState('right');
     const [editmenuClick, seteditmenuClick] = useState(false);
@@ -175,7 +174,7 @@ const Editorbox = ({
                         setremovalMessageButtonDisabled(true);
                         setTimeout(() => {
                             const cName = document.getElementById('campaignName');
-                            cName.focus();
+                            cName?.focus();
                         }, 500);
                     }
                     return currentState;
@@ -209,6 +208,7 @@ const Editorbox = ({
 
     useEffect(() => {
         linkCalculation();
+        onUpdate(smsModel);
     }, [smsModel, isSiteTracking, isLinksStatistics])
 
     useEffect(() => {
@@ -266,16 +266,12 @@ const Editorbox = ({
         if (commonSettings?.DefaultCellNumber) {
             fromNumber = commonSettings.DefaultCellNumber;
         }
-        else {
-            const commonFeatures = await dispatch(getCommonFeatures());
-            fromNumber = commonFeatures.payload.DefaultCellNumber;
-        }
 
         setstoredValue(fromNumber);
 
         const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
-        if (fromNumber === -1) {
+        if (fromNumber === -1 || fromNumber === '') {
             fromNumber = virtualNumber.payload.Number;
         }
 

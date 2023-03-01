@@ -245,8 +245,9 @@ const FORM_COMPANY_DETAILS = ({
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
-          classes={classes}
-          isIcon={false}
+          Classes={classes}
+          ContainerStyle={null}
+          Element={null}
         />
         <Box className={"formContainer"}>
           <Grid container className={"form"}>
