@@ -342,7 +342,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onSave = async (args) => {
     try {
-      setLoader(true);
+      if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
@@ -382,6 +382,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
     await editorRef.current.save();
   }
+  
+  const onAutoSaveCampaign = async () => saveDesign(false, null, false);
+
   const deleteNewsletter = async () => {
     setDialog(null);
     await dispatch(deleteCampaign(campaignId));
@@ -531,6 +534,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       EditRow: EditRow,
       openModal: openModal,
       SaveCampaign: onSave,
+      AutoSaveCampaign: onAutoSaveCampaign,
       SetDialog: setDialog,
       CampaignId: campaignId,
       PulseemEditBlock: onEditBlock,

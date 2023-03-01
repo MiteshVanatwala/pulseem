@@ -3,7 +3,7 @@ import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translation
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
-//const AUTO_SAVE_SECONDS = 60000; // 1 minute
+const AUTO_SAVE_SECONDS = 180; // 3 minutes
 
 export interface ConfigOptions {
     classes: any,
@@ -13,6 +13,7 @@ export interface ConfigOptions {
     SetDialog: dialog,
     EditRow: Function,
     SaveCampaign: save,
+    AutoSaveCampaign: Function,
     DeleteBlock: Function,
     CampaignId: Number,
     PulseemEditBlock: Function,
@@ -34,6 +35,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         CampaignId,
         DeleteBlock,
         SaveCampaign,
+        AutoSaveCampaign,
         getRows,
         handleEditRow,
         // HandleAutoSave,
@@ -46,7 +48,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
-        autosave: 60,
+        autosave: AUTO_SAVE_SECONDS,
+        loadingSpinnerDisableOnSave: true,
         // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
@@ -155,18 +158,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         onLoad: (jsonFile: any) => {
             console.log(jsonFile);
         },
-        // Auto Save here
-        // onChange: (jsonFile: any, response: any) => {
-        // console.log(response);
-        // const interval = setInterval(() => {
-        //     SaveCampaign({
-        //         campaignId: CampaignId,
-        //         JsonData: jsonFile,
-        //         HtmlData: null
-        //     });
-        //     clearInterval(interval);
-        // }, AUTO_SAVE_SECONDS);
-        //}
+        onAutoSave: () => AutoSaveCampaign()
         //#endregion
     }
 };
