@@ -36,7 +36,11 @@ import {
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
-import { getDynamicFields, getTemplatePreviewData } from '../Common';
+import {
+	checkSiteTrackingLink,
+	getDynamicFields,
+	getTemplatePreviewData,
+} from '../Common';
 import {
 	landingPageAPIProps,
 	landingPageDataProps,
@@ -54,6 +58,7 @@ import {
 import {
 	apiStatus,
 	buttonTypes,
+	fieldNameIds,
 	resetToastData,
 	whatsappChatStatuses,
 	whatsappRoutes,
@@ -222,6 +227,20 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		/**
+		 * This will check that is current user is allowed to send freeform message
+		 * or not every 3 second.
+		 */
+		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {
+			let ChatStatusTimer = setInterval(
+				async () => await setAPIInboundChatStatus(),
+				3000
+			);
+			return () => clearInterval(ChatStatusTimer);
+		}
+	});
 
 	const setWhatsappChatCoversationStatus = async (
 		StatusId: number,
@@ -473,29 +492,15 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	};
 
-	const checkSiteTrackingLink = (text: string) => {
-		if (
-			SubAccountSettings?.DomainAddress &&
-			SubAccountSettings?.DomainAddress !== ''
-		) {
-			const domainName = SubAccountSettings?.DomainAddress.replace(
-				'https://',
-				''
-			)
-				.replace('http://', '')
-				.replace('www.', '');
-			if (text.includes(domainName)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
-
 	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
-			if (variable?.FieldTypeId === 3 && variable?.IsStatastic) {
-				if (checkSiteTrackingLink(variable?.VariableValue)) {
+			if (
+				variable?.FieldTypeId === fieldNameIds?.LINK &&
+				variable?.IsStatastic
+			) {
+				if (
+					checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+				) {
 					return {
 						...variable,
 						VariableValue: variable?.VariableValue.includes('?')

@@ -152,7 +152,9 @@ const ChatUi = ({
 										  }
 								}
 								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
-								<MenuItem value={1}><>{translator('whatsappChat.open')}</></MenuItem>
+								<MenuItem value={1}>
+									<>{translator('whatsappChat.open')}</>
+								</MenuItem>
 								<MenuItem value={2}>
 									{translator('whatsappChat.pending')}
 								</MenuItem>

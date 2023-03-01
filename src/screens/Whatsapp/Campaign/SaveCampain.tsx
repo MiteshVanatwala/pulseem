@@ -70,7 +70,11 @@ import { RiCloseFill } from 'react-icons/ri';
 import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
-import { getDynamicFields, getTemplatePreviewData } from '../Common';
+import {
+	checkSiteTrackingLink,
+	getDynamicFields,
+	getTemplatePreviewData,
+} from '../Common';
 import {
 	getAccountExtraData,
 	getPreviousLandingData,
@@ -80,6 +84,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import {
 	apiStatus,
 	buttons,
+	fieldNameIds,
 	resetToastData,
 	whatsappRoutes,
 } from '../Constant';
@@ -251,8 +256,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
-			if (variable?.FieldTypeId === 3 && variable?.IsStatastic) {
-				if (checkSiteTrackingLink(variable?.VariableValue)) {
+			if (
+				variable?.FieldTypeId === fieldNameIds?.LINK &&
+				variable?.IsStatastic
+			) {
+				if (
+					!variable.VariableValue.includes('ref') &&
+					checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+				) {
 					return {
 						...variable,
 						VariableValue: variable?.VariableValue.includes('?')
@@ -261,6 +272,18 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					};
 				}
 				return variable;
+			} else {
+				if (
+					variable.VariableValue.includes('ref') &&
+					!checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+				) {
+					return {
+						...variable,
+						VariableValue: variable?.VariableValue.includes('?')
+							? variable?.VariableValue?.replace('&ref=##ClientIDEnc##', '')
+							: variable?.VariableValue?.replace('?ref=##ClientIDEnc##', ''),
+					};
+				}
 			}
 			return variable;
 		});
@@ -281,7 +304,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					);
 					setlinkCount(
 						campaignData?.Data?.VariableValues?.filter(
-							(variable) => variable?.FieldTypeId === 3
+							(variable) => variable?.FieldTypeId === fieldNameIds?.LINK
 						)?.length
 					);
 				}
@@ -336,25 +359,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setTestSendOneContact('');
 		setIsTestSend(false);
 		setSelectedTestGroup([]);
-	};
-
-	const checkSiteTrackingLink = (text: string) => {
-		if (
-			SubAccountSettings?.DomainAddress &&
-			SubAccountSettings?.DomainAddress !== ''
-		) {
-			const domainName = SubAccountSettings?.DomainAddress.replace(
-				'https://',
-				''
-			)
-				.replace('http://', '')
-				.replace('www.', '');
-			if (text.includes(domainName)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
 	};
 
 	const resetToast = () => {
@@ -567,8 +571,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	) => {
 		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
 		setlinkCount(
-			updatedDynamicVariable?.filter((variable) => variable?.FieldTypeId === 3)
-				?.length
+			updatedDynamicVariable?.filter(
+				(variable) => variable?.FieldTypeId === fieldNameIds?.LINK
+			)?.length
 		);
 		setIsDynamcFieldModal(false);
 	};
@@ -975,7 +980,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							onFormButtonClick(buttonName)
 						}
 					/>
-			</Grid>
+				</Grid>
 			</form>
 
 			<Loader isOpen={isLoader} showBackdrop={true} />
