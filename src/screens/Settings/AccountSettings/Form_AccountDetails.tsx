@@ -74,7 +74,7 @@ const FORM_ACCOUNT_DETAILS = ({
       <Title
         Text={t("settings.accountSettings.actDetails.title")}
         Classes={classes}
-        ContainerStyle={null}
+        ContainerStyle={undefined}
         Element={null}
       />
       <Box className={"formContainer"}>

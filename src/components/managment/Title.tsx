@@ -4,15 +4,15 @@ import clsx from "clsx";
 interface TitleObject {
     Classes: any;
     Text: string;
-    ContainerStyle?: object;
+    ContainerStyle?: any;
     Element?: any;
-    ShowDivider: boolean;
+    ShowDivider?: boolean;
 }
 
 export const Title = ({
     Text,
     Classes,
-    ContainerStyle,
+    ContainerStyle = null,
     Element = null,
     ShowDivider
 }: TitleObject) => {
