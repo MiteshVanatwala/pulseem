@@ -1849,8 +1849,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "72px",
     alignItems: "center",
     justifyContent: "center",
-    borderBottomRightRadius: "4px",
-    borderTopRightRadius: "4px",
     borderBottomLeftRadius: isRTL ? "4px" : null,
     borderBottomRightRadius: isRTL ? null : "4px",
     borderTopLeftRadius: isRTL ? "4px" : null,
