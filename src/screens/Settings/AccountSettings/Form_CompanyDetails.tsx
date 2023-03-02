@@ -3,12 +3,12 @@ import {
   Box,
   Button,
   FormControl,
-  FormControlLabel,
   Grid,
   OutlinedInput,
   Select,
   TextField,
-  Typography
+  Typography,
+  FormControlLabel
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
@@ -20,6 +20,7 @@ import {
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
 import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
+import { Title } from "../../../components/managment/Title";
 import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
@@ -34,8 +35,6 @@ import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
-import { Title } from "../../../components/managment/Title";
-import { getCookie } from "../../../helpers/cookies";
 import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 
 
@@ -73,9 +72,6 @@ const FORM_COMPANY_DETAILS = ({
     ZipCode: null,
     TwoFactorAuthTestMethodID: null
   } as AccountSettings);
-
-  const accSettings = getCookie("accountSettings");
-  const accFeatures = accSettings?.AccountFeatures;
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -137,8 +133,7 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    const newSettings = { ...Settings, TwoFactorAuthEnabled: accFeatures.indexOf(45) === -1 } as AccountSettings;
-    setCompanyDetails(newSettings);
+    setCompanyDetails(Settings);
     if (Settings)
       handleQueryString2FA();
   }, [Settings]);
@@ -415,7 +410,7 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            {accFeatures.indexOf(45) === -1 && <Grid item xs={12} sm={3} md={2} className={clsx(classes.mt3)}>
+            <Grid item xs={12} sm={3} md={2} className={clsx(classes.mt3)}>
               <FormControlLabel
                 control={
                   <PulseemSwitch
@@ -443,8 +438,7 @@ const FORM_COMPANY_DETAILS = ({
                 }
               />
             </Grid>
-            }
-            {accFeatures.indexOf(45) === -1 && <Grid
+            <Grid
               item
               xs={12}
               sm={3}
@@ -502,11 +496,11 @@ const FORM_COMPANY_DETAILS = ({
                   })}
                 </Select>
               </FormControl>
-            </Grid>}
-            {accFeatures.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            </Grid>
+            <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
-                justifyContent: 'flex-start',
+                justifyContent: 'flex-end',
                 alignItems: 'center',
                 height: '100%'
               }}>
@@ -553,7 +547,7 @@ const FORM_COMPANY_DETAILS = ({
                   </>
                 </Button>
               </Box>
-            </Grid>}
+            </Grid>
             <Grid
               item
               xs={12}
