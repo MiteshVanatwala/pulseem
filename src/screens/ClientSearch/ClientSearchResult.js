@@ -385,6 +385,9 @@ const ClientSearchResult = () => {
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
           promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
         }
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+          orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
+        }
 
         Promise.all(promiseArray).then(() => {
           const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
@@ -431,20 +434,14 @@ const ClientSearchResult = () => {
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
-      setSearchData({
-        ...searchData,
-        OrderBy: descSortDirection ? 0 : 1
-      });
+      setSearchData({ ...searchData, OrderBy: descSortDirection ? 0 : 1 });
       setSortDirection(!descSortDirection);
     }
     else {
       if (data && data.length > 0) {
         let tempData = [...data].sort((a, b) => {
-          return a.Revenue !== null && b.Revenue !== null
-            ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
-            : -1
-        }
-        );
+          return a.Revenue !== null && b.Revenue !== null ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue)) : -1
+        });
         setData(tempData);
         setSortDirection(!descSortDirection);
       }
@@ -472,9 +469,9 @@ const ClientSearchResult = () => {
       onChange={(e) => setFilterMin(e.target.value)}
       className={clsx(classes.textField, classes.minWidth252)}
       placeholder={t("siteTracking.minimumRevenue")}
-      type="number"
-    />
+      type="number" />
   </Grid>
+
   const Max = () => <Grid item>
     <TextField
       variant="outlined"
@@ -483,14 +480,13 @@ const ClientSearchResult = () => {
       onChange={(e) => setFilterMax(e.target.value)}
       className={clsx(classes.textField, classes.minWidth252)}
       placeholder={t("siteTracking.maximumRevenue")}
-      type="number"
-    />
+      type="number" />
   </Grid>
+
   const EL_FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
         toolbarDisabled={false}
-        classes={classes}
         value={date.FromDate}
         onChange={handleFromDateChange}
         placeholder={t('mms.locFromDateResource1.Text')}
@@ -501,7 +497,6 @@ const ClientSearchResult = () => {
     <Grid item>
       <DateField
         toolbarDisabled={false}
-        classes={classes}
         value={date.ToDate}
         onChange={(value) => setDate({ ...date, ToDate: value })}
         placeholder={t('mms.locToDateResource1.Text')}
@@ -614,22 +609,19 @@ const ClientSearchResult = () => {
       title: t("common.campaignRevenue"),
       sortKey: 'Number',
       component: {
-        mobile: ({ Revenue = 0, ...rest }) => (<>
-          <Typography className={classes.bold}>
-            {t("common.campaignRevenue")}
-          </Typography>
-          <Typography>
-            {Revenue} {t("common.NIS")}
-          </Typography>
-        </>),
-        web: ({ Revenue = 0, ...rest }) => (
-          <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
-          </Typography>
-        )
+        mobile: ({ Revenue = 0, ...rest }) => (<><Typography className={classes.bold}>{t("common.campaignRevenue")}</Typography><Typography>{Revenue} {t("common.NIS")}</Typography></>),
+        web: ({ Revenue = 0, ...rest }) => (<Typography className={clsx(classes.bold, classes.f16)}>{Revenue} {t("common.NIS")}</Typography>)
       },
       filterComponents: [Min, Max]
-    },
+    }, '17': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      component: {
+        mobile: ({ Revenue = 0, ...rest }) => (<><Typography className={classes.bold}>{t("common.campaignRevenue")}</Typography><Typography>{Revenue} {t("common.NIS")}</Typography></>),
+        web: ({ Revenue = 0, ...rest }) => (<Typography className={clsx(classes.bold, classes.f16)}>{Revenue} {t("common.NIS")}</Typography>)
+      },
+      // filterComponents: [Min, Max]
+    }
   }
   const TABLE_HEAD = [
     {
@@ -1029,7 +1021,6 @@ const ClientSearchResult = () => {
       return (
         <Grid container className={'searchLine'}>
           <SearchField
-            classes={classes}
             value={searchStr}
             onChange={(e) => setSearchStr(e.target.value)}
             onClick={() => {
@@ -1164,8 +1155,13 @@ const ClientSearchResult = () => {
         {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
           <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
             {revenueSummary && <SummaryRow
-              data={revenueSummary}
-              classes={classes} />
+              data={revenueSummary} />
+            }
+          </Grid>},
+        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+          <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+            {revenueSummary && <SummaryRow
+              data={revenueSummary} />
             }
           </Grid>}
       </Grid>
@@ -1395,14 +1391,15 @@ const ClientSearchResult = () => {
         </TableCell>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({
-              Revenue: Revenue,
-              snt_OpeningDate: snt_OpeningDate,
-              LastSendDate: LastSendDate,
-              SentDate: SentDate,
-              CreationDate: CreationDate,
-              LogSms_ErrorType: ErrorTypeText
-            })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web(
+              {
+                Revenue: Revenue,
+                snt_OpeningDate: snt_OpeningDate,
+                LastSendDate: LastSendDate,
+                SentDate: SentDate,
+                CreationDate: CreationDate,
+                LogSms_ErrorType: ErrorTypeText
+              })}
           </TableCell>}
         {/* <TableCell classes={cellStyle} align="center" className={classes.flex2}>
           <Typography className={clsx(classes.bold, classes.f16)}>
