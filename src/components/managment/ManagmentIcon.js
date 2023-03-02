@@ -19,7 +19,7 @@ export const ManagmentIcon = ({
   href = '',
   type = '',
   text = '',
-  style= {},
+  style = {},
   disableHover = false,
   onClick = () => null }) => {
   const buttonRef = useRef();
@@ -35,13 +35,15 @@ export const ManagmentIcon = ({
         disabled={!!disable || !!hide}
         size='small'
         style={{ backgroundColor: disableHover ? 'transparent' : null }}
-        onClick={() => {
+        onClick={(e) => {
+          e?.preventDefault();
           if (href) {
             Redirect({ url: href });
           }
           else {
             onClick(buttonRef)
           }
+          return false;
         }}
         className={clsx({
           [classes.managmentIconHide]: hide
