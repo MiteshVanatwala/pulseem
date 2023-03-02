@@ -15,6 +15,7 @@ export const logout = async () => {
         setCookie('jtoken', '')
         setCookie('accountFeatures', '');
         setCookie('accountSettings', '');
+        redirectToLogin()
     } catch (err) {
         console.log("logout error", err)
     }
@@ -53,8 +54,7 @@ PulseemReactInstance.interceptors.request.use(async config => {
         config.headers.Authorization = `Bearer ${token}`
         return config
     } catch (err) {
-        console.error(err);
-        //redirectToLogin()
+        redirectToLogin()
     }
 })
 
