@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { debounce } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -342,7 +343,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onSave = async (args) => {
     try {
-      setLoader(true);
+      if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
@@ -382,6 +383,15 @@ const CampaignEditor = ({ classes, ...props }) => {
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
     await editorRef.current.save();
   }
+  
+  const onAutoSaveCampaign = debounce(() => {
+    saveDesign(false, null, false)
+  }, 15000);
+
+  const onDesignChange = async () => {
+    onAutoSaveCampaign();
+  }
+
   const deleteNewsletter = async () => {
     setDialog(null);
     await dispatch(deleteCampaign(campaignId));
@@ -531,6 +541,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       EditRow: EditRow,
       openModal: openModal,
       SaveCampaign: onSave,
+      AutoSaveCampaign: onAutoSaveCampaign,
+      DesignChange: onDesignChange,
       SetDialog: setDialog,
       CampaignId: campaignId,
       PulseemEditBlock: onEditBlock,
