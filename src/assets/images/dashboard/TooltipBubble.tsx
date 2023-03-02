@@ -1,9 +1,10 @@
 import { Box, Typography } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
+import { StateType } from "../../../Models/StateTypes";
 
 const TooltipBubble = ({ tooltipText = "TooltipText", ...props }: any) => {
-  const { isRTL } = useSelector((state) => state?.core);
+  const { isRTL } = useSelector((state: StateType) => state?.core);
   return (
     <Box style={{ transform: isRTL ? "scaleX(1)" : "scaleX(-1)" }}>
       <svg

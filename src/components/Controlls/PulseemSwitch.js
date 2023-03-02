@@ -2,6 +2,8 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import clsx from 'clsx';
+import useCore from '../../helpers/hooks/Core';
+import { useSelector } from 'react-redux';
 
 const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -56,7 +58,10 @@ const IOSSwitch = styled((props) => (
     },
 }));
 
-const PulseemSwitch = ({ classes, id, switchType, margin = 1, onChange = (par) => { }, checked = true, isRTL = true, ...props }) => {
+const PulseemSwitch = ({ id, switchType, margin = 1, onChange = (par) => { }, checked = true, ...props }) => {
+    const { classes } = useCore();
+    const { isRTL } = useSelector(state => state.core);
+
     switch (switchType) {
         case "ios": {
             return (<IOSSwitch sx={{ m: margin }} checked={checked} onChange={onChange} {...props} />)

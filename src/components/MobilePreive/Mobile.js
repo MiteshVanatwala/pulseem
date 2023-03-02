@@ -1,8 +1,10 @@
 import Mobile from "../../assets/images/mobileiphone.png";
 import { Box } from "@material-ui/core";
 import clsx from "clsx";
+import useCore from "../../helpers/hooks/Core";
 
-const MobilePreivew = ({ classes, campaignNumber, text, keyItem }) => {
+const MobilePreivew = ({ campaignNumber, text, keyItem }) => {
+    const { classes } = useCore();
     return (
         <Box className={classes.phoneDiv}>
             <img src={Mobile} className={classes.phoneImg} alt="Phone Simulation" />

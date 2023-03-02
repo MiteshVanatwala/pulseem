@@ -20,9 +20,10 @@ import { editGroup, } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { Dialog } from "../../../../components/managment/Dialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import useCore from "../../../../helpers/hooks/Core";
 
 
-const EditGroupPopup = ({ classes,
+const EditGroupPopup = ({
     isOpen = false,
     onClose,
     setLoader,
@@ -35,6 +36,7 @@ const EditGroupPopup = ({ classes,
     handleResponses = (response, actions) => null
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const dispatch = useDispatch();
     const [editableFroupData, setEditableFroupData] = useState(null);
     const { groupData } = useSelector((state) => state.group);
@@ -112,7 +114,6 @@ const EditGroupPopup = ({ classes,
     return (
         <>
             {editableFroupData && <BaseDialog
-                classes={classes}
                 open={isOpen}
                 title={t("group.edit")}
                 icon={<div className={classes.dialogIconContent}>

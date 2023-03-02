@@ -11,11 +11,15 @@ import { actionURL } from '../../config/index';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 import { NotesIcon } from '../../assets/images/dashboard/index'
 import { sitePrefix } from '../../config/index';
+import useCore from '../../helpers/hooks/Core';
+import { useTranslation } from 'react-i18next';
 
-const LatestReports = ({ classes, t, isRTL }) => {
+const LatestReports = () => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
-  const { windowSize } = useSelector(state => state.core);
+  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { classes } = useCore();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [tabValue, handleTabValue] = useState(0);
   const dateTimeFormat = 'DD/MM/YY, HH:mm';
   const dateFormat = 'D.M.YYYY';
@@ -30,9 +34,9 @@ const LatestReports = ({ classes, t, isRTL }) => {
   }));
 
   function BootstrapTooltip(props) {
-    const classes = useStylesBootstrap();
+    const localClasses = useStylesBootstrap();
 
-    return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
+    return <Tooltip arrow classes={localClasses} {...props} disableFocusListener />;
   }
 
   const initData = async () => {
@@ -252,7 +256,6 @@ const LatestReports = ({ classes, t, isRTL }) => {
               })) :
                 (
                   <ButtonWithTitle
-                    classes={classes}
                     title={NoDataObject[tabType].title}
                     buttonText={NoDataObject[tabType].buttonText}
                     redirect={NoDataObject[tabType].redirect}

@@ -273,28 +273,28 @@ const SmsReplies = () => {
             className={classes.flex2}
             align="center"
           >
-            {`{t("common.ToNumber")}`}
+            {`${t("common.ToNumber")}`}
           </TableCell>
           <TableCell
             classes={cellStyle}
             className={classes.flex2}
             align="center"
           >
-            {`{t("common.smsStatus")}`}
+            {`${t("common.smsStatus")}`}
           </TableCell>
           <TableCell
             classes={cellStyle}
             className={classes.flex2}
             align="center"
           >
-            {`{t("common.ReplyDate")}`}
+            {`${t("common.ReplyDate")}`}
           </TableCell>
           <TableCell
             classes={cellStyle}
             className={classes.flex5}
             align="center"
           >
-            {`{t("common.messageContent")}`}
+            {`${t("common.messageContent")}`}
           </TableCell>
         </TableRow>
       </TableHead>
@@ -368,7 +368,6 @@ const SmsReplies = () => {
                 <ManagmentIcon
                   //   disableHover={true}
                   key="edit"
-                  classes={classes}
                   icon={EditIcon}
                   iconClass={clsx(classes.smallIcon)}
                   rootClass={classes.paddingIcon}
@@ -434,7 +433,6 @@ const SmsReplies = () => {
   const renderTablePagination = () => {
     return (
       <TablePagination
-        classes={classes}
         rows={smsReplies?.Message}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handlePageChange}
@@ -459,7 +457,6 @@ const SmsReplies = () => {
 
           return (
             <AddRecipientPopup
-              classes={classes}
               isOpen={
                 selectedClients.length === 1 &&
                 dialog === DialogType.EDIT_RECIPIENT
@@ -468,7 +465,6 @@ const SmsReplies = () => {
                 setDialog(null);
                 setSelectedClients([]);
               }}
-              windowSize={windowSize}
               ToastMessages={ToastMessages}
               selectedGroups={mappedGroups}
               handleResponses={(response, actions) => {
@@ -654,7 +650,6 @@ const SmsReplies = () => {
       {renderTablePagination()}
       {showDialog()}
       <ConfirmRadioDialog
-        classes={classes}
         isOpen={dialog === "exportFormat"}
         title={t("campaigns.exportFile")}
         radioTitle={t("common.SelectFormat")}

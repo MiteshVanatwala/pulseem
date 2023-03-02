@@ -26,22 +26,22 @@ import {
   IsNumberField,
   IsValidEmail,
 } from "../../../helpers/Utils/Validations";
-import {
-  CompDtlPropTypes
-} from "../../../Models/Settings/CompanyDetails";
+import { CompDtlPropTypes } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import useCore from "../../../helpers/hooks/Core";
-import { AccountSettings } from '../../../Models/Account/AccountSettings';
-import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
-import { useSearchParams } from 'react-router-dom';
+import { AccountSettings } from "../../../Models/Account/AccountSettings";
+import {
+  resetTwoFA,
+  update2FASettings,
+} from "../../../redux/reducers/AccountSettingsSlice";
+import { useSearchParams } from "react-router-dom";
 import ChangePassword from "./Password/ChangePassword";
-
 
 const FORM_COMPANY_DETAILS = ({
   setToastMessage,
   ToastMessages,
   Settings,
-  OnUpdate
+  OnUpdate,
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
@@ -55,7 +55,9 @@ const FORM_COMPANY_DETAILS = ({
   } | null>(null);
 
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
-  const [companyDetails, setCompanyDetails] = useState<AccountSettings>({} as AccountSettings);
+  const [companyDetails, setCompanyDetails] = useState<AccountSettings>(
+    {} as AccountSettings
+  );
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [errors, setErrors] = useState<AccountSettings>({
@@ -68,7 +70,7 @@ const FORM_COMPANY_DETAILS = ({
     Address: "",
     City: "",
     ZipCode: null,
-    TwoFactorAuthTestMethodID: null
+    TwoFactorAuthTestMethodID: null,
   } as AccountSettings);
 
   const isValidPayload = () => {
@@ -93,7 +95,9 @@ const FORM_COMPANY_DETAILS = ({
       isValid = false;
       tempErrors = {
         ...tempErrors,
-        CellPhone: t("settings.accountSettings.fixedComDetails.errors.reqMobile"),
+        CellPhone: t(
+          "settings.accountSettings.fixedComDetails.errors.reqMobile"
+        ),
       };
     } else if (
       companyDetails.CellPhone.length > 16 ||
@@ -131,39 +135,48 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    setCompanyDetails(Settings);
-    if (Settings)
-      handleQueryString2FA();
+    setCompanyDetails(Settings as AccountSettings);
+    if (Settings) handleQueryString2FA();
   }, [Settings]);
 
   useEffect(() => {
-    if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {
+    if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== "") {
       if (twoFAUpdated?.StatusCode === 201) {
-        setToastMessage(twoFAUpdated?.Message === 'Activated' ? ToastMessages.TWO_FA_SAVED : ToastMessages.TWO_FA_SAVED_INACTIVE);
-      }
-      else {
+        setToastMessage(
+          twoFAUpdated?.Message === "Activated"
+            ? ToastMessages.TWO_FA_SAVED
+            : ToastMessages.TWO_FA_SAVED_INACTIVE
+        );
+      } else {
         setToastMessage(ToastMessages.TWO_FA_NOT_SAVED);
       }
     }
-  }, [twoFAUpdated])
+  }, [twoFAUpdated]);
 
   const on2FAUpdate = (req: AccountSettings) => {
+    // @ts-ignore
     dispatch(update2FASettings(req)).then(() => {
       setCompanyDetails(req);
       OnUpdate(req, false);
       dispatch(resetTwoFA());
-    })
-  }
+    });
+  };
 
   const handleQueryString2FA = () => {
-    if (searchParams.has('2fa') && Settings?.SubAccountId > 0 && !Settings.TwoFactorAuthEnabled) {
-      searchParams.delete('2fa');
+    if (
+      searchParams.has("2fa") &&
+      // @ts-ignore
+      Settings?.SubAccountId > 0 &&
+      // @ts-ignore
+      !Settings.TwoFactorAuthEnabled
+    ) {
+      searchParams.delete("2fa");
       setSearchParams(searchParams);
       const req = { ...companyDetails, TwoFactorAuthEnabled: true };
       setCompanyDetails(req);
       on2FAUpdate(req);
     }
-  }
+  };
 
   const handleChange = (e: any, name = "") => {
     //@ts-ignore
@@ -175,7 +188,6 @@ const FORM_COMPANY_DETAILS = ({
         TwoFactorAuthEnabled: !!!companyDetails.TwoFactorAuthEnabled,
       };
       on2FAUpdate(req);
-
     } else if (name === "BirthDate") {
       setCompanyDetails({
         ...companyDetails,
@@ -229,7 +241,7 @@ const FORM_COMPANY_DETAILS = ({
     const req = { ...companyDetails, TwoFactorAuthOptionID: e?.target?.value };
     setCompanyDetails(req);
     on2FAUpdate(req);
-  }
+  };
 
   return (
     <>
@@ -239,21 +251,28 @@ const FORM_COMPANY_DETAILS = ({
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
-          classes={classes}
           isIcon={false}
           ContainerStyle={{
-            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
-              }`,
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${
+              isRTL ? 0 : "14.69px"
+            }`,
           }}
         />
         <Box className={"formContainer"}>
-          <img src={DataAnalysis} className={'svg_data_analysis'} alt="" width="225" height="155" style={{
-            top: 121,
-            right: isRTL ? 'auto' : '93.14px',
-            left: isRTL ? '93.14px' : 'auto',
-            position: 'absolute',
-            transform: 'scaleX(1)'
-          }} />
+          <img
+            src={DataAnalysis}
+            className={"svg_data_analysis"}
+            alt=""
+            width="225"
+            height="155"
+            style={{
+              top: 121,
+              right: isRTL ? "auto" : "93.14px",
+              left: isRTL ? "93.14px" : "auto",
+              position: "absolute",
+              transform: "scaleX(1)",
+            }}
+          />
           {/* <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> */}
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
@@ -308,7 +327,6 @@ const FORM_COMPANY_DETAILS = ({
               </Typography>
               <DateField
                 toolbarDisabled={false}
-                classes={classes}
                 value={companyDetails.BirthDate}
                 onChange={(value: any) => handleChange(value, "BirthDate")}
               />
@@ -402,14 +420,21 @@ const FORM_COMPANY_DETAILS = ({
                 variant="outlined"
                 size="small"
                 name="ZipCode"
-                value={companyDetails.ZipCode === 0 ? '' : companyDetails.ZipCode}
+                value={
+                  companyDetails.ZipCode === 0 ? "" : companyDetails.ZipCode
+                }
                 onKeyPress={IsNumberField}
                 onChange={handleChange}
                 className={clsx(classes.textField, classes.minWidth252)}
               />
             </Grid>
-            <Typography className="subHeading" style={{ fontWeight: 'bold', color: '#000', marginBottom: 15 }}>
-              {t("settings.accountSettings.fixedComDetails.securitySettings")}
+            <Typography
+              className="subHeading"
+              style={{ fontWeight: "bold", color: "#000", marginBottom: 15 }}
+            >
+              {`${t(
+                "settings.accountSettings.fixedComDetails.securitySettings"
+              )}`}
             </Typography>
 
             <Grid container className={"subform"}>
@@ -430,7 +455,11 @@ const FORM_COMPANY_DETAILS = ({
                 </Typography>
                 <FormControl
                   className={classes.formControl}
-                  style={{ width: "100%", maxHeight: 40, paddingInlineStart: 10 }}
+                  style={{
+                    width: "100%",
+                    maxHeight: 40,
+                    paddingInlineStart: 10,
+                  }}
                 >
                   <Select
                     disabled={!companyDetails.TwoFactorAuthEnabled}
@@ -443,11 +472,19 @@ const FORM_COMPANY_DETAILS = ({
                       paddingRight: 0,
                     }}
                     name="TwoFactorAuthOptionID"
-                    onChange={(e: any) => { handleTwoFactorOption(e) }}
+                    onChange={(e: any) => {
+                      handleTwoFactorOption(e);
+                    }}
                   >
                     {[
-                      { name: t("settings.accountSettings.auth.everyDay"), value: 101 },
-                      { name: t("settings.accountSettings.auth.everyTwoWeeks"), value: 202 }
+                      {
+                        name: t("settings.accountSettings.auth.everyDay"),
+                        value: 101,
+                      },
+                      {
+                        name: t("settings.accountSettings.auth.everyTwoWeeks"),
+                        value: 202,
+                      },
                     ].map((so, index) => {
                       return (
                         <MenuItem
@@ -480,9 +517,7 @@ const FORM_COMPANY_DETAILS = ({
                     classes.textCapitalize,
                     "link"
                   )}
-                  onClick={() =>
-                    setShowChangePassword(true)
-                  }
+                  onClick={() => setShowChangePassword(true)}
                   startIcon={<UnLockIcon />}
                   endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >
@@ -510,12 +545,13 @@ const FORM_COMPANY_DETAILS = ({
         </Box>
       </Box>
       {RenderDialog()}
-      {showChangePassword && <ChangePassword
-        SetToast={setToastMessage}
-        IsOpen={showChangePassword}
-        OnClose={() => setShowChangePassword(false)}
-      />
-      }
+      {showChangePassword && (
+        <ChangePassword
+          SetToast={setToastMessage}
+          IsOpen={showChangePassword}
+          OnClose={() => setShowChangePassword(false)}
+        />
+      )}
     </>
   );
 };

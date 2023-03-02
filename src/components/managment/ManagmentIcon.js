@@ -3,10 +3,10 @@ import clsx from 'clsx';
 import { Typography, Button, Box } from '@material-ui/core'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useRedirect from '../../helpers/Routes/Redirect';
+import useCore from '../../helpers/hooks/Core';
 
 
 export const ManagmentIcon = ({
-  classes,
   icon,
   uIcon = "",
   lable = '',
@@ -23,6 +23,7 @@ export const ManagmentIcon = ({
 }) => {
   const buttonRef = useRef();
   const Redirect = useRedirect();
+  const { classes } = useCore();
 
   if (remove)
     return null

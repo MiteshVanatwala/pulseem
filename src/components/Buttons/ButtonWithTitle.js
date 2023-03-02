@@ -1,9 +1,11 @@
 import { Button, Grid, Typography } from '@material-ui/core';
 import clsx from 'clsx';
 import useRedirect from '../../helpers/Routes/Redirect';
+import useCore from '../../helpers/hooks/Core';
 
-const ButtonWithTitle = ({ classes, title, buttonText, redirect, innerStyle, buttonClass }) => {
+const ButtonWithTitle = ({ title, buttonText, redirect, innerStyle, buttonClass }) => {
     const Redirect = useRedirect();
+    const { classes } = useCore();
     return <Grid container className={clsx(classes.fullSize)}>
         <Grid item lg={12} className={clsx(classes.justifyCenterOfCenter, classes.flexColumn, classes.spaceEvenly)} style={innerStyle}>
             <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5, classes.tabTitle, classes.bold)}>

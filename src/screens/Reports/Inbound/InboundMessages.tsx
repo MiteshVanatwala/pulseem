@@ -112,7 +112,7 @@ const InboundMessages = () => {
               <SmsReplies />
             </TabPanel>
             <TabPanel value="1" className={classes.p0}>
-              <WhatsappInbound classes={classes} />
+              <WhatsappInbound />
             </TabPanel>
           </Grid>
         </TabContext>
@@ -124,11 +124,10 @@ const InboundMessages = () => {
     <DefaultScreen
       subPage={"inboundMessages"}
       currentPage="reports"
-      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
       <Box className={"topSection"}>
-        <Title Text={t("report.ResponsesReports.title")} classes={classes} />
+        <Title Text={t("report.ResponsesReports.title")} />
         {renderTabs()}
       </Box>
     </DefaultScreen>

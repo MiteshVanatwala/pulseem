@@ -7,9 +7,10 @@ import { Autocomplete } from '@material-ui/lab';
 import React, { useState } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import useCore from '../../helpers/hooks/Core';
 
 
-const GroupTags = ({ classes,
+const GroupTags = ({
     groupSelected,
     title = 'mainReport.ChooseLinks',
     onShowModal = () => null,
@@ -26,6 +27,7 @@ const GroupTags = ({ classes,
     ...props
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const [groups, setGroups] = useState([]);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;

@@ -394,7 +394,7 @@ const renderRoutes = (classes) => {
         element={<InboundMessages />}
       />
       <Route
-        path="*" element={<PageNotFound classes={classes} />}
+        path="*" element={<PageNotFound />}
       />
     </>
   )

@@ -523,7 +523,7 @@ const GraphicReport = (props) => {
           {<RenderCampaignSummary chartData={campaignData} />}
         </TabPanel>
         <TabPanel value={1} index={1} className={classes.p0}>
-          {/* <RecipientsTab classes={classes} /> */}
+          {/* <RecipientsTab /> */}
         </TabPanel>
         <TabPanel value={2} index={2} className={classes.p0}>
           {<RenderOpenClickTab />}
@@ -539,7 +539,7 @@ const GraphicReport = (props) => {
   }
 
   return (
-    <DefaultScreen currentPage="reports" classes={classes}>
+    <DefaultScreen currentPage="reports" >
       {
         campaignData && <>
           {renderHeader()}

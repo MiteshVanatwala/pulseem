@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Button,
   Grid,
@@ -138,7 +138,7 @@ const RecipientsTab = ({ classes }) => {
       removals: "No",
       sms: "0522698875",
     },
-  ]);
+  ];
 
   const renderRecipients = () => {
     return (
@@ -506,36 +506,32 @@ const RecipientsTab = ({ classes }) => {
         }}
       >
         <ManagmentIcon
-          classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
           icon={EditIcon}
           lable="Edited"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
-          classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Delete from Group"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
-          classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove email"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
-          classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove phone"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
       </Box>
     );
@@ -602,7 +598,6 @@ const RecipientsTab = ({ classes }) => {
 
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching ? SearchResults.length : tableData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}

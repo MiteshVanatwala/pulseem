@@ -247,7 +247,6 @@ const SiteTrackingEditor = () => {
         if (type) {
             return (
                 dialogType && <BaseDialog
-                    classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
                     onCancel={() => { setDialogType(null) }}
@@ -460,7 +459,6 @@ const SiteTrackingEditor = () => {
                                         arrow={true}
                                         style={{ fontSize: 14 }}
                                         nameEllipsis={false}
-                                        classes={classes}
                                         interactive={true}
                                         placement={'top'}
                                         titleStyle={{ fontSize: 13, textAlign: 'center' }}
@@ -553,7 +551,6 @@ const SiteTrackingEditor = () => {
                             </Typography>
                         </Box>
                     )}
-                    classes={classes}
                     isIcon={false}
                 />
             </>
@@ -599,7 +596,6 @@ const SiteTrackingEditor = () => {
     return <DefaultScreen
         currentPage='settings'
         subPage='SiteTracking'
-        classes={classes}
         customPadding={true}>
         <Box className={classes.editorCont}>
             <Box className='head'>
@@ -622,7 +618,6 @@ const SiteTrackingEditor = () => {
                             >{t("siteTracking.scriptImplementation")}</Button>
                         </Box>
                     }
-                    classes={classes}
                     isIcon={true}
                     ContainerStyle={{
                         width: '100%'
@@ -667,7 +662,6 @@ const SiteTrackingEditor = () => {
                                 <Grid item xs={12}>
                                     <Typography className={clsx(classes.marginBlock20, classes.font20)}>{t("siteTracking.eventToTrack")}</Typography>
                                     <EventTabs
-                                        classes={classes}
                                         setDialog={setDialogType}
                                         showButtons={setShowActions}
                                         domain={event?.domain}

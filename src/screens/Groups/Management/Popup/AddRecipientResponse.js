@@ -8,14 +8,14 @@ import {
 
 import { useTranslation } from "react-i18next";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+import useCore from "../../../../helpers/hooks/Core";
 
-const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message, summary = null }) => {
+const AddRecipientResponse = ({ isOpen = false, onClose, title, message, summary = null }) => {
 
   const { t } = useTranslation();
-
+  const { classes } = useCore();
   return (
     <BaseDialog
-      classes={classes}
       open={isOpen}
       title={title}
       icon={<div className={classes.dialogIconContent}>

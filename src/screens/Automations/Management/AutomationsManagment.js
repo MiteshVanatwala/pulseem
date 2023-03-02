@@ -138,7 +138,6 @@ const AutomationsManagnentScreen = () => {
       return (
         <Grid container className={'searchLine'}>
           <SearchField
-            classes={classes}
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             onClick={handleSearch}
@@ -166,7 +165,6 @@ const AutomationsManagnentScreen = () => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
-              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
@@ -178,7 +176,6 @@ const AutomationsManagnentScreen = () => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
-              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
@@ -329,7 +326,6 @@ const AutomationsManagnentScreen = () => {
             className={'rowIconContainer'}
           >
             <ManagmentIcon
-              classes={classes}
               className={'rowIconContainer'}
               {...icon}
               uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
@@ -415,7 +411,6 @@ const AutomationsManagnentScreen = () => {
         <CustomTooltip
           arrow
           isSimpleTooltip={false}
-          classes={classes}
           interactive={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
@@ -545,7 +540,6 @@ const AutomationsManagnentScreen = () => {
     }
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching ? searchResults.length : automationsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -561,7 +555,6 @@ const AutomationsManagnentScreen = () => {
 
   const handleChange = (ID) => () => {
     const found = restoreArray.includes(ID)
-    console.log('restore', ID, 'found:', found)
     if (found) {
       setRestoreArray(restoreArray.filter(restore => restore !== ID))
     } else {
@@ -611,7 +604,6 @@ const AutomationsManagnentScreen = () => {
       ),
       content: restoreArray?.length > 0 ? (
         <RestorDialogContent
-          classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
@@ -788,7 +780,6 @@ const AutomationsManagnentScreen = () => {
     const currentDialog = dialogContent[type] || {}
     return (
       dialogType && <BaseDialog
-        classes={classes}
         open={dialogType}
         onClose={handleClose}
         onCancel={handleClose}
@@ -800,10 +791,9 @@ const AutomationsManagnentScreen = () => {
   return (
     <DefaultScreen
       currentPage='automations'
-      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
-        <Title Text={t('automations.logPageHeaderResource1.Text')} classes={classes} />
+        <Title Text={t('automations.logPageHeaderResource1.Text')} />
         {renderSearchLine()}
       </Box>
       {renderManagmentLine()}

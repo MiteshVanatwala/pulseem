@@ -12,10 +12,14 @@ import useRedirect from '../../helpers/Routes/Redirect';
 import { FlagIcon } from '../../assets/images/dashboard/index'
 import { CgCloseO } from 'react-icons/cg';
 import { sitePrefix } from '../../config';
+import useCore from '../../helpers/hooks/Core';
+import { useTranslation } from 'react-i18next';
 
-const Shortcut = ({ classes, windowSize, t, isRTL }) => {
+const Shortcut = () => {
   const { shortcuts } = useSelector(state => state.shortcuts);
-  const { accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures, windowSize, isRTL } = useSelector(state => state.core)
+  const { classes } = useCore();
+  const { t } = useTranslation();
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});

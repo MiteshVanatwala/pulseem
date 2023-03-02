@@ -315,7 +315,6 @@ const SmsReport = ({ classes }) => {
     if (windowSize === 'xs') {
       return (
         <SearchField
-          classes={classes}
           value={smsQuery.SerachTxt}
           onChange={(e) => {
             setSmsQuery({
@@ -355,7 +354,6 @@ const SmsReport = ({ classes }) => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={smsQuery.From}
               onChange={(value) => {
                 setSmsQuery({
@@ -372,7 +370,6 @@ const SmsReport = ({ classes }) => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={smsQuery.To}
               onChange={(value) => {
                 setSmsQuery({
@@ -391,7 +388,6 @@ const SmsReport = ({ classes }) => {
             control={
               <PulseemSwitch
                 switchType='ios'
-                classes={classes}
                 checked={smsQuery.ShowTestCampaigns}
                 onColor="#0371ad"
                 handleDiameter={20}
@@ -787,7 +783,6 @@ const SmsReport = ({ classes }) => {
   const renderTablePagination = () => {
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching && smsReport.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
@@ -813,19 +808,17 @@ const SmsReport = ({ classes }) => {
 
   return (
     <DefaultScreen
-      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
       <Box className={'topSection'}>
-        <Title Text={t('common.SMSReports')} classes={classes} />
+        <Title Text={t('common.SMSReports')} />
         {renderSearchSection()}
       </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
       <ConfirmRadioDialog
-        classes={classes}
         isOpen={dialogType === 'exportFormat'}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}
@@ -835,7 +828,7 @@ const SmsReport = ({ classes }) => {
         defaultValue="xls"
         options={ExportFileTypes}
       />
-      <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
+      <GraphReport showLoader={!smsGraph} reportData={smsGraph} />
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   )

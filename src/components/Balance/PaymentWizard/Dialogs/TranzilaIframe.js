@@ -4,20 +4,21 @@ import PurchaseSummary from './PurchaseSummary'
 import { Loader } from '../../../Loader/Loader';
 import { useEffect } from 'react';
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import useCore from '../../../../helpers/hooks/Core';
+import { useTranslation } from 'react-i18next';
 
 const TranzilaIframe = ({
-    t,
-    classes,
     data,
-    isRTL,
     packageId,
-    windowSize,
     paymentUrl = null,
     onStepBack = () => null,
     onComplete = () => null
 }) => {
     const dispatch = useDispatch();
+    const { classes } = useCore();
+    const { t } = useTranslation();
+    const { isRTL, windowSize } = useSelector(state => state.core);
     useEffect(() => {
         window.addEventListener('message', (e) => {
             if (e.data) {
@@ -49,8 +50,6 @@ const TranzilaIframe = ({
         </Grid>
         <Grid item className={clsx(classes.mt25, classes.fullFlexItem)}>
             <PurchaseSummary data={data}
-                classes={classes}
-                isRTL={isRTL}
                 packageId={packageId}
                 showTitle={false}
                 showButtons={false} />

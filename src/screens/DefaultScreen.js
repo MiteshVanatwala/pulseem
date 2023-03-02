@@ -9,9 +9,11 @@ import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
 import Illustration_BG_BL from '../assets/images/Illustration_BG_BL';
 import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
+import useCore from '../helpers/hooks/Core';
 
-const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
+const DefaultScreen = ({ children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   const { isAdmin, isAllowSwitchAccount } = useSelector(state => state.core)
   let route, title;
 
@@ -64,7 +66,6 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       </Helmet>
       <TopAppBar
         showAppBar={showAppBar}
-        classes={classes}
         currentPage={currentPage}
       />
       <Container

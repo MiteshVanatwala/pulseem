@@ -120,7 +120,7 @@ const BulkStatus = () => {
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PurchaseWizard classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType.type} />
+          <PurchaseWizard onComplete={handleDialogClose} packageType={selectedPackageType.type} />
         </Grid >
       )
     };

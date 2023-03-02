@@ -148,7 +148,6 @@ const NotificationSend = () => {
                             </span>
                         </Box>
                     )}
-                    classes={classes}
                     isIcon={false}
                     ContainerStyle={{
                         padding: 0,
@@ -166,7 +165,6 @@ const NotificationSend = () => {
 
             return (
                 <BaseDialog
-                    classes={classes}
                     open={validationErrorList}
                     onCancel={handleDialogClose}
                     onClose={handleDialogClose}
@@ -414,7 +412,6 @@ const NotificationSend = () => {
             return (
                 <BaseDialog
                     customContainerStyle={classes.summaryContainer}
-                    classes={classes}
                     open={summary}
                     onCancel={() => setSummary(null)}
                     onClose={() => setSummary(null)}
@@ -449,7 +446,7 @@ const NotificationSend = () => {
                     </Grid>
                     {windowSize !== 'xs' && <Grid item md={6}>
                         <h3 className={classes.colrPrimary} style={{ fontWeight: '500', fontSize: 20, marginTop: 10 }}>{t("notifications.preview")}</h3>
-                        <Preview classes={classes}
+                        <Preview
                             model={model}
                             ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText !== ''}
                             showDevices={true}
@@ -551,7 +548,7 @@ const NotificationSend = () => {
                     >
                         <Grid item md={7} xs={12}>
                             <h2 className={classes.sectionTitle}>{t('notifications.toWhomToSend')}</h2>
-                            {groupList && <Groups classes={classes}
+                            {groupList && <Groups
                                 list={[...groupList]}
                                 selectedList={selectedGroups}
                                 callbackSelectedGroups={callbackSelectedGroups}
@@ -585,7 +582,6 @@ const NotificationSend = () => {
                                 <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType === '1' ? 'none' : 'auto' }}>
                                     <DateField
                                         minDate={moment()}
-                                        classes={classes}
                                         value={sendDate}
                                         onChange={handleDatePicker}
                                         placeholder={t('notifications.date')}
@@ -595,7 +591,6 @@ const NotificationSend = () => {
                                 </Box>
                                 <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType === '1' ? 'none' : 'auto' }}>
                                     <DateField
-                                        classes={classes}
                                         value={sendDate}
                                         onTimeChange={handleTimePicker}
                                         placeholder={t('notifications.hour')}
@@ -631,7 +626,6 @@ const NotificationSend = () => {
                     cancelText="common.No"
                     confirmText="common.Yes"
                     disableBackdropClick={true}
-                    classes={classes}
                     open={showConfirmCancel}
                     onCancel={() => setShowConfirmCancel(null)}
                     onClose={() => onCancelConfirm(false)}
@@ -674,7 +668,6 @@ const NotificationSend = () => {
             return (
                 <BaseDialog
                     showDivider={false}
-                    classes={classes}
                     open={true}
                     onClose={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
                     {...dialog}>
@@ -690,10 +683,9 @@ const NotificationSend = () => {
             currentPage='notifications'
             subPage='create'
             customPadding={true}
-            classes={classes}
             containerClass={classes.editorCont}>
             <div className={'head'} >
-                <Title Text={t('notifications.createNewPush')} classes={classes} />
+                <Title Text={t('notifications.createNewPush')} />
             </div>
             <div className={'containerBody'}>
                 {renderToast()}

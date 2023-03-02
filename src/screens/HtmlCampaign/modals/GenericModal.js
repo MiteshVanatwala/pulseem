@@ -4,17 +4,17 @@ import "moment/locale/he";
 import { Dialog } from "../../../components/managment/Dialog";
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import useCore from "../../../helpers/hooks/Core";
 
 const GenericModal = ({
-  classes,
   modalData,
   isOpen = false
 }) => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   return !isOpen ? (<></>) :
     (
       <BaseDialog
-        classes={classes}
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
         title={t(modalData.title)}

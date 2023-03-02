@@ -4,13 +4,15 @@ import { useTranslation } from 'react-i18next'
 import NumberFormat from 'react-number-format'
 import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography } from '@material-ui/core';
+import useCore from '../../../helpers/hooks/Core';
 
-const Package = ({ classes,
+const Package = ({
     pack,
     packSize,
     packageType = 1,
-    onSelect = () => null }) => {
-
+    onSelect = () => null
+}) => {
+    const { classes } = useCore();
     const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
     return (

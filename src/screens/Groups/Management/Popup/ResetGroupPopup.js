@@ -7,10 +7,10 @@ import { resetGroups } from '../../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { DeleteIcon } from '../../../../assets/images/managment';
+import useCore from '../../../../helpers/hooks/Core';
 
 const ResetGroupPopup = ({
     onClose,
-    classes,
     isOpen,
     windowSize,
     getData,
@@ -20,6 +20,7 @@ const ResetGroupPopup = ({
 
     const { t } = useTranslation();
     const dispatch = useDispatch()
+    const { classes } = useCore();
 
     const handleSubmit = async () => {
         const response = await new Promise((resolve, reject) => resolve(dispatch(resetGroups(selectedGroup))))
@@ -66,7 +67,6 @@ const ResetGroupPopup = ({
 
     return (
         <BaseDialog
-            classes={classes}
             open={isOpen}
             onClose={onClose}
             onCancel={onClose}

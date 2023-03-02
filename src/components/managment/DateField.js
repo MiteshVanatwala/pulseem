@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import useCore from '../../helpers/hooks/Core';
 
 export const DateField = ({
-  minDate = undefined,
+  minDate = '',
   value,
   onChange = (value) => { },
   onTimeChange = () => { },
@@ -100,7 +100,7 @@ export const DateField = ({
       keyboardIcon={<CalendarIcon />}
       format={"DD/MM/YYYY"}
       margin='none'
-      minDate={minDate}
+      minDate={minDate ?? undefined}
       placeholder={placeholder}
       initialFocusedDate={moment()}
       value={value}

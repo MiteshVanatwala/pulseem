@@ -558,7 +558,6 @@ const CampaignEditor = ({ ...props }) => {
         title: t("common.imageGallery"),
         content: (
           <Gallery
-            classes={classes}
             style={{ minWidth: 400 }}
             multiSelect={false}
             forceReload={true}
@@ -572,7 +571,6 @@ const CampaignEditor = ({ ...props }) => {
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
           showDivider={false}
-          classes={classes}
           open={showGallery}
           onClose={() => { setShowGallery(false); }}
           onCancel={() => { setShowGallery(false); }}
@@ -593,7 +591,6 @@ const CampaignEditor = ({ ...props }) => {
         title: t("common.documentGallery"),
         content: (
           <Gallery
-            classes={classes}
             style={{ minWidth: 400 }}
             multiSelect={false}
             forceReload={true}
@@ -607,7 +604,6 @@ const CampaignEditor = ({ ...props }) => {
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
           showDivider={false}
-          classes={classes}
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
           onCancel={() => { setShowDocuments(false); }}
@@ -685,7 +681,6 @@ const CampaignEditor = ({ ...props }) => {
     <DefaultScreen
       showAppBar={false}
       currentPage='campaignEditor'
-      classes={classes}
       customPadding={true}
       containerClass={[classes.fullWidth, classes.noPadding]}
     >
@@ -693,25 +688,21 @@ const CampaignEditor = ({ ...props }) => {
       {showGalleryModal()}
       {showDocumentsModal()}
       <NoCreditsModal
-        classes={classes}
         onClose={() => setDialog(null)}
         isOpen={dialog === DialogType.NO_CREDITS_LEFT}
       />
       <DemoModal modals={modals} />
       <TestSend
-        classes={classes}
         isOpen={dialog === DialogType.TEST_SEND}
         onClose={() => setDialog(null)}
         onSubmit={onTestSendSubmit}
         campaignId={campaignId || params?.id}
       />
       <GenericModal
-        classes={classes}
         modalData={genericModalData}
         isOpen={dialog === DialogType.GENERIC}
       />
       <ResponseModal
-        classes={classes}
         isOpen={dialog && isResponseModal}
         onClose={handleCloseReponse}
         onConfirm={handleCloseReponse}
@@ -724,7 +715,6 @@ const CampaignEditor = ({ ...props }) => {
       <WizardActions
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
-        classes={classes}
         onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
         onBack={{

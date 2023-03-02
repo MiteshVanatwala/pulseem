@@ -257,7 +257,6 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
         const currentDialog = dialogContent[type] || {}
         return (
             dialogType && <BaseDialog
-                classes={classes}
                 open={dialogType}
                 onClose={handleClose}
                 {...currentDialog}>
@@ -268,7 +267,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
     const handleAlertoff = () => {
         setDialogType(null);
     }
-    
+
     return (<>
         {renderDialog()}
         <Loader isOpen={showLoader} />

@@ -6,14 +6,16 @@ import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
 import { setCookie } from '../../helpers/Functions/cookies';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import useCore from '../../helpers/hooks/Core';
 
 
-const TFA = ({ classes,
+const TFA = ({
     showTFA = false,
     onCancel = () => null,
     onConfirm = () => null
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const { isRTL } = useSelector(state => state.core);
     const { companyName } = useSelector(state => state.core)
     const [hideThisMessage, setHideThisMessage] = useState(false);
@@ -92,7 +94,6 @@ const TFA = ({ classes,
     };
 
     return (<SolidDialog
-        classes={classes}
         open={showTFA}
         onClose={() => { onCancel() }}
         {...dialog}>

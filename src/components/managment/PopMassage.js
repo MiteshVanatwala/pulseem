@@ -1,12 +1,13 @@
-import {Box, Popper} from '@material-ui/core'
+import { Box, Popper } from '@material-ui/core'
+import useCore from '../../helpers/hooks/Core';
 
-export const PopMassage=({
-  classes,
-  show=false,
-  timeout=500,
-  label='',
-  innerRef=null
+export const PopMassage = ({
+  show = false,
+  timeout = 500,
+  label = '',
+  innerRef = null
 }) => {
+  const { classes } = useCore();
   // const transitionStyles={
   //   entering: 1,
   //   entered: 1,
@@ -16,12 +17,12 @@ export const PopMassage=({
   return (
     <Popper open={show} anchorEl={innerRef}>
       <Box
-          className={classes.copyClip}
-          style={{
-            transition: `opacity ${timeout}ms ease-in-out`,
-          }}>
-          {label}
-        </Box>
+        className={classes.copyClip}
+        style={{
+          transition: `opacity ${timeout}ms ease-in-out`,
+        }}>
+        {label}
+      </Box>
     </Popper>
   )
 }

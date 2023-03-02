@@ -1326,7 +1326,6 @@ const ClientSearchResult = () => {
               key={icon.key}
               item >
               <ManagmentIcon
-                classes={classes}
                 {...icon}
                 uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
               />
@@ -1553,7 +1552,6 @@ const ClientSearchResult = () => {
     };
     return (
       <BaseDialog
-        classes={classes}
         open={
           dialog === DialogType.CONFIRM_INVALID ||
           dialog === DialogType.CONFIRM_DELETE_FROM_GROUPS ||
@@ -1632,7 +1630,6 @@ const ClientSearchResult = () => {
           </Box>
         </DataTable>
         <TablePagination
-          classes={classes}
           rows={TotalCount}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleRowsPerPageChange}
@@ -1662,7 +1659,6 @@ const ClientSearchResult = () => {
           cancelText="common.Cancel"
           confirmText="common.Yes"
           disableBackdropClick={true}
-          classes={classes}
           open={showConfirmDialog}
           onCancel={() => setShowConfirmDialog(false)}
           onClose={() => setShowConfirmDialog(false)}
@@ -1677,7 +1673,6 @@ const ClientSearchResult = () => {
       switch (dialog) {
         case DialogType.ADD_GROUP: {
           return <AddGroupPopUp
-            classes={classes}
             isOpen={dialog === DialogType.ADD_GROUP}
             onClose={() => setDialog(null)}
             setLoader={setLoader}
@@ -1704,7 +1699,6 @@ const ClientSearchResult = () => {
           }
 
           return <AddRecipientPopup
-            classes={classes}
             isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
             onClose={() => { setDialog(null); setSelectedClients([]); }}
             setLoader={setLoader}
@@ -1725,7 +1719,6 @@ const ClientSearchResult = () => {
         }
         case DialogType.UNSUB_RECIPIENT: {
           return <UnsubscribeOrDeletePopup
-            classes={classes}
             isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
             onClose={() => { setDialog(null); }}
             setLoader={setLoader}
@@ -1758,12 +1751,10 @@ const ClientSearchResult = () => {
   return (
     <DefaultScreen
       currentPage="groups"
-      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
       <Box className={'topSection'}>
         <Title
-          classes={classes}
           Element={renderHeader()}
         />
         {renderSearchLine()}
@@ -1774,7 +1765,6 @@ const ClientSearchResult = () => {
       {renderConfirmDialog()}
       {showDialog()}
       <ConfirmRadioDialog
-        classes={classes}
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}

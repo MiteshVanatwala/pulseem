@@ -633,7 +633,6 @@ const NewsLetterWizard = () => {
                                             title={campaingnValues.Subject}
                                         />
                                         <EmojiPicker
-                                            classes={classes}
                                             boxStyles={{ marginTop: 10 }}
                                             OnSelectEmoji={(emoji) => {
                                                 setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
@@ -782,7 +781,6 @@ const NewsLetterWizard = () => {
                     disableBackdropClick={true}
                     style={{ minHeight: 400 }}
                     showDivider={false}
-                    classes={classes}
                     open={showGallery}
                     onClose={() => { setShowGallery(false) }}
                     onConfirm={handleGalleryConfirm}
@@ -801,7 +799,6 @@ const NewsLetterWizard = () => {
             title: t("common.documentGallery"),
             content: (
                 <Gallery
-                    classes={classes}
                     isConfirm={isGalleryConfirmed}
                     callbackSelectFile={handleSelectedImage}
                     style={{ minWidth: 400 }}
@@ -1024,7 +1021,6 @@ const NewsLetterWizard = () => {
         const currentDialog = dialogContent[type] || {}
         return (
             dialogType && <BaseDialog
-                classes={classes}
                 open={dialogType}
                 onCancel={() => setDialogType(null)}
                 onClose={() => setDialogType(null)}
@@ -1038,7 +1034,6 @@ const NewsLetterWizard = () => {
     return (
         <DefaultScreen
             currentPage="Campaingn Settings"
-            classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
             {renderDialog()}
@@ -1046,7 +1041,7 @@ const NewsLetterWizard = () => {
             {renderToast()}
             <Box className={classes.editorCont}>
                 <Box className="head">
-                    <Title Text={t("campaigns.createNewsLetterHeader")} classes={classes} />
+                    <Title Text={t("campaigns.createNewsLetterHeader")} />
                 </Box>
                 <Box className={"containerBody"}>
                     {CampaignBox1()}
@@ -1055,7 +1050,6 @@ const NewsLetterWizard = () => {
                         {/* Additional Text */}
                         <Grid item xs={12} sm={5} >
                             <AdditionalText
-                                classes={classes}
                                 localClasses={localClasses}
                                 selectedCheck={{ ...selectedCheck }}
                                 campaingnValues={{ ...campaingnValues }}
@@ -1066,7 +1060,6 @@ const NewsLetterWizard = () => {
                         {/* Advanced settings */}
                         <Grid item xs={12} sm={7}>
                             <AdvancedSettings
-                                classes={classes}
                                 localClasses={localClasses}
                                 campaingnValues={{ ...campaingnValues }}
                                 setCampaingnValues={setCampaingnValues}
@@ -1078,7 +1071,6 @@ const NewsLetterWizard = () => {
 
                     <Box className={clsx({ [classes.flex]: windowSize !== 'xs' }, classes.ps15)} style={{ justifyContent: 'end', marginTop: 25 }}>
                         <WizardActions
-                            classes={classes}
                             onBack={{
                                 callback: () => { setConfirmExit(true) }
                             }}
@@ -1087,7 +1079,6 @@ const NewsLetterWizard = () => {
                         />
                     </Box>
                     <BaseDialog
-                        classes={classes}
                         open={confirmExit}
                         title={t("campaigns.GridButtonColumnResource2.confirmExit")}
                         showDivider={true}
@@ -1105,7 +1096,6 @@ const NewsLetterWizard = () => {
                         </Box>
                     </BaseDialog>
                     <BaseDialog
-                        classes={classes}
                         open={confirmDelete}
                         title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
                         showDivider={true}
@@ -1121,7 +1111,7 @@ const NewsLetterWizard = () => {
                             </Typography>
                         </Box>
                     </BaseDialog>
-                    {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
+                    {verPopupOpen && <VerificationDialog isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
                     <Loader isOpen={showLoader} />
                 </Box>
             </Box>

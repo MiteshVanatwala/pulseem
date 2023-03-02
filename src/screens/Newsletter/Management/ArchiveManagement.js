@@ -149,7 +149,6 @@ const ArchiveManagementScreen = () => {
     if (windowSize === 'xs') {
       return (
         <SearchField
-          classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
@@ -209,7 +208,6 @@ const ArchiveManagementScreen = () => {
         windowSize !== 'xs' ?
           <Grid item>
             <DateField
-              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
@@ -224,7 +222,6 @@ const ArchiveManagementScreen = () => {
         windowSize !== 'xs' ?
           <Grid item>
             <DateField
-              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
@@ -361,7 +358,6 @@ const ArchiveManagementScreen = () => {
                   key={icon.key}
                   item >
                   <ManagmentIcon
-                    classes={classes}
                     {...icon}
                     uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                   />
@@ -434,7 +430,6 @@ const ArchiveManagementScreen = () => {
         <CustomTooltip
           key={row.ID}
           isSimpleTooltip={false}
-          classes={classes}
           interactive={true}
           arrow={true}
           placement={'top'}
@@ -540,7 +535,6 @@ const ArchiveManagementScreen = () => {
     }
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching ? searchResults.length : newsletterArchiveData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -593,7 +587,6 @@ const ArchiveManagementScreen = () => {
     const currentDialog = dialogContent[type] || {}
     return (
       dialogType && <BaseDialog
-        classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
@@ -606,11 +599,10 @@ const ArchiveManagementScreen = () => {
     <DefaultScreen
       currentPage="newsletter"
       subPage='archiveManagement'
-      classes={classes}
       containerClass={classes.management}>
       <Box className={classes.mb50}>
         <Box className={'topSection'}>
-          <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />
+          <Title Text={t('campaigns.logPageHeaderArchive.Text')} />
           {renderSearchLine()}
         </Box>
         {renderManagmentLine()}
@@ -619,7 +611,6 @@ const ArchiveManagementScreen = () => {
         {renderDialog()}
         <Loader isOpen={showLoader} />
         <ConfirmRadioDialog
-          classes={classes}
           isOpen={dialogType === 'exportFormat'}
           title={t('campaigns.exportFile')}
           radioTitle={t('common.SelectFormat')}

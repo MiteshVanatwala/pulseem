@@ -3,7 +3,7 @@ import "moment/locale/he";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { Link, Grid, Button, TextField, makeStyles } from "@material-ui/core";
-import { coreProps } from "../../../model/Core/corePros.types";
+// import { coreProps } from "../../../model/Core/corePros.types";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CalendarIcon } from "../../../assets/images/managment/index";
@@ -88,9 +88,7 @@ const SearchLine = ({
     false
   );
 
-  const { windowSize } = useSelector(
-    (state: { core: coreProps }) => state.core
-  );
+  const { windowSize } = useSelector((state: StateType) => state.core);
 
   useEffect(() => {
     if (!isSearching) {

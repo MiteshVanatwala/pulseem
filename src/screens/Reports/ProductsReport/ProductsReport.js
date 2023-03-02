@@ -428,7 +428,6 @@ const ProductsReport = () => {
     const renderTablePagination = () => {
         return (
             <TablePagination
-                classes={classes}
                 rows={productsReportDetails?.TotalProducts ? productsReportDetails?.TotalProducts : 0}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageSearching}
@@ -441,13 +440,12 @@ const ProductsReport = () => {
 
     return (
         <DefaultScreen
-            classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="productsReport">
             <Box>
                 <Box className='topSection'>
-                    <Title Text={t('report.ProductsReport.title')} classes={classes} />
+                    <Title Text={t('report.ProductsReport.title')} />
                     <Grid item xs={12} className={classes.mt2} style={{ paddingInline: 31 }}>
                         <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
                         <Typography display='inline'>{t('common.ForSupport')}: </Typography>
@@ -463,7 +461,6 @@ const ProductsReport = () => {
             {renderTableBody()}
             {renderTablePagination()}
             <ConfirmRadioDialog
-                classes={classes}
                 isOpen={dialogType === 'exportFormat'}
                 title={t('campaigns.exportFile')}
                 radioTitle={t('common.SelectFormat')}

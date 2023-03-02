@@ -14,9 +14,10 @@ import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
 import { useNavigate } from 'react-router';
 import { ChartIcon } from '../../assets/images/dashboard/index'
 import { sitePrefix } from '../../config';
+import useCore from '../../helpers/hooks/Core';
 
 
-const RecipientChart = ({ classes, }) => {
+const RecipientChart = () => {
     const navigate = useNavigate()
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
@@ -24,6 +25,7 @@ const RecipientChart = ({ classes, }) => {
     const { windowSize, isRTL } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const { classes } = useCore();
 
     let slidesCount = 0;
     recipientsReport?.forEach(report => {
@@ -431,7 +433,6 @@ const RecipientChart = ({ classes, }) => {
                     </Carousel>) : (
                     <ButtonWithTitle
                         innerStyle={{ minHeight: 210 }}
-                        classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
                         redirect={`${sitePrefix}groups?NewGroup=true`}
@@ -471,7 +472,6 @@ const RecipientChart = ({ classes, }) => {
                 }) :
                     <ButtonWithTitle
                         innerStyle={{ minHeight: 210 }}
-                        classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
                         redirect={`${sitePrefix}/Groups?NewGroup=true`}

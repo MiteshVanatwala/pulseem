@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Toast = ({ data = null, onClose = () => { } }) => {
+const Toast = ({ data = {}, onClose = () => { } }) => {
     const { t } = useTranslation();
     const { language } = useSelector(state => state.core)
     const classes = useStyles();

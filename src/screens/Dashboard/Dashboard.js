@@ -59,43 +59,28 @@ const DashboardScreen = () => {
   return (
     <DefaultScreen
       currentPage='dashboard'
-      classes={classes}
       customStyle={classes.dashboard}>
       <Grid container>
         <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
-              <BulkStatus classes={classes} />
+              <BulkStatus />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
-              <RecipientChart classes={classes} />
+              <RecipientChart />
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
             <Grid item xs={12} sm={12} md={12} lg={3}>
-              <PulseemTips
-                classes={classes}
-                t={t}
-                isRTL={isRTL}
-              />
+              <PulseemTips />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9}>
-              <LatestReports
-                classes={classes}
-                windowSize={windowSize}
-                t={t}
-                isRTL={isRTL}
-              />
+              <LatestReports />
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} sm={4} md={3} lg={3} xl={2} className={classes.dashboardSide}>
-          <Shortcut
-            windowSize={windowSize}
-            classes={classes}
-            t={t}
-            isRTL={isRTL}
-          />
+          <Shortcut />
         </Grid>
       </Grid>
       {toastMessage && renderToast()}

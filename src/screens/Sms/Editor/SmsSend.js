@@ -847,7 +847,6 @@ const SmsSend = () => {
         <Grid item md={12} xs={12}>
           {groupClick ? (
             <Groups
-              classes={classes}
               list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups]}
               selectedList={selectedGroups}
               callbackSelectedGroups={callbackSelectedGroups}
@@ -1131,7 +1130,6 @@ const SmsSend = () => {
               >
                 <DateField
                   minDate={moment()}
-                  classes={classes}
                   value={sendType === "2" ? sendDate : null}
                   onChange={handleDatePicker}
                   placeholder={t("notifications.date")}
@@ -1148,7 +1146,6 @@ const SmsSend = () => {
               >
                 <DateField
                   minDate={moment()}
-                  classes={classes}
                   value={sendType === "2" ? sendDate : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
@@ -1294,9 +1291,7 @@ const SmsSend = () => {
                 }}
               >
                 <DateField
-                  classes={classes}
                   value={sendType === "3" ? sendTime : null}
-
                   onTimeChange={handleRadioTime}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1484,7 +1479,6 @@ const SmsSend = () => {
     return (
       <>
         <Summary
-          classes={classes}
           campaignName={dataSaved.campaignName}
           fromNumber={dataSaved.fromNumber}
           textMsg={dataSaved.msg}
@@ -1751,7 +1745,6 @@ const SmsSend = () => {
   const renderSendType2validation = () => {
     return (<>
       <BaseDialog
-        classes={classes}
         open={sendType2Dialog}
         onClose={() => { setsendType2Dialog(false) }}
         showDefaultButtons={false}
@@ -1793,7 +1786,6 @@ const SmsSend = () => {
   const renderSpecialModal = () => {
     return (<>
       <BaseDialog
-        classes={classes}
         open={specialSettingValidation}
         onClose={() => { setspecialSettingValidation(false) }}
         showDefaultButtons={false}
@@ -1969,7 +1961,6 @@ const SmsSend = () => {
                 <Groups
                   isSms={true}
                   bsDot={false}
-                  classes={classes}
                   showSortBy={false}
                   isCampaign={false}
                   showSelectAll={false}
@@ -1993,7 +1984,6 @@ const SmsSend = () => {
                 <Groups
                   isSms={false}
                   bsDot={false}
-                  classes={classes}
                   showSortBy={false}
                   showSelectAll={false}
                   isNotifications={false}
@@ -2537,7 +2527,6 @@ const SmsSend = () => {
     if (type) {
       return (
         dialogType && <BaseDialog
-          classes={classes}
           open={dialogType}
           onClose={() => { setDialogType(null) }}
           {...currentDialog}>
@@ -2594,7 +2583,6 @@ const SmsSend = () => {
               </Stack>
             </Box>
           )}
-          classes={classes}
           isIcon={false}
           ContainerStyle={{
             padding: 0,
@@ -2608,9 +2596,9 @@ const SmsSend = () => {
   }
 
   return (
-    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true} containerClass={classes.editorCont}>
+    <DefaultScreen subPage={"create"} currentPage="sms" customPadding={true} containerClass={classes.editorCont}>
       <Box className={"head"}>
-        <Title Text={t("mainReport.smsCampaign")} classes={classes} />
+        <Title Text={t("mainReport.smsCampaign")} />
       </Box>
       <div>
         <Box className={'containerBody'}>
@@ -2720,7 +2708,7 @@ const SmsSend = () => {
           {t("sms.filtersSave")}
         </Alert>
       </Snackbar>
-      {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+      {otpOpen && <OTP campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

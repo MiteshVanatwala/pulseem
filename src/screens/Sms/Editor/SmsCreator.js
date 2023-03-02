@@ -850,7 +850,6 @@ const SmsCreator = () => {
                 )}
 
                 <EmojiPicker
-                  classes={classes}
                   OnSelectEmoji={(emoji) => {
                     onAddText(emoji);
                   }}
@@ -989,7 +988,6 @@ const SmsCreator = () => {
                 control={
                   <PulseemSwitch
                     switchType='ios'
-                    classes={classes}
                     checked={isLinksStatistics}
                     height={20}
                     width={48}
@@ -1032,7 +1030,7 @@ const SmsCreator = () => {
   const renderPhone = () => {
     return (
       <Box className={classes.mobilePreviewContainer}>
-        <MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text} keyItem="edtiorPreview" />
+        <MobilePreview campaignNumber={campaignNumber} text={smsModel.Text} keyItem="edtiorPreview" />
         <div
           className={classes.testDiv}
         >
@@ -1040,7 +1038,6 @@ const SmsCreator = () => {
             control={
               <PulseemSwitch
                 switchType='ios'
-                classes={classes}
                 checked={checked}
                 height={20}
                 width={48}
@@ -1370,7 +1367,6 @@ const SmsCreator = () => {
     return (
       <>
         <Summary
-          classes={classes}
           campaignName={smsModel.Name}
           fromNumber={campaignNumber}
           textMsg={smsModel.Text}
@@ -1903,7 +1899,6 @@ const SmsCreator = () => {
     const currentDialog = dialogContent[type] || {}
     return (
       dialogType && <BaseDialog
-        classes={classes}
         open={dialogType}
         onClose={handleClose}
         onCancel={handleClose}
@@ -1930,7 +1925,6 @@ const SmsCreator = () => {
               </Stack>
             </Box>
           )}
-          classes={classes}
           isIcon={false}
           ContainerStyle={{
             padding: 0,
@@ -1946,7 +1940,7 @@ const SmsCreator = () => {
   //#endregion
 
   return (
-    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true} containerClass={classes.editorCont}>
+    <DefaultScreen subPage={"create"} currentPage="sms" customPadding={true} containerClass={classes.editorCont}>
       <Box className={"head"}>
         <Title Element={
           <Box className={classes.flex}>
@@ -1967,7 +1961,7 @@ const SmsCreator = () => {
             </Tooltip>
           </Box>
 
-        } classes={classes} />
+        } />
 
       </Box>
       <Box className={'containerBody'}>
@@ -1991,7 +1985,7 @@ const SmsCreator = () => {
           </Grid >
           {renderDialog()}
           {renderSummary()}
-          {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+          {otpOpen && <OTP campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
           <Loader isOpen={showLoader} />
         </Box>
       </Box>

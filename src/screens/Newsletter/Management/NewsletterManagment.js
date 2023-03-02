@@ -153,7 +153,6 @@ const NewsletterManagnentScreen = () => {
       return (
         <Grid container className={'searchLine'}>
           <SearchField
-            classes={classes}
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             onKeyPress={(e) => { handleSearch(); handleKeyPress(e) }}
@@ -182,7 +181,6 @@ const NewsletterManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
@@ -194,7 +192,6 @@ const NewsletterManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
@@ -321,7 +318,6 @@ const NewsletterManagnentScreen = () => {
     const renderCopyToClipoard = (
       showCopied === CampaignID ?
         <PopMassage
-          classes={classes}
           show={showCopied === CampaignID}
           timeout={2000}
           label={t('common.copyClip')}
@@ -469,7 +465,6 @@ const NewsletterManagnentScreen = () => {
                   key={icon.key}
                   item >
                   <ManagmentIcon
-                    classes={classes}
                     {...icon}
                     uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                   />
@@ -543,7 +538,6 @@ const NewsletterManagnentScreen = () => {
       <>
         <CustomTooltip
           isSimpleTooltip={false}
-          classes={classes}
           interactive={true}
           arrow={true}
           placement={'top'}
@@ -648,7 +642,6 @@ const NewsletterManagnentScreen = () => {
     }
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching ? searchResults.length : newslettersData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -741,7 +734,6 @@ const NewsletterManagnentScreen = () => {
       ),
       content: (
         <RestorDialogContent
-          classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
@@ -855,7 +847,6 @@ const NewsletterManagnentScreen = () => {
     const currentDialog = dialogContent[type] || {}
     return (
       dialogType && <BaseDialog
-        classes={classes}
         open={dialogType}
         onCancel={handleClose}
         onClose={handleClose}
@@ -869,10 +860,9 @@ const NewsletterManagnentScreen = () => {
   return (
     <DefaultScreen
       currentPage='newsletter'
-      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
-        <Title Text={t('campaigns.logPageHeaderResource1.Text')} classes={classes} />
+        <Title Text={t('campaigns.logPageHeaderResource1.Text')} />
         {renderSearchLine()}
       </Box>
       {renderManagmentLine()}

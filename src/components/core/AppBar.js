@@ -24,18 +24,19 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { BsGlobe2 } from 'react-icons/bs';
 import { sitePrefix } from '../../config';
 import PulseemNewLogo from '../../assets/images/PulseemNewLogo';
+import useCore from '../../helpers/hooks/Core';
 
 const AppBarItem = ({
   item,
   chosen = false,
   textStyle = '',
   showIcon = false,
-  classes,
   menuWidth = 290,
   onMainClick = () => null,
   onInnerClick = () => null,
 }) => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
 
@@ -139,7 +140,9 @@ const AppBarItem = ({
 const returnToMainAccount = () => {
   window.location = '/Pulseem/ReactRedirect.aspx?fromreact=true';
 }
-const LanguageSelector = ({ windowSize, classes }) => {
+const LanguageSelector = () => {
+  const { classes } = useCore();
+  const { windowSize } = useSelector(state => state.core)
   const cookieData = getCookie('Culture');
   const language = !!cookieData ? cookieData : 'he-IL';
   const dispatch = useDispatch();
@@ -176,7 +179,6 @@ const LanguageSelector = ({ windowSize, classes }) => {
     <AppBarItem
       isMobile={windowSize === 'xs'}
       textStyle={windowSize === 'xs' && classes.textCapitalize}
-      classes={classes}
       item={item}
       menuWidth={230}
       onInnerClick={changeLanguage} />
@@ -184,7 +186,9 @@ const LanguageSelector = ({ windowSize, classes }) => {
 }
 
 
-export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
+export const TopAppBar = ({ currentPage = '', showAppBar = true }) => {
+  const { t } = useTranslation();
+  const { classes } = useCore();
   const Redirect = useRedirect();
   let cookieFeature = getCookie("accountFeatures");
   const cookieIsClal = getCookie("isClal");
@@ -228,7 +232,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const handleOpen = () => {
     setOpen(!open)
   }
-  const { t } = useTranslation();
   const routes = getRoutes(t, cookieIsClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), companyName)
 
@@ -250,7 +253,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         route.isShow &&
         <AppBarItem
           key={route.key}
-          classes={classes}
           item={route}
           chosen={route.key === currentPage}
           showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
@@ -262,23 +264,20 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         <Box className='settingsContainer'>
           <span className='settingsBorder'></span>
           <AppBarItem
-            classes={classes}
             item={settings}
           />
           <span className='settingsBorder'></span>
         </Box>
         <Box style={{ zIndex: 1300 }}>
-          <LanguageSelector classes={classes} />
+          <LanguageSelector />
         </Box>
         {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
-          classes={classes}
           item={{ title: t('appBar.admin') }}
           onMainClick={() => {
             returnToAdmin();
           }}
         />}
         {cameFromSubAccount && <AppBarItem
-          classes={classes}
           item={{ title: t('appBar.returnToMainAccount') }}
           onMainClick={() => {
             returnToMainAccount()

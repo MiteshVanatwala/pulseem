@@ -375,7 +375,6 @@ const NewslettersReport = () => {
     if (windowSize === 'xs') {
       return (
         <SearchField
-          classes={classes}
           value={notificationNameSearch}
           onKeyPress={handleSearchKeyPress}
           onChange={handleNotificationNameChange}
@@ -406,7 +405,6 @@ const NewslettersReport = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
@@ -418,7 +416,6 @@ const NewslettersReport = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
@@ -432,7 +429,6 @@ const NewslettersReport = () => {
             control={
               <PulseemSwitch
                 switchType='ios'
-                classes={classes}
                 checked={isDemoSend}
                 onColor="#0371ad"
                 handleDiameter={20}
@@ -528,7 +524,6 @@ const NewslettersReport = () => {
     return (
       <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }} className={'rowIconContainer'}>
         <ManagmentIcon
-          classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
           uIcon={<RowIcon width={18} height={20} className={'rowIcon'} />}
@@ -992,7 +987,6 @@ const NewslettersReport = () => {
 
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching ? (searchResults?.length ?? 0) : (newslettersReports?.length ?? 0)}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -1014,17 +1008,15 @@ const NewslettersReport = () => {
   return (
     <DefaultScreen
       currentPage='reports'
-      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
-        <Title Text={t('mainReport.logPageHeaderResource1.Text')} classes={classes} />
+        <Title Text={t('mainReport.logPageHeaderResource1.Text')} />
         {renderSearchSection()}
       </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
       <ConfirmRadioDialog
-        classes={classes}
         isOpen={dialogType === 'exportFormat'}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}

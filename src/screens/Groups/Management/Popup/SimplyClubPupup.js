@@ -13,6 +13,7 @@ import AddRecipientResponse from './AddRecipientResponse';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import useCore from '../../../../helpers/hooks/Core';
 
 const useStyles = makeStyles({
     dialogContainer: {
@@ -61,7 +62,6 @@ const useStyles = makeStyles({
 
 const SimplyClubPupup = ({
     onClose,
-    classes,
     isOpen,
     windowSize,
     getData,
@@ -73,6 +73,7 @@ const SimplyClubPupup = ({
 }) => {
     const { isRTL } = useSelector((state) => state.core);
     const { t } = useTranslation();
+    const { classes } = useCore();
     const dispatch = useDispatch()
     const localClasses = useStyles()
 
@@ -419,7 +420,6 @@ const SimplyClubPupup = ({
 
         return (
             <BaseDialog
-                classes={classes}
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
                 icon={< div className={classes.dialogIconContent} >
@@ -511,8 +511,6 @@ const SimplyClubPupup = ({
     const ColumnAdjustmentPopup = () => {
         return (
             <ColumnAdjustmentDialog
-                t={t}
-                classes={classes}
                 isOpen={showClients}
                 settings={UploadSettings.GROUPS}
                 isSimplyAccount={true}
@@ -539,7 +537,6 @@ const SimplyClubPupup = ({
     return (
         <>
             <BaseDialog
-                classes={classes}
                 open={isOpen}
                 onClose={onClose}
                 onCancel={onClose}
@@ -615,7 +612,6 @@ const SimplyClubPupup = ({
                 {showGroups && groups.length > 0 && GroupDialog()}
                 {showClients && ColumnAdjustmentPopup()}
                 {summary && <AddRecipientResponse
-                    classes={classes}
                     isOpen={!!summary}
                     onClose={() => { setSummary(null); setSelectedGroups([]); getData(); }}
                     windowSize={windowSize}

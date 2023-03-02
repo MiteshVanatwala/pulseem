@@ -8,9 +8,9 @@ import { useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md'
 import { RiImageAddLine } from 'react-icons/ri'
 import { AiOutlineFileAdd } from 'react-icons/ai'
+import useCore from '../../helpers/hooks/Core';
 
 const WizardActions = ({
-    classes,
     innerStyle,
     additionalButtons = null,
     onSave = null,
@@ -22,6 +22,7 @@ const WizardActions = ({
     onShowDocuments = null
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const { isRTL, windowSize } = useSelector(state => state.core);
     return (
         <Grid container style={innerStyle}>

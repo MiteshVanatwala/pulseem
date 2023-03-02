@@ -362,7 +362,6 @@ const WhatsappInbound = () => {
   const renderTablePagination = () => {
     return (
       <TablePagination
-        classes={classes}
         rows={inboundWhatsappReport?.Message}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handlePageChange}
@@ -385,7 +384,6 @@ const WhatsappInbound = () => {
           {renderTable()}
           {renderTablePagination()}
           <ConfirmRadioDialog
-            classes={classes}
             isOpen={dialog === "exportFormat"}
             title={t("campaigns.exportFile")}
             radioTitle={t("common.SelectFormat")}

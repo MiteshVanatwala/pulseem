@@ -11,21 +11,21 @@ import {
 } from '../../../assets/images/settings/index'
 import { useSelector } from "react-redux";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import useCore from "../../../helpers/hooks/Core";
 
 const ResponseModal = ({
-  classes,
   isOpen = false,
   onClose,
   message,
   onConfirm = () => null
 }) => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   const { windowSize, isRTL } = useSelector(state => state.core);
 
   return !isOpen ? (<></>) :
     (
       <BaseDialog
-        classes={classes}
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
         title={message !== 'campaigns.successSent' ? t('common.ErrorOccured') : null}

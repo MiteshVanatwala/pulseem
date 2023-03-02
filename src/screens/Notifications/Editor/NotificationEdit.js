@@ -44,9 +44,9 @@ const useStylesBootstrap = makeStyles((theme) => ({
 }));
 
 function BootstrapTooltip(props) {
-  const classes = useStylesBootstrap();
+  const localClasses = useStylesBootstrap();
 
-  return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
+  return <Tooltip arrow classes={localClasses} {...props} disableFocusListener />;
 }
 
 const DashedInput = withStyles({
@@ -249,7 +249,6 @@ const NotificationEdit = () => {
           cancelText="common.No"
           confirmText="common.Yes"
           disableBackdropClick={true}
-          classes={classes}
           open={showConfirmCancel}
           onCancel={() => setShowConfirmCancel(null)}
           onClose={() => onCancelConfirm(false)}
@@ -529,7 +528,7 @@ const NotificationEdit = () => {
           </Grid>
           <Grid item md={1} xs={12}>&nbsp;</Grid>
           <Grid item md={4} xs={12} className={classes.previewStep}>
-            <Preview classes={classes}
+            <Preview
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText && model.RedirectButtonText !== ''}
             />
@@ -747,7 +746,6 @@ const NotificationEdit = () => {
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
           showDivider={false}
-          classes={classes}
           open={showGallery}
           onClose={handleDialogClose}
           onConfirm={handleGalleryConfirm}
@@ -766,7 +764,6 @@ const NotificationEdit = () => {
       title: t("common.imageGallery"),
       content: (
         <Gallery
-          classes={classes}
           isConfirm={isGalleryConfirmed}
           callbackSelectFile={handleSelectedImage}
           style={{ minWidth: 400 }}
@@ -781,7 +778,6 @@ const NotificationEdit = () => {
 
       return (
         <BaseDialog
-          classes={classes}
           open={validationErrorList}
           onCancel={handleDialogClose}
           onClose={handleDialogClose}
@@ -846,7 +842,6 @@ const NotificationEdit = () => {
               </Stack>
             </Box>
           )}
-          classes={classes}
           isIcon={false}
           ContainerStyle={{
             padding: 0,
@@ -990,10 +985,9 @@ const NotificationEdit = () => {
       currentPage='notifications'
       subPage='create'
       customPadding={true}
-      classes={classes}
       containerClass={clsx(classes.editorCont)}>
       <div className={'head'} >
-        <Title Text={t('notifications.createNewPush')} classes={classes} />
+        <Title Text={t('notifications.createNewPush')} />
       </div>
       <div className={'containerBody'}>
         {renderHeader()}

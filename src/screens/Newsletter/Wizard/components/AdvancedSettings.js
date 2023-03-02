@@ -18,9 +18,9 @@ import { LangugeCode, MobileSupport, PulseemFeatures } from "../../../../model/P
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import PulseemTags from '../../../../components/Tags/PulseemTags'
 import { IoIosArrowDown } from 'react-icons/io';
+import useCore from '../../../../helpers/hooks/Core';
 
 export const AdvancedSettings = ({
-    classes,
     localClasses,
     campaingnValues,
     setShowGallery,
@@ -28,6 +28,7 @@ export const AdvancedSettings = ({
     removeAttachmentFile,
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const { accountFeatures } = useSelector((state) => state.core);
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
@@ -148,7 +149,6 @@ export const AdvancedSettings = ({
                 {accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 &&
                     <><CustomTooltip
                         isSimpleTooltip={false}
-                        classes={classes}
                         interactive={true}
                         arrow={true}
                         placement={'top'}
@@ -161,7 +161,6 @@ export const AdvancedSettings = ({
                             <PulseemTags
                                 title={""}
                                 style={null}
-                                classes={classes}
                                 tagStyle={{ maxWidth: 150 }}
                                 items={campaingnValues.FilesProperties?.map((f) => {
                                     return {

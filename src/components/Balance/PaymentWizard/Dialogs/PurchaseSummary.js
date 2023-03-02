@@ -3,22 +3,22 @@ import { useTranslation } from 'react-i18next'
 import { Button, Grid, Typography, Divider } from '@material-ui/core';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux'
+import useCore from '../../../../helpers/hooks/Core';
 
 const PurchaseSummary = ({
     data,
-    classes,
-    isRTL,
     packageId,
     showTitle = true,
     showButtons = true,
     onConfirm = () => null,
     onComplete = () => null }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const israelTax = 0.17;
     const pack = data.find((p) => { return p.ID === packageId });
     const vat = (pack.Price * israelTax).toFixed(2);
     const totalPrice = pack.Price + parseFloat(vat);
-    const { windowSize } = useSelector(state => state.core);
+    const { windowSize, isRTL } = useSelector(state => state.core);
     return (
         <Grid container spacing={1} className={classes.paymentDialog}>
             {showTitle && <Grid item xs={12} className={clsx(classes.mb4)}>

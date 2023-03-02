@@ -189,7 +189,6 @@ const NotificationManagement = () => {
     const dialog = renderImplement();
     return (
       <BaseDialog
-        classes={classes}
         open={showScriptDialog}
         onClose={() => setShowScriptDialog(false)}
         onCancel={() => setShowScriptDialog(false)}
@@ -269,7 +268,6 @@ const NotificationManagement = () => {
       return (
         <Grid container className={'searchLine'}>
           <SearchField
-            classes={classes}
             value={notificationNameSearch}
             onKeyPress={handleSearch}
             onChange={handleNotificationNameChange}
@@ -298,7 +296,6 @@ const NotificationManagement = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('notifications.searchSection.fromDate')}
@@ -310,7 +307,6 @@ const NotificationManagement = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('notifications.searchSection.toDate')}
@@ -492,7 +488,6 @@ const NotificationManagement = () => {
             key={icon.key}
             item >
             <ManagmentIcon
-              classes={classes}
               {...icon}
               uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
@@ -702,7 +697,6 @@ const NotificationManagement = () => {
     }
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching ? searchResults.length : notificationData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -738,7 +732,7 @@ const NotificationManagement = () => {
       ),
       content: (
         <Box className={classes.dialogBox}>
-          <Preview classes={classes}
+          <Preview
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText !== ''}
             showID={true}
@@ -812,7 +806,6 @@ const NotificationManagement = () => {
       ),
       content: (
         <RestorDialogContent
-          classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
@@ -1260,7 +1253,6 @@ const NotificationManagement = () => {
 
     if (dialog) {
       return (<BaseDialog
-        classes={classes}
         open={dialogType}
         onClose={handleDialogClose}
         onCancel={handleDialogClose}
@@ -1276,11 +1268,9 @@ const NotificationManagement = () => {
   return (
     <DefaultScreen
       currentPage='notifications'
-      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
         <Title
-          classes={classes}
           Element={
             <Box className={clsx(classes.dFlex, classes.flexWrap)} justifyContent='center' alignItems='center'>
               <Typography style={{ color: '#4D4D4D', fontSize: 29 }}>{t('notifications.notificationManagement')}</Typography>

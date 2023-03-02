@@ -135,7 +135,6 @@ const MmsManagnentScreen = () => {
     if (windowSize === 'xs') {
       return (
         <SearchField
-          classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
@@ -163,7 +162,6 @@ const MmsManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
@@ -175,7 +173,6 @@ const MmsManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
-              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
@@ -339,7 +336,6 @@ const MmsManagnentScreen = () => {
             key={icon.key}
             item >
             <ManagmentIcon
-              classes={classes}
               {...icon}
               uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
@@ -409,7 +405,6 @@ const MmsManagnentScreen = () => {
       <>
         <CustomTooltip
           isSimpleTooltip={false}
-          classes={classes}
           interactive={true}
           arrow={true}
           placement={'top'}
@@ -531,7 +526,6 @@ const MmsManagnentScreen = () => {
     }
     return (
       <TablePagination
-        classes={classes}
         rows={isSearching ? searchResults.length : mmsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -568,7 +562,6 @@ const MmsManagnentScreen = () => {
       ),
       content: (
         <RestorDialogContent
-          classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
@@ -672,7 +665,7 @@ const MmsManagnentScreen = () => {
       ),
       content: (
         <Box>
-          <Preview classes={classes}
+          <Preview
             mobileFullsize={true}
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText !== ''}
@@ -731,7 +724,6 @@ const MmsManagnentScreen = () => {
 
     return (
       dialogType && <BaseDialog
-        classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
@@ -742,10 +734,9 @@ const MmsManagnentScreen = () => {
   return (
     <DefaultScreen
       currentPage='sms'
-      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
-        <Title Text={t('mms.logPageHeaderResource1.Text')} classes={classes} />
+        <Title Text={t('mms.logPageHeaderResource1.Text')} />
         {renderSearchLine()}
       </Box>
       {renderManagmentLine()}
