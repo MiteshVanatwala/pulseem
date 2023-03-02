@@ -14,6 +14,9 @@ import Icon from './Icon';
 import PDF from '../../../../assets/images/pdf.png';
 import Video from '../../../../assets/images/video.png';
 import Download from '../../../../assets/images/download.png';
+import ImagePreview from './ImagePreview';
+import imagePlaceholder from '../../../../assets/images/image-placeholder.svg';
+import imagePlaceholderX from '../../../../assets/images/image-placeholder-x.svg';
 
 const ChatTemplate = ({
 	classes,
@@ -235,50 +238,22 @@ const ChatTemplate = ({
 				</p>
 			) : (
 				<>
-					{message?.MediaUrl && message?.MediaUrl?.length > 0 ? (
-						<div
-							key={msgIndex}
-							className={`${classes.whatsappChat} chat__msg chat__img-wrapper ${
-								!message.IsInbound
-									? `${classes.whatsappChat} chat__msg--rxd`
-									: `${classes.whatsappChat} chat__msg--sent`
-							}`}>
-							<img
-								src={message?.MediaUrl}
-								alt='media file'
-								className={`${classes.whatsappChat} chat__img`}
-							/>
-							<span className={`${classes.whatsappChat} chat__msg-footer`}>
-								<span>{formatTime(message.MessageDate)}</span>
-								{message.IsInbound && (
-									<Icon
-										id={
-											message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'
-										}
-										aria-label={'sent'}
-										className={`${classes.whatsappChat} chat__msg-status-icon ${
-											message?.SmsStatusId === 6
-												? `${classes.whatsappChat} chat__msg-status-icon--blue`
-												: ''
-										}`}
-									/>
-								)}
-							</span>
-
-							<button
-								aria-label='Message options'
-								className={`${classes.whatsappChat} chat__msg-options`}>
-								<Icon
-									id='downArrow'
-									className={`${classes.whatsappChat} chat__msg-options-icon`}
-								/>
-							</button>
-						</div>
-					) : message.IsInbound ? (
+					{message.IsInbound ? (
 						<p
 							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}>
-							<span>{message?.Message}</span>
+							{message?.MediaUrl?.length === 0 && (
+								<span>{message?.Message}</span>
+							)}
+							{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
+								<ImagePreview
+									classes={classes}
+									className={`${classes.whatsappChat} chat__img`}
+									placeholderImg={imagePlaceholder}
+									errorImg={imagePlaceholderX}
+									src={message?.MediaUrl}
+								/>
+							)}
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
 							</span>

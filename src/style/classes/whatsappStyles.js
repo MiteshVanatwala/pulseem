@@ -2758,4 +2758,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		paddingTop: '12px',
 		color: '#00000099',
 	},
+	whatsappImageErrorMsg: {
+		color: '#0371ad',
+		fontWeight: 'bolder',
+		textDecoration: 'underline',
+		'&:hover': {
+			color: '#0371ad',
+			fontWeight: 'bolder',
+			textDecoration: 'underline',
+		},
+	},
 });
