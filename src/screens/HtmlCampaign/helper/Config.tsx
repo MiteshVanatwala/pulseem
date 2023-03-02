@@ -3,7 +3,7 @@ import { TRANSLATE_HEBREW, TRANSLATE_ENGLISH } from '../../../assets/translation
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
-const AUTO_SAVE_SECONDS = 30; // 3 minutes
+const AUTO_SAVE_SECONDS = 180; // 3 minutes
 
 export interface ConfigOptions {
     classes: any,
@@ -14,6 +14,7 @@ export interface ConfigOptions {
     EditRow: Function,
     SaveCampaign: save,
     AutoSaveCampaign: Function,
+    DesignChange: Function,
     DeleteBlock: Function,
     CampaignId: Number,
     PulseemEditBlock: Function,
@@ -36,6 +37,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         DeleteBlock,
         SaveCampaign,
         AutoSaveCampaign,
+        DesignChange,
         getRows,
         handleEditRow,
         // HandleAutoSave,
@@ -150,15 +152,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
             SetDialog(DialogType.TEST_SEND);
         },
         onWarning: (alertMessage: any) => {
-            console.log('onWarning ', alertMessage)
+            // console.log('onWarning ', alertMessage)
         },
         onError: (errorMessage: any) => {
-            console.log('onError ', errorMessage)
+            // console.log('onError ', errorMessage)
         },
         onLoad: (jsonFile: any) => {
-            console.log(jsonFile);
+            // console.log(jsonFile);
         },
-        onAutoSave: () => AutoSaveCampaign()
+        onAutoSave: () => AutoSaveCampaign(),
+        onChange: () => DesignChange()
         //#endregion
     }
 };

@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { debounce } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -383,7 +384,13 @@ const CampaignEditor = ({ classes, ...props }) => {
     await editorRef.current.save();
   }
   
-  const onAutoSaveCampaign = async () => saveDesign(false, null, false);
+  const onAutoSaveCampaign = debounce(() => {
+    saveDesign(false, null, false)
+  }, 15000);
+
+  const onDesignChange = async () => {
+    onAutoSaveCampaign();
+  }
 
   const deleteNewsletter = async () => {
     setDialog(null);
@@ -535,6 +542,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       openModal: openModal,
       SaveCampaign: onSave,
       AutoSaveCampaign: onAutoSaveCampaign,
+      DesignChange: onDesignChange,
       SetDialog: setDialog,
       CampaignId: campaignId,
       PulseemEditBlock: onEditBlock,
