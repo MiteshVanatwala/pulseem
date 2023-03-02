@@ -430,10 +430,12 @@ const App = ({ screenSize }) => {
   const userName = useRef();
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings, isClal } = useSelector(state => state.core)
-  screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
-
+    screenSize && dispatch(setWindowSize(screenSize));
+  }, [screenSize]);
+  
+  useEffect(() => {
     const initFeatures = async () => {
       if (!accountSettings) {
         const settings = await dispatch(getCommonFeatures());
