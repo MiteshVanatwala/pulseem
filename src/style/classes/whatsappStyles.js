@@ -419,6 +419,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		background: '#dbf8c6',
 		padding: '8px',
 		borderRadius: isRTL ? '5px 0px 5px 5px' : '0px 5px 5px 5px',
+		'&.transparent-background': {
+			background: 'transparent',
+			padding: '0px',
+		},
 		'& pre': {
 			wordWrap: 'break-word',
 			whiteSpace: 'pre-line',
@@ -445,6 +449,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			'&.download-preview-img': {
 				width: '28px',
 				padding: '4px',
+				marginTop: '5px',
 			},
 		},
 	},
@@ -1888,6 +1893,35 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			position: 'relative',
 			whiteSpace: 'pre-line',
 			display: 'flex',
+			'& .rhap_container': {
+				boxShadow: 'none',
+				padding: '0px',
+				'& .rhap_progress-section': {
+					'& .rhap_progress-container': {
+						width: '160px',
+					},
+					'& .rhap_progress-indicator': {
+						background: '#0371ad',
+					},
+					'& .rhap_progress-filled': {
+						backgroundColor: '#0371ad',
+					},
+					'& .rhap_download-progress': {
+						backgroundColor: '#c5d7e1',
+					},
+				},
+				'& .rhap_controls-section': {
+					'& .rhap_additional-controls': {
+						display: 'none',
+					},
+					'& .rhap_volume-controls': {
+						display: 'none',
+					},
+					'& .rhap_play-pause-button': {
+						color: '#0371ad',
+					},
+				},
+			},
 		},
 		'&.chat__msg.chat__img-wrapper': { padding: '4px', width: '95%' },
 		'&.chat__msg--sent': {
@@ -2757,5 +2791,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textAlign: 'center',
 		paddingTop: '12px',
 		color: '#00000099',
+	},
+	whatsappImageErrorMsg: {
+		color: '#0371ad',
+		fontWeight: 'bolder',
+		textDecoration: 'underline',
+		'&:hover': {
+			color: '#0371ad',
+			fontWeight: 'bolder',
+			textDecoration: 'underline',
+		},
+	},
+	whatsappOppsMsg: {
+		color: '#FD4445',
 	},
 });

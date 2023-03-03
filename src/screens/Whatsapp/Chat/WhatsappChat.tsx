@@ -106,6 +106,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Hour: '0',
 			Minute: '0',
 			Second: '0',
+			IsNewMessage: false,
 		});
 
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
@@ -310,6 +311,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				Hour: '0',
 				Minute: '0',
 				Second: '0',
+				IsNewMessage: false,
 			});
 			whatsAppChatSessionStatus?.Message
 				? setToastMessage({

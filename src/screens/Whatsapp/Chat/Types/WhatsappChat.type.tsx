@@ -200,6 +200,7 @@ export type APIWhatsappChatTemplateData = {
 export type APIWhatsappChatDetailData = {
 	IsInbound: null | boolean;
 	IsTemplate: boolean;
+	MediaContentType: string;
 	MediaUrl: string;
 	Message: string;
 	MessageDate: string;
@@ -238,6 +239,7 @@ export type APIWhatsappChatSessionData = {
 	Hour: string;
 	Minute: string;
 	Second: string;
+	IsNewMessage: boolean;
 };
 
 export type ContactsPaginationSetting = {
@@ -319,4 +321,10 @@ export type Timer = {
 	Hour: number;
 	Minute: number;
 	Second: number;
+};
+
+export type ImagePreviewProps = React.ImgHTMLAttributes<HTMLImageElement> & {
+	placeholderImg?: string;
+	errorImg?: string;
+	classes: ClassesType['classes'];
 };
