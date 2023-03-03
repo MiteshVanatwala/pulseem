@@ -239,6 +239,7 @@ export type APIWhatsappChatSessionData = {
 	Hour: string;
 	Minute: string;
 	Second: string;
+	IsNewMessage: boolean;
 };
 
 export type ContactsPaginationSetting = {

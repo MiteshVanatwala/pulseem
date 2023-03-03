@@ -17,5 +17,6 @@
 	"unsubscribe": "This user is unsubscribed",
 	"pleaseUpdate": "Please update all variable in the message",
 	"noChat": "No Chats",
-	"noContacts": "No Contacts Were Found"
+	"noContacts": "No Contacts Were Found",
+	"messageErrorText": "This message can't be displayed"
 }
