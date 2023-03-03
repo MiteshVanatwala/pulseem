@@ -42,6 +42,8 @@ export type statusProps = { [key: number]: string };
 
 export type statusByNameProps = { [key: string]: string };
 
+export type TemplatesStatusIdByStatusName = { [key: string]: number };
+
 export type campaignStatusProps = { [key: number]: string };
 
 export type ManagmentIconProps = {
@@ -70,6 +72,15 @@ export type AllTemplateReq = {
 };
 
 export type AllCampaignReq = {
+	campaignName: string;
+	fromDate: MaterialUiPickersDate | null;
+	toDate: MaterialUiPickersDate | null;
+	isPagination: boolean;
+	pageNo: number;
+	pageSize: number;
+};
+
+export type AllReportReq = {
 	campaignName: string;
 	fromDate: MaterialUiPickersDate | null;
 	toDate: MaterialUiPickersDate | null;

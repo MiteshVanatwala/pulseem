@@ -21,6 +21,7 @@ import {
 } from '../../screens/Whatsapp/Chat/Types/WhatsappChat.type';
 import {
 	AllCampaignReq,
+	AllReportReq,
 	AllTemplateReq,
 } from '../../screens/Whatsapp/management/Types/Management.types';
 
@@ -361,10 +362,11 @@ export const duplicateCampaign = createAsyncThunk(
 
 export const getAllReports = createAsyncThunk(
 	'WhatsAppReport/GetWhatsAppReport',
-	async (_data, thunkAPI) => {
+	async (data: AllReportReq, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`WhatsAppReport/GetWhatsAppReport`
+				`WhatsAppReport/GetWhatsAppReport`,
+				data
 			);
 
 			return response.data;

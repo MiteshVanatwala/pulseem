@@ -65,6 +65,7 @@ import {
 	apiStatus,
 	resetToastData,
 	statusesByName,
+	templateStatusIdsByStatusName,
 } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
@@ -90,8 +91,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isDuplicateTemplateOpen, setIsDuplicateTemplateOpen] =
 		useState<boolean>(false);
-	const [campaignNameSearch, setCampaignNameSearch] = useState<string>('');
-	const [campainStatusSearch, setCampainStatusSearch] = useState<string>('');
+	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
+	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 	const [totalRecord, setTotalRecord] = useState<number>(0);
 	const [templateData, setTemplateData] = useState<templateDataProps>({
@@ -142,10 +143,10 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	}, []);
 
 	useEffect(() => {
-		if (campainStatusSearch?.length > 0 || campaignNameSearch?.length > 0) {
+		if (templateStatusSearch?.length > 0 || templateNameSearch?.length > 0) {
 			setSearching(true);
 		}
-	}, [campaignNameSearch, campainStatusSearch]);
+	}, [templateNameSearch, templateStatusSearch]);
 
 	const setApiTemplateData = async (
 		pagination: AllTemplateReq = paginationSetting
@@ -165,12 +166,20 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const handleCampainNameChange = (event: BaseSyntheticEvent) => {
-		setCampaignNameSearch(event.target.value);
+		setTemplateNameSearch(event.target.value);
 	};
 	const clearSearch = () => {
-		setCampaignNameSearch('');
-		setCampainStatusSearch('');
+		setTemplateNameSearch('');
+		setTemplateStatusSearch('');
 		setSearching(false);
+		const updatedPagination: AllTemplateReq = {
+			...paginationSetting,
+			pageNo: 1,
+			templateName: '',
+			templateStatus: 0,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiTemplateData(updatedPagination);
 	};
 	const renderNameCell = (row: templateListItemsProps) => {
 		let date = null;
@@ -526,21 +535,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 	};
 
-	const getSearchedTemplate = () => {
-		let searchedData: templateListItemsProps[] = templateListData;
-		if (campaignNameSearch && campaignNameSearch?.length > 0) {
-			searchedData = searchedData?.filter((row: templateListItemsProps) =>
-				row.TemplateName?.includes(campaignNameSearch)
-			);
-		}
-		if (campainStatusSearch && campainStatusSearch?.length > 0) {
-			searchedData = searchedData?.filter((row: templateListItemsProps) =>
-				row.Status?.includes(campainStatusSearch.trim())
-			);
-		}
-		return searchedData;
-	};
-
 	const onSubmitTemplate = async () => {
 		const submitData: commonAPIResponseProps = await dispatch<any>(
 			submitTemplateDirect({ id: activeRowId })
@@ -601,7 +595,18 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onSearch = async () => {
-		// setPage(1);
+		if (templateStatusSearch?.length > 0 || templateNameSearch?.length > 0) {
+			const updatedPagination: AllTemplateReq = {
+				...paginationSetting,
+				pageNo: 1,
+				templateName: templateNameSearch,
+				templateStatus: templateStatusIdsByStatusName[templateStatusSearch],
+			};
+			setPaginationSetting(updatedPagination);
+			setApiTemplateData(updatedPagination);
+		} else {
+			clearSearch();
+		}
 	};
 
 	const resetToast = () => {
@@ -644,7 +649,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						<TextField
 							variant='outlined'
 							size='small'
-							value={campaignNameSearch}
+							value={templateNameSearch}
 							onChange={handleCampainNameChange}
 							className={clsx(classes.textField, classes.minWidth252)}
 							placeholder={translator(
@@ -658,7 +663,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							select
 							type='text'
 							label={
-								campainStatusSearch?.length > 0 ? (
+								templateStatusSearch?.length > 0 ? (
 									''
 								) : (
 									<>{translator('whatsappManagement.status')}</>
@@ -666,9 +671,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							}
 							className={classes.whatsappManagementbuttonField}
 							onChange={(e: BaseSyntheticEvent) =>
-								setCampainStatusSearch(e.target.value)
+								setTemplateStatusSearch(e.target.value)
 							}
-							value={campainStatusSearch}>
+							value={templateStatusSearch}>
 							{Object.keys(statusesByName)?.map((status: string) => (
 								<MenuItem key={'no-data-template' + status} value={status}>
 									<>{translator(statusesByName[status])}</>

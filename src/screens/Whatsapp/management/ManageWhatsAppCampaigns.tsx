@@ -98,7 +98,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	);
 	const [activeRowId, setActiveRowId] = useState<string>('');
 	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
-	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
+	const [campaignNameSearch, setCampaignNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
 
 	const [isPreviewCampaignOpen, setIsPreviewCampaignOpen] =
@@ -177,11 +177,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		if (
 			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
 			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
-			campaineNameSearch?.length > 0
+			campaignNameSearch?.length > 0
 		) {
 			setSearching(true);
 		}
-	}, [fromDate, toDate, campaineNameSearch]);
+	}, [fromDate, toDate, campaignNameSearch]);
 
 	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
 		if (toDate && value && value > toDate) {
@@ -190,13 +190,23 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		handleFromDate(value);
 	};
 	const handleCampainNameChange = (event: BaseSyntheticEvent) => {
-		setCampaineNameSearch(event.target.value);
+		setCampaignNameSearch(event.target.value);
 	};
 	const clearSearch = () => {
-		setCampaineNameSearch('');
+		setCampaignNameSearch('');
 		handleFromDate(null);
 		handleToDate(null);
 		setSearching(false);
+
+		const updatedPagination: AllCampaignReq = {
+			...paginationSetting,
+			pageNo: 1,
+			campaignName: '',
+			fromDate: null,
+			toDate: null,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiCampaignData(updatedPagination);
 	};
 	const renderNameCell = (row: campaignDataProps) => {
 		let date = null;
@@ -620,7 +630,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const searchArray: searchArrayProps[] = [
 			{
 				type: 'name',
-				campaignName: campaineNameSearch,
+				campaignName: campaignNameSearch,
 			},
 			{
 				type: 'date',
@@ -631,7 +641,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const filtersObject: filtersObjectProps = {
 			name: (row: campaignDataProps) => {
 				return String(row.Name.toLowerCase()).includes(
-					campaineNameSearch.toLowerCase()
+					campaignNameSearch.toLowerCase()
 				);
 			},
 			date: (row: campaignDataProps, values: searchArrayProps) => {
@@ -722,13 +732,25 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		}
 	};
 
-	const onSearch = async () => {};
+	const onSearch = async () => {
+		const updatedPagination: AllCampaignReq = {
+			...paginationSetting,
+			pageNo: 1,
+			campaignName: campaignNameSearch || '',
+			fromDate: fromDate || null,
+			toDate: toDate || null,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiCampaignData(updatedPagination);
+	};
 
 	const onCreateCamoaign = async () => {
 		navigate('/react/whatsapp/campaign/create/page1');
 	};
 
-	const setApiCampaignData = async (pagination: AllCampaignReq = paginationSetting) => {
+	const setApiCampaignData = async (
+		pagination: AllCampaignReq = paginationSetting
+	) => {
 		setIsLoader(true);
 		const campaignData: campaignListAPIProps = await dispatch<any>(
 			getAllCampaigns(pagination)
@@ -790,7 +812,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						<TextField
 							variant='outlined'
 							size='small'
-							value={campaineNameSearch}
+							value={campaignNameSearch}
 							onChange={handleCampainNameChange}
 							className={clsx(classes.textField, classes.minWidth252)}
 							placeholder={translator(
