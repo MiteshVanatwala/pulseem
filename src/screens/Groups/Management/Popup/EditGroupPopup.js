@@ -196,7 +196,7 @@ const EditGroupPopup = ({ classes,
                                     value={editableFroupData.GroupID}
                                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, classes.disabled)}
                                     autoComplete="off"
-                                    style={{ marginInlineEnd: 10, width: 40, maxWidth: 40 }}
+                                    style={{ marginInlineEnd: 10, width: 40, maxWidth: 40, pointerEvents: 'unset !important' }}
                                 />
                             </Box>
                         </Grid>
