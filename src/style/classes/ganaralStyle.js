@@ -2729,4 +2729,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
+  disabledButPointer: {
+    opacity: ".65",
+    pointerEvents: "unset !important",
+    cursor: "not-allowed !important",
+  }
 });
