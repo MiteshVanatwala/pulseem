@@ -4,7 +4,7 @@ import { FONTS } from '../../../helpers/Fonts/Init';
 
 type dialog = (a: any) => void;
 type save = (a: any) => void;
-//const AUTO_SAVE_SECONDS = 60000; // 1 minute
+const AUTO_SAVE_SECONDS = 180; // 3 minutes
 
 export interface ConfigOptions {
     classes: any,
@@ -14,6 +14,8 @@ export interface ConfigOptions {
     SetDialog: dialog,
     EditRow: Function,
     SaveCampaign: save,
+    AutoSaveCampaign: Function,
+    DesignChange: Function,
     DeleteBlock: Function,
     CampaignId: Number,
     PulseemEditBlock: Function,
@@ -35,6 +37,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         CampaignId,
         DeleteBlock,
         SaveCampaign,
+        AutoSaveCampaign,
+        DesignChange,
         getRows,
         handleEditRow,
         // HandleAutoSave,
@@ -46,8 +50,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
         uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
-        trackChanges: false,
-        autosave: 60,
+        trackChanges: true,
+        autosave: AUTO_SAVE_SECONDS,
+        loadingSpinnerDisableOnSave: true,
         // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
@@ -149,26 +154,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
             SetDialog(DialogType.TEST_SEND);
         },
         onWarning: (alertMessage: any) => {
-            console.log('onWarning ', alertMessage)
+            // console.log('onWarning ', alertMessage)
         },
         onError: (errorMessage: any) => {
-            console.log('onError ', errorMessage)
+            // console.log('onError ', errorMessage)
         },
         onLoad: (jsonFile: any) => {
-            console.log(jsonFile);
+            // console.log(jsonFile);
         },
-        // Auto Save here
-        // onChange: (jsonFile: any, response: any) => {
-        // console.log(response);
-        // const interval = setInterval(() => {
-        //     SaveCampaign({
-        //         campaignId: CampaignId,
-        //         JsonData: jsonFile,
-        //         HtmlData: null
-        //     });
-        //     clearInterval(interval);
-        // }, AUTO_SAVE_SECONDS);
-        //}
+        onAutoSave: () => AutoSaveCampaign(),
+        onChange: () => DesignChange()
         //#endregion
     }
 };
