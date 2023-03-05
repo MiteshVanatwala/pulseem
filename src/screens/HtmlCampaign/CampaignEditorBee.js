@@ -45,6 +45,7 @@ import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
+import moment from 'moment';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -79,6 +80,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
+  const [lastSaveText, setLastSaveText] = useState(null);
+  const [silentSave, setSilentSave] = useState(false);
 
   //#endregion State
 
@@ -382,10 +385,17 @@ const CampaignEditor = ({ classes, ...props }) => {
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
     await editorRef.current.save();
+    setTimeout(() => {
+      const now = moment();
+      setLastSaveText(`${t('campaigns.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      setSilentSave(false)
+    }, 2000);
+
   }
-  
+
   const onAutoSaveCampaign = debounce(() => {
-    saveDesign(false, null, false)
+    setSilentSave(true)
+    saveDesign(false, null, false);
   }, 15000);
 
   const onDesignChange = async () => {
@@ -640,7 +650,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             classes.backButton
           )}
           style={{ margin: '8px' }}
-          startIcon={<BiSave />}
+          startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
           color="primary"
         >{t("common.save")}
         </Button>
@@ -746,6 +756,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
+        helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

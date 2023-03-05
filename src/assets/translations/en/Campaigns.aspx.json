@@ -610,5 +610,6 @@
   "kb": "KB",
   "saveBlock": "Save Block",
   "savedBlocks": "Saved-blocks",
-  "newsletterSetUp": "Newsletter Set-Up"
+  "newsletterSetUp": "Newsletter Set-Up",
+  "lastSaveAt": "Last save at: "
 }
