@@ -19,14 +19,15 @@ const WizardActions = ({
     onDelete = null,
     onTestSend = null,
     onShowGallery = null,
-    onShowDocuments = null
+    onShowDocuments = null,
+    helperText = null
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
     return (
-        <Grid container style={innerStyle}>
+        <Grid container style={{ ...innerStyle, paddingBottom: 40 }} >
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer)} style={{ paddingBottom: 40 }}>
+                <Box className={clsx(classes.wizardButtonContainer)}>
                     {onBack &&
                         <Button onClick={() => { onBack?.callback() }}
                             variant='contained'
@@ -142,6 +143,9 @@ const WizardActions = ({
                     </Box>
                 </Box>
             </Grid>
+            {helperText && <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {helperText}
+            </Grid>}
         </Grid>
     );
 }
