@@ -287,9 +287,12 @@ const CampaignEditor = ({ classes, ...props }) => {
             const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
-              if (!campaign || !campaign.HtmlData) {
+              if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
+              // else {
+              //   getData();
+              // }
             });
           }
           break;
