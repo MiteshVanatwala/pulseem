@@ -139,10 +139,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [isRTL]);
   // Get data by campaign id
   useEffect(() => {
-    if (params?.id != null && params?.id > 0) {
+    if (params?.id > 0) {
       getData();
     }
-  }, [dispatch]);
+  }, []);
   useEffect(() => {
     if (userBlocks) {
       return new Promise((resolve) => {
