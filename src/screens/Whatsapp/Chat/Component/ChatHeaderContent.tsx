@@ -74,6 +74,7 @@ const ChatHeaderContent = ({
 			Hour: '0',
 			Minute: '0',
 			Second: '0',
+			IsNewMessage: false,
 		});
 	};
 

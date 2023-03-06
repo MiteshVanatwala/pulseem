@@ -55,7 +55,9 @@ const SideBarContactList = ({
 					loader={<LinearProgress />}
 					scrollableTarget='contact-list-div'>
 					{filteredSideChatContacts?.length === 0 && !isLoader ? (
-						<div className={classes.noContactDiv}>No Contacts available</div>
+						<div className={classes.noContactDiv}>
+							<>{translator('whatsappChat.noContacts')}</>
+						</div>
 					) : (
 						<>
 							{filteredSideChatContacts.map(

@@ -36,6 +36,8 @@ export type dynamicModalProps = {
 	dynamicModalVariable: number;
 	landingPageData: landingPageDataProps[];
 	dynamicVariable: updatedVariable[];
+	isTrackLink: boolean;
+	setIsTrackLink: (isTrackLink: boolean) => void;
 };
 
 export type campaignFielsProps = {
@@ -253,7 +255,6 @@ export type DynamicModalFieldsProps = {
 	personalFields: personalFieldDataProps;
 	landingPageData: landingPageDataProps[];
 	isTrackLink: boolean;
-	setIsTrackLink: () => void;
 };
 
 export type TestGroupModalRowsProps = {
@@ -301,6 +302,10 @@ export type updatedVariable = {
 
 export type smsReducerProps = {
 	testGroups: testGroupsProps[];
+};
+
+export type SubAccountSettings = {
+	DomainAddress: string;
 };
 
 export type testGroupsProps = {
@@ -673,4 +678,11 @@ export type ApiQuickSendPayload = {
 
 export type ApiQuickSend = {
 	payload: ApiQuickSendPayload;
+};
+
+export type SiteTrackAlertModalProps = {
+	classes: ClassesType['classes'];
+	isOpen: boolean;
+	onClose: () => void;
+	onOkay: () => void;
 };

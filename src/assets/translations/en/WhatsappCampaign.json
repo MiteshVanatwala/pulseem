@@ -53,5 +53,18 @@
 	"back": "Back",
 	"exit": "Exit",
 	"save": "Save",
-	"send": "Send"
+	"send": "Send",
+	"selectGroup": "Please Select a Group",
+	"timeAndDate": "Please Select Time and Date",
+	"setCampaign": "Please set Campaign name",
+	"selectTemplate": "Please select a template",
+	"restoreCampaign": "Campaign restored successfully",
+	"sendCampaign": "Campaign sent successfully",
+	"saveCampaign": "Campaign saved successfully",
+	"cloneCampaign": "Campaign cloned successfully",
+	"createTemplate": "Template created successfully",
+	"deleteTemplate": "Template deleted successfully",
+	"submitTemplate": "Template submitted successfully",
+	"saveTemplate": "Template saved successfully",
+	"chatMediaErrorMsg": "Can not view media in chat - click here to view the media"
 }

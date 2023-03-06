@@ -36,13 +36,18 @@ import {
 } from '../../../redux/reducers/whatsappSlice';
 import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
-import { getDynamicFields, getTemplatePreviewData } from '../Common';
+import {
+	checkSiteTrackingLink,
+	getDynamicFields,
+	getTemplatePreviewData,
+} from '../Common';
 import {
 	landingPageAPIProps,
 	landingPageDataProps,
 	personalFieldAPIProps,
 	personalFieldDataProps,
 	phoneNumberAPIProps,
+	SubAccountSettings,
 	updatedVariable,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import DynamicModal from '../Campaign/Popups/DynamicModal';
@@ -53,8 +58,10 @@ import {
 import {
 	apiStatus,
 	buttonTypes,
+	fieldNameIds,
 	resetToastData,
 	whatsappChatStatuses,
+	whatsappRoutes,
 } from '../Constant';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -67,7 +74,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const SubAccountSettings = useSelector(
+		(state: {
+			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.commonSettings?.SubAccountSettings
+	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
@@ -93,6 +106,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Hour: '0',
 			Minute: '0',
 			Second: '0',
+			IsNewMessage: false,
 		});
 
 	const handleUserStatus = (e: BaseSyntheticEvent, ClientNumber: string) => {
@@ -215,6 +229,20 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		/**
+		 * This will check that is current user is allowed to send freeform message
+		 * or not every 3 second.
+		 */
+		if (activeChatContacts && activeChatContacts?.PhoneNumber?.length > 0) {
+			let ChatStatusTimer = setInterval(
+				async () => await setAPIInboundChatStatus(),
+				3000
+			);
+			return () => clearInterval(ChatStatusTimer);
+		}
+	});
+
 	const setWhatsappChatCoversationStatus = async (
 		StatusId: number,
 		Sendernumber: string,
@@ -283,6 +311,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				Hour: '0',
 				Minute: '0',
 				Second: '0',
+				IsNewMessage: false,
 			});
 			whatsAppChatSessionStatus?.Message
 				? setToastMessage({
@@ -312,6 +341,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				UserName: '',
 			});
 			setAllWhatsappChat(undefined);
+			navigate(whatsappRoutes.CHAT);
 		}
 		setActivePhoneNumber(activeUser);
 		const whatsAppChatContactsData: APIWhatsappChatSidebarContactsData =
@@ -463,10 +493,34 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
 		}
 	};
+
+	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
+		const updatedVariableWithSiteLink = variable?.map((variable) => {
+			if (
+				variable?.FieldTypeId === fieldNameIds?.LINK &&
+				variable?.IsStatastic
+			) {
+				if (
+					checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
+				) {
+					return {
+						...variable,
+						VariableValue: variable?.VariableValue.includes('?')
+							? variable?.VariableValue + '&ref=##ClientIDEnc##'
+							: variable?.VariableValue + '?ref=##ClientIDEnc##',
+					};
+				}
+				return variable;
+			}
+			return variable;
+		});
+		setUpdatedDynamicVariable(updatedVariableWithSiteLink);
+	};
+
 	const onDynamcFieldModalSave = (
 		updatedDynamicVariable: updatedVariable[]
 	) => {
-		setUpdatedDynamicVariable(updatedDynamicVariable);
+		setUpdatedDynamicVariableWithLinks(updatedDynamicVariable);
 		setIsDynamcFieldModal(false);
 	};
 
@@ -510,7 +564,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			savedTemplate?.length > 0 &&
 			getDynamicFields(newMessage)?.length !== updatedDynamicVariable?.length
 		) {
-			validationErrors.push('Please update all variable in the message');
+			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
 			isValidated = false;
 		}
 		if (newMessage?.length === 0) {
@@ -704,7 +758,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							setAllWhatsappChat={setAllWhatsappChat}
 							setAPIInboundChatStatus={setAPIInboundChatStatus}
 							setWhatsappChatSession={setWhatsappChatSession}
-							setUpdatedDynamicVariable={setUpdatedDynamicVariable}
+							setUpdatedDynamicVariable={setUpdatedDynamicVariableWithLinks}
 							setDynamicVariable={setDynamicVariable}
 							setSavedTemplate={setSavedTemplate}
 							activeChatContacts={activeChatContacts}
@@ -723,6 +777,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						onDynamcFieldModalSave(updatedDynamicVariable)
 					}
 					dynamicVariable={updatedDynamicVariable}
+					isTrackLink={isTrackLink}
+					setIsTrackLink={setIsTrackLink}
 				/>
 				<Loader isOpen={isLoader} showBackdrop={true} />
 				<ValidationAlert

@@ -12,6 +12,7 @@ import {
 	templatePreviewDataProps,
 } from './Editor/Types/WhatsappCreator.types';
 import uniqid from 'uniqid';
+import { SubAccountSettings } from './Campaign/Types/WhatsappCampaign.types';
 
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -72,6 +73,7 @@ export const getTemplateIdByName = (
 	return (
 		savedTemplateList?.find(
 			(template: savedTemplateListProps) =>
+				template.FriendlyTemplateName === templateName ||
 				template.TemplateName === templateName
 		)?.TemplateId || null
 	);
@@ -81,11 +83,19 @@ export const getTemplateNameById = (
 	savedTemplateList: savedTemplateListProps[],
 	templateId: string
 ) => {
-	return (
-		savedTemplateList?.find(
-			(template: savedTemplateListProps) => template.TemplateId === templateId
-		)?.TemplateName || null
+	const template = savedTemplateList?.find(
+		(template: savedTemplateListProps) => template.TemplateId === templateId
 	);
+	if (template) {
+		if (
+			template?.FriendlyTemplateName &&
+			template?.FriendlyTemplateName?.length > 0
+		) {
+			return template?.FriendlyTemplateName;
+		}
+		return template?.TemplateName;
+	}
+	return '';
 };
 
 export const getTemplateName = (template: savedTemplateListProps) => {
@@ -250,4 +260,24 @@ export const getTemplatePreviewData = (
 		}
 	}
 	return templatePreviewData;
+};
+
+export const checkSiteTrackingLink = (
+	SubAccountSettings: SubAccountSettings,
+	text: string
+): boolean => {
+	if (
+		SubAccountSettings?.DomainAddress &&
+		SubAccountSettings?.DomainAddress !== ''
+	) {
+		const domainName = SubAccountSettings?.DomainAddress.replace('https://', '')
+			.replace('http://', '')
+			.replace('www.', '');
+		if (text.includes(domainName)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	return false;
 };

@@ -80,9 +80,16 @@ const ChatUi = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [chatContacts?.PhoneNumber]);
 
-	const getAPIAllWhatsappChat = async () => {
+	useEffect(() => {
+		if (whatsappChatSession?.IsNewMessage) {
+			getAPIAllWhatsappChat(true);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [whatsappChatSession]);
+
+	const getAPIAllWhatsappChat = async (isNewMessage: boolean = false) => {
 		if (activePhoneNumber && chatContacts?.PhoneNumber) {
-			setIsLoader(true);
+			!isNewMessage && setIsLoader(true);
 			const allWhatsAppChatData: APIWhatsappChatData = await dispatch<any>(
 				getWhatsappChat({
 					activePhoneNumber: activePhoneNumber,
@@ -94,7 +101,7 @@ const ChatUi = ({
 			setDynamicVariable([]);
 			setNewMessage('');
 			setSavedTemplate('');
-			setIsLoader(false);
+			!isNewMessage && setIsLoader(false);
 
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
 				setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
@@ -152,7 +159,9 @@ const ChatUi = ({
 										  }
 								}
 								onChange={(e) => handleUserStatus(e, chatContacts.PhoneNumber)}>
-								<MenuItem value={1}><>{translator('whatsappChat.open')}</></MenuItem>
+								<MenuItem value={1}>
+									<>{translator('whatsappChat.open')}</>
+								</MenuItem>
 								<MenuItem value={2}>
 									{translator('whatsappChat.pending')}
 								</MenuItem>

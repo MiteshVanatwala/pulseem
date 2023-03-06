@@ -1,19 +1,31 @@
 import { Grid } from '@material-ui/core';
 import moment from 'moment';
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 import { getTemplatePreviewData } from '../../Common';
 import { fileTypes } from '../../Constant';
 import {
 	callToActionFieldProps,
 	callToActionRowProps,
+	coreProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 } from '../../Editor/Types/WhatsappCreator.types';
-import { ChatTemplateProps } from '../Types/WhatsappChat.type';
+import {
+	APIWhatsappChatDetailData,
+	ChatTemplateProps,
+} from '../Types/WhatsappChat.type';
 import clsx from 'clsx';
 import Icon from './Icon';
 import PDF from '../../../../assets/images/pdf.png';
+import ZIP from '../../../../assets/images/zip.png';
 import Video from '../../../../assets/images/video.png';
 import Download from '../../../../assets/images/download.png';
+import ImagePreview from './ImagePreview';
+import imagePlaceholder from '../../../../assets/images/image-placeholder.svg';
+import imagePlaceholderX from '../../../../assets/images/image-placeholder-x.svg';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const ChatTemplate = ({
 	classes,
@@ -21,6 +33,8 @@ const ChatTemplate = ({
 	msgIndex,
 	message,
 }: ChatTemplateProps) => {
+	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const { templateData, buttonType, fileData } =
 		getTemplatePreviewData(template);
 	const getValueByFieldName = (
@@ -37,6 +51,75 @@ const ChatTemplate = ({
 	};
 	const formatTime = (timeString: string) => {
 		return moment(timeString).format('hh:mm');
+	};
+	const getInboundMessageContent = (message: APIWhatsappChatDetailData) => {
+		if (message?.Message?.length === 0 && message?.MediaUrl?.length === 0) {
+			return (
+				<span className={classes.whatsappOppsMsg}>
+					<>{translator('whatsappChat.messageErrorText')}</>
+				</span>
+			);
+		}
+		if (message.MediaContentType?.includes('audio')) {
+			return (
+				<>
+					<AudioPlayer
+						src={message?.MediaUrl}
+						layout={isRTL ? 'horizontal-reverse' : 'horizontal'}
+						showJumpControls={false}
+						showFilledVolume={false}
+					/>
+				</>
+			);
+		}
+		if (
+			message.MediaContentType?.includes('pdf') ||
+			message.MediaContentType?.includes('zip')
+		) {
+			return (
+				<div
+					className={clsx(
+						classes.whatsappMobileMessageTextAndImage,
+						'transparent-background'
+					)}>
+					<Grid container alignItems='center'>
+						<img
+							className='pdf-preview-img'
+							src={message.MediaContentType?.includes('zip') ? ZIP : PDF}
+							alt='uploaded-file-preview'
+						/>
+						<div className={classes.pdfFileName}>
+							{
+								message?.Message?.split('/')[
+									message?.Message?.split('/')?.length - 1
+								]
+							}
+						</div>
+						<a href={message?.MediaUrl} target='_blank' rel='noreferrer'>
+							<img
+								className='download-preview-img'
+								src={Download}
+								alt='uploaded-file-preview'
+							/>
+						</a>
+					</Grid>
+				</div>
+			);
+		}
+		return (
+			<>
+				{message?.MediaUrl?.length === 0 && <span>{message?.Message}</span>}
+				{message?.MediaUrl && message?.MediaUrl?.length > 0 && (
+					<ImagePreview
+						classes={classes}
+						className={`${classes.whatsappChat} chat__img`}
+						placeholderImg={imagePlaceholder}
+						errorImg={imagePlaceholderX}
+						src={message?.MediaUrl}
+					/>
+				)}
+			</>
+		);
 	};
 	return (
 		<>
@@ -235,50 +318,11 @@ const ChatTemplate = ({
 				</p>
 			) : (
 				<>
-					{message?.MediaUrl && message?.MediaUrl?.length > 0 ? (
-						<div
-							key={msgIndex}
-							className={`${classes.whatsappChat} chat__msg chat__img-wrapper ${
-								!message.IsInbound
-									? `${classes.whatsappChat} chat__msg--rxd`
-									: `${classes.whatsappChat} chat__msg--sent`
-							}`}>
-							<img
-								src={message?.MediaUrl}
-								alt='media file'
-								className={`${classes.whatsappChat} chat__img`}
-							/>
-							<span className={`${classes.whatsappChat} chat__msg-footer`}>
-								<span>{formatTime(message.MessageDate)}</span>
-								{message.IsInbound && (
-									<Icon
-										id={
-											message?.SmsStatusId === 2 ? 'singleTick' : 'doubleTick'
-										}
-										aria-label={'sent'}
-										className={`${classes.whatsappChat} chat__msg-status-icon ${
-											message?.SmsStatusId === 6
-												? `${classes.whatsappChat} chat__msg-status-icon--blue`
-												: ''
-										}`}
-									/>
-								)}
-							</span>
-
-							<button
-								aria-label='Message options'
-								className={`${classes.whatsappChat} chat__msg-options`}>
-								<Icon
-									id='downArrow'
-									className={`${classes.whatsappChat} chat__msg-options-icon`}
-								/>
-							</button>
-						</div>
-					) : message.IsInbound ? (
+					{message.IsInbound ? (
 						<p
 							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--rxd`}>
-							<span>{message?.Message}</span>
+							{getInboundMessageContent(message)}
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
 							</span>

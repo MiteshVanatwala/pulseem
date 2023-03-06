@@ -208,14 +208,19 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onTableCellClick = (cellName: string, campaignId: number) => {
+		const pageTypeRequest = {
+			"Failed": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed,
+			"Read": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRead,
+			"Sent": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount,
+			"Removed": CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
+		} as any
 		navigate(CLIENT_CONSTANTS.BASEURL, {
 			state: {
 				...CLIENT_CONSTANTS.QUERY_PARAMS,
-				CampaignID: '537500',
-				ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-				PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
+				CampaignID: campaignId,
+				PageType: pageTypeRequest[cellName],
 				ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
-				PageProperty: GetPageNyName('reports/NewsletterReports'),
+				PageProperty: GetPageNyName('reports/WhatsappReports'),
 			},
 		});
 	};
@@ -470,7 +475,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											classes={cellStyle}
 											className={classes.flex2}
 											align='center'>
-											<>{}</>
+											<>{ }</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
@@ -556,9 +561,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 													</Grid>
 													<Grid
 														item
-														className={`${
-															report?.UniqueClicksCount >= 1 && 'underline'
-														}`}>
+														className={`${report?.UniqueClicksCount >= 1 && 'underline'
+															}`}>
 														{getTableTypographyCells(
 															translator('whatsappReport.unique'),
 															report.UniqueClicksCount,
@@ -586,9 +590,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												<Grid container justifyContent='space-around'>
 													<Grid
 														item
-														className={`${
-															report?.Removed >= 1 && 'underline'
-														}`}>
+														className={`${report?.Removed >= 1 && 'underline'
+															}`}>
 														{getTableTypographyCells(
 															translator('common.Removed'),
 															report.Removed,
