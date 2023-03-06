@@ -384,7 +384,7 @@ const ClientSearchResult = ({ props, classes }) => {
         }, []);
         orderList = orderList.map((ol) => { return FlatObject(ol) });
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-          orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
+          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
         }
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
           searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
