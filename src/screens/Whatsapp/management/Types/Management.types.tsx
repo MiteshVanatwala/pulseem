@@ -88,3 +88,5 @@ export type AllReportReq = {
 	pageNo: number;
 	pageSize: number;
 };
+
+export type PageTypeRequest = { [key: string]: number };
