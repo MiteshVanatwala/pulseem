@@ -50,7 +50,10 @@ import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { useNavigate } from 'react-router-dom';
 import { GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import { campaignStatus } from '../Constant';
-import { AllReportReq } from '../management/Types/Management.types';
+import {
+	AllReportReq,
+	PageTypeRequest,
+} from '../management/Types/Management.types';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
@@ -175,12 +178,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onTableCellClick = (cellName: string, campaignId: number) => {
-		const pageTypeRequest = {
+		const pageTypeRequest: PageTypeRequest = {
 			Failed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed,
 			Read: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRead,
 			Sent: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount,
 			Removed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
-		} as any;
+		};
 		navigate(CLIENT_CONSTANTS.BASEURL, {
 			state: {
 				...CLIENT_CONSTANTS.QUERY_PARAMS,
