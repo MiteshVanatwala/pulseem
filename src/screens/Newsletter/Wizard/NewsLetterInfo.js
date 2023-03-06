@@ -242,7 +242,7 @@ const NewsLetterInfo = ({ classes }) => {
         const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
         if (htmlTemplate && htmlTemplate !== '') {
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
-            //sessionStorage.removeItem("Newlsetter_Html_Template");
+            sessionStorage.removeItem("Newlsetter_Html_Template");
         }
     }, []);
 
