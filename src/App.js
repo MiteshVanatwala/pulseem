@@ -43,6 +43,10 @@ import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 
 const renderRoutes = (classes, history) => {
+  if (localStorage.getItem('reloadBeeEditor') == '1' && window.location.pathname.indexOf('Campaigns/editor')) {
+    localStorage.removeItem('reloadBeeEditor');
+    window.location.reload(true);
+  }
   const transferUrl = (url = '', param = '') => () => {
     const { campaignID, automationID, id, notificationID } = useParams()
     const addParam = {
