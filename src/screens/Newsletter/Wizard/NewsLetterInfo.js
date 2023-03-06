@@ -197,7 +197,9 @@ const NewsLetterInfo = ({ classes }) => {
         UnsubscribeLocation: 2,
         UpdateClient: 0,
         IsResponsive: 1,
-        FilesProperties: []
+        FilesProperties: [],
+        HtmlToEdit: '',
+        HtmlToSend: ''
     })
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
@@ -235,6 +237,14 @@ const NewsLetterInfo = ({ classes }) => {
     const handleClickOutsideEmoji = () => {
         setShowEmoji(false);
     }
+
+    useEffect(() => {
+        const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
+        if (htmlTemplate && htmlTemplate !== '') {
+            setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
+            //sessionStorage.removeItem("Newlsetter_Html_Template");
+        }
+    }, []);
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
