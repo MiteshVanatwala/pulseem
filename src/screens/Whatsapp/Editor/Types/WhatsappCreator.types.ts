@@ -289,6 +289,7 @@ export type saveTemplateItemsProps = {
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
 	Status: string;
+	StatusId: number;
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
@@ -355,6 +356,7 @@ export type templateListItemsProps = {
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
 	Status: string;
+	StatusId: number;
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
@@ -364,10 +366,10 @@ export type templateListItemsProps = {
 };
 
 export type templateListDataProps = {
-	Error: string;
+	CurrentPage: number;
+	PageSize: number;
 	Count: number;
-	Message: string;
-	Status: number;
+	TotalRecord: number;
 	Items: saveTemplateItemsProps[];
 };
 

@@ -19,6 +19,11 @@ import {
 	APIGetWhatsappChatContactsReq,
 	APISendWhatsAppChatReqPayload,
 } from '../../screens/Whatsapp/Chat/Types/WhatsappChat.type';
+import {
+	AllCampaignReq,
+	AllReportReq,
+	AllTemplateReq,
+} from '../../screens/Whatsapp/management/Types/Management.types';
 
 type ApiError = {
 	message: string;
@@ -276,10 +281,11 @@ export const duplicateTemplate = createAsyncThunk(
 
 export const getAllTemplates = createAsyncThunk(
 	'WhatsAppTemplate/GetWhatsAppTemplate',
-	async (_data, thunkAPI) => {
+	async (data: AllTemplateReq, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`WhatsAppTemplate/GetWhatsAppTemplate`
+				`WhatsAppTemplate/GetWhatsAppTemplate`,
+				data
 			);
 
 			return response.data;
@@ -309,10 +315,11 @@ export const submitTemplateDirect = createAsyncThunk(
 
 export const getAllCampaigns = createAsyncThunk(
 	'whatsAppCampaign/GetWhatsAppCampaigns',
-	async (_data, thunkAPI) => {
+	async (data: AllCampaignReq, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/GetWhatsAppCampaigns`
+				`whatsAppCampaign/GetWhatsAppCampaigns`,
+				data
 			);
 
 			return response.data;
@@ -355,10 +362,11 @@ export const duplicateCampaign = createAsyncThunk(
 
 export const getAllReports = createAsyncThunk(
 	'WhatsAppReport/GetWhatsAppReport',
-	async (_data, thunkAPI) => {
+	async (data: AllReportReq, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
-				`WhatsAppReport/GetWhatsAppReport`
+				`WhatsAppReport/GetWhatsAppReport`,
+				data
 			);
 
 			return response.data;

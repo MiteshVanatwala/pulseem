@@ -50,7 +50,7 @@ import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
-import { ManagmentIconProps } from './Types/Management.types';
+import { AllTemplateReq, ManagmentIconProps } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
@@ -60,7 +60,13 @@ import {
 	getSavedTemplatesPreviewById,
 	submitTemplateDirect,
 } from '../../../redux/reducers/whatsappSlice';
-import { apiStatus, resetToastData, statusesByName } from '../Constant';
+import {
+	allTemplateInitialPagination,
+	apiStatus,
+	resetToastData,
+	statusesByName,
+	templateStatusIdsByStatusName,
+} from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
@@ -85,15 +91,17 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isDuplicateTemplateOpen, setIsDuplicateTemplateOpen] =
 		useState<boolean>(false);
-	const [campaignNameSearch, setCampaignNameSearch] = useState<string>('');
-	const [campainStatusSearch, setCampainStatusSearch] = useState<string>('');
+	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
+	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
-	const [page, setPage] = useState<number>(1);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(6);
+	const [totalRecord, setTotalRecord] = useState<number>(0);
 	const [templateData, setTemplateData] = useState<templateDataProps>({
 		templateText: '',
 		templateButtons: [],
 	});
+	const [paginationSetting, setPaginationSetting] = useState<AllTemplateReq>(
+		allTemplateInitialPagination
+	);
 	const [buttonType, setButtonType] = useState<string>('');
 	const [fileData, setFileData] = useState<{
 		fileLink: string;
@@ -106,7 +114,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const [templateListData, setTemplateListData] = useState<
 		templateListItemsProps[]
 	>([]);
-	const [tableData, setTableData] = useState<templateListItemsProps[]>([]);
 	const [activeRowId, setActiveRowId] = useState<string>('');
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
@@ -131,40 +138,48 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	useEffect(() => {
-		setApiTemplateData();
+		setApiTemplateData(paginationSetting);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		if (campainStatusSearch?.length > 0 || campaignNameSearch?.length > 0) {
+		if (templateStatusSearch?.length > 0 || templateNameSearch?.length > 0) {
 			setSearching(true);
 		}
-	}, [campaignNameSearch, campainStatusSearch]);
+	}, [templateNameSearch, templateStatusSearch]);
 
-	const setApiTemplateData = async () => {
+	const setApiTemplateData = async (
+		pagination: AllTemplateReq = paginationSetting
+	) => {
 		setIsLoader(true);
 		const templateData: templateListAPIProps = await dispatch<any>(
-			getAllTemplates()
+			getAllTemplates(pagination)
 		);
 		if (templateData.payload.Status === apiStatus.SUCCESS) {
 			setTemplateListData(templateData.payload?.Data?.Items);
-			setTableData(templateData.payload?.Data?.Items);
+			setTotalRecord(templateData?.payload?.Data?.TotalRecord);
 			setIsLoader(false);
 		} else {
 			setTemplateListData([]);
-			setTableData([]);
 			setIsLoader(false);
 		}
 	};
 
 	const handleCampainNameChange = (event: BaseSyntheticEvent) => {
-		setCampaignNameSearch(event.target.value);
+		setTemplateNameSearch(event.target.value);
 	};
 	const clearSearch = () => {
-		setCampaignNameSearch('');
-		setCampainStatusSearch('');
+		setTemplateNameSearch('');
+		setTemplateStatusSearch('');
 		setSearching(false);
-		setTableData(templateListData);
+		const updatedPagination: AllTemplateReq = {
+			...paginationSetting,
+			pageNo: 1,
+			templateName: '',
+			templateStatus: 0,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiTemplateData(updatedPagination);
 	};
 	const renderNameCell = (row: templateListItemsProps) => {
 		let date = null;
@@ -415,9 +430,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			} else {
 				templateData?.payload?.Message
 					? setToastMessage({
-						...ToastMessages.ERROR,
-						message: templateData?.payload?.Message,
-					})
+							...ToastMessages.ERROR,
+							message: templateData?.payload?.Message,
+					  })
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		}
@@ -520,32 +535,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		);
 	};
 
-	const getSearchedTemplate = () => {
-		let searchedData: templateListItemsProps[] = templateListData;
-		if (campaignNameSearch && campaignNameSearch?.length > 0) {
-			searchedData = searchedData?.filter((row: templateListItemsProps) =>
-				row.TemplateName?.includes(campaignNameSearch)
-			);
-		}
-		if (campainStatusSearch && campainStatusSearch?.length > 0) {
-			searchedData = searchedData?.filter((row: templateListItemsProps) =>
-				row.Status?.includes(campainStatusSearch.trim())
-			);
-		}
-		return searchedData;
-	};
-
-	const getRows = () => {
-		let sortData = tableData;
-
-		sortData = sortData?.slice(
-			(page - 1) * rowsPerPage,
-			(page - 1) * rowsPerPage + rowsPerPage
-		);
-
-		return sortData?.length > 0 ? sortData : [];
-	};
-
 	const onSubmitTemplate = async () => {
 		const submitData: commonAPIResponseProps = await dispatch<any>(
 			submitTemplateDirect({ id: activeRowId })
@@ -557,9 +546,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			submitData?.payload?.Message
 				? setToastMessage({
-					...ToastMessages.ERROR,
-					message: submitData?.payload?.Message,
-				})
+						...ToastMessages.ERROR,
+						message: submitData?.payload?.Message,
+				  })
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -575,9 +564,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		} else {
 			deleteData?.payload?.Error
 				? setToastMessage({
-					...ToastMessages.ERROR,
-					message: deleteData?.payload?.Error,
-				})
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Error,
+				  })
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -594,9 +583,9 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			setIsDuplicateTemplateOpen(false);
 			duplicateData?.payload?.Error
 				? setToastMessage({
-					...ToastMessages.ERROR,
-					message: duplicateData?.payload?.Error,
-				})
+						...ToastMessages.ERROR,
+						message: duplicateData?.payload?.Error,
+				  })
 				: setToastMessage(ToastMessages.ERROR);
 		}
 	};
@@ -606,8 +595,18 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onSearch = async () => {
-		setPage(1);
-		setTableData(getSearchedTemplate());
+		if (templateStatusSearch?.length > 0 || templateNameSearch?.length > 0) {
+			const updatedPagination: AllTemplateReq = {
+				...paginationSetting,
+				pageNo: 1,
+				templateName: templateNameSearch,
+				templateStatus: templateStatusIdsByStatusName[templateStatusSearch],
+			};
+			setPaginationSetting(updatedPagination);
+			setApiTemplateData(updatedPagination);
+		} else {
+			clearSearch();
+		}
 	};
 
 	const resetToast = () => {
@@ -622,6 +621,11 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			return <Toast data={toastMessage} />;
 		}
 		return null;
+	};
+
+	const updatePaginationSetting = (pagination: AllTemplateReq) => {
+		setApiTemplateData(pagination);
+		setPaginationSetting(pagination);
 	};
 
 	return (
@@ -645,7 +649,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						<TextField
 							variant='outlined'
 							size='small'
-							value={campaignNameSearch}
+							value={templateNameSearch}
 							onChange={handleCampainNameChange}
 							className={clsx(classes.textField, classes.minWidth252)}
 							placeholder={translator(
@@ -659,15 +663,17 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							select
 							type='text'
 							label={
-								campainStatusSearch?.length > 0
-									? ''
-									: <>{translator('whatsappManagement.status')}</>
+								templateStatusSearch?.length > 0 ? (
+									''
+								) : (
+									<>{translator('whatsappManagement.status')}</>
+								)
 							}
 							className={classes.whatsappManagementbuttonField}
 							onChange={(e: BaseSyntheticEvent) =>
-								setCampainStatusSearch(e.target.value)
+								setTemplateStatusSearch(e.target.value)
 							}
-							value={campainStatusSearch}>
+							value={templateStatusSearch}>
 							{Object.keys(statusesByName)?.map((status: string) => (
 								<MenuItem key={'no-data-template' + status} value={status}>
 									<>{translator(statusesByName[status])}</>
@@ -711,8 +717,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
-						{tableData?.length || 0}{' '}
-						<>{translator('whatsappManagement.templates')}</>
+						{totalRecord || 0} <>{translator('whatsappManagement.templates')}</>
 					</span>
 				</Grid>
 
@@ -748,7 +753,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{getRows()?.length === 0 ? (
+							{templateListData?.length === 0 ? (
 								<Box
 									className={clsx(
 										classes.flex,
@@ -761,30 +766,41 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 								</Box>
 							) : (
 								<>
-									{getRows()?.map((row: templateListItemsProps, index) => (
-										<TableRow
-											key={`templateMaganement_${row.Id}_${index}`}
-											classes={rowStyle}>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={clsx(classes.flex3, classes.tableCellBody)}>
-												{renderNameCell(row)}
-											</TableCell>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderStatusCell(row.Status, row.RejectionReason)}
-											</TableCell>
-											<TableCell
-												component='th'
-												scope='row'
-												className={clsx(classes.flex5, classes.tableCellRoot)}>
-												{renderCellIcons(row)}
-											</TableCell>
-										</TableRow>
-									))}
+									{templateListData?.map(
+										(row: templateListItemsProps, index) => (
+											<TableRow
+												key={`templateMaganement_${row.Id}_${index}`}
+												classes={rowStyle}>
+												<TableCell
+													classes={cellStyle}
+													align='center'
+													className={clsx(
+														classes.flex3,
+														classes.tableCellBody
+													)}>
+													{renderNameCell(row)}
+												</TableCell>
+												<TableCell
+													classes={cellStyle}
+													align='center'
+													className={clsx(
+														classes.flex1,
+														classes.tableCellBody
+													)}>
+													{renderStatusCell(row.Status, row.RejectionReason)}
+												</TableCell>
+												<TableCell
+													component='th'
+													scope='row'
+													className={clsx(
+														classes.flex5,
+														classes.tableCellRoot
+													)}>
+													{renderCellIcons(row)}
+												</TableCell>
+											</TableRow>
+										)
+									)}
 								</>
 							)}
 						</Table>
@@ -792,14 +808,23 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				</Grid>
 				<Pagination
 					classes={classes}
-					rows={tableData?.length}
-					rowsPerPage={rowsPerPage}
+					rows={totalRecord}
+					rowsPerPage={paginationSetting?.pageSize}
 					onRowsPerPageChange={(rowsNumber: number) =>
-						setRowsPerPage(rowsNumber)
+						updatePaginationSetting({
+							...paginationSetting,
+							pageSize: rowsNumber,
+							pageNo: 1,
+						})
 					}
 					rowsPerPageOptions={[6, 10, 20, 50]}
-					page={page}
-					onPageChange={(pageNumber: number) => setPage(pageNumber)}
+					page={paginationSetting?.pageNo}
+					onPageChange={(pageNumber: number) =>
+						updatePaginationSetting({
+							...paginationSetting,
+							pageNo: pageNumber,
+						})
+					}
 					returnPageOne={false}
 				/>
 			</div>

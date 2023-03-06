@@ -126,7 +126,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isMobileSideBar, setIsMobileSideBar] = useState<boolean>(false);
 	const [isTemplateModal, setIsTemplateModal] = useState<boolean>(false);
 	const [isDynamcFieldModal, setIsDynamcFieldModal] = useState<boolean>(false);
-	const [newMessage, setNewMessage] = useState<string>('sas');
+	const [newMessage, setNewMessage] = useState<string>('');
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
@@ -699,6 +699,17 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	};
 
+	const updateFreeFormMessage = (message: string) => {
+		if (message !== newMessage) {
+			setNewMessage(message);
+
+			const freeFormDivElement = document.getElementById('free-from-input');
+			if (freeFormDivElement) {
+				freeFormDivElement.innerHTML = message;
+			}
+		}
+	};
+
 	return (
 		<>
 			<DefaultScreen
@@ -739,7 +750,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 								onChoose(template, templateText)
 							}
 							newMessage={newMessage}
-							setNewMessage={setNewMessage}
+							setNewMessage={updateFreeFormMessage}
 							isTemplateModal={isTemplateModal}
 							setIsTemplateModal={setIsTemplateModal}
 							dynamicVariable={dynamicVariable}

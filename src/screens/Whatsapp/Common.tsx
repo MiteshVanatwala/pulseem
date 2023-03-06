@@ -273,11 +273,7 @@ export const checkSiteTrackingLink = (
 		const domainName = SubAccountSettings?.DomainAddress.replace('https://', '')
 			.replace('http://', '')
 			.replace('www.', '');
-		if (text.includes(domainName)) {
-			return true;
-		} else {
-			return false;
-		}
+		return text.includes(domainName);
 	}
 	return false;
 };

@@ -52,6 +52,7 @@ import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import {
+	allCampaignInitialPagination,
 	apiStatus,
 	campaignStatus,
 	campaignStatuses,
@@ -61,7 +62,7 @@ import Pagination from './Component/Pagination';
 import RestoreDeletedModal from './Popups/RestoreDeletedModal';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
-import { ManagmentIconProps } from './Types/Management.types';
+import { AllCampaignReq, ManagmentIconProps } from './Types/Management.types';
 import AlertModal from '../Editor/Popups/AlertModal';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
@@ -97,10 +98,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	);
 	const [activeRowId, setActiveRowId] = useState<string>('');
 	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
-	const [campaineNameSearch, setCampaineNameSearch] = useState<string>('');
+	const [campaignNameSearch, setCampaignNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
-	const [page, setPage] = useState<number>(1);
-	const [rowsPerPage, setRowsPerPage] = useState<number>(6);
 
 	const [isPreviewCampaignOpen, setIsPreviewCampaignOpen] =
 		useState<boolean>(false);
@@ -108,6 +107,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		templateText: '',
 		templateButtons: [],
 	});
+	const [totalRecord, setTotalRecord] = useState<number>(0);
+	const [paginationSetting, setPaginationSetting] = useState<AllCampaignReq>(
+		allCampaignInitialPagination
+	);
 	const [buttonType, setButtonType] = useState<string>('');
 	const [fileData, setFileData] = useState<{
 		fileLink: string;
@@ -116,8 +119,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		fileLink: '',
 		fileType: '',
 	});
-
-	const [tableData, setTableData] = useState<campaignDataProps[]>([]);
 
 	const [isRestoreDeletedModal, setIsRestoreDeletedModal] =
 		useState<boolean>(false);
@@ -161,7 +162,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		fileType: string;
 	} = {
 		fileLink: '',
-		fileType: ''
+		fileType: '',
 	};
 
 	useEffect(() => {
@@ -176,11 +177,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		if (
 			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
 			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
-			campaineNameSearch?.length > 0
+			campaignNameSearch?.length > 0
 		) {
 			setSearching(true);
 		}
-	}, [fromDate, toDate, campaineNameSearch]);
+	}, [fromDate, toDate, campaignNameSearch]);
 
 	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
 		if (toDate && value && value > toDate) {
@@ -189,14 +190,23 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		handleFromDate(value);
 	};
 	const handleCampainNameChange = (event: BaseSyntheticEvent) => {
-		setCampaineNameSearch(event.target.value);
+		setCampaignNameSearch(event.target.value);
 	};
 	const clearSearch = () => {
-		setCampaineNameSearch('');
+		setCampaignNameSearch('');
 		handleFromDate(null);
 		handleToDate(null);
 		setSearching(false);
-		setTableData(campaignListData);
+
+		const updatedPagination: AllCampaignReq = {
+			...paginationSetting,
+			pageNo: 1,
+			campaignName: '',
+			fromDate: null,
+			toDate: null,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiCampaignData(updatedPagination);
 	};
 	const renderNameCell = (row: campaignDataProps) => {
 		let date = null;
@@ -620,7 +630,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const searchArray: searchArrayProps[] = [
 			{
 				type: 'name',
-				campaignName: campaineNameSearch,
+				campaignName: campaignNameSearch,
 			},
 			{
 				type: 'date',
@@ -631,7 +641,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		const filtersObject: filtersObjectProps = {
 			name: (row: campaignDataProps) => {
 				return String(row.Name.toLowerCase()).includes(
-					campaineNameSearch.toLowerCase()
+					campaignNameSearch.toLowerCase()
 				);
 			},
 			date: (row: campaignDataProps, values: searchArrayProps) => {
@@ -663,16 +673,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		});
 
 		return sortData;
-	};
-
-	const getRows = () => {
-		let sortData = tableData;
-		sortData = sortData?.slice(
-			(page - 1) * rowsPerPage,
-			(page - 1) * rowsPerPage + rowsPerPage
-		);
-
-		return sortData?.length > 0 ? sortData : [];
 	};
 
 	const onDuplicateCampaign = async () => {
@@ -733,19 +733,29 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onSearch = async () => {
-		setPage(1);
-		setTableData(getSearchedCampaign());
+		const updatedPagination: AllCampaignReq = {
+			...paginationSetting,
+			pageNo: 1,
+			campaignName: campaignNameSearch || '',
+			fromDate: fromDate || null,
+			toDate: toDate || null,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiCampaignData(updatedPagination);
 	};
 
 	const onCreateCamoaign = async () => {
 		navigate('/react/whatsapp/campaign/create/page1');
 	};
 
-	const setApiCampaignData = async () => {
+	const setApiCampaignData = async (
+		pagination: AllCampaignReq = paginationSetting
+	) => {
 		setIsLoader(true);
 		const campaignData: campaignListAPIProps = await dispatch<any>(
-			getAllCampaigns()
+			getAllCampaigns(pagination)
 		);
+		setIsLoader(false);
 		if (campaignData.payload.Status === apiStatus.SUCCESS) {
 			const filteredCampaignData = campaignData.payload?.Data?.Items?.filter(
 				(campaign) => !campaign?.IsDeleted
@@ -754,14 +764,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				(campaign) => campaign?.IsDeleted
 			);
 			setCampaignListData(filteredCampaignData);
-			setTableData(filteredCampaignData);
 			setDeletedCampaignListData(deletedCampaignData);
-			setIsLoader(false);
+			setTotalRecord(campaignData?.payload?.Data?.TotalRecord);
 		} else {
 			setCampaignListData([]);
 			setDeletedCampaignListData([]);
-			setTableData([]);
-			setIsLoader(false);
 		}
 	};
 
@@ -777,6 +784,11 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			return <Toast data={toastMessage} />;
 		}
 		return null;
+	};
+
+	const updatePaginationSetting = (pagination: AllCampaignReq) => {
+		setApiCampaignData(pagination);
+		setPaginationSetting(pagination);
 	};
 
 	return (
@@ -800,7 +812,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						<TextField
 							variant='outlined'
 							size='small'
-							value={campaineNameSearch}
+							value={campaignNameSearch}
 							onChange={handleCampainNameChange}
 							className={clsx(classes.textField, classes.minWidth252)}
 							placeholder={translator(
@@ -898,8 +910,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					</div>
 
 					<span className={classes.manageTemplatesCampaignCount}>
-						{tableData?.length || 0}{' '}
-						<>{translator('whatsappManagement.campaigns')}</>
+						{totalRecord || 0} <>{translator('whatsappManagement.campaigns')}</>
 					</span>
 				</Grid>
 
@@ -944,7 +955,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									</TableRow>
 								</TableHead>
 							)}
-							{getRows()?.length === 0 ? (
+							{campaignListData?.length === 0 ? (
 								<Box
 									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
 									style={{ height: 50 }}>
@@ -954,7 +965,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 								</Box>
 							) : (
 								<>
-									{getRows()?.map((campaign: campaignDataProps) => (
+									{campaignListData?.map((campaign: campaignDataProps) => (
 										<TableRow key={campaign.WACampaignID} classes={rowStyle}>
 											<TableCell
 												classes={cellStyle}
@@ -995,14 +1006,23 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				</Grid>
 				<Pagination
 					classes={classes}
-					rows={tableData?.length}
-					rowsPerPage={rowsPerPage}
+					rows={totalRecord}
+					rowsPerPage={paginationSetting?.pageSize}
 					onRowsPerPageChange={(rowsNumber: number) =>
-						setRowsPerPage(rowsNumber)
+						updatePaginationSetting({
+							...paginationSetting,
+							pageSize: rowsNumber,
+							pageNo: 1,
+						})
 					}
 					rowsPerPageOptions={[6, 10, 20, 50]}
-					page={page}
-					onPageChange={(pageNumber: number) => setPage(pageNumber)}
+					page={paginationSetting?.pageNo}
+					onPageChange={(pageNumber: number) =>
+						updatePaginationSetting({
+							...paginationSetting,
+							pageNo: pageNumber,
+						})
+					}
 					returnPageOne={false}
 				/>
 			</div>

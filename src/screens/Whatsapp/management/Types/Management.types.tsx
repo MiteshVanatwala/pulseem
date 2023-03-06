@@ -1,3 +1,4 @@
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { ClassesType } from '../../../Classes.types';
 import { campaignDataProps } from '../../Campaign/Types/WhatsappCampaign.types';
 
@@ -41,6 +42,8 @@ export type statusProps = { [key: number]: string };
 
 export type statusByNameProps = { [key: string]: string };
 
+export type TemplatesStatusIdByStatusName = { [key: string]: number };
+
 export type campaignStatusProps = { [key: number]: string };
 
 export type ManagmentIconProps = {
@@ -59,3 +62,31 @@ export type ManagmentIconProps = {
 	textClass?: any;
 	id: string;
 };
+
+export type AllTemplateReq = {
+	templateName: string;
+	templateStatus: number;
+	isPagination: boolean;
+	pageNo: number;
+	pageSize: number;
+};
+
+export type AllCampaignReq = {
+	campaignName: string;
+	fromDate: MaterialUiPickersDate | null;
+	toDate: MaterialUiPickersDate | null;
+	isPagination: boolean;
+	pageNo: number;
+	pageSize: number;
+};
+
+export type AllReportReq = {
+	campaignName: string;
+	fromDate: MaterialUiPickersDate | null;
+	toDate: MaterialUiPickersDate | null;
+	isPagination: boolean;
+	pageNo: number;
+	pageSize: number;
+};
+
+export type PageTypeRequest = { [key: string]: number };

@@ -2703,6 +2703,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		wordWrap: 'break-word',
 		whiteSpace: 'pre-wrap',
 		width: 'calc(100% - 66px)',
+		'&.inbound': {
+			fontFamily: 'OpenSansHebrew',
+			padding: '0px 2px',
+		},
 	},
 	summaryModalAccordion: {
 		color: '#1771ad',
