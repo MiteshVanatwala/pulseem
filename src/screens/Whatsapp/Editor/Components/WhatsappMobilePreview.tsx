@@ -72,7 +72,8 @@ const WhatsappMobilePreview = ({
 	const getFileType = () => {
 		if (
 			fileData?.fileLink?.includes('.png') ||
-			fileData?.fileLink?.includes('.jpeg')
+			fileData?.fileLink?.includes('.jpeg') ||
+			fileData?.fileLink?.includes('.jpg')
 		) {
 			return fileTypes.IMAGE;
 		} else if (fileData?.fileLink?.includes('.pdf')) {
