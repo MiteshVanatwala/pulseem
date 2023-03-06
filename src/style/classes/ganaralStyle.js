@@ -2726,7 +2726,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         background: '#ff0000',
         textAlign: 'center',
         fontSize: '0.5rem',
+        color: "#fff"
       }
     }
   },
+  disabledButPointer: {
+    opacity: ".65",
+    pointerEvents: "unset !important",
+    cursor: "not-allowed !important",
+  }
 });
