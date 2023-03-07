@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
-	Link,
-	Typography,
-} from '@material-ui/core';
+import { Link } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import {
 	ApiGetCampaignSummary,
@@ -26,22 +20,13 @@ import {
 } from '../../../../redux/reducers/whatsappSlice';
 import { useDispatch } from 'react-redux';
 import {
-	buttonsDataProps,
-	callToActionProps,
-	quickReplyButtonProps,
-	savedTemplateCallToActionProps,
-	savedTemplateCardProps,
 	savedTemplateDataProps,
-	savedTemplateMediaProps,
-	savedTemplateQuickReplyProps,
-	savedTemplateTextProps,
 	saveTemplateItemsProps,
 	templateDataProps,
 	templateListAPIProps,
 	templatePreviewDataProps,
 } from '../../Editor/Types/WhatsappCreator.types';
 import { apiStatus } from '../../Constant';
-import uniqid from 'uniqid';
 import WhatsappMobilePreview from '../../Editor/Components/WhatsappMobilePreview';
 import downArrow from '../../../../assets/images/down-arrow.svg';
 import upArrow from '../../../../assets/images/up-arrow.svg';
@@ -51,7 +36,6 @@ import { getTemplatePreviewData } from '../../Common';
 const SummaryModal = ({
 	classes,
 	isOpen,
-	fromNumber,
 	onSummaryModalClose,
 	onConfirmOrYes,
 	selectedGroups,
@@ -95,13 +79,6 @@ const SummaryModal = ({
 		fileLink: '',
 		fileType: '',
 	});
-
-	let updatedTemplateData: templateDataProps = {
-		templateText: '',
-		templateButtons: [],
-	};
-	let updatedButtonType: string = '';
-	let updatedFileData: string = '';
 
 	useEffect(() => {
 		(async () => {
@@ -218,9 +195,10 @@ const SummaryModal = ({
 										{sendType === '2' &&
 											moment(sendDate)?.format('dddd , MMMM Do YYYY, h:mm a')}
 										{sendType === '3' &&
-											`${daysBeforeAfter} ${translator('mainReport.days')} ${isSpecialDateBefore
-												? translator('mainReport.before')
-												: translator('mainReport.after')
+											`${daysBeforeAfter} ${translator('mainReport.days')} ${
+												isSpecialDateBefore
+													? translator('mainReport.before')
+													: translator('mainReport.after')
 											} ${getSpecialDay()} day at ${moment(sendTime)?.format(
 												'hh:mm a'
 											)}`}
@@ -241,9 +219,11 @@ const SummaryModal = ({
 											onClick={() => {
 												setdetailsHide(!detailsHide);
 											}}>
-											{detailsHide
-												? <>{translator('sms.smsSummaryDetails')}</>
-												: <>{translator('sms.smsSummaryClose')}</>}
+											{detailsHide ? (
+												<>{translator('sms.smsSummaryDetails')}</>
+											) : (
+												<>{translator('sms.smsSummaryClose')}</>
+											)}
 										</Link>
 									</span>
 								</Box>

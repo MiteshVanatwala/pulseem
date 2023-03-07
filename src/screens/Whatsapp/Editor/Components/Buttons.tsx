@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { coreProps, ButtonsProps } from '../Types/WhatsappCreator.types';
-import { Button, Box } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { BsTrash } from 'react-icons/bs';
 import { useTranslation } from 'react-i18next';
 

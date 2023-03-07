@@ -34,9 +34,7 @@ import { KeyboardDatePicker } from '@material-ui/pickers';
 import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import {
 	exportDataProps,
-	filtersObjectProps,
 	reportDataProps,
-	searchArrayProps,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import { exportAsXLSX } from '../../../helpers/Export/ExportFile';
 import { getAllReports } from '../../../redux/reducers/whatsappSlice';

@@ -1,10 +1,4 @@
-import React, {
-	BaseSyntheticEvent,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
+import React, { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import uniqid from 'uniqid';
 import { Title } from '../../../components/managment/Title';
@@ -13,7 +7,6 @@ import ActionCallPopOver from './Popups/ActionCallPopOver';
 import Buttons from './Components/Buttons';
 import {
 	buttonsDataProps,
-	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
 	coreProps,
