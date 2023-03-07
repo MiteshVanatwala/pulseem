@@ -153,6 +153,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
+    const [newEditorDisabled, setNewEditorDisabled] = useState(false);
     const [showEmoji, setShowEmoji] = useState(false);
     const navigate = useNavigate();
     const maxCharLimits = {
@@ -197,7 +198,9 @@ const NewsLetterInfo = ({ classes }) => {
         UnsubscribeLocation: 2,
         UpdateClient: 0,
         IsResponsive: 1,
-        FilesProperties: []
+        FilesProperties: [],
+        HtmlToEdit: '',
+        HtmlToSend: ''
     })
 
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
@@ -235,6 +238,15 @@ const NewsLetterInfo = ({ classes }) => {
     const handleClickOutsideEmoji = () => {
         setShowEmoji(false);
     }
+
+    useEffect(() => {
+        const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
+        if (htmlTemplate && htmlTemplate !== '') {
+            setNewEditorDisabled(true);
+            setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
+            sessionStorage.removeItem("Newlsetter_Html_Template");
+        }
+    }, []);
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
@@ -893,6 +905,7 @@ const NewsLetterInfo = ({ classes }) => {
                     color="primary"
                 >{t('common.saveAndContinue')}</Button>
                     {(id === null || id === undefined) && <Button
+                        disabled={newEditorDisabled}
                         onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
                         variant='contained'
                         size='medium'

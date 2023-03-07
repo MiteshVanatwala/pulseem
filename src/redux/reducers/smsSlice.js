@@ -221,10 +221,10 @@ export const getAuthorizeNumbers = createAsyncThunk(
 
 export const sendVerificationCode = createAsyncThunk(
   'authorization/newAuthorizeNumbers', async (data, thunkAPI) => {
-    const { username = '', number = '' } = data || {};
+    const { number = '' } = data || {};
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await PulseemReactInstance.put(`authorization/newAuthorizeNumbers/${username}/${number}`);
+        const response = await PulseemReactInstance.put(`authorization/newAuthorizeNumbers/${number}`);
         resolve(JSON.parse(response.data))
       } catch (error) {
         reject({ error: error.message });

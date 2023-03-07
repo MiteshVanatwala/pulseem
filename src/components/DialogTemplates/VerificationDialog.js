@@ -316,7 +316,7 @@ const VerificationDialog = ({
             case 'smsTFA': {
                 const res = await dispatch(checkCellphoneAuthorization(selectedVerificationContact));
                 if (res?.payload?.StatusCode === 404) {
-                    dispatch(sendVerificationCode({ username, number: val })).then((result) => {
+                    dispatch(sendVerificationCode({ number: val })).then((result) => {
                         setCodeResend(isResend);
                         return result?.payload;
                     });
