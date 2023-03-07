@@ -25,6 +25,7 @@ const SummaryDialog = ({ classes,
     PreviewURL = null,
     SendDate = "",
     handleSendResponse = () => null,
+    IsQuickSend = false,
     ...props }) => {
     const dispatch = useDispatch();
     const [detailsHide, setdetailsHide] = useState(true);
@@ -116,7 +117,7 @@ const SummaryDialog = ({ classes,
 
             });
 
-            return groupWithRecipients.map((group, idx) => { return renderDetailsLine(group.GroupName, group.Recipients?.toLocaleString()) });
+            return groupWithRecipients.map((group, idx) => { return renderDetailsLine(group?.GroupName, group?.Recipients?.toLocaleString()) });
         }
         return <></>
     }
@@ -208,9 +209,11 @@ const SummaryDialog = ({ classes,
                                 <span className={classes.bodySum}>
                                     {`${t("sms.smsSummaryDialogTotalRecipients")}: ${FinalClients?.toLocaleString()}`}
                                 </span>
-                                <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
-                                    {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
-                                </Link>
+                                {
+                                    !IsQuickSend && <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
+                                        {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
+                                    </Link>
+                                }
                             </Box>
                         </Box>
                         {PreviewURL && <Box className={classes.sumRight}>
@@ -221,21 +224,23 @@ const SummaryDialog = ({ classes,
                             </Stack>
                         </Box>}
                     </Box>
-                    <Box>
-                        {detailsHide ? null : <ul className={classes.sumList}>
-                            <li>
-                                <Link onClick={() => { setsubDetailsActive(!subDetailsActive) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
-                                    {t("sms.smsSummaryGroups")} ({newsletterSendSummary.Groups !== '' ? newsletterSendSummary.Groups?.split(',')?.length : 0})
-                                    {subDetailsActive ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
-                                </Link>
-                            </li>
-                        </ul>}
+                    {!IsQuickSend &&
+                        <Box>
+                            {detailsHide ? null : <ul className={classes.sumList}>
+                                <li>
+                                    <Link onClick={() => { setsubDetailsActive(!subDetailsActive) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
+                                        {t("sms.smsSummaryGroups")} ({newsletterSendSummary.Groups !== '' ? newsletterSendSummary.Groups?.split(',')?.length : 0})
+                                        {subDetailsActive ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
+                                    </Link>
+                                </li>
+                            </ul>}
 
 
-                        {!detailsHide && subDetailsActive ? <Box style={{ borderTop: '1px solid #ccc' }}>{renderGroupForSend()}</Box> : null}
-                    </Box>
+                            {!detailsHide && subDetailsActive ? <Box style={{ borderTop: '1px solid #ccc' }}>{renderGroupForSend()}</Box> : null}
+                        </Box>
+                    }
                 </Box>
-                <Box>
+                {!IsQuickSend && <Box>
                     {detailsHide ? null : <ul className={classes.sumList}>
                         <li
                             onClick={() => { setsubRecipients(!subRecipientsDetails) }}
@@ -248,6 +253,7 @@ const SummaryDialog = ({ classes,
                     </ul>}
                     {subRecipientsDetails ? renderFilterDetails() : null}
                 </Box>
+                }
                 <Grid
                     container
                     spacing={4}

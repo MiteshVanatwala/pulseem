@@ -154,6 +154,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         IsLinksStatistics: true
     });
     const [newGroupId, setNewGroupId] = useState(0);
+    const [quickSendClients, setQuickSendClients] = useState(null);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -339,17 +340,33 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             const responseDefaultGroup = await dispatch(getDefaultGroup());
             groupId = responseDefaultGroup.payload
         }
-        onSaveSettings(true, groupId.toString()).then(async () => {
-            if (isEmailVerified) {
-                setLoader(true);
-                await dispatch(getSendSummary(params?.id));
-                setDialogType({ type: 'SummaryDialog' });
-                setLoader(false);
-            }
-            else {
-                setNewEmailVerification(true);
-            }
-        })
+
+        var req = [];
+        quickSendClients.split('\n').map((q) => req.push({ Email: q.replace(',', '') }));
+        const finalPayload = {
+            ClientsData: req,
+            GroupIds: [groupId]
+        }
+        const r = await dispatch(addRecipient(finalPayload));
+
+        if (r.payload.StatusCode === 201) {
+            onSaveSettings(true, groupId.toString()).then(async () => {
+                if (isEmailVerified) {
+                    setLoader(true);
+                    await dispatch(getSendSummary(params?.id));
+                    setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
+                    setLoader(false);
+                }
+                else {
+                    setNewEmailVerification(true);
+                }
+            });
+        }
+        else{
+            // Set error - clients were not uploaded
+            setToastMessage(ToastMessages.GENERAL_ERROR);
+        }
+
     };
 
     const handleFilterConfirm = () => {
@@ -958,6 +975,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                     placeHolder={"recipient.addRecTextareaPlaceholder"}
                                     tooltipText='recipient.bulkRecUpldTooltipText'
                                     onlyMapping={true}
+                                    onType={setQuickSendClients}
                                     extraButtons={
                                         <>
                                             <Button
@@ -1130,6 +1148,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 groups={selectedGroups}
                 PreviewURL={newsletterSettings?.PreviewURL}
                 handleSendResponse={handleSendResponse}
+                IsQuickSend={dialogType?.IsQuickSend}
             />}
             {dialogType?.type === 'SendResponse' && <SendResponseDialog
                 classes={classes}

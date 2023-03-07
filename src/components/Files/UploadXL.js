@@ -43,7 +43,8 @@ const UploadXL = ({
     settings = null,
     tooltipText = "smsReport.manualTotalTooltip",
     onlyMapping = false,
-    extraButtons = <></>
+    extraButtons = <></>,
+    onType = null
 }) => {
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
@@ -171,6 +172,7 @@ const UploadXL = ({
         if (records?.length < 100) {
             setareaData(pastedData);
             setdropClick(false);
+            onType && onType(pastedData);
         }
         else {
             handlePasted(pastedData);
@@ -718,6 +720,7 @@ const UploadXL = ({
                 settypedData([]);
                 settotalRecords(0)
                 setDialogType(null);
+                onType && onType('');
             }
         }
     }
@@ -836,6 +839,7 @@ const UploadXL = ({
                                 setContacts([]);
                                 settypedData([]);
                                 settotalRecords(0)
+                                onType && onType('');
                             }}
                         >
                             {t("sms.clearList")}
