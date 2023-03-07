@@ -140,7 +140,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   // Get data by campaign id
   useEffect(() => {
     if (params?.id > 0) {
-      getData();
+      if (localStorage.getItem('reloadBeeEditor') == '1') {
+        localStorage.removeItem('reloadBeeEditor');
+        window.location.reload(true);
+      } else getData();
     }
   }, []);
   useEffect(() => {
@@ -368,6 +371,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
+          localStorage.setItem('reloadBeeEditor', 1);
           window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           return false;
         }
@@ -399,7 +403,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onAutoSaveCampaign = debounce(() => {
     setSilentSave(true)
     saveDesign(false, null, false);
-  }, 15000);
+  }, 5000);
 
   const onDesignChange = async () => {
     onAutoSaveCampaign();
