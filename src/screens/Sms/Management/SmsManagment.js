@@ -32,7 +32,6 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
   const { smsData, smsDeletedData } = useSelector(state => state.sms)
-  const { username } = useSelector(state => state.user)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
@@ -625,7 +624,7 @@ const SmsManagnentScreen = ({ classes }) => {
       handleNumberError(true);
       return
     }
-    const result = await dispatch(sendVerificationCode({ username, number: value }));
+    const result = await dispatch(sendVerificationCode({ number: value }));
 
     if (!result.error) {
       setDialogType({

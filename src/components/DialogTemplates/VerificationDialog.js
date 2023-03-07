@@ -28,7 +28,6 @@ import { Loader } from '../Loader/Loader';
 const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', step = 0, value, ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
-    const { username } = useSelector(state => state.user)
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState(true);
@@ -313,7 +312,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             case 'smsTFA': {
                 const res = await dispatch(checkCellphoneAuthorization(selectedVerificationContact));
                 if (res?.payload?.StatusCode === 404) {
-                    dispatch(sendVerificationCode({ username, number: val })).then((result) => {
+                    dispatch(sendVerificationCode({ number: val })).then((result) => {
                         setCodeResend(isResend);
                         return result?.payload;
                     });
