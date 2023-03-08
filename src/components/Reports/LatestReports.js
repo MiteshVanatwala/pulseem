@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link, Button } from '@material-ui/core';
+import { Box, Grid, Paper, Tab, Tabs, Typography, Tooltip, Link, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
-import { HiUserGroup } from 'react-icons/hi';
 import { actionURL } from '../../config/index';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle'
+import { NotesIcon } from '../../assets/images/dashboard/index'
+import { sitePrefix } from '../../config/index';
+import useCore from '../../helpers/hooks/Core';
+import { useTranslation } from 'react-i18next';
 
-const LatestReports = ({ classes, windowSize, t, isRTL }) => {
+const LatestReports = () => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
+  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { classes } = useCore();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [tabValue, handleTabValue] = useState(0);
   const dateTimeFormat = 'DD/MM/YY, HH:mm';
   const dateFormat = 'D.M.YYYY';
@@ -28,9 +34,9 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   }));
 
   function BootstrapTooltip(props) {
-    const classes = useStylesBootstrap();
+    const localClasses = useStylesBootstrap();
 
-    return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
+    return <Tooltip arrow classes={localClasses} {...props} disableFocusListener />;
   }
 
   const initData = async () => {
@@ -127,14 +133,14 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     if (!lastCampaignReport) {
       return;
     }
-    const innerData = tabType === "newsletter" ? reports.newsletter : reports.sms;
+    const innerData = reports[tabType];
     const labels = [];
     const datasets = [];
     const opens = [];
     const clicks = [];
     const removed = [];
 
-    innerData.forEach((campaign, index) => {
+    innerData?.forEach((campaign, index) => {
       let percentOpens = 0;
       let percentClicks = 0;
       let perecentRemoved = 0;
@@ -165,17 +171,21 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
 
     if (tabType === "newsletter") {
       datasets.push(
-        // { stack: 1, label: "total", backgroundColor: "#000", hoverBackgroundColor: "#000", data: total, title: 'ccc' },
-        { stack: 2, label: `${t('common.Opens')}`, backgroundColor: "#579b53", hoverBackgroundColor: "#579b53", data: opens, title: 'aaa' },
-        { stack: 3, label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks, title: 'bbb' }
+        { stack: 2, label: `${t('common.Opens')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: opens, title: 'aaa' },
+        { stack: 3, label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks, title: 'bbb' }
       );
     }
 
     if (tabType === 'sms') {
       datasets.push(
-        // { stack: 4, label: "total", backgroundColor: "#000", hoverBackgroundColor: "#000", data: total, title: 'ccc' },
-        { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#6771DC", hoverBackgroundColor: "#6771DC", data: removed },
-        { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks }
+        { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
+        { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
+      );
+    }
+    if (tabType === 'whatsapp') {
+      datasets.push(
+        // { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
+        // { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
       );
     }
 
@@ -187,55 +197,80 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
       }
     }
 
+    let NoDataObject = {
+      sms: {
+        title: t("dashboard.createFirstSms"),
+        buttonText: t('sms.create'),
+        redirect: `${sitePrefix}sms/create`
+      },
+      newsletter: {
+        title: t("dashboard.createFirstNewsletter"),
+        buttonText: t('common.CreateNewsletter'),
+        redirect: `${sitePrefix}Campaigns/Create`
+
+      },
+      whatsapp: {
+        title: '',
+        buttonText: '',
+        redirect: '/'
+
+      }
+    }
+
     const showGraphs = innerData && (innerData.length > 0);
 
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
-        <Grid container justifyContent={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
-          <Grid item lg={showGraphs ? 4 : 12} xs={12} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
+        <Box className={clsx(!showGraphs ? classes.tabPanel : null, classes.spaceBetween, classes.flexJustifyCenter, classes.flexWrap)}>
+          <Box className={clsx(tabType !== "newsletter" ? clsx(classes.flex, classes.flexColumn) : null, classes.flex1, classes.mlr10)}>
             {
               showGraphs ? (innerData.map((c, index) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
-                  <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
-                    <Grid item lg={12} xs={12} style={{ paddingInline: windowSize === 'xs' ? 15 : null }}>
-                      <Box style={{ display: 'flex', alignItems: 'center' }}>
+                  <Box key={index} className={classes.w100}>
+                    {index === 0 && <Divider />}
+                    <Box style={{ height: 40, background: index % 2 === 1 ? '#F0F5FF' : '#fff' }} className={clsx(classes.flex)} key={`${c.CampaignName}_${index}`}>
+                      <Box className={clsx(classes.flex2, classes.paddingSides15)}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
-                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText, classes.graphCampaignName)}>
+                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.f16, classes.ellipsisText, classes.graphCampaignName)}>
                             {c.CampaignName}
                           </Link>
                         </BootstrapTooltip>
-                        <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                      </Box>
+                      <Box className={classes.flex1}>
+                        {tabType === "sms" && <Box>
+                          <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5, classes.f16)}>
+                            {c.TotalSendPlan.toLocaleString()} {`${c.TotalSendPlan === 1 ? t('common.Recipient') : t('common.Recipients')}`}
+                          </Typography>
+                        </Box>}
+                      </Box>
+                      <Box className={classes.flex1}>
+                        <Typography className={clsx(classes.dInlineBlock, classes.f16, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
                           {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
                         </Typography>
                       </Box>
-                      {tabType === "sms" && <Box>
-                        <HiUserGroup />
-                        <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5)}>
-                          {c.TotalSendPlan.toLocaleString()} {`${c.TotalSendPlan === 1 ? t('common.Recipient') : t('common.Recipients')}`}
-                        </Typography>
-                      </Box>}
-                    </Grid>
-                  </Grid>
+                    </Box>
+                    {index === innerData.length - 1 && <Divider />}
+                  </Box>
                 )
               })) :
                 (
                   <ButtonWithTitle
-                    classes={classes}
-                    title={tabType === 'newsletter' ? t("dashboard.createFirstNewsletter") : t("dashboard.createFirstSms")}
-                    buttonText={tabType === 'newsletter' ? t('common.CreateNewsletter') : t('sms.create')}
-                    redirect={tabType === 'newsletter' ? `/react/Campaigns/Create` : `/react/sms/create`}
-                    buttonClass={classes.createButton} />
+                    title={NoDataObject[tabType].title}
+                    buttonText={NoDataObject[tabType].buttonText}
+                    redirect={NoDataObject[tabType].redirect}
+                  />
                 )
             }
-          </Grid>
-          {showGraphs && <Grid item lg={8} xs={12}>
-            <Box className={classes.barChart}>
-              <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
+          </Box>
+          {showGraphs &&
+            <Box className={clsx(classes.flex1, classes.mlr10)}>
+              <Box className={classes.barChart}>
+                <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
+              </Box>
             </Box>
-          </Grid>
           }
-        </Grid>
+        </Box>
       </TabPanel>
     );
   }
@@ -254,35 +289,48 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           justifyContent='space-between'
           alignItems='center'
           item xs={12}
-          className={classes.lastReportTitleSection}>
-          <Box className={classes.lastReportItemText}>
-            <Typography className={clsx(classes.dashboardTitle, classes.dInline, classes.pe10)}>
-              {t('dashboard.lastReports')}
-            </Typography>
-            <Typography className={clsx(classes.colorGray, classes.f14)}>
-              {updatedOnText}
-            </Typography>
+          className={clsx(classes.lastReportTitleSection, classes.dashBoxtitleSection)}>
+          <Box className={clsx(classes.spaceBetween, classes.w100, classes.flexWrap)}>
+            <Box className={classes.mt2}>
+              <NotesIcon className={classes.mlr10} />
+              <Typography
+                className={clsx(classes.dInline, classes.pe10, 'title')}
+              >
+                {t('dashboard.lastReports')}
+              </Typography>
+              <Typography className={clsx(classes.colorGray, classes.f14)}>
+                {updatedOnText}
+              </Typography>
+            </Box>
+            <Box className={{ [classes.w100]: windowSize === 'xs' }}>
+              <Tabs
+                value={tabValue}
+                onChange={(e, value) => handleTabValue(value)}
+                className={clsx(classes.ml15, classes.tab, classes.tablistRoot)}
+                classes={{ indicator: classes.hideIndicator }}
+              // scrollableX={true}
+              // variant="scrollable"
+              // orientation="horizontal"
+              >
+                <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
+                <Tab label={t('appBar.sms.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
+                <Tab label={t('appBar.whatsapp.title')} classes={{ root: classes.btnTab, selected: classes.currentActiveTab }} />
+              </Tabs>
+            </Box>
           </Box>
-          <Tabs
-            value={tabValue}
-            onChange={(e, value) => handleTabValue(value)}
-            className={clsx(classes.mr15, classes.ml15)}
-            classes={{ indicator: classes.hideIndicator }}
-          >
-            <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-            <Tab label={t('appBar.sms.title')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-          </Tabs>
+
         </Grid>
         <Grid item xs={12} className={classes.lastReportsTabPanels}>
           {renderTab('newsletter')}
           {renderTab('sms')}
+          {/* {renderTab('whatsapp')} */}
         </Grid>
       </Grid>
     );
   }
 
   return (
-    <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.lastReportPadding)
+    <Paper elevation={3} style={{ height: 'max-content' }} className={clsx(classes.dashboardBottomPaper, classes.lastReportPadding)
     } >
       {renderTabsLastReports()}
     </Paper >

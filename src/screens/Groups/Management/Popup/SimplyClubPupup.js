@@ -3,7 +3,6 @@ import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { Dialog } from "../../../../components/managment/Dialog";
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
@@ -11,14 +10,14 @@ import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import useCore from '../../../../helpers/hooks/Core';
 
 const useStyles = makeStyles({
     dialogContainer: {
         width: '100%'
-    },
-    tableHead: {
-        borderBottom: '2px solid #000000 !important'
     },
     fw500: {
         fontWeight: '500 !important'
@@ -63,7 +62,6 @@ const useStyles = makeStyles({
 
 const SimplyClubPupup = ({
     onClose,
-    classes,
     isOpen,
     windowSize,
     getData,
@@ -75,6 +73,7 @@ const SimplyClubPupup = ({
 }) => {
     const { isRTL } = useSelector((state) => state.core);
     const { t } = useTranslation();
+    const { classes } = useCore();
     const dispatch = useDispatch()
     const localClasses = useStyles()
 
@@ -114,6 +113,11 @@ const SimplyClubPupup = ({
                 setheaders([...tempHeaders])
             } catch (e) {
                 console.error(e);
+                dispatch(sendToTeamChannel({
+                    MethodName: 'preload',
+                    ComponentName: 'SimplyClubPupup.js',
+                    Text: e
+                }));
             }
         }
         if (ClientData) {
@@ -292,6 +296,11 @@ const SimplyClubPupup = ({
                 resolve(response);
             } catch (e) {
                 console.error(e);
+                dispatch(sendToTeamChannel({
+                    MethodName: 'handleAddClients',
+                    ComponentName: 'SimplyClubPupup.js',
+                    Text: e
+                }));
                 reject(null);
             }
         });
@@ -410,14 +419,12 @@ const SimplyClubPupup = ({
     const GroupDialog = () => {
 
         return (
-            <Dialog
-                classes={classes}
+            <BaseDialog
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
-                childrenStyle={{ margin: 0 }}
                 className={classes.sidebar}
 
                 renderButtons={
@@ -427,12 +434,10 @@ const SimplyClubPupup = ({
                         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
                         <Grid item>
                             <Button
-                                variant='contained'
-                                size='small'
                                 onClick={() => setShowGroups(false)}
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogCancelButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}>
                                 {t('common.Cancel')}
                             </Button>
@@ -442,28 +447,29 @@ const SimplyClubPupup = ({
                 title={
                     <>
                         {t("group.externalImportTitle")}
-                        <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400, color: "#000" }}>
-                            {t("group.externalImportDesc")}
-                        </Typography>
                     </>
                 }
                 showDivider={true}
+                childrenStyle={classes.mt0}
             >
                 <Box className={clsx(localClasses.dialogContainer, classes.sidebar)}>
+                    <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400, color: "#000" }}>
+                        {t("group.externalImportDesc")}
+                    </Typography>
                     <DataTable
                         tableContainer={{
-                            className: clsx(classes.sidebar, classes.tableStyle,
+                            className: clsx(classes.sidebar, classes.tableStyle, classes.mt2,
                                 windowSize === "xs" ? classes.mt3 : '')
                         }}
                         table={{ className: clsx(classes.tableContainer, classes.noborder) }}
                         tableHead={{
                             tableHeadCells: TABLE_HEAD,
                             classes: rowStyle,
-                            className: clsx(classes.bgWhite, localClasses.tableHead)
+                            className: clsx(classes.bgWhite)
                         }}
                     />
 
-                    <Box className={clsx(localClasses.recordBoxMaxHeight, classes.sidebar)} style={{ overflow: 'auto' }}>
+                    <Box className={clsx(localClasses.recordBoxMaxHeight, classes.sidebar, classes.mt1)} style={{ overflow: 'auto' }}>
                         {groups.map((obj, i) => (<TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle} className={classes.noborder}>
                             <TableCell classes={cellStyle} align="center" className={clsx(classes.flex2, classes.noborder, classes.f16)}>
                                 <Grid container className={classes.flex}>
@@ -492,7 +498,7 @@ const SimplyClubPupup = ({
                         </TableRow>))}
                     </Box>
                 </Box>
-            </Dialog >
+            </BaseDialog >
         )
     }
 
@@ -505,8 +511,6 @@ const SimplyClubPupup = ({
     const ColumnAdjustmentPopup = () => {
         return (
             <ColumnAdjustmentDialog
-                t={t}
-                classes={classes}
                 isOpen={showClients}
                 settings={UploadSettings.GROUPS}
                 isSimplyAccount={true}
@@ -532,8 +536,7 @@ const SimplyClubPupup = ({
 
     return (
         <>
-            <Dialog
-                classes={classes}
+            <BaseDialog
                 open={isOpen}
                 onClose={onClose}
                 onCancel={onClose}
@@ -564,7 +567,7 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Username}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
+                                className={clsx(classes.textField, classes.minWidth252, { [classes.textFieldError]: !!error })}
                                 inputProps={{ autocomplete: "new-password" }}
                                 onChange={handleChange}
                             />
@@ -589,7 +592,7 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Password}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
+                                className={clsx(classes.textField, classes.minWidth252, { [classes.textFieldError]: !!error })}
                                 inputProps={{ autocomplete: "new-password" }}
                                 onChange={handleChange}
                                 InputProps={{
@@ -609,7 +612,6 @@ const SimplyClubPupup = ({
                 {showGroups && groups.length > 0 && GroupDialog()}
                 {showClients && ColumnAdjustmentPopup()}
                 {summary && <AddRecipientResponse
-                    classes={classes}
                     isOpen={!!summary}
                     onClose={() => { setSummary(null); setSelectedGroups([]); getData(); }}
                     windowSize={windowSize}
@@ -618,7 +620,7 @@ const SimplyClubPupup = ({
                     summary={summary.data}
                 />}
 
-            </Dialog>
+            </BaseDialog>
             <Loader isOpen={showLoader} zIndex={1500} />
         </>
     )

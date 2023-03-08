@@ -27,7 +27,6 @@ const EditRow = ({ onClose, save, args, classes }) => {
   return (
     <>
       <SolidDialog
-        classes={classes}
         key={123}
         disableBackdropClick={true}
         open={true}

@@ -4,18 +4,24 @@ import { IconButton, Box, Grid, Paper, Typography } from '@material-ui/core';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import LighBulb from '../../assets/images/lightbulb.png'
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
+import { HornIcon, IllustrationTipulseem } from '../../assets/images/dashboard/index'
+import { useTranslation } from 'react-i18next';
+import useCore from '../../helpers/hooks/Core';
 
-const PulseemTips = ({ classes, t, isRTL }) => {
+const PulseemTips = () => {
   const { tips } = useSelector(state => state.dashboard);
+  const { isRTL } = useSelector(state => state.core);
   const [activeTip, setActiveTip] = useState(0);
-
+  const { classes } = useCore();
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const initData = async () => {
-    dispatch(getTips());
+  const initData = () => {
+    if (!tips || tips.length === 0) {
+      dispatch(getTips());
+    }
   }
 
   useEffect(initData, [dispatch])
@@ -42,30 +48,34 @@ const PulseemTips = ({ classes, t, isRTL }) => {
     }
 
     return (
-      <Grid item className={className}>
-        <IconButton onClick={handlePrevious}>
-          <ArrowBackIosIcon />
-        </IconButton>
-        <IconButton onClick={handleNext}>
-          <ArrowForwardIosIcon />
-        </IconButton>
-      </Grid>
+      <Box className={classes.justifyCenterOfCenter}>
+        <Grid item className={className}>
+          <IconButton onClick={handlePrevious}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton onClick={handleNext}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </Grid>
+      </Box>
     );
   }
 
   return (
     <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
-      <Box className={classes.tipsTitle}>
-        <img src={LighBulb} className={classes.lightBulb} />
+      <Box className={clsx(classes.tipsTitle, classes.dashBoxtitleSection)}>
+        <HornIcon className={classes.mlr10} />
         <Typography
-          align='center'
-          variant='h5'
-          className={classes.blue}>
-          <b>{t('dashboard.tip')}</b>{t('dashboard.ulseem')}
+          className={clsx(classes.dInline, classes.pe10, 'title')}
+        >
+          {t('dashboard.tip')}{t('dashboard.ulseem')}
         </Typography>
       </Box>
-      <Box dir={'ltr'} >
-        {renderArrows(activeTip, tips.length - 1, setActiveTip, classes.carouselTipsArrows)}
+      <Box className={classes.flexJustifyCenter}>
+        {/* <IllustrationTipulseem /> */}
+        <img alt="Tips" src={IllustrationTipulseem} width="158" height="99" />
+      </Box>
+      <Box dir={'ltr'} style={{ marginTop: 30 }}>
         <Carousel
           autoPlay={true}
           interval={8000}
@@ -82,6 +92,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
             );
           })}
         </Carousel>
+        {renderArrows(activeTip, tips.length - 1, setActiveTip, classes.carouselTipsArrows)}
       </Box>
     </Paper>
   );

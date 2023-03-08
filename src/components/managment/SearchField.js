@@ -1,16 +1,17 @@
 import React from 'react';
-import {IconButton,InputAdornment,Input, TextField} from '@material-ui/core'
-import {SearchIcon} from '../../assets/images/managment/index'
+import { IconButton, InputAdornment, Input } from '@material-ui/core'
+import { SearchIcon } from '../../assets/images/managment/index'
+import useCore from '../../helpers/hooks/Core';
 
 
-export const SearchField=({
-  classes,
+export const SearchField = ({
   value,
-  onChange=() => null,
-  onClick=() => null,
-  onKeyPress=() => null,
-  placeholder=''
+  onChange = () => null,
+  onClick = () => null,
+  onKeyPress = () => null,
+  placeholder = ''
 }) => {
+  const { classes } = useCore();
   return (
     <Input
       classes={{
@@ -21,7 +22,7 @@ export const SearchField=({
       onKeyPress={onKeyPress}
       placeholder={placeholder}
       endAdornment={
-        <InputAdornment>
+        <InputAdornment position="start">
           <IconButton
             onClick={onClick}
             className={classes.phoneSearchBarIcon}>

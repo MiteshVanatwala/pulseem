@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Box, TextField } from "@material-ui/core";
-import { Dialog } from "../managment/index";
+import { Typography, Grid, Box, TextField, Button } from "@material-ui/core";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -15,11 +14,13 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
-import { renderHtml } from "../../helpers/utils";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import moment from 'moment';
 import 'moment/locale/he';
-import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
-import { Button } from "@mui/material";
+import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
+import useCore from "../../helpers/hooks/Core";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -34,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UploadXL = ({
-    classes,
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
     uploadToGroups = [],
@@ -43,6 +43,7 @@ const UploadXL = ({
     tooltipText = "smsReport.manualTotalTooltip"
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const { extraData } = useSelector((state) => state.sms);
     const { language, isRTL } = useSelector(state => state.core)
     const { uploadProgress } = useSelector((state) => state.group);
@@ -208,10 +209,11 @@ const UploadXL = ({
         }
         setheaders(dummyArr);
         if (b.length > 1000) {
-            jsonToCSV({ array: b }).then((csvOutput) => {
-                const file = createFile(csvOutput, 'csv');
-                setFileToUpload(file);
-                parseFile(csvOutput);
+            JsonToCSV({ array: b }).then((csvOutput) => {
+                CreateFile(csvOutput, 'csv').then((file) => {
+                    setFileToUpload(file);
+                    parseFile(csvOutput);
+                })
             });
         }
         else {
@@ -372,11 +374,21 @@ const UploadXL = ({
                         reader.readAsText(file, "ISO-8859-8");
                     }
                     else {
+                        dispatch(sendToTeamChannel({
+                            MethodName: 'handleFiles',
+                            ComponentName: 'UploadXL.js',
+                            Text: `Client trying to upload non-acceptable file - ${file.name}`
+                        }));
                         setLoader(false);
                         return false;
                     }
                 }
                 catch (error) {
+                    dispatch(sendToTeamChannel({
+                        MethodName: 'handleFiles',
+                        ComponentName: 'UploadXL',
+                        Message: error
+                    }));
                     reject(error);
                 }
             });
@@ -683,7 +695,7 @@ const UploadXL = ({
     const cautionDialog = () => {
         return {
             title: t('sms.columnAdjustment'),
-            content: renderHtml(t('sms.reset_manual_upload_notice')),
+            content: RenderHtml(t('sms.reset_manual_upload_notice')),
             disableBackdropClick: true,
             onClose: () => setDialogType({ type: "manualUpload" }),
             onCancel: () => setDialogType({ type: "manualUpload" }),
@@ -708,14 +720,13 @@ const UploadXL = ({
 
         if (type) {
             return (
-                dialogType && <Dialog
-                    classes={classes}
+                dialogType && <BaseDialog
                     open={dialogType}
                     childrenStyle={classes.mb25}
                     onClose={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
-                </Dialog>
+                </BaseDialog>
             )
         }
         return <></>
@@ -786,7 +797,7 @@ const UploadXL = ({
                 {areaData !== "" ? (
                     <div>
                         <Button
-                            className={classes.addManualDiv}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 handlePasted(areaData);
                             }}
@@ -794,7 +805,7 @@ const UploadXL = ({
                             {t("sms.editFields")}
                         </Button>
                         <Button
-                            className={classes.clearDiv}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 setareaData("");
                                 setContacts([]);

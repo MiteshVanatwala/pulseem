@@ -1,24 +1,25 @@
 import PropTypes from 'prop-types';
-import clsx from "clsx";
 import {
     Typography,
     Box
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { DeleteIcon } from '../../../../assets/images/managment';
+import { MdDeleteForever } from 'react-icons/md';
+import useCore from '../../../../helpers/hooks/Core';
 
-const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, handleDeleteGroup }) => {
+const ConfirmDeletePopUp = ({ isOpen = false, onClose, windowSize, handleDeleteGroup }) => {
 
     const { t } = useTranslation();
+    const { classes } = useCore();
 
     return (
-        <Dialog
-            classes={classes}
+        <BaseDialog
             open={isOpen}
             title={t("group.delete")}
-            icon={<Box className={classes.dialogAlertIcon}>
-                !
-            </Box>}
+
+            icon={<MdDeleteForever />}
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
@@ -31,7 +32,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
                     {t("group.deleteConfirm")}
                 </Typography>
             </Box>
-        </Dialog>
+        </BaseDialog>
     );
 };
 

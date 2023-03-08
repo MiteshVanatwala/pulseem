@@ -4,6 +4,7 @@
   "All": "All",
   "Clicked": "Clicked",
   "Copyrights": "##Year## © All Rights Reserved by Pulseem LTD",
+  "ForSupport": "For Support",
   "DateFormat": "mm/dd/yy",
   "EditMessage": "Edit Message",
   "EmailLink": "Add Link to Email Campaign",
@@ -605,5 +606,9 @@
   "commingSoon": "Comming soon!",
   "whatsappCommingSoon": "Comming Soon!<br/>Sending Whatsapp messages<br/>via Pulseem",
   "xssError": "Html, Scripts or other then a normal string does not allowed!",
-  "remove": "Remove"
+  "remove": "Remove",
+  "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>",
+  "next": "Next",
+  "new": "New",
+  "comingSoon": "Coming Soon"
 }

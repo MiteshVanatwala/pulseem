@@ -11,15 +11,17 @@ import GroupTags from "../../../components/Groups/GroupTags";
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useSelector } from "react-redux";
 import Toast from '../../../components/Toast/Toast.component';
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import useCore from "../../../helpers/hooks/Core";
 
 const TestSend = ({
-    classes,
     isOpen = false,
     onClose,
     campaignId,
     onSubmit = () => null
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const [recipient, setRecipient] = useState('');
     const [sendSendMethod, setSendMethod] = useState("1");
     const [toastMessage, setToastMessage] = useState(null);
@@ -97,7 +99,6 @@ const TestSend = ({
             label:
                 <CustomTooltip
                     isSimpleTooltip={false}
-                    classes={classes}
                     interactive={true}
                     arrow={true}
                     style={{ fontSize: 17 }}
@@ -106,7 +107,6 @@ const TestSend = ({
                     text={<>{t("mainReport.sendToGroups")}<span className={classes.newIcn}>{t("mainReport.newFeature")}</span></>}
                 />,
             child: <GroupTags
-                classes={classes}
                 title={'siteTracking.typeGroupName'}
                 style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 dropdown
@@ -124,21 +124,20 @@ const TestSend = ({
 
     const renderToast = () => {
         if (toastMessage) {
-          setTimeout(() => {
-            setToastMessage(null);
-          }, 4000);
-          return (
-            <Toast data={toastMessage} />
-          );
+            setTimeout(() => {
+                setToastMessage(null);
+            }, 4000);
+            return (
+                <Toast data={toastMessage} />
+            );
         }
         return null;
-      }
+    }
     return !isOpen ? (<></>) :
         (
             <>
                 {renderToast()}
-                <Dialog
-                    classes={classes}
+                <BaseDialog
                     customContainerStyle={classes.dialogZindex}
                     open={isOpen}
                     title={t('mainReport.testSend')}
@@ -157,14 +156,13 @@ const TestSend = ({
                 >
                     <Box className={clsx(classes.contentBox, classes.mt10, classes.mb25)}>
                         <PulseemRadio
-                            classes={classes}
                             name={"sendMethod"}
                             onChange={handleSendMethod}
                             value={sendSendMethod}
                             radioOptions={radios}
                         />
                     </Box>
-                </Dialog>
+                </BaseDialog>
             </>
         );
 }

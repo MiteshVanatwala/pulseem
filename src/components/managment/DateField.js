@@ -7,10 +7,10 @@ import moment from 'moment'
 import 'moment/locale/he'
 import { FiClock } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next';
+import useCore from '../../helpers/hooks/Core';
 
 export const DateField = ({
-  minDate,
-  classes,
+  minDate = '',
   value,
   onChange,
   onTimeChange,
@@ -36,6 +36,7 @@ export const DateField = ({
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const { t } = useTranslation();
+  const { classes } = useCore();
 
   return isTimePicker ? (
     <KeyboardTimePicker
@@ -99,11 +100,16 @@ export const DateField = ({
       keyboardIcon={<CalendarIcon />}
       format={"DD/MM/YYYY"}
       margin='none'
-      minDate={minDate}
+      minDate={minDate ?? undefined}
       placeholder={placeholder}
       initialFocusedDate={moment()}
       value={value}
       onChange={onChange}
+      InputAdornmentProps={{
+        style: {
+          maxWidth: isRTL ? 10 : 'auto'
+        }
+      }}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton

@@ -7,11 +7,13 @@ import { getPaymentURL, getAccountCards } from '../../../redux/reducers/paymentS
 import PackagesList from './Dialogs/PackagesList';
 import TranzilaIframe from './Dialogs/TranzilaIframe';
 import PaymentResult from './Dialogs/PaymentResult';
+import useCore from '../../../helpers/hooks/Core';
 
-const PurchaseWizard = ({ classes,
+const PurchaseWizard = ({
     packageType
 }) => {
     const { isRTL } = useSelector(state => state.core);
+    const { classes } = useCore();
     const { accountAvailablePackages } = useSelector(state => state.dashboard);
     const { paymentUrl } = useSelector(state => state.payment);
     const { t } = useTranslation();
@@ -19,7 +21,7 @@ const PurchaseWizard = ({ classes,
     const [data, setData] = useState(null);
     const [newsletterBulkData, setNewsletterBulkData] = useState(null);
     const [smsBulkData, setSmsBulkData] = useState(null);
-    const [notificationsBulkData, setNotificationsBulkData] = useState(null);
+    // const [notificationsBulkData, setNotificationsBulkData] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [packageId, setPackageId] = useState(null);
     const [step, setStep] = useState(1);
@@ -78,39 +80,33 @@ const PurchaseWizard = ({ classes,
     }
 
     const purchaseWizard = () => {
+        var dialogElement = null;
         switch (step) {
             case 1:
             default:
-                var dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
+                dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
                 if (dialogElement) {
                     dialogElement.style = "max-width: 1050px";
                 }
                 return <PackagesList data={data}
-                    classes={classes}
                     onSelect={selectPackage}
                     packageType={packageType}
                     smsBulkData={smsBulkData}
                     newsletterBulkData={newsletterBulkData}
                 />
             case 2: {
-                var dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
+                dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
                 dialogElement.style = "max-width: 750px";
                 return <TranzilaIframe
                     data={data}
-                    classes={classes}
-                    isRTL={isRTL}
                     packageId={packageId}
                     onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
                     onStepBack={onStepBack}
-                    t={t}
                 />
             }
             case 3: {
                 return <PaymentResult
-                    t={t}
-                    isRTL={isRTL}
-                    classes={classes}
                     paymentObject={paymentResult}
                     onStepBack={onStepBack}
                 />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, Select, MenuItem, Button
 } from '@material-ui/core'
@@ -39,26 +39,19 @@ const Groups = ({ classes,
     callbackShowTestGroup = () => null,
     uniqueKey = null
 }) => {
-    const { language, isRTL, windowSize } = useSelector(state => state.core)
+    const { windowSize } = useSelector(state => state.core)
     const { t } = useTranslation();
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
     const [showTestGroups, setShowTestGroups] = useState(false);
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
+
     const handleShowTestGroup = () => {
         callbackShowTestGroup(showTestGroups);
         setShowTestGroups(!showTestGroups);
     }
     const handleSearch = (event) => {
-        setClearInput(event.target.value != '');
+        setClearInput(event.target.value !== '');
         setGroupNameSearch(event.target.value);
     }
     const resetSearch = (event) => {
@@ -94,11 +87,11 @@ const Groups = ({ classes,
 
                 <ListItemAvatar>
                     <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderPrimary)}>
                         {isExist ?
                             (<FaCheck className={clsx(classes.green)} />)
                             :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
+                            (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                         }
                     </Avatar>
                 </ListItemAvatar>
@@ -106,7 +99,7 @@ const Groups = ({ classes,
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] !== 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })
@@ -124,11 +117,11 @@ const Groups = ({ classes,
             >
                 <ListItemAvatar>
                     <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderPrimary)}>
                         {isExist ?
                             (<FaCheck className={clsx(classes.green)} />)
                             :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
+                            (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                         }
                     </Avatar>
                 </ListItemAvatar>
@@ -145,11 +138,11 @@ const Groups = ({ classes,
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
                 <Avatar
-                    className={clsx(classes.listIcon, classes.transparentBg, allSelected ? classes.green : classes.blue, allSelected ? classes.borderGreen : classes.borderBlue)}>
+                    className={clsx(classes.listIcon, classes.transparentBg, allSelected ? classes.green : classes.blue, allSelected ? classes.borderGreen : classes.borderPrimary)}>
                     {allSelected ?
                         (<FaCheck className={clsx(classes.green)} />)
                         :
-                        (<HiUserGroup className={clsx(classes.blue)} />)
+                        (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                     }
                 </Avatar>
             </ListItemAvatar>
@@ -268,7 +261,7 @@ const Groups = ({ classes,
                             placeholder={t('notifications.buttons.search')}
                             id="searchGroup"
                             startAdornment={
-                                <InputAdornment position="start" autocomplete="off">
+                                <InputAdornment position="start" autoComplete="off">
                                     <BsSearch />
                                 </InputAdornment>
                             }
@@ -303,8 +296,8 @@ const Groups = ({ classes,
                     />
                 </FormControl>}
                 {showSortBy && <Box className={classes.filterButtonsContainer}>
-                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
-                        {windowSize !== 'xs' && <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />} {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
+                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#ff3343", fontWeight: "600", textTransform: "capitalize" }}>
+                        {windowSize !== 'xs' && <BsFilter style={{ fontSize: "22px", color: "#ff3343" }} />} {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
 
                     </Button> : null}
                     {isSms && <Button variant="outlined"
@@ -358,7 +351,7 @@ const Groups = ({ classes,
                     renderInput={(params) => selectedList.length > 0 ? (
                         <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                     ) : (
-                        <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText != '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
+                        <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText !== '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
                     )
                     }
                 />)

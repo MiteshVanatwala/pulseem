@@ -9,21 +9,22 @@ import {
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx';
+import useCore from '../../../../helpers/hooks/Core';
 
 export const AdditionalText = ({
     localClasses,
     selectedCheck,
     handleChangeCheckbox,
-    classes,
     campaingnValues,
     handleSelectionRadio
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("campaigns.newsLetterEditor.textAdditions")}</Typography>
         {/* If you don't see this email */}
         <Grid container className={localClasses.contentCenter}>
-            <Grid xs={1} sm={1}>
+            <Grid xs={2} sm={1}>
                 <Checkbox
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -32,10 +33,10 @@ export const AdditionalText = ({
                     onClick={handleChangeCheckbox}
                 />
             </Grid>
-            <Grid xs={11} sm={5}>
+            <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.dontSee_clickHere_mail")} align="left">{t("campaigns.newsLetterEditor.dontSee_clickHere_mail")}</Typography>
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"
@@ -58,7 +59,7 @@ export const AdditionalText = ({
         </Grid>
         {/* Print Email */}
         <Grid container className={clsx(localClasses.contentCenter, classes.pt15)}>
-            <Grid xs={1} sm={1}>
+            <Grid xs={2} sm={1}>
                 <Checkbox
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -67,10 +68,10 @@ export const AdditionalText = ({
                     onClick={handleChangeCheckbox}
                 />
             </Grid>
-            <Grid xs={11} sm={5}>
+            <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.printMail")} align="left">{t("campaigns.newsLetterEditor.printMail")}</Typography>
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="position" name="PrintLocation" defaultValue="2">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"
@@ -93,7 +94,7 @@ export const AdditionalText = ({
         </Grid>
         {/* Remove Customer from mail list */}
         <Grid container className={clsx(localClasses.contentCenter, classes.pt15)}>
-            <Grid xs={1} sm={1}>
+            <Grid xs={2} sm={1} >
                 <Checkbox
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -102,10 +103,10 @@ export const AdditionalText = ({
                     onClick={handleChangeCheckbox}
                 />
             </Grid>
-            <Grid xs={11} sm={5}>
+            <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.removeCustomerFromMail")} align="left">{t("campaigns.newsLetterEditor.removeCustomerFromMail")}</Typography>
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="position" name="UnsubscribeLocation" defaultValue="2">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"
@@ -128,7 +129,7 @@ export const AdditionalText = ({
         </Grid>
         {/* Update customer information */}
         <Grid container className={clsx(localClasses.contentCenter, classes.pt15)}>
-            <Grid xs={1} sm={1}>
+            <Grid xs={2} sm={1}>
                 <Checkbox
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -137,10 +138,10 @@ export const AdditionalText = ({
                     onClick={handleChangeCheckbox}
                 />
             </Grid>
-            <Grid xs={11} sm={5}>
+            <Grid xs={10} sm={4}>
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.updateCustomerInfo")} align="left">{t("campaigns.newsLetterEditor.updateCustomerInfo")}</Typography>
             </Grid>
-            <Grid xs={12} sm={6}>
+            <Grid xs={12} sm={7} className={classes.justifyContentEnd}>
                 <RadioGroup row aria-label="position" name="UpdateClient" defaultValue="2">
                     <FormControlLabel value={1} control={<Radio
                         color="primary"

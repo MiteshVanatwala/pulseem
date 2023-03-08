@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { Grid, Box, Typography, Button } from '@material-ui/core';
 import { FaExclamationCircle } from 'react-icons/fa';
 import {
     CheckAnimation
 } from '../../../../assets/images/settings/index'
+import { useTranslation } from 'react-i18next';
+import useCore from '../../../../helpers/hooks/Core';
 
-const PaymentResult = ({ t, classes, paymentObject, onStepBack = () => null }) => {
+const PaymentResult = ({ paymentObject, onStepBack = () => null }) => {
+    const { classes } = useCore();
+    const { t } = useTranslation();
     return <Grid container>
         <Grid item xs={12}>
             {paymentObject.result === true ? (<Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>

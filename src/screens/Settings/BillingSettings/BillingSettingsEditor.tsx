@@ -165,6 +165,7 @@ const BillingSettingsEditor = () => {
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
+    // @ts-ignore
     return <Toast data={toastMessage} />;
   };
 
@@ -175,7 +176,6 @@ const BillingSettingsEditor = () => {
     >
       <Title
         Text={t("settings.billingSettings.titleBillingInfo")}
-        classes={classes}
         isIcon={false}
         ContainerStyle={{
           padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"}`,
@@ -606,13 +606,12 @@ const BillingSettingsEditor = () => {
     <DefaultScreen
       currentPage="settings"
       subPage="billingSettings"
-      classes={classes}
       containerClass={classes.management}
     >
       {toastMessage && renderToast()}
       <Box className={classes.settingsContainer}>
         <Box className="head">
-          <Title Text={t("settings.billingSettings.title")} classes={classes} />
+          <Title Text={t("settings.billingSettings.title")} />
         </Box>
         <Box className={"containerBody"}>{FormBillingInformation()}</Box>
       </Box>

@@ -5,6 +5,8 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import "moment/locale/he";
 import { Dialog } from "../../../components/managment/Dialog";
 import { FaExclamationCircle } from 'react-icons/fa'
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import useCore from "../../../helpers/hooks/Core";
 
 const renderHtml = (html) => {
   function createMarkup() {
@@ -16,48 +18,46 @@ const renderHtml = (html) => {
 }
 
 const NoCreditsModal = ({
-  classes,
   onClose = () => null,
   isOpen = false
 }) => {
   const { t } = useTranslation();
+  const { classes } = useCore();
   return !isOpen ? (<></>) :
-  (
-    <Dialog
-      classes={classes}
-      customContainerStyle={classes.dialogZindex}
-      open={isOpen}
-      icon={<AiOutlineExclamationCircle
-        style={{ fontSize: 30, color: "#fff" }}
-      />}
-      disableBackdropClick={true}
-      showDivider={false}
-      onClose={onClose}
-      onCancel={onClose}
-      onConfirm={onClose}
-      reduceTitle
-      showDefaultButtons={false}
-    >
-      <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-        <FaExclamationCircle style={{ fontSize: 100 }} />
-        <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
-        <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-        <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
-        <Box style={{ marginTop: 25 }}>
-          <Button
-            variant='contained'
-            size='small'
-            onClick={() => onClose()}
-            className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmButton
-            )}>
-            {t("common.Ok")}
-          </Button>
+    (
+      <BaseDialog
+        customContainerStyle={classes.dialogZindex}
+        open={isOpen}
+        icon={<AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />}
+        disableBackdropClick={true}
+        showDivider={false}
+        onClose={onClose}
+        onCancel={onClose}
+        onConfirm={onClose}
+        reduceTitle
+        showDefaultButtons={false}
+      >
+        <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <FaExclamationCircle style={{ fontSize: 100 }} />
+          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Box style={{ marginTop: 25 }}>
+            <Button
+              onClick={() => onClose()}
+              className={clsx(
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
+              )}>
+              {t("common.Ok")}
+            </Button>
+          </Box>
         </Box>
-      </Box>
-    </Dialog>
-  );
+      </BaseDialog>
+    );
 }
 
 export default NoCreditsModal;

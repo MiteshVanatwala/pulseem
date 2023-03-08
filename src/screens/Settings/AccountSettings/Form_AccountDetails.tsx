@@ -47,8 +47,9 @@ const FORM_ACCOUNT_DETAILS = ({
   };
 
   useEffect(() => {
+    // @ts-ignore
     setAccountDetails(Settings);
-  }, [Settings])
+  }, [Settings]);
 
   const handleChange = (e: any, name = "") => {
     let actualValue = e?.target?.value;
@@ -68,16 +69,18 @@ const FORM_ACCOUNT_DETAILS = ({
 
   return (
     <Box
-      style={{ marginTop: 10, paddingInline: 15 }}
+      style={{ marginTop: 42.6, paddingInline: 17.2 }}
       className={"settingsWrapper"}
     >
       <Title
         Text={t("settings.accountSettings.actDetails.title")}
-        classes={classes}
         isIcon={false}
+        ContainerStyle={{
+          padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"}`,
+        }}
       />
       <Box className={"formContainer"}>
-        {/* <Illustration_app_Settings className={"svg_app_settings"} /> */}
+        <Illustration_app_Settings className={"svg_app_settings"} />
         <Grid container className={"form"}>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
             <Typography>
@@ -144,7 +147,7 @@ const FORM_ACCOUNT_DETAILS = ({
               >
                 <FormControlLabel
                   value="0"
-                  control={<Radio color="primary" />}
+                  control={<Radio />}
                   label={
                     <>
                       {t(
@@ -155,7 +158,7 @@ const FORM_ACCOUNT_DETAILS = ({
                 />
                 <FormControlLabel
                   value="1"
-                  control={<Radio color="primary" />}
+                  control={<Radio />}
                   label={
                     <>
                       {t(

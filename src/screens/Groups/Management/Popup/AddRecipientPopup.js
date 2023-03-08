@@ -27,22 +27,19 @@ import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
 import { addRecipient, deleteRecipients } from "../../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
-import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
-
-import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
-
-
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
-import { Autocomplete } from "@material-ui/lab";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
-import { Close } from "@material-ui/icons";
 import { IoMdClose } from "react-icons/io";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+import { ReplaceExtraFieldHeader } from "../../../../helpers/UI/AccountExtraField";
+import useCore from "../../../../helpers/hooks/Core";
 
 
 const useStyles = makeStyles({
@@ -52,14 +49,25 @@ const useStyles = makeStyles({
     accordionIcons: {
         position: 'absolute',
         '& path': {
-            stroke: '#0371ad'
+            stroke: '#ff3343'
         }
     },
+    headLabel: {
+        paddingBottom: 5,
+        background: '#f0f5ff',
+        paddingLeft: 5,
+        borderRadius: 5,
+    },
     expandedBox: {
-        margin: '0 !important',
+        border: '2px solid #f0f5ff',
+        borderRadius: 10,
+        marginBottom: 16,
+
+        // margin: '0 !important',
         '& .MuiAccordionSummary-root': {
             minHeight: 30,
-            maxHeight: 48
+            maxHeight: 48,
+            padding: 0
         },
         '& .MuiAccordionSummary-content': {
             margin: 0
@@ -85,23 +93,23 @@ const useStyles = makeStyles({
     }
 });
 
-const AddRecipientPopup = ({ classes,
+const AddRecipientPopup = ({
     isOpen = false,
     onClose,
-    windowSize,
     selectedGroups = [],
-    selectGroup,
+    selectGroup = () => { },
     ToastMessages,
-    onAddRecipient = () => null,
-    onRecipientAdded = () => null,
-    handleResponses = (response, actions) => null,
+    onAddRecipient = () => { },
+    onRecipientAdded = () => { },
+    handleResponses = (response, actions) => { },
     recipientData = null
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const { classes } = useCore();
     const localClasses = useStyles()
     const { extraData } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
+    const { isRTL, windowSize } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
@@ -162,7 +170,7 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...errors, [e.target.name]: t(ADD_RECIPIENT_REQUIRED_ERRORS[e.target.name]) })
         }
         if (e.target.name === "Email") {
-            if (!ValidateEmail(e.target.value)) {
+            if (!IsValidEmail(e.target.value)) {
                 setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
             }
         }
@@ -170,7 +178,7 @@ const AddRecipientPopup = ({ classes,
             if (e.target.value.length > 16 || e.target.value.length < 9) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength) })
             }
-            else if (!ValidateNumber(e.target.value)) {
+            else if (!IsValidPhone(e.target.value)) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
             }
         }
@@ -259,7 +267,7 @@ const AddRecipientPopup = ({ classes,
 
         if (!data.ClientsData.Email &&
             !data.ClientsData.Cellphone) {
-            if (!data.ClientsData.Email || !ValidateEmail(data.ClientsData.Email)) {
+            if (!data.ClientsData.Email || !IsValidEmail(data.ClientsData.Email)) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
             if (data.ClientsData.Cellphone.length < 9 || data.ClientsData.Cellphone.length > 16) {
@@ -270,7 +278,7 @@ const AddRecipientPopup = ({ classes,
             setActiveTab(0);
 
             return;
-        } else if (data.ClientsData.Email && !ValidateEmail(data.ClientsData.Email)) {
+        } else if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
             setActiveTab(0);
@@ -361,6 +369,11 @@ const AddRecipientPopup = ({ classes,
         }
         catch (err) {
             console.log('errr:', err)
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleSubmit',
+                ComponentName: 'AddRecipientPopup.js',
+                Text: err
+            }));
         }
         finally {
             setLoader(false)
@@ -386,7 +399,7 @@ const AddRecipientPopup = ({ classes,
                             variant="outlined"
                             name="FirstName"
                             value={addRecipientData.FirstName}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={handleChange}
                             error={errors.FirstName}
@@ -410,7 +423,7 @@ const AddRecipientPopup = ({ classes,
                             variant="outlined"
                             name="LastName"
                             value={addRecipientData.LastName}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={handleChange}
                             error={errors.LastName}
@@ -434,14 +447,14 @@ const AddRecipientPopup = ({ classes,
                             variant="outlined"
                             name="Telephone"
                             value={addRecipientData.Telephone}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={(e) => {
                                 let tempVal = e.target.value
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (ValidateNumber(tempVal)) {
+                                else if (!IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -464,7 +477,7 @@ const AddRecipientPopup = ({ classes,
                             variant="outlined"
                             name="Cellphone"
                             value={addRecipientData.Cellphone}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={(e) => {
                                 if (e.target.value.length === 1 && e.target.value === "-") {
@@ -474,7 +487,7 @@ const AddRecipientPopup = ({ classes,
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (ValidateNumber(tempVal)) {
+                                else if (IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -501,7 +514,7 @@ const AddRecipientPopup = ({ classes,
                             variant="outlined"
                             name="Email"
                             value={addRecipientData.Email}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={handleEmailValue}
                             error={errors.Email}
@@ -528,7 +541,7 @@ const AddRecipientPopup = ({ classes,
                             variant="outlined"
                             name="Company"
                             value={addRecipientData.Company}
-                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={handleChange}
                         />,
@@ -550,7 +563,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="FirstName"
                         value={addRecipientData.FirstName}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                         error={errors.FirstName}
@@ -565,7 +578,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="LastName"
                         value={addRecipientData.LastName}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                         error={errors.LastName}
@@ -580,7 +593,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="Email"
                         value={addRecipientData.Email}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                         error={errors.Email}
@@ -596,14 +609,14 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="Cellphone"
                         value={addRecipientData.Cellphone}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={(e) => {
                             let tempVal = e.target.value
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (ValidateNumber(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}
@@ -621,14 +634,14 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="Telephone"
                         value={addRecipientData.Telephone}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={(e) => {
                             let tempVal = e.target.value
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (ValidateNumber(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}
@@ -642,7 +655,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="Company"
                         value={addRecipientData.Company}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                     />
@@ -669,7 +682,7 @@ const AddRecipientPopup = ({ classes,
                                 variant="outlined"
                                 name="Address"
                                 value={addRecipientData.Address}
-                                className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
@@ -693,7 +706,7 @@ const AddRecipientPopup = ({ classes,
                                 variant="outlined"
                                 name="City"
                                 value={addRecipientData.City}
-                                className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
@@ -717,7 +730,7 @@ const AddRecipientPopup = ({ classes,
                                 variant="outlined"
                                 name="State"
                                 value={addRecipientData.State}
-                                className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
@@ -741,7 +754,7 @@ const AddRecipientPopup = ({ classes,
                                 variant="outlined"
                                 name="Country"
                                 value={addRecipientData.Country}
-                                className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
@@ -765,7 +778,7 @@ const AddRecipientPopup = ({ classes,
                                 variant="outlined"
                                 name="Zip"
                                 value={addRecipientData.Zip}
-                                className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
@@ -788,7 +801,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="Address"
                         value={addRecipientData.Address}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                     />
@@ -801,7 +814,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="City"
                         value={addRecipientData.City}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                     />
@@ -814,7 +827,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="State"
                         value={addRecipientData.State}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                     />
@@ -827,7 +840,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="Country"
                         value={addRecipientData.Country}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                     />
@@ -840,7 +853,7 @@ const AddRecipientPopup = ({ classes,
                         variant="outlined"
                         name="Zip"
                         value={addRecipientData.Zip}
-                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
                     />
@@ -865,7 +878,6 @@ const AddRecipientPopup = ({ classes,
                             content: <Box className={localClasses.dateBox}>
                                 <DateField
                                     name="BirthDate"
-                                    classes={classes}
                                     value={addRecipientData.BirthDate}
                                     onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
                                     toolbarDisabled={false}
@@ -892,7 +904,6 @@ const AddRecipientPopup = ({ classes,
                                 <Box className={localClasses.dateBox}>
                                     <DateField
                                         name="ReminderDate"
-                                        classes={classes}
                                         value={addRecipientData.ReminderDate}
                                         onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
                                         toolbarDisabled={false}
@@ -916,7 +927,6 @@ const AddRecipientPopup = ({ classes,
                 {
                     content: <DateField
                         name="BirthDate"
-                        classes={classes}
                         value={addRecipientData.BirthDate}
                         onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
                         toolbarDisabled={false}
@@ -925,7 +935,6 @@ const AddRecipientPopup = ({ classes,
                 {
                     content: <DateField
                         name="ReminderDate"
-                        classes={classes}
                         value={addRecipientData.ReminderDate}
                         onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
                         toolbarDisabled={false}
@@ -948,14 +957,13 @@ const AddRecipientPopup = ({ classes,
         temp = temp.forEach((t) => {
             tempp[t.key] = t.value
         });
-        let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
+        let extraFields = Object.keys(ReplaceExtraFieldHeader(extraFieldsTemp, extraData));
         const json = windowSize === 'xs' ?
             extraFields.map((ef) => {
                 return {
                     content: ef.toLowerCase().indexOf('date') > -1 ?
                         <Box className={localClasses.dateBox}>
                             <DateField
-                                classes={classes}
                                 value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
                                 onChange={e => handleChange(e, { date: e, field: ef }, true)}
                                 toolbarDisabled={false}
@@ -973,7 +981,7 @@ const AddRecipientPopup = ({ classes,
                             variant="outlined"
                             name={ef}
                             value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
-                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={e => handleChange(e, null, true)}
                         />
@@ -996,7 +1004,6 @@ const AddRecipientPopup = ({ classes,
                                 content: ef.toLowerCase().indexOf('date') > -1 ?
                                     <Box className={localClasses.dateBox}>
                                         <DateField
-                                            classes={classes}
                                             value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
                                             onChange={e => handleChange(e, { date: e, field: ef }, true)}
                                             toolbarDisabled={false}
@@ -1011,7 +1018,8 @@ const AddRecipientPopup = ({ classes,
                                         variant="outlined"
                                         name={ef}
                                         value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
-                                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                        className={clsx(classes.pl5, classes.pr10, classes.textField, classes.minWidth252)
+                                        }
                                         autoComplete="off"
                                         onChange={e => handleChange(e, null, true)}
                                     />,
@@ -1025,13 +1033,13 @@ const AddRecipientPopup = ({ classes,
 
         return extraData && <SimpleGrid
             gridArr={json}
+            spacing={3}
         />
     }
 
     const GROUPS_FORM = () => (
         <div className={classes.fullWidth}>
             <GroupTags
-                classes={classes}
                 title={'siteTracking.typeGroupName'}
                 style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 dropdown
@@ -1223,15 +1231,15 @@ const AddRecipientPopup = ({ classes,
                     }}
 
                 >
-                    <Box className={clsx(classes.mb5, classes.fullWidth)}>
-                        <Typography align="left" className={clsx(classes.font18, classes.bold)}>{t(label)}
+                    <Box className={classes.fullWidth}>
+                        <Typography align="left" className={clsx(classes.font18, classes.bold, localClasses.headLabel)}>{t(label)}
                             {
                                 activeTab !== index && <GrFormAdd size={26} className={localClasses.accordionIcons} />
                             }
                         </Typography>
-                        <Box style={{ padding: '5px 5px 10px 0px' }}>
+                        {/* <Box style={{ padding: '0 5px' }}>
                             <Divider />
-                        </Box>
+                        </Box> */}
                     </Box>
 
                 </AccordionSummary>
@@ -1249,8 +1257,7 @@ const AddRecipientPopup = ({ classes,
 
 
     return (
-        <Dialog
-            classes={classes}
+        <BaseDialog
             open={isOpen}
             title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
             icon={<div className={classes.dialogIconContent}>
@@ -1277,12 +1284,11 @@ const AddRecipientPopup = ({ classes,
                             className={clsx(classes.txtCenter, classes.mt5)}
                         >
                             <Button
-                                variant="contained"
-                                size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
+
                                     classes.dialogButtonResponive,
-                                    classes.dialogCancelButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 onClick={onClose}
                             >
@@ -1297,12 +1303,11 @@ const AddRecipientPopup = ({ classes,
                             className={clsx(classes.txtCenter, classes.mt5)}
                         >
                             <Button
-                                variant="contained"
-                                size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
+
                                     classes.dialogButtonResponive,
-                                    classes.dialogConfirmButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.textCapitalize
                                 )}
 
@@ -1319,13 +1324,12 @@ const AddRecipientPopup = ({ classes,
                             className={clsx(classes.txtCenter, classes.mt5, classes.maxContent)}
                         >
                             <Button
-                                variant="contained"
-                                size="medium"
                                 className={clsx(
                                     classes.maxContent,
-                                    classes.dialogButton,
+
                                     classes.dialogButtonResponive,
-                                    classes.dialogConfirmButton
+                                    classes.btn,
+                                    classes.btnRounded
                                 )}
                                 onClick={() => handleSubmit(() => {
                                     setAccountExtraFields(null)
@@ -1349,7 +1353,7 @@ const AddRecipientPopup = ({ classes,
                 }
             </Box>
             <Loader isOpen={showLaoder} />
-        </Dialog>
+        </BaseDialog>
     );
 };
 

@@ -1,0 +1,44 @@
+﻿import { WebFormToGroup } from './WebFormToGroup';
+
+export interface WebForm {
+    ID: number;
+    SubAccountID: number;
+    PageName: string;
+    PageUrl: string;
+    PageType: number;
+    AnswerType: number;
+    AnswerData: string;
+    IsResponsive: boolean;
+    DownloadUrl: string;
+    OfflineDate: Date | string | null;
+    OfflineUrl: string;
+    HtmlToEdit: string;
+    HtmlFile: string;
+    Status: number;
+    BaseLanguage: number | null;
+    SplitRegistrations: boolean | null;
+    DoubleOptin: boolean | null;
+    SubscriptionsLimit: number | null;
+    EmailsToReport: string;
+    FacebookPageID: string;
+    FacebookPrefunPage: boolean | null;
+    FacebookPrefunImage: string;
+    FacebookComments: boolean | null;
+    ClientJavaScript: string;
+    ClientHtmlCode: string;
+    ClientCssStyle: string;
+    PageTitle: string;
+    MetaDescription: string;
+    MetaKeywords: string;
+    GoogleAnalyticsCode: string;
+    IsTemplate: boolean | null;
+    CategoryID: number | null;
+    IsUpdate: boolean;
+    SurveyData: string;
+    IsSurvey: boolean | null;
+    IsAccessibility: boolean | null;
+    ClientBodyScript: string;
+    CreatedDate: Date | string | null;
+    UpdatedDate: Date | string | null;
+    WebFormsToGroups: WebFormToGroup[];
+}

@@ -1,9 +1,9 @@
 import React from 'react';
-import clsx from 'clsx';
 import { Typography, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
+import useCore from '../../helpers/hooks/Core';
 
 const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
@@ -26,13 +26,14 @@ const useStylesBootstrap = makeStyles((theme) => ({
   },
 }));
 function BootstrapTooltip(props) {
-  const classes = useStylesBootstrap(props);
+  const localClasses = useStylesBootstrap(props);
 
-  return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
+  return <Tooltip arrow classes={localClasses} {...props} disableFocusListener />;
 }
 
-const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = null, forceDirection = null }) => {
+const CustomTooltip = ({ children, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = null, forceDirection = null  }) => {
   const { isRTL } = useSelector(state => state.core)
+  const { classes } = useCore();
   return (isSimpleTooltip ?
     <BootstrapTooltip
       style={{ color: '#000', ...style }}

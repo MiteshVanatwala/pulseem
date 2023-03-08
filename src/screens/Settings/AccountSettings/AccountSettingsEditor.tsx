@@ -9,11 +9,15 @@ import FORM_COMPANY_DETAILS from "./Form_CompanyDetails";
 import FORM_ACCOUNT_DETAILS from "./Form_AccountDetails";
 import Toast from "../../../components/Toast/Toast.component";
 import useCore from "../../../helpers/hooks/Core";
-import { getAccountSettings, updateDetails, updateSettings } from "../../../redux/reducers/AccountSettingsSlice";
-import { AccountSettings } from '../../../Models/Account/AccountSettings';
+import {
+  getAccountSettings,
+  updateDetails,
+  updateSettings,
+} from "../../../redux/reducers/AccountSettingsSlice";
+import { AccountSettings } from "../../../Models/Account/AccountSettings";
 import { Loader } from "../../../components/Loader/Loader";
-import { logout } from "../../../helpers/api";
-import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import { logout } from "../../../helpers/Api/PulseemReactAPI";
+import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog";
 import {
   MdArrowBackIos,
   MdArrowForwardIos,
@@ -74,13 +78,14 @@ const AccountSettingsEditor = () => {
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
+    // @ts-ignore
     return <Toast data={toastMessage} />;
   };
 
   const getData = async () => {
     await dispatch(getAccountSettings());
     setShowLoader(false);
-  }
+  };
   useEffect(() => {
     getData();
   }, []);
@@ -89,8 +94,11 @@ const AccountSettingsEditor = () => {
     setSettingRequest(accountSettings?.Data);
   }, [accountSettings]);
 
-  const handleUpdate = async (updatedObject: AccountSettings, saveType: string, sendRequest: boolean) => {
-
+  const handleUpdate = async (
+    updatedObject: AccountSettings,
+    saveType: string,
+    sendRequest: boolean
+  ) => {
     setSettingRequest({ ...settingRequest, ...updatedObject });
 
     if (sendRequest === true) {
@@ -99,11 +107,11 @@ const AccountSettingsEditor = () => {
 
       try {
         switch (saveType) {
-          case 'company': {
+          case "company": {
             response = await dispatch(updateDetails(updatedObject));
             break;
           }
-          case 'account':
+          case "account":
           default: {
             response = await dispatch(updateSettings(updatedObject));
           }
@@ -212,17 +220,13 @@ const AccountSettingsEditor = () => {
       currentPage="settings"
       subPage="accountSettings"
       key="accountSettings"
-      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
       {toastMessage && renderToast()}
       <Box className={clsx(classes.settingsContainer)}>
-        <Box className={clsx("head", classes.flexSpaceBetween)} style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
-          <Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
-            {/* @ts-ignore */}
-            {t('settings.accountSettings.title')}
-          </Typography>
-          <Box style={{ marginInlineStart: 'auto' }}>
+        <Box className={clsx("head", classes.flexSpaceBetween)}>
+          <Title Text={t("settings.accountSettings.title")} />
+          <Box style={{ marginInlineStart: "auto" }}>
             <Button
               className={clsx(
                 classes.btn,
@@ -232,16 +236,12 @@ const AccountSettingsEditor = () => {
                 classes.textCapitalize,
                 "link"
               )}
-              onClick={() =>
-                handleVerification('cellphone')
-              }
+              onClick={() => handleVerification("cellphone")}
               startIcon={<MdMobileFriendly />}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
               <>
-                {t(
-                  "settings.accountSettings.fixedComDetails.btnVerifyNumber"
-                )}
+                {t("settings.accountSettings.fixedComDetails.btnVerifyNumber")}
               </>
             </Button>
             <Button
@@ -253,21 +253,16 @@ const AccountSettingsEditor = () => {
                 classes.textCapitalize,
                 "link"
               )}
-              onClick={() =>
-                handleVerification('email')
-              }
+              onClick={() => handleVerification("email")}
               startIcon={<MdOutlineMarkEmailRead />}
               endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             >
               <>
-                {t(
-                  "settings.accountSettings.fixedComDetails.btnVerifyEmail"
-                )}
+                {t("settings.accountSettings.fixedComDetails.btnVerifyEmail")}
               </>
             </Button>
           </Box>
         </Box>
-        <Divider />
         <Box className={"containerBody"}>
           <FORM_COMPANY_DETAILS
             setToastMessage={setToastMessage}
@@ -295,7 +290,6 @@ const AccountSettingsEditor = () => {
       {tfaEmailVerification && <VerificationDialog
         variant="emailTFA"
         textButtonOnSuccess={t('common.close')}
-        classes={classes}
         isOpen={tfaEmailVerification}
         value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
@@ -306,7 +300,6 @@ const AccountSettingsEditor = () => {
       />}
       {emailVerificationPopup && <VerificationDialog
         textButtonOnSuccess={t('common.close')}
-        classes={classes}
         variant="email"
         isOpen={emailVerificationPopup}
         value={verificationStep > 0 && emailToVerify}
@@ -318,7 +311,6 @@ const AccountSettingsEditor = () => {
       {tfaSmsVerification && <VerificationDialog
         variant="smsTFA"
         textButtonOnSuccess={t('common.close')}
-        classes={classes}
         isOpen={tfaSmsVerification}
         value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
@@ -329,7 +321,6 @@ const AccountSettingsEditor = () => {
       />}
       {smsVerificationPopup && <VerificationDialog
         textButtonOnSuccess={t('common.close')}
-        classes={classes}
         variant="sms"
         value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}

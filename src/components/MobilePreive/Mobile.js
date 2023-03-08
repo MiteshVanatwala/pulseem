@@ -1,15 +1,13 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
 import Mobile from "../../assets/images/mobileiphone.png";
 import { Box } from "@material-ui/core";
 import clsx from "clsx";
+import useCore from "../../helpers/hooks/Core";
 
-const MobilePreivew = ({ classes, campaignNumber, text, keyItem }) => {
-    const { t } = useTranslation();
-
+const MobilePreivew = ({ campaignNumber, text, keyItem }) => {
+    const { classes } = useCore();
     return (
         <Box className={classes.phoneDiv}>
-            <img src={Mobile} className={classes.phoneImg} />
+            <img src={Mobile} className={classes.phoneImg} alt="Phone Simulation" />
             <span className={classes.phoneNumber}>{campaignNumber}</span>
             <div className={clsx(classes.wrapChat, classes.sidebar)}>
                 <div className={classes.chatBox}>
@@ -19,7 +17,6 @@ const MobilePreivew = ({ classes, campaignNumber, text, keyItem }) => {
                         }) : null}
                     </div>
                 </div>
-
             </div>
         </Box>
     )

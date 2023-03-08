@@ -11,7 +11,6 @@ import {
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
@@ -25,9 +24,9 @@ export const BaseDialog = ({
   icon = "",
   children,
   showDivider = false,
-  onClose = () => { },
-  onCancel = () => { },
-  onConfirm = () => { },
+  onClose = () => {},
+  onCancel = () => {},
+  onConfirm = () => {},
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -78,7 +77,6 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
-        style={{ textAlign: 'center', marginTop: 15, color: "#000" }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -105,31 +103,29 @@ export const BaseDialog = ({
       >
         <Grid item>
           <Button
-            variant='contained'
-            size='small'
-            disabled={confirmDisabled}
-            onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
+            name="btnConfirm"
             className={clsx(
-              classes.solidDialogButton,
-              classes.dialogConfirmButton
-            )}>
+              classes.btn,
+              classes.btnRounded,
+              "saveFixedDetails"
+            )}
+            onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
+          >
             <>{t(confirmText)}</>
           </Button>
         </Grid>
         <Grid item>
           <Button
-            variant='contained'
-            size='small'
+            variant="contained"
+            size="small"
             onClick={(e: React.MouseEvent<HTMLElement>) => {
               if (onClose) {
                 onClose();
               }
               return false;
             }}
-            className={clsx(
-              classes.solidDialogButton,
-              classes.dialogCancelButton
-            )}>
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
             <>{t(cancelText)}</>
           </Button>
         </Grid>
@@ -162,9 +158,9 @@ export const BaseDialog = ({
         direction="row"
         justifyContent={"space-between"}
       >
-        <Stack direction={"row"} style={{ width: '100%' }}>
-          {/* {RenderIcon()} */}
-          <Stack alignSelf="center" style={{ width: '100%' }}>
+        <Stack direction={"row"}>
+          {RenderIcon()}
+          <Stack alignSelf="center">
             {renderTitle ? renderTitle() : RenderTitleDefault()}
           </Stack>
         </Stack>
@@ -181,8 +177,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-              ? "calc(65vh)"
-              : "calc(45vh)",
+            ? "calc(65vh)"
+            : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}

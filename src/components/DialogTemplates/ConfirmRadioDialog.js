@@ -4,15 +4,14 @@ import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
 import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
-import { setCookie, getCookie } from '../../helpers/cookies';
-import { voidFunction } from '../../helpers/utils';
+import { setCookie, getCookie } from '../../helpers/Functions/cookies';
+import useCore from '../../helpers/hooks/Core';
 
 const ConfirmRadioDialog = ({
-    classes,
     text = '',
     title = '',
     radioTitle = '',
-    options = null,
+    options = [],
     isOpen = false,
     onCancel,
     onConfirm,
@@ -20,6 +19,7 @@ const ConfirmRadioDialog = ({
     cookieName = ""
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const { isRTL } = useSelector(state => state?.core);
     const [value, setValue] = useState(getCookie(cookieName) ?? defaultValue);
 
@@ -43,7 +43,7 @@ const ConfirmRadioDialog = ({
                         </Typography>
                     </Box>
                     <Box className={clsx(classes.mt15, classes.mb10)}>{radioTitle}</Box>
-                    {options !== null && (<FormControl component="fieldset">
+                    {options.length > 0 && (<FormControl component="fieldset">
                         <RadioGroup
                             aria-label="value"
                             name="radioValue"
@@ -84,24 +84,20 @@ const ConfirmRadioDialog = ({
             >
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onConfirm(value) }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogConfirmButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.confirm')}
                     </Button>
                 </Grid>
                 <Grid item>
                     <Button
-                        variant='contained'
-                        size='small'
                         onClick={() => { onCancel() }}
                         className={clsx(
-                            classes.solidDialogButton,
-                            classes.dialogCancelButton
+                            classes.btn,
+                            classes.btnRounded
                         )}>
                         {t('common.cancel')}
                     </Button>
@@ -116,7 +112,6 @@ const ConfirmRadioDialog = ({
     };
 
     return (<SolidDialog
-        classes={classes}
         open={isOpen ?? false}
         onClose={() => onCancel()}
         {...dialog}>

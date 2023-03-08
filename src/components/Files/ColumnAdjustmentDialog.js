@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Typography, TextField, Box, Tooltip } from "@material-ui/core";
-import { Dialog } from "../managment/index";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-import { translateKeys } from '../../helpers/languageHelper';
+import { TranslateKeys } from '../../helpers/UI/TableText';
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
+import useCore from "../../helpers/hooks/Core";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -21,8 +23,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ColumnAdjustmentDialog = ({
-    t,
-    classes,
     isOpen,
     title,
     onClose,
@@ -39,6 +39,8 @@ const ColumnAdjustmentDialog = ({
 
     const { extraData } = useSelector((state) => state.sms);
     const styles = useStyles();
+    const { classes } = useCore();
+    const { t } = useTranslation();
     const [groupNameInput, setgroupNameInput] = useState("");
 
     // const [selectArray, setselectArray] = useState([]);
@@ -164,9 +166,8 @@ const ColumnAdjustmentDialog = ({
 
 
     return (
-        <Dialog
+        <BaseDialog
             disableBackdropClick={true}
-            classes={classes}
             title={title || t('sms.columnAdjustment')}
             open={isOpen}
             onClose={onClose}
@@ -296,9 +297,9 @@ const ColumnAdjustmentDialog = ({
                                                             }
                                                         }
                                                         else {
-                                                            const translatedKey = translateKeys(headerKey, t).key;
+                                                            const translatedKey = TranslateKeys(headerKey, t).key;
                                                             dispData = restObj[translatedKey];
-                                                            delete restObj[translateKeys(headerKey, t).value === t("sms.adjustTitle") ? Object.keys(restObj)[0] : translateKeys(headerKey, t).value];
+                                                            delete restObj[TranslateKeys(headerKey, t).value === t("sms.adjustTitle") ? Object.keys(restObj)[0] : TranslateKeys(headerKey, t).value];
                                                         }
 
                                                         return (
@@ -318,7 +319,7 @@ const ColumnAdjustmentDialog = ({
                     </>
                 ) : <Typography variant="body1">{t("common.NoData")}</Typography>}
 
-        </Dialog>
+        </BaseDialog>
     )
 }
 

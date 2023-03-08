@@ -1,4 +1,5 @@
-import { Grid, makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core"
+import { Grid } from "@mui/material";
 import clsx from "clsx";
 
 const useStyles = makeStyles({

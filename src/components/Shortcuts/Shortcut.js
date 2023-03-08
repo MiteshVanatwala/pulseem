@@ -8,10 +8,18 @@ import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { getShortcuts, setShortcuts, deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 import { DASHBOARD_SHORTCUT } from '../../model/Shortcuts/DashboardShortcuts';
+import useRedirect from '../../helpers/Routes/Redirect';
+import { FlagIcon } from '../../assets/images/dashboard/index'
+import { CgCloseO } from 'react-icons/cg';
+import { sitePrefix } from '../../config';
+import useCore from '../../helpers/hooks/Core';
+import { useTranslation } from 'react-i18next';
 
-const Shortcut = ({ classes, windowSize, t, isRTL }) => {
+const Shortcut = () => {
   const { shortcuts } = useSelector(state => state.shortcuts);
-  const { accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures, windowSize, isRTL } = useSelector(state => state.core)
+  const { classes } = useCore();
+  const { t } = useTranslation();
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});
@@ -22,6 +30,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const [activeShortcut, setActiveShortcut] = useState(null);
   const dispatch = useDispatch();
   const categories = { ...DASHBOARD_SHORTCUT };
+  const Redirect = useRedirect();
 
   if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf('35') > -1) {
     categories['appBar.notifications.title'] = {
@@ -29,23 +38,24 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       pages: [
         {
           title: 'dashboard.createNotification',
-          link: '/react/Notification/create'
+          link: `${sitePrefix}Notification/create`
         },
         {
           title: 'dashboard.notificationManagement',
-          link: '/react/Notifications'
+          link: `${sitePrefix}Notifications`
         }
       ]
     }
   }
 
-  const initData = async () => {
-    let r = await dispatch(getShortcuts());
+  const initData = () => {
+    dispatch(getShortcuts());
   }
 
   useEffect(() => {
-    initData();
-  }, [dispatch])
+    if (!shortcuts || shortcuts.length === 0)
+      initData();
+  }, [])
 
   const handlePageChange = useCallback((title, href, update, num, index) => {
     const data = {
@@ -80,8 +90,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const renderShortcutMenu = (num, update, index) => {
-    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+    let pageTitle = (selectedPage[num] && selectedPage[num].title) ?? '';
+    let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) ?? '';
     const open = Boolean(anchorEl[num]);
 
     if (shortcuts.length > 0) {
@@ -192,15 +202,15 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const handleShortcutMenuOpen = (event, num, update, index) => {
-    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+  const handleShortcutMenuOpen = (event, num) => {
+    let pageTitle = (selectedPage[num] && selectedPage[num].title) || '';
+    let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) || '';
     let refElement = event.currentTarget || event.current || '';
     if (!refElement) {
       return;
     }
     let data = {};
-    data[num] = num == Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
+    data[num] = num === Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
@@ -244,27 +254,39 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
         onMouseLeave={() => setActiveShortcut(null)}
         key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox}>
-        {activeShortcut === `short_${data.ID}` && <Link className={classes.deleteShortcut}
-          onClick={deleteShortcut}
-        >x</Link>}
+
         <Button
           variant='contained'
           color='primary'
-          href={data.ShortcutUrl}
           classes={{
             label: classes.shortcutLabel,
             root: classes.shortcutButton
           }}>
-          <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5)}>{t(data.CategoryName)}</Typography>
-          <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
+          <Box className={clsx(classes.flex, classes.hAuto)}>
+            <IconButton
+              id="editIcon"
+              className={clsx(classes.shortcutEditIcon)}
+              onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index)}>
+              {'\uE09C'}
+            </IconButton>
+            <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5, classes.flex1,)} onClick={() => {
+              Redirect({ url: data.ShortcutUrl })
+            }}>{t(data.CategoryName)}</Typography>
+            <Link className={'deleteShortcut'} style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
+              onClick={deleteShortcut}
+            ><CgCloseO /></Link>
+          </Box>
+          <Divider />
+          <Typography
+            align='center'
+            className={classes.pageTitle}
+            component="a"
+            href={data.ShortcutUrl}
+            onClick={(e) => {
+              e.preventDefault();
+              Redirect({ url: data.ShortcutUrl })
+            }}>{t(data.ShortcutName)}</Typography>
         </Button>
-        {windowSize !== 'xs' && windowSize !== 'sm' && <IconButton
-          id="editIcon"
-          className={classes.shortcutEditIcon}
-          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID, true, index)}>
-          {'\uE09C'}
-        </IconButton>
-        }
         {renderShortcutMenu(data.ID, true, index)}
       </Box>
     );
@@ -281,7 +303,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             color='primary'
             fullWidth
             className={classes.shortcutDottedButton}
-            onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, index)}>
+            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}>
             {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}
@@ -291,14 +313,16 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
     return newShortcutButtons;
   }
-  if (shortcuts.length > 0 && windowSize === 'xs' || windowSize !== 'xs') {
+  if ((shortcuts.length > 0 && windowSize === 'xs') || windowSize !== 'xs') {
     return (
       <Box className={classes.shortcutBox}>
-        <Paper elevation={windowSize == 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
-          <Box className={classes.shortcutTitleSection}>
-            <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
-            <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
-          </Box>
+        <Box className={clsx(classes.dashBoxtitleSection, classes.shortcutTitle, classes.flex)}>
+          <FlagIcon className={classes.mlr10} />
+          <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
+        </Box>
+        <Paper className={classes.shortcutPaper} ref={shortcutRef}>
+
+          <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
           {shortcuts && shortcuts.map((item, index) => {
             return renderShortcutButton(item, index)
           })}

@@ -12,7 +12,6 @@ import {
     Tooltip
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
@@ -22,12 +21,14 @@ import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
-import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import useCore from "../../../../helpers/hooks/Core";
 
 const UnsubscribeOrDeletePopup = ({
-    classes,
     dialogType = null,
     onClose,
     selectedGroups,
@@ -39,6 +40,7 @@ const UnsubscribeOrDeletePopup = ({
 }) => {
     const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
+    const { classes } = useCore();
     const [highlighted, setHighlighted] = useState(false);
     const dispatch = useDispatch();
     const [showLoader, setLoader] = useState(false);
@@ -85,7 +87,6 @@ const UnsubscribeOrDeletePopup = ({
                                             arrow
                                             isSimpleTooltip={false}
                                             // title={t('recipient.unsubSetting1Tooltip')}
-                                            classes={classes}
                                             interactive={true}
                                             // arrow={true}
                                             placement={'top'}
@@ -283,6 +284,11 @@ const UnsubscribeOrDeletePopup = ({
             }
             catch (error) {
                 setLoader(false);
+                dispatch(sendToTeamChannel({
+                    MethodName: 'handleFiles',
+                    ComponentName: 'UnsubscribeOrDeletePopup.js',
+                    Text: error
+                }));
                 reject(error);
             }
         });
@@ -304,12 +310,12 @@ const UnsubscribeOrDeletePopup = ({
                 return null;
             }
 
-            if (ValidateNumber(m)) {
+            if (IsValidPhone(m)) {
                 if (m.length >= 9 && m.length <= 13) {
                     return m.trim();
                 }
             }
-            if (ValidateEmail(m)) {
+            if (IsValidEmail(m)) {
                 return m.trim();
             }
 
@@ -433,6 +439,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleDeleteSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            }));
             setLoader(false);
         }
     }
@@ -504,7 +515,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
-            //TODO: Something went wrong
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleUnsubSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            }));
             setLoader(false);
         }
     }
@@ -549,14 +564,12 @@ const UnsubscribeOrDeletePopup = ({
 
     const RenderSummaryDialog = () => {
         return (
-            <Dialog
-                classes={classes}
+            <BaseDialog
                 open={confirm || isSubmitted}
                 title={t("common.systemNotice")}
-                icon={<div className={classes.dialogIconContent}>
+                icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={DialogObject[dialogType].summaryOnClose}
                 onCancel={DialogObject[dialogType].summaryOnClose}
                 onConfirm={DialogObject[dialogType].onSummaryConfirm}
@@ -566,17 +579,16 @@ const UnsubscribeOrDeletePopup = ({
                     {updatedRows <= 0 && <Box>{t("recipient.noRecordsFound")}</Box>}
                     {updatedRows > 0 && <Box>{updatedRows === 1 ? null : updatedRows} {updatedRows === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>}
                 </Box>}
-            </Dialog>
+            </BaseDialog>
         )
     }
 
     const RenderMaximumLimitationRequest = () => {
         return (
-            <Dialog
-                classes={classes}
+            <BaseDialog
                 open={limitationWarning}
                 title={t("common.systemNotice")}
-                icon={<div className={classes.dialogIconContent}>
+                icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
                     {'\uE0D5'}
                 </div>}
                 showDefaultButtons={false}
@@ -597,7 +609,7 @@ const UnsubscribeOrDeletePopup = ({
                 }}
             >
                 <Typography>{t('recipient.maximumRecordLimitation')}</Typography>
-            </Dialog>
+            </BaseDialog>
         )
     }
 
@@ -645,9 +657,8 @@ const UnsubscribeOrDeletePopup = ({
 
 
     return (
-        <Dialog
+        <BaseDialog
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
-            classes={classes}
             open={dialogType}
             childrenStyle={showDropBox ? classes.h50v : classes.h10v}
             title={
@@ -683,10 +694,9 @@ const UnsubscribeOrDeletePopup = ({
                     </Box>}
                 </Box>
             }
-            icon={< div className={classes.dialogIconContent} >
+            icon={< div className={clsx(classes.dialogIconContent, 'unicode')} >
                 {'\uE0D5'}
             </div >}
-            showDivider={true}
             onClose={onClose}
             onCancel={onClose}
             onConfirm={DialogObject[dialogType].onConfirm}
@@ -697,7 +707,7 @@ const UnsubscribeOrDeletePopup = ({
                 {/* {!showDropBox && } */}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
-        </Dialog >
+        </BaseDialog >
     )
 }
 

@@ -1,9 +1,9 @@
 const shortcutEditLeft = {
     xs: '8%',
-    sm: '18px',
-    md: '15px',
-    lg: '22px',
-    xl: '28px'
+    sm: '36px',
+    md: '33px',
+    lg: '40px',
+    xl: '42px'
 }
 
 const shortcutPaperHeight = {
@@ -11,14 +11,14 @@ const shortcutPaperHeight = {
     sm: '100%',
     md: '100%',
     lg: '100%',
-    xl: 'calc(100vh - 47px)'
+    xl: 'calc(100vh - 40px)'
 }
 
 const shortcutBoxWidth = {
     xs: 'auto',
-    sm: '100%',
-    md: '100%',
-    lg: '100%',
+    sm: '92.1%',
+    md: '92.1%',
+    lg: '92.1%',
     xl: 'auto'
 }
 
@@ -33,7 +33,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         paddingBlock: 15
     },
     dashboard: {
-        background: '#F2F2F2',
+        background: 'transparent',
         padding: 0,
         maxHeight: 'unset',
     },
@@ -46,30 +46,44 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         textTransform: 'uppercase',
         color: '#65d638'
     },
-    shortcutTitleSection: {
-        width: '85%',
-        marginTop: '2.1rem',
-        marginBottom: 40
+    dashboardChartTitle: {
+        maxHeight: 47
     },
     shortcutTitle: {
-        fontSize: windowSize === 'xs' ? 23 : 25,
-        fontWeight: 'bold'
+        maxHeight: 39,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        paddingTop: 0
     },
     shortcutSubtitle: {
         fontSize: windowSize === 'xs' ? 16 : 18,
+        padding: '0 10px 0 10px',
+        marginBottom: 15,
+        maxHeight: '10%'
     },
     shortcutBox: {
+        borderRadius: 20,
+        background: '#fff',
+        marginBottom: 19,
+        marginTop: 28,
+        overflow: 'hidden',
         position: windowSize !== 'xl' && windowSize !== 'xs' ? 'block' : 'sticky',
         top: windowSize !== 'xl' ? 47 : 0,
         right: isRTL ? 'auto' : 0,
         left: isRTL ? 0 : 'auto',
         width: shortcutBoxWidth[windowSize],
-        height: shortcutPaperHeight[windowSize],
-        [theme.breakpoints.down('xs')]: {
-            margin: '10px 10px 10px 10px'
+        height: '100%',
+        maxHeight: '780px',
+        marginTop: windowSize !== 'xs' ? 49 : '',
+        ['@media (max-width:1280px)']: {
+            maxHeight: 'calc(100% - 65px)',
+            width: '100%'
         },
-        boxShadow: windowSize === 'xs' ? '0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%)' : isRTL && windowSize !== 'xs' ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2)',
-        borderRadius: windowSize === 'xs' ? 10 : 0,
+        [theme.breakpoints.down('xs')]: {
+            margin: '10px 10px 10px 10px',
+            maxHeight: 'calc(100% - 50px)',
+        },
+        border: '3px solid #F0F5FF',
         '& .MuiPaper-rounded': {
             scrollbarWidth: 'none',
             overflow: 'auto',
@@ -80,7 +94,8 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         [theme.breakpoints.down('xs')]: {
             borderRadius: 10,
         },
-        height: shortcutPaperHeight[windowSize],
+        // height: shortcutPaperHeight[windowSize],
+        height: '95%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -93,7 +108,11 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
             borderRadius: '5px'
         },
         scrollbarWidth: 'none',
-        '-ms-overflow-style': 'none' /* IE 11 */
+        '-ms-overflow-style': 'none', /* IE 11 */
+        ['@media (max-width:1280px)']: {
+            height: '100%',
+            overflow: 'hidden'
+        },
     },
     shortcutBtnBox: {
         position: 'relative',
@@ -101,25 +120,59 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         textAlign: 'center'
     },
     shortcutButton: {
-        height: '92px',
+        height: windowSize !== 'xs' && windowSize !== 'sm' ? 'auto' : 92,
         width: '85%',
-        background: '#0371AD',
+        background: '#fff',
         borderRadius: '20px',
         marginBottom: windowSize === 'xs' ? 30 : 40,
         fontSize: '18px',
         position: 'relative',
         textTransform: 'capitalize',
-        padding: '6px 30px'
+        padding: '6px 30px',
+        color: '#FF0054',
+        border: '3px solid #FF0076',
+        boxShadow: 'none',
+        '& .MuiDivider-root': {
+            width: '100%',
+            border: '1px #FF0054 solid',
+            height: 0,
+            margin: '5px 0'
+        },
+        '& .deleteShortcut': {
+            maxHeight: 20,
+            zIndex: 100,
+            opacity: 0,
+            PointerEvent: 'none',
+            marginTop: -15,
+            color: '#707070',
+            fontSize: 20,
+            cursor: 'pointer',
+            '&:hover': {
+                textDecoration: 'none',
+            }
+        },
+        '&:hover': {
+            background: '#fff',
+            boxShadow: 'none',
+            '& .deleteShortcut': {
+                opacity: 1,
+                PointerEvent: 'all',
+            }
+        },
 
     },
     shortcutDottedButton: {
         borderRadius: '20px',
-        border: '1px dashed #0371AD',
+        color: '#FF0076',
+        border: '1px dashed #FF0076',
         fontFamily: 'pulseemicons',
         height: '92px',
         fontSize: '30px',
         marginBottom: 45,
         width: '85%',
+        '&:hover': {
+            background: 'none'
+        }
     },
     shortcutList: {
         maxWidth: 350,
@@ -128,13 +181,11 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         margin: 10
     },
     shortcutEditIcon: {
-        position: 'absolute',
-        left: isRTL ? 'auto' : shortcutEditLeft[windowSize],
-        right: isRTL ? shortcutEditLeft[windowSize] : 'auto',
-        bottom: windowSize === 'xs' ? 40 : 50,
         fontFamily: 'pulseemicons',
         fontSize: 18,
-        color: 'white'
+        color: '#FF0054',
+        padding: 0,
+        display: windowSize !== 'xs' && windowSize !== 'sm' ? 'none' : 'block',
     },
     shortcutLabel: {
         display: 'flex',
@@ -142,34 +193,28 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         marginTop: -5
     },
-    deleteShortcut: {
-        position: 'absolute',
-        right: isRTL ? 'auto' : 40,
-        left: isRTL ? 40 : 'auto',
-        top: 5,
-        zIndex: 100,
-        color: '#fff',
-        fontSize: 20,
-        cursor: 'pointer',
-        '&:hover': {
-            textDecoration: 'none',
-        }
-    },
+
     dashboardTop: {
         [theme.breakpoints.down('sm')]: {
             order: 1
         },
     },
     dashboardSide: {
+        paddingRight: isRTL ? 0 : 30,
+        paddingLeft: !isRTL ? 0 : 30,
         [theme.breakpoints.down('sm')]: {
-            order: 2
+            order: 2,
+            padding: 0,
+            justifyContent: 'center',
+            display: 'flex',
+            justifyContent: 'center'
         },
     },
     transitionElem: {
         transition: ' ease-in-out .4s'
     },
     tabTitle: {
-        color: '#006996',
+        color: '#000',
         fontSize: 32,
         textAlign: 'center',
         lineHeight: '1.1'

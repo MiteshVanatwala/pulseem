@@ -4,12 +4,13 @@ import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import useCore from '../../helpers/hooks/Core';
 
 
-const GroupTags = ({ classes,
+const GroupTags = ({
     groupSelected,
     title = 'mainReport.ChooseLinks',
     onShowModal = () => null,
@@ -22,9 +23,11 @@ const GroupTags = ({ classes,
     },
     error = '',
     helperText = '',
+    containerStyle = {},
     ...props
 }) => {
     const { t } = useTranslation();
+    const { classes } = useCore();
     const [groups, setGroups] = useState([]);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -41,7 +44,7 @@ const GroupTags = ({ classes,
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box
-                style={{ minHeight: 40, maxHeight: 40 }}
+                style={{ minHeight: 40, maxHeight: 40, ...containerStyle }}
                 className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
                 onClick={() => onShowModal()}
             >

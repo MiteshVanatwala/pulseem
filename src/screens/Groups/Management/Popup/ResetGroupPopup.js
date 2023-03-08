@@ -1,15 +1,16 @@
-import { Box, Typography } from '@material-ui/core'
-import React from 'react'
+import { Typography } from '@material-ui/core'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { Dialog } from "../../../../components/managment/Dialog";
 import { resetGroups } from '../../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
+import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import { DeleteIcon } from '../../../../assets/images/managment';
+import useCore from '../../../../helpers/hooks/Core';
 
 const ResetGroupPopup = ({
     onClose,
-    classes,
     isOpen,
     windowSize,
     getData,
@@ -19,6 +20,7 @@ const ResetGroupPopup = ({
 
     const { t } = useTranslation();
     const dispatch = useDispatch()
+    const { classes } = useCore();
 
     const handleSubmit = async () => {
         const response = await new Promise((resolve, reject) => resolve(dispatch(resetGroups(selectedGroup))))
@@ -64,8 +66,7 @@ const ResetGroupPopup = ({
     }
 
     return (
-        <Dialog
-            classes={classes}
+        <BaseDialog
             open={isOpen}
             onClose={onClose}
             onCancel={onClose}
@@ -79,7 +80,7 @@ const ResetGroupPopup = ({
             <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} >
                 {t("group.resetConfirm")}
             </Typography>
-        </Dialog>
+        </BaseDialog>
     )
 }
 

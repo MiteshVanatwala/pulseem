@@ -1,11 +1,12 @@
-import { Box, makeStyles, Typography, Button } from "@material-ui/core";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { UploadSettings } from "../../tempConstants";
 import UploadXL from '../../../../components/Files/UploadXL'
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
 import { Tooltip } from "@material-ui/core";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+import useCore from "../../../../helpers/hooks/Core";
 
 const useStyles = makeStyles((theme) => ({
     contentBox: {
@@ -31,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AddBulkRecipientPopup = ({ classes,
+const AddBulkRecipientPopup = ({
     isOpen = false,
     onClose,
     selectedGroups,
@@ -40,10 +41,9 @@ const AddBulkRecipientPopup = ({ classes,
 }) => {
     const { t } = useTranslation();
     const localClasses = useStyles()
-
+    const { classes } = useCore();
     return (
-        <Dialog
-            classes={classes}
+        <BaseDialog
             open={isOpen}
             childrenStyle={classes.h50v}
             maxHeight={"45vh"}
@@ -80,11 +80,11 @@ const AddBulkRecipientPopup = ({ classes,
             </div>}
             showDivider={true}
             onClose={onClose}
+            onCancel={onClose}
             renderButtons={() => (<></>)}
             customContainerStyle={classes.addRecipientDialog}
         >
             <UploadXL
-                classes={classes}
                 onDone={onAddRecipient}
                 settings={UploadSettings.GROUPS}
                 uploadToGroups={selectedGroups}
@@ -92,7 +92,7 @@ const AddBulkRecipientPopup = ({ classes,
                 placeHolder={"recipient.addRecTextareaPlaceholder"}
                 tooltipText='recipient.bulkRecUpldTooltipText'
             />
-        </Dialog>
+        </BaseDialog>
     );
 };
 
