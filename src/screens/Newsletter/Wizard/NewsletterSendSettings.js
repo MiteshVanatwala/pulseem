@@ -16,7 +16,7 @@ import { Button, Grid, Box } from "@material-ui/core";
 import {
     getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing
 } from "../../../redux/reducers/smsSlice";
-import { combinedGroup, addRecipient, addRecipients, createGroup, getDefaultGroup, getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
+import { combinedGroup, addRecipient, addRecipients, createGroup, createAndGetGroupIdForManualSend, getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
 import { getAuthorizeNumbers, getAuthorizedEmails, getCommonFeatures } from '../../../redux/reducers/commonSlice'
 import clsx from "clsx";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
@@ -337,7 +337,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setLoader(true);
         let groupId = defaultGroupId;
         if (defaultGroupId <= 0) {
-            const responseDefaultGroup = await dispatch(getDefaultGroup());
+            const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
             groupId = responseDefaultGroup.payload
         }
 

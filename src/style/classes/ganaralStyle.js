@@ -22,8 +22,8 @@ const summaryPadding = {
   xs: 0,
   sm: 0,
   md: 0,
-  lg: 25,
-  xl: 25,
+  lg: 10,
+  xl: 10,
 };
 
 const iconWrapperMargin = {
@@ -84,7 +84,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   solidDialogContainer: {
     zIndex: '1500 !important',
     "& .MuiPaper-root": {
-      borderRadius: 25,
+      borderRadius: 10,
       overflowX: "hidden",
       boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
       backgroundColor: '#fff'
@@ -99,7 +99,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dialogContainer: {
     "& .MuiPaper-root": {
-      borderRadius: 25,
+      borderRadius: 10,
       overflowX: "hidden",
       // boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
       backgroundColor: '#fff'
@@ -2258,10 +2258,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#000"
   },
   dialogExitButtonRTL: {
-    left: "1.2rem",
+    left: 15,
+    top: 15
   },
   dialogExitButtonLTR: {
-    right: "1rem",
+    right: 15,
+    top: 15
   },
   solidDialog: {
     display: "flex",
