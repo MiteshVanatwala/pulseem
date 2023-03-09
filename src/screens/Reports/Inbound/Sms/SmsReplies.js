@@ -17,9 +17,10 @@ import { getSmsReplies, getAccountExtraData, getFinishedCampaigns } from '../../
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
 import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
-import { FormControl, OutlinedInput, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box, Select } from '@material-ui/core'
+import { FormControl, OutlinedInput, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box, Select, TextField, Paper } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
+import { Autocomplete } from '@mui/material';
 
 
 const SmsReplies = ({ classes, ...other }) => {
@@ -477,46 +478,37 @@ const SmsReplies = ({ classes, ...other }) => {
                 onFilterRequest={(val) => setRequest({ ...request, ...val })}
                 onSetIsSearching={(val) => setIsSearching(val)}
                 AdditionalElements={
-                    <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
-                        <Select
-                            native
-                            autoWidth
-                            input={<OutlinedInput />}
-                            MenuProps={{
-                                PaperProps: {
-                                    style: {
-                                        maxHeight: 40
-                                    },
-                                }
-                            }}
-                            inputProps={{
-                                'aria-label': 'Without label',
-                                style: {
-                                    height: 32,
-                                    padding: 5,
-                                    paddingInlineStart: 15,
-                                    paddingInlineEnd: 15,
-                                }
-                            }}
-                            value={request.CampaignID}
-                            onChange={(event) => {
+                    <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
+                        <Autocomplete
+                            value={finishedCampaigns.find((x) => { return x.SMSCampaignID === request.CampaignID })?.Name}
+                            id='searchByCampaign'
+                            getOptionLabel={(option) => option.name}
+                            noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
+                            options={finishedCampaigns.map((item, idx) => {
+                                return { name: item.Name, id: item.SMSCampaignID }
+                            })}
+
+
+                            renderOption={(props, option) => (
+                                <Box component="li" {...props} key={option.id}>
+                                    {option.name}
+                                </Box>
+                            )}
+                            onChange={(option, selected) => {
                                 setRequest({
                                     ...request,
                                     PageIndex: 1,
-                                    CampaignID: event.target.value
+                                    CampaignID: selected?.id ?? null
                                 })
                             }}
-                        >
-                            <option key={null} value={'null'} name={null}>{t('common.searchByCampaign')}</option>
-                            {finishedCampaigns.map((item) => (
-                                <option
-                                    key={item.SMSCampaignID}
-                                    value={item.SMSCampaignID}
-                                >
-                                    {t(item.Name)}
-                                </option>
-                            ))}
-                        </Select>
+                            renderInput={(params) => <TextField
+                                size="small"
+                                label={t('common.searchByCampaign')}
+                                style={{
+                                    width: 240,
+                                }}
+                                {...params} variant="outlined" />}
+                        />
                     </FormControl>
                 }
             />

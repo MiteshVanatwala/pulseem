@@ -1838,5 +1838,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   smallIcon: {
     width: 14
+  },
+  smsReplies: {
+    '& .MuiOutlinedInput-root': {
+      padding: '4px !important'
+    }
   }
 });
