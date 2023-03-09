@@ -52,12 +52,13 @@ import {
 	AllReportReq,
 	PageTypeRequest,
 } from '../management/Types/Management.types';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { windowSize } = useSelector(
+	const { windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
@@ -88,7 +89,17 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
 
 	useEffect(() => {
-		setApiReportData();
+		setApiReportData(
+			rowsPerPage
+				? { ...paginationSetting, pageSize: Number(rowsPerPage) }
+				: paginationSetting
+		);
+		if (rowsPerPage) {
+			setPaginationSetting({
+				...paginationSetting,
+				pageSize: Number(rowsPerPage),
+			});
+		}
 		/**
 		 * we disable it because we want to run this code only when component loads
 		 */
@@ -286,6 +297,22 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		setPaginationSetting(pagination);
 	};
 
+	const onRowsPerPageChange = (rowsNumber: number) => {
+		dispatch(setRowsPerPage(rowsNumber));
+		updatePaginationSetting({
+			...paginationSetting,
+			pageSize: rowsNumber,
+			pageNo: 1,
+		});
+	};
+
+	const onTemplateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		const keyCode = e.keyCode ? e.keyCode : e.which;
+		if (keyCode === 13) {
+			onSearch();
+		}
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -308,6 +335,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							size='small'
 							value={campaignNameSearch}
 							onChange={handleCampainNameChange}
+							onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+								onTemplateKeyDown(e)
+							}
 							className={clsx(classes.textField, classes.minWidth252)}
 							placeholder={translator(
 								'sms.GridBoundColumnResource2.HeaderText'
@@ -637,13 +667,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					classes={classes}
 					rows={totalRecord}
 					rowsPerPage={paginationSetting?.pageSize}
-					onRowsPerPageChange={(rowsNumber: number) =>
-						updatePaginationSetting({
-							...paginationSetting,
-							pageSize: rowsNumber,
-							pageNo: 1,
-						})
-					}
+					onRowsPerPageChange={onRowsPerPageChange}
 					rowsPerPageOptions={[6, 10, 20, 50]}
 					page={paginationSetting?.pageNo}
 					onPageChange={(pageNumber: number) =>

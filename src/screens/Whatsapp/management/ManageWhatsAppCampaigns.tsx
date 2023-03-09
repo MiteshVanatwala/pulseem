@@ -81,12 +81,13 @@ import {
 } from '../Campaign/Types/WhatsappCampaign.types';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { windowSize } = useSelector(
+	const { windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const ToastMessages = useSelector(
@@ -166,7 +167,17 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	useEffect(() => {
-		setApiCampaignData();
+		setApiCampaignData(
+			rowsPerPage
+				? { ...paginationSetting, pageSize: Number(rowsPerPage) }
+				: paginationSetting
+		);
+		if (rowsPerPage) {
+			setPaginationSetting({
+				...paginationSetting,
+				pageSize: Number(rowsPerPage),
+			});
+		}
 		/**
 		 * we disable it because we want to run this code only when component loads
 		 */
@@ -626,55 +637,6 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		);
 	};
 
-	const getSearchedCampaign = () => {
-		const searchArray: searchArrayProps[] = [
-			{
-				type: 'name',
-				campaignName: campaignNameSearch,
-			},
-			{
-				type: 'date',
-				fromDate,
-				toDate,
-			},
-		];
-		const filtersObject: filtersObjectProps = {
-			name: (row: campaignDataProps) => {
-				return String(row.Name.toLowerCase()).includes(
-					campaignNameSearch.toLowerCase()
-				);
-			},
-			date: (row: campaignDataProps, values: searchArrayProps) => {
-				const { UpdateDate, SendDate } = row;
-				const lastUpdate = SendDate
-					? moment(SendDate, dateFormat).valueOf()
-					: moment(UpdateDate, dateFormat).valueOf();
-				const startFromDate =
-					(values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ||
-					null;
-				const endToDate =
-					(values.toDate && values.toDate.hour(23).minute(59).valueOf()) ||
-					null;
-
-				if (!values) return true;
-				if (fromDate && toDate && startFromDate && endToDate)
-					return lastUpdate >= startFromDate && lastUpdate <= endToDate;
-				if (fromDate && startFromDate) return lastUpdate >= startFromDate;
-				if (toDate && endToDate) return lastUpdate <= endToDate;
-				return true;
-			},
-		};
-
-		let sortData = campaignListData;
-		searchArray.forEach((values) => {
-			sortData = sortData.filter((row) =>
-				filtersObject[values.type](row, values)
-			);
-		});
-
-		return sortData;
-	};
-
 	const onDuplicateCampaign = async () => {
 		const deleteData: commonAPIResponseProps = await dispatch<any>(
 			duplicateCampaign(activeRowId)
@@ -791,6 +753,22 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		setPaginationSetting(pagination);
 	};
 
+	const onRowsPerPageChange = (rowsNumber: number) => {
+		dispatch(setRowsPerPage(rowsNumber));
+		updatePaginationSetting({
+			...paginationSetting,
+			pageSize: rowsNumber,
+			pageNo: 1,
+		});
+	};
+
+	const onTemplateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		const keyCode = e.keyCode ? e.keyCode : e.which;
+		if (keyCode === 13) {
+			onSearch();
+		}
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -814,6 +792,9 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							size='small'
 							value={campaignNameSearch}
 							onChange={handleCampainNameChange}
+							onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+								onTemplateKeyDown(e)
+							}
 							className={clsx(classes.textField, classes.minWidth252)}
 							placeholder={translator(
 								'sms.GridBoundColumnResource2.HeaderText'
@@ -1008,13 +989,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					classes={classes}
 					rows={totalRecord}
 					rowsPerPage={paginationSetting?.pageSize}
-					onRowsPerPageChange={(rowsNumber: number) =>
-						updatePaginationSetting({
-							...paginationSetting,
-							pageSize: rowsNumber,
-							pageNo: 1,
-						})
-					}
+					onRowsPerPageChange={onRowsPerPageChange}
 					rowsPerPageOptions={[6, 10, 20, 50]}
 					page={paginationSetting?.pageNo}
 					onPageChange={(pageNumber: number) =>

@@ -63,7 +63,6 @@ const DynamicModalFields = ({
 		setIsSiteTrack(false);
 		setLinkInput(linkInput, !isTrackLink);
 	};
-
 	return (
 		<>
 			{activeDynamicButton?.includes('pField') && (
@@ -81,13 +80,15 @@ const DynamicModalFields = ({
 					onChange={(e: BaseSyntheticEvent) =>
 						setPersonalField(e.target.value)
 					}>
-					{Object.keys(personalFields)?.map(
-						(personalFieldKey: string, index: number) => (
+					{Object.values(personalFields)
+						?.filter(
+							(personalField) => personalField && personalField?.length > 0
+						)
+						?.map((personalFieldKey: string, index: number) => (
 							<MenuItem key={index} value={personalFieldKey}>
 								{personalFieldKey}
 							</MenuItem>
-						)
-					)}
+						))}
 				</Select>
 			)}
 

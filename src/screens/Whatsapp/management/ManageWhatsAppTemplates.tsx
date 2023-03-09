@@ -46,7 +46,12 @@ import {
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
-import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import {
+	BaseSyntheticEvent,
+	KeyboardEventHandler,
+	useEffect,
+	useState,
+} from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
@@ -71,12 +76,13 @@ import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
 import { getTemplateName } from '../Common';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { t: translator } = useTranslation();
-	const { windowSize } = useSelector(
+	const { windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const ToastMessages = useSelector(
@@ -138,7 +144,17 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	useEffect(() => {
-		setApiTemplateData(paginationSetting);
+		setApiTemplateData(
+			rowsPerPage
+				? { ...paginationSetting, pageSize: Number(rowsPerPage) }
+				: paginationSetting
+		);
+		if (rowsPerPage) {
+			setPaginationSetting({
+				...paginationSetting,
+				pageSize: Number(rowsPerPage),
+			});
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -628,6 +644,22 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setPaginationSetting(pagination);
 	};
 
+	const onRowsPerPageChange = (rowsNumber: number) => {
+		dispatch(setRowsPerPage(rowsNumber));
+		updatePaginationSetting({
+			...paginationSetting,
+			pageSize: rowsNumber,
+			pageNo: 1,
+		});
+	};
+
+	const onTemplateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		const keyCode = e.keyCode ? e.keyCode : e.which;
+		if (keyCode === 13) {
+			onSearch();
+		}
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -645,20 +677,21 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 
 			<div className={classes.manageWhatsappTemplates}>
 				<Grid container spacing={2} className={classes.lineTopMarging}>
-					<Grid item lg={2}>
+					<Grid item xs={6} lg={2}>
 						<TextField
 							variant='outlined'
 							size='small'
 							value={templateNameSearch}
 							onChange={handleCampainNameChange}
+							onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+								onTemplateKeyDown(e)
+							}
 							className={clsx(classes.textField, classes.minWidth252)}
-							placeholder={translator(
-								'sms.GridBoundColumnResource2.HeaderText'
-							)}
+							placeholder={translator('whatsapp.templateNamePlaceholder')}
 						/>
 					</Grid>
 
-					<Grid item lg={2}>
+					<Grid item xs={6} lg={2}>
 						<TextField
 							select
 							type='text'
@@ -737,9 +770,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 											classes={cellStyle}
 											className={classes.flex3}
 											align='center'>
-											<>
-												{translator('sms.GridBoundColumnResource2.HeaderText')}
-											</>
+											<>{translator('whatsapp.templateName')}</>
 										</TableCell>
 										<TableCell
 											classes={cellStyle}
@@ -810,13 +841,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					classes={classes}
 					rows={totalRecord}
 					rowsPerPage={paginationSetting?.pageSize}
-					onRowsPerPageChange={(rowsNumber: number) =>
-						updatePaginationSetting({
-							...paginationSetting,
-							pageSize: rowsNumber,
-							pageNo: 1,
-						})
-					}
+					onRowsPerPageChange={onRowsPerPageChange}
 					rowsPerPageOptions={[6, 10, 20, 50]}
 					page={paginationSetting?.pageNo}
 					onPageChange={(pageNumber: number) =>

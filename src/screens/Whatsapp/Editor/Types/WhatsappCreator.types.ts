@@ -98,6 +98,7 @@ export type campaignPage1ButtonsProps = {
 export type coreProps = {
 	windowSize: string;
 	isRTL: boolean;
+	rowsPerPage: string | number;
 };
 
 export type actionButtonProps = {
