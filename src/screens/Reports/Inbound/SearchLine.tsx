@@ -38,7 +38,8 @@ interface SearchObject {
     currentPage: Number,
     onFilterRequest: Function,
     onSetPage: Function,
-    onSetIsSearching: Function
+    onSetIsSearching: Function,
+    AdditionalElements: any | null
 }
 
 const SearchLine = ({
@@ -46,8 +47,8 @@ const SearchLine = ({
     currentPage,
     onFilterRequest,
     onSetPage,
-    onSetIsSearching
-
+    onSetIsSearching,
+    AdditionalElements
 }: SearchObject) => {
     const { t } = useTranslation();
     const localClasses = useStyles();
@@ -247,6 +248,7 @@ const SearchLine = ({
 
     return (
         <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb15)}>
+            {AdditionalElements && <Grid item>{AdditionalElements}</Grid>}
             {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
             <Grid item>
                 <Button
