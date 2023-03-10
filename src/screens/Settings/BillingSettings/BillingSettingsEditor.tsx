@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import useCore from "../../../helpers/hooks/Core";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import {
@@ -30,8 +29,7 @@ import {
 import { ERROR_TYPE } from "../../../helpers/Types/common";
 import { IsNumberField } from "../../../helpers/Utils/Validations";
 
-const BillingSettingsEditor = () => {
-  const { classes } = useCore();
+const BillingSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const { isRTL } = useSelector((state: any) => state.core);
   const [cardDetails, setCardDetails] = useState<CardDetailsTypes>({

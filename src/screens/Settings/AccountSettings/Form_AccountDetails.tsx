@@ -21,13 +21,13 @@ import { IsNumberField } from "../../../helpers/Utils/Validations";
 import { AccountSettings } from "../../../Models/Account/AccountSettings";
 
 const FORM_ACCOUNT_DETAILS = ({
+  classes,
   setToastMessage,
   ToastMessages,
   Settings,
-  OnUpdate
+  OnUpdate,
 }: AccDtlPropTypes) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
 
@@ -36,7 +36,7 @@ const FORM_ACCOUNT_DETAILS = ({
     DefaultFromName: "",
     DefaultCellNumber: "",
     UnsubscribeType: false,
-    IsSmsImmediateUnsubscribeLink: false
+    IsSmsImmediateUnsubscribeLink: false,
   } as AccountSettings);
 
   const isValidPayload = () => {
@@ -47,7 +47,7 @@ const FORM_ACCOUNT_DETAILS = ({
 
   useEffect(() => {
     setAccountDetails(Settings);
-  }, [Settings])
+  }, [Settings]);
 
   const handleChange = (e: any, name = "") => {
     let actualValue = e?.target?.value;
@@ -139,9 +139,13 @@ const FORM_ACCOUNT_DETAILS = ({
               <RadioGroup
                 aria-label="UnsubscribeType"
                 name="UnsubscribeType"
-                value={!accountDetails.UnsubscribeType ? '0' : '1'}
+                value={!accountDetails.UnsubscribeType ? "0" : "1"}
                 onChange={() => {
-                  setAccountDetails({ ...accountDetails, UnsubscribeType: accountDetails.UnsubscribeType === false ? true : false })
+                  setAccountDetails({
+                    ...accountDetails,
+                    UnsubscribeType:
+                      accountDetails.UnsubscribeType === false ? true : false,
+                  });
                 }}
               >
                 <FormControlLabel
@@ -179,9 +183,17 @@ const FORM_ACCOUNT_DETAILS = ({
               <RadioGroup
                 aria-label="quiz"
                 name="IsSmsImmediateUnsubscribeLink"
-                value={!accountDetails.IsSmsImmediateUnsubscribeLink ? '0' : '1'}
+                value={
+                  !accountDetails.IsSmsImmediateUnsubscribeLink ? "0" : "1"
+                }
                 onChange={() => {
-                  setAccountDetails({ ...accountDetails, IsSmsImmediateUnsubscribeLink: accountDetails.IsSmsImmediateUnsubscribeLink === false ? true : false })
+                  setAccountDetails({
+                    ...accountDetails,
+                    IsSmsImmediateUnsubscribeLink:
+                      accountDetails.IsSmsImmediateUnsubscribeLink === false
+                        ? true
+                        : false,
+                  });
                 }}
               >
                 <FormControlLabel

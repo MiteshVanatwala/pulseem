@@ -382,17 +382,17 @@ const renderRoutes = (classes) => {
       />
       <Route
         exact
-        path={`${sitePrefix}/reports/Inbound`}
+        path={`${sitePrefix}reports/Inbound`}
         element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
-        path={`${sitePrefix}/reports/Inbound/:type`}
+        path={`${sitePrefix}reports/Inbound/:type`}
         element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
-        path={`${sitePrefix}/reports/Inbound/:type/:id`}
+        path={`${sitePrefix}reports/Inbound/:type/:id`}
         element={<InboundMessages classes={classes} />}
       />
       <Route

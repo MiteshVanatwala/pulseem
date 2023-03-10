@@ -1,5 +1,5 @@
 import React from "react";
-import { AccountSettings } from '../Account/AccountSettings';
+import { AccountSettings } from "../Account/AccountSettings";
 
 export type CompDtlErrorsType = {
   [key: string]: string;
@@ -16,10 +16,11 @@ export type CompDtlErrorsType = {
 };
 
 export type CompDtlPropTypes = {
+  classes: any;
   setToastMessage: React.Dispatch<React.SetStateAction<null>>;
   ToastMessages: {
     [key: string]: any;
   };
-  Settings: AccountSettings | null,
-  OnUpdate: Function
+  Settings: AccountSettings | null;
+  OnUpdate: Function;
 };

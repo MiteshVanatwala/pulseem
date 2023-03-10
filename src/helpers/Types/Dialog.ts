@@ -34,6 +34,7 @@ export type Slide_PropTypes = {
 };
 
 export type Slider_Dialog_PropTypes = {
+  classes: any;
   slides: Slide_PropTypes[];
   isOpen: boolean;
   VARIABLE_SLIDE_HEIGHTS?: null | String[];
