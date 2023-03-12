@@ -166,6 +166,11 @@ const DirectSMSReportTab = ({
         {windowSize !== 'xs' && <Grid item>
           <TextField
             type='tel'
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             variant='outlined'
             size='small'
             value={ToNumber}
@@ -191,6 +196,11 @@ const DirectSMSReportTab = ({
             variant='outlined'
             size='small'
             value={FromNumber}
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             onChange={(e) => handleSearchInput(e.target.value, 'FromNumber', 'sms')}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('common.FrmNumber')}
@@ -201,6 +211,11 @@ const DirectSMSReportTab = ({
             type='tel'
             variant='outlined'
             size='small'
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             value={ToNumber}
             onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
             className={clsx(classes.textField, classes.minWidth252)}
@@ -211,6 +226,11 @@ const DirectSMSReportTab = ({
           <TextField
             variant='outlined'
             size='small'
+            inputProps={{
+              style: {
+                textAlign: isRTL ? 'right' : 'left'
+              }
+            }}
             value={Text}
             onChange={(e) => handleSearchInput(e.target.value, 'Text', 'sms')}
             className={clsx(classes.textField, classes.minWidth252)}

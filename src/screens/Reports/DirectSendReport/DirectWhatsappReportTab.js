@@ -164,6 +164,11 @@ const DirectWhatsappReportTab = ({
                         type='tel'
                         variant='outlined'
                         size='small'
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         value={ToNumber}
                         onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'whatsapp')}
                         className={clsx(classes.textField, classes.minWidth252)}
@@ -186,6 +191,11 @@ const DirectWhatsappReportTab = ({
                         type='tel'
                         variant='outlined'
                         size='small'
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         value={FromNumber}
                         onChange={(e) => handleSearchInput(e.target.value, 'FromNumber', 'whatsapp')}
                         className={clsx(classes.textField, classes.minWidth252)}
@@ -197,6 +207,11 @@ const DirectWhatsappReportTab = ({
                         type='tel'
                         variant='outlined'
                         size='small'
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         value={ToNumber}
                         onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'whatsapp')}
                         className={clsx(classes.textField, classes.minWidth252)}
@@ -208,6 +223,11 @@ const DirectWhatsappReportTab = ({
                         variant='outlined'
                         size='small'
                         value={Text}
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         onChange={(e) => handleSearchInput(e.target.value, 'Text', 'whatsapp')}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={t('report.ContentOfMessage')}
@@ -239,6 +259,11 @@ const DirectWhatsappReportTab = ({
                     <TextField
                         variant='outlined'
                         size='small'
+                        inputProps={{
+                            style: {
+                                textAlign: isRTL ? 'right' : 'left'
+                            }
+                        }}
                         value={ExternalRef}
                         onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'whatsapp')}
                         className={clsx(classes.textField, classes.minWidth252)}

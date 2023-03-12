@@ -2801,5 +2801,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	passwordDialog: {
 		maxWidth: windowSize !== 'xs' ? '25vw' : null
+	},
+	disabledButPointer: {
+		opacity: ".65",
+		pointerEvents: "unset !important",
+		cursor: "not-allowed !important",
 	}
 });

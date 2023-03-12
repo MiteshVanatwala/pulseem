@@ -143,8 +143,18 @@ export const commonSlice = createSlice({
       })
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-        state.commonSettings = payload?.Data;
-        setCookie('accountSettings', payload?.Data);
+        const data = payload?.Data;
+        state.commonSettings = data;
+        setCookie("accountSettings", {
+          Account: data.Account,
+          AccountFeatures: data?.Account?.AccountFeatures,
+          DefaultLinkChars: data?.DefaultLinkChars,
+          DefaultCellNumber: data?.DefaultCellNumber,
+          DefaultFromMail: data?.DefaultFromMail,
+          DefaultFromName: data?.DefaultFromName,
+          SubAccountSettings: data?.SubAccountSettings,
+          SubAccountName: data?.SubAccountName
+        });
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;

@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { newAuthorizeEmail, verifyEmailCode, getTwoFactorAuthValues } from '../../redux/reducers/commonSlice';
 import { getAuthorizedEmails, getAuthorizeNumbers } from '../../redux/reducers/commonSlice'
 import { sendVerificationCode, verifyCode } from '../../redux/reducers/smsSlice'
-import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { BaseDialog } from './BaseDialog';
 import {
@@ -17,15 +16,17 @@ import {
     deleteAuthorization2FA,
     checkCellphoneAuthorization
 } from '../../redux/reducers/AccountSettingsSlice';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { Loader } from '../Loader/Loader';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', step = 0, value, ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
-    const { username } = useSelector(state => state.user)
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [verificationStep, setVerificationStep] = useState(Option?.Step ?? 0)
+    const [showLoader, setShowLoader] = useState(true);
     const [verificationError, setVerificationError] = useState(null)
     const [selectedVerificationContact, setSelectedVerificationContact] = useState(Option?.Value ?? "")
     const [codeResend, setCodeResend] = useState(false)
@@ -49,6 +50,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             case "email": {
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizedEmails());
+                    setShowLoader(false);
                 }
                 handleVerificationDialog();
                 break;
@@ -56,6 +58,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             case "sms": {
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizeNumbers());
+                    setShowLoader(false);
                 }
                 handleVerificationDialog()
                 break;
@@ -65,6 +68,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizedEmails());
                     await dispatch(getTwoFactorAuthValues(1));
+                    setShowLoader(false);
                 }
                 handleVerificationDialog()
                 break;
@@ -73,6 +77,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 const handleVerificationDialog = async () => {
                     await dispatch(getAuthorizeNumbers());
                     await dispatch(getTwoFactorAuthValues(2));
+                    setShowLoader(false);
                 }
                 handleVerificationDialog()
                 break;
@@ -123,6 +128,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         variant === 'sms' && dispatch(getAuthorizeNumbers());
         variant === 'emailTFA' && dispatch(getTwoFactorAuthValues(1));
         variant === 'smsTFA' && dispatch(getTwoFactorAuthValues(2));
+
+        setAddToFromEmailToSend(false);
+        setAddToFromNumberToSend(false);
     }
 
     const addTwoFactorValue = async (disableNextStep = false, type = 1) => {
@@ -156,6 +164,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     }
 
     const handleVerifyCode = async () => {
+        setShowLoader(true);
         setUserCodeConfirmed(true);
         switch (variant) {
             //#region email
@@ -248,6 +257,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             //#endregion
             default: { break; }
         }
+        setShowLoader(false);
     }
 
     const handleResendInterval = () => {
@@ -276,6 +286,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     }, [codeResend])
 
     const handleSendCode = async (val, isResend = false) => {
+        setShowLoader(true);
         setResendDisalbed(isResend);
         switch (variant) {
             case 'email':
@@ -294,9 +305,10 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             }
             case 'sms':
             case 'smsTFA': {
-                const res = await dispatch(checkCellphoneAuthorization(selectedVerificationContact));
+                const request = { value: selectedVerificationContact, isTwoFa: variant === 'smsTFA' }
+                const res = await dispatch(checkCellphoneAuthorization(request));
                 if (res?.payload?.StatusCode === 404) {
-                    dispatch(sendVerificationCode({ username, number: val })).then((result) => {
+                    dispatch(sendVerificationCode({ number: val })).then((result) => {
                         setCodeResend(isResend);
                         return result?.payload;
                     });
@@ -310,6 +322,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 break;
             }
         }
+        setShowLoader(false);
     }
 
     const removeValue = async () => {
@@ -500,7 +513,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         <Typography variant='body1' className={clsx(classes.mt4, classes.mb15)}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
                         <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.buttonMinWidth, classes.mt6)} onClick={() => {
                             handleClose()
-                        }}>{props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
+                        }}>{props.textButtonOnSuccess && props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
                     </Box>
                 </Box>
             </Box >
@@ -695,7 +708,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         <Typography variant='body1' className={classes.mt4}>{t('sms.verificationSuccessMessage')}</Typography>
                         <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt15, classes.buttonMinWidth)} onClick={() => {
                             handleClose()
-                        }}>{t('common.continue')}</Button>
+                        }}>{props.textButtonOnSuccess && props.textButtonOnSuccess !== '' ? props.textButtonOnSuccess : t('common.continue')}</Button>
                     </Box>
                 </Box>
             </Box >
@@ -1203,6 +1216,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 renderButtons={Popup().renderButtons || null}
                 {...Popup()}>
                 {Popup().content}
+                <Loader isOpen={showLoader} />
             </BaseDialog>
         </>
     )
