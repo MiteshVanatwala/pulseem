@@ -83,6 +83,7 @@ const SearchLine = ({
     const [advanceSearch, setAdvanceSearch] = useState<boolean | undefined>(false);
     const { finishedCampaigns } = useSelector((state: { sms: any }) => state.sms);
     const [autoCompleteKey, setAutoCompleteKey] = useState<number>(0);
+    const [autoCompleteOptions, setAutoCompleteOptions] = useState<any>(null);
 
     const { windowSize, isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
@@ -93,6 +94,13 @@ const SearchLine = ({
             setSearchRequest(DEFAULT_REQUEST);
         }
     }, [isSearching]);
+
+    useEffect(() => {
+        const campaigns = finishedCampaigns.map((item: any, idx: number) => {
+            return { Name: item.Name, CampaignID: item.SMSCampaignID, key: idx }
+        });
+        setAutoCompleteOptions(campaigns.slice(0, 200));
+    }, [finishedCampaigns]);
 
     const handleFromDate = (val: string | null | undefined) => {
         if (val) {
@@ -119,14 +127,13 @@ const SearchLine = ({
                 {showAutoCompleteForm && <Grid item>
                     <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
                         <Autocomplete
+                            disableListWrap
                             key={autoCompleteKey}
                             id='searchByCampaign'
                             getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
                             noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
                             clearOnBlur={false}
-                            options={finishedCampaigns.map((item: any, idx: number) => {
-                                return { Name: item.Name, CampaignID: item.SMSCampaignID, key: idx }
-                            })}
+                            options={autoCompleteOptions}
                             renderOption={renderOptions}
                             onChange={(option: any, selected: any) => {
                                 setSearchRequest({
@@ -135,9 +142,26 @@ const SearchLine = ({
                                 });
                             }}
                             disableClearable={false}
+                            onInputChange={(e: any, searchTerm: any) => {
+                                if (searchTerm === '') {
+                                    setAutoCompleteOptions(finishedCampaigns.slice(0, 200));
+                                }
+                            }}
                             renderInput={(params) => {
                                 return (<TextField
                                     {...params}
+                                    onChange={(e: any) => {
+                                        if (e.target.value !== '') {
+                                            const campaigns = finishedCampaigns.map((item: any, idx: number) => {
+                                                return { Name: item.Name, CampaignID: item.SMSCampaignID, key: idx }
+                                            });
+                                            const filtered = campaigns.filter((cmp: any) => { return cmp.Name.indexOf(e.target.value) > -1 })
+                                            setAutoCompleteOptions(filtered);
+                                        }
+                                        else {
+                                            setAutoCompleteOptions(finishedCampaigns.slice(0, 200));
+                                        }
+                                    }}
                                     InputProps={{
                                         ...params.InputProps,
                                         placeholder: t('common.searchByCampaign'),
