@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import 'moment/locale/he';
 import moment from 'moment';
-import { useEffect, useState } from "react";
+import { HtmlHTMLAttributes, useEffect, useState } from "react";
 import { FormControl, Box, Link, Grid, Button, TextField, makeStyles } from '@material-ui/core'
 import { coreProps } from '../../../model/Core/corePros.types';
 import { useSelector } from 'react-redux';
@@ -81,8 +81,8 @@ const SearchLine = ({
     const [isFromDatePickerOpen, setIsFromDatePickerOpen] = useState<boolean | undefined>(false);
     const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean | undefined>(false);
     const [advanceSearch, setAdvanceSearch] = useState<boolean | undefined>(false);
-    const [selectedCampaign, setSelectedCampaign] = useState<any>({ CampaignID: null, Name: '' });
     const { finishedCampaigns } = useSelector((state: { sms: any }) => state.sms);
+    const [autoCompleteKey, setAutoCompleteKey] = useState<number>(0);
 
     const { windowSize, isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
@@ -109,45 +109,43 @@ const SearchLine = ({
     }
 
     const renderDateFields = () => {
-
+        const renderOptions = (props: HtmlHTMLAttributes<HTMLElement>, option: Partial<any>) => {
+            return (<Box component="li" {...props} key={option.CampaignID}>
+                {option.Name}
+            </Box>)
+        }
         return (
             <>
                 {showAutoCompleteForm && <Grid item>
                     <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
                         <Autocomplete
-                            //value={selectedCampaign?.CampaignID}
-                            inputValue={selectedCampaign?.Name}
+                            key={autoCompleteKey}
                             id='searchByCampaign'
-                            getOptionLabel={(option) => {
-                                return option.Name
-                            }}
+                            getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
                             noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
                             clearOnBlur={false}
                             options={finishedCampaigns.map((item: any, idx: number) => {
                                 return { Name: item.Name, CampaignID: item.SMSCampaignID, key: idx }
                             })}
-                            renderOption={(props, option) => (
-                                <Box component="li" {...props} key={option.CampaignID}>
-                                    {option.Name}
-                                </Box>
-                            )}
+                            renderOption={renderOptions}
                             onChange={(option: any, selected: any) => {
-                                const campaign = [{ CampaignID: null, Name: '' }, ...finishedCampaigns].find((x: any) => { return x.SMSCampaignID === selected?.CampaignID });
-                                setSelectedCampaign(campaign);
                                 setSearchRequest({
                                     ...searchRequest, PageIndex: 1,
                                     CampaignID: selected?.CampaignID
                                 });
                             }}
-                            disableClearable={true}
+                            disableClearable={false}
                             renderInput={(params) => {
                                 return (<TextField
-                                    key={params?.id}
-                                    placeholder={t('common.searchByCampaign')}
+                                    {...params}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        placeholder: t('common.searchByCampaign'),
+
+                                    }}
                                     style={{
                                         width: 240,
                                     }}
-                                    {...params}
                                     variant="outlined" />)
                             }}
                         />
@@ -287,10 +285,11 @@ const SearchLine = ({
     }
     const handleClearSearchForm = (e: any) => {
         e.preventDefault();
+        //setSearchRequest(DEFAULT_REQUEST);
         onFilterRequest(DEFAULT_REQUEST);
         onSetIsSearching(false);
         setIsSearching(false);
-        showAutoCompleteForm && setSelectedCampaign({ CampaignID: null, Name: '' });
+        showAutoCompleteForm && setAutoCompleteKey(autoCompleteKey + 1);
     }
 
     return (
