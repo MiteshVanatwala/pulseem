@@ -1,11 +1,10 @@
 import { useTranslation } from "react-i18next";
-import useCore from "../../../../helpers/hooks/Core";
 import { Box, Grid } from "@material-ui/core";
 import { BsCheck } from "react-icons/bs";
 import { MdClear } from "react-icons/md";
 
-const PasswordHint = ({ Password }: any) => {
-  const { classes, isRTL } = useCore();
+const PasswordHint = ({ classes, Password }: any) => {
+  const { isRTL } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
 
   const elemStyle = { fontSize: 16, marginTop: 5 };
@@ -20,7 +19,7 @@ const PasswordHint = ({ Password }: any) => {
       }}
     >
       <span className={classes.mb1}>
-        <b> {`${t("settings.changePassword.passwordHint.title")}`}</b>
+        <b> {t("settings.changePassword.passwordHint.title")}</b>
       </span>
       <Grid container>
         <Grid item xs={6}>
@@ -32,7 +31,7 @@ const PasswordHint = ({ Password }: any) => {
                 <MdClear style={elemStyle} />
               )}
             </Box>
-            <Box>{`${t("settings.changePassword.passwordHint.length")}`}</Box>
+            <Box>{t("settings.changePassword.passwordHint.length")}</Box>
           </Box>
         </Grid>
         <Grid item xs={6}>
@@ -44,9 +43,7 @@ const PasswordHint = ({ Password }: any) => {
                 <MdClear style={elemStyle} />
               )}
             </Box>
-            <Box>
-              {`${t("settings.changePassword.passwordHint.upperChar")}`}
-            </Box>
+            <Box>{t("settings.changePassword.passwordHint.upperChar")}</Box>
           </Box>
         </Grid>
       </Grid>
@@ -60,9 +57,7 @@ const PasswordHint = ({ Password }: any) => {
                 <MdClear style={elemStyle} />
               )}
             </Box>
-            <Box>
-              {`${t("settings.changePassword.passwordHint.specialChar")}`}
-            </Box>
+            <Box>{t("settings.changePassword.passwordHint.specialChar")}</Box>
           </Box>
         </Grid>
         <Grid item xs={6}>
@@ -74,9 +69,7 @@ const PasswordHint = ({ Password }: any) => {
                 <MdClear style={elemStyle} />
               )}
             </Box>
-            <Box>
-              {`${t("settings.changePassword.passwordHint.lowerChar")}`}
-            </Box>
+            <Box>{t("settings.changePassword.passwordHint.lowerChar")}</Box>
           </Box>
         </Grid>
       </Grid>
@@ -90,7 +83,7 @@ const PasswordHint = ({ Password }: any) => {
                 <MdClear style={elemStyle} />
               )}
             </Box>
-            <Box>{`${t("settings.changePassword.passwordHint.number")}`}</Box>
+            <Box>{t("settings.changePassword.passwordHint.number")}</Box>
           </Box>
         </Grid>
       </Grid>

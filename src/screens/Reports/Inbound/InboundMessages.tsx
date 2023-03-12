@@ -20,7 +20,6 @@ import { Title } from "../../../components/managment/Title";
 import WhatsappInbound from "./Whatsapp/WhatsappInbound";
 import { useSelector } from "react-redux";
 import { StateType } from "../../../Models/StateTypes";
-import useCore from "../../../helpers/hooks/Core";
 
 const useStyles = makeStyles({
   flexItems: {
@@ -33,13 +32,12 @@ const useStyles = makeStyles({
   },
 });
 
-const InboundMessages = () => {
+const InboundMessages = ({ classes }) => {
   const params = useParams();
   const { type } = params;
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>("0");
   const localClasses = useStyles();
-  const { classes } = useCore();
 
   useEffect(() => {
     if (type?.toLowerCase() === "whatsapp") {
@@ -109,10 +107,10 @@ const InboundMessages = () => {
           </Grid>
           <Grid item xs={12}>
             <TabPanel value="0" className={classes.p0}>
-              <SmsReplies />
+              <SmsReplies classes={classes} />
             </TabPanel>
             <TabPanel value="1" className={classes.p0}>
-              <WhatsappInbound />
+              <WhatsappInbound classes={classes} />
             </TabPanel>
           </Grid>
         </TabContext>
@@ -124,10 +122,11 @@ const InboundMessages = () => {
     <DefaultScreen
       subPage={"inboundMessages"}
       currentPage="reports"
+      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
       <Box className={"topSection"}>
-        <Title Text={t("report.ResponsesReports.title")} />
+        <Title Text={t("report.ResponsesReports.title")} classes={classes} />
         {renderTabs()}
       </Box>
     </DefaultScreen>

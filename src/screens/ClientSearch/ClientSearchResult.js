@@ -12,9 +12,8 @@ import {
   TableRow,
   TableCell,
   makeStyles,
-  Divider
 } from "@material-ui/core";
-import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
+import { ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
 import {
   TablePagination,
@@ -22,7 +21,6 @@ import {
 } from "../../components/managment/index";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
 import "moment/locale/he";
 import { Loader } from "../../components/Loader/Loader";
@@ -60,7 +58,6 @@ import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDia
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
 import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
-import { sitePrefix } from "../../config";
 import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import useCore from "../../helpers/hooks/Core";
@@ -89,7 +86,7 @@ const useStyles = makeStyles({
     }
   }
 });
-const ClientSearchResult = () => {
+const ClientSearchResult = ({ classes }) => {
   const {
     accountFeatures,
     language,
@@ -105,7 +102,6 @@ const ClientSearchResult = () => {
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
-  // const { groupData, ToastMessages } = useSelector((state) => state.group);
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
@@ -121,6 +117,7 @@ const ClientSearchResult = () => {
   const [searchData, setSearchData] = useState(null);
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
+  //eslint-disable-next-line
   const [searchParams, setSearchParams] = useSearchParams();
   const [clientToEdit, setClientToEdit] = useState(null);
   const [date, setDate] = useState({
@@ -260,6 +257,7 @@ const ClientSearchResult = () => {
     }
     initSearchData();
     initExtraFields();
+
   }, []);
   useEffect(() => {
     if (extraData && Object.entries(extraData).length > 0) {
@@ -317,6 +315,7 @@ const ClientSearchResult = () => {
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
+
   }, [extraData])
 
 
@@ -327,6 +326,7 @@ const ClientSearchResult = () => {
       }
       getData();
     }
+
   }, [dispatch, searchData, page, rowsPerPage]);
 
   const handleFromDateChange = (value) => {
@@ -367,6 +367,8 @@ const ClientSearchResult = () => {
       handleFilter();
     }
   };
+
+
   const handleDownloadCsv = async (formatType) => {
     setDialog(null);
     setLoader(true);
@@ -613,12 +615,24 @@ const ClientSearchResult = () => {
         web: ({ Revenue = 0, ...rest }) => (<Typography className={clsx(classes.bold, classes.f16)}>{Revenue} {t("common.NIS")}</Typography>)
       },
       filterComponents: [Min, Max]
-    }, '17': {
+    },
+    '17': {
       title: t("common.campaignRevenue"),
       sortKey: 'Number',
       component: {
-        mobile: ({ Revenue = 0, ...rest }) => (<><Typography className={classes.bold}>{t("common.campaignRevenue")}</Typography><Typography>{Revenue} {t("common.NIS")}</Typography></>),
-        web: ({ Revenue = 0, ...rest }) => (<Typography className={clsx(classes.bold, classes.f16)}>{Revenue} {t("common.NIS")}</Typography>)
+        mobile: ({ Revenue = 0, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.campaignRevenue")}
+          </Typography>
+          <Typography>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </>),
+        web: ({ Revenue = 0, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        )
       },
       // filterComponents: [Min, Max]
     }
@@ -1158,12 +1172,12 @@ const ClientSearchResult = () => {
               data={revenueSummary} />
             }
           </Grid>},
-        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
-          <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
-            {revenueSummary && <SummaryRow
-              data={revenueSummary} />
-            }
-          </Grid>}
+        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+          {revenueSummary && <SummaryRow
+            data={revenueSummary}
+            classes={classes} />
+          }
+        </Grid>}
       </Grid>
     );
   };
@@ -1211,7 +1225,7 @@ const ClientSearchResult = () => {
   };
   const renderWebNameCell = (row, fullwidth) => {
     let date = null;
-    const { FirstName, LastName, CreationDate, ClientID } = row;
+    const { FirstName, LastName } = row;
     let text = t("common.UpdatedOn");
     date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
     return (
@@ -1253,7 +1267,6 @@ const ClientSearchResult = () => {
       FirstName,
       LastName,
       UpdateDate,
-      LogSms_ErrorType,
       SentDate,
       CreationDate,
       LastSendDate,

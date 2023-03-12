@@ -41,18 +41,16 @@ import {
   HandleExportData,
 } from "../../../../helpers/Export/ExportHelper";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-import useCore from "../../../../helpers/hooks/Core";
 import { TOAST_TYPE } from "../../../../helpers/Types/common";
 import { StateType } from "../../../../Models/StateTypes";
 import {
   SmsRepDefaultFilterType,
   SmsRepRowType,
-} from "../../../../Models/Sms/smsReplies";
+} from "../../../../Models/Sms/SmsReplies";
 
-const SmsReplies = () => {
+const SmsReplies = ({ classes }: any) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { classes } = useCore();
   const [page, setPage] = useState<number>(1);
   const rowsOptions: number[] = [6, 10, 20, 50];
   const dateFormat = "YYYY-MM-DD HH:mm:ss:FFF";
@@ -368,6 +366,7 @@ const SmsReplies = () => {
                 <ManagmentIcon
                   //   disableHover={true}
                   key="edit"
+                  classes={classes}
                   icon={EditIcon}
                   iconClass={clsx(classes.smallIcon)}
                   rootClass={classes.paddingIcon}
@@ -433,6 +432,7 @@ const SmsReplies = () => {
   const renderTablePagination = () => {
     return (
       <TablePagination
+        classes={classes}
         rows={smsReplies?.Message}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handlePageChange}
@@ -457,6 +457,7 @@ const SmsReplies = () => {
 
           return (
             <AddRecipientPopup
+              classes={classes}
               isOpen={
                 selectedClients.length === 1 &&
                 dialog === DialogType.EDIT_RECIPIENT
@@ -465,6 +466,7 @@ const SmsReplies = () => {
                 setDialog(null);
                 setSelectedClients([]);
               }}
+              windowSize={windowSize}
               ToastMessages={ToastMessages}
               selectedGroups={mappedGroups}
               handleResponses={(response, actions) => {
@@ -642,6 +644,7 @@ const SmsReplies = () => {
     <Box>
       {renderHeader()}
       <SearchLine
+        classes={classes}
         onSetPage={(val: number) => setPage(val)}
         onFilterRequest={(val: SmsRepDefaultFilterType) => setRequest(val)}
         onSetIsSearching={(val: boolean) => setIsSearching(val)}
@@ -650,6 +653,7 @@ const SmsReplies = () => {
       {renderTablePagination()}
       {showDialog()}
       <ConfirmRadioDialog
+        classes={classes}
         isOpen={dialog === "exportFormat"}
         title={t("campaigns.exportFile")}
         radioTitle={t("common.SelectFormat")}

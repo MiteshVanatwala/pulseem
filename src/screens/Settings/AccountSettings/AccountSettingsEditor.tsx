@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import FORM_COMPANY_DETAILS from "./Form_CompanyDetails";
 import FORM_ACCOUNT_DETAILS from "./Form_AccountDetails";
 import Toast from "../../../components/Toast/Toast.component";
-import useCore from "../../../helpers/hooks/Core";
 import {
   getAccountSettings,
   updateDetails,
@@ -25,10 +24,9 @@ import {
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
 
-const AccountSettingsEditor = () => {
+const AccountSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector(
     (state: any) => state?.accountSettings
@@ -181,7 +179,7 @@ const AccountSettingsEditor = () => {
       {toastMessage && renderToast()}
       <Box className={clsx(classes.settingsContainer)}>
         <Box className={clsx("head", classes.flexSpaceBetween)}>
-          <Title Text={t("settings.accountSettings.title")} />
+          <Title Text={t("settings.accountSettings.title")} classes={classes} />
           <Box style={{ marginInlineStart: "auto" }}>
             <Button
               className={clsx(
@@ -221,6 +219,7 @@ const AccountSettingsEditor = () => {
         </Box>
         <Box className={"containerBody"}>
           <FORM_COMPANY_DETAILS
+            classes={classes}
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
             Settings={{ ...(settingRequest as AccountSettings) }}
@@ -229,6 +228,7 @@ const AccountSettingsEditor = () => {
             }
           />
           <FORM_ACCOUNT_DETAILS
+            classes={classes}
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
             Settings={{ ...(settingRequest as AccountSettings) }}
@@ -242,8 +242,8 @@ const AccountSettingsEditor = () => {
         <VerificationDialog
           variant="email"
           isOpen={emailVerificationPopup}
-          // value={verificationStep > 0 && settingRequest?.DefaultFromMail}
-          // step={verificationStep}
+          value={verificationStep > 0 && settingRequest?.DefaultFromMail}
+          step={verificationStep}
           onClose={() => {
             setEmailVerificationPopup(false);
             setVerificationStep(0);
@@ -253,8 +253,8 @@ const AccountSettingsEditor = () => {
       {smsVerificationPopup && (
         <VerificationDialog
           variant="sms"
-          // value={verificationStep > 0 && settingRequest?.DefaultCellNumber}
-          // step={verificationStep}
+          value={verificationStep > 0 && settingRequest?.DefaultCellNumber}
+          step={verificationStep}
           isOpen={smsVerificationPopup}
           onClose={() => {
             setSmsVerificationPopup(false);

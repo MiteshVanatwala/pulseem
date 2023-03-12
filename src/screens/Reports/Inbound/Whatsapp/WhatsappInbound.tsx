@@ -31,16 +31,14 @@ import {
   ReplaceNull,
   HandleExportData,
 } from "../../../../helpers/Export/ExportHelper";
-import useCore from "../../../../helpers/hooks/Core";
 import { StateType } from "../../../../Models/StateTypes";
 import {
   wpInbdDefaultFilterType,
   wpInbdRowType,
 } from "../../../../Models/Whatsapp/whatsappInbound";
 
-const WhatsappInbound = () => {
+const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
-  const { classes } = useCore();
   const { t } = useTranslation();
   const [page, setPage] = useState<number>(1);
   const rowsOptions = [6, 10, 20, 50];
@@ -362,6 +360,7 @@ const WhatsappInbound = () => {
   const renderTablePagination = () => {
     return (
       <TablePagination
+        classes={classes}
         rows={inboundWhatsappReport?.Message}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handlePageChange}
@@ -377,6 +376,7 @@ const WhatsappInbound = () => {
         <Box>
           {renderHeader()}
           <SearchLine
+            classes={classes}
             onSetPage={(val) => setPage(val)}
             onFilterRequest={(val) => setRequest(val)}
             onSetIsSearching={(val) => setIsSearching(val)}
@@ -384,6 +384,7 @@ const WhatsappInbound = () => {
           {renderTable()}
           {renderTablePagination()}
           <ConfirmRadioDialog
+            classes={classes}
             isOpen={dialog === "exportFormat"}
             title={t("campaigns.exportFile")}
             radioTitle={t("common.SelectFormat")}

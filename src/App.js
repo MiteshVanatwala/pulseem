@@ -381,17 +381,17 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}reports/Inbound`}
-        element={<InboundMessages />}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}reports/Inbound/:type`}
-        element={<InboundMessages />}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}reports/Inbound/:type/:id`}
-        element={<InboundMessages />}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
         path="*" element={<PageNotFound />}

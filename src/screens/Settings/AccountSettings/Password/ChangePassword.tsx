@@ -20,6 +20,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Zoom from "@material-ui/core/Zoom";
 import { ValidPassword } from "./Types";
 import PasswordHint from "./PasswordHint";
+import { StateType } from "../../../../Models/StateTypes";
 
 const useStyles = makeStyles({
   dialogContainer: {
@@ -66,10 +67,11 @@ const useStyles = makeStyles({
 });
 
 export interface PasswordParams {
+  classes: any;
   IsOpen: boolean;
   OnClose: Function;
   SetToast: Function;
-  Text?: string | null | undefined;
+  Text: string | null | undefined;
 }
 
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -85,18 +87,19 @@ const useStylesBootstrap = makeStyles((theme) => ({
 }));
 
 function BootstrapTooltip(props: any) {
-  const bootStrappedClasses = useStylesBootstrap();
+  const classes = useStylesBootstrap();
 
-  return <Tooltip arrow classes={bootStrappedClasses} {...props} />;
+  return <Tooltip arrow classes={classes} {...props} />;
 }
 
 const ChangePassword = ({
+  classes,
   IsOpen = false,
   OnClose,
   SetToast,
   Text,
 }: PasswordParams) => {
-  const { classes, isRTL } = useCore();
+  const { isRTL } = useSelector((state: StateType) => state.core);
   const { t } = useTranslation();
   const localClasses = useStyles();
   const [loginPass, setLoginPass] = useState<LoginPassword>({
@@ -233,7 +236,7 @@ const ChangePassword = ({
         >
           <Grid item xs={12}>
             <Typography>
-              {Text ? Text : `${t("settings.changePassword.subTitle")}`}
+              {Text ? Text : t("settings.changePassword.subTitle")}
             </Typography>
           </Grid>
           {/* Old Password */}
@@ -248,7 +251,7 @@ const ChangePassword = ({
           >
             <Grid item xs={6}>
               <Typography>
-                {`${t("settings.changePassword.oldPassword")}`}:
+                {t("settings.changePassword.oldPassword")}:
               </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -298,7 +301,7 @@ const ChangePassword = ({
             <Grid item xs={6}>
               <Box className={classes.flex1}>
                 <Typography>
-                  {`${t("settings.changePassword.newPassword")}`}:
+                  {t("settings.changePassword.newPassword")}:
                 </Typography>
               </Box>
             </Grid>
@@ -307,7 +310,12 @@ const ChangePassword = ({
                 <BootstrapTooltip
                   TransitionComponent={Zoom}
                   interactive={true}
-                  title={<PasswordHint Password={passwordValidation} />}
+                  title={
+                    <PasswordHint
+                      Password={passwordValidation}
+                      classes={classes}
+                    />
+                  }
                   arrow
                   open={showPasswordTip}
                 >
@@ -362,7 +370,7 @@ const ChangePassword = ({
             <Grid item xs={6}>
               <Box className={classes.flex1}>
                 <Typography>
-                  {`${t("settings.changePassword.confirmPassword")}`}:
+                  {t("settings.changePassword.confirmPassword")}:
                 </Typography>
               </Box>
             </Grid>
@@ -406,7 +414,7 @@ const ChangePassword = ({
             <Grid container>
               <Grid item xs={12}>
                 <Typography className={classes.red}>
-                  {`${t("settings.changePassword.passwordHint.title")}`}:
+                  {t("settings.changePassword.passwordHint.title")}:
                 </Typography>
                 <Typography className={classes.red}>
                   {errors.map((err, idx) => {

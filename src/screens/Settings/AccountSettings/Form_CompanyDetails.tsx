@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormControlLabel,
   Grid,
   MenuItem,
   Select,
@@ -15,9 +14,7 @@ import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import {
   MdArrowBackIos,
-  MdArrowForwardIos,
-  MdMobileFriendly,
-  MdOutlineMarkEmailRead,
+  MdArrowForwardIos
 } from "react-icons/md";
 import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
 import { Title } from "../../../components/managment/Title";
@@ -28,7 +25,6 @@ import {
 } from "../../../helpers/Utils/Validations";
 import { CompDtlPropTypes } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from "../../../Models/Account/AccountSettings";
 import {
   resetTwoFA,
@@ -38,13 +34,13 @@ import { useSearchParams } from "react-router-dom";
 import ChangePassword from "./Password/ChangePassword";
 
 const FORM_COMPANY_DETAILS = ({
+  classes,
   setToastMessage,
   ToastMessages,
   Settings,
   OnUpdate,
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
@@ -253,9 +249,8 @@ const FORM_COMPANY_DETAILS = ({
           Text={t("settings.accountSettings.fixedComDetails.title")}
           isIcon={false}
           ContainerStyle={{
-            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${
-              isRTL ? 0 : "14.69px"
-            }`,
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+              }`,
           }}
         />
         <Box className={"formContainer"}>
@@ -432,9 +427,7 @@ const FORM_COMPANY_DETAILS = ({
               className="subHeading"
               style={{ fontWeight: "bold", color: "#000", marginBottom: 15 }}
             >
-              {`${t(
-                "settings.accountSettings.fixedComDetails.securitySettings"
-              )}`}
+              {t("settings.accountSettings.fixedComDetails.securitySettings")}
             </Typography>
 
             <Grid container className={"subform"}>
@@ -547,6 +540,7 @@ const FORM_COMPANY_DETAILS = ({
       {RenderDialog()}
       {showChangePassword && (
         <ChangePassword
+          classes={classes}
           SetToast={setToastMessage}
           IsOpen={showChangePassword}
           OnClose={() => setShowChangePassword(false)}

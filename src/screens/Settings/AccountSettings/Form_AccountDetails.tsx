@@ -21,13 +21,13 @@ import { IsNumberField } from "../../../helpers/Utils/Validations";
 import { AccountSettings } from "../../../Models/Account/AccountSettings";
 
 const FORM_ACCOUNT_DETAILS = ({
+  classes,
   setToastMessage,
   ToastMessages,
   Settings,
   OnUpdate,
 }: AccDtlPropTypes) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const dispatch = useDispatch();
 

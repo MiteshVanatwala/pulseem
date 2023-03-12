@@ -85,6 +85,7 @@ const DashboardScreen = () => {
       </Grid>
       {toastMessage && renderToast()}
       {showChangePassword && <ChangePassword
+        classes={classes}
         SetToast={setToastMessage}
         IsOpen={showChangePassword}
         OnClose={() => setShowChangePassword(false)}
