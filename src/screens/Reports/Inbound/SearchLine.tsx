@@ -131,7 +131,7 @@ const SearchLine = ({
                             key={autoCompleteKey}
                             id='searchByCampaign'
                             getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
-                            noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
+                            noOptionsText={translator("campaigns.newsLetterEditor.errors.CampaignNotFound")}
                             clearOnBlur={false}
                             options={autoCompleteOptions}
                             renderOption={renderOptions}
@@ -164,7 +164,7 @@ const SearchLine = ({
                                     }}
                                     InputProps={{
                                         ...params.InputProps,
-                                        placeholder: t('common.searchByCampaign'),
+                                        placeholder: translator('common.searchByCampaign'),
 
                                     }}
                                     style={{
