@@ -285,7 +285,6 @@ const SearchLine = ({
     }
     const handleClearSearchForm = (e: any) => {
         e.preventDefault();
-        //setSearchRequest(DEFAULT_REQUEST);
         onFilterRequest(DEFAULT_REQUEST);
         onSetIsSearching(false);
         setIsSearching(false);

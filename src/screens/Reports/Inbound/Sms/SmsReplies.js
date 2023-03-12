@@ -71,11 +71,6 @@ const SmsReplies = ({ classes, ...other }) => {
         await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
         setShowLoader(false);
     }
-    // const getRepliesById = async () => {
-    //     setShowLoader(true);
-    //     await dispatch(getSmsRepliesById(id));
-    //     setShowLoader(false);
-    // }
 
     useEffect(() => {
         const initExtraFields = async () => {
@@ -86,12 +81,6 @@ const SmsReplies = ({ classes, ...other }) => {
     }, [dispatch]);
 
     useEffect(() => {
-        // if (id && id > 0) {
-        //     getRepliesById(id);
-        // }
-        // else {
-        //     getReplies();
-        // }
         if (!finishedCampaigns || finishedCampaigns?.length === 0) {
             dispatch(getFinishedCampaigns());
         }
