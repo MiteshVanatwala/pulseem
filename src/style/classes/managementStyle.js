@@ -1842,6 +1842,18 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   smsReplies: {
     '& .MuiOutlinedInput-root': {
       padding: '4px !important'
+    },
+    '& .MuiInputBase-root': {
+      '& .MuiInputBase-input': {
+        maxWidth: '70% !important',
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }
+    },
+    '& .MuiAutocomplete-endAdornment': {
+      right: isRTL ? 'auto !important' : '0 !important',
+      left: isRTL ? '0 !important' : 'auto !important'
     }
   }
 });

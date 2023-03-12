@@ -2,13 +2,14 @@ import clsx from 'clsx';
 import 'moment/locale/he';
 import moment from 'moment';
 import { useEffect, useState } from "react";
-import { Link, Grid, Button, TextField, makeStyles } from '@material-ui/core'
+import { FormControl, Box, Link, Grid, Button, TextField, makeStyles } from '@material-ui/core'
 import { coreProps } from '../../../model/Core/corePros.types';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 import { CalendarIcon, SearchIcon } from '../../../assets/images/managment/index'
 import ClearIcon from '@material-ui/icons/Clear';
+import { Autocomplete } from '@mui/material';
 
 
 const useStyles = makeStyles({
@@ -31,6 +32,7 @@ type RequestObject = {
     TextMessage: String
     ToDate: string | null,
     FromDate: string | null,
+    CampaignID: string | null
 }
 
 interface SearchObject {
@@ -39,7 +41,7 @@ interface SearchObject {
     onFilterRequest: Function,
     onSetPage: Function,
     onSetIsSearching: Function,
-    AdditionalElements: any | null
+    showAutoCompleteForm: boolean
 }
 
 const SearchLine = ({
@@ -48,7 +50,7 @@ const SearchLine = ({
     onFilterRequest,
     onSetPage,
     onSetIsSearching,
-    AdditionalElements
+    showAutoCompleteForm
 }: SearchObject) => {
     const { t } = useTranslation();
     const localClasses = useStyles();
@@ -69,7 +71,8 @@ const SearchLine = ({
         Text: '',
         PageIndex: currentPage,
         PageSize: 6,
-        IsExport: false
+        IsExport: false,
+        CampaignID: null
     };
 
     const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -78,11 +81,12 @@ const SearchLine = ({
     const [isFromDatePickerOpen, setIsFromDatePickerOpen] = useState<boolean | undefined>(false);
     const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean | undefined>(false);
     const [advanceSearch, setAdvanceSearch] = useState<boolean | undefined>(false);
+    const [selectedCampaign, setSelectedCampaign] = useState<any>({ CampaignID: null, Name: '' });
+    const { finishedCampaigns } = useSelector((state: { sms: any }) => state.sms);
 
     const { windowSize, isRTL } = useSelector(
         (state: { core: coreProps }) => state.core
     );
-
 
     useEffect(() => {
         if (!isSearching) {
@@ -103,10 +107,52 @@ const SearchLine = ({
             setSearchRequest({ ...searchRequest, ToDate: dateVal });
         }
     }
+
     const renderDateFields = () => {
 
         return (
             <>
+                {showAutoCompleteForm && <Grid item>
+                    <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
+                        <Autocomplete
+                            //value={selectedCampaign?.CampaignID}
+                            inputValue={selectedCampaign?.Name}
+                            id='searchByCampaign'
+                            getOptionLabel={(option) => {
+                                return option.Name
+                            }}
+                            noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
+                            clearOnBlur={false}
+                            options={finishedCampaigns.map((item: any, idx: number) => {
+                                return { Name: item.Name, CampaignID: item.SMSCampaignID, key: idx }
+                            })}
+                            renderOption={(props, option) => (
+                                <Box component="li" {...props} key={option.CampaignID}>
+                                    {option.Name}
+                                </Box>
+                            )}
+                            onChange={(option: any, selected: any) => {
+                                const campaign = [{ CampaignID: null, Name: '' }, ...finishedCampaigns].find((x: any) => { return x.SMSCampaignID === selected?.CampaignID });
+                                setSelectedCampaign(campaign);
+                                setSearchRequest({
+                                    ...searchRequest, PageIndex: 1,
+                                    CampaignID: selected?.CampaignID
+                                });
+                            }}
+                            disableClearable={true}
+                            renderInput={(params) => {
+                                return (<TextField
+                                    key={params?.id}
+                                    placeholder={t('common.searchByCampaign')}
+                                    style={{
+                                        width: 240,
+                                    }}
+                                    {...params}
+                                    variant="outlined" />)
+                            }}
+                        />
+                    </FormControl>
+                </Grid>}
                 {dateFields()}
                 {windowSize !== 'xs' && <Grid item>
                     <TextField
@@ -244,11 +290,11 @@ const SearchLine = ({
         onFilterRequest(DEFAULT_REQUEST);
         onSetIsSearching(false);
         setIsSearching(false);
+        showAutoCompleteForm && setSelectedCampaign({ CampaignID: null, Name: '' });
     }
 
     return (
         <Grid container spacing={2} className={clsx(classes.lineTopMarging, classes.mb15)}>
-            {AdditionalElements && <Grid item>{AdditionalElements}</Grid>}
             {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
             <Grid item>
                 <Button

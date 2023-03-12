@@ -17,10 +17,9 @@ import { getSmsReplies, getAccountExtraData, getFinishedCampaigns } from '../../
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
 import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
-import { FormControl, OutlinedInput, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box, Select, TextField, Paper } from '@material-ui/core'
+import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
-import { Autocomplete } from '@mui/material';
 
 
 const SmsReplies = ({ classes, ...other }) => {
@@ -477,40 +476,7 @@ const SmsReplies = ({ classes, ...other }) => {
                 onSetPage={(val) => setPage(val)}
                 onFilterRequest={(val) => setRequest({ ...request, ...val })}
                 onSetIsSearching={(val) => setIsSearching(val)}
-                AdditionalElements={
-                    <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
-                        <Autocomplete
-                            value={finishedCampaigns.find((x) => { return x.SMSCampaignID === request.CampaignID })?.Name}
-                            id='searchByCampaign'
-                            getOptionLabel={(option) => option.name}
-                            noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
-                            options={finishedCampaigns.map((item, idx) => {
-                                return { name: item.Name, id: item.SMSCampaignID }
-                            })}
-
-
-                            renderOption={(props, option) => (
-                                <Box component="li" {...props} key={option.id}>
-                                    {option.name}
-                                </Box>
-                            )}
-                            onChange={(option, selected) => {
-                                setRequest({
-                                    ...request,
-                                    PageIndex: 1,
-                                    CampaignID: selected?.id ?? null
-                                })
-                            }}
-                            renderInput={(params) => <TextField
-                                size="small"
-                                label={t('common.searchByCampaign')}
-                                style={{
-                                    width: 240,
-                                }}
-                                {...params} variant="outlined" />}
-                        />
-                    </FormControl>
-                }
+                showAutoCompleteForm={true}
             />
             {renderTable()}
             {renderTablePagination()}
