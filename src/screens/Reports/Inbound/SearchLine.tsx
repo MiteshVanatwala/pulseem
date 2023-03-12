@@ -313,6 +313,7 @@ const SearchLine = ({
         onSetIsSearching(false);
         setIsSearching(false);
         showAutoCompleteForm && setAutoCompleteKey(autoCompleteKey + 1);
+        showAutoCompleteForm && setAutoCompleteOptions(finishedCampaigns.slice(0, 200));
     }
 
     return (
