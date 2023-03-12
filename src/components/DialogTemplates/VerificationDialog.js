@@ -310,7 +310,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
             }
             case 'sms':
             case 'smsTFA': {
-                const res = await dispatch(checkCellphoneAuthorization(selectedVerificationContact));
+                const request = { value: selectedVerificationContact, isTwoFa: variant === 'smsTFA' }
+                const res = await dispatch(checkCellphoneAuthorization(request));
                 if (res?.payload?.StatusCode === 404) {
                     dispatch(sendVerificationCode({ number: val })).then((result) => {
                         setCodeResend(isResend);
