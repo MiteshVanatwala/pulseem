@@ -851,11 +851,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   formControl: {
     "& .MuiInputLabel-formControl": {
       top: -7,
-    },
-    "& .MuiSvgIcon-root.MuiSelect-icon.MuiSelect-iconOutlined": {
-      left: "auto !important",
-      right: "10px !important"
-    },
+    }
   },
   formControlSelect: {
     "& .MuiSelect-outlined.MuiSelect-outlined": {
@@ -1838,5 +1834,22 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   smallIcon: {
     width: 14
+  },
+  smsReplies: {
+    '& .MuiOutlinedInput-root': {
+      padding: '4px !important'
+    },
+    '& .MuiInputBase-root': {
+      '& .MuiInputBase-input': {
+        maxWidth: '70% !important',
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }
+    },
+    '& .MuiAutocomplete-endAdornment': {
+      right: isRTL ? 'auto !important' : '0 !important',
+      left: isRTL ? '0 !important' : 'auto !important'
+    }
   }
 });

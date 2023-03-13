@@ -602,5 +602,6 @@
   "commingSoon": "בקרוב!",
   "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים",
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
-  "remove": "הסר"
+  "remove": "הסר",
+  "searchByCampaign": "חפש לפי קמפיין"
 }
