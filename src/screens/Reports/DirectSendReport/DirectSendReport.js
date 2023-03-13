@@ -71,7 +71,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
     },
     current: {
-      from: priorDate,
+      // from: priorDate,
+      from: moment().subtract(24, "hours").format("YYYY-MM-DD HH:mm"),
       to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
     }
   }
