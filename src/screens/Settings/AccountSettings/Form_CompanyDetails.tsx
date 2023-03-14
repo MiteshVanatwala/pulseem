@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormControlLabel,
   Grid,
   OutlinedInput,
   Select,
@@ -36,7 +35,6 @@ import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
 import { getCookie } from "../../../helpers/cookies";
-import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 
 
 const FORM_COMPANY_DETAILS = ({
@@ -415,35 +413,6 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            {accFeatures.indexOf(45) === -1 && <Grid item xs={12} sm={3} md={2} className={clsx(classes.mt3)}>
-              <FormControlLabel
-                control={
-                  <PulseemSwitch
-                    switchType="ios"
-                    classes={classes}
-                    checked={companyDetails?.TwoFactorAuthEnabled === true}
-                    //@ts-ignore
-                    onColor="#0371ad"
-                    handleDiameter={20}
-                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                    height={15}
-                    width={40}
-                    className={clsx({ [classes.rtlSwitch]: isRTL })}
-                    id="switchIDS425"
-                    onChange={(e: any) => handleChange(e, "TwoFactorAuth")}
-                  />
-                }
-                label={
-                  <>
-                    {t(
-                      "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
-                    )}
-                  </>
-                }
-              />
-            </Grid>
-            }
             {accFeatures.indexOf(45) === -1 && <Grid
               item
               xs={12}
