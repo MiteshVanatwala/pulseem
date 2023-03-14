@@ -72,6 +72,7 @@ import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
 	checkSiteTrackingLink,
+	formatUpdatedDynamicVariable,
 	getDynamicFields,
 	getTemplatePreviewData,
 } from '../Common';
@@ -582,7 +583,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		const reqData: saveCampaignDataProps = {
 			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
-			Variables: updatedDynamicVariable,
+			Variables: formatUpdatedDynamicVariable(
+				updatedDynamicVariable,
+				personalFields,
+				landingPages
+			),
 			name: campaignName,
 			fromnumber: from,
 			IsTestCampaign: isTestSend,

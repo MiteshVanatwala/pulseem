@@ -2,7 +2,10 @@ import { Grid } from '@material-ui/core';
 import moment from 'moment';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
-import { getTemplatePreviewData } from '../../Common';
+import {
+	getTemplatePreviewData,
+	getTemplateTextWithVariable,
+} from '../../Common';
 import { fileTypes } from '../../Constant';
 import {
 	callToActionFieldProps,
@@ -35,6 +38,7 @@ const ChatTemplate = ({
 	template,
 	msgIndex,
 	message,
+	variables,
 }: ChatTemplateProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -211,7 +215,12 @@ const ChatTemplate = ({
 														</a>
 													</Grid>
 												)}
-											<pre>{templateData?.templateText}</pre>
+											<pre>
+												{getTemplateTextWithVariable(
+													templateData?.templateText,
+													variables
+												)}
+											</pre>
 										</div>
 									)}
 									{buttonType === 'callToAction' &&

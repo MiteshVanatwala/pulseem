@@ -200,17 +200,12 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const renderNameCell = (row: templateListItemsProps) => {
 		let date = null;
 		let text = '';
-		if (!row.CreatedDate) {
-			date = moment(row.StatusUpdatedDate, dateFormat);
-			text = translator('common.UpdatedOn');
-		} else {
+		if (!row.UpdatedOn) {
 			date = moment(row.CreatedDate, dateFormat);
-			const dateMillis = date.valueOf();
-			const currentDateMillis = moment().valueOf();
-			text =
-				dateMillis > currentDateMillis
-					? translator('common.ScheduledFor')
-					: translator('common.SentOn');
+			text = translator('common.CreatedOn');
+		} else {
+			date = moment(row.UpdatedOn, dateFormat);
+			text = translator('common.UpdatedOn');
 		}
 
 		return (

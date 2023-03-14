@@ -208,9 +208,17 @@ const DynamicModalFields = ({
 							placeholder={translator('whatsappCampaign.navigationPlaceholder')}
 							className={classes.whatsappCampaignDynamicFieldNavigationText}
 							onChange={(e: BaseSyntheticEvent) =>
-								setNavAddress(e.target.value)
+								setNavAddress(
+									`${
+										navApp === 'Waze'
+											? 'https://waze.to/?q='
+											: 'http://maps.google.com/?q='
+									}${e.target.value}`
+								)
 							}
-							value={navAddress}
+							value={
+								navAddress?.split('?q=')[navAddress?.split('?q=')?.length - 1]
+							}
 						/>
 					</Grid>
 				</Grid>

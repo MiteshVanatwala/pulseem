@@ -297,6 +297,7 @@ export type saveTemplateItemsProps = {
 	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
+	UpdatedOn: string;
 };
 
 export type saveTemplateDataProps = {
@@ -364,6 +365,7 @@ export type templateListItemsProps = {
 	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
+	UpdatedOn: string;
 };
 
 export type templateListDataProps = {

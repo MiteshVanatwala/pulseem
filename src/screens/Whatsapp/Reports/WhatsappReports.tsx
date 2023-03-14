@@ -272,7 +272,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					return updatedRow;
 				}
 			);
-			exportAsXLSX(exportData, header, 'pulseemExport.XLSX', 'Sheet1');
+			exportAsXLSX(
+				exportData,
+				header,
+				`${translator('whatsappReport.report')}.XLSX`,
+				`${translator('whatsappReport.report')}.XLSX`
+			);
 		}
 	};
 
