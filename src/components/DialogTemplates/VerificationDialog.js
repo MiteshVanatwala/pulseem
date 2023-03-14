@@ -31,7 +31,6 @@ const VerificationDialog = ({
     ...props }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
-    const { username } = useSelector(state => state.user)
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState(true);
@@ -314,7 +313,8 @@ const VerificationDialog = ({
             }
             case 'sms':
             case 'smsTFA': {
-                const res = await dispatch(checkCellphoneAuthorization(selectedVerificationContact));
+                const request = { value: selectedVerificationContact, isTwoFa: variant === 'smsTFA' }
+                const res = await dispatch(checkCellphoneAuthorization(request));
                 if (res?.payload?.StatusCode === 404) {
                     dispatch(sendVerificationCode({ number: val })).then((result) => {
                         setCodeResend(isResend);

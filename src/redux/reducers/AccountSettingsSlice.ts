@@ -100,16 +100,19 @@ export const deleteAuthorization2FA = createAsyncThunk(
         }
     })
 export const checkCellphoneAuthorization = createAsyncThunk(
-    'CheckCellphoneAuthorization', async (value: string, thunkAPI) => {
+    'CheckCellphoneAuthorization', async (cellphoneAuth: CellphoneAuthorization, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`authorization/CheckCellphoneAuthorization/${value}`);
+            const response = await PulseemReactInstance.get(`authorization/CheckCellphoneAuthorization/${cellphoneAuth.value}/${cellphoneAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
 
-
+interface CellphoneAuthorization {
+    value: string,
+    isTwoFa: boolean
+}
 
 const AccountSettingsSlice = createSlice({
     name: 'AccountSettings',

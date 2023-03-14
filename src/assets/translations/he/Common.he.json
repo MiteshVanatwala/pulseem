@@ -606,5 +606,6 @@
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
   "remove": "הסר",
   "backToHome": "לדף הבית",
-  "backToCampaigns": "לניהול קמפיינים"
+  "backToCampaigns": "לניהול קמפיינים",
+  "searchByCampaign": "חפש לפי קמפיין"
 }

@@ -12,7 +12,7 @@ import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
 import { TablePagination, ManagmentIcon } from '../../../../components/managment/index';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
-import { getSmsReplies, getSmsRepliesById, getAccountExtraData } from '../../../../redux/reducers/smsSlice';
+import { getSmsReplies, getAccountExtraData, getFinishedCampaigns } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
 import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
@@ -36,7 +36,7 @@ const SmsReplies = ({ classes, ...other }) => {
     const [selectedClients, setSelectedClients] = useState([]);
     // const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { ToastMessages } = useSelector(state => state.client);
-    const { smsReplies, extraData } = useSelector(state => state.sms);
+    const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
     const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -71,11 +71,6 @@ const SmsReplies = ({ classes, ...other }) => {
         await dispatch(getSmsReplies({ ...request, PageSize: rowsPerPage, PageIndex: page }));
         setShowLoader(false);
     }
-    const getRepliesById = async () => {
-        setShowLoader(true);
-        await dispatch(getSmsRepliesById(id));
-        setShowLoader(false);
-    }
 
     useEffect(() => {
         const initExtraFields = async () => {
@@ -86,12 +81,10 @@ const SmsReplies = ({ classes, ...other }) => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (id && id > 0) {
-            getRepliesById(id);
+        if (!finishedCampaigns || finishedCampaigns?.length === 0) {
+            dispatch(getFinishedCampaigns());
         }
-        else {
-            getReplies();
-        }
+        getReplies();
     }, [request, page, rowsPerPage])
 
     useEffect(() => {
@@ -380,7 +373,7 @@ const SmsReplies = ({ classes, ...other }) => {
         'S_201': {
             code: 201,
             message: '',
-            Func: () => id ? getRepliesById() : getReplies()
+            Func: () => getReplies()
         },
         'S_400': {
             code: 400,
@@ -486,8 +479,9 @@ const SmsReplies = ({ classes, ...other }) => {
             <SearchLine
                 classes={classes}
                 onSetPage={(val) => setPage(val)}
-                onFilterRequest={(val) => setRequest(val)}
+                onFilterRequest={(val) => setRequest({ ...request, ...val })}
                 onSetIsSearching={(val) => setIsSearching(val)}
+                showAutoCompleteForm={true}
             />
             {renderTable()}
             {renderTablePagination()}

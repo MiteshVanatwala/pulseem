@@ -2759,6 +2759,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         background: '#ff0000',
         textAlign: 'center',
         fontSize: '0.5rem',
+        color: "#fff"
       }
     }
   },

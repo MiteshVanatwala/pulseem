@@ -609,5 +609,6 @@
   "xssError": "Html, Scripts or other then a normal string does not allowed!",
   "remove": "Remove",
   "backToHome": "To Home page",
-  "backToCampaigns": "To Campaigns"
+  "backToCampaigns": "To Campaigns",
+  "searchByCampaign": "Search by Campaign"
 }

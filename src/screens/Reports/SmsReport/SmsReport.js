@@ -118,18 +118,20 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      // href: `/react/ClientSearchResult/${id}`,
       isRevenueCol: true,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-        state:
-        {
-          ...CLIENT_CONSTANTS.QUERY_PARAMS,
-          CampaignID: id,
-          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
-          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-          PageProperty: GetPageNyName('reports/SMSMainReport')
-        }
-      }),
+      onClick: () => {
+        navigate(`${CLIENT_CONSTANTS.BASEURL}/${id}`, {
+          state:
+          {
+            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+            CampaignID: id,
+            PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
+            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+            PageProperty: GetPageNyName('reports/SMSMainReport')
+          }
+        })
+      },
       textStyle: { fontWeight: 900 }
     }
   })
@@ -518,14 +520,17 @@ const SmsReport = ({ classes }) => {
     )
   }
   const renderRevenueData = (value, type, data = {}) => {
-    const { href = '', textStyle = null, isRevenueCol = false } = data
+    const { textStyle = null, onClick = null } = data
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
-          href={href !== '' ? href : ''}
+        <Typography component={value > 0 ? 'a' : 'p'}
+          onClick={() => {
+            if (value > 0) {
+              onClick();
+            }
+          }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
-          style={textStyle}
-          target="_blank">
+          style={{ ...textStyle, textDecoration: value > 0 && 'underline', cursor: value > 0 && 'pointer' }}>
           {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
         </Typography>
       </Box>

@@ -136,11 +136,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   // Get data by campaign id
   useEffect(() => {
     if (params?.id > 0) {
-      getData();
       if (localStorage.getItem('reloadBeeEditor') == '1') {
         localStorage.removeItem('reloadBeeEditor');
         window.location.reload(true);
-      } 
+      } else getData();
     }
   }, []);
   useEffect(() => {
@@ -285,6 +284,9 @@ const CampaignEditor = ({ classes, ...props }) => {
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
+              // else {
+              //   getData();
+              // }
             });
           }
           break;
