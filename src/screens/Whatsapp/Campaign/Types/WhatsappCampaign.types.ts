@@ -686,3 +686,9 @@ export type SiteTrackAlertModalProps = {
 	onClose: () => void;
 	onOkay: () => void;
 };
+
+export type TestSendReq = {
+	WACampaignID: number;
+	TestGroupsIds?: number[];
+	PhoneNumber?: string;
+};

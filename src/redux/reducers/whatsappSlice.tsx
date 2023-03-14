@@ -11,6 +11,7 @@ import {
 	ApiCreateGroupPayload,
 	ApiSaveCampaignSettingsData,
 	saveCampaignDataProps,
+	TestSendReq,
 	uploadData,
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
 import { uploaderInstance } from '../../helpers/Api/UploaderAPI';
@@ -669,10 +670,7 @@ export const getWhatsAppCampaignSummary = createAsyncThunk(
 
 export const quickSend = createAsyncThunk(
 	'whatsAppCampaign/QuickSend',
-	async (
-		data: { WACampaignID: number; TestGroupsIds: number[] | number },
-		thunkAPI
-	) => {
+	async (data: TestSendReq, thunkAPI) => {
 		try {
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/QuickSend`,
