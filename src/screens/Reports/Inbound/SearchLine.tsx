@@ -274,6 +274,7 @@ const SearchLine = ({
                         key={autoCompleteKey}
                         id='searchByCampaign'
                         getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
+                        //@ts-ignore
                         noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
                         clearOnBlur={false}
                         options={autoCompleteOptions}
@@ -281,7 +282,7 @@ const SearchLine = ({
                         onChange={(option: any, selected: any) => {
                             setSearchRequest({
                                 ...searchRequest, PageIndex: 1,
-                                CampaignID: selected?.CampaignID
+                                CampaignID: selected?.CampaignID ?? selected?.SMSCampaignID
                             });
                         }}
                         disableClearable={false}
