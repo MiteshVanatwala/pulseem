@@ -103,7 +103,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const { verifiedEmails, commonSettings } = useSelector(state => state.common);
     const { defaultGroupId, subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
-    const { ToastMessages, newsletterSettings, newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
+    const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);
@@ -164,7 +164,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         try {
             const isVerified = verifiedEmails.find((email) => {
-                return email?.Number === campaignInfo.FromEmail;
+                return email?.Number === newsletterInfo.FromEmail;
             });
             setIsEmailVerified(isVerified);
             setNewEmailVerification(!isVerified || isVerified === false);
@@ -211,8 +211,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             try {
                 await dispatch(getEmailSendSettings(params?.id));
 
-                if (!campaignInfo || campaignInfo?.length === 0)
-                    await dispatch(getCampaignInfo(params.id))
                 if (!verifiedEmails || verifiedEmails?.length === 0)
                     dispatch(getAuthorizedEmails())
                 if (!previousCampaignData || previousCampaignData?.length === 0)
@@ -1250,7 +1248,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => setNewEmailVerification(false)}
                 Option={{
                     Step: 1,
-                    Value: campaignInfo.FromEmail
+                    Value: newsletterInfo.FromEmail
                 }}
             />}
             <Loader isOpen={showLoader} />
