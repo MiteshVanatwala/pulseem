@@ -856,7 +856,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: '2px 10px',
     fontWeight: 'bold',
     background: '#fff',
-    maxWidth: 300,
+    // maxWidth: 300,
     color: '#000',
     "@media screen and (max-width: 400px)": {
       maxWidth: 200

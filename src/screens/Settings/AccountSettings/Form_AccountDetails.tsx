@@ -176,8 +176,9 @@ const FORM_ACCOUNT_DETAILS = ({
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 className={clsx(
                   classes.mt5,
-                  classes.actionButton,
-                  classes.actionButtonLightGreen
+                  classes.btn,
+                  classes.btnRounded,
+                  "saveFixedDetails"
                 )}>
                 {/* @ts-ignore */}
                 {t('settings.accountSettings.actDetails.btnUpdate')}

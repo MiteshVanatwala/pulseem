@@ -238,7 +238,7 @@ export const getRoutes = (
       {
         key: "smsResponse",
         title: t("master.smsReplies"),
-        href: `${sitePrefix}reports/SmsReplies`,
+        href: `${sitePrefix}reports/inbound/sms`,
         isShow: true,
       },
     ],
@@ -430,7 +430,7 @@ export const getRoutes = (
       {
         key: "smsResponse",
         title: t("master.smsReplies"),
-        href: `${sitePrefix}reports/SmsReplies`,
+        href: `${sitePrefix}reports/inbound/sms`,
         isShow: true,
       },
     ],

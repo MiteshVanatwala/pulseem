@@ -253,7 +253,7 @@ const SearchLine = ({
     <Grid
       container
       spacing={2}
-      className={clsx(classes.lineTopMarging, classes.mb15)}
+      className={clsx(classes.lineTopMarging, 'searchLine')}
     >
       {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
       <Grid item>

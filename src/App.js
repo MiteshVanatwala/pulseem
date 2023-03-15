@@ -33,7 +33,7 @@ import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
-import SmsReplies from './screens/Reports/Inbound/Sms/SmsReplies';
+// import SmsReplies from './screens/Reports/Inbound/Sms/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterInfo from './screens/Newsletter/Wizard/NewsLetterInfo';
@@ -231,11 +231,6 @@ const renderRoutes = (classes) => {
       <Route
         path={`${sitePrefix}Reports/SMSMainReport`}
         element={<SmsReport classes={classes} />}
-      />
-      <Route
-        exact
-        path={`${sitePrefix}Reports/SmsReplies/:id`}
-        element={<SmsReplies classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Reports/MmsMainReport`}

@@ -229,7 +229,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
           <Box style={{ marginInlineStart: "auto" }}>
             <Button
               className={clsx(
-                classes.btn,
+                // classes.btn,
                 classes.btnNohover,
                 classes.noBorder,
                 classes.link,
@@ -246,7 +246,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
             </Button>
             <Button
               className={clsx(
-                classes.btn,
+                // classes.btn,
                 classes.btnNohover,
                 classes.noBorder,
                 classes.link,
@@ -306,6 +306,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
       }
       {
         emailVerificationPopup && <VerificationDialog
+          classes={classes}
           textButtonOnSuccess={t('common.close')}
           variant="email"
           isOpen={emailVerificationPopup}
@@ -319,6 +320,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
       }
       {
         tfaSmsVerification && <VerificationDialog
+          classes={classes}
           variant="smsTFA"
           textButtonOnSuccess={t('common.close')}
           isOpen={tfaSmsVerification}
@@ -333,6 +335,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
       }
       {
         smsVerificationPopup && <VerificationDialog
+          classes={classes}
           textButtonOnSuccess={t('common.close')}
           variant="sms"
           // @ts-ignore

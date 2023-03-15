@@ -22,7 +22,7 @@ const useStyles = makeStyles({
   }
 });
 
-const InboundMessages = (classes: any) => {
+const InboundMessages = ({ classes }: any) => {
   const params = useParams();
   const { type, id } = params;
   const { t: translator } = useTranslation();
@@ -82,6 +82,8 @@ const InboundMessages = (classes: any) => {
 
   return (
     <DefaultScreen
+      showAppBar={true}
+      key={"inboundMessages"}
       subPage={"inboundMessages"}
       currentPage="reports"
       classes={classes}
