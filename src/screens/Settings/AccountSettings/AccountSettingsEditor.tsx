@@ -240,6 +240,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
       </Box>
       {emailVerificationPopup && (
         <VerificationDialog
+          //@ts-ignore  
           classes={classes}
           variant="email"
           isOpen={emailVerificationPopup}
@@ -253,6 +254,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
       )}
       {smsVerificationPopup && (
         <VerificationDialog
+          //@ts-ignore  
           classes={classes}
           variant="sms"
           value={verificationStep > 0 && settingRequest?.DefaultCellNumber}
