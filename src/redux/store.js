@@ -18,8 +18,10 @@ import campaignReducer from './reducers/campaignEditorSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
 import galleryReducer from './reducers/gallerySlice'
+import ConnectorsSlice from './reducers/ConnectorsSlice';
 import whatsappReducer from './reducers/whatsappSlice'
 import AccountSettingsSlice from './reducers/AccountSettingsSlice';
+
 
 export default configureStore({
   reducer: {
@@ -42,6 +44,7 @@ export default configureStore({
     group: groupSlice,
     report: reportSlice,
     gallery: galleryReducer,
+    connectors: ConnectorsSlice,
     whatsapp: whatsappReducer,
     accountSettings: AccountSettingsSlice
   },

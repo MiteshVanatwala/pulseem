@@ -1,35 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Link
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, SearchIcon,
+  DeleteIcon, DuplicateIcon, EditIcon,
   PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, RestorDialogContent, Dialog, PopMassage, SearchField
+  TablePagination, ManagmentIcon, RestorDialogContent, PopMassage, SearchField
 } from '../../../components/managment/index'
 import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
   duplicteLandingPage, downloadReport, exportSurvey
 } from '../../../redux/reducers/landingPagesSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
-import { openInNewTab } from '../../../helpers/functions'
+import { openInNewTab } from '../../../helpers/Functions/functions'
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
+import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
-  const { windowSize, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+  const { windowSize, rowsPerPage, accountFeatures, isRTL } = useSelector(state => state.core)
+
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
@@ -43,7 +47,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   const [showCopied, setShowCopied] = useState(null)
   const [copyRef, setCopyRef] = useState(null)
   const [restoreArray, setRestoreArray] = useState([])
-  const history = useCtrlHistory()
   const dispatch = useDispatch()
   const [showLoader, setLoader] = useState(true);
 
@@ -56,17 +59,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     setLoader(true);
     getData();
   }, [dispatch])
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('landingPages.logPageHeaderResource1.Text')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
 
   const clearSearch = () => {
     setLandingPageNameSearch('');
@@ -115,19 +107,20 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     if (windowSize === 'xs') {
       return (
-        <SearchField
-          classes={classes}
-          value={landingPageNameSearch}
-          onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
-          onClick={handleSearch}
-          onKeyPress={handleKeyPress}
-          placeholder={placeholder}
-        />
+        <Grid container className={'searchLine'}>
+          <SearchField
+            classes={classes}
+            value={landingPageNameSearch}
+            onChange={handleCampainNameChange}
+            onClick={handleSearch}
+            onKeyPress={handleKeyPress}
+            placeholder={placeholder}
+          />
+        </Grid>
       )
     }
     return (
-      <Grid container spacing={2} className={classes.lineTopMarging}>
+      <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -142,21 +135,17 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={handleSearch}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={clearSearch}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -169,24 +158,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('landingPages.CreateNewResource.Text')}
           </Button>
         </Grid>}
         {windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
+            className={clsx(classes.btn, classes.btnRounded)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
             onClick={() => setDialogType({
               type: 'restore',
               data: landingPagesDeletedData
@@ -280,7 +261,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     const iconsMap = [
       {
         key: 'purchase/survey',
-        icon: IsPayment ? ReportsIcon : SurveryResultsIcon,
+        uIcon: IsPayment ? ReportsIcon : SurveryResultsIcon,
         lable: IsPayment ?
           t('landingPages.PurchaseExportTitle')
           : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
@@ -298,7 +279,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       },
       {
         key: 'preview',
-        icon: PreviewIcon,
+        uIcon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize === 'xs',
         disable: !PageLink,
@@ -309,7 +290,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       },
       {
         key: 'edit',
-        icon: EditIcon,
+        uIcon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
         remove: windowSize === 'xs',
         href: `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
@@ -317,7 +298,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       },
       {
         key: 'duplicate',
-        icon: DuplicateIcon,
+        uIcon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -329,10 +310,9 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       },
       {
         key: 'copy',
-        icon: (copyData && copyData.icon) || null,
+        uIcon: CopyIcon,
         lable: (copyData && copyData.lable) || '',
         rootClass: classes.minWidth95,
-        disable: !PageLink,
         text: (copyData && copyData.copy) || '',
         disable: !PageLink,
         type: 'copy',
@@ -346,7 +326,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       },
       {
         key: 'delete',
-        icon: DeleteIcon,
+        uIcon: DeleteIcon,
         lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
         showPhone: true,
         rootClass: classes.paddingIcon,
@@ -364,11 +344,13 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
+            className={'rowIconContainer'}
             key={icon.key}
             item >
             <ManagmentIcon
               classes={classes}
               {...icon}
+              uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
             {icon.key === 'copy' && renderCopyToClipoard}
           </Grid>
@@ -454,7 +436,15 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       <>
         <Link
           style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
-          onClick={() => {
+          component='a'
+          href={`${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
+            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+            CampaignID: ID,
+            PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+            ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+          })}`}
+          onClick={(e) => {
+            e.preventDefault();
             if (Submits && Submits > 0) {
               navigate(CLIENT_CONSTANTS.BASEURL, {
                 state: {
@@ -524,7 +514,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
+        <TableCell style={{ flex: 1 }} classes={{ root: clsx(classes.tableCellRoot, classes.tabelCellPadding) }}>
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
@@ -553,10 +543,12 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
-      <TableBody>
-        {sortData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
+      <Box className='tableBodyContainer'>
+        <TableBody>
+          {sortData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      </Box>
     )
   }
 
@@ -608,7 +600,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       title: t('landingPages.restoreLandingPageTitle'),
       showDivider: false,
       icon: (
-        <div className={classes.dialogIconContent}>
+        <div className={clsx(classes.dialogIconContent, 'unicode')}>
           {'\uE185'}
         </div>
       ),
@@ -659,53 +651,48 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
       handleClose()
       setPage(1)
       setLoader(true);
-      const result = await dispatch(duplicteLandingPage(data))
-      //const { payload={} } = result || {};
+      await dispatch(duplicteLandingPage(data))
       await getData()
       setLoader(false);
-      // setDialogType({
-      //   type: 'duplicateSuccessful',
-      //   data: payload
-      // })
     }
   })
 
-  const getDuplicateSuccessfulDialog = (data = '') => ({
-    paperStyle: classes.maxWidth540,
-    childrenStyle: classes.duplicateSuccessMsg,
-    title: t('landingPages.duplicationSuccessful'),
-    showDivider: false,
-    content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('landingPages.duplicationSuccessfulMessage')}
-      </Typography>
-    ),
-    renderButtons: () => (
-      <Box className={classes.spaceEvenly}>
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogCancelButton,
-          )}>
-          {t('common.Cancel')}
-        </Button>
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Edit')}
-        </Button>
-      </Box>
-    )
-  })
+  // const getDuplicateSuccessfulDialog = (data = '') => ({
+  //   paperStyle: classes.maxWidth540,
+  //   childrenStyle: classes.duplicateSuccessMsg,
+  //   title: t('landingPages.duplicationSuccessful'),
+  //   showDivider: false,
+  //   content: (
+  //     <Typography style={{ fontSize: 18 }}>
+  //       {t('landingPages.duplicationSuccessfulMessage')}
+  //     </Typography>
+  //   ),
+  //   renderButtons: () => (
+  //     <Box className={classes.spaceEvenly}>
+  //       <Button
+  //         variant='contained'
+  //         size='small'
+  //         onClick={handleClose}
+  //         className={clsx(
+  //           classes.gruopsDialogButton,
+  //           classes.dialogCancelButton,
+  //         )}>
+  //         {t('common.Cancel')}
+  //       </Button>
+  //       <Button
+  //         variant='contained'
+  //         size='small'
+  //         onClick={handleClose}
+  //         href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
+  //         className={clsx(
+  //           classes.gruopsDialogButton,
+  //           classes.dialogConfirmButton,
+  //         )}>
+  //         {t('common.Edit')}
+  //       </Button>
+  //     </Box>
+  //   )
+  // })
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}
@@ -718,22 +705,25 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
 
     const currentDialog = dialogContent[type] || {}
     return (
-      dialogType && <Dialog
+      dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
-      </Dialog>
+      </BaseDialog>
     )
   }
   return (
     <DefaultScreen
       currentPage='landingPages'
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb50)}>
-      {renderHeader()}
-      {renderSearchLine()}
+      containerClass={classes.management}>
+      <Box className={'topSection'}>
+        <Title Text={t('landingPages.logPageHeaderResource1.Text')} classes={classes} />
+        {renderSearchLine()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

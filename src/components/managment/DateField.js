@@ -9,7 +9,7 @@ import { FiClock } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next';
 
 export const DateField = ({
-  minDate,
+  minDate = undefined,
   classes,
   value,
   onChange,
@@ -104,6 +104,11 @@ export const DateField = ({
       initialFocusedDate={moment()}
       value={value}
       onChange={onChange}
+      InputAdornmentProps={{
+        style: {
+          maxWidth: isRTL ? 10 : 'auto'
+        }
+      }}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton

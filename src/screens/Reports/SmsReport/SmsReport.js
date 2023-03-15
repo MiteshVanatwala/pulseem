@@ -2,32 +2,30 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControlLabel
 } from '@material-ui/core'
-import Switch from "react-switch";
-import {
-  SearchIcon, ExportIcon
-} from '../../../assets/images/managment/index'
 import {
   TablePagination, DateField, SearchField
 } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { smsReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { smsReportStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { sitePrefix } from '../../../config';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -117,7 +115,7 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      // href: `/react/ClientSearchResult/${id}`,
+      href: `${sitePrefix}ClientSearchResult/${id}`,
       isRevenueCol: true,
       onClick: () => {
         navigate(`${CLIENT_CONSTANTS.BASEURL}/${id}`, {
@@ -225,17 +223,6 @@ const SmsReport = ({ classes }) => {
     "StatusName": t('mainReport.statusName'),
   }
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('common.SMSReports')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
-
   const clearSearch = () => {
     const resetSmsQuery = {
       ...smsQuery,
@@ -259,22 +246,45 @@ const SmsReport = ({ classes }) => {
   const handleDownloadCsv = async (formatType) => {
     setDialogType(null);
     setLoader(true);
+
     if (hasRevenue)
       exportColumnHeader["Revenue"] = t("common.revenue");
 
-    let orderList = preferredOrder(smsReport, Object.keys(exportColumnHeader));
-    orderList = await statusNumberToString(t, orderList, smsReportStatus);
-    orderList = await formatDateTime(orderList, t);
-    orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-    orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
-      data: orderList,
-      fileName: 'smsReport',
-      exportType: formatType,
-      fields: exportColumnHeader
-    });
-    setLoader(false);
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      ConvertStatusToString: true,
+      IsBoolean: true,
+      BooleanToNumber: true,
+      PropertyToReplace: 'IsResponse',
+      PropertyDefaultReplaceValue: t('common.No'),
+      Statuses: smsReportStatus,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    };
+
+    try {
+      const result = await HandleExportData([...smsReport], exportOptions);
+
+      ExportFile({
+        data: result,
+        fileName: 'smsReport',
+        exportType: formatType,
+        fields: exportColumnHeader
+      });
+    } catch (e) {
+      console.log(e);
+      // dispatch(sendToTeamChannel({
+      //   MethodName: 'handleDownloadCsv',
+      //   ComponentName: 'ArchiveManagement.js',
+      //   Text: e
+      // }));
+    }
+    finally {
+      setLoader(false);
+    }
   }
+
 
   const handleSearch = () => {
     if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
@@ -319,7 +329,7 @@ const SmsReport = ({ classes }) => {
       <Grid
         container
         spacing={2}
-        className={classes.lineTopMarging}>
+        className={clsx(classes.lineTopMarging, 'searchLine')}>
         <Grid item>
           <TextField
             variant='outlined'
@@ -373,7 +383,25 @@ const SmsReport = ({ classes }) => {
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Switch
+          <FormControlLabel
+            control={
+              <PulseemSwitch
+                switchType='ios'
+                classes={classes}
+                checked={smsQuery.ShowTestCampaigns}
+                onColor="#0371ad"
+                handleDiameter={20}
+                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                height={15}
+                width={40}
+                className={clsx({ [classes.rtlSwitch]: isRTL })}
+                onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
+              />
+            }
+            label={t('mainReport.locShowTestCampaigns.Text')}
+          />
+          {/* <Switch
             checked={smsQuery.ShowTestCampaigns}
             onColor="#0371ad"
             handleDiameter={20}
@@ -385,28 +413,21 @@ const SmsReport = ({ classes }) => {
             width={40}
             className={clsx({ [classes.rtlSwitch]: isRTL })}
             onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
-          />
-          <Typography style={{ marginInlineStart: 8 }}>
-            {t('mainReport.locShowTestCampaigns.Text')}
-          </Typography>
+          /> */}
         </Grid>
         <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => handleSearch()}
-            className={classes.searchButton}
-            endIcon={<SearchIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {isSearching && <Grid item>
           <Button
-            size='large'
-            variant='contained'
             onClick={() => clearSearch()}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('common.clear')}
           </Button>
         </Grid>}
@@ -420,15 +441,12 @@ const SmsReport = ({ classes }) => {
       <Grid container spacing={2} className={classes.linePadding} >
         {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
           <Button
-            variant='contained'
-            size='medium'
             className={clsx(
-              classes.actionButton,
-              classes.actionButtonGreen,
+              classes.btn, classes.btnRounded,
               smsReport.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialogType('exportFormat')}
-            startIcon={<ExportIcon />}>
+            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('campaigns.exportFile')}
           </Button>
         </Grid>}
@@ -461,7 +479,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, UpdateDate, Status } = row
+    const { Name, SendDate, UpdateDate, Status } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
@@ -507,7 +525,7 @@ const SmsReport = ({ classes }) => {
     const isLink = value > 0 && !!onClick;
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
-        onClick={isLink ? onClick : voidFunction}>
+        onClick={isLink ? onClick : null}>
         <Typography
           component={'a'}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
@@ -740,10 +758,12 @@ const SmsReport = ({ classes }) => {
     if (rowData.length > 0) {
       rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
       return (
-        <TableBody>
-          {rowData
-            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-        </TableBody>
+        <Box className='tableBodyContainer'>
+          <TableBody>
+            {rowData
+              .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+          </TableBody>
+        </Box>
       )
     }
     return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
@@ -767,7 +787,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={smsReport.length}
+        rows={isSearching && smsReport.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -796,8 +816,10 @@ const SmsReport = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
-      {renderHeader()}
-      {renderSearchSection()}
+      <Box className={'topSection'}>
+        <Title Text={t('common.SMSReports')} classes={classes} />
+        {renderSearchSection()}
+      </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}

@@ -6,8 +6,8 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
-import { exportFile } from '../../../../helpers/exportFromJson';
-import { ClientStatus } from '../../../../helpers/PulseemArrays';
+import { ExportFile } from '../../../../helpers/Export/ExportFile';
+import { ClientStatus } from '../../../../helpers/Constants';
 import { EditIcon, ExportIcon } from '../../../../assets/images/managment/index';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import AddRecipientPopup from "../../../Groups/Management/Popup/AddRecipientPopup";
@@ -16,13 +16,15 @@ import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRa
 import { getSmsReplies, getAccountExtraData, getFinishedCampaigns } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
-import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
+import { OrderItems, HandleExportData } from '../../../../helpers/Export/ExportHelper';
+// import { preferredOrder, formatDateTime, smsStatusNumberToString, replaceNull } from '../../../../helpers/exportHelper';
 import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 
-const SmsReplies = ({ classes, ...other }) => {
+const SmsReplies = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [page, setPage] = useState(1);
@@ -101,18 +103,15 @@ const SmsReplies = ({ classes, ...other }) => {
         return (
             <>
                 {/* <Divider /> */}
-                <Grid container spacing={2} className={classes.linePadding} >
+                <Grid container spacing={2} className={classes.lineTopMarging} >
                     {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
-                            variant='contained'
-                            size='medium'
                             className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonGreen,
-                                smsReplies && smsReplies?.Data?.length > 0 ? null : classes.disabled
+                                classes.btn, classes.btnRounded,
+                                smsReplies?.Data?.length > 0 ? null : classes.disabled
                             )}
                             onClick={() => setDialog('exportFormat')}
-                            startIcon={<ExportIcon />}>
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
                             {t('campaigns.exportFile')}
                         </Button>
                     </Grid>}
@@ -133,25 +132,29 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
-        setDialog(null);
-        setShowLoader(true);
-        let exportData = await dispatch(getSmsReplies({ ...request, IsExport: true }));
-        let orderList = exportData?.payload;
-        orderList = preferredOrder(orderList?.Data, Object.keys(exportColumnHeader));
-        orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
-        orderList = replaceNull(orderList, 'FirstName', '');
-        orderList = replaceNull(orderList, 'LastName', '');
-        orderList = replaceNull(orderList, 'CellPhone', '');
-        orderList = replaceNull(orderList, 'CampaignName', '');
+        let orderList = await OrderItems(smsReplies, Object.keys(exportColumnHeader));
 
-        orderList = await formatDateTime(orderList);
-        exportFile({
-            data: orderList,
-            fileName: `ResponsesReport${id ? '_' + id : ''}`,
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
-        setShowLoader(false)
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: true,
+            Statuses: ClientStatus.Email.concat(ClientStatus.Sms),
+            Order: Object.keys(exportColumnHeader),
+            DeleteProperties: ["Status"]
+        };
+
+        try {
+            const result = await HandleExportData(orderList, exportOptions);
+
+            ExportFile({
+                data: result,
+                fileName: `smsReplies_${id}`,
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     const renderTable = () => {
@@ -459,14 +462,22 @@ const SmsReplies = ({ classes, ...other }) => {
 
     return (
         <Box>
-            {renderHeader()}
-            <SearchLine
-                classes={classes}
-                onSetPage={(val) => setPage(val)}
-                onFilterRequest={(val) => setRequest({ ...request, ...val })}
-                onSetIsSearching={(val) => setIsSearching(val)}
-                showAutoCompleteForm={true}
-            />
+            {/* <Box className={'topSection'}> */}
+            {/* {renderHeader()} */}
+            <Grid container>
+                <Grid item>
+                    <SearchLine
+                        classes={classes}
+                        onSetPage={(val) => setPage(val)}
+                        onFilterRequest={(val) => setRequest({ ...request, ...val })}
+                        onSetIsSearching={(val) => setIsSearching(val)}
+                        showAutoCompleteForm={true}
+                    />
+                </Grid>
+                <Grid item>{renderHeader()}</Grid>
+            </Grid>
+
+            {/* </Box> */}
             {renderTable()}
             {renderTablePagination()}
             {showDialog()}
@@ -482,7 +493,7 @@ const SmsReplies = ({ classes, ...other }) => {
                 options={ExportFileTypes}
             />
             <Loader isOpen={showLoader} showBackdrop={true} />
-        </Box>
+        </Box >
     )
 }
 

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { setCookie, getCookie } from '../../helpers/cookies'
+import { setCookie, getCookie } from '../../helpers/Functions/cookies'
 const rtlLanguages = ['he', 'ar']
 
 export const coreSlice = createSlice({
@@ -21,7 +21,6 @@ export const coreSlice = createSlice({
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
-    // smsOldVersion: false,
     accountSettings: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
@@ -70,10 +69,7 @@ export const coreSlice = createSlice({
       state.isAdmin = payload.isAdmin
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
-    },
-    // setSmsOldVersion: (state, action) => {
-    //   state.smsOldVersion = action.payload
-    // }
+    }
   }
 })
 

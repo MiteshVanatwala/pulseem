@@ -1,10 +1,10 @@
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const getFileGallery = createAsyncThunk(
     '/Gallery/GetFiles', async (folderType, thunkAPI) => {
         try {
-            const response = await instence.get(`/Gallery/GetFiles/${folderType}`);
+            const response = await PulseemReactInstance.get(`/Gallery/GetFiles/${folderType}`);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,7 +14,7 @@ export const getFileGallery = createAsyncThunk(
 export const createFolder = createAsyncThunk(
     '/Gallery/CreateFolder', async (folderObject, thunkAPI) => {
         try {
-            const response = await instence.post(`/Gallery/CreateFolder`, folderObject
+            const response = await PulseemReactInstance.post(`/Gallery/CreateFolder`, folderObject
             );
             return JSON.parse(response.data)
         } catch (error) {
@@ -24,7 +24,7 @@ export const createFolder = createAsyncThunk(
 export const uploadFiles = createAsyncThunk(
     '/gallery/UploadFiles', async (files, thunkAPI) => {
         try {
-            const response = await instence.put(`/gallery/UploadFiles`, files,
+            const response = await PulseemReactInstance.put(`/gallery/UploadFiles`, files,
                 {
                     onUploadProgress: (progressEvent) => {
                         const { loaded, total } = progressEvent
@@ -40,7 +40,7 @@ export const uploadFiles = createAsyncThunk(
 export const deleteGalleryFile = createAsyncThunk(
     '/Gallery/DeleteFile', async (fileGallery, thunkAPI) => {
         try {
-            const response = await instence.post(`/Gallery/DeleteFile`, fileGallery);
+            const response = await PulseemReactInstance.post(`/Gallery/DeleteFile`, fileGallery);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });

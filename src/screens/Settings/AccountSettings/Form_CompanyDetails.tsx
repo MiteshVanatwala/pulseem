@@ -7,8 +7,7 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography,
-  FormControlLabel
+  Typography
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
@@ -20,7 +19,6 @@ import {
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
 import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
-import { Title } from "../../../components/managment/Title";
 import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
@@ -30,15 +28,16 @@ import {
   CompDtlPropTypes
 } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
-import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
+import { Title } from "../../../components/managment/Title";
+import { getCookie } from "../../../helpers/Functions/cookies";
 
 
 const FORM_COMPANY_DETAILS = ({
+  classes,
   setToastMessage,
   ToastMessages,
   Settings,
@@ -46,7 +45,6 @@ const FORM_COMPANY_DETAILS = ({
   onShowTwoFactorAuth
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
@@ -72,6 +70,9 @@ const FORM_COMPANY_DETAILS = ({
     ZipCode: null,
     TwoFactorAuthTestMethodID: null
   } as AccountSettings);
+
+  const accSettings = getCookie("accountSettings");
+  const accFeatures = accSettings?.AccountFeatures;
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -133,7 +134,8 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    setCompanyDetails(Settings);
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accFeatures.indexOf(45) === -1 } as AccountSettings;
+    setCompanyDetails(newSettings);
     if (Settings)
       handleQueryString2FA();
   }, [Settings]);
@@ -237,15 +239,34 @@ const FORM_COMPANY_DETAILS = ({
   return (
     <>
       <Box
-        style={{ marginTop: 10, paddingInline: 15 }}
+        style={{ marginTop: 34.5, paddingInline: 17.2 }}
         className={"settingsWrapper"}
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
           classes={classes}
           isIcon={false}
+          ContainerStyle={{
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
+              }`,
+          }}
         />
-        <Box className={"formContainer"}>
+        <Box className={"formContainer"} style={{ marginBottom: 25 }}>
+          <img
+            src={DataAnalysis}
+            className={"svg_data_analysis"}
+            alt=""
+            width="225"
+            height="155"
+            style={{
+              top: 121,
+              right: isRTL ? "auto" : "93.14px",
+              left: isRTL ? "93.14px" : "auto",
+              position: "absolute",
+              transform: "scaleX(1)",
+            }}
+          />
+          {/* <ILLUSTRATION_DATA_ANALYSIS className={"svg_data_analysis"} /> */}
           <Grid container className={"form"}>
             <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
               <Typography>
@@ -410,35 +431,7 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            <Grid item xs={12} sm={3} md={2} className={clsx(classes.mt3)}>
-              <FormControlLabel
-                control={
-                  <PulseemSwitch
-                    switchType="ios"
-                    classes={classes}
-                    checked={companyDetails?.TwoFactorAuthEnabled === true}
-                    //@ts-ignore
-                    onColor="#0371ad"
-                    handleDiameter={20}
-                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                    height={15}
-                    width={40}
-                    className={clsx({ [classes.rtlSwitch]: isRTL })}
-                    id="switchIDS425"
-                    onChange={(e: any) => handleChange(e, "TwoFactorAuth")}
-                  />
-                }
-                label={
-                  <>
-                    {t(
-                      "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
-                    )}
-                  </>
-                }
-              />
-            </Grid>
-            <Grid
+            {accFeatures.indexOf(45) === -1 && <Grid
               item
               xs={12}
               sm={3}
@@ -455,7 +448,7 @@ const FORM_COMPANY_DETAILS = ({
               </Typography>
               <FormControl
                 variant="outlined" className={classes.formControl}
-                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10, maxWidth: 210 }}
+                style={{ width: "50%", maxHeight: 40, paddingInlineStart: 10, maxWidth: 210, border: 'none' }}
               >
                 <Select
                   native
@@ -472,7 +465,7 @@ const FORM_COMPANY_DETAILS = ({
                     style: {
                       padding: 10,
                       maxWidth: 210,
-                      paddingInlineStart: 15,
+                      paddingInlineStart: 15
                     }
                   }}
                   autoWidth
@@ -496,17 +489,17 @@ const FORM_COMPANY_DETAILS = ({
                   })}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            </Grid>}
+            {accFeatures.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
-                justifyContent: 'flex-end',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
                 height: '100%'
               }}>
                 <Button
                   className={clsx(
-                    classes.btn,
+                    // classes.btn,
                     classes.btnNohover,
                     classes.noBorder,
                     classes.link,
@@ -527,12 +520,10 @@ const FORM_COMPANY_DETAILS = ({
                 </Button>
                 <Button
                   className={clsx(
+                    classes.mt5,
                     classes.btn,
-                    classes.btnNohover,
-                    classes.noBorder,
-                    classes.link,
-                    classes.textCapitalize,
-                    "link"
+                    classes.btnRounded,
+                    "saveFixedDetails"
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('emailTFA');
@@ -547,7 +538,7 @@ const FORM_COMPANY_DETAILS = ({
                   </>
                 </Button>
               </Box>
-            </Grid>
+            </Grid>}
             <Grid
               item
               xs={12}
@@ -560,7 +551,7 @@ const FORM_COMPANY_DETAILS = ({
             >
               <Button
                 className={clsx(
-                  classes.btn,
+                  // classes.btn,
                   classes.btnNohover,
                   classes.noBorder,
                   classes.link,
@@ -586,8 +577,9 @@ const FORM_COMPANY_DETAILS = ({
                 endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 className={clsx(
                   classes.mt5,
-                  classes.actionButton,
-                  classes.actionButtonLightGreen
+                  classes.btn,
+                  classes.btnRounded,
+                  "saveFixedDetails"
                 )}>
                 {/* @ts-ignore */}
                 {t('settings.accountSettings.fixedComDetails.btnUpdate')}
@@ -600,6 +592,7 @@ const FORM_COMPANY_DETAILS = ({
       {RenderDialog()}
       {showChangePassword && <ChangePassword
         Text={null}
+        classes={classes}
         SetToast={setToastMessage}
         IsOpen={showChangePassword}
         OnClose={() => setShowChangePassword(false)}

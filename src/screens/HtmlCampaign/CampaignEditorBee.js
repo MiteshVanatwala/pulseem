@@ -31,12 +31,10 @@ import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
-import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
-
 // User input controls
 import { EditRow } from './components/ContentDialogs'
 
@@ -47,6 +45,9 @@ import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 /* END Bee */
+import { sitePrefix } from '../../config';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 
 const CampaignEditor = ({ classes, ...props }) => {
   //#region State
@@ -130,12 +131,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         return true;
       })
     }
+
   }, [dataReady]);
   //#endregion
   useEffect(() => {
     if (editorRef && editorRef.current) {
       initBeeEditor();
     }
+
   }, [isRTL]);
   // Get data by campaign id
   useEffect(() => {
@@ -156,6 +159,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     else {
       initOptions();
     }
+
   }, [language, userBlocks]);
 
   //#region Check session token -> tokenAlive
@@ -174,6 +178,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (alertLogout === true) {
       onLogoutAlert();
     }
+
   }, [alertLogout]);
 
   document.addEventListener('setAlert', () => {
@@ -196,9 +201,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         size='small'
         variant='contained'
         className={clsx(
-          classes.confirmButton,
-          classes.dialogConfirmButton,
-          classes.dialogButtonCenter
+          classes.btn,
+          classes.btnRounded,
+          classes.middle
         )}
         onClick={() => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }}
       >
@@ -321,6 +326,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (beeToken) {
       initBeeEditor();
     }
+
   }, [beeToken]);
 
   const initOptions = async () => {
@@ -341,6 +347,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const doaminWithClientRef = (str) => {
     let finalStr = str;
     const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
+    //eslint-disable-next-line
     const originalLink = startIndex.split(/[\s\n]+/);
     let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
     let newUrl = originUrl.trim();
@@ -412,7 +419,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const deleteNewsletter = async () => {
     setDialog(null);
     await dispatch(deleteCampaign(campaignId));
-    window.location = `/react/Campaigns`;
+    window.location = `${sitePrefix}Campaigns`;
   }
   const onDelete = () => {
     setIsResponseModal(false);
@@ -429,10 +436,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
     if (saveBeforeExit) {
-      saveDesign(true, '/react/Campaigns', false);
+      saveDesign(true, `${sitePrefix}Campaigns`, false);
     }
     else {
-      window.location.href = '/react/Campaigns';
+      window.location.href = `${sitePrefix}Campaigns`;
     }
   }
   const onExit = () => {
@@ -448,10 +455,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onBack = () => {
     if (isFromAutomation) {
-      saveDesign(true, `/react/Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+      saveDesign(true, `${sitePrefix}Campaigns/Create/${campaignId}?FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
     }
     else {
-      saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
+      saveDesign(true, `${sitePrefix}Campaigns/Create/${campaignId}`)
     }
   }
   const onTestSendSubmit = async (sendRequest) => {
@@ -578,7 +585,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       let dialog = {
         showDivider: false,
         icon: (
-          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+          <IoMdImages />
         ),
         title: t("common.imageGallery"),
         content: (
@@ -592,7 +599,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -600,10 +607,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showGallery}
           onClose={() => { setShowGallery(false); }}
+          onCancel={() => { setShowGallery(false); }}
           onConfirm={() => { setShowGallery(false); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -626,7 +634,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -634,10 +642,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
+          onCancel={() => { setShowDocuments(false); }}
           onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -649,11 +658,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button
           onClick={() =>
             saveDesign(false, null, true)}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
           style={{ margin: '8px' }}
@@ -662,13 +669,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         >{t("common.save")}
         </Button>
         <Button onClick={saveDesign}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.continue')}</Button>
@@ -679,13 +685,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button
           onClick={() =>
             saveDesign(false, null, true)}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ margin: '8px' }}
           startIcon={<BiSave />}
           color="primary"
@@ -694,13 +699,12 @@ const CampaignEditor = ({ classes, ...props }) => {
         <Button onClick={() => {
           saveDesign(true, `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`, false);
         }}
-          variant='contained'
-          size='medium'
           className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
+            classes.btn,
+            classes.btnRounded,
             classes.backButton
           )}
+          endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.backToAutomation')}</Button>

@@ -31,11 +31,11 @@ const barHeight = {
 };
 
 const tipsFontSize = {
-  xs: 18,
-  sm: 16,
-  md: 14,
-  lg: 14,
-  xl: 18,
+  xs: 13,
+  sm: 13,
+  md: 11,
+  lg: 13,
+  xl: 13,
 };
 
 const shortcutFontSize = {
@@ -58,18 +58,40 @@ const shortcutFontSize = {
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   management: {
     maxWidth: 1500,
+    '&.MuiContainer-root': {
+      marginLeft: 207
+    },
+    '& .topSection': {
+      marginTop: 37.870,
+      border: '2px solid #F0F5FF',
+      borderRadius: 10,
+      paddingBottom: 31,
+      '& .searchLine': {
+        paddingLeft: 31
+      },
+      "@media screen and (max-width: 765px)": {
+        paddingBottom: 17,
+      },
+    }
   },
   managmentNarrow: {
     maxWidth: 1050,
   },
+  mgmtTitleContainer: {
+    width: 'auto !important',
+    background: '#F0F5FF',
+    padding: `11px 31.69px 8px 31.69px`,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10
+  },
   managementTitle: {
-    fontSize: windowSize === "xs" ? "25px" : "36px",
-    color: "#333333",
-    paddingBlock: "0.5rem",
+    fontSize: windowSize === "xs" ? 20 : 29,
     fontFamily: "Assistant",
     fontWeight: "bold",
-    marginTop: 20,
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
+    fontWeight: 300,
+    color: '#4D4D4D',
+    width: '100%'
   },
   tableRow: {
     marginBox: 20,
@@ -83,7 +105,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: "16px 10px!important",
   },
   tableCellBody: {
-    borderInlineEnd: "1px solid #797979",
+    borderInlineEnd: "2px solid #F0F5FF",
     marginBlock: 10,
     borderBottom: 0,
     display: "flex",
@@ -98,6 +120,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   flex: {
     display: "flex",
+  },
+  flexWrap: {
+    flexWrap: 'wrap'
   },
   flexRow: {
     flexDirection: "row",
@@ -123,7 +148,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   maxWidth450: {
     maxWidth: '450px !important'
   },
+  maxWidth500: {
+    maxWidth: '500px !important'
+  },
 
+  wFitContent: {
+    width: 'fit-content'
+  },
   paddingRightLeft10: {
     padding: "0 10px!important",
   },
@@ -142,7 +173,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     flexDirection: "column",
     minWidth: 50,
-    padding: "0 10px",
+    padding: 10,
     "@media screen and (max-width: 1240px)": {
       padding: "0px 5px",
     },
@@ -153,12 +184,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tableRowRoot: {
     display: "flex",
     justifyContent: "center",
-    borderBottom: "1px solid #797979",
+    border: 'none',
+    // borderBottom: "1px solid #797979",
     "&:last-child": {
       borderBottom: 0,
     },
     "&:nth-of-type(even)": {
-      backgroundColor: "#E3E9F0",
+      backgroundColor: "#f7faff",
     },
     "&.directEmailRow": {
       "&:nth-of-type(4n+3)": {
@@ -196,7 +228,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
   },
   tableRowReportHead: {
-    backgroundColor: "#E3E9F0",
+    backgroundColor: "#F0F5FF",
     borderColor: "transparent",
   },
 
@@ -254,7 +286,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   errorText: {
-    color: "red",
+    color: "red !important",
   },
   paddingIcon: {
     padding: "0.8rem 0rem 0.2rem!important",
@@ -277,6 +309,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px) and (min-width: 480px)": {
       padding: 0,
     },
+    '& .rowIcon': {
+      alignSelf: 'center',
+      padding: 2
+    }
   },
   managmentIcon: {
     width: iconWidth[windowSize],
@@ -516,12 +552,140 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 0,
     padding: 0,
   },
+
+  underlinedSelOptns: {
+    paddingBlock: 5,
+    marginInline: 12,
+    borderBottom: '1px solid #d1d1d1',
+    '&:hover': {
+      cursor: 'pointer',
+      color: '#ff3343'
+    }
+  },
+
   tableStyle: {
-    overflowX: "visible",
+    overflowX: "clip",
+    border: "2px solid #F0F5FF",
+    borderRadius: 20
   },
   tableContainer: {
     width: "100%",
-    border: "1px solid #7F7F7F",
+    background: '#fff',
+    '& .MuiTableHead-root': {
+      '& .MuiTableRow-root': {
+        borderColor: 'transparent',
+        backgroundColor: '#F0F5FF',
+      }
+    },
+    '& .tableBodyContainer': {
+      display: 'grid',
+      padding: '0 17px 32.8px 17px',
+      '&.newsLetterReportTable': {
+        '& .MuiTableBody-root': {
+          '& .MuiTableCell-root': {
+            flexWrap: 'wrap',
+            '& .MuiGrid-container': {
+              flexWrap: 'wrap'
+            },
+            '&:nth-Child(4)': {
+              '& .MuiGrid-item': {
+                '& .MuiBox-root': {
+                  "@media screen and (max-width: 1420px)": {
+                    paddingInline: 5
+                  }
+                }
+              }
+            },
+            '&:nth-Child(5)': {
+              '& .MuiGrid-item': {
+                '& .MuiBox-root': {
+                  "@media screen and (max-width: 1420px)": {
+                    paddingInline: 5
+                  }
+                }
+              }
+            },
+            '&:nth-Child(6)': {
+              '& .MuiGrid-item': {
+                '& .MuiBox-root': {
+                  "@media screen and (max-width: 1420px)": {
+                    paddingInline: 5
+                  }
+                }
+              }
+            },
+          }
+        }
+      },
+      '&.groupsTable': {
+        '& .MuiTableBody-root': {
+          '& .MuiTableCell-root': {
+            '& .MuiGrid-grid-lg-3': {
+              "@media screen and (max-width: 1420px)": {
+                minWidth: '50%'
+              }
+            }
+          }
+        }
+      },
+    },
+    '& .MuiTableCell-head': {
+      fontWeight: 300,
+      fontSize: 18
+    },
+    '& .MuiTableBody-root': {
+      '& .MuiTableRow-root': {
+        borderBottom: '1px solid #F0F5FF',
+        '&:nth-child(even)': {
+          '& .rowIconContainer': {
+            '& div': {
+              '& div': {
+                background: '#fff',
+              }
+            }
+          }
+        },
+        '&:nth-child(odd)': {
+          '& .rowIconContainer': {
+            '& div': {
+              '& div': {
+                background: '#F0F5FF',
+              }
+            }
+          }
+        },
+        '& .MuiTableCell-root:last-child': {
+          borderRight: 'none',
+        },
+        '& .rowTitle': {
+          textAlign: 'center',
+          alignItems: 'flex-start',
+          "@media screen and (max-width: 768px)": {
+            textAlign: 'start'
+          },
+        },
+        '& .MuiTableCell-root': {
+
+          marginTop: 0,
+          marginBottom: 0,
+
+          '& .rowIconContainer': {
+            '& div': {
+              '& div': {
+                width: 25,
+                height: 25,
+                alignSelf: 'center',
+                borderRadius: 20,
+                padding: 4,
+              }
+            }
+          },
+          '& *.MuiTypography-root': {
+            fontSize: 16,
+          }
+        }
+      }
+    }
   },
   flex2: {
     flex: 2,
@@ -589,6 +753,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiSelect-icon": {
       color: "#000",
     },
+    '& svg': {
+      color: '#F65026',
+      marginLeft: -30,
+      fontSize: 30
+    },
+    '& .MuiSelect-select': {
+      '&:focus': {
+        background: 'transparent'
+      }
+    },
     color: "#000",
     marginInlineStart: 15,
   },
@@ -622,7 +796,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "& .MuiInputBase-root": {
       fontSize: 14,
       padding: 0,
-      height: 30,
+      height: 30
     },
     "& .MuiOutlinedInput": {
       "&-input": {
@@ -649,11 +823,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         borderColor: "#a6a6a6",
       },
       "&-root": {
+        '& fieldset': {
+          border: 'none',
+        },
         "&:hover fieldset": {
-          borderColor: "#797979",
+          border: 'none',
         },
         "&.Mui-focused fieldset": {
-          border: "1px solid #797979",
+          border: 'none',
         },
       },
     },
@@ -662,11 +839,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     transform: isRTL ? "rotateY(0deg)" : "rotateY(180deg)",
     marginInlineStart: 10,
     padding: 10,
+    color: '#F65026'
   },
   tablePadingtonArrowOppisite: {
     transform: isRTL ? "rotateY(180deg)" : "rotateY(0deg)",
     marginInlineEnd: 10,
     padding: 10,
+    color: '#F65026'
   },
   tablePadingtonGridItem: {
     display: "flex",
@@ -706,7 +885,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   linePadding: {
-    paddingBlock: "1rem",
+    paddingBlock: "25px",
+    margin: '0px !important'
   },
   responsiveLinePadding: {
     paddingBlock: "1rem",
@@ -715,7 +895,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   lineTopMarging: {
-    marginTop: "1rem",
+    marginTop: "2rem",
   },
 
   customDialog: {
@@ -786,11 +966,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   gruopsDialogButton: {
     alignSelf: "center",
     fontFamily: "OpenSansHebrew",
-    color: "#fff",
     textTransform: "capitalize",
     width: 400,
-    fontSize: 16,
-    borderRadius: 100,
+    fontSize: '0.875rem',
   },
   gruopsDialogBullet: {
     fontSize: 8,
@@ -808,9 +986,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flex: 1,
     height: 300,
     width: 600,
-    border: "1px solid #8b8b8b",
+    border: '2px solid #d9d9d9',
+    padding: 15,
     overflowY: "auto",
-    padding: 5,
     marginBlock: 10,
   },
   grayTextCell: {
@@ -849,6 +1027,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderRadius: 100,
   },
   formControl: {
+    "&.MuiFormControl-root": {
+      borderBottom: "1px solid #d6d1e6",
+      "&:hover": {
+        borderBottom: "1px solid #000"
+      }
+    },
     "& .MuiInputLabel-formControl": {
       top: -7,
     }
@@ -999,10 +1183,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
   },
   scriptCode: {
-    background: "#eee",
+    background: '#1e1b1b',
+    color: '#ff9467',
+    padding: 10,
     fontSize: 12,
     wordBreak: "break-all",
     overflow: "auto",
+    borderRadius: 10
   },
   verificationTitle: {
     fontWeight: "bold",
@@ -1115,7 +1302,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 16,
     textDecoration: 'underline',
     margin: '0 5px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    textUnderlineOffset: '4px',
+    "&:hover": {
+      textDecoration: 'none',
+    }
   },
   popperPaper: {
     padding: "5px 0",
@@ -1128,10 +1319,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   pageTitle: {
     fontSize: shortcutFontSize.page[windowSize],
     lineHeight: 1,
+    color: '#FF0054',
+    textDecoration: 'none'
   },
   categoryLabel: {
     fontSize: shortcutFontSize.category[windowSize],
     lineHeight: 1,
+    marginInlineStart: windowSize !== 'xs' && windowSize !== 'sm' ? 18 : 0,
+
   },
   carouselPaper: {
     borderRadius: 10,
@@ -1152,23 +1347,30 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   carouselTipsArrows: {
     display: "flex",
     justifyContent: "space-between",
-    width: "100%",
+    width: "80%",
     position: "absolute",
-    top: "calc(50% - 24px)",
+    top: "calc(72% - 24px)",
     zIndex: 1,
   },
   carouselTips: {
     position: "relative",
+    '& .control-dots': {
+      bottom: 5
+    },
     "& .control-dots .dot": {
-      background: "white!important",
-      height: "10px!important",
-      width: "10px!important",
+      width: "18px!important",
       boxShadow: "unset!important",
-      border: "1px solid #000",
-      margin: "0 2px!important",
+      border: "1px solid #979797",
+      marginTop: -5,
+      height: '3px !important',
+      background: '#979797 !important',
+      marginInline: 3.5,
+      borderRadius: 20
     },
     "& .control-dots .dot.selected": {
-      background: "#000!important",
+      border: "1px solid #ff0054",
+      background: "#ff0054!important",
+      borderRadius: 20
     },
   },
   doughnutGrid: {
@@ -1177,12 +1379,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
   },
   barChart: {
+    width: '100%',
     float: isRTL ? "left" : "right",
     "& canvas": {
       height: barHeight[windowSize],
     },
     paddingLeft: windowSize !== "xs" ? 15 : 0,
-    paddingRight: windowSize !== "xs" ? 15 : 0,
+    // paddingRight: windowSize !== "xs" ? 15 : 0,
   },
   barContainer: {
     width: windowSize !== "xs" ? "460px !important" : "100%",
@@ -1200,9 +1403,28 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 180,
     margin: 10,
   },
-  recipientTitleSection: {
+  dashBoxtitleSection: {
     marginBottom: "1.2rem",
-    borderBottom: "1px solid #ccc",
+    borderBottom: "none !important",
+    background: '#F0F5FF',
+    height: 50,
+    minHeight: 50,
+    color: "#0371AD",
+    fontSize: 20,
+    padding: '10px 0 0 20px',
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+      height: 'auto',
+    },
+    '& .title': {
+      fontSize: 20,
+      color: '#000'
+    }
+
+  },
+  icon_Info: {
+    color: '#FF0054 !important',
+    fontSize: 10
   },
   noRecipients: {
     color: "#AAAAAA",
@@ -1218,9 +1440,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: -10,
   },
   tipsTitle: {
-    textAlign: "center",
-    padding: "20px 20px 0px 20px",
-    marginBottom: 10,
+    maxHeight: 39
   },
   bulkStatusTitleSection: {
     marginBottom: "1rem",
@@ -1263,15 +1483,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     background: "transparent",
     color: "#0371AD",
   },
-  // bulkOutlineStatic: {
-  //   marginBottom: '1rem',
-  //   padding: '3px 15px',
-  //   borderRadius: '.9rem',
-  //   border: '1px solid #0371AD',
-  //   background: 'transparent',
-  //   color: '#0371AD',
-  //   transition: 'all ease-in-out 0.2s'
-  // },
   bulkOutline: {
     marginBottom: "1rem",
     padding: "3px 15px",
@@ -1287,7 +1498,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     // }
   },
   bulkTitle: {
-    fontWeight: 700,
+    fontWeight: 400,
     fontSize: "12",
     lineHeight: "2.1rem",
   },
@@ -1297,13 +1508,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     lineHeight: "2.1rem",
     textDecoration: "underline",
     color: "#0371AD",
-  },
-  dashboardTitle: {
-    fontWeight: "bold",
-    color: "#0371AD",
-    marginTop: 10,
-    marginInlineStart: windowSize === "xs" ? 15 : 30,
-    fontSize: 20,
   },
   dashboardUsername: {
     fontWeight: "bold",
@@ -1322,16 +1526,55 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     margin: "30px 30px 0px 30px",
     borderRadius: 10,
+    border: '3px solid #F0F5FF',
+    '&.MuiPaper-elevation3': {
+      boxShadow: 'none'
+    }
   },
   dashboardBottomPaper: {
     [theme.breakpoints.up("lg")]: {
-      height: 370,
+      minHeight: 370,
     },
     [theme.breakpoints.down("xs")]: {
       margin: 10,
     },
+    height: 'max-content',
     margin: 30,
+    paddingBottom: 25,
     borderRadius: 10,
+    border: '3px solid #F0F5FF',
+    '&.MuiPaper-elevation3': {
+      boxShadow: 'none'
+    }
+  },
+  bulkStatusContainer: {
+    ['@media (max-width:1550px)']: {
+      '& div': {
+        zoom: '95%',
+      }
+    },
+    ['@media (max-width:1280px)']: {
+      '& div': {
+        zoom: '100%',
+      }
+    },
+    '& .MuiDivider-root': {
+      width: '100%',
+      border: '1px #F0F5FF solid',
+      height: 0,
+    },
+    '& .bubbleNew': {
+      marginTop: '-5px',
+      position: 'relative',
+      '& .bubbleText': {
+        color: '#000',
+        position: 'absolute',
+        zIndex: 10,
+        fontSize: 18,
+        left: 25,
+        fontWeight: 'bold'
+      }
+    }
   },
   bulkMargin: {
     [theme.breakpoints.down("xs")]: {
@@ -1352,23 +1595,24 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tipulseemMsg: {
     fontSize: tipsFontSize[windowSize],
     padding: "0px 20px 20px 20px",
+    maxWidth: 204,
+    textAlign: 'center',
+    margin: 'auto',
+    ['@media (max-width:1280px)']: {
+      maxWidth: '65%',
+      fontSize: '14px'
+    },
   },
   lightBulb: {
     width: 100,
     height: 100,
     marginBottom: 10,
   },
+
   activeTab: {
     background: blue,
     borderRadius: 5,
     color: "white",
-  },
-  tabText: {
-    fontSize: 20,
-    textTransform: "capitalize",
-    padding: 2,
-    minWidth: 120,
-    minHeight: 40,
   },
   SMSLastReportGrid: {
     padding: "15px 20px 0px 20px",
@@ -1388,9 +1632,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: "baseline",
   },
   lastReportTitleSection: {
-    marginTop: 5,
+    paddingTop: '0 !important',
     marginBottom: "1.2rem",
     borderBottom: "1px solid #ccc",
+    [theme.breakpoints.down('xs')]: {
+      height: 'auto',
+      '& .MuiTabs-root': {
+        marginLeft: 0,
+        marginTop: 10
+      }
+    }
   },
   lastReportRowItem: {
     display: "flex",
@@ -1400,15 +1651,34 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   lastReportsTabPanels: {
     paddingRight: windowSize !== "xs" ? 25 : 0,
     paddingLeft: windowSize !== "xs" ? 25 : 0,
+    '& .MuiDivider-root': {
+      width: '100%',
+      border: '1px #F0F5FF solid',
+      height: 0,
+    },
   },
   tabPanel: {
     minHeight: 220,
     marginTop: 20,
   },
+
+  directSendTabSection: {
+    marginTop: 30,
+    background: 'aliceblue',
+    padding: 0,
+    maxWidth: 1400,
+    marginInline: 25,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    '& .MuiTabs-root': {
+      height: '100%'
+    }
+  },
   lastReportPadding: {
     [theme.breakpoints.down("md")]: {
       marginTop: 0,
     },
+    borderTop: 'none'
   },
   chartLabel: {
     position: "absolute",
@@ -1419,17 +1689,37 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 18,
     fontWeight: "bold",
     textTransform: "uppercase",
-    color: "gray",
+    color: "#000",
     right: 0,
     left: 0,
     margin: "auto",
     cursor: "pointer",
     textDecoration: "none",
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     "&:hover": {
       textDecoration: "none",
     },
+    '& .centerText': {
+      fontWeight: 500,
+      fontSize: 15,
+      marginBottom: 19,
+    },
+    '& .quantity': {
+      fontWeight: 700,
+      fontSize: 28.676,
+      color: '#FF4D2A'
+    },
+    '& .MuiDivider-root': {
+      height: 2.8,
+      backgroundColor: '#CCFF00',
+      width: 20.3,
+    }
   },
   doughnutBox: {
+    marginTop: 20,
     width: 200,
     height: 200,
     position: "relative",
@@ -1589,7 +1879,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   maxHeightReponsive: {
     "@media screen and (max-width: 1170px)": {
-      maxHeight: "150px !important",
+      // maxHeight: "150px !important",
       textAlign: isRTL ? "right" : "left",
     },
   },
@@ -1671,7 +1961,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       overflowY: 'scroll',
       maxHeight: 150,
       '& :hover': {
-        color: '#0371ad'
+        color: '#ff3343'
       },
       '&::-webkit-scrollbar': {
         width: '6px',
@@ -1683,12 +1973,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       },
 
       '&::-webkit-scrollbar-thumb': {
-        background: '#0371ad',
+        background: '#ff3343',
         borderRadius: '10px'
       },
 
       '&::-webkit-scrollbar-thumb:hover': {
-        background: '#036297'
+        background: '#ef2c3c'
       }
     }
   },
@@ -1729,7 +2019,23 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   carouselContainer: {
+    display: 'flex'
+  },
+  implementButtonFlex: {
+    maxHeight: '45',
+    marginBottom: 5,
+    marginRight: 5,
+    marginInlineStart: 'auto',
+    lineHeight: windowSize === 'xs' ? 1 : null,
+    "@media screen and (max-width: 540px)": {
+      marginTop: 5,
+      marginLeft: 38
+    },
+  },
+
+  carouselContainer: {
     display: 'flex',
+    flexDirection: 'row !important',
     flexWrap: 'nowrap',
     overflowX: 'hidden',
     height: 'min-content',
@@ -1817,6 +2123,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       height: '100%',
       textAlign: 'center',
       '&.secondSlide': {
+        '& div': {
+          width: '100%',
+        },
         '& .titleDescBox': {
           '& .mt20': {
             marginTop: 20

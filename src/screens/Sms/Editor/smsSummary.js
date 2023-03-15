@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
@@ -9,6 +8,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux'
 import clsx from "clsx";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 
 
 const SmsSummary = ({ classes,
@@ -35,7 +35,7 @@ const SmsSummary = ({ classes,
 
   return (
     <Box>
-      {open && <Dialog
+      {open && <BaseDialog
         style={{ paddingBottom: 20 }}
         title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
         showDivider={true}
@@ -43,7 +43,7 @@ const SmsSummary = ({ classes,
         open={open}
         onClose={() => { handleSmsSettings() }}
         showDefaultButtons={false}
-        icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
+        icon={<FaMobileAlt />}
       >
         <Box style={{ fontSize: "22px", marginTop: "5px" }}>
           <Box className={classes.baseSum}>
@@ -70,7 +70,7 @@ const SmsSummary = ({ classes,
                 <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
                 <span className={classes.bodySum}>
                   {t("sms.smsSummaryDialogTotalRecipients")}:
-                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
+                  <span className={classes.bodySum}> {summaryPayload.FinalCount?.toLocaleString()}</span>
                 </span>
                 <Link onClick={() => { setdetailsHide(!detailsHide) }}
                   style={{
@@ -208,12 +208,11 @@ const SmsSummary = ({ classes,
           className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={onConfirm}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton,
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
                 summaryPayload.FinalCount <= 0 ? classes.disabled : null
               )}>
               {t("sms.sendDialog")}
@@ -221,18 +220,17 @@ const SmsSummary = ({ classes,
           </Grid>
           <Grid item>
             <Button
-              variant='contained'
-              size='small'
               onClick={() => { handleSmsSettings() }}
               className={clsx(
-                classes.dialogButton,
-                classes.dialogCancelButton
+                classes.btn,
+                classes.btnRounded,
+                classes.middle,
               )}>
               {t("sms.cancelDialog")}
             </Button>
           </Grid>
         </Grid>
-      </Dialog>}
+      </BaseDialog>}
     </Box>
   )
 }

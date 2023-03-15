@@ -6,7 +6,7 @@ import {
     TextField,
     Typography,
     FormControl,
-    OutlinedInput
+    InputAdornment
 } from '@material-ui/core'
 import clsx from "clsx";
 import { FaGoogle } from 'react-icons/fa';
@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 import { LangugeCode, MobileSupport, PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
 import PulseemTags from '../../../../components/Tags/PulseemTags'
+import { IoIosArrowDown } from 'react-icons/io';
 
 export const AdvancedSettings = ({
     classes,
@@ -30,11 +31,11 @@ export const AdvancedSettings = ({
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
         <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className='selectWrapper'>
                 <Typography title={t("campaigns.newsLetterEditor.mobileSupport")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.mobileSupport")}</Typography>
-                <FormControl className={localClasses.select}>
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
-                        native
+                        // native
                         displayEmpty
                         value={campaingnValues?.IsResponsive ? '1' : '0'}
                         onChange={(event) => {
@@ -43,10 +44,17 @@ export const AdvancedSettings = ({
                                 IsResponsive: Number(event.target.value) === 1 ? true : false
                             })
                         }}
-                        input={<OutlinedInput />}
+                        endAdornment={
+                            <InputAdornment
+                                className={classes.selectAdornment}
+                                position="end"
+                            >
+                                <IoIosArrowDown size={20} />
+                            </InputAdornment>
+                        }
                         renderValue={(selected) => {
                             const lc = MobileSupport.find(e => { return e.value === selected });
-                            return t(lc.label);
+                            return t(lc?.label);
                         }}
                         MenuProps={{
                             PaperProps: {
@@ -62,6 +70,7 @@ export const AdvancedSettings = ({
                             <option
                                 key={item.value}
                                 value={item.value}
+                                className={classes.underlinedSelOptns}
                             >
                                 {t(item.label)}
                             </option>
@@ -69,39 +78,48 @@ export const AdvancedSettings = ({
                     </Select>
                 </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className='textBoxWrapper'>
                 <Typography title={t("campaigns.newsLetterEditor.pre_text")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.pre_text")}</Typography>
                 <TextField
                     id="previewText"
                     label=""
                     variant="outlined"
-                    // name="PreviewText"
+                    name="PreviewText"
                     value={campaingnValues.PreviewText}
-                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
+                    className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, 'fullWidth')}
                     autoComplete="off"
                     onChange={(e) => {
                         setCampaingnValues({ ...campaingnValues, PreviewText: e.target.value });
                     }}
                     title={campaingnValues.PreviewText}
-                    helperText={t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')}
+                // helperText={t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')}
                 />
+                <Typography className={clsx('MuiFormHelperText-root', classes.f14)}>
+                    {t('campaigns.newsLetterEditor.helpTexts.pre_helper_text')}
+                </Typography>
             </Grid>
         </Grid>
         <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} className={clsx('selectWrapper', classes.middle)} >
                 <Typography title={t("campaigns.newsLetterEditor.language")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.language")}</Typography>
-                <FormControl className={localClasses.select}>
+                <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)}>
                     <Select
-                        native
                         displayEmpty
                         value={campaingnValues.LanguageCode}
                         onChange={(event) => {
                             setCampaingnValues({ ...campaingnValues, LanguageCode: event.target.value })
                         }}
-                        input={<OutlinedInput />}
+                        endAdornment={
+                            <InputAdornment
+                                className={classes.selectAdornment}
+                                position="end"
+                            >
+                                <IoIosArrowDown size={20} />
+                            </InputAdornment>
+                        }
                         renderValue={(selected) => {
                             const lc = LangugeCode.find(e => { return e.value === selected });
-                            return t(lc.label);
+                            return t(lc?.label);
                         }}
                         MenuProps={{
                             PaperProps: {
@@ -117,6 +135,7 @@ export const AdvancedSettings = ({
                             <option
                                 key={item.value}
                                 value={item.value}
+                                className={classes.underlinedSelOptns}
                             >
                                 {t(item.label)}
                             </option>

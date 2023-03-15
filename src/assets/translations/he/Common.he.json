@@ -4,6 +4,7 @@
   "All": "הכל",
   "Clicked": "הקליקו",
   "Copyrights": "##Year## © כל הזכויות שמורות לפולסים בע\"מ",
+  "ForSupport": "לתמיכה",
   "DateFormat": "dd/mm/yy",
   "EditMessage": "עריכת הודעה",
   "EmailLink": "הוסף קישור לקמפיין דיוור",
@@ -603,5 +604,9 @@
   "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים",
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
   "remove": "הסר",
-  "searchByCampaign": "חפש לפי קמפיין"
+  "searchByCampaign": "חפש לפי קמפיין",
+  "pageNotFound": "<h1>אווופס... 404!</h1><br/><p>הלכת לאיבוד :(</p><p>אל דאגה. השארנו את שורת תפריט הניווט כאן למעלה, במיוחד בשבילך :)</p>",
+  "next": "הבא",
+  "new": "חדש",
+  "comingSoon": "מגיע בקרוב"
 }

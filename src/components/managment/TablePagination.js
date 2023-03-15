@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { Typography, Grid, TextField, IconButton, FormControl, Select, InputLabel } from '@material-ui/core'
-import { PageArrowIcon } from '../../assets/images/managment/index'
+import { useState } from 'react';
+import { Typography, Grid, TextField, IconButton } from '@material-ui/core'
 
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux';
-
+import { IoIosArrowDown } from 'react-icons/io';
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 
 export const TablePagination = ({
   classes,
@@ -12,8 +11,8 @@ export const TablePagination = ({
   page = 1,
   rowsPerPageOptions = [],
   rowsPerPage,
-  onRowsPerPageChange = () => null,
-  onPageChange = () => null,
+  onRowsPerPageChange = (val) => { },
+  onPageChange = (val) => { },
   returnPageOne = true,
   style = null
 }) => {
@@ -22,7 +21,6 @@ export const TablePagination = ({
   const pages = Math.ceil(rows / rowsPerPage)
   const [innerPage, setPage] = useState('');
   const [isTyping, setTyping] = useState(false);
-  const { isRTL } = useSelector(state => state.core)
 
   const handleKeyPress = event => {
     var isNumber = /^[0-9]*$/;
@@ -66,6 +64,7 @@ export const TablePagination = ({
           variant='standard'
           SelectProps={{
             native: true,
+            IconComponent: () => <IoIosArrowDown />
           }}
           value={rowsPerPage}
           onChange={handleRowsPerPageChange}>
@@ -95,7 +94,7 @@ export const TablePagination = ({
             }}
             size='small'
             className={classes.tablePadingtonArrowOppisite}>
-            <PageArrowIcon />
+            <MdArrowBackIos />
           </IconButton>}
         <Typography>
           {t('common.page')}
@@ -124,7 +123,7 @@ export const TablePagination = ({
             }}
             size='small'
             className={classes.tablePadingtonArrow}>
-            <PageArrowIcon />
+            <MdArrowBackIos />
           </IconButton>}
       </Grid>
     )

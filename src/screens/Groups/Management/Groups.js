@@ -4,15 +4,14 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
-    Box, Typography, Divider, TableBody, TableRow, TableCell,
+    Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
-import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
-import { TablePagination, SearchField } from '../../../components/managment/index'
+import { PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
+import { TablePagination, SearchField, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import {
@@ -27,7 +26,7 @@ import AddRecipientPopup from "./Popup/AddRecipientPopup";
 import ConfirmDeletePopUp from "./Popup/ConfirmDeletePopUp";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { Loader } from '../../../components/Loader/Loader';
-import { MdOutlineLockClock } from "react-icons/md"
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineLockClock } from "react-icons/md"
 import { RiPagesLine } from "react-icons/ri"
 import IconWrapper from "../../../components/icons/IconWrapper";
 import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
@@ -39,10 +38,12 @@ import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
+import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
+import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
+import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
 
 const Groups = ({ classes }) => {
@@ -102,40 +103,23 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.emails"),
             classes: cellStyle,
-            className: classes.flex2,
+            className: classes.flex3,
             align: "center",
         },
         {
             label: t("recipient.sms/mms"),
             classes: cellStyle,
-            className: clsx(classes.flex2, classes.textUppercase, classes.maxWidth325),
+            className: clsx(classes.flex3, classes.textUppercase),
             align: "center",
         },
         {
             label: "",
             classes: cellStyle,
-            className: clsx(classes.flex4, classes.maxWidth450),
+            className: clsx(classes.flex5),
             align: "center",
         },
     ];
-    const renderHeader = () => {
-        return (
-            <>
-                <Typography className={classes.managementTitle}>
-                    {t("recipient.logPageHeaderResource1.Text")}
-                </Typography>
-                <Divider />
-            </>
-        );
-    };
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
+
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -179,12 +163,14 @@ const Groups = ({ classes }) => {
         if (lastSearch?.SearchTerm) {
             setSearchStr(lastSearch?.SearchTerm ?? "");
         }
+
     }, [dispatch, serachData.PageIndex, rowsPerPage]);
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
             setDialog(DialogType.ADD_GROUP)
         }
+
     }, [])
 
     const renderSearchSection = () => {
@@ -224,32 +210,34 @@ const Groups = ({ classes }) => {
 
         if (windowSize === "xs") {
             return (
-                <SearchField
-                    classes={classes}
-                    value={searchStr}
-                    onChange={(e) => setSearchStr(e.target.value)}
-                    onClick={() => {
-                        const searchObject = {
-                            PageIndex: 1,
-                            PageSize: rowsPerPage,
-                            SearchTerm: searchStr,
-                        };
+                <Grid container className={'searchLine'}>
+                    <SearchField
+                        classes={classes}
+                        value={searchStr}
+                        onChange={(e) => setSearchStr(e.target.value)}
+                        onClick={() => {
+                            const searchObject = {
+                                PageIndex: 1,
+                                PageSize: rowsPerPage,
+                                SearchTerm: searchStr,
+                            };
 
-                        setSearchData(searchObject);
-                        SetPageState({
-                            "PageName": "groups",
-                            "PageNumber": 1,
-                            "SearchData": searchObject
-                        });
-                    }}
-                    onKeyPress={handleKeyPress}
-                    placeholder={t("common.GroupName")}
-                />
+                            setSearchData(searchObject);
+                            SetPageState({
+                                "PageName": "groups",
+                                "PageNumber": 1,
+                                "SearchData": searchObject
+                            });
+                        }}
+                        onKeyPress={handleKeyPress}
+                        placeholder={t("common.GroupName")}
+                    />
+                </Grid>
             );
         }
 
         return (
-            <Grid container spacing={2} className={classes.lineTopMarging}>
+            <Grid container spacing={2} className={clsx(classes.lineTopMarging, 'searchLine')}>
                 <Grid item>
                     <TextField
                         variant="outlined"
@@ -263,8 +251,6 @@ const Groups = ({ classes }) => {
                 </Grid>
                 <Grid item>
                     <Button
-                        size="large"
-                        variant="contained"
                         onClick={() => {
                             const searchObject = {
                                 PageIndex: 1,
@@ -280,8 +266,8 @@ const Groups = ({ classes }) => {
                             });
                             getData(searchObject);
                         }}
-                        className={classes.searchButton}
-                        endIcon={<SearchIcon />}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >
                         {t("campaigns.btnSearchResource1.Text")}
                     </Button>
@@ -289,8 +275,6 @@ const Groups = ({ classes }) => {
                 {serachData.SearchTerm && (
                     <Grid item>
                         <Button
-                            size="large"
-                            variant="contained"
                             onClick={() => {
                                 const searchObject = {
                                     ...serachData,
@@ -310,8 +294,8 @@ const Groups = ({ classes }) => {
                                 setSearchStr("");
                                 getData(searchObject);
                             }}
-                            className={classes.searchButton}
-                            endIcon={<ClearIcon />}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         >
                             {t("common.clear")}
                         </Button>
@@ -327,13 +311,10 @@ const Groups = ({ classes }) => {
             <Grid container spacing={2} className={classes.linePadding}>
                 <Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen
-                        )}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => setDialog(DialogType.ADD_GROUP)}
+
                     >
                         {t("group.new")}
                     </Button>
@@ -341,9 +322,8 @@ const Groups = ({ classes }) => {
                 {windowSize !== "xs" && (
                     <Grid item>
                         <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(classes.actionButton, classes.actionButtonRed)}
+                            className={clsx(classes.btn, classes.btnRounded)}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                             onClick={() => {
                                 selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
                             }}
@@ -354,29 +334,17 @@ const Groups = ({ classes }) => {
                 )}
                 <Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(classes.actionButton, classes.actionButtonRed)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_RECIPIENT)}
                     >
                         {t("recipient.deleteRecipient")}
                     </Button>
                 </Grid>
-                {/* <Grid item xs={colSize}>
-                    <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(classes.actionButton, classes.actionButtonRed)}
-                        onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
-                    >
-                        {t("recipient.unsubscribe")}
-                    </Button>
-                </Grid> */}
                 {accountFeatures && accountFeatures?.indexOf('15') > -1 && (<Grid item xs={colSize}>
                     <Button
-                        variant="contained"
-                        size="medium"
-                        className={clsx(classes.actionButton, classes.importButtonBlue)}
+                        className={clsx(classes.btn, classes.btnRounded)}
+                        endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
 
                     >
@@ -387,14 +355,9 @@ const Groups = ({ classes }) => {
                     accountFeatures?.indexOf('13') === -1 &&
                     <Grid item xs={colSize}>
                         <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonGreen
-                            )}
+                            className={clsx(classes.btn, classes.btnRounded)}
                             onClick={() => setShowConfirmDialog(true)}
-                            startIcon={<ExportIcon />}
+                            endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         >
                             {t("campaigns.exportFile")}
                         </Button>
@@ -426,8 +389,8 @@ const Groups = ({ classes }) => {
         }
 
         return (
-            <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-                {windowSize !== 'xs' && <Grid item sm={2}>
+            <Grid container wrap="nowrap" spacing={1} alignItems='center' className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.groupNameCell : ''}>
+                {windowSize !== 'xs' && <Grid item sm={2} className={['xs', 'sm'].indexOf(windowSize) > -1 ? classes.flexJustifyCenter : ''}>
                     <Checkbox
                         color="primary"
                         checked={selectedGroups && selectedGroups.includes(GroupID)}
@@ -442,7 +405,7 @@ const Groups = ({ classes }) => {
                     />
 
                 </Grid>}
-                <Grid item sm={10}>
+                <Grid item sm={10} className='rowTitle'>
                     <CustomTooltip
                         isSimpleTooltip={false}
                         interactive={true}
@@ -451,7 +414,6 @@ const Groups = ({ classes }) => {
                             arrow: classes.fBlack,
                         }}
                         arrow={true}
-                        style={{ fontSize: 18 }}
                         placement={"top"}
                         title={<Typography noWrap={false}>{GroupName}</Typography>}
                         text={GroupName}
@@ -477,19 +439,8 @@ const Groups = ({ classes }) => {
         );
     };
 
-    const REDIRECT_OPTIONS = {
-        ShowGroup: 0,
-        ShowMails: 10,
-        ShowMailsActive: 11,
-        ShowMailsRemoved: 12,
-        ShowMailsErrored: 13,
-        ShowSms: 20,
-        ShowSmsActive: 21,
-        ShowSmsRemoved: 22,
-        ShowSmsErrored: 23
-    };
 
-    const renderRow = (row) => {
+    const renderCellIcons = (row) => {
         const {
             ActiveCell,
             ActiveEmails,
@@ -503,11 +454,159 @@ const Groups = ({ classes }) => {
             IsConnectedToWebForm,
             AutomationID,
             IsAutoResponder,
+            PendingClients,
+            PendingSmsClients,
+        } = row;
+
+        const iconsMap = [
+            {
+                key: 'preview',
+                uIcon: PreviewIcon,
+                lable: t("recipient.preview"),
+                remove: windowSize === 'xs',
+                rootClass: classes.paddingIcon,
+                disable: !((
+                    (ActiveEmails || 0) +
+                    (RemovedEmails || 0) +
+                    (RestrictedEmails || 0) +
+                    (InvalidEmails || 0) +
+                    (PendingClients || 0)
+                ) > 0
+                    ||
+                    (
+                        (ActiveCell || 0) +
+                        (RemovedCell || 0) +
+                        (InvalidCell || 0) +
+                        (PendingSmsClients || 0)
+                    ) > 0),
+                onClick:
+                    (e) => {
+                        navigate(CLIENT_CONSTANTS.BASEURL, {
+                            state: {
+                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                GroupIds: [GroupID],
+                                ResultTitle: GroupName,
+                                PageProperty: pageProperty.current
+                            }
+                        })
+                    }
+            },
+            {
+                key: 'addRecipient',
+                uIcon: AddRecipient,
+                lable: t("recipient.addRecipient"),
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.ADD_RECIPIENT)
+                },
+            },
+            {
+                key: 'addRecipients',
+                uIcon: AddRecipients,
+                lable: t("recipient.addRecipients"),
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.ADD_RECIPIENTS)
+                },
+            },
+            {
+                key: 'reset',
+                uIcon: ResetIcon,
+                lable: t("recipient.reset"),
+                remove: windowSize === 'xs',
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.RESET_GROUP)
+                },
+            },
+            {
+                key: 'settings',
+                uIcon: SettingIcon,
+                lable: t("recipient.settings"),
+                remove: windowSize === 'xs',
+                onClick: () => {
+                    setSelectedGroups([GroupID])
+                    setDialog(DialogType.EDIT_GROUP)
+                },
+                rootClass: classes.paddingIcon,
+            },
+            {
+                key: 'automation',
+                uIcon: AutomationIcon,
+                lable: t("recipient.automation"),
+                disable: !AutomationID,
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    if (AutomationID)
+                        window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
+                }
+            },
+            {
+                key: 'delete',
+                uIcon: DeleteIcon,
+                lable: t("recipient.delete"),
+                disable: (AutomationID || IsConnectedToWebForm || IsAutoResponder),
+                rootClass: classes.paddingIcon,
+                onClick: () => {
+                    if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
+                        setSelectedGroups([GroupID])
+                        setDialog(DialogType.DELETE_GROUP)
+                    }
+                },
+            }
+        ]
+        return (
+            <Grid
+                container
+                direction='row'
+                justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+                {iconsMap.map(icon => (
+                    <Grid
+                        className={clsx(icon.disable && classes.disabledCursor, 'rowIconContainer')}
+                        key={icon.key}
+                        item >
+                        <ManagmentIcon
+                            classes={classes}
+                            {...icon}
+                            uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+        )
+    }
+
+    // const REDIRECT_OPTIONS = {
+    //     ShowGroup: 0,
+    //     ShowMails: 10,
+    //     ShowMailsActive: 11,
+    //     ShowMailsRemoved: 12,
+    //     ShowMailsErrored: 13,
+    //     ShowSms: 20,
+    //     ShowSmsActive: 21,
+    //     ShowSmsRemoved: 22,
+    //     ShowSmsErrored: 23
+    // };
+
+    const renderRow = (row) => {
+        const {
+            ActiveCell,
+            ActiveEmails,
+            GroupID,
+            GroupName,
+            InvalidCell,
+            InvalidEmails,
+            RestrictedEmails,
+            RemovedCell,
+            RemovedEmails,
             CreationDate,
             UpdateDate,
             PendingClients,
             PendingSmsClients,
-            PendingEmails
         } = row;
         let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
             return e === true
@@ -571,7 +670,7 @@ const Groups = ({ classes }) => {
                         }
                     </Grid>
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={classes.flex3}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
                     <FlexGrid
                         gridArr={[
                             {
@@ -583,22 +682,36 @@ const Groups = ({ classes }) => {
                                                 name: t("campaigns.recipients"),
                                                 value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.blue, classes.f09rem),
-                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                        GroupIds: [GroupID],
-                                                        Status: 100,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -615,23 +728,38 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Active"),
                                                 value: ActiveEmails,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.green, classes.f09rem),
-                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                                            GroupIds: [GroupID],
+                                                            Status: 1,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: (ActiveEmails || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
 
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
-                                                        GroupIds: [GroupID],
-                                                        Status: 1,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                                            GroupIds: [GroupID],
+                                                            Status: 1,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -648,23 +776,38 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Removed"),
                                                 value: RemovedEmails,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 2,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: (RemovedEmails || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
 
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
-                                                        GroupIds: [GroupID],
-                                                        Status: 2,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 2,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -682,23 +825,38 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Bounced"),
                                                 value: InvalidEmails,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: (InvalidEmails || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
 
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
-                                                        GroupIds: [GroupID],
-                                                        Status: 4,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -716,22 +874,37 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Pending"),
                                                 value: PendingClients || 0,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.grey, classes.f09rem),
-                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (PendingClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                        GroupIds: [GroupID],
-                                                        Status: 5,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (PendingClients || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -747,7 +920,7 @@ const Groups = ({ classes }) => {
                     />
                 </TableCell>
 
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.maxWidth325)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3)}>
                     <FlexGrid
                         gridArr={[
                             {
@@ -759,23 +932,38 @@ const Groups = ({ classes }) => {
                                                 name: t("campaigns.recipients"),
                                                 value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0),
                                                 classes: {
-                                                    name: clsx(colorTextStyle.blue, classes.f09rem),
-                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.blue, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
 
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                        GroupIds: [GroupID],
-                                                        Status: 100,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -792,23 +980,38 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Active"),
                                                 value: ActiveCell,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.green, classes.f09rem),
-                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.green, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.green, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                                            GroupIds: [GroupID],
+                                                            Status: 0,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: (ActiveCell || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
 
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
-                                                        GroupIds: [GroupID],
-                                                        Status: 0,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                                            GroupIds: [GroupID],
+                                                            Status: 0,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Active")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -825,23 +1028,38 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Removed"),
                                                 value: RemovedCell,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 1,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: (RemovedCell || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
 
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
-                                                        GroupIds: [GroupID],
-                                                        Status: 1,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 1,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Removed")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -859,22 +1077,37 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Bounced"),
                                                 value: InvalidCell,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.red, classes.f09rem),
-                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.red, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.red, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
-                                                        GroupIds: [GroupID],
-                                                        Status: 4,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (InvalidCell || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]}
 
                                         variant="body1"
@@ -892,22 +1125,37 @@ const Groups = ({ classes }) => {
                                                 name: t("recipient.Pending"),
                                                 value: PendingSmsClients || 0,
                                                 classes: {
-                                                    name: clsx(colorTextStyle.grey, classes.f09rem),
-                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem),
+                                                    name: clsx(colorTextStyle.grey, classes.f09rem, classes.noDecoration),
+                                                    value: clsx(colorTextStyle.grey, classes.grpDataBoxText, classes.f09rem, classes.noDecoration),
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (PendingSmsClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                        GroupIds: [GroupID],
-                                                        Status: 5,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (PendingSmsClients || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: `${GroupName} - ${t("recipient.Pending")}`,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                                 // onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsPending}&GroupID=${GroupID}`)
                                             }]}
 
@@ -926,133 +1174,15 @@ const Groups = ({ classes }) => {
                 <TableCell
                     classes={noBorderCellStyle}
                     align="center"
-                    className={clsx(classes.flex4, classes.maxWidth450)}
+                    className={clsx(classes.flex5, classes.p0)}
                 >
-                    <FlexGrid
-                        gridArr={[
-                            {
-                                onClick:
-                                    (
-                                        (ActiveEmails || 0) +
-                                        (RemovedEmails || 0) +
-                                        (RestrictedEmails || 0) +
-                                        (InvalidEmails || 0) +
-                                        (PendingClients || 0)
-                                    ) > 0
-                                        ||
-                                        (
-                                            (ActiveCell || 0) +
-                                            (RemovedCell || 0) +
-                                            (InvalidCell || 0) +
-                                            (PendingSmsClients || 0)
-                                        ) > 0 ?
-                                        () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                            state: {
-                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
-                                                GroupIds: [GroupID],
-                                                ResultTitle: GroupName,
-                                                PageProperty: pageProperty.current
-                                            }
-                                        }) : voidFunction,
-                                label: t("recipient.preview"),
-                                component: (
-                                    <IconWrapper iconName="preview" className={classes.mxAuto} />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.ADD_RECIPIENT)
-                                },
-                                label: t("recipient.addRecipient"),
-                                component: (
-                                    <IconWrapper
-                                        iconName="addRecipient"
-                                        className={classes.mxAuto}
-
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.ADD_RECIPIENTS)
-                                },
-                                label: t("recipient.addRecipients"),
-                                component: (
-                                    <IconWrapper
-                                        iconName="addRecipients"
-                                        className={classes.mxAuto}
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.RESET_GROUP)
-                                },
-                                label: t("recipient.reset"),
-                                component: (
-                                    <IconWrapper iconName="reset" className={classes.mxAuto} />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            {
-                                onClick: () => {
-                                    setSelectedGroups([GroupID])
-                                    setDialog(DialogType.EDIT_GROUP)
-                                },
-                                label: t("recipient.settings"),
-                                component: (
-                                    <IconWrapper iconName="settings" className={classes.mxAuto} />
-                                ),
-                                classes: { text: clsx(classes.noWrap, classes.f09rem) },
-                            },
-                            //TODO: Disable if !== null
-                            {
-                                label: t("recipient.automation"),
-                                component: (
-                                    <IconWrapper iconName="automation" className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-                                        onClick={() => {
-                                            if (AutomationID)
-                                                window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
-                                        }}
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, !AutomationID ? classes.disabled : null) },
-                                isDisabled: !AutomationID
-                            },
-                            {
-                                onClick: () => {
-                                    if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
-                                        setSelectedGroups([GroupID])
-                                        setDialog(DialogType.DELETE_GROUP)
-                                    }
-                                },
-                                label: t("recipient.delete"),
-                                component: (
-                                    <IconWrapper
-                                        iconName="delete"
-                                        className={(AutomationID || IsConnectedToWebForm || IsAutoResponder) ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-
-                                    />
-                                ),
-                                classes: { text: clsx(classes.noWrap, (AutomationID || IsConnectedToWebForm || IsAutoResponder) ? classes.disabled : null) },
-                                isDisabled: (AutomationID || IsConnectedToWebForm || IsAutoResponder)
-                            },
-                        ]}
-                        variant="body1"
-                        align="center"
-                    />
+                    {renderCellIcons(row)}
                 </TableCell>
             </TableRow>
         )
 
     }
+
     const renderPhoneRow = (row) => {
         const {
             ActiveCell,
@@ -1066,7 +1196,7 @@ const Groups = ({ classes }) => {
             RestrictedEmails,
             GroupName,
             PendingClients,
-            PendingSmsClients,
+            PendingSmsClients
         } = row;
         return (
             <TableRow key={GroupID} component="div" classes={rowStyle}>
@@ -1105,20 +1235,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.blue,
                                                     value: colorTextStyle.blue,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                        GroupIds: [GroupID],
-                                                        Status: 100,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1134,20 +1279,34 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.green,
                                                     value: colorTextStyle.green,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
-                                                        GroupIds: [GroupID],
-                                                        Status: 1,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (ActiveEmails || 0) > 0 ? (e) => {
+                                                    e.preventDefault(); navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                                            GroupIds: [GroupID],
+                                                            Status: 1,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1163,20 +1322,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 2,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
-                                                        GroupIds: [GroupID],
-                                                        Status: 2,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (RemovedEmails || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 2,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />
                                     ),
 
@@ -1193,20 +1367,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
-                                                        GroupIds: [GroupID],
-                                                        Status: 4,
-                                                        TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (InvalidEmails || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 1,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />),
 
                                 },
@@ -1222,20 +1411,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.grey,
                                                     value: colorTextStyle.grey,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (PendingSmsClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                        GroupIds: [GroupID],
-                                                        Status: 5,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (PendingSmsClients || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />
                                     ),
 
@@ -1262,20 +1466,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.blue,
                                                     value: colorTextStyle.blue,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-                                                        GroupIds: [GroupID],
-                                                        Status: 100,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                                            GroupIds: [GroupID],
+                                                            Status: 100,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1291,20 +1510,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.green,
                                                     value: colorTextStyle.green,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                                            GroupIds: [GroupID],
+                                                            Status: 0,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: () => (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
-                                                        GroupIds: [GroupID],
-                                                        Status: 0,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (ActiveCell || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                                            GroupIds: [GroupID],
+                                                            Status: 0,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1320,20 +1554,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 1,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: () => (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
-                                                        GroupIds: [GroupID],
-                                                        Status: 1,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (RemovedCell || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                                            GroupIds: [GroupID],
+                                                            Status: 1,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />
                                     ),
                                 },
@@ -1349,20 +1598,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.red,
                                                     value: colorTextStyle.red,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: () => (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
-                                                        GroupIds: [GroupID],
-                                                        Status: 4,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (InvalidCell || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                                            GroupIds: [GroupID],
+                                                            Status: 4,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]} />),
 
                                 },
@@ -1378,20 +1642,35 @@ const Groups = ({ classes }) => {
                                                 classes: {
                                                     name: colorTextStyle.grey,
                                                     value: colorTextStyle.grey,
+                                                    href: `${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString(
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageName: pageProperty?.current?.PageName
+                                                        }
+                                                    )}`
                                                 },
-                                                onClick: (PendingClients || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                                    state:
-                                                    {
-                                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-                                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
-                                                        GroupIds: [GroupID],
-                                                        Status: 5,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName,
-                                                        PageProperty: pageProperty.current
-                                                    }
-                                                }) : voidFunction
+                                                onClick: (PendingClients || 0) > 0 ? (e) => {
+                                                    e.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                        state:
+                                                        {
+                                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                                            GroupIds: [GroupID],
+                                                            Status: 5,
+                                                            TestStatusOfEmailElseSms: 0,
+                                                            ResultTitle: GroupName,
+                                                            PageProperty: pageProperty.current
+                                                        }
+                                                    })
+                                                } : VoidFunction
                                             }]
                                             } />),
                                 },
@@ -1468,7 +1747,7 @@ const Groups = ({ classes }) => {
                 break;
             }
             case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
                 setDialog(DialogType.MESSAGE);
                 break;
             }
@@ -1489,17 +1768,17 @@ const Groups = ({ classes }) => {
         }
     }
     const handleConfirmExport = (formatType) => {
-        let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
+        setShowConfirmDialog(false);
+        let qString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
         if (selectedGroups && selectedGroups.length > 0) {
-            queryString += `&Groups=${selectedGroups.join(',')}`;
+            qString += `&Groups=${selectedGroups.join(',')}`;
         }
         if (selectedGroups.length === 1) {
             const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
-            queryString += `&GroupName=${groupName.replace(' ', '-')}`;
+            qString += `&GroupName=${groupName.replace(' ', '-')}`;
         }
         // This should be change in the .NET site for support the format file selection POP UP 
-        window.open(`/Pulseem/ClientExport.csv?${queryString}`);
-        setShowConfirmDialog(false);
+        window.open(`/Pulseem/ClientExport.csv?${qString}`);
     }
     const renderConfirmDialog = () => {
         return (
@@ -1648,13 +1927,23 @@ const Groups = ({ classes }) => {
                     return <AddGroupPopUp
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
-                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        onClose={() => {
+                            setDialog(null);
+                            setSelectedGroups([])
+                        }}
+                        onCancel={() => {
+                            setDialog(null);
+                            setSelectedGroups([])
+                        }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
                         addClientByQuery={false}
-                        addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
+                        addAnotherRecCallback={(groupId) => {
+                            setSelectedGroups([...selectedGroups, groupId]);
+                            setDialog(DialogType.ADD_RECIPIENTS)
+                        }}
                         getData={() => getData(null)}
                         handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions) }}
                     />
@@ -1664,6 +1953,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.EDIT_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]) }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1680,6 +1970,7 @@ const Groups = ({ classes }) => {
                             classes={classes}
                             isOpen={dialog === DialogType.RESET_GROUP}
                             onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                            onCancel={() => { setDialog(null); setSelectedGroups([]) }}
                             setLoader={setLoader}
                             windowSize={windowSize}
                             ToastMessages={ToastMessages}
@@ -1696,6 +1987,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_RECIPIENT}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1715,6 +2007,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_RECIPIENTS}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1731,6 +2024,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1746,6 +2040,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.DELETE_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); }}
                         windowSize={windowSize}
                         handleDeleteGroup={() => handleDeleteGroup()}
                     />
@@ -1755,6 +2050,7 @@ const Groups = ({ classes }) => {
                         classes={classes}
                         isOpen={dialog === DialogType.MESSAGE}
                         onClose={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
+                        onCancel={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
                         windowSize={windowSize}
                         title={responseMessage.title}
                         message={responseMessage.message}
@@ -1767,6 +2063,7 @@ const Groups = ({ classes }) => {
                             classes={classes}
                             isOpen={dialog === DialogType.SIMPLY_CLUB}
                             onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                            onCancel={() => { setDialog(null); setSelectedGroups([]) }}
                             windowSize={windowSize}
                             title={responseMessage.title}
                             message={responseMessage.message}
@@ -1798,8 +2095,11 @@ const Groups = ({ classes }) => {
         >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
-                {renderHeader()}
-                {renderSearchSection()}
+                <Box className={'topSection'}>
+
+                    <Title Text={t('recipient.logPageHeaderResource1.Text')} classes={classes} />
+                    {renderSearchSection()}
+                </Box>
                 {windowSize !== 'xs' ? renderManagmentLine() :
                     <Box
                         item
