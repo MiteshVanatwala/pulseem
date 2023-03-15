@@ -14,6 +14,7 @@ import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
 import { useNavigate } from 'react-router';
 import { ChartIcon } from '../../assets/images/dashboard/index'
 import { sitePrefix } from '../../config';
+import { Loader } from '../Loader/Loader';
 
 
 const RecipientChart = ({ classes, }) => {
@@ -444,7 +445,7 @@ const RecipientChart = ({ classes, }) => {
 
     const renderCharts = () => {
         if (!recipientsReport) {
-            return;
+            return (<Loader showBackdrop={false} contained containerSize={240} />);
         }
 
         let totalRecipientsReport = 0;
