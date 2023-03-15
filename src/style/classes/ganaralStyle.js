@@ -195,7 +195,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   packageDialogPpaper: {
-    background: '#ffe6e0c4'
+    // background: '#ffe6e0c4'
   },
   dialogChildren: {
     marginBlock: 20,
@@ -2627,8 +2627,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   dialogTopBar: {
-    height: 36,
-    padding: "2px 0px 0 6px",
+    height: 50,
+    padding: "2px 0px 0 15px",
     color: "#fff",
     fontWeight: 600,
     textTransform: "capitalize",
@@ -2654,10 +2654,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#000"
   },
   dialogExitButtonRTL: {
-    left: "-0.1rem",
+    right: 15,
+    top: 15
   },
   dialogExitButtonLTR: {
-    right: "-0.1rem",
+    left: 15,
+    top: 15
   },
   solidDialog: {
     display: "flex",
