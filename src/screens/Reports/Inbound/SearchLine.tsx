@@ -326,7 +326,7 @@ const SearchLine = ({
                         id='searchByCampaign'
                         getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
                         // @ts-ignore
-                        noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
+                        noOptionsText={translator("campaigns.newsLetterEditor.errors.CampaignNotFound")}
                         clearOnBlur={false}
                         options={autoCompleteOptions}
                         renderOption={renderOptions}
