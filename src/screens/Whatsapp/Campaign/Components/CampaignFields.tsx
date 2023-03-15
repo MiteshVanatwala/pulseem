@@ -4,9 +4,6 @@ import {
 	Typography,
 	MenuItem,
 	Grid,
-	Select,
-	ListSubheader,
-	InputAdornment,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
@@ -14,26 +11,11 @@ import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
 import { BaseSyntheticEvent } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useState, useMemo } from 'react';
-import SearchIcon from '@mui/material/IconButton/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
 import {
 	getTemplateIdByName,
 	getTemplateName,
 	getTemplateNameById,
 } from '../../Common';
-
-// const containsText = (text: any, searchText: any) =>
-// 	text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
-
-const useStyles = makeStyles((theme) => ({
-	selectEmpty: {
-		marginTop: theme.spacing(2),
-	},
-	menuPaper: {
-		maxHeight: 400,
-	},
-}));
 
 const CampaignFields = ({
 	classes,

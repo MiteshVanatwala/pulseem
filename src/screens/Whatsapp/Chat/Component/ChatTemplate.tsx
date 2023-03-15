@@ -2,7 +2,10 @@ import { Grid } from '@material-ui/core';
 import moment from 'moment';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
-import { getTemplatePreviewData } from '../../Common';
+import {
+	getTemplatePreviewData,
+	getTemplateTextWithVariable,
+} from '../../Common';
 import { fileTypes } from '../../Constant';
 import {
 	callToActionFieldProps,
@@ -19,6 +22,9 @@ import clsx from 'clsx';
 import Icon from './Icon';
 import PDF from '../../../../assets/images/pdf.png';
 import ZIP from '../../../../assets/images/zip.png';
+import PPT from '../../../../assets/images/ppt.png';
+import XLSX from '../../../../assets/images/xlsx.png';
+import DOC from '../../../../assets/images/doc.png';
 import Video from '../../../../assets/images/video.png';
 import Download from '../../../../assets/images/download.png';
 import ImagePreview from './ImagePreview';
@@ -32,6 +38,7 @@ const ChatTemplate = ({
 	template,
 	msgIndex,
 	message,
+	variables,
 }: ChatTemplateProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -51,6 +58,21 @@ const ChatTemplate = ({
 	};
 	const formatTime = (timeString: string) => {
 		return moment(timeString).format('hh:mm');
+	};
+	const getIconForFile = (message: APIWhatsappChatDetailData) => {
+		if (message.MediaContentType?.includes('spreadsheetml.sheet')) {
+			return XLSX;
+		} else if (
+			message.MediaContentType?.includes('presentationml.presentation')
+		) {
+			return PPT;
+		} else if (message.MediaContentType?.includes('pdf')) {
+			return PDF;
+		} else if (message.MediaContentType?.includes('zip')) {
+			return ZIP;
+		} else {
+			return DOC;
+		}
 	};
 	const getInboundMessageContent = (message: APIWhatsappChatDetailData) => {
 		if (message?.Message?.length === 0 && message?.MediaUrl?.length === 0) {
@@ -74,7 +96,11 @@ const ChatTemplate = ({
 		}
 		if (
 			message.MediaContentType?.includes('pdf') ||
-			message.MediaContentType?.includes('zip')
+			message.MediaContentType?.includes('zip') ||
+			message.MediaContentType?.includes('doc') ||
+			message.MediaContentType?.includes('docx') ||
+			message.MediaContentType?.includes('spreadsheetml.sheet') ||
+			message.MediaContentType?.includes('presentationml.presentation')
 		) {
 			return (
 				<div
@@ -85,10 +111,10 @@ const ChatTemplate = ({
 					<Grid container alignItems='center'>
 						<img
 							className='pdf-preview-img'
-							src={message.MediaContentType?.includes('zip') ? ZIP : PDF}
+							src={getIconForFile(message)}
 							alt='uploaded-file-preview'
 						/>
-						<div className={classes.pdfFileName}>
+						<div className={clsx(classes.pdfFileName, 'inbound')}>
 							{
 								message?.Message?.split('/')[
 									message?.Message?.split('/')?.length - 1
@@ -189,7 +215,12 @@ const ChatTemplate = ({
 														</a>
 													</Grid>
 												)}
-											<pre>{templateData?.templateText}</pre>
+											<pre>
+												{getTemplateTextWithVariable(
+													templateData?.templateText,
+													variables
+												)}
+											</pre>
 										</div>
 									)}
 									{buttonType === 'callToAction' &&

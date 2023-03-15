@@ -1430,6 +1430,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	manageTemplatesTableWrapper: {
 		marginTop: '17px',
 		padding: '0 8px',
+		'@media screen and (max-width: 1024px)': {
+			'& table': {
+				minWidth: '860px',
+				overflowX: 'auto',
+			},
+		},
 	},
 	manageTemplatesTableWrapperPadding: {
 		padding: '0px 220px',
@@ -1577,7 +1583,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		outline: 'none',
 		padding: '3px 11px 3px 10px',
 		fontSize: '16px',
-		width: 'calc(100% - 23px)',
+		width: '100%',
 		'&::placeholder': {
 			fontSize: '16px',
 		},
@@ -2703,6 +2709,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		wordWrap: 'break-word',
 		whiteSpace: 'pre-wrap',
 		width: 'calc(100% - 66px)',
+		'&.inbound': {
+			fontFamily: 'OpenSansHebrew',
+			padding: '0px 2px',
+		},
 	},
 	summaryModalAccordion: {
 		color: '#1771ad',

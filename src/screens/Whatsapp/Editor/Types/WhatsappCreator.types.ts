@@ -98,6 +98,7 @@ export type campaignPage1ButtonsProps = {
 export type coreProps = {
 	windowSize: string;
 	isRTL: boolean;
+	rowsPerPage: string | number;
 };
 
 export type actionButtonProps = {
@@ -289,12 +290,14 @@ export type saveTemplateItemsProps = {
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
 	Status: string;
+	StatusId: number;
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
 	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
+	UpdatedOn: string;
 };
 
 export type saveTemplateDataProps = {
@@ -355,19 +358,21 @@ export type templateListItemsProps = {
 	Data: savedTemplateDataProps;
 	RejectionReason: string;
 	Status: string;
+	StatusId: number;
 	StatusUpdatedDate: string;
 	TemplateId: string;
 	TemplateName: string;
 	FriendlyTemplateName: string;
 	Id: number;
 	IsAllowEdit: boolean;
+	UpdatedOn: string;
 };
 
 export type templateListDataProps = {
-	Error: string;
+	CurrentPage: number;
+	PageSize: number;
 	Count: number;
-	Message: string;
-	Status: number;
+	TotalRecord: number;
 	Items: saveTemplateItemsProps[];
 };
 

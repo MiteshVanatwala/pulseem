@@ -12,7 +12,13 @@ import {
 	templatePreviewDataProps,
 } from './Editor/Types/WhatsappCreator.types';
 import uniqid from 'uniqid';
-import { SubAccountSettings } from './Campaign/Types/WhatsappCampaign.types';
+import {
+	landingPageDataProps,
+	personalFieldDataProps,
+	SubAccountSettings,
+	updatedVariable,
+} from './Campaign/Types/WhatsappCampaign.types';
+import { APIWhatsappChatVariablesData } from './Chat/Types/WhatsappChat.type';
 
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -273,11 +279,72 @@ export const checkSiteTrackingLink = (
 		const domainName = SubAccountSettings?.DomainAddress.replace('https://', '')
 			.replace('http://', '')
 			.replace('www.', '');
-		if (text.includes(domainName)) {
-			return true;
-		} else {
-			return false;
-		}
+		return text.includes(domainName);
 	}
 	return false;
+};
+
+export const getTemplateTextWithVariable = (
+	templateText: string,
+	variablesData: APIWhatsappChatVariablesData
+) => {
+	let updatedTemplateText = templateText;
+	if (variablesData) {
+		const dynamicVariables = getDynamicFields(templateText);
+		dynamicVariables?.forEach((dynamicVariable: string) => {
+			updatedTemplateText = updatedTemplateText?.replace(
+				dynamicVariable,
+				variablesData[getVariableValue(dynamicVariable)]
+			);
+		});
+	}
+
+	return updatedTemplateText;
+};
+
+export const getKeyByValue = (
+	object: { [key: string]: string },
+	value: string
+) => {
+	return Object.keys(object).find((key) => object[key] === value) || '';
+};
+
+export const getCampaignLink = (
+	landingPages: landingPageDataProps[],
+	campaignName: string
+) => {
+	return (
+		landingPages?.find((page) => page.CampaignName === campaignName)
+			?.PageHref || ''
+	);
+};
+
+export const formatUpdatedDynamicVariable = (
+	updatedDynamicVariable: updatedVariable[],
+	personalFields: personalFieldDataProps,
+	landingPages: landingPageDataProps[]
+): updatedVariable[] => {
+	const formattedDynamicVariable: updatedVariable[] =
+		updatedDynamicVariable.map((dynamicVariable) => {
+			if (dynamicVariable?.FieldTypeId === 1) {
+				return {
+					...dynamicVariable,
+					VariableValue: `##${getKeyByValue(
+						personalFields,
+						dynamicVariable?.VariableValue
+					)}##`,
+				};
+			}
+			if (dynamicVariable?.FieldTypeId === 4) {
+				return {
+					...dynamicVariable,
+					VariableValue: getCampaignLink(
+						landingPages,
+						dynamicVariable?.VariableValue
+					),
+				};
+			}
+			return dynamicVariable;
+		});
+	return formattedDynamicVariable;
 };

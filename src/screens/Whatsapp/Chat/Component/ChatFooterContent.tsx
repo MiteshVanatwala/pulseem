@@ -111,7 +111,6 @@ const ChatFooterContent = ({
 								</button>
 								{savedTemplate?.length !== 0 ? (
 									<Box className={`${classes.whatsappChat} chat__input m`}>
-										{/* @ts-ignore */}
 										<Highlighter
 											searchWords={dynamicVariable}
 											autoEscape={true}
@@ -126,10 +125,8 @@ const ChatFooterContent = ({
 										className={`${classes.whatsappChat} chat__input s`}
 										id={'free-from-input'}
 										data-text='Type a message'
-										contentEditable={savedTemplate?.length === 0 ? true : false}
-										suppressContentEditableWarning={
-											savedTemplate?.length === 0 ? true : false
-										}
+										contentEditable={true}
+										suppressContentEditableWarning={true}
 										onKeyUp={onEditableDivChange}
 									/>
 								)}

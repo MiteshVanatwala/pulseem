@@ -686,3 +686,24 @@ export type SiteTrackAlertModalProps = {
 	onClose: () => void;
 	onOkay: () => void;
 };
+
+export type TestSendReq = {
+	WACampaignID: number;
+	TestGroupsIds?: number[];
+	PhoneNumber?: string;
+};
+
+export type SaveQuickSendGroupReq = {
+	WACampaignID: number;
+	TestGroupsIds: number[];
+};
+
+export type SaveQuickSendGroupsPayload = {
+	Data: null;
+	Message: string | null;
+	Status: string;
+};
+
+export type SaveQuickSendGroups = {
+	payload: SaveQuickSendGroupsPayload;
+};

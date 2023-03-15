@@ -13,6 +13,7 @@ import {
 } from '../Types/WhatsappCampaign.types';
 import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
 import CampaignGroups from '../Components/Groups/CampaignGroups';
+import ValidationAlert from './ValidationAlert';
 
 const FilterRecipientsDialog = ({
 	classes,
@@ -32,6 +33,11 @@ const FilterRecipientsDialog = ({
 }: FilterRecipientsDialogProps) => {
 	const [RecipientsBool, setRecipientsBool] = useState<boolean>(false);
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
+	const [isValidated, setIsValidated] = useState<boolean>(false);
+	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
+		string[]
+	>([]);
 	useState<selectedFilterCampaignsProps[]>(selectedFilterCampaigns);
 	const [selectedModalFilterCampaigns, setSelectedModalFilterCampaigns] =
 		useState<selectedFilterCampaignsProps[]>(selectedFilterCampaigns);
@@ -113,6 +119,20 @@ const FilterRecipientsDialog = ({
 		}
 	};
 
+	const validate = () => {
+		if (exceptionalDaysToggle) {
+			if (exceptionalDays?.length > 0) {
+				return true;
+			} else {
+				setIsValidated(false);
+				setGroupSendValidationErrors([translator('sms.FillDay')]);
+				setIsValidationAlert(true);
+				return false;
+			}
+		}
+		return true;
+	};
+
 	const onClose = () => {
 		setSelectedModalFilterCampaigns(selectedFilterCampaigns);
 		setSelectedModalFilterGroups(selectedFilterGroups);
@@ -120,9 +140,11 @@ const FilterRecipientsDialog = ({
 	};
 
 	const onConfirm = () => {
-		setFilterCampaigns(selectedModalFilterCampaigns);
-		setFilterGroups(selectedModalFilterGroups);
-		onConfirmOrYes();
+		if (validate()) {
+			setFilterCampaigns(selectedModalFilterCampaigns);
+			setFilterGroups(selectedModalFilterGroups);
+			onConfirmOrYes();
+		}
 	};
 	return (
 		<>
@@ -278,6 +300,13 @@ const FilterRecipientsDialog = ({
 					</Grid>
 				</div>
 			</Dialog>
+			<ValidationAlert
+				classes={classes}
+				isOpen={isValidationAlert}
+				onClose={() => setIsValidationAlert(false)}
+				title={translator('whatsappCampaign.sendValidation')}
+				requiredFields={groupSendValidationErrors}
+			/>
 		</>
 	);
 };

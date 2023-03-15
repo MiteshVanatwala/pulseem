@@ -1,8 +1,12 @@
 import { toastProps } from './Editor/Types/WhatsappCreator.types';
 import {
+	AllCampaignReq,
+	AllReportReq,
+	AllTemplateReq,
 	campaignStatusProps,
 	statusByNameProps,
 	statusProps,
+	TemplatesStatusIdByStatusName,
 } from './management/Types/Management.types';
 
 export const whatsappRoutes = {
@@ -359,6 +363,14 @@ export const statusesByName: statusByNameProps = {
 	Created: 'common.Created',
 };
 
+export const templateStatusIdsByStatusName: TemplatesStatusIdByStatusName = {
+	Pending: 1,
+	Rejected: 2,
+	Approved: 3,
+	Received: 4,
+	Created: 50,
+};
+
 export const campaignStatus: campaignStatusProps = {
 	1: 'Created',
 	2: 'Sending',
@@ -372,3 +384,29 @@ export enum whatsappChatStatuses {
 	PENDING = 'pending',
 	SOLVED = 'solved',
 }
+
+export const allTemplateInitialPagination: AllTemplateReq = {
+	templateName: '',
+	templateStatus: 0,
+	isPagination: true,
+	pageNo: 1,
+	pageSize: 6,
+};
+
+export const allCampaignInitialPagination: AllCampaignReq = {
+	campaignName: '',
+	fromDate: null,
+	toDate: null,
+	isPagination: true,
+	pageNo: 1,
+	pageSize: 6,
+};
+
+export const allReportInitialPagination: AllReportReq = {
+	campaignName: '',
+	fromDate: null,
+	toDate: null,
+	isPagination: true,
+	pageNo: 1,
+	pageSize: 6,
+};

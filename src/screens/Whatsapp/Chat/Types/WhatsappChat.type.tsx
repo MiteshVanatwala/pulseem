@@ -100,6 +100,7 @@ export type ChatTemplateProps = {
 	template: savedTemplateTypesProps;
 	msgIndex: number;
 	message: APIWhatsappChatDetailData;
+	variables: APIWhatsappChatVariablesData;
 };
 
 export type WhatsappChatSideBarProps = {
@@ -183,8 +184,7 @@ export type APIWhatsappChatSidebarContactsData = {
 
 // TemplateData Variables (PersonalField,Text,Link,LandingPage,Navigation)
 export type APIWhatsappChatVariablesData = {
-	'1': string;
-	'2': string;
+	[key: string]: string;
 };
 
 //According to API inbound schema for template data types

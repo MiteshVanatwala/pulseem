@@ -257,6 +257,7 @@ const ChatUi = ({
 													template={message?.TemplateData?.types}
 													msgIndex={msgIndex}
 													message={message}
+													variables={message?.TemplateData?.variables}
 												/>
 											)
 										)}
