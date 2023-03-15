@@ -24,7 +24,7 @@ const AccountSettingsEditor = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { classes } = useCore();
-  const { isRTL } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize } = useSelector((state: any) => state.core);
   const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
@@ -216,7 +216,7 @@ const AccountSettingsEditor = () => {
     >
       {toastMessage && renderToast()}
       <Box className={clsx(classes.settingsContainer)}>
-        <Box className={clsx("head", classes.flexSpaceBetween)}>
+        <Box className={clsx("head", classes.flexSpaceBetween)} style={{ display: windowSize !== 'xs' ? 'flex' : 'block' }}>
           <Typography className={classes.managementTitle} style={{ marginTop: 0 }}>
             {/* @ts-ignore */}
             {t('settings.accountSettings.title')}

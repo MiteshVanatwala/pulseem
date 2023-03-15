@@ -52,6 +52,8 @@
             "addNumber": "Add 2FA Number",
             "addToFromEmailToSend": "Do you wish to verify this Email for sending campaigns as well?",
             "addToFromNumberToSend": "Do you wish to verify this Cellphone number for sending campaigns as well? ",
+            "deleteValueTitle":"Remove Confirmation",
+            "deleteValueDescription": "Are you sure you want to remove this value from Two Factor Authentication's list?",
             "email": {
                 "firstSlide": {
                     "title": "Verification of Email for Two Factor Authentication",

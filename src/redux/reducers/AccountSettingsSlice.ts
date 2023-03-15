@@ -64,7 +64,6 @@ export const addTwoFactorAuthValues = createAsyncThunk(
     'AddTwoFactorAuthValue', async (authObject: TwoFactorAuthAllowed, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.post(`authorization/AddTwoFactorAuthValue`, authObject);
-            response.data.authType = authObject.AuthType;
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -82,9 +81,9 @@ export const deleteAuthorizationValue = createAsyncThunk(
     })
 
 export const checkEmailAuthorization = createAsyncThunk(
-    'CheckEmailAuthorization', async (value: string, thunkAPI) => {
+    'CheckEmailAuthorization', async (emailAuth: AuthorizationValues, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`authorization/CheckEmailAuthorization/${value}`);
+            const response = await PulseemReactInstance.get(`authorization/CheckEmailAuthorization/${emailAuth.value}/${emailAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -101,16 +100,19 @@ export const deleteAuthorization2FA = createAsyncThunk(
         }
     })
 export const checkCellphoneAuthorization = createAsyncThunk(
-    'CheckCellphoneAuthorization', async (value: string, thunkAPI) => {
+    'CheckCellphoneAuthorization', async (cellphoneAuth: AuthorizationValues, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`authorization/CheckCellphoneAuthorization/${value}`);
+            const response = await PulseemReactInstance.get(`authorization/CheckCellphoneAuthorization/${cellphoneAuth.value}/${cellphoneAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
 
-
+interface AuthorizationValues {
+    value: string,
+    isTwoFa: boolean
+}
 
 const AccountSettingsSlice = createSlice({
     name: 'AccountSettings',

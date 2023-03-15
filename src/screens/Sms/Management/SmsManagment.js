@@ -663,18 +663,13 @@ const SmsManagnentScreen = ({ classes }) => {
 		});
 	};
 
-	const handleSendVerificationCode = async () => {
-		const value =
-			dialogType && dialogType.type === 'shortVerify' && dialogType.data
-				? dialogType.data
-				: number;
-		if (!value || value.length < 10) {
-			handleNumberError(true);
-			return;
-		}
-		const result = await dispatch(
-			sendVerificationCode({ username, number: value })
-		);
+  const handleSendVerificationCode = async () => {
+    const value = (dialogType && dialogType.type === 'shortVerify' && dialogType.data) ? dialogType.data : number;
+    if (!value || value.length < 10) {
+      handleNumberError(true);
+      return
+    }
+    const result = await dispatch(sendVerificationCode({ number: value }));
 
 		if (!result.error) {
 			setDialogType({

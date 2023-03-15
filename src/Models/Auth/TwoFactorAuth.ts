@@ -1,7 +1,7 @@
 export interface TwoFactorAuthAllowed {
     Id: number | null | undefined;
     SubAccountId: number | null | undefined;
-    AuthType: e_AuthType;
+    TwoFactorAuthTypeID: e_AuthType;
     AuthValue: string;
     CreatedDate: Date | string | null | undefined;
     IsDeleted: boolean | null | undefined;

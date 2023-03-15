@@ -851,11 +851,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   formControl: {
     "& .MuiInputLabel-formControl": {
       top: -7,
-    },
-    "& .MuiSvgIcon-root.MuiSelect-icon.MuiSelect-iconOutlined": {
-      left: "auto !important",
-      right: "10px !important"
-    },
+    }
   },
   formControlSelect: {
     "& .MuiSelect-outlined.MuiSelect-outlined": {
@@ -1735,8 +1731,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   carouselContainer: {
     display: 'flex',
     flexWrap: 'nowrap',
-    overflow: 'hidden',
-    height: 'min-content'
+    overflowX: 'hidden',
+    height: 'min-content',
+    paddingBottom: 10
   },
   carouselItem: {
     minWidth: '100%',
@@ -1770,11 +1767,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
       height: '100%',
       position: "relative",
+      padding: 10,
       '&.firstSlide': {
         '& .contactDataBox': {
           overflowX: 'clip',
           overflowY: 'auto',
-          height: 'calc(100% - 115px)'
+          height: 'calc(100% - 80px)'
         },
         '& .emailBox': {
           '& span': {
@@ -1843,5 +1841,22 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   smallIcon: {
     width: 14
+  },
+  smsReplies: {
+    '& .MuiOutlinedInput-root': {
+      padding: '4px !important'
+    },
+    '& .MuiInputBase-root': {
+      '& .MuiInputBase-input': {
+        maxWidth: '70% !important',
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }
+    },
+    '& .MuiAutocomplete-endAdornment': {
+      right: isRTL ? 'auto !important' : '0 !important',
+      left: isRTL ? '0 !important' : 'auto !important'
+    }
   }
 });

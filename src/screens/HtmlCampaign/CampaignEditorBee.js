@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { debounce } from 'lodash';
 import BeePlugin from '@mailupinc/bee-plugin'
 import { Box, Button } from '@material-ui/core'
 import { useRef, useState, useEffect } from 'react'
@@ -27,7 +28,7 @@ import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import Gallery from '../../components/Gallery/Gallery.component';
-import { PulseemFolderType } from "../../model/PulseemFields/Fields";
+import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
 
@@ -40,6 +41,8 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { getCookie } from '../../helpers/Functions/cookies';
+import moment from 'moment';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -74,6 +77,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
+  const [lastSaveText, setLastSaveText] = useState(null);
+  const [silentSave, setSilentSave] = useState(false);
 
   //#endregion State
 
@@ -131,10 +136,13 @@ const CampaignEditor = ({ classes, ...props }) => {
   }, [isRTL]);
   // Get data by campaign id
   useEffect(() => {
-    if (params?.id != null && params?.id > 0) {
-      getData();
+    if (params?.id > 0) {
+      if (localStorage.getItem('reloadBeeEditor') == '1') {
+        localStorage.removeItem('reloadBeeEditor');
+        window.location.reload(true);
+      } else getData();
     }
-  }, [dispatch]);
+  }, []);
   useEffect(() => {
     if (userBlocks) {
       return new Promise((resolve) => {
@@ -260,6 +268,10 @@ const CampaignEditor = ({ classes, ...props }) => {
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
+      const accountFeatures = getCookie("accountFeatures")
+      if (accountFeatures.indexOf(PulseemFeatures.BEE_AMP) > -1) {
+        config.workspace.type = 'mixed';
+      }
 
       initTags();
 
@@ -274,9 +286,12 @@ const CampaignEditor = ({ classes, ...props }) => {
             const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
-              if (!campaign || !campaign.HtmlData) {
+              if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
+              // else {
+              //   getData();
+              // }
             });
           }
           break;
@@ -333,7 +348,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onSave = async (args) => {
     try {
-      setLoader(true);
+      if (saveRef.current?.showAnimation) setLoader(true);
       let finalHtml = args.HtmlData;
       let finalJson = args.JsonData;
 
@@ -353,6 +368,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
           // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          localStorage.setItem('reloadBeeEditor', 1);
           window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
           return false;
         }
@@ -373,7 +389,23 @@ const CampaignEditor = ({ classes, ...props }) => {
   const saveDesign = async (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
     saveRef.current = { redirectAfterSave: redirectAfterSave, redirectUrl: redirectUrl, showAnimation: showAnimation };
     await editorRef.current.save();
+    setTimeout(() => {
+      const now = moment();
+      setLastSaveText(`${t('campaigns.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
+      setSilentSave(false)
+    }, 2000);
+
   }
+
+  const onAutoSaveCampaign = debounce(() => {
+    setSilentSave(true)
+    saveDesign(false, null, false);
+  }, 5000);
+
+  const onDesignChange = async () => {
+    onAutoSaveCampaign();
+  }
+
   const deleteNewsletter = async () => {
     setDialog(null);
     await dispatch(deleteCampaign(campaignId));
@@ -521,6 +553,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       EditRow: EditRow,
       openModal: openModal,
       SaveCampaign: onSave,
+      AutoSaveCampaign: onAutoSaveCampaign,
+      DesignChange: onDesignChange,
       SetDialog: setDialog,
       CampaignId: campaignId,
       PulseemEditBlock: onEditBlock,
@@ -612,7 +646,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             classes.backButton
           )}
           style={{ margin: '8px' }}
-          startIcon={<BiSave />}
+          startIcon={silentSave ? <Loader isOpen={silentSave} size={20} showBackdrop={false} contained={true} /> : <BiSave />}
           color="primary"
         >{t("common.save")}
         </Button>
@@ -718,6 +752,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
+        helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

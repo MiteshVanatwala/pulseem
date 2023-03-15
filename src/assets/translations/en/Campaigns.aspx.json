@@ -669,5 +669,6 @@
   "savedBlocks": "Saved-blocks",
   "weSent": "We sent!",
   "campaignIsOnItsWay": "Your campaign is on its way",
-  "newsletterSetUp": "Newsletter Set-Up"
+  "newsletterSetUp": "Newsletter Set-Up",
+  "lastSaveAt": "Last save at: "
 }

@@ -622,7 +622,7 @@
       "successSlide": {
         "title": "האימייל אומת בהצלחה",
         "desc": "מעתה תוכלו לשלוח דרך אימייל זה ללא צורך באימות חוזר",
-        "btnTxt": "המשך ל קמפיינים"
+        "btnTxt": "המשך לקמפיינים"
       }
     },
     "payAttention": "שימו לב!",
@@ -660,5 +660,6 @@
   "savedBlocks": "תבניות-שמורות",
   "weSent": "שלחנו!",
   "campaignIsOnItsWay": "הקמפיין שלך בדרך ליעד",
-  "newsletterSetUp": "הגדרות קמפיין"
+  "newsletterSetUp": "הגדרות קמפיין",
+  "lastSaveAt": "שמירה אחרונה ב: "
 }
