@@ -5,9 +5,9 @@ import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControl
 import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
-import useCore from '../../helpers/hooks/Core';
 
 const ConfirmRadioDialog = ({
+    classes,
     text = '',
     title = '',
     radioTitle = '',
@@ -19,7 +19,6 @@ const ConfirmRadioDialog = ({
     cookieName = ""
 }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     const { isRTL } = useSelector(state => state?.core);
     const [value, setValue] = useState(getCookie(cookieName) ?? defaultValue);
 
@@ -112,6 +111,7 @@ const ConfirmRadioDialog = ({
     };
 
     return (<SolidDialog
+        classes={classes}
         open={isOpen ?? false}
         onClose={() => onCancel()}
         {...dialog}>

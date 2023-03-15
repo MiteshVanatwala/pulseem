@@ -54,7 +54,7 @@ const ResponsesReports = () => {
   const { classes } = useCore();
   const { accountFeatures, language, windowSize, isRTL, rowsPerPage } =
     useSelector((state: StateType) => state.core);
-  const { responsesReportDetails, TotalResponses } = useSelector(
+  const { responsesReportDetails } = useSelector(
     (state: StateType) => state.report
   );
 
@@ -154,7 +154,6 @@ const ResponsesReports = () => {
     };
 
     try {
-      // @ts-ignore
       const result = await HandleExportData(exportPRData, exportOptions);
 
       ExportFile({
@@ -191,6 +190,7 @@ const ResponsesReports = () => {
           {/* @ts-ignore */}
           <DateField
             toolbarDisabled={false}
+            classes={classes}
             value={searchData.FromDate}
             onChange={handleFromDateChange}
             placeholder={t("notifications.searchSection.fromDate")}
@@ -200,6 +200,7 @@ const ResponsesReports = () => {
           {/* @ts-ignore */}
           <DateField
             toolbarDisabled={false}
+            classes={classes}
             value={searchData.ToDate}
             onChange={(value: any) =>
               setSearchData({ ...searchData, ToDate: value })
@@ -261,7 +262,6 @@ const ResponsesReports = () => {
   };
 
   const renderManagmentLine = () => {
-    // @ts-ignore
     const dataLength = responsesReportDetails?.TotalResponses ?? 0;
     return (
       <Grid container spacing={2} className={classes.linePadding}>
@@ -374,36 +374,28 @@ const ResponsesReports = () => {
   const renderTableBody = () => {
     if (
       responsesReportDetails &&
-      // @ts-ignore
       responsesReportDetails?.Responses?.length > 0
     ) {
       return (
         <DataTable
-          // @ts-ignore
           tableContainer={{
             className:
               windowSize === "xs"
                 ? clsx(classes.mt3, classes.tableStyle)
                 : classes.tableStyle,
           }}
-          // @ts-ignore
           table={{ className: classes.tableContainer }}
           tableHead={{
-            // @ts-ignore
             tableHeadCells: TABLE_HEAD,
-            // @ts-ignore
             classes: rowStyle,
             className: windowSize === "xs" && classes.dNone,
           }}
         >
           <Box className="tableBodyContainer groupsTable">
             <TableBody>
-              {
-                // @ts-ignore
-                responsesReportDetails?.Responses.map(
-                  windowSize === "xs" ? renderPhoneRow : renderRow
-                )
-              }
+              {responsesReportDetails?.Responses.map(
+                windowSize === "xs" ? renderPhoneRow : renderRow
+              )}
             </TableBody>
           </Box>
         </DataTable>
@@ -424,7 +416,12 @@ const ResponsesReports = () => {
   const renderTablePagination = () => {
     return (
       <TablePagination
-        rows={TotalResponses ? TotalResponses : 0}
+        classes={classes}
+        rows={
+          responsesReportDetails?.TotalResponses
+            ? responsesReportDetails?.TotalResponses
+            : 0
+        }
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageSearching}
         rowsPerPageOptions={rowsOptions}
@@ -436,12 +433,13 @@ const ResponsesReports = () => {
 
   return (
     <DefaultScreen
+      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="productsReport"
     >
       <Box className={clsx("topSection")}>
-        <Title Text={t("report.ResponsesReports.title")} />
+        <Title Text={t("report.ResponsesReports.title")} classes={classes} />
         <Box className={clsx(classes.lineTopMarging, "searchLine")}>
           <TabContext value={String(tabValue)}>
             <Tabs
@@ -503,6 +501,7 @@ const ResponsesReports = () => {
       {renderTableBody()}
       {renderTablePagination()}
       <ConfirmRadioDialog
+        classes={classes}
         isOpen={dialogType === "exportFormat"}
         title={t("campaigns.exportFile")}
         radioTitle={t("common.SelectFormat")}

@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import FORM_COMPANY_DETAILS from "./Form_CompanyDetails";
 import FORM_ACCOUNT_DETAILS from "./Form_AccountDetails";
 import Toast from "../../../components/Toast/Toast.component";
-import useCore from "../../../helpers/hooks/Core";
 import {
   getAccountSettings,
   updateDetails,
@@ -25,12 +24,13 @@ import {
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
 
-const AccountSettingsEditor = () => {
+const AccountSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { classes } = useCore();
-  const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+  const { isRTL } = useSelector((state: any) => state.core);
+  const { accountSettings, ToastMessages } = useSelector(
+    (state: any) => state?.accountSettings
+  );
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
@@ -78,7 +78,6 @@ const AccountSettingsEditor = () => {
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
-    // @ts-ignore
     return <Toast data={toastMessage} />;
   };
 
@@ -221,11 +220,12 @@ const AccountSettingsEditor = () => {
       subPage="accountSettings"
       key="accountSettings"
       containerClass={clsx(classes.management, classes.mb50)}
+      classes={classes}
     >
       {toastMessage && renderToast()}
       <Box className={clsx(classes.settingsContainer)}>
         <Box className={clsx("head", classes.flexSpaceBetween)}>
-          <Title Text={t("settings.accountSettings.title")} />
+          <Title Text={t("settings.accountSettings.title")} classes={classes} />
           <Box style={{ marginInlineStart: "auto" }}>
             <Button
               className={clsx(
@@ -265,6 +265,7 @@ const AccountSettingsEditor = () => {
         </Box>
         <Box className={"containerBody"}>
           <FORM_COMPANY_DETAILS
+            classes={classes}
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
@@ -280,6 +281,7 @@ const AccountSettingsEditor = () => {
           />
           <Divider style={{ marginTop: 35 }} />
           <FORM_ACCOUNT_DETAILS
+            classes={classes}
             setToastMessage={setToastMessage}
             ToastMessages={ToastMessages}
             Settings={{ ...settingRequest as AccountSettings }}
@@ -287,54 +289,63 @@ const AccountSettingsEditor = () => {
           />
         </Box>
       </Box>
-      {tfaEmailVerification && <VerificationDialog
-        variant="emailTFA"
-        textButtonOnSuccess={t('common.close')}
-        isOpen={tfaEmailVerification}
-        // @ts-ignore
-        value={verificationStep > 0 && emailToVerify}
-        step={verificationStep}
-        onClose={() => {
-          setTfaEmailVerification(false);
-          setVerificationStep(0);
-        }}
-      />}
-      {emailVerificationPopup && <VerificationDialog
-        textButtonOnSuccess={t('common.close')}
-        variant="email"
-        isOpen={emailVerificationPopup}
-        // @ts-ignore
-        value={verificationStep > 0 && emailToVerify}
-        step={verificationStep}
-        onClose={() => {
-          setEmailVerificationPopup(false);
-          setVerificationStep(0);
-        }} />}
-      {tfaSmsVerification && <VerificationDialog
-        variant="smsTFA"
-        textButtonOnSuccess={t('common.close')}
-        isOpen={tfaSmsVerification}
-        // @ts-ignore
-        value={verificationStep > 0 && cellphoneToVerify}
-        step={verificationStep}
-        onClose={() => {
-          setTfaSmsVerification(false);
-          setVerificationStep(0);
-        }}
-      />}
-      {smsVerificationPopup && <VerificationDialog
-        textButtonOnSuccess={t('common.close')}
-        variant="sms"
-        // @ts-ignore
-        value={verificationStep > 0 && cellphoneToVerify}
-        step={verificationStep}
-        isOpen={smsVerificationPopup}
-        onClose={() => {
-          setSmsVerificationPopup(false);
-          setVerificationStep(0);
-        }} />}
+      {
+        tfaEmailVerification && <VerificationDialog
+          variant="emailTFA"
+          classes={classes}
+          textButtonOnSuccess={t('common.close')}
+          isOpen={tfaEmailVerification}
+          // @ts-ignore
+          value={verificationStep > 0 && emailToVerify}
+          step={verificationStep}
+          onClose={() => {
+            setTfaEmailVerification(false);
+            setVerificationStep(0);
+          }}
+        />
+      }
+      {
+        emailVerificationPopup && <VerificationDialog
+          textButtonOnSuccess={t('common.close')}
+          variant="email"
+          isOpen={emailVerificationPopup}
+          // @ts-ignore
+          value={verificationStep > 0 && emailToVerify}
+          step={verificationStep}
+          onClose={() => {
+            setEmailVerificationPopup(false);
+            setVerificationStep(0);
+          }} />
+      }
+      {
+        tfaSmsVerification && <VerificationDialog
+          variant="smsTFA"
+          textButtonOnSuccess={t('common.close')}
+          isOpen={tfaSmsVerification}
+          // @ts-ignore
+          value={verificationStep > 0 && cellphoneToVerify}
+          step={verificationStep}
+          onClose={() => {
+            setTfaSmsVerification(false);
+            setVerificationStep(0);
+          }}
+        />
+      }
+      {
+        smsVerificationPopup && <VerificationDialog
+          textButtonOnSuccess={t('common.close')}
+          variant="sms"
+          // @ts-ignore
+          value={verificationStep > 0 && cellphoneToVerify}
+          step={verificationStep}
+          isOpen={smsVerificationPopup}
+          onClose={() => {
+            setSmsVerificationPopup(false);
+            setVerificationStep(0);
+          }} />
+      }
       <Loader isOpen={showLoader} showBackdrop={true} />
-    </DefaultScreen>
+    </DefaultScreen >
   );
 };
 

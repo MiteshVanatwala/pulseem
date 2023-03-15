@@ -7,12 +7,13 @@ import { useTranslation } from "react-i18next";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import { MdDeleteForever } from 'react-icons/md';
 
-const ConfirmDeletePopUp = ({ isOpen = false, onClose, windowSize, handleDeleteGroup }) => {
+const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, handleDeleteGroup }) => {
 
     const { t } = useTranslation();
 
     return (
         <BaseDialog
+            classes={classes}
             open={isOpen}
             title={t("group.delete")}
 

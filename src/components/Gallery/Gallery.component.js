@@ -23,9 +23,9 @@ import Toast from '../Toast/Toast.component';
 import { GalleryImages } from './GalleryImages'
 import { GalleryDocuments } from './GalleryDocuments'
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import useCore from '../../helpers/hooks/Core';
 
 const Gallery = ({
+    classes,
     isConfirm,
     callbackSelectFile,
     folderType = PulseemFolderType.CLIENT_IMAGES,
@@ -33,7 +33,6 @@ const Gallery = ({
     selected = [],
     forceReload = false }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     const dispatch = useDispatch();
     const [folders, setFolders] = useState(null);
     const [folderName, setFolderName] = useState('');
@@ -358,6 +357,7 @@ const Gallery = ({
                     onScroll={handleScroll} ref={paneDidMount}>
                     {
                         (folders && folderType === PulseemFolderType.CLIENT_IMAGES) ? <GalleryImages
+                            classes={classes}
                             folder={folders.find((f) => { return f.FolderName === selectedFolder })}
                             onReInitGallery={() => { initGallery(true) }}
                             selectedFolder={selectedFolder}
@@ -369,6 +369,7 @@ const Gallery = ({
                             onReachToLimit={removeScrollHanlder} />
                             :
                             (folders && folderType === PulseemFolderType.DOCUMENT) ? <GalleryDocuments
+                                classes={classes}
                                 folder={folders.find((f) => { return f.FolderName === selectedFolder })}
                                 onReInitGallery={() => { initGallery(true) }}
                                 selectedFolder={selectedFolder}

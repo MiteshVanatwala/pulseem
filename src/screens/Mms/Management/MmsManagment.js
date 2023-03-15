@@ -24,13 +24,11 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import useCore from '../../../helpers/hooks/Core';
 
-const MmsManagnentScreen = () => {
+const MmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { mmsData, mmsDeletedData } = useSelector(state => state.mms)
   const { t } = useTranslation()
-  const { classes } = useCore();
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
   const [campaineNameSearch, setCampaineNameSearch] = useState('')
@@ -134,6 +132,7 @@ const MmsManagnentScreen = () => {
     if (windowSize === 'xs') {
       return (
         <SearchField
+          classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
@@ -161,6 +160,7 @@ const MmsManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
+              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
@@ -172,6 +172,7 @@ const MmsManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
+              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
@@ -335,6 +336,7 @@ const MmsManagnentScreen = () => {
             key={icon.key}
             item >
             <ManagmentIcon
+              classes={classes}
               {...icon}
               uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
@@ -404,6 +406,7 @@ const MmsManagnentScreen = () => {
       <>
         <CustomTooltip
           isSimpleTooltip={false}
+          classes={classes}
           interactive={true}
           arrow={true}
           placement={'top'}
@@ -525,6 +528,7 @@ const MmsManagnentScreen = () => {
     }
     return (
       <TablePagination
+        classes={classes}
         rows={isSearching ? searchResults.length : mmsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -561,6 +565,7 @@ const MmsManagnentScreen = () => {
       ),
       content: (
         <RestorDialogContent
+          classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
@@ -664,7 +669,7 @@ const MmsManagnentScreen = () => {
       ),
       content: (
         <Box>
-          <Preview
+          <Preview classes={classes}
             mobileFullsize={true}
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText !== ''}
@@ -723,6 +728,7 @@ const MmsManagnentScreen = () => {
 
     return (
       dialogType && <BaseDialog
+        classes={classes}
         open={dialogType}
         onClose={handleClose}
         {...currentDialog}>
@@ -733,9 +739,10 @@ const MmsManagnentScreen = () => {
   return (
     <DefaultScreen
       currentPage='sms'
+      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
-        <Title Text={t('mms.logPageHeaderResource1.Text')} />
+        <Title Text={t('mms.logPageHeaderResource1.Text')} classes={classes} />
         {renderSearchLine()}
       </Box>
       {renderManagmentLine()}

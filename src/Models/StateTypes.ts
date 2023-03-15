@@ -1,6 +1,3 @@
-import { TOAST_TYPE, TYPE_KEY_VAL_OBJECT } from "../helpers/Types/common";
-import { SmsRepRowType } from "./Sms/smsReplies";
-
 export type ReportStateType = {
   showContent: Boolean;
   productsReportDetails: Array<any>;
@@ -30,35 +27,6 @@ export type CoreStateType = {
   accountSettings: any;
 };
 
-export type SmsStateType = {
-  smsData: TYPE_KEY_VAL_OBJECT[];
-  smsDeletedData: TYPE_KEY_VAL_OBJECT[];
-  smsDataError: string;
-  authorizationData: TYPE_KEY_VAL_OBJECT[];
-  smsReport: TYPE_KEY_VAL_OBJECT[];
-  smsGraph: any;
-  previousLandingData: TYPE_KEY_VAL_OBJECT[];
-  previousCampaignData: TYPE_KEY_VAL_OBJECT[];
-  extraData: TYPE_KEY_VAL_OBJECT[];
-  accountId: string[];
-  subAccountGroups: TYPE_KEY_VAL_OBJECT[];
-  getCampaignSum: TYPE_KEY_VAL_OBJECT[];
-  finishedCampaigns: TYPE_KEY_VAL_OBJECT[];
-  testGroups: TYPE_KEY_VAL_OBJECT[];
-  commonSettings: TYPE_KEY_VAL_OBJECT;
-  directSmsReport: TYPE_KEY_VAL_OBJECT;
-  directSmsReportError: string;
-  credits: TYPE_KEY_VAL_OBJECT[];
-  smsCampaignSettings: TYPE_KEY_VAL_OBJECT[];
-  smsSendResult: number;
-  OTPPassed: any;
-  smsReplies: {
-    Data: SmsRepRowType[];
-    Message: number;
-  };
-  ToastMessages: { [key: string]: TOAST_TYPE };
-};
-
 export type StateType = {
   core: CoreStateType;
   user: any;
@@ -67,7 +35,7 @@ export type StateType = {
   mms: any;
   automations: any;
   notification: any;
-  sms: SmsStateType;
+  sms: any;
   dashboard: any;
   recipientReports: any;
   shortcuts: any;

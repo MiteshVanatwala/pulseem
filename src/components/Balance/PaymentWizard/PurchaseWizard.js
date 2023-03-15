@@ -8,7 +8,7 @@ import PackagesList from './Dialogs/PackagesList';
 import TranzilaIframe from './Dialogs/TranzilaIframe';
 import PaymentResult from './Dialogs/PaymentResult';
 
-const PurchaseWizard = ({
+const PurchaseWizard = ({ classes,
     packageType
 }) => {
     const { isRTL } = useSelector(state => state.core);
@@ -89,6 +89,7 @@ const PurchaseWizard = ({
                     dialogElement.style = "max-width: 1050px";
                 }
                 return <PackagesList data={data}
+                    classes={classes}
                     onSelect={selectPackage}
                     packageType={packageType}
                     smsBulkData={smsBulkData}
@@ -99,6 +100,8 @@ const PurchaseWizard = ({
                 dialogElement.style = "max-width: 750px";
                 return <TranzilaIframe
                     data={data}
+                    classes={classes}
+                    isRTL={isRTL}
                     packageId={packageId}
                     onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
@@ -107,6 +110,9 @@ const PurchaseWizard = ({
             }
             case 3: {
                 return <PaymentResult
+                    t={t}
+                    isRTL={isRTL}
+                    classes={classes}
                     paymentObject={paymentResult}
                     onStepBack={onStepBack}
                 />

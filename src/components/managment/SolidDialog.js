@@ -7,10 +7,10 @@ import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { CloseIcon } from '../../assets/images/managment/index'
 import { ManagmentIcon } from '../../components/managment/index'
-import useCore from '../../helpers/hooks/Core';
 
 export const SolidDialog = ({
   childrenPadding = true,
+  classes,
   open = false,
   title = '',
   children,
@@ -37,9 +37,8 @@ export const SolidDialog = ({
     false: 'ltr'
   }
 
-  const { t } = useTranslation();
-  const { classes } = useCore();
-  const { isRTL, windowSize } = useSelector(state => state.core);
+  const { t } = useTranslation()
+  const { isRTL, windowSize } = useSelector(state => state.core)
 
   const onExit = () => {
     if (onCancel !== null) {
@@ -59,6 +58,7 @@ export const SolidDialog = ({
             classes.solidDialogExitButton
           )}>
           <ManagmentIcon
+            classes={classes}
             icon={CloseIcon}
           />
 

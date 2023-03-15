@@ -22,7 +22,6 @@ import {
 } from "../../../helpers/Utils/Validations";
 import { CompDtlPropTypes } from "../../../Models/Settings/CompanyDetails";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../helpers/hooks/Core";
 import { AccountSettings } from "../../../Models/Account/AccountSettings";
 import {
   resetTwoFA,
@@ -32,6 +31,7 @@ import { useSearchParams } from "react-router-dom";
 import ChangePassword from "./Password/ChangePassword";
 
 const FORM_COMPANY_DETAILS = ({
+  classes,
   setToastMessage,
   ToastMessages,
   Settings,
@@ -39,7 +39,6 @@ const FORM_COMPANY_DETAILS = ({
   onShowTwoFactorAuth
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
@@ -235,6 +234,7 @@ const FORM_COMPANY_DETAILS = ({
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
+          classes={classes}
           isIcon={false}
           ContainerStyle={{
             padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
@@ -416,9 +416,7 @@ const FORM_COMPANY_DETAILS = ({
               className="subHeading"
               style={{ fontWeight: "bold", color: "#000", marginBottom: 15 }}
             >
-              {`${t(
-                "settings.accountSettings.fixedComDetails.securitySettings"
-              )}`}
+              {t("settings.accountSettings.fixedComDetails.securitySettings")}
             </Typography>
 
             <Grid container className={"subform"}>
@@ -531,6 +529,8 @@ const FORM_COMPANY_DETAILS = ({
       {RenderDialog()}
       {showChangePassword && (
         <ChangePassword
+          Text={null}
+          classes={classes}
           SetToast={setToastMessage}
           IsOpen={showChangePassword}
           OnClose={() => setShowChangePassword(false)}

@@ -6,7 +6,6 @@ import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
 import { Tooltip } from "@material-ui/core";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../../helpers/hooks/Core";
 
 const useStyles = makeStyles((theme) => ({
     contentBox: {
@@ -32,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AddBulkRecipientPopup = ({
+const AddBulkRecipientPopup = ({ classes,
     isOpen = false,
     onClose,
     selectedGroups,
@@ -41,9 +40,10 @@ const AddBulkRecipientPopup = ({
 }) => {
     const { t } = useTranslation();
     const localClasses = useStyles()
-    const { classes } = useCore();
+
     return (
         <BaseDialog
+            classes={classes}
             open={isOpen}
             childrenStyle={classes.h50v}
             maxHeight={"45vh"}
@@ -85,6 +85,7 @@ const AddBulkRecipientPopup = ({
             customContainerStyle={classes.addRecipientDialog}
         >
             <UploadXL
+                classes={classes}
                 onDone={onAddRecipient}
                 settings={UploadSettings.GROUPS}
                 uploadToGroups={selectedGroups}

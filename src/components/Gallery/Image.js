@@ -11,9 +11,9 @@ import {
     Txt
 } from '../../assets/images/managment/index';
 import clsx from 'clsx';
-import useCore from '../../helpers/hooks/Core';
 
 export const Image = ({
+    classes,
     onSelectFile = () => { },
     onDelete = () => { },
     imgSrc,
@@ -23,7 +23,7 @@ export const Image = ({
     imgFile,
     fileExtension = null,
     folderType = PulseemFolderType.CLIENT_IMAGES }) => {
-    const { classes } = useCore();
+
     const icons = {
         xlsv: Excel,
         xlsx: Excel,

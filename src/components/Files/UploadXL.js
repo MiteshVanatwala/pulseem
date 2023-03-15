@@ -20,7 +20,6 @@ import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
-import useCore from "../../helpers/hooks/Core";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -35,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UploadXL = ({
+    classes,
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
     uploadToGroups = [],
@@ -43,7 +43,6 @@ const UploadXL = ({
     tooltipText = "smsReport.manualTotalTooltip"
 }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     const { extraData } = useSelector((state) => state.sms);
     const { language, isRTL } = useSelector(state => state.core)
     const { uploadProgress } = useSelector((state) => state.group);
@@ -722,6 +721,7 @@ const UploadXL = ({
         if (type) {
             return (
                 dialogType && <BaseDialog
+                    classes={classes}
                     open={dialogType}
                     childrenStyle={classes.mb25}
                     onClose={() => { setDialogType(null) }}

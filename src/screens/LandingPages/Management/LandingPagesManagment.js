@@ -28,13 +28,12 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import useCore from '../../../helpers/hooks/Core';
 
 
-const LandingPagesesManagmentScreen = () => {
+const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
   const { windowSize, rowsPerPage, accountFeatures, isRTL } = useSelector(state => state.core)
-  const { classes } = useCore();
+
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
@@ -110,6 +109,7 @@ const LandingPagesesManagmentScreen = () => {
       return (
         <Grid container className={'searchLine'}>
           <SearchField
+            classes={classes}
             value={landingPageNameSearch}
             onChange={handleCampainNameChange}
             onClick={handleSearch}
@@ -250,6 +250,7 @@ const LandingPagesesManagmentScreen = () => {
     const renderCopyToClipoard = (
       showCopied === ID ?
         <PopMassage
+          classes={classes}
           show={showCopied === ID}
           timeout={2000}
           label={t('common.copyClip')}
@@ -347,6 +348,7 @@ const LandingPagesesManagmentScreen = () => {
             key={icon.key}
             item >
             <ManagmentIcon
+              classes={classes}
               {...icon}
               uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
@@ -412,6 +414,7 @@ const LandingPagesesManagmentScreen = () => {
       <>
         <CustomTooltip
           isSimpleTooltip={false}
+          classes={classes}
           interactive={true}
           arrow={true}
           placement={'top'}
@@ -566,6 +569,7 @@ const LandingPagesesManagmentScreen = () => {
     }
     return (
       <TablePagination
+        classes={classes}
         rows={isSearching ? searchResults.length : landingPagesData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -602,6 +606,7 @@ const LandingPagesesManagmentScreen = () => {
       ),
       content: (
         <RestorDialogContent
+          classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
@@ -701,6 +706,7 @@ const LandingPagesesManagmentScreen = () => {
     const currentDialog = dialogContent[type] || {}
     return (
       dialogType && <BaseDialog
+        classes={classes}
         open={dialogType}
         onClose={handleClose}
         onCancel={handleClose}
@@ -712,9 +718,10 @@ const LandingPagesesManagmentScreen = () => {
   return (
     <DefaultScreen
       currentPage='landingPages'
+      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
-        <Title Text={t('landingPages.logPageHeaderResource1.Text')} />
+        <Title Text={t('landingPages.logPageHeaderResource1.Text')} classes={classes} />
         {renderSearchLine()}
       </Box>
       {renderManagmentLine()}

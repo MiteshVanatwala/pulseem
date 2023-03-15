@@ -5,9 +5,9 @@ import { BsTrash } from "react-icons/bs";
 import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
-import useCore from '../../helpers/hooks/Core';
 
 const WizardActions = ({
+    classes,
     innerStyle,
     additionalButtons = null,
     onSave = null,
@@ -20,7 +20,6 @@ const WizardActions = ({
     helperText = null
 }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     const { isRTL, windowSize } = useSelector(state => state.core);
     return (
         <Grid container style={{ ...innerStyle, paddingBottom: 40 }} >

@@ -32,7 +32,6 @@ import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 import { sitePrefix } from '../../../config';
 import { Title } from '../../../components/managment/Title';
 import { Stack } from '@mui/material';
-import useCore from '../../../helpers/hooks/Core';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -44,9 +43,9 @@ const useStylesBootstrap = makeStyles((theme) => ({
 }));
 
 function BootstrapTooltip(props) {
-  const localClasses = useStylesBootstrap();
+  const classes = useStylesBootstrap();
 
-  return <Tooltip arrow classes={localClasses} {...props} disableFocusListener />;
+  return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
 // const DashedInput = withStyles({
@@ -107,11 +106,10 @@ function BootstrapTooltip(props) {
 
 // })(TextField);
 
-const NotificationEdit = () => {
+const NotificationEdit = ({ classes }) => {
   const Redirect = useRedirect();
   const { id } = useParams();
   const location = useLocation();
-  const { classes } = useCore();
 
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
@@ -249,6 +247,7 @@ const NotificationEdit = () => {
           cancelText="common.No"
           confirmText="common.Yes"
           disableBackdropClick={true}
+          classes={classes}
           open={showConfirmCancel}
           onCancel={() => setShowConfirmCancel(null)}
           onClose={() => onCancelConfirm(false)}
@@ -528,7 +527,7 @@ const NotificationEdit = () => {
           </Grid>
           <Grid item md={1} xs={12}>&nbsp;</Grid>
           <Grid item md={4} xs={12} className={classes.previewStep}>
-            <Preview
+            <Preview classes={classes}
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText && model.RedirectButtonText !== ''}
             />
@@ -746,6 +745,7 @@ const NotificationEdit = () => {
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
           showDivider={false}
+          classes={classes}
           open={showGallery}
           onClose={handleDialogClose}
           onConfirm={handleGalleryConfirm}
@@ -764,6 +764,7 @@ const NotificationEdit = () => {
       title: t("common.imageGallery"),
       content: (
         <Gallery
+          classes={classes}
           isConfirm={isGalleryConfirmed}
           callbackSelectFile={handleSelectedImage}
           style={{ minWidth: 400 }}
@@ -778,6 +779,7 @@ const NotificationEdit = () => {
 
       return (
         <BaseDialog
+          classes={classes}
           open={validationErrorList}
           onCancel={handleDialogClose}
           onClose={handleDialogClose}
@@ -842,6 +844,7 @@ const NotificationEdit = () => {
               </Stack>
             </Box>
           )}
+          classes={classes}
           isIcon={false}
           ContainerStyle={{
             padding: 0,
@@ -985,9 +988,10 @@ const NotificationEdit = () => {
       currentPage='notifications'
       subPage='create'
       customPadding={true}
+      classes={classes}
       containerClass={clsx(classes.editorCont)}>
       <div className={'head'} >
-        <Title Text={t('notifications.createNewPush')} />
+        <Title Text={t('notifications.createNewPush')} classes={classes} />
       </div>
       <div className={'containerBody'}>
         {renderHeader()}

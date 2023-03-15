@@ -20,7 +20,6 @@ import {
 import { Stack } from "@mui/material";
 import { BaseDialog } from "./BaseDialog";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
-import useCore from "../../helpers/hooks/Core";
 import {
   addTwoFactorAuthValues,
   deleteAuthorizationValue,
@@ -36,6 +35,7 @@ type Verification_Dialog_Popup = {
   isOpen: boolean;
   onClose: Function;
   textButtonOnSuccess?: string;
+  classes: any;
 };
 
 type POPUP_OBJECT_TYPE = {
@@ -52,13 +52,13 @@ type verificationErrorType = {
 };
 
 const VerificationDialog = ({
+  classes,
   variant = "email",
   isOpen = false,
   textButtonOnSuccess = "",
   onClose = () => { },
   ...props
 }: Verification_Dialog_Popup) => {
-  const { classes } = useCore();
   const dispatch: any = useDispatch();
   const { isRTL } = useSelector((state: { core: any }) => state.core);
   const { username } = useSelector((state: { user: any }) => state.user);

@@ -7,15 +7,11 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
 import { HornIcon, IllustrationTipulseem } from '../../assets/images/dashboard/index'
-import { useTranslation } from 'react-i18next';
-import useCore from '../../helpers/hooks/Core';
 
-const PulseemTips = () => {
+const PulseemTips = ({ classes, t, isRTL }) => {
   const { tips } = useSelector(state => state.dashboard);
-  const { isRTL } = useSelector(state => state.core);
   const [activeTip, setActiveTip] = useState(0);
-  const { classes } = useCore();
-  const { t } = useTranslation();
+
   const dispatch = useDispatch();
 
   const initData = () => {
@@ -76,7 +72,7 @@ const PulseemTips = () => {
         {/* <IllustrationTipulseem /> */}
         <img alt="Tips" src={IllustrationTipulseem} width="158" height="99" />
       </Box>
-      <Box dir={'ltr'} style={{ marginTop: 30 }}>
+      <Box dir={'ltr'} style={{marginTop: 30}}>
         <Carousel
           autoPlay={true}
           interval={8000}

@@ -9,17 +9,16 @@ import {
 } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
 import clsx from 'clsx';
-import useCore from '../../../../helpers/hooks/Core';
 
 export const AdditionalText = ({
     localClasses,
     selectedCheck,
     handleChangeCheckbox,
+    classes,
     campaingnValues,
     handleSelectionRadio
 }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("campaigns.newsLetterEditor.textAdditions")}</Typography>
         {/* If you don't see this email */}

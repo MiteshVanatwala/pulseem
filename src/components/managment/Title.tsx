@@ -1,9 +1,9 @@
 import { Typography, Box } from "@material-ui/core";
 import { ListIcon } from "../../assets/images/managment";
 import clsx from "clsx";
-import useCore from "../../helpers/hooks/Core";
 
 interface TitleObject {
+  classes: any;
   Text?: string;
   ContainerStyle?: object;
   Element?: any;
@@ -12,11 +12,11 @@ interface TitleObject {
 
 export const Title = ({
   Text,
+  classes,
   ContainerStyle,
   Element = null,
   isIcon = true,
 }: TitleObject) => {
-  const { classes } = useCore();
   return (
     <Box
       style={ContainerStyle}

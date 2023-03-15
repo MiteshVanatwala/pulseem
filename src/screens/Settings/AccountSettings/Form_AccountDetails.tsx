@@ -21,13 +21,13 @@ import { IsNumberField } from "../../../helpers/Utils/Validations";
 import { AccountSettings } from "../../../Models/Account/AccountSettings";
 
 const FORM_ACCOUNT_DETAILS = ({
+  classes,
   setToastMessage,
   ToastMessages,
   Settings,
   OnUpdate
 }: AccDtlPropTypes) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
 
   const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
@@ -46,7 +46,6 @@ const FORM_ACCOUNT_DETAILS = ({
   };
 
   useEffect(() => {
-    // @ts-ignore
     setAccountDetails(Settings);
   }, [Settings]);
 
@@ -73,6 +72,7 @@ const FORM_ACCOUNT_DETAILS = ({
     >
       <Title
         Text={t("settings.accountSettings.actDetails.title")}
+        classes={classes}
         isIcon={false}
         ContainerStyle={{
           padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"}`,

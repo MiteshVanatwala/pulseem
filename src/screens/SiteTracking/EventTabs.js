@@ -52,6 +52,7 @@ const EventTabs = ({ classes,
                         index={idx}
                         currentEvent={mt}
                         eventsCount={event.metadata.length}
+                        classes={classes}
                         onShowGroups={() => { setDialog({ type: 'showGroups' }) }}
                         onHideGroups={() => { setDialog(null) }}
                     />
@@ -76,11 +77,13 @@ const EventTabs = ({ classes,
     const renderPurchase = () => {
         return <Box style={{ marginBlock: 20 }}>
             <PulseemSwitch
+                classes={classes}
                 id="enablePurchase"
                 onChange={async () => {
                     await onPurchaseChanged(!togglePurchase);
                 }}
                 checked={togglePurchase}
+                isRTL={isRTL}
                 switchType="ios"
                 props={{ disabled: purchaseToggleDisabled }}
             />

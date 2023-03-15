@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Grid, Typography, Divider } from '@material-ui/core';
 import Package from '../../PackageBox/Package';
 
-const PackagesList = ({ data, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
+const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
     const { t } = useTranslation();
     if (data !== null) {
         const packageLength = data.length;
@@ -31,7 +31,7 @@ const PackagesList = ({ data, packageType, smsBulkData = null, newsletterBulkDat
                                 key={`pack_${d.ID}`}
                                 onSelect={onSelect}
                                 packageType={packageType}
-                            />
+                                classes={classes} />
                         )
                     })
                 }

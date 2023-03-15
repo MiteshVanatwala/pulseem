@@ -12,17 +12,15 @@ import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
-import useCore from '../../helpers/hooks/Core';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
 
-const BulkStatus = () => {
+const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings, isRTL } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const [selectedPackageType, setPackageType] = useState({ type: 1, title: '' });
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { classes } = useCore()
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
 
@@ -121,7 +119,7 @@ const BulkStatus = () => {
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PurchaseWizard onComplete={handleDialogClose} packageType={selectedPackageType.type} />
+          <PurchaseWizard classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType.type} />
         </Grid >
       )
     };

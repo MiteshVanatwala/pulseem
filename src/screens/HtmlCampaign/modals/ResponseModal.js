@@ -9,20 +9,20 @@ import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../helpers/hooks/Core";
 
 const ResponseModal = ({
+  classes,
   isOpen = false,
   onClose,
   message,
   onConfirm = () => null
 }) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
 
   return !isOpen ? (<></>) :
     (
       <BaseDialog
+        classes={classes}
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
         title={message !== 'campaigns.successSent' ? t('common.ErrorOccured') : null}

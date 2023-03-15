@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaChrome, FaFirefox, FaMobile } from 'react-icons/fa';
 import desktopClock from '../../../assets/images/desktopClock.jpg';
-import useCore from '../../../helpers/hooks/Core';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -30,12 +29,11 @@ function TabPanel(props) {
 }
 
 export const Preview = (
-  { model, ShowRedirectButton, mobileFullsize = false,
+  { classes, model, ShowRedirectButton, mobileFullsize = false,
     showDevices = true, showTitle = true, isSMS = false, isMMS = false,
     showOSScreen = true, showID = false
   }) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   const { isRTL, windowSize } = useSelector(state => state.core);
   const [previewDeviceSelected, setPreviewDevice] = useState(showDevices === false ? 0 : 0);
   const [notificationExpanded, setNotificationExpanded] = useState(!showDevices);

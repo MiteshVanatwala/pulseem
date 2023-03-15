@@ -1,17 +1,16 @@
 import React from 'react';
 import { IconButton, InputAdornment, Input } from '@material-ui/core'
 import { SearchIcon } from '../../assets/images/managment/index'
-import useCore from '../../helpers/hooks/Core';
 
 
 export const SearchField = ({
+  classes,
   value,
   onChange = () => null,
   onClick = () => null,
   onKeyPress = () => null,
   placeholder = ''
 }) => {
-  const { classes } = useCore();
   return (
     <Input
       classes={{

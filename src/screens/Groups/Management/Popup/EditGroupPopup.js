@@ -19,10 +19,9 @@ import { BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
-import useCore from "../../../../helpers/hooks/Core";
 
 
-const EditGroupPopup = ({
+const EditGroupPopup = ({ classes,
     isOpen = false,
     onClose,
     setLoader,
@@ -35,7 +34,6 @@ const EditGroupPopup = ({
     handleResponses = (response, actions) => null
 }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     const dispatch = useDispatch();
     const [editableFroupData, setEditableFroupData] = useState(null);
     const { groupData } = useSelector((state) => state.group);
@@ -114,6 +112,7 @@ const EditGroupPopup = ({
     return (
         <>
             {editableFroupData && <BaseDialog
+                classes={classes}
                 open={isOpen}
                 title={t("group.edit")}
                 icon={<div className={classes.dialogIconContent}>

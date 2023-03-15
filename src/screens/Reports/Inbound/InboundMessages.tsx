@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Grid, makeStyles, Tab, Tabs } from "@material-ui/core";
+import { Grid, makeStyles, Tab, Tabs, Box } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import { InboundTypes } from "./Constants";
 import { TabContext, TabPanel } from "@material-ui/lab";
@@ -9,8 +9,8 @@ import DefaultScreen from "../../DefaultScreen";
 import SmsReplies from "./Sms/SmsReplies";
 import { Title } from "../../../components/managment/Title";
 import WhatsappInbound from "./Whatsapp/WhatsappInbound";
-import useCore from "../../../helpers/hooks/Core";
-import WizardTitle from "../../../components/Wizard/WizardTitle";
+import { useSelector } from "react-redux";
+import { StateType } from "../../../Models/StateTypes";
 
 const useStyles = makeStyles({
   flexItems: {
@@ -22,13 +22,12 @@ const useStyles = makeStyles({
   }
 });
 
-const InboundMessages = () => {
+const InboundMessages = (classes: any) => {
   const params = useParams();
   const { type, id } = params;
   const { t: translator } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>('0');
   const localClasses = useStyles();
-  const { classes } = useCore();
 
 
 
@@ -67,12 +66,12 @@ const InboundMessages = () => {
               }
             </Tabs>
           </Grid>
-          <Grid item xs={12} className={classes.lastReportsTabPanels}>
-            <TabPanel value='0' className={classes.p0}>
-              <SmsReplies />
+          <Grid item xs={12}>
+            <TabPanel value="0" className={classes.p0}>
+              <SmsReplies classes={classes} />
             </TabPanel>
-            <TabPanel value='1' className={classes.p0}>
-              <WhatsappInbound />
+            <TabPanel value="1" className={classes.p0}>
+              <WhatsappInbound classes={classes} />
             </TabPanel>
           </Grid>
         </TabContext>
@@ -81,23 +80,19 @@ const InboundMessages = () => {
     )
   }
 
-  return <DefaultScreen
-    subPage={'inboundMessages'}
-    currentPage='reports'
-    containerClass={clsx(classes.management, classes.mb50)}
-  >
-    <WizardTitle
-      stepNumber={null}
-      subTitle={null}
-      title={translator('master.linkSMSResponsesReport.Text')}
-      key="Inbound_reports"
-      tooltip={null}
-      topZero={undefined}
-    />
-    {renderTabs()}
-  </DefaultScreen>
-
-
-}
+  return (
+    <DefaultScreen
+      subPage={"inboundMessages"}
+      currentPage="reports"
+      classes={classes}
+      containerClass={clsx(classes.management, classes.mb50)}
+    >
+      <Box className={"topSection"}>
+        <Title Text={translator("report.ResponsesReports.title")} classes={classes} />
+        {renderTabs()}
+      </Box>
+    </DefaultScreen>
+  );
+};
 
 export default InboundMessages;

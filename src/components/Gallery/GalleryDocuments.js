@@ -10,6 +10,7 @@ import { Loader } from '../Loader/Loader';
 import { AllowedExentions, ImageExtensions } from '../../model/Gallery/FileExtentions';
 
 export const GalleryDocuments = ({
+    classes,
     isRTL,
     folder,
     onToast = () => null,
@@ -168,6 +169,7 @@ export const GalleryDocuments = ({
                         imageType = PulseemFolderType.CLIENT_IMAGES;
                     }
                     return <Image
+                        classes={classes}
                         onSelectFile={onSelectFile}
                         onDelete={deleteDocument}
                         imgSrc={f.FileURL}

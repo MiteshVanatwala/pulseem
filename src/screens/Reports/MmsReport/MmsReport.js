@@ -23,7 +23,6 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
-import useCore from '../../../helpers/hooks/Core';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -31,9 +30,8 @@ const DEFAULT_FILTER = {
     campaignName: ''
 }
 
-const MmsReport = () => {
+const MmsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { classes } = useCore();
     const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
@@ -212,6 +210,7 @@ const MmsReport = () => {
         if (windowSize === 'xs') {
             return (
                 <SearchField
+                    classes={classes}
                     value={filterValues.campaignName}
                     onChange={(e) => setFilterValues({
                         ...filterValues,
@@ -247,6 +246,7 @@ const MmsReport = () => {
                     <Grid item>
                         <DateField
                             toolbarDisabled={false}
+                            classes={classes}
                             value={filterValues.fromDate}
                             onChange={(value) => setFilterValues({
                                 ...filterValues,
@@ -262,6 +262,7 @@ const MmsReport = () => {
                     <Grid item>
                         <DateField
                             toolbarDisabled={false}
+                            classes={classes}
                             value={filterValues.toDate}
                             onChange={(value) => {
                                 setFilterValues({
@@ -280,6 +281,7 @@ const MmsReport = () => {
                         control={
                             <PulseemSwitch
                                 switchType='ios'
+                                classes={classes}
                                 checked={isDemoSend}
                                 onColor="#0371ad"
                                 handleDiameter={20}
@@ -623,11 +625,12 @@ const MmsReport = () => {
 
     return (
         <DefaultScreen
+            classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
             <Box className={'topSection'}>
-                <Title Text={t('common.MMSReports')} />
+                <Title Text={t('common.MMSReports')} classes={classes} />
                 {renderFilter()}
             </Box>
             {renderManagmentLine()}
@@ -639,6 +642,7 @@ const MmsReport = () => {
                 {renderTableBody()}
             </DataTable>
             <TablePagination
+                classes={classes}
                 rows={filteredResults?.length ?? 0}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageSearching}
@@ -646,8 +650,9 @@ const MmsReport = () => {
                 page={page}
                 onPageChange={handlePageChange}
             />
-            <GraphReport showLoader={!mmsGraph} reportData={mmsGraph} />
+            <GraphReport classes={classes} showLoader={!mmsGraph} reportData={mmsGraph} />
             <ConfirmRadioDialog
+                classes={classes}
                 isOpen={dialogType === 'exportFormat'}
                 title={t('campaigns.exportFile')}
                 radioTitle={t('common.SelectFormat')}

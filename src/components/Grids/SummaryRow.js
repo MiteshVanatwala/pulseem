@@ -1,16 +1,15 @@
 import clsx from 'clsx';
 import { Typography, Box } from '@material-ui/core'
 import { useSelector } from 'react-redux';
-import useCore from '../../helpers/hooks/Core';
 
 // data = [{ title: "", value: "" }, ...]
 const SummaryRow = ({
     data = [],
+    classes,
     showBorder = true,
     borderRadius = true
 }) => {
     const { windowSize } = useSelector(state => state.core);
-    const { classes } = useCore();
     if (data && data.length > 0) {
         return <Box style={{
             display: 'flex',

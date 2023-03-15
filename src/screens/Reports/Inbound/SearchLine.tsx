@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { CalendarIcon } from "../../../assets/images/managment/index";
 import { DateField } from "../../../components/managment";
 import { StateType } from "../../../Models/StateTypes";
-import useCore from "../../../helpers/hooks/Core";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 
 const useStyles = makeStyles({
@@ -35,6 +34,7 @@ type RequestObject = {
 };
 
 interface SearchObject {
+  classes: any;
   currentPage?: number;
   onFilterRequest: (val: any) => void;
   onSetPage: (val: number) => void;
@@ -42,6 +42,7 @@ interface SearchObject {
 }
 
 const SearchLine = ({
+  classes,
   currentPage = 1,
   onFilterRequest,
   onSetPage,
@@ -55,7 +56,6 @@ const SearchLine = ({
     .utcOffset(0)
     .format("YYYY-MM-DD HH:mm")
     .toString();
-  const { classes } = useCore();
 
   const defaultsDates = {
     from: priorDate,
@@ -139,6 +139,7 @@ const SearchLine = ({
         <Grid item>
           {/* @ts-ignore */}
           <DateField
+            classes={classes}
             toolbarDisabled={false}
             className={clsx(classes.textField, classes.NoPaddingtextField)}
             inputProps={{
@@ -162,6 +163,7 @@ const SearchLine = ({
         <Grid item>
           {/* @ts-ignore */}
           <DateField
+            classes={classes}
             toolbarDisabled={false}
             className={clsx(classes.textField, classes.NoPaddingtextField)}
             inputProps={{

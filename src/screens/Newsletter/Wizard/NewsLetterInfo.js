@@ -27,7 +27,6 @@ import { sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
-import useCore from '../../../helpers/hooks/Core';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -141,13 +140,12 @@ const useStyles = makeStyles({
     }
 })
 
-const NewsLetterInfo = () => {
+const NewsLetterInfo = ({ classes }) => {
     const { id } = useParams();
     const queryParams = new URLSearchParams(window.location.search)
     const isNew = queryParams.get("new")
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
-    const { classes } = useCore();
 
     const { accountSettings, isRTL, windowSize, CoreToastMessages } = useSelector((state) => state.core);
     const { t } = useTranslation();
@@ -645,6 +643,7 @@ const NewsLetterInfo = () => {
                                             title={campaingnValues.Subject}
                                         />
                                         <EmojiPicker
+                                            classes={classes}
                                             boxStyles={{ marginTop: 10 }}
                                             OnSelectEmoji={(emoji) => {
                                                 setCampaingnValues({ ...campaingnValues, Subject: campaingnValues.Subject + emoji })
@@ -793,6 +792,7 @@ const NewsLetterInfo = () => {
                     disableBackdropClick={true}
                     style={{ minHeight: 400 }}
                     showDivider={false}
+                    classes={classes}
                     open={showGallery}
                     onClose={() => { setShowGallery(false) }}
                     onConfirm={handleGalleryConfirm}
@@ -811,6 +811,7 @@ const NewsLetterInfo = () => {
             title: t("common.documentGallery"),
             content: (
                 <Gallery
+                    classes={classes}
                     isConfirm={isGalleryConfirmed}
                     callbackSelectFile={handleSelectedImage}
                     style={{ minWidth: 400 }}
@@ -1031,6 +1032,7 @@ const NewsLetterInfo = () => {
         const currentDialog = dialogContent[type] || {}
         return (
             dialogType && <BaseDialog
+                classes={classes}
                 open={dialogType}
                 onCancel={() => setDialogType(null)}
                 onClose={() => setDialogType(null)}
@@ -1044,6 +1046,7 @@ const NewsLetterInfo = () => {
     return (
         <DefaultScreen
             currentPage="Campaingn Settings"
+            classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
             {renderDialog()}
@@ -1051,7 +1054,7 @@ const NewsLetterInfo = () => {
             {renderToast()}
             <Box className={classes.editorCont}>
                 <Box className="head">
-                    <Title Text={t("campaigns.createNewsLetterHeader")} />
+                    <Title Text={t("campaigns.createNewsLetterHeader")} classes={classes} />
                 </Box>
                 <Box className={"containerBody"}>
                     {CampaignBox1()}
@@ -1060,6 +1063,7 @@ const NewsLetterInfo = () => {
                         {/* Additional Text */}
                         <Grid item xs={12} sm={5} >
                             <AdditionalText
+                                classes={classes}
                                 localClasses={localClasses}
                                 selectedCheck={{ ...selectedCheck }}
                                 campaingnValues={{ ...campaingnValues }}
@@ -1070,6 +1074,7 @@ const NewsLetterInfo = () => {
                         {/* Advanced settings */}
                         <Grid item xs={12} sm={7}>
                             <AdvancedSettings
+                                classes={classes}
                                 localClasses={localClasses}
                                 campaingnValues={{ ...campaingnValues }}
                                 setCampaingnValues={setCampaingnValues}
@@ -1081,6 +1086,7 @@ const NewsLetterInfo = () => {
 
                     <Box className={clsx({ [classes.flex]: windowSize !== 'xs' }, classes.ps15)} style={{ justifyContent: 'end', marginTop: 25 }}>
                         <WizardActions
+                            classes={classes}
                             onBack={{
                                 callback: () => { setConfirmExit(true) }
                             }}
@@ -1089,6 +1095,7 @@ const NewsLetterInfo = () => {
                         />
                     </Box>
                     <BaseDialog
+                        classes={classes}
                         open={confirmExit}
                         title={t("campaigns.GridButtonColumnResource2.confirmExit")}
                         showDivider={true}
@@ -1106,6 +1113,7 @@ const NewsLetterInfo = () => {
                         </Box>
                     </BaseDialog>
                     <BaseDialog
+                        classes={classes}
                         open={confirmDelete}
                         title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
                         showDivider={true}
@@ -1121,7 +1129,7 @@ const NewsLetterInfo = () => {
                             </Typography>
                         </Box>
                     </BaseDialog>
-                    {verPopupOpen && <VerificationDialog isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
+                    {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
                     <Loader isOpen={showLoader} />
                 </Box>
             </Box>

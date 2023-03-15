@@ -126,7 +126,7 @@ export const Dialog = ({
   }
 
   const renderIcon = () => {
-    const alertIcon = <AlertIcon />
+    const alertIcon = <AlertIcon classes={classes} />
     return (
       <Box
         className={clsx(classes.dialogIconContainer, {

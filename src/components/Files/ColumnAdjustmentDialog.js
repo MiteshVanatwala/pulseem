@@ -7,8 +7,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { TranslateKeys } from '../../helpers/UI/TableText';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
-import useCore from "../../helpers/hooks/Core";
-import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -23,6 +21,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ColumnAdjustmentDialog = ({
+    t,
+    classes,
     isOpen,
     title,
     onClose,
@@ -39,8 +39,6 @@ const ColumnAdjustmentDialog = ({
 
     const { extraData } = useSelector((state) => state.sms);
     const styles = useStyles();
-    const { classes } = useCore();
-    const { t } = useTranslation();
     const [groupNameInput, setgroupNameInput] = useState("");
     const [groupTextError, setGroupTextError] = useState(false);
 
@@ -168,6 +166,7 @@ const ColumnAdjustmentDialog = ({
     return (
         <BaseDialog
             disableBackdropClick={true}
+            classes={classes}
             title={title || t('sms.columnAdjustment')}
             open={isOpen}
             onClose={onClose}

@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Stack } from "@mui/material";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
-import useCore from "../../helpers/hooks/Core";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import {
   Slider_Dialog_PropTypes,
@@ -17,6 +16,7 @@ import { POPUP_OBJECT_TYPE } from "../../helpers/Types/Verification";
 import { Button } from "@material-ui/core";
 
 const SliderDialog = ({
+  classes,
   slides = [],
   isOpen = false,
   VARIABLE_SLIDE_HEIGHTS = null,
@@ -31,7 +31,6 @@ const SliderDialog = ({
   currentStep = 0,
   setCurrentStep = () => {},
 }: Slider_Dialog_PropTypes) => {
-  const { classes } = useCore();
   const { t } = useTranslation();
   const dispatch: any = useDispatch();
   const { isRTL } = useSelector((state: { core: any }) => state.core);
@@ -107,28 +106,29 @@ const SliderDialog = ({
           <>{t(confirmText)}</>
         </Button>
       )}
-      {(step || currentStep) > 0 && (step || currentStep) < slides.length - 1 && (
-        <Button
-          variant="contained"
-          size="small"
-          onClick={async (e: React.MouseEvent<HTMLElement>) => {
-            // PrevSlide(onClose?.());
-            PrevSlide();
-            // if (onClose) {
-            // try {
-            //   await onClose?.();
-            //   PrevSlide();
-            // } catch (error) {
-            //   console.log("ERROR-Back:", error);
-            // }
-            // }
-            // return false;
-          }}
-          className={clsx(classes.dialogButton, classes.dialogCancelButton)}
-        >
-          <>{t(backText)}</>
-        </Button>
-      )}
+      {(step || currentStep) > 0 &&
+        (step || currentStep) < slides.length - 1 && (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={async (e: React.MouseEvent<HTMLElement>) => {
+              // PrevSlide(onClose?.());
+              PrevSlide();
+              // if (onClose) {
+              // try {
+              //   await onClose?.();
+              //   PrevSlide();
+              // } catch (error) {
+              //   console.log("ERROR-Back:", error);
+              // }
+              // }
+              // return false;
+            }}
+            className={clsx(classes.dialogButton, classes.dialogCancelButton)}
+          >
+            <>{t(backText)}</>
+          </Button>
+        )}
     </>
   );
 

@@ -12,9 +12,9 @@ import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { IoIosArrowDown } from 'react-icons/io';
 import { BsTrash } from 'react-icons/bs';
-import useCore from '../../helpers/hooks/Core';
 
 const EventToGroups = ({
+    classes,
     index = 0,
     currentEvent = null,
     eventsCount
@@ -26,7 +26,7 @@ const EventToGroups = ({
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
     const [groupSelected, setGroupSelected] = useState([]);
     const [showGroupsDialog, setShowGroupsDialog] = useState(false);
-    const { classes } = useCore();
+
     const dispatch = useDispatch();
 
     const updateOperationData = (e, key, value) => {
@@ -79,6 +79,7 @@ const EventToGroups = ({
 
         return (
             <BaseDialog
+                classes={classes}
                 open={showGroupsDialog}
                 onClose={() => { setShowGroupsDialog(false) }}
                 onCancel={() => { setShowGroupsDialog(false) }}
@@ -142,6 +143,7 @@ const EventToGroups = ({
                                 >{
                                         condition.tooltip ? <CustomTooltip
                                             isSimpleTooltip={false}
+                                            classes={classes}
                                             interactive={false}
                                             arrow={true}
                                             style={{ fontSize: 16, fontWeight: 400 }}
@@ -184,6 +186,7 @@ const EventToGroups = ({
                 <GroupTags
                     groupSelected={groupSelected}
                     onRemoveGroup={handleRemoveGroup}
+                    classes={classes}
                     title={'siteTracking.typeGroupName'}
                     onShowModal={handleShowGroup}
                     style={{ width: '100%' }}

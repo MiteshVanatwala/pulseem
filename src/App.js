@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
@@ -43,7 +43,7 @@ import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
-import { sitePrefix } from './config/index';
+import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 
@@ -64,19 +64,21 @@ const renderRoutes = (classes) => {
     <Routes>
       <Route
         path={sitePrefix}
-        element={<DashboardScreen />}
+        element={<DashboardScreen classes={classes} />}
       />
       <Route
+
         path={`${sitePrefix}sms/create/`}
-        element={<SmsCreator />}
+        element={<SmsCreator classes={classes} />}
       />
       <Route
         path={`${sitePrefix}sms/edit/:id`}
-        element={<SmsCreator />}
+        element={<SmsCreator classes={classes} />}
       />
       <Route
+
         path={`${sitePrefix}sms/send/:id`}
-        element={<SmsSend />}
+        element={<SmsSend classes={classes} />}
       />
       <Route
         path={`${sitePrefix}SendCampaign/:campaignID`}
@@ -97,11 +99,11 @@ const renderRoutes = (classes) => {
       <Route
         path={`${sitePrefix}CampaignStatistics/:campaignID`}
         // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
-        element={<GraphicReport />}
+        element={<GraphicReport classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Groups`}
-        element={<Groups />}
+        element={<Groups classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}
@@ -123,35 +125,35 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}Campaigns`}
-        element={<NewsletterManagment />}
+        element={<NewsletterManagment classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}Campaigns/Create`}
-        element={<NewsLetterInfo />}
+        element={<NewsLetterInfo classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Campaigns/Create/:id`}
-        element={<NewsLetterInfo />}
+        element={<NewsLetterInfo  classes={classes}/>}
       />
       <Route
         exact
         path={`${sitePrefix}Campaigns/editor`}
-        element={<CampaignEditorBee />}
+        element={<CampaignEditorBee classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Campaigns/editor/:id`}
-        element={<CampaignEditorBee />}
+        element={<CampaignEditorBee classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}Campaigns/Archive`}
-        element={<ArchiveManagement />}
+        element={<ArchiveManagement classes={classes} />}
       />
       {/* SMS */}
       <Route
         path={`${sitePrefix}SMSCampaigns`}
-        element={<SmsManagment />}
+        element={<SmsManagment classes={classes} />}
       />
       <Route
         path={`/SMSSmartResponses`}
@@ -173,7 +175,7 @@ const renderRoutes = (classes) => {
       {/* MMS */}
       <Route
         path={`${sitePrefix}MmsCampaigns`}
-        element={<MmsManagment />}
+        element={<MmsManagment classes={classes} />}
       />
       <Route
         path="/CreateMmsCampaign"
@@ -199,15 +201,15 @@ const renderRoutes = (classes) => {
       />
       <Route
         path={`${sitePrefix}ClientSearchResult/:referrer/:id`}
-        element={<ClientSearchResult />}
+        element={<ClientSearchResult classes={classes} />}
       />
       <Route
         path={`${sitePrefix}ClientSearchResult`}
-        element={<ClientSearchResult />}
+        element={<ClientSearchResult classes={classes} />}
       />
       <Route
         path={`${sitePrefix}EditRegistrationPage`}
-        element={<LandingPagesesManagment />}
+        element={<LandingPagesesManagment classes={classes} />}
       />
       <Route
         path={`/LandingPageWizard`}
@@ -220,7 +222,7 @@ const renderRoutes = (classes) => {
       {/* Reports */}
       <Route
         path={`${sitePrefix}Reports/NewsletterReports`}
-        element={<NewslettersReport />}
+        element={<NewslettersReport classes={classes} />}
       />
       <Route
         path={`/ClalReport`}
@@ -228,21 +230,21 @@ const renderRoutes = (classes) => {
       />
       <Route
         path={`${sitePrefix}Reports/SMSMainReport`}
-        element={<SmsReport />}
+        element={<SmsReport classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}Reports/SmsReplies/:id`}
-        element={<SmsReplies />}
+        element={<SmsReplies classes={classes} />}
       />
       <Route
         path={`${sitePrefix}Reports/MmsMainReport`}
-        element={<MmsReport />}
+        element={<MmsReport classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}Reports/ProductsReport`}
-        element={<ProductsReport />}
+        element={<ProductsReport classes={classes} />}
       />
       <Route
         path={`/AbTestsReport`}
@@ -275,12 +277,12 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport`}
-        element={<DirectSendReport isArchive={false} />}
+        element={<DirectSendReport classes={classes} isArchive={false} />}
       />
       <Route
         exact
         path={`${sitePrefix}Reports/DirectSendReport/Archive`}
-        element={<DirectSendReport isArchive={true} />}
+        element={<DirectSendReport classes={classes} isArchive={true} />}
       />
       {/* <Route
         exact
@@ -294,7 +296,7 @@ const renderRoutes = (classes) => {
       {/* Automations */}
       <Route
         path={`${sitePrefix}Automations`}
-        element={<AutomationManagment />}
+        element={<AutomationManagment classes={classes} />}
       />
       <Route
         path={`/CreateAutomations`}
@@ -317,33 +319,33 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}Notifications`}
-        element={<NotificationManagement />}
+        element={<NotificationManagement classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}Notification/create`}
-        element={<NotificationEdit />}
+        element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}Notification/edit/:id`}
-        element={<NotificationEdit />}
+        element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}Notification/send/:id`}
-        element={<NotificationSend />}
+        element={<NotificationSend classes={classes} />}
       />
       {/* Settings */}
       <Route
         exact
         path={`${sitePrefix}AccountSettings`}
-        element={<AccountSettingsEditor />}
+        element={<AccountSettingsEditor classes={classes} />}
       />
       <Route
         exact
         path={`${sitePrefix}BillingSettings`}
-        element={<BillingSettingsEditor />}
+        element={<BillingSettingsEditor classes={classes} />}
       />
       <Route
         path={`/AccountBilling`}
@@ -376,25 +378,25 @@ const renderRoutes = (classes) => {
       <Route
         exact
         path={`${sitePrefix}SiteTracking`}
-        element={<SiteTrackingEditor />}
+        element={<SiteTrackingEditor classes={classes} />}
       />
       <Route
         exact
-        path={'/reports/Inbound'}
-        element={<InboundMessages />}
+        path={`${sitePrefix}reports/Inbound`}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
-        path={'/reports/Inbound/:type'}
-        element={<InboundMessages />}
+        path={`${sitePrefix}reports/Inbound/:type`}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
-        path={'/reports/Inbound/:type/:id'}
-        element={<InboundMessages />}
+        path={`${sitePrefix}reports/Inbound/:type/:id`}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
-        path="*" element={<PageNotFound />}
+        path="*" element={<PageNotFound classes={classes} />}
       />
     </Routes>
   )
@@ -409,11 +411,15 @@ const App = ({ screenSize }) => {
     windowSize !== screenSize && dispatch(setWindowSize(screenSize))
   }, [screenSize])
 
+  const userName = useRef();
+
+
   useEffect(() => {
     const initFeatures = async () => {
       const isClal = getCookie('isClal');
       if (!accountSettings) {
-        const settings = await dispatch(getCommonFeatures());
+        //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
+        const settings = await dispatch(getCommonFeatures({ companyName: userName.current }));
         dispatch(setAccountFeatures(settings.payload));
       }
       if (isClal === undefined) {
@@ -453,7 +459,7 @@ const App = ({ screenSize }) => {
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang.toLowerCase()))
       dispatch(setUsername(companyName))
-
+      userName.current = companyName;
     }
 
     const cookieFunctionObj = {

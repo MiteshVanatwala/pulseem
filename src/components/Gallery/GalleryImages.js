@@ -10,6 +10,7 @@ import { Loader } from '../Loader/Loader';
 import { ImageExtensions } from '../../model/Gallery/FileExtentions';
 
 export const GalleryImages = ({
+    classes,
     isRTL,
     folder,
     onToast = () => null,
@@ -165,6 +166,7 @@ export const GalleryImages = ({
                     const imgKey = f.FileName;
                     return (
                         <Image
+                            classes={classes}
                             onSelectFile={onSelectFile}
                             onDelete={deleteImage}
                             imgSrc={f.FileURL}
