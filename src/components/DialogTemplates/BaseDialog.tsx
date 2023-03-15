@@ -13,11 +13,11 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
-import useCore from "../../helpers/hooks/Core";
 import { CgClose } from "react-icons/cg";
 import { IoAlertCircleOutline } from "react-icons/io5";
 
 export const BaseDialog = ({
+  classes,
   childrenPadding = true,
   open = true,
   title = "",
@@ -48,7 +48,6 @@ export const BaseDialog = ({
     false: "ltr",
   };
 
-  const { classes } = useCore();
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(
     (state: { core: any }) => state.core

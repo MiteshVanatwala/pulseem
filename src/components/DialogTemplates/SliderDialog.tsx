@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-
 import { Stack } from "@mui/material";
-import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import {
   Slider_Dialog_PropTypes,
@@ -25,11 +23,11 @@ const SliderDialog = ({
   customButtons = null,
   confirmText = "common.Ok",
   backText = "notifications.back",
-  onClose = () => {},
-  onConfirm = () => {},
+  onClose = () => { },
+  onConfirm = () => { },
   rollBack = false,
   currentStep = 0,
-  setCurrentStep = () => {},
+  setCurrentStep = () => { },
 }: Slider_Dialog_PropTypes) => {
   const { t } = useTranslation();
   const dispatch: any = useDispatch();
@@ -199,9 +197,8 @@ const SliderDialog = ({
         classes.emailVerItemContainer
       )}
       style={{
-        transform: `translate(${
-          isRTL ? step || currentStep * 100 : -(step || currentStep * 100)
-        }%)`,
+        transform: `translate(${isRTL ? step || currentStep * 100 : -(step || currentStep * 100)
+          }%)`,
         ...slideStyle,
       }}
     >
@@ -237,6 +234,7 @@ const SliderDialog = ({
 
   return (
     <BaseDialog
+      classes={classes}
       open={isOpen}
       onClose={handleClose}
       onCancel={handleClose}
@@ -247,9 +245,9 @@ const SliderDialog = ({
         style={
           VARIABLE_SLIDE_HEIGHTS
             ? {
-                height: `${VARIABLE_SLIDE_HEIGHTS[step]}`,
-                transition: "height .5s",
-              }
+              height: `${VARIABLE_SLIDE_HEIGHTS[step]}`,
+              transition: "height .5s",
+            }
             : {}
         }
       >

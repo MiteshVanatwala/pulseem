@@ -6,9 +6,9 @@ import {
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { AlertIcon } from '../icons/index'
-import useCore from "../../helpers/hooks/Core";
 
 export const Dialog = ({
+  classes,
   childrenPadding = true,
   open = false,
   title = '',
@@ -34,7 +34,6 @@ export const Dialog = ({
   ContentStyle = null,
   ...props
 }) => {
-  const { classes } = useCore();
   const direction = {
     true: 'rtl',
     false: 'ltr'
@@ -162,6 +161,7 @@ export const Dialog = ({
 
   return (
     <BaseDialog
+      classes={classes}
       style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}

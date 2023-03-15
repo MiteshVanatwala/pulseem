@@ -1582,6 +1582,7 @@ const ClientSearchResult = ({ classes }) => {
     };
     return (
       <BaseDialog
+        classes={classes}
         open={
           dialog === DialogType.CONFIRM_INVALID ||
           dialog === DialogType.CONFIRM_DELETE_FROM_GROUPS ||
@@ -1686,6 +1687,7 @@ const ClientSearchResult = ({ classes }) => {
       }
       return (
         <BaseDialog
+          classes={classes}
           cancelText="common.Cancel"
           confirmText="common.Yes"
           disableBackdropClick={true}

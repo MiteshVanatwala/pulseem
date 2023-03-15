@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import useCore from "../../../../helpers/hooks/Core";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader } from "../../../../components/Loader/Loader";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
@@ -221,6 +220,7 @@ const ChangePassword = ({
   return (
     <>
       <BaseDialog
+        classes={classes}
         open={IsOpen}
         onClose={OnClose}
         onCancel={OnClose}

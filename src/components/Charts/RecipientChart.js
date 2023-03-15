@@ -26,7 +26,7 @@ const RecipientChart = ({ classes, }) => {
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
 
     let slidesCount = 0;
-    recipientsReport?.forEach(report => {
+    recipientsReport?.map(report => {
         if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
             (report.ReportSection === 1 && !Sms.FeatureExist)) {
             return
@@ -83,7 +83,7 @@ const RecipientChart = ({ classes, }) => {
 
     let data = [];
     if (recipientsReport) {
-        recipientsReport.forEach(report => {
+        recipientsReport.map(report => {
             if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                 (report.ReportSection === 1 && !Sms.FeatureExist)) {
                 return null;
@@ -416,7 +416,7 @@ const RecipientChart = ({ classes, }) => {
                         showThumbs={false}
                         showArrows={false}
                         selectedItem={carouselItem}>
-                        {recipientsReport.forEach((report, index) => {
+                        {recipientsReport.map((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)
                                 || (report.ReportSection === 1 && !Sms.FeatureExist)) {
                                 return;
@@ -457,7 +457,7 @@ const RecipientChart = ({ classes, }) => {
 
         return (
             <Grid item container justifyContent='space-evenly'>
-                {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.forEach((report, index) => {
+                {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                         (report.ReportSection === 1 && !Sms.FeatureExist)) {
                         return;

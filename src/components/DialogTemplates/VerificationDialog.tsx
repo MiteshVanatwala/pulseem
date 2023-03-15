@@ -1333,6 +1333,7 @@ const VerificationDialog = ({
 
   return (
     <BaseDialog
+      classes={classes}
       open={isOpen}
       onClose={handleClose}
       onCancel={handleClose}

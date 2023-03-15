@@ -215,6 +215,7 @@ const FORM_COMPANY_DETAILS = ({
     const currentDialog: any = dialogContent[type] || {};
     return (
       <BaseDialog
+        classes={classes}
         title={data.title}
         open={!!dialogType}
         onClose={() => {

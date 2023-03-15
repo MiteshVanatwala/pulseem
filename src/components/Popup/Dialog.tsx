@@ -154,8 +154,8 @@ export const Dialog = (options: Options) => {
           maxHeight: options.maxHeight
             ? options.maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-            ? "calc(65vh)"
-            : "calc(45vh)",
+              ? "calc(65vh)"
+              : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? "330px" : "0px",
         }}
@@ -180,6 +180,7 @@ export const Dialog = (options: Options) => {
   };
   return (
     <BaseDialog
+      classes={classes}
       style={options.Style}
       open={!!options.Open}
       className={clsx(

@@ -1,7 +1,6 @@
 import { Box, Tooltip, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from 'clsx';
-import useCore from "../../helpers/hooks/Core";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -15,8 +14,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const WizardTitle = ({ title, tooltip = null, stepNumber, subTitle, topZero = false }) => {
-    const { classes } = useCore();
+const WizardTitle = ({ classes, title, tooltip = null, stepNumber, subTitle, topZero = false }) => {
     const styles = useStyles();
     return (<Box>
         <Box className={classes.infoDiv} style={{ height: 'auto' }}>

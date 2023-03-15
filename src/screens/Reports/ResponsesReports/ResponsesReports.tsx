@@ -33,7 +33,7 @@ import { ExportFileTypes } from "../../../model/Export/ExportFileTypes";
 import { HandleExportData } from "../../../helpers/Export/ExportHelper";
 import { Title } from "../../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-import useCore from "../../../helpers/hooks/Core";
+// import useCore from "../../../helpers/hooks/Core";
 import { TabContext } from "@material-ui/lab";
 import { StateType } from "../../../Models/StateTypes";
 import {
@@ -50,8 +50,8 @@ const DEFAULT_FILTER: ResponsesFilter = {
   IsExport: false,
 };
 
-const ResponsesReports = () => {
-  const { classes } = useCore();
+const ResponsesReports = ({ clsases }) => {
+  // const { classes } = useCore();
   const { accountFeatures, language, windowSize, isRTL, rowsPerPage } =
     useSelector((state: StateType) => state.core);
   const { responsesReportDetails } = useSelector(

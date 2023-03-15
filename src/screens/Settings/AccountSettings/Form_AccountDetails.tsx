@@ -16,7 +16,6 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { Title } from "../../../components/managment/Title";
 import Illustration_app_Settings from "../../../assets/images/settings/Illustration_app_Settings";
 import { AccDtlPropTypes } from "../../../Models/Settings/AccountDetails";
-import useCore from "../../../helpers/hooks/Core";
 import { IsNumberField } from "../../../helpers/Utils/Validations";
 import { AccountSettings } from "../../../Models/Account/AccountSettings";
 
