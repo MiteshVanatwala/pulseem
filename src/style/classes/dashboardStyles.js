@@ -119,7 +119,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         textAlign: 'center'
     },
     shortcutButton: {
-        height: windowSize !== 'xs' && windowSize !== 'sm' ? 'auto' : 92,
+        height: 92,
         width: '85%',
         background: '#fff',
         borderRadius: '20px',
@@ -136,6 +136,15 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
             border: '1px #FF0054 solid',
             height: 0,
             margin: '5px 0'
+        },
+        '& .shortcutEditIcon': {
+            fontFamily: 'pulseemicons',
+            fontSize: 16,
+            color: '#FF0054',
+            padding: 0,
+            '&:hover': {
+                textDecoration: 'none',
+            }
         },
         '& .deleteShortcut': {
             maxHeight: 20,
@@ -178,13 +187,6 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         background: 'white',
         borderRadius: 10,
         margin: 10
-    },
-    shortcutEditIcon: {
-        fontFamily: 'pulseemicons',
-        fontSize: 18,
-        color: '#FF0054',
-        padding: 0,
-        display: windowSize !== 'xs' && windowSize !== 'sm' ? 'none' : 'block',
     },
     shortcutLabel: {
         display: 'flex',

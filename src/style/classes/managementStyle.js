@@ -40,18 +40,18 @@ const tipsFontSize = {
 
 const shortcutFontSize = {
   category: {
-    xs: 16,
+    xs: 15,
     sm: 14,
-    md: 16,
-    lg: 16,
-    xl: 16,
+    md: 15,
+    lg: 15,
+    xl: 15,
   },
   page: {
-    xs: 18,
-    sm: 16,
-    md: 18,
-    lg: 18,
-    xl: 18,
+    xs: 15,
+    sm: 14,
+    md: 15,
+    lg: 15,
+    xl: 15,
   },
 };
 
@@ -1324,9 +1324,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   categoryLabel: {
     fontSize: shortcutFontSize.category[windowSize],
-    lineHeight: 1,
-    marginInlineStart: windowSize !== 'xs' && windowSize !== 'sm' ? 18 : 0,
-
+    lineHeight: 1
   },
   carouselPaper: {
     borderRadius: 10,

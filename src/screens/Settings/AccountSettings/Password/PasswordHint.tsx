@@ -2,6 +2,8 @@ import { useTranslation } from "react-i18next";
 import { Box, Grid } from "@material-ui/core";
 import { BsCheck } from "react-icons/bs";
 import { MdClear } from "react-icons/md";
+import { StateType } from '../../../../Models/StateTypes';
+import { useSelector } from "react-redux";
 
 const PasswordHint = ({ classes, Password }: any) => {
   const { isRTL } = useSelector((state: StateType) => state.core);

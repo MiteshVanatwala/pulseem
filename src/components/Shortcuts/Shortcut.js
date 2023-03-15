@@ -262,7 +262,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <Box className={clsx(classes.flex, classes.hAuto)}>
             <IconButton
               id="editIcon"
-              className={clsx(classes.shortcutEditIcon)}
+              style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
+              className={'shortcutEditIcon'} 
               onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index)}>
               {'\uE09C'}
             </IconButton>
