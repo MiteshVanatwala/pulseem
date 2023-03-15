@@ -34,7 +34,7 @@ import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSe
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
-import { getCookie } from "../../../helpers/cookies";
+import { getCookie } from "../../../helpers/Functions/cookies";
 
 
 const FORM_COMPANY_DETAILS = ({

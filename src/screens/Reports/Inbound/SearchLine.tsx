@@ -359,7 +359,7 @@ const SearchLine = ({
                                 }}
                                 InputProps={{
                                     ...params.InputProps,
-                                    placeholder: t('common.searchByCampaign'),
+                                    placeholder: translator('common.searchByCampaign'),
 
                                 }}
                                 style={{
