@@ -35,6 +35,8 @@ import {
 	ApiQuickSend,
 	SubAccountSettings,
 	TestSendReq,
+	SaveQuickSendGroupsPayload,
+	SaveQuickSendGroups,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -64,6 +66,7 @@ import {
 	getCampaignDetailById,
 	quickSend,
 	deleteCampaign,
+	saveQuickSendGroups,
 } from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
@@ -504,7 +507,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			getDynamicFields(templateData?.templateText)?.length !==
 				updatedDynamicVariable?.length
 		) {
-			alert(';d')
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
 			isValidated = false;
 		}
@@ -581,12 +583,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const onOkTestSending = async () => {
 		let campaignIdForTestSend: number = Number(campaignID) || 0;
-		if (!campaignID) {
-			setIsLoader(true);
-			const saveCampaign = await onSaveCampaign(false);
-			setIsLoader(false);
-			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
+		setIsLoader(true);
+		const saveCampaign = await onSaveCampaign(false);
+		campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
+		if (testSendSelection !== 'onecontact') {
+			const { payload: quickSendGroupsData }: SaveQuickSendGroups =
+				await dispatch<any>(
+					saveQuickSendGroups({
+						WACampaignID: campaignIdForTestSend,
+						TestGroupsIds: selectedTestGroup?.map((group) => group?.GroupID),
+					})
+				);
 		}
+		setIsLoader(false);
 		if (campaignIdForTestSend) {
 			if (validateSaveCampaign(true)) {
 				if (!campaignID) {
@@ -636,7 +645,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onSaveCampaign = async (showSuccess: boolean = true) => {
-		if (validateSaveCampaign()) {
+		if (validateSaveCampaign(true)) {
 			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
 			setIsLoader(false);

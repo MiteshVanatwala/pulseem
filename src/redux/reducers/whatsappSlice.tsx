@@ -11,6 +11,7 @@ import {
 	ApiCreateGroupPayload,
 	ApiSaveCampaignSettingsData,
 	saveCampaignDataProps,
+	SaveQuickSendGroupReq,
 	TestSendReq,
 	uploadData,
 } from '../../screens/Whatsapp/Campaign/Types/WhatsappCampaign.types';
@@ -854,5 +855,22 @@ export const whatsappSlice = createSlice({
 		});
 	},
 });
+
+export const saveQuickSendGroups = createAsyncThunk(
+	'whatsAppCampaign/SaveQuickSendGroups',
+	async (data: SaveQuickSendGroupReq, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/SaveQuickSendGroups`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
 
 export default whatsappSlice.reducer;

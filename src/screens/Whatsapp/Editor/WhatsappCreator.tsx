@@ -686,17 +686,19 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle?.includes('quickReplay')) {
 			setIsQuickReplyOpen(true);
 		} else if (button.buttonTitle?.includes('dynamicField')) {
-			const selectionEnd = templateTextRef.current?.selectionEnd;
-			const textLength = templateTextRef.current?.textLength;
-			const updatedTemplateText = reOrderDynamicFieldValue(
-				addDynamicField(selectionEnd, textLength)
-			);
-			setDynamicFieldCount(getDynamicFieldIndex(updatedTemplateText)?.length);
-			setTemplateData({
-				...templateData,
-				templateText: updatedTemplateText,
-			});
-			templateTextRef.current?.focus();
+			if (templateData?.templateText?.length < 1024) {
+				const selectionEnd = templateTextRef.current?.selectionEnd;
+				const textLength = templateTextRef.current?.textLength;
+				const updatedTemplateText = reOrderDynamicFieldValue(
+					addDynamicField(selectionEnd, textLength)
+				)?.substring(0, 1024);
+				setDynamicFieldCount(getDynamicFieldIndex(updatedTemplateText)?.length);
+				setTemplateData({
+					...templateData,
+					templateText: updatedTemplateText,
+				});
+				templateTextRef.current?.focus();
+			}
 		} else if (button.buttonTitle?.includes('removalText')) {
 			setTemplateData({
 				...templateData,

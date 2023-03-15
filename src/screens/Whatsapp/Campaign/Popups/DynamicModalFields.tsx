@@ -63,6 +63,11 @@ const DynamicModalFields = ({
 		setIsSiteTrack(false);
 		setLinkInput(linkInput, !isTrackLink);
 	};
+
+	const onAddRemovalLinkClick = () => {
+		onAddRemovalLink(true);
+	};
+
 	return (
 		<>
 			{activeDynamicButton?.includes('pField') && (
@@ -151,7 +156,7 @@ const DynamicModalFields = ({
 						color='primary'
 						size='small'
 						className={classes.whatsappCampaignDynamicFieldLinkRemoval}
-						onClick={() => onAddRemovalLink(isTrackLink)}>
+						onClick={() => onAddRemovalLinkClick()}>
 						<>{translator('whatsappCampaign.removalLinkTooltip')}</>
 					</Button>
 				</div>

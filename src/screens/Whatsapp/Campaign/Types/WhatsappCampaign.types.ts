@@ -692,3 +692,18 @@ export type TestSendReq = {
 	TestGroupsIds?: number[];
 	PhoneNumber?: string;
 };
+
+export type SaveQuickSendGroupReq = {
+	WACampaignID: number;
+	TestGroupsIds: number[];
+};
+
+export type SaveQuickSendGroupsPayload = {
+	Data: null;
+	Message: string | null;
+	Status: string;
+};
+
+export type SaveQuickSendGroups = {
+	payload: SaveQuickSendGroupsPayload;
+};
