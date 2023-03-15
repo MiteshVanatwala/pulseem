@@ -39,7 +39,6 @@ import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
 import { IoMdClose } from "react-icons/io";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { ReplaceExtraFieldHeader } from "../../../../helpers/UI/AccountExtraField";
-import useCore from "../../../../helpers/hooks/Core";
 
 
 const useStyles = makeStyles({
@@ -93,23 +92,23 @@ const useStyles = makeStyles({
     }
 });
 
-const AddRecipientPopup = ({
+const AddRecipientPopup = ({ classes,
     isOpen = false,
     onClose,
+    windowSize,
     selectedGroups = [],
-    selectGroup = () => { },
+    selectGroup,
     ToastMessages,
-    onAddRecipient = () => { },
-    onRecipientAdded = () => { },
-    handleResponses = (response, actions) => { },
+    onAddRecipient = () => null,
+    onRecipientAdded = () => null,
+    handleResponses = (response, actions) => null,
     recipientData = null
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { classes } = useCore();
     const localClasses = useStyles()
     const { extraData } = useSelector((state) => state.sms);
-    const { isRTL, windowSize } = useSelector((state) => state.core);
+    const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
     const [accountExtraFields, setAccountExtraFields] = useState(null);
@@ -878,6 +877,7 @@ const AddRecipientPopup = ({
                             content: <Box className={localClasses.dateBox}>
                                 <DateField
                                     name="BirthDate"
+                                    classes={classes}
                                     value={addRecipientData.BirthDate}
                                     onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
                                     toolbarDisabled={false}
@@ -904,6 +904,7 @@ const AddRecipientPopup = ({
                                 <Box className={localClasses.dateBox}>
                                     <DateField
                                         name="ReminderDate"
+                                        classes={classes}
                                         value={addRecipientData.ReminderDate}
                                         onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
                                         toolbarDisabled={false}
@@ -927,6 +928,7 @@ const AddRecipientPopup = ({
                 {
                     content: <DateField
                         name="BirthDate"
+                        classes={classes}
                         value={addRecipientData.BirthDate}
                         onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
                         toolbarDisabled={false}
@@ -935,6 +937,7 @@ const AddRecipientPopup = ({
                 {
                     content: <DateField
                         name="ReminderDate"
+                        classes={classes}
                         value={addRecipientData.ReminderDate}
                         onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
                         toolbarDisabled={false}
@@ -964,6 +967,7 @@ const AddRecipientPopup = ({
                     content: ef.toLowerCase().indexOf('date') > -1 ?
                         <Box className={localClasses.dateBox}>
                             <DateField
+                                classes={classes}
                                 value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
                                 onChange={e => handleChange(e, { date: e, field: ef }, true)}
                                 toolbarDisabled={false}
@@ -1004,6 +1008,7 @@ const AddRecipientPopup = ({
                                 content: ef.toLowerCase().indexOf('date') > -1 ?
                                     <Box className={localClasses.dateBox}>
                                         <DateField
+                                            classes={classes}
                                             value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
                                             onChange={e => handleChange(e, { date: e, field: ef }, true)}
                                             toolbarDisabled={false}
@@ -1040,6 +1045,7 @@ const AddRecipientPopup = ({
     const GROUPS_FORM = () => (
         <div className={classes.fullWidth}>
             <GroupTags
+                classes={classes}
                 title={'siteTracking.typeGroupName'}
                 style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 dropdown
@@ -1258,6 +1264,7 @@ const AddRecipientPopup = ({
 
     return (
         <BaseDialog
+            classes={classes}
             open={isOpen}
             title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
             icon={<div className={classes.dialogIconContent}>

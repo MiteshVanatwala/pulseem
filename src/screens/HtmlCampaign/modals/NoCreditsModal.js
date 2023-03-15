@@ -6,7 +6,6 @@ import "moment/locale/he";
 import { Dialog } from "../../../components/managment/Dialog";
 import { FaExclamationCircle } from 'react-icons/fa'
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../helpers/hooks/Core";
 
 const renderHtml = (html) => {
   function createMarkup() {
@@ -18,14 +17,15 @@ const renderHtml = (html) => {
 }
 
 const NoCreditsModal = ({
+  classes,
   onClose = () => null,
   isOpen = false
 }) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
   return !isOpen ? (<></>) :
     (
       <BaseDialog
+        classes={classes}
         customContainerStyle={classes.dialogZindex}
         open={isOpen}
         icon={<AiOutlineExclamationCircle

@@ -3,10 +3,8 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Box, Grid, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import useCore from '../../helpers/hooks/Core';
 
-const TotalSection = ({ TotalObject, callerType }) => {
-    const { classes } = useCore();
+const TotalSection = ({ classes, TotalObject, callerType }) => {
     const { t } = useTranslation();
     const { windowSize } = useSelector(state => state.core);
 

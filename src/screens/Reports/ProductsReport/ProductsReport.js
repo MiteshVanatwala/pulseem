@@ -25,7 +25,6 @@ import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
-import useCore from '../../../helpers/hooks/Core';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -37,9 +36,8 @@ const DEFAULT_FILTER = {
     OrderByParameter: null
 }
 
-const ProductsReport = () => {
-    const navigate = useNavigate();
-    const { classes } = useCore();
+const ProductsReport = ({ classes }) => {
+    const navigate = useNavigate()
     const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
 
@@ -101,7 +99,6 @@ const ProductsReport = () => {
 
 
     //  HANDLERS  //
-    //BUG: REVENUE type REdirection to CSR 
     const getHrefs = (id) => ({
         Purchased: {
             title: t('report.ProductsReport.purchased'),
@@ -428,6 +425,7 @@ const ProductsReport = () => {
     const renderTablePagination = () => {
         return (
             <TablePagination
+                classes={classes}
                 rows={productsReportDetails?.TotalProducts ? productsReportDetails?.TotalProducts : 0}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageSearching}
@@ -440,12 +438,13 @@ const ProductsReport = () => {
 
     return (
         <DefaultScreen
+            classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="productsReport">
             <Box>
                 <Box className='topSection'>
-                    <Title Text={t('report.ProductsReport.title')} />
+                    <Title Text={t('report.ProductsReport.title')} classes={classes} />
                     <Grid item xs={12} className={classes.mt2} style={{ paddingInline: 31 }}>
                         <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
                         <Typography display='inline'>{t('common.ForSupport')}: </Typography>
@@ -461,6 +460,7 @@ const ProductsReport = () => {
             {renderTableBody()}
             {renderTablePagination()}
             <ConfirmRadioDialog
+                classes={classes}
                 isOpen={dialogType === 'exportFormat'}
                 title={t('campaigns.exportFile')}
                 radioTitle={t('common.SelectFormat')}

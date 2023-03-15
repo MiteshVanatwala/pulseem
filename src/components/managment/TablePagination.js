@@ -5,9 +5,9 @@ import { PageArrowIcon } from '../../assets/images/managment/index'
 import { useTranslation } from 'react-i18next'
 import { IoIosArrowDown } from 'react-icons/io';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import useCore from '../../helpers/hooks/Core';
 
 export const TablePagination = ({
+  classes,
   rows = 0,
   page = 1,
   rowsPerPageOptions = [],
@@ -19,7 +19,6 @@ export const TablePagination = ({
 }) => {
 
   const { t } = useTranslation()
-  const { classes } = useCore();
   const pages = Math.ceil(rows / rowsPerPage)
   const [innerPage, setPage] = useState('');
   const [isTyping, setTyping] = useState(false);

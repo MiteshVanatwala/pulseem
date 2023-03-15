@@ -14,15 +14,13 @@ import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
-import useCore from '../../helpers/hooks/Core';
 
-const DashboardScreen = () => {
+const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [member, setMember] = useState(null);
-  const { classes } = useCore();
 
   useEffect(() => {
     const initialize = async () => {
@@ -59,28 +57,43 @@ const DashboardScreen = () => {
   return (
     <DefaultScreen
       currentPage='dashboard'
+      classes={classes}
       customStyle={classes.dashboard}>
       <Grid container>
         <Grid item xs={12} sm={8} md={9} lg={9} xl={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
-              <BulkStatus />
+              <BulkStatus classes={classes} />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
-              <RecipientChart />
+              <RecipientChart classes={classes} />
             </Grid>
           </Grid>
           <Grid container direction='row' className={classes.pt20}>
             <Grid item xs={12} sm={12} md={12} lg={3}>
-              <PulseemTips />
+              <PulseemTips
+                classes={classes}
+                t={t}
+                isRTL={isRTL}
+              />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9}>
-              <LatestReports />
+              <LatestReports
+                classes={classes}
+                windowSize={windowSize}
+                t={t}
+                isRTL={isRTL}
+              />
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} sm={4} md={3} lg={3} xl={2} className={classes.dashboardSide}>
-          <Shortcut />
+          <Shortcut
+            windowSize={windowSize}
+            classes={classes}
+            t={t}
+            isRTL={isRTL}
+          />
         </Grid>
       </Grid>
       {toastMessage && renderToast()}

@@ -1,56 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React,{useState,useEffect} from 'react';
 import clsx from 'clsx';
 import {
-  Drawer as BaseDrawer, Divider,
-  List, ListItem, ListItemIcon, ListItemText, Collapse
+  Drawer as BaseDrawer,Divider,
+  List,ListItem,ListItemIcon,ListItemText,Collapse
 } from '@material-ui/core';
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 //import {useSelector,useDispatch} from 'react-redux';
-import { ContactIcon, GuidsIcon, LogoutIcon } from '../../assets/images/drawer/index'
-import { getRoutes } from '../../helpers/Routes/routes'
-import useCore from '../../helpers/hooks/Core';
+import {ContactIcon,GuidsIcon,LogoutIcon} from '../../assets/images/drawer/index'
+import {getRoutes} from '../../helpers/Routes/routes'
 
-const DrawerItem = ({
+const DrawerItem=({
   item,
-  isOpen = false,
-  onClick = () => null,
-  onOpenChange = () => null,
+  classes,
+  isOpen=false,
+  onClick=() => null,
+  onOpenChange=() => null,
 }) => {
-  const { classes } = useCore();
-  const [open, setOpen] = useState(false)
-  const [hover, setHover] = useState(false)
-  const [innerHover, setInnerHover] = useState('')
+  const [open,setOpen]=useState(false)
+  const [hover,setHover]=useState(false)
+  const [innerHover,setInnerHover]=useState('')
 
   useEffect(() => {
     setOpen(isOpen)
-  }, [isOpen])
+  },[isOpen])
 
-  const handleOpen = () => {
+  const handleOpen=() => {
     setOpen(!open)
     onOpenChange(!open)
   }
 
-  const handlwHoverOn = () => {
+  const handlwHoverOn=() => {
     setHover(true)
   }
 
-  const handlwHoverOff = () => {
+  const handlwHoverOff=() => {
     setHover(false)
   }
 
-  const handleInnerHoverOn = title => () => {
+  const handleInnerHoverOn=title => () => {
     setInnerHover(title)
   }
 
-  const handleInnerHoverOff = () => {
+  const handleInnerHoverOff=() => {
     setInnerHover('')
   }
 
-  const renderItem = () => (
+  const renderItem=() => (
     <ListItem
       button
-      onClick={item.options ? handleOpen : onClick(item)}
-      className={hover && classes.drawerItemHover}>
+      onClick={item.options? handleOpen:onClick(item)}
+      className={hover&&classes.drawerItemHover}>
       <ListItemIcon>
         {item.icon}
       </ListItemIcon>
@@ -58,7 +57,7 @@ const DrawerItem = ({
         classes={{
           primary: clsx({
             [classes.drawerItemTextStyle]: !hover,
-            [classes.drawerItemTextHoverStyle]: hover || isOpen
+            [classes.drawerItemTextHoverStyle]: hover||isOpen
           })
         }}>
         {item.title}
@@ -66,8 +65,8 @@ const DrawerItem = ({
     </ListItem>
   )
 
-  const renderCollapseList = () => {
-    if (!item.options) return null
+  const renderCollapseList=() => {
+    if(!item.options) return null
 
     return (
       <Collapse
@@ -84,7 +83,7 @@ const DrawerItem = ({
     )
   }
 
-  const renderInnerListItem = (inner) => (
+  const renderInnerListItem=(inner) => (
     <ListItem
       key={inner.title}
       button
@@ -94,8 +93,8 @@ const DrawerItem = ({
       <ListItemText
         classes={{
           primary: clsx({
-            [classes.drawerItemInnerTextStyle]: innerHover !== inner.title,
-            [classes.drawerItemInnerTextHoverStyle]: innerHover === inner.title
+            [classes.drawerItemInnerTextStyle]: innerHover!==inner.title,
+            [classes.drawerItemInnerTextHoverStyle]: innerHover===inner.title
           })
         }}>
         {inner.title}
@@ -114,24 +113,24 @@ const DrawerItem = ({
   )
 }
 
-export const Drawer = () => {
-  const [open, setOpen] = useState(true)
-  const [currentRoute, setCurrentRoute] = useState('')
-  const { t } = useTranslation()
-  const { classes } = useCore();
-  const routes = getRoutes(t)
+export const Drawer=({classes}) => {
+  const [open,setOpen]=useState(true)
+  const [currentRoute,setCurrentRoute]=useState('')
+  const {t}=useTranslation()
 
-  const handleOpen = () => {
+  const routes=getRoutes(t)
+
+  const handleOpen=() => {
     setOpen(!open)
     setCurrentRoute('')
   }
 
-  const BorgerButton = ({ onClick = () => null }) => {
+  const BorgerButton=({onClick=() => null}) => {
     return (
       <div
         onClick={onClick}
         className={classes.borgerContainer}>
-        {[...Array(3)].map((_, i) => (
+        {[...Array(3)].map((_,i) => (
           <div
             key={i}
             className={classes.borgerLine} />
@@ -140,18 +139,19 @@ export const Drawer = () => {
     )
   }
 
-  const renderToolbar = () => {
+  const renderToolbar=() => {
     return (
       <>
         <BorgerButton onClick={handleOpen} />
         {routes.map(route => (
           <DrawerItem
             key={route.title}
+            classes={classes}
             item={route}
-            isOpen={currentRoute === route.title}
+            isOpen={currentRoute===route.title}
             onOpenChange={expand => {
-              if (expand && !open) handleOpen()
-              setCurrentRoute(currentRoute === route.title ? '' : route.title)
+              if(expand&&!open) handleOpen()
+              setCurrentRoute(currentRoute===route.title? '':route.title)
             }}
           />
         ))}
@@ -159,11 +159,12 @@ export const Drawer = () => {
     )
   }
 
-  const renderBottomToolbar = () => {
+  const renderBottomToolbar=() => {
     return (
       <div className={classes.bottomToolbar}>
         <Divider className={classes.divider} />
         <DrawerItem
+          classes={classes}
           item={{
             title: t('master.guides'),
             icon: <img
@@ -173,6 +174,7 @@ export const Drawer = () => {
           }}
         />
         <DrawerItem
+          classes={classes}
           item={{
             title: t('master.linkContactResource1.Text'),
             icon: <ContactIcon className={classes.contactIconStyle} />
@@ -180,6 +182,7 @@ export const Drawer = () => {
         />
         <Divider className={classes.divider} />
         <DrawerItem
+          classes={classes}
           item={{
             title: t('master.LogoutResource1.Text'),
             icon:
@@ -195,7 +198,7 @@ export const Drawer = () => {
   return (
     <BaseDrawer
       variant='permanent'
-      className={clsx(classes.drawer, {
+      className={clsx(classes.drawer,{
         [classes.drawerOpen]: open,
         [classes.drawerClose]: !open,
       })}

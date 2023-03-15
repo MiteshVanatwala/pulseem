@@ -46,7 +46,6 @@ const FORM_ACCOUNT_DETAILS = ({
   };
 
   useEffect(() => {
-    // @ts-ignore
     setAccountDetails(Settings);
   }, [Settings]);
 
@@ -73,6 +72,7 @@ const FORM_ACCOUNT_DETAILS = ({
     >
       <Title
         Text={t("settings.accountSettings.actDetails.title")}
+        classes={classes}
         isIcon={false}
         ContainerStyle={{
           padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"}`,

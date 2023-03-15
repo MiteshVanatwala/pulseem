@@ -12,7 +12,7 @@ export const InboundTypes = [
     key: "Whatsapp",
     name: "appBar.whatsapp.title",
     disabled: false,
-    icon: "common.comingSoon",
+    icon: "common.commingSoon",
     isNewFeature: true,
   },
 ];

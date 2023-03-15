@@ -4,20 +4,19 @@ import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import useCore from '../../helpers/hooks/Core';
 
 
 const PulseemTags = ({
     title,
     style,
     tagStyle,
+    classes,
     icon = null,
     items = null,
     onShowModal = null,
     handleRemove = null
 }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     const { isRTL } = useSelector(state => state.core);
     return <Box className={classes.rightForm} style={{ ...style, position: 'relative' }}>
         <Box

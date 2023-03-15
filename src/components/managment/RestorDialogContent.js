@@ -1,18 +1,16 @@
 import React from 'react';
 import { Box, FormControlLabel, Checkbox } from '@material-ui/core'
 import clsx from 'clsx'
-import useCore from '../../helpers/hooks/Core';
 
 
 export const RestorDialogContent = ({
+  classes,
   data = [],
   currentChecked = [],
   dataIdVar = 'ID',
   dataLabeleVar = 'Name',
   onChange = () => null
 }) => {
-  const { classes } = useCore();
-
   if (!Array.isArray(data))
     return null
 

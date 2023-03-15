@@ -26,9 +26,9 @@ import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
-import useCore from "../../../../helpers/hooks/Core";
 
 const UnsubscribeOrDeletePopup = ({
+    classes,
     dialogType = null,
     onClose,
     selectedGroups,
@@ -40,7 +40,6 @@ const UnsubscribeOrDeletePopup = ({
 }) => {
     const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
-    const { classes } = useCore();
     const [highlighted, setHighlighted] = useState(false);
     const dispatch = useDispatch();
     const [showLoader, setLoader] = useState(false);
@@ -87,6 +86,7 @@ const UnsubscribeOrDeletePopup = ({
                                             arrow
                                             isSimpleTooltip={false}
                                             // title={t('recipient.unsubSetting1Tooltip')}
+                                            classes={classes}
                                             interactive={true}
                                             // arrow={true}
                                             placement={'top'}
@@ -565,6 +565,7 @@ const UnsubscribeOrDeletePopup = ({
     const RenderSummaryDialog = () => {
         return (
             <BaseDialog
+                classes={classes}
                 open={confirm || isSubmitted}
                 title={t("common.systemNotice")}
                 icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
@@ -586,6 +587,7 @@ const UnsubscribeOrDeletePopup = ({
     const RenderMaximumLimitationRequest = () => {
         return (
             <BaseDialog
+                classes={classes}
                 open={limitationWarning}
                 title={t("common.systemNotice")}
                 icon={<div className={clsx(classes.dialogIconContent, 'unicode')}>
@@ -659,6 +661,7 @@ const UnsubscribeOrDeletePopup = ({
     return (
         <BaseDialog
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
+            classes={classes}
             open={dialogType}
             childrenStyle={showDropBox ? classes.h50v : classes.h10v}
             title={

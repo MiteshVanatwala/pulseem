@@ -15,7 +15,7 @@ import moment from 'moment';
 import { getNewsletterDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { reactivateEmail } from '../../../redux/reducers/clientSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { EmailStatus } from '../../../helpers/Constants';
 import { ConvertColorStatus, ConvertEmailStatusText, EllipsisText, SourceType } from '../../../helpers/UI/TableText';
 import { actionURL } from '../../../config/index'
@@ -23,20 +23,19 @@ import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import useCore from '../../../helpers/hooks/Core';
 
 const RenderRow = ({
+  classes,
   cellStyle,
   noborderCell,
   rowStyle,
   row,
+  t = () => null,
+  windowSize,
   isArchive = false,
   dispatch,
   onRefresh = () => null
 }) => {
-  const { classes } = useCore();
-  const { t } = useTranslation();
-  const { isRTL, windowSize } = useSelector(state => state.core);
   const [open, setOpen] = useState(false);
 
   const renderCell = (data, dataType) => {
@@ -205,7 +204,10 @@ const RenderRow = ({
 }
 
 const DirectEmailReportTab = ({
+  classes,
   title,
+  dispatch,
+  windowSize,
   handleSearchInput = () => null,
   handleSearching = () => null,
   handlePageChange = () => null,
@@ -220,14 +222,12 @@ const DirectEmailReportTab = ({
   advanceSearch,
   isArchive = false
 }) => {
-  const { classes } = useCore();
-  const { isRTL, windowSize } = useSelector(state => state.core);
+  const { isRTL } = useSelector(state => state.core);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
-  const dispatch = useDispatch();
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
@@ -302,6 +302,7 @@ const DirectEmailReportTab = ({
       <>
         <Grid item>
           <DateField
+            classes={classes}
             value={FromDate}
             onChange={(v) => handleFromDate(v)}
             placeholder={t('mms.locFromDateResource1.Text')}
@@ -313,6 +314,7 @@ const DirectEmailReportTab = ({
         </Grid>
         <Grid item>
           <DateField
+            classes={classes}
             value={ToDate}
             onChange={(v) => handleToDate(v)}
             placeholder={t('mms.locToDateResource1.Text')}
@@ -621,10 +623,13 @@ const DirectEmailReportTab = ({
             sortData.map(row =>
               windowSize === 'xs' ? renderPhoneRow(row) :
                 <RenderRow
+                  windowSize={windowSize}
+                  classes={classes}
                   row={row}
                   noborderCell={noborderCell}
                   cellStyle={cellStyle}
                   rowStyle={rowStyle}
+                  t={t}
                   isArchive={isArchive}
                   dispatch={dispatch}
                   onRefresh={handleSearch} />
@@ -660,6 +665,7 @@ const DirectEmailReportTab = ({
     return (
       <TablePagination
         style={{ flexWrap: 'nowrap' }}
+        classes={classes}
         rows={emailData}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageSearching}
@@ -674,12 +680,12 @@ const DirectEmailReportTab = ({
   return (
     <>
       <Box className={'topSection'}>
-        <Title Text={title} />
+        <Title Text={title} classes={classes} />
         {renderSearchLine()}
       </Box>
       {renderTable()}
       {renderTablePagination()}
-      {<TotalSection TotalObject={directEmailReport} callerType="email" />}
+      {<TotalSection classes={classes} TotalObject={directEmailReport} callerType="email" />}
       <Loader isOpen={showLoader} />
     </>
   );

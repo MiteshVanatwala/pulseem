@@ -21,14 +21,17 @@ import { SmsStatus } from '../../../helpers/Constants';
 import { ConvertSmsStatusText, ConvertColorStatus, SourceType } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import useCore from '../../../helpers/hooks/Core';
 
 const DirectSMSReportTab = ({
+  classes,
   title,
+  dispatch,
+  windowSize,
+  isRTL,
   handleSearchInput = () => null,
   handleSearching = () => null,
   handlePageChange = () => null,
@@ -43,15 +46,12 @@ const DirectSMSReportTab = ({
   rowsOptions,
   isArchive = false
 }) => {
-  const { classes } = useCore();
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const [showLoader, setLoader] = useState(false)
   const { showContent } = useSelector(state => state.report);
-  const { isRTL, windowSize } = useSelector(state => state.core);
 
   const handleSearch = async () => {
     setLoader(true);
@@ -145,6 +145,7 @@ const DirectSMSReportTab = ({
       <>
         <Grid item>
           <DateField
+            classes={classes}
             value={FromDate}
             onChange={(v) => handleFromDate(v)}
             placeholder={t('mms.locFromDateResource1.Text')}
@@ -156,6 +157,7 @@ const DirectSMSReportTab = ({
         </Grid>
         <Grid item>
           <DateField
+            classes={classes}
             value={ToDate}
             onChange={(v) => handleToDate(v)}
             placeholder={t('mms.locToDateResource1.Text')}
@@ -221,6 +223,7 @@ const DirectSMSReportTab = ({
         </Grid>
         <Grid item>
           <DateField
+            classes={classes}
             value={FromDate}
             onChange={handleFromDate}
             placeholder={t('mms.locFromDateResource1.Text')}
@@ -231,6 +234,7 @@ const DirectSMSReportTab = ({
         </Grid>
         <Grid item>
           <DateField
+            classes={classes}
             value={ToDate}
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
@@ -333,6 +337,7 @@ const DirectSMSReportTab = ({
           control={
             <PulseemSwitch
               switchType='ios'
+              classes={classes}
               checked={showContent}
               onColor="#0371ad"
               handleDiameter={20}
@@ -619,6 +624,7 @@ const DirectSMSReportTab = ({
     const smsData = (directSmsReport && directSmsReport.TotalSent) || 0;
     return (
       <TablePagination
+        classes={classes}
         rows={smsData}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageSearching}
@@ -633,13 +639,13 @@ const DirectSMSReportTab = ({
   return (
     <>
       <Box className={'topSection'}>
-        <Title Text={title} />
+        <Title Text={title} classes={classes} />
         {renderSearchLine()}
       </Box>
       {windowSize !== 'xs' && renderToggleContent()}
       {renderTable()}
       {renderTablePagination()}
-      {directSmsReport && <TotalSection TotalObject={directSmsReport} callerType="sms" />}
+      {directSmsReport && <TotalSection classes={classes} TotalObject={directSmsReport} callerType="sms" />}
       <Loader isOpen={showLoader} />
     </>
   );

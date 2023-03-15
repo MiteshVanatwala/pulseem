@@ -23,11 +23,9 @@ import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
-import useCore from '../../../helpers/hooks/Core';
 
-const DirectSendReport = ({ isArchive = false, ...props }) => {
+const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
-  const { classes } = useCore();
   const { showContent } = useSelector(state => state.report);
   const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
@@ -360,7 +358,11 @@ const DirectSendReport = ({ isArchive = false, ...props }) => {
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
             <TabPanel value={0} index={0} className={classes.p0}>
               <DirectSMSReportTab
+                classes={classes}
                 title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
+                dispatch={dispatch}
+                windowSize={windowSize}
+                isRTL={isRTL}
                 handleSearchInput={handleSearchInput}
                 handleSearching={handleSearching}
                 handlePageChange={setPageSms}
@@ -380,7 +382,11 @@ const DirectSendReport = ({ isArchive = false, ...props }) => {
             </TabPanel>
             <TabPanel value={1} index={1} className={classes.p0}>
               <DirectEmailReportTab
+                classes={classes}
                 title={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')}
+                dispatch={dispatch}
+                windowSize={windowSize}
+                isRTL={isRTL}
                 handleSearchInput={handleSearchInput}
                 handleSearching={handleSearching}
                 handlePageChange={setPageEmail}
@@ -409,9 +415,11 @@ const DirectSendReport = ({ isArchive = false, ...props }) => {
     <DefaultScreen
       subPage={isArchive ? 'directSendReportArchive' : 'directSendReport'}
       currentPage='reports'
+      classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
       {renderTabs()}
       <ConfirmRadioDialog
+        classes={classes}
         isOpen={dialogType === 'exportFormat'}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}

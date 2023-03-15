@@ -32,14 +32,12 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
-import useCore from '../../../helpers/hooks/Core';
 
-const SmsManagnentScreen = () => {
+const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion, isRTL
   const { smsData, smsDeletedData } = useSelector(state => state.sms)
   const { username } = useSelector(state => state.user)
   const { t } = useTranslation()
-  const { classes } = useCore();
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
   const [number, handleNumber] = useState('');
@@ -149,6 +147,7 @@ const SmsManagnentScreen = () => {
       return (
         <Grid container className={'searchLine'}>
           <SearchField
+            classes={classes}
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             onClick={handleSearch}
@@ -177,6 +176,7 @@ const SmsManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
+              classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
@@ -188,6 +188,7 @@ const SmsManagnentScreen = () => {
           <Grid item>
             <DateField
               toolbarDisabled={false}
+              classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
@@ -385,6 +386,7 @@ const SmsManagnentScreen = () => {
             key={icon.key}
             item >
             <ManagmentIcon
+              classes={classes}
               {...icon}
               uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
             />
@@ -580,6 +582,7 @@ const SmsManagnentScreen = () => {
     }
     return (
       <TablePagination
+        classes={classes}
         rows={isSearching ? searchResults.length : smsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
@@ -659,6 +662,7 @@ const SmsManagnentScreen = () => {
       ),
       content: (
         <RestorDialogContent
+          classes={classes}
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
@@ -761,7 +765,7 @@ const SmsManagnentScreen = () => {
       ),
       content: (
         <Box>
-          <Preview
+          <Preview classes={classes}
             mobileFullsize={true}
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText !== ''}
@@ -1024,6 +1028,7 @@ const SmsManagnentScreen = () => {
     const currentDialog = dialogContent[type] || {}
     return (
       dialogType && <BaseDialog
+        classes={classes}
         open={dialogType}
         onClose={handleClose}
         onCancel={handleClose}
@@ -1035,16 +1040,17 @@ const SmsManagnentScreen = () => {
   return (
     <DefaultScreen
       currentPage='sms'
+      classes={classes}
       containerClass={classes.management}>
       <Box className={'topSection'}>
-        <Title Text={t('common.SMSReports')} />
+        <Title Text={t('common.SMSReports')} classes={classes} />
         {renderSearchLine()}
       </Box>
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      {newSmsVerification && <VerificationDialog isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
+      {newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

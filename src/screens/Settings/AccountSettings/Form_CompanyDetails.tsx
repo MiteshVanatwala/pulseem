@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
   Grid,
   MenuItem,
   Select,
@@ -14,7 +15,9 @@ import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import {
   MdArrowBackIos,
-  MdArrowForwardIos
+  MdArrowForwardIos,
+  MdMobileFriendly,
+  MdOutlineMarkEmailRead,
 } from "react-icons/md";
 import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
 import { Title } from "../../../components/managment/Title";
@@ -131,7 +134,7 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    setCompanyDetails(Settings as AccountSettings);
+    setCompanyDetails(Settings);
     if (Settings) handleQueryString2FA();
   }, [Settings]);
 
@@ -150,7 +153,6 @@ const FORM_COMPANY_DETAILS = ({
   }, [twoFAUpdated]);
 
   const on2FAUpdate = (req: AccountSettings) => {
-    // @ts-ignore
     dispatch(update2FASettings(req)).then(() => {
       setCompanyDetails(req);
       OnUpdate(req, false);
@@ -161,9 +163,7 @@ const FORM_COMPANY_DETAILS = ({
   const handleQueryString2FA = () => {
     if (
       searchParams.has("2fa") &&
-      // @ts-ignore
       Settings?.SubAccountId > 0 &&
-      // @ts-ignore
       !Settings.TwoFactorAuthEnabled
     ) {
       searchParams.delete("2fa");
@@ -247,10 +247,12 @@ const FORM_COMPANY_DETAILS = ({
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
+          classes={classes}
           isIcon={false}
           ContainerStyle={{
-            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"
-              }`,
+            padding: `6px ${isRTL ? "14.69px" : 0} 5px ${
+              isRTL ? 0 : "14.69px"
+            }`,
           }}
         />
         <Box className={"formContainer"}>
@@ -322,6 +324,7 @@ const FORM_COMPANY_DETAILS = ({
               </Typography>
               <DateField
                 toolbarDisabled={false}
+                classes={classes}
                 value={companyDetails.BirthDate}
                 onChange={(value: any) => handleChange(value, "BirthDate")}
               />

@@ -7,13 +7,11 @@ import { getPaymentURL, getAccountCards } from '../../../redux/reducers/paymentS
 import PackagesList from './Dialogs/PackagesList';
 import TranzilaIframe from './Dialogs/TranzilaIframe';
 import PaymentResult from './Dialogs/PaymentResult';
-import useCore from '../../../helpers/hooks/Core';
 
-const PurchaseWizard = ({
+const PurchaseWizard = ({ classes,
     packageType
 }) => {
     const { isRTL } = useSelector(state => state.core);
-    const { classes } = useCore();
     const { accountAvailablePackages } = useSelector(state => state.dashboard);
     const { paymentUrl } = useSelector(state => state.payment);
     const { t } = useTranslation();
@@ -89,6 +87,7 @@ const PurchaseWizard = ({
                     dialogElement.style = "max-width: 1050px";
                 }
                 return <PackagesList data={data}
+                    classes={classes}
                     onSelect={selectPackage}
                     packageType={packageType}
                     smsBulkData={smsBulkData}
@@ -99,14 +98,20 @@ const PurchaseWizard = ({
                 dialogElement.style = "max-width: 750px";
                 return <TranzilaIframe
                     data={data}
+                    classes={classes}
+                    isRTL={isRTL}
                     packageId={packageId}
                     onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
                     onStepBack={onStepBack}
+                    t={t}
                 />
             }
             case 3: {
                 return <PaymentResult
+                    t={t}
+                    isRTL={isRTL}
+                    classes={classes}
                     paymentObject={paymentResult}
                     onStepBack={onStepBack}
                 />

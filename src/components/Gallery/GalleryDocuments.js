@@ -8,9 +8,9 @@ import { deleteGalleryFile, uploadFiles } from '../../redux/reducers/gallerySlic
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { Loader } from '../Loader/Loader';
 import { AllowedExentions, ImageExtensions } from '../../model/Gallery/FileExtentions';
-import useCore from '../../helpers/hooks/Core';
 
 export const GalleryDocuments = ({
+    classes,
     isRTL,
     folder,
     onToast = () => null,
@@ -26,7 +26,6 @@ export const GalleryDocuments = ({
     const [docs, setDocs] = useState([]);
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { classes } = useCore();
     const [fileToUploads, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [galleryReady, setGalleryReady] = useState(false);
@@ -168,6 +167,7 @@ export const GalleryDocuments = ({
                         imageType = PulseemFolderType.CLIENT_IMAGES;
                     }
                     return <Image
+                        classes={classes}
                         onSelectFile={onSelectFile}
                         onDelete={deleteDocument}
                         imgSrc={f.FileURL}

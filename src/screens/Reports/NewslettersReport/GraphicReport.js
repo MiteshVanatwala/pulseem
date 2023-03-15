@@ -18,11 +18,9 @@ import { Loader } from '../../../components/Loader/Loader';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { useParams } from 'react-router-dom';
 import { sitePrefix } from '../../../config';
-import useCore from '../../../helpers/hooks/Core';
 
-const GraphicReport = (props) => {
+const GraphicReport = ({ props, classes }) => {
   const { isRTL } = useSelector(state => state.core)
-  const { classes } = useCore();
   const [tabValue, setTabValue] = useState(0);
   const Redirect = useRedirect();
   const [showLoader, setLoader] = useState(true);
@@ -523,7 +521,7 @@ const GraphicReport = (props) => {
           {<RenderCampaignSummary chartData={campaignData} />}
         </TabPanel>
         <TabPanel value={1} index={1} className={classes.p0}>
-          {/* <RecipientsTab /> */}
+          {/* <RecipientsTab classes={classes} /> */}
         </TabPanel>
         <TabPanel value={2} index={2} className={classes.p0}>
           {<RenderOpenClickTab />}
@@ -539,7 +537,7 @@ const GraphicReport = (props) => {
   }
 
   return (
-    <DefaultScreen currentPage="reports" >
+    <DefaultScreen currentPage="reports" classes={classes}>
       {
         campaignData && <>
           {renderHeader()}

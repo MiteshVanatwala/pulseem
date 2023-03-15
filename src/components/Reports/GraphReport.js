@@ -8,13 +8,11 @@ import { Typography, Box, Paper } from '@material-ui/core';
 import arrowDown from "../../assets/images/down-arrow-splash.png";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import * as am4plugins_annotation from "@amcharts/amcharts4/plugins/annotation";
-import useCore from '../../helpers/hooks/Core';
 
-const GraphReport = ({ reportData, showLoader }) => {
+const GraphReport = ({ classes, reportData, showLoader }) => {
     let chart;
     am4core.useTheme(am4themes_animated);
     const { t } = useTranslation()
-    const { classes } = useCore();
 
     chart = am4core.create("chartdiv", am4charts.XYChart3D);
     chart.data = reportData;

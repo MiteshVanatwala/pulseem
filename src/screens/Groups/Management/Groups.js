@@ -46,12 +46,10 @@ import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageM
 import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
-import useCore from '../../../helpers/hooks/Core';
 
-const Groups = () => {
+const Groups = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
-    const { classes } = useCore();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
@@ -214,6 +212,7 @@ const Groups = () => {
             return (
                 <Grid container className={'searchLine'}>
                     <SearchField
+                        classes={classes}
                         value={searchStr}
                         onChange={(e) => setSearchStr(e.target.value)}
                         onClick={() => {
@@ -571,6 +570,7 @@ const Groups = () => {
                         key={icon.key}
                         item >
                         <ManagmentIcon
+                            classes={classes}
                             {...icon}
                             uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
                         />
@@ -1729,6 +1729,7 @@ const Groups = () => {
     const renderTablePagination = () => {
         return (
             <TablePagination
+                classes={classes}
                 rows={groupData ? groupData.RecordCount : 0}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={handleRowsPerPageChange}
@@ -1782,6 +1783,7 @@ const Groups = () => {
     const renderConfirmDialog = () => {
         return (
             <ConfirmRadioDialog
+                classes={classes}
                 isOpen={showConfirmDialog}
                 title={t('common.ExportGroups')}
                 text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
@@ -1912,6 +1914,7 @@ const Groups = () => {
             switch (dialog) {
                 case DialogType.ADD_GROUP: {
                     return <AddGroupPopUp
+                        classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
                         onClose={() => {
                             setDialog(null);
@@ -1939,6 +1942,7 @@ const Groups = () => {
                 }
                 case DialogType.EDIT_GROUP: {
                     return <EditGroupPopup
+                        classes={classes}
                         isOpen={dialog === DialogType.EDIT_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]) }}
                         onCancel={() => { setDialog(null); setSelectedGroups([]) }}
@@ -1955,6 +1959,7 @@ const Groups = () => {
                 case DialogType.RESET_GROUP: {
                     if (selectedGroups.length === 1) {
                         return <ResetGroupPopup
+                            classes={classes}
                             isOpen={dialog === DialogType.RESET_GROUP}
                             onClose={() => { setDialog(null); setSelectedGroups([]) }}
                             onCancel={() => { setDialog(null); setSelectedGroups([]) }}
@@ -1971,6 +1976,7 @@ const Groups = () => {
                 }
                 case DialogType.ADD_RECIPIENT: {
                     return <AddRecipientPopup
+                        classes={classes}
                         isOpen={dialog === DialogType.ADD_RECIPIENT}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
                         onCancel={() => { setDialog(null); setSelectedGroups([]); }}
@@ -1990,6 +1996,7 @@ const Groups = () => {
                 }
                 case DialogType.ADD_RECIPIENTS: {
                     return <AddBulkRecipientPopup
+                        classes={classes}
                         isOpen={dialog === DialogType.ADD_RECIPIENTS}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
                         onCancel={() => { setDialog(null); setSelectedGroups([]); }}
@@ -2006,6 +2013,7 @@ const Groups = () => {
                 case DialogType.DELETE_RECIPIENT:
                 case DialogType.UNSUB_RECIPIENT: {
                     return <UnsubscribeOrDeletePopup
+                        classes={classes}
                         isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
                         onCancel={() => { setDialog(null); setSelectedGroups([]); }}
@@ -2021,6 +2029,7 @@ const Groups = () => {
                 }
                 case DialogType.DELETE_GROUP: {
                     return <ConfirmDeletePopUp
+                        classes={classes}
                         isOpen={dialog === DialogType.DELETE_GROUP}
                         onClose={() => { setDialog(null); setSelectedGroups([]); }}
                         onCancel={() => { setDialog(null); setSelectedGroups([]); }}
@@ -2030,6 +2039,7 @@ const Groups = () => {
                 }
                 case DialogType.MESSAGE: {
                     return <AddRecipientResponse
+                        classes={classes}
                         isOpen={dialog === DialogType.MESSAGE}
                         onClose={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
                         onCancel={() => { setDialog(null); setSelectedGroups([]); getData(null); }}
@@ -2042,6 +2052,7 @@ const Groups = () => {
                 case DialogType.SIMPLY_CLUB: {
                     if (accountFeatures && accountFeatures.includes('15')) {
                         return <SimplyClubPupup
+                            classes={classes}
                             isOpen={dialog === DialogType.SIMPLY_CLUB}
                             onClose={() => { setDialog(null); setSelectedGroups([]) }}
                             onCancel={() => { setDialog(null); setSelectedGroups([]) }}
@@ -2071,13 +2082,14 @@ const Groups = () => {
         <DefaultScreen
             currentPage='groups'
             subPage='groupManagement'
+            classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
                 <Box className={'topSection'}>
 
-                    <Title Text={t('recipient.logPageHeaderResource1.Text')} />
+                    <Title Text={t('recipient.logPageHeaderResource1.Text')} classes={classes} />
                     {renderSearchSection()}
                 </Box>
                 {windowSize !== 'xs' ? renderManagmentLine() :

@@ -72,7 +72,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
     setTimeout(() => {
       setToastMessage(null);
     }, 4000);
-    // @ts-ignore
     return <Toast data={toastMessage} />;
   };
 
@@ -174,6 +173,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
     <DefaultScreen
       currentPage="settings"
       subPage="accountSettings"
+      classes={classes}
       containerClass={classes.management}
     >
       {toastMessage && renderToast()}
@@ -240,6 +240,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
       </Box>
       {emailVerificationPopup && (
         <VerificationDialog
+          classes={classes}
           variant="email"
           isOpen={emailVerificationPopup}
           value={verificationStep > 0 && settingRequest?.DefaultFromMail}
@@ -252,6 +253,7 @@ const AccountSettingsEditor = ({ classes }: any) => {
       )}
       {smsVerificationPopup && (
         <VerificationDialog
+          classes={classes}
           variant="sms"
           value={verificationStep > 0 && settingRequest?.DefaultCellNumber}
           step={verificationStep}

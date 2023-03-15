@@ -3,12 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { Grid, Typography, Divider } from '@material-ui/core';
 import Package from '../../PackageBox/Package';
 import { useSelector } from 'react-redux'
-import useCore from '../../../../helpers/hooks/Core';
 //import PurchaseLogs from '../PurhcaseLogs/Logs';
 
-const PackagesList = ({ data, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
+const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
     const { t } = useTranslation();
-    const { classes } = useCore();
     const { windowSize } = useSelector(state => state.core);
     if (data !== null) {
         const packageLength = data.length;
@@ -36,7 +34,7 @@ const PackagesList = ({ data, packageType, smsBulkData = null, newsletterBulkDat
                                 key={`pack_${d.ID}`}
                                 onSelect={onSelect}
                                 packageType={packageType}
-                            />
+                                classes={classes} />
                         )
                     })
                 }

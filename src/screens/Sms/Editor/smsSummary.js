@@ -9,10 +9,9 @@ import { FaChevronUp } from 'react-icons/fa';
 import { useSelector } from 'react-redux'
 import clsx from "clsx";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import useCore from "../../../helpers/hooks/Core";
 
 
-const SmsSummary = ({
+const SmsSummary = ({ classes,
   open,
   campaignName,
   fromNumber,
@@ -27,7 +26,7 @@ const SmsSummary = ({
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
   const { isRTL } = useSelector(state => state.core)
-  const { classes } = useCore();
+
   const { t } = useTranslation();
 
   const handleSmsSettings = () => {
@@ -40,6 +39,7 @@ const SmsSummary = ({
         style={{ paddingBottom: 20 }}
         title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
         showDivider={true}
+        classes={classes}
         open={open}
         onClose={() => { handleSmsSettings() }}
         showDefaultButtons={false}
@@ -84,7 +84,7 @@ const SmsSummary = ({
               </Box>
             </Box>
             <Box className={classes.sumRight}>
-              <MobilePreview campaignNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
+              <MobilePreview classes={classes} campaignNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
             </Box>
           </Box>
 

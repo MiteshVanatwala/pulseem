@@ -24,9 +24,9 @@ import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTestGroups } from "../../../../redux/reducers/smsSlice";
 
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
-import useCore from "../../../../helpers/hooks/Core";
 
 const AddGroupPopUp = ({
+    classes,
     isOpen = false,
     onClose,
     setLoader,
@@ -39,7 +39,6 @@ const AddGroupPopUp = ({
     getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { classes } = useCore();
 
     const DEFAULT_NEW_GROUP = {
         ActiveCell: 0,
@@ -134,6 +133,7 @@ const AddGroupPopUp = ({
     return (
         <>
             <BaseDialog
+                classes={classes}
                 open={isOpen}
                 title={t("group.createNew")}
                 icon={<div className={classes.dialogIconContent}>

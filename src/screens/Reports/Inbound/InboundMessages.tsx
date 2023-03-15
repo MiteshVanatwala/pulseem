@@ -32,7 +32,7 @@ const useStyles = makeStyles({
   },
 });
 
-const InboundMessages = ({ classes }) => {
+const InboundMessages = (classes: any) => {
   const params = useParams();
   const { type } = params;
   const { t } = useTranslation();
