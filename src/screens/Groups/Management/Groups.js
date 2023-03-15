@@ -7,12 +7,11 @@ import {
     Box, Typography, TableBody, TableRow, TableCell,
     Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
-import { SearchIcon, ExportIcon, PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
+import { PreviewIcon, AddRecipient, AddRecipients, ResetIcon, SettingIcon, AutomationIcon, DeleteIcon } from '../../../assets/images/managment/index'
 import { TablePagination, SearchField, ManagmentIcon } from '../../../components/managment/index'
 import FlexGrid from "../../../components/Grids/FlexGrid";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import {
@@ -166,12 +165,14 @@ const Groups = () => {
         if (lastSearch?.SearchTerm) {
             setSearchStr(lastSearch?.SearchTerm ?? "");
         }
+
     }, [dispatch, serachData.PageIndex, rowsPerPage]);
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
             setDialog(DialogType.ADD_GROUP)
         }
+
     }, [])
 
     const renderSearchSection = () => {
@@ -579,17 +580,17 @@ const Groups = () => {
         )
     }
 
-    const REDIRECT_OPTIONS = {
-        ShowGroup: 0,
-        ShowMails: 10,
-        ShowMailsActive: 11,
-        ShowMailsRemoved: 12,
-        ShowMailsErrored: 13,
-        ShowSms: 20,
-        ShowSmsActive: 21,
-        ShowSmsRemoved: 22,
-        ShowSmsErrored: 23
-    };
+    // const REDIRECT_OPTIONS = {
+    //     ShowGroup: 0,
+    //     ShowMails: 10,
+    //     ShowMailsActive: 11,
+    //     ShowMailsRemoved: 12,
+    //     ShowMailsErrored: 13,
+    //     ShowSms: 20,
+    //     ShowSmsActive: 21,
+    //     ShowSmsRemoved: 22,
+    //     ShowSmsErrored: 23
+    // };
 
     const renderRow = (row) => {
         const {

@@ -1,5 +1,4 @@
 import { Box, makeStyles, Typography } from "@material-ui/core"
-import clsx from 'clsx'
 
 const useStyles = makeStyles({
     flexBox: {

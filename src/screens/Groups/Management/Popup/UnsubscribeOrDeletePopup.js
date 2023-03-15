@@ -3,13 +3,11 @@ import {
     Grid,
     Typography,
     FormControlLabel,
-    Switch,
     Button,
     FormControl,
     FormLabel,
     RadioGroup,
     Radio,
-    Tooltip
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
@@ -47,13 +45,11 @@ const UnsubscribeOrDeletePopup = ({
     const [areaData, setareaData] = useState("");
     const [finalData, setFinalData] = useState(null);
     const [updatedRows, setUpdatedRows] = useState(-1);
-    const [advanceOpt, setAdvanceOpt] = useState(false)
     const [activeTab, setActiveTab] = useState(showDropBox ? '0' : 0)
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [limitationWarning, setLimitationWarning] = useState(false);
-    const [allData, setAllData] = useState(null);
     const [enteredValue, setEnteredValues] = useState(null);
     const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -171,12 +167,14 @@ const UnsubscribeOrDeletePopup = ({
         if (confirmUnsubscsribe === true) {
             handleUnsubSubmit();
         }
+
     }, [confirmUnsubscsribe, unsubscribeOption]);
 
     useEffect(() => {
         if (confirmDelete === true && finalData) {
             openConfirmDialog();
         }
+
     }, [confirmDelete]);
 
     const openConfirmDialog = () => {

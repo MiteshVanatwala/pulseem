@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormControlLabel,
   Grid,
   MenuItem,
   Select,
@@ -13,12 +12,7 @@ import {
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  MdArrowBackIos,
-  MdArrowForwardIos,
-  MdMobileFriendly,
-  MdOutlineMarkEmailRead,
-} from "react-icons/md";
+import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
 import { Title } from "../../../components/managment/Title";
 import { DateField } from "../../../components/managment";
@@ -452,9 +446,9 @@ const FORM_COMPANY_DETAILS = ({
                   }}
                 >
                   <Select
-                    disabled={!companyDetails.TwoFactorAuthEnabled}
+                    disabled={!companyDetails?.TwoFactorAuthEnabled}
                     autoWidth
-                    value={companyDetails.TwoFactorAuthOptionID ?? 202}
+                    value={companyDetails?.TwoFactorAuthOptionID ?? 202}
                     style={{
                       maxHeight: 40,
                       overflow: "hidden",

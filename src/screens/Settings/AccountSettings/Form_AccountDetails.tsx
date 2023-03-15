@@ -29,7 +29,6 @@ const FORM_ACCOUNT_DETAILS = ({
   const { t } = useTranslation();
   const { classes } = useCore();
   const { isRTL } = useSelector((state: any) => state.core);
-  const dispatch = useDispatch();
 
   const [accountDetails, setAccountDetails] = useState<AccountSettings | null>({
     DefaultFromMail: "",

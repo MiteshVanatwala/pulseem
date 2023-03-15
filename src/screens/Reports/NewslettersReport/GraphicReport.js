@@ -12,8 +12,6 @@ import { getNewsletterReportsByIds } from '../../../redux/reducers/newsletterSli
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
-// import RecipientsTab from './RecipientsTab';
-import queryString from 'query-string';
 import { Loader } from '../../../components/Loader/Loader';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { useParams } from 'react-router-dom';
@@ -356,7 +354,7 @@ const GraphicReport = (props) => {
       categoryAxis.dataFields.category = "title";
       categoryAxis.renderer.grid.template.location = 0;
 
-      let valueAxis = charts.generalSummary.yAxes.push(new am4charts.ValueAxis());
+      // let valueAxis = charts.generalSummary.yAxes.push(new am4charts.ValueAxis());
 
       // Create series
       let series = charts.generalSummary.series.push(new am4charts.ColumnSeries());
@@ -398,7 +396,7 @@ const GraphicReport = (props) => {
       categoryAxis.renderer.labels.template.fontWeight = "bold";
       categoryAxis.renderer.labels.template.dy = 15;
 
-      let valueAxis = charts.byGroups.yAxes.push(new am4charts.ValueAxis());
+      // let valueAxis = charts.byGroups.yAxes.push(new am4charts.ValueAxis());
       // Create series
       function createSeries(field, name) {
         var series = charts.byGroups.series.push(new am4charts.ColumnSeries());

@@ -188,6 +188,7 @@ const ResponsesReports = () => {
     return (
       <Grid container spacing={2}>
         <Grid item>
+          {/* @ts-ignore */}
           <DateField
             toolbarDisabled={false}
             value={searchData.FromDate}
@@ -196,10 +197,11 @@ const ResponsesReports = () => {
           />
         </Grid>
         <Grid item>
+          {/* @ts-ignore */}
           <DateField
             toolbarDisabled={false}
             value={searchData.ToDate}
-            onChange={(value) =>
+            onChange={(value: any) =>
               setSearchData({ ...searchData, ToDate: value })
             }
             placeholder={t("notifications.searchSection.toDate")}
@@ -297,7 +299,7 @@ const ResponsesReports = () => {
             classes.middleText,
             onClick && value > 0 ? classes.link : ""
           )}
-          // target="_blank"
+        // target="_blank"
         >
           {(value && value.toLocaleString()) || "0"}
         </Typography>
@@ -504,7 +506,7 @@ const ResponsesReports = () => {
         isOpen={dialogType === "exportFormat"}
         title={t("campaigns.exportFile")}
         radioTitle={t("common.SelectFormat")}
-        onConfirm={(e) => handleDownloadCsv(e)}
+        onConfirm={(e: any) => handleDownloadCsv(e)}
         onCancel={() => setDialogType(null)}
         cookieName={"exportFormat"}
         defaultValue="xls"

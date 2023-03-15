@@ -1,15 +1,13 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import {
   Typography,
   Button,
   TextField,
-  makeStyles,
   Divider,
   Avatar,
 } from "@material-ui/core";
 import "moment/locale/he";
-import { RiCheckboxCircleFill, RiCloseCircleFill } from "react-icons/ri";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { newAuthorizeEmail, verifyEmailCode, getTwoFactorAuthValues } from '../../redux/reducers/commonSlice';
@@ -76,7 +74,6 @@ const VerificationDialog = ({
     useState("");
   const [codeResend, setCodeResend] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-  const verificationSource = useRef();
   const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
   const [resendDisabled, setResendDisalbed] = useState(false);
   const [resendInterval, setResendInterval] = useState(10);
@@ -89,8 +86,6 @@ const VerificationDialog = ({
   let trials = localStorage.getItem("verificationTrial")
     ? Number(localStorage.getItem("verificationTrial"))
     : 0;
-
-  // const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
 
   useEffect(() => {
     setDeleteValue(null);
@@ -117,6 +112,7 @@ const VerificationDialog = ({
 
         const handleVerificationDialog = async () => {
           await dispatch(getAuthorizedEmails());
+          //@ts-ignore
           await dispatch(getTwoFactorAuthValues(1));
           setShowLoader(false);
         }
@@ -126,6 +122,7 @@ const VerificationDialog = ({
       case "smsTFA": {
         const handleVerificationDialog = async () => {
           await dispatch(getAuthorizeNumbers());
+          //@ts-ignore
           await dispatch(getTwoFactorAuthValues(2));
           setShowLoader(false);
         }
@@ -159,9 +156,11 @@ const VerificationDialog = ({
   const handleClose = (callback?: Function) => {
 
     if (verificationStep <= 3 && variant === 'emailTFA' && selectedVerificationContact && !addToFromEmailToSend) {
+      //@ts-ignore
       dispatch(deleteAuthorizationValue({ TwoFactorAuthTypeID: 1, AuthValue: selectedVerificationContact }));
     }
     if (verificationStep <= 3 && variant === 'smsTFA' && selectedVerificationContact && !addToFromNumberToSend) {
+      //@ts-ignore
       dispatch(deleteAuthorizationValue({ TwoFactorAuthTypeID: 2, AuthValue: selectedVerificationContact }));
     }
 
@@ -177,7 +176,9 @@ const VerificationDialog = ({
 
     variant === 'email' && dispatch(getAuthorizedEmails());
     variant === 'sms' && dispatch(getAuthorizeNumbers());
+    //@ts-ignore
     variant === 'emailTFA' && dispatch(getTwoFactorAuthValues(1));
+    //@ts-ignore
     variant === 'smsTFA' && dispatch(getTwoFactorAuthValues(2));
 
     setAddToFromEmailToSend(false);
@@ -186,6 +187,7 @@ const VerificationDialog = ({
 
   const addTwoFactorValue = async (disableNextStep = false, type = 1) => {
     try {
+      //@ts-ignore
       const authResponse = await dispatch(addTwoFactorAuthValues({ TwoFactorAuthTypeID: type, AuthValue: selectedVerificationContact, AddToFromValues: addToFromEmailToSend }))
       if (disableNextStep) {
         return authResponse?.payload;
@@ -221,54 +223,49 @@ const VerificationDialog = ({
       //#region email
       case 'email':
       case 'emailTFA': {
-        dispatch(verifyEmailCode(
-          {
-            email: selectedVerificationContact,
-            optinCode: verificationCode
-          })).then(async (response) => {
-            setUserCodeConfirmed(false);
-            switch (response?.payload.toLowerCase()) {
-              case "ok": {
-                if (variant === 'emailTFA') {
-                  addTwoFactorValue();
-                }
-                else {
-                  NextSlide();
-                }
-                break;
+        //@ts-ignore
+        dispatch(verifyEmailCode({ email: selectedVerificationContact, optinCode: verificationCode })).then(async (response) => {
+          setUserCodeConfirmed(false);
+          switch (response?.payload.toLowerCase()) {
+            case "ok": {
+              if (variant === 'emailTFA') {
+                addTwoFactorValue();
               }
-              case "expired": {
-                setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
-                break;
+              else {
+                NextSlide();
               }
-              case "notmatch": {
-                setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match') })
-                break;
-              }
-              case "toomuch": {
-                setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts') })
-                break;
-              }
-              case "abused": {
-                setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.email_error_abused') })
-                break;
-              }
-              default: {
-                setVerificationError({ code: t('common.ErrorOccured') })
-                break;
-              }
+              break;
             }
-          })
+            case "expired": {
+              setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
+              break;
+            }
+            case "notmatch": {
+              setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match') })
+              break;
+            }
+            case "toomuch": {
+              setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_tooMuchAttempts') })
+              break;
+            }
+            case "abused": {
+              setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.email_error_abused') })
+              break;
+            }
+            default: {
+              setVerificationError({ code: t('common.ErrorOccured') })
+              break;
+            }
+          }
+        })
         break;
       }
       //#endregion
       //#region sms
       case 'sms':
       case 'smsTFA': {
-        const result = await dispatch(verifyCode({
-          optinCode: verificationCode,
-          phoneNumber: selectedVerificationContact
-        }));
+        //@ts-ignore
+        const result = await dispatch(verifyCode({ optinCode: verificationCode, phoneNumber: selectedVerificationContact }));
         setUserCodeConfirmed(false);
         switch (result.payload.toLowerCase()) {
           case 'ok': {
@@ -281,11 +278,13 @@ const VerificationDialog = ({
             break;
           }
           case 'notmatch': {
+            //@ts-ignore
             localStorage.setItem('verificationTrial', trials + 1)
             setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match') })
             break;
           }
           case 'expired': {
+            //@ts-ignore
             localStorage.setItem('verificationTrial', trials + 1)
             setVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
             break;
@@ -345,6 +344,7 @@ const VerificationDialog = ({
       case 'emailTFA': {
         const res = await dispatch(checkEmailAuthorization(selectedVerificationContact));
         if (res?.payload?.StatusCode === 404) {
+          //@ts-ignore
           dispatch(newAuthorizeEmail({ email: val })).then((result) => {
             setCodeResend(isResend);
             return result?.payload;
@@ -359,6 +359,7 @@ const VerificationDialog = ({
       case 'smsTFA': {
         const res = await dispatch(checkCellphoneAuthorization(selectedVerificationContact));
         if (res?.payload?.StatusCode === 404) {
+          //@ts-ignore
           dispatch(sendVerificationCode({ number: val })).then((result) => {
             setCodeResend(isResend);
             return result?.payload;
@@ -377,8 +378,10 @@ const VerificationDialog = ({
   };
 
   const removeValue = async () => {
+    //@ts-ignore
     const response = await dispatch(deleteAuthorization2FA(deleteValue));
     if (response?.payload?.StatusCode === 201) {
+      //@ts-ignore
       await dispatch(getTwoFactorAuthValues(variant === 'emailTFA' ? 1 : 2));
     }
     else {
@@ -565,6 +568,7 @@ const VerificationDialog = ({
                   if (selectedVerificationContact) {
                     if (
                       selectedVerificationContact.match(
+                        //eslint-disable-next-line
                         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
                       )
                     ) {

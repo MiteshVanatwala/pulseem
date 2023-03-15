@@ -2,12 +2,9 @@ import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControlLabel } from '@material-ui/core'
-import Switch from "react-switch";
-import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, DateField, SearchField } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
@@ -412,7 +409,7 @@ const MmsReport = () => {
 
     const renderIntData = (value, type, data = {}, clickable = true) => {
         const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick = () => null } = data
-        const innerRef = clickable ? href : '';
+        // const innerRef = clickable ? href : '';
         return (
             <Box style={{ display: 'flex', flexDirection: 'column' }} >
                 {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */}

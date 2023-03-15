@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText, InputAdornment } from '@material-ui/core'
-import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText, InputAdornment } from '@material-ui/core'
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { Loader } from '../../../components/Loader/Loader';
@@ -47,7 +45,6 @@ const ProductsReport = () => {
     const [searchData, setSearchData] = useState(DEFAULT_FILTER)
     const [isSearching, setIsSearching] = useState(true);
     const [filter, setFilter] = useState(false);
-    const [page, setPage] = useState(1)
 
     const dispatch = useDispatch()
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
@@ -297,7 +294,11 @@ const ProductsReport = () => {
     }
 
     const renderIntData = (value, data = {}) => {
-        const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick = null } = data
+        const {
+            // title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), 
+            // href = '', 
+            onClick = null
+        } = data
         return (
             <Box style={{ display: 'flex', flexDirection: 'column' }} >
                 <Typography component={'p'}
@@ -305,7 +306,7 @@ const ProductsReport = () => {
                     className={clsx(classes.middleText,
                         (onClick && value > 0) ? classes.link : '')}
                     target="_blank">
-                    {value && value.toLocaleString() || '0'}
+                    {value?.toLocaleString() ?? '0'}
                 </Typography>
 
             </Box>

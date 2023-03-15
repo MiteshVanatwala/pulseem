@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Typography, Grid, TextField, IconButton } from '@material-ui/core'
-import { PageArrowIcon } from '../../assets/images/managment/index'
 
 import { useTranslation } from 'react-i18next'
 import { IoIosArrowDown } from 'react-icons/io';
-import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { MdArrowBackIos } from 'react-icons/md';
 import useCore from '../../helpers/hooks/Core';
 
 export const TablePagination = ({

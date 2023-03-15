@@ -123,11 +123,13 @@ const SimplyClubPupup = ({
         if (ClientData) {
             preload()
         }
+
     }, [ClientData])
 
 
     useEffect(() => {
         selectedGroups.length > 0 && handleGetClients()
+
     }, [selectedGroups])
 
 

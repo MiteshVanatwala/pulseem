@@ -117,7 +117,7 @@ const SmsReplies = () => {
   };
   const [request, setRequest] =
     useState<SmsRepDefaultFilterType>(defaultRequest);
-  const [searchRequest, setSearchRequest] = useState(defaultRequest);
+  // const [searchRequest, setSearchRequest] = useState(defaultRequest);
 
   const DialogType = { EDIT_RECIPIENT: "EDIT_RECIPIENT" };
 
@@ -152,11 +152,11 @@ const SmsReplies = () => {
     }
   }, [request, page, rowsPerPage]);
 
-  useEffect(() => {
-    if (!isSearching) {
-      setSearchRequest(defaultRequest);
-    }
-  }, [isSearching]);
+  // useEffect(() => {
+  //   if (!isSearching) {
+  //     setSearchRequest(defaultRequest);
+  //   }
+  // }, [isSearching]);
 
   const handlePageChange = (val: number) => {
     setRowsPerPage(val);
@@ -539,8 +539,8 @@ const SmsReplies = () => {
     }
   ) => {
     switch (
-      response.payload?.StatusCode ||
-      response.payload?.Message.StatusCode
+    response.payload?.StatusCode ||
+    response.payload?.Message.StatusCode
     ) {
       case 200: {
         actions?.S_200?.Func?.();
@@ -653,7 +653,7 @@ const SmsReplies = () => {
         isOpen={dialog === "exportFormat"}
         title={t("campaigns.exportFile")}
         radioTitle={t("common.SelectFormat")}
-        onConfirm={(e) => handleDownloadCsv(e)}
+        onConfirm={(e: any) => handleDownloadCsv(e)}
         onCancel={() => setDialog(null)}
         cookieName={"exportFormat"}
         defaultValue="xls"

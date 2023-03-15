@@ -6,8 +6,6 @@ import {
   TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem
 } from '@material-ui/core';
 import { TablePagination, DateField } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
-import ClearIcon from '@material-ui/icons/Clear';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -221,7 +219,7 @@ const DirectEmailReportTab = ({
   isArchive = false
 }) => {
   const { classes } = useCore();
-  const { isRTL, windowSize } = useSelector(state => state.core);
+  const { windowSize, isRTL } = useSelector(state => state.core);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };

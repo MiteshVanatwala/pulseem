@@ -8,7 +8,6 @@ import { uploadFiles, deleteGalleryFile } from '../../redux/reducers/gallerySlic
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
 import { Loader } from '../Loader/Loader';
 import { ImageExtensions } from '../../model/Gallery/FileExtentions';
-import useCore from '../../helpers/hooks/Core';
 
 export const GalleryImages = ({
     isRTL,
@@ -21,7 +20,6 @@ export const GalleryImages = ({
     onReInitGallery = () => null,
     onReachToLimit = () => null,
 }) => {
-    const { classes } = useCore();
     const imagesPerScroll = 20;
     const [images, setImages] = useState([]);
     const dispatch = useDispatch();
@@ -85,6 +83,7 @@ export const GalleryImages = ({
                 })
             }
         }
+
     }, [fileToUploads]);
 
     const changeHandler = (event) => {
@@ -134,6 +133,7 @@ export const GalleryImages = ({
             }
             setGalleryReady(true);
         }
+
     }, [scrollIndex, selectedFolder, folder]);
 
     if (galleryReady) {

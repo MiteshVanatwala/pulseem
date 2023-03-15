@@ -134,13 +134,11 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   appBar: {
     maxWidth: 'calc(100vw - 56px)',
     backgroundColor: '#fff',
-    height: '45px',
     zIndex: 50000000,
     boxShadow: '0px 1px 10px 4a4a4aab',
     height: 62.78,
     borderBottomLeftRadius: 40,
     borderBottomRightRadius: 40
-    // borderRadius: '0% 0% 4% 4% / 70% 70% 100% 100% ',
   },
   appBarLogo: {
     marginInlineEnd: '1vw',

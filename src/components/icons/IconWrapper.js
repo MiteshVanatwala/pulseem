@@ -6,8 +6,6 @@ import {
   PreviewIcon,
   AddRecipient,
   AddRecipients,
-  Reset,
-  SettingsIcon,
   EditIcon,
   DeleteRecipient,
   DeleteEmail,

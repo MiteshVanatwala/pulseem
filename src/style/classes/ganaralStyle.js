@@ -1,5 +1,3 @@
-import { height } from "@mui/system";
-
 const dialogWidth = {
   xs: "200px",
   sm: "350px",

@@ -9,9 +9,6 @@ import {
 import {
   TablePagination, DateField
 } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
-import ClearIcon from '@material-ui/icons/Clear';
-import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/reducers/smsSlice';
 import { reactivateSms } from '../../../redux/reducers/clientSlice';

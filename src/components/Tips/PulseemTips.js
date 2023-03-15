@@ -24,6 +24,7 @@ const PulseemTips = () => {
     }
   }
 
+  //eslint-disable-next-line
   useEffect(initData, [dispatch])
 
   const renderArrows = (value, length, setItem, className) => {

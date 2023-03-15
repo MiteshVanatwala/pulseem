@@ -1,20 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, IconButton, MenuItem, ClickAwayListener,
-  Grow, Paper, Popper, MenuList, SvgIcon, Grid, Box
+  Grow, Paper, Popper, MenuList, Grid, Box
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLanguage } from '../../redux/reducers/coreSlice'
 import { useTranslation } from "react-i18next";
-import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
-import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { getRoutes, getSettingsItem } from '../../helpers/Routes/routes'
 import { setCookie, getCookie } from '../../helpers/Functions/cookies'
-import { setScriptDialog } from '../../redux/reducers/notificationSlice';
-import { logout } from '../../helpers/Api/PulseemReactAPI'
-import { openInNewTab } from '../../helpers/Functions/functions'
+// import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import {
   ChartIcon
 } from '../../assets/images/drawer/index'
@@ -40,12 +36,12 @@ const AppBarItem = ({
   const Redirect = useRedirect();
   const [open, setOpen] = useState(false)
 
-  const [buttonWidth, setButtonWidth] = useState(0)
+  // const [buttonWidth, setButtonWidth] = useState(0)
   const buttonRef = useRef(null)
 
-  useEffect(() => {
-    setButtonWidth(buttonRef.current.clientWidth)
-  }, [])
+  // useEffect(() => {
+  //   setButtonWidth(buttonRef.current.clientWidth)
+  // }, [])
 
   const handleOpen = () => {
     setOpen(true)
@@ -55,7 +51,7 @@ const AppBarItem = ({
     setOpen(false)
   }
   const currentStyle = showIcon ? classes.appBarItemIcon : classes.appBarItemText
-  {/* Top menu */ }
+  /* Top menu */
   return (
     <Box
       zIndex='tooltip'
@@ -197,31 +193,30 @@ export const TopAppBar = ({ currentPage = '', showAppBar = true }) => {
     cookieFeature = null;
   }
 
-  const { accountSettings, companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount } = useSelector(state => state.core) // smsOldVersion
+  const { accountSettings, companyName, windowSize, isRTL, cameFromSubAccount, isAdmin, isAllowSwitchAccount } = useSelector(state => state.core) // smsOldVersion
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  // const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const topNavRef = useRef(null)
-  const dispatch = useDispatch();
 
-  const handleScriptDialog = () => {
-    let scriptDialog = getCookie('scriptDialog');
-    scriptDialog = (scriptDialog === 'true');
-    dispatch(setScriptDialog(scriptDialog));
-  }
+  // const handleScriptDialog = () => {
+  //   let scriptDialog = getCookie('scriptDialog');
+  //   scriptDialog = (scriptDialog === 'true');
+  //   dispatch(setScriptDialog(scriptDialog));
+  // }
 
-  useEffect(() => {
-    handleScriptDialog();
-    const resizeWindow = () => {
-      setWindowWidth(window.innerWidth)
-    }
-    window.addEventListener('resize', resizeWindow)
+  // useEffect(() => {
+  //   handleScriptDialog();
+  // const resizeWindow = () => {
+  //   setWindowWidth(window.innerWidth)
+  // }
+  //   window.addEventListener('resize', resizeWindow)
 
-    return () => {
-      window.removeEventListener('resize', resizeWindow)
-    }
-  }, [])
+  //   return () => {
+  //     window.removeEventListener('resize', resizeWindow)
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (accountSettings && accountSettings !== '') {
@@ -389,9 +384,9 @@ export const TopAppBar = ({ currentPage = '', showAppBar = true }) => {
 
   const renderAppBar = windowSize === 'xs' || windowSize === 'sm' ? renderPhoneAppBar : renderRegularAppBar
 
-  const question = <SvgIcon style={{ marginBottom: 5, marginInlineEnd: 5 }}>
-    <QuestionIcon />
-  </SvgIcon>
+  // const question = <SvgIcon style={{ marginBottom: 5, marginInlineEnd: 5 }}>
+  //   <QuestionIcon />
+  // </SvgIcon>
   return (
     <Box style={{ flexGrow: 1 }} className={clsx(classes.pl25, classes.ps25)}>
       <AppBar position='static' className={classes.appBar} ref={topNavRef} style={{ display: showAppBar === true ? null : 'none' }}>

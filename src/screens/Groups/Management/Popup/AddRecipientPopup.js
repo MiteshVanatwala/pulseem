@@ -3,7 +3,6 @@ import clsx from "clsx";
 import {
     Grid,
     Typography,
-    Divider,
     Button,
     TextField,
     Box,
@@ -11,10 +10,7 @@ import {
     AccordionSummary,
     AccordionDetails,
     makeStyles,
-    Checkbox,
-    Paper,
     FormControl,
-    InputLabel,
     Select,
     MenuItem,
 
@@ -158,6 +154,7 @@ const AddRecipientPopup = ({
             setAddRecipientData({ ...restData, ...ExtraFields })
             setSelectedLocalGroups([...selectedLocalGroups, ...selectedGroups])
         }
+
     }, [recipientData])
 
     // useEffect(() => {

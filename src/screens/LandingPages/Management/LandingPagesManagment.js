@@ -6,7 +6,7 @@ import {
   Grid, Button, TextField, Box, Link
 } from '@material-ui/core'
 import {
-  DeleteIcon, DuplicateIcon, EditIcon, SearchIcon,
+  DeleteIcon, DuplicateIcon, EditIcon,
   PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon
 } from '../../../assets/images/managment/index'
 import {

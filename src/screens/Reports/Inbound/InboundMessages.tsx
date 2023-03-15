@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { Grid, makeStyles, Tab } from "@material-ui/core";
+import { Grid, makeStyles, Tab, Tabs } from "@material-ui/core";
 import { useParams } from "react-router-dom";
 import { InboundTypes } from "./Constants";
-import { TabContext, TabList, TabPanel } from "@material-ui/lab";
+import { TabContext, TabPanel } from "@material-ui/lab";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
@@ -48,7 +48,7 @@ const InboundMessages = () => {
             alignItems='center'
             item xs={12}
             className={classes.borderBottom1}>
-            <TabList
+            <Tabs
               onChange={(e, value) => { setActiveTab(value.toString()) }}
               indicatorColor="primary"
             >
@@ -65,7 +65,7 @@ const InboundMessages = () => {
                   />
                 })
               }
-            </TabList>
+            </Tabs>
           </Grid>
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
             <TabPanel value='0' className={classes.p0}>

@@ -256,7 +256,7 @@ export const Preview = (
   }
 
   // Return final template
-  const campaignID = (isSMS && model.SMSCampaignID) || (isMMS && model.MmsCampaignID) || model.ID || '';
+  // const campaignID = (isSMS && model.SMSCampaignID) || (isMMS && model.MmsCampaignID) || model.ID || '';
   return (
     <>
       <Grid className={mobileFullsize && classes.alignCenter}>

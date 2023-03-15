@@ -17,7 +17,7 @@ import { logout } from '../../helpers/Api/PulseemReactAPI';
 import useCore from '../../helpers/hooks/Core';
 
 const DashboardScreen = () => {
-  const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
+  const { windowSize, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);

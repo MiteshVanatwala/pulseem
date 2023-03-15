@@ -18,7 +18,7 @@ const TranzilaIframe = ({
     const dispatch = useDispatch();
     const { classes } = useCore();
     const { t } = useTranslation();
-    const { isRTL, windowSize } = useSelector(state => state.core);
+    const { windowSize } = useSelector(state => state.core);
     useEffect(() => {
         window.addEventListener('message', (e) => {
             if (e.data) {
@@ -38,6 +38,7 @@ const TranzilaIframe = ({
                 }
             }
         })
+
     }, []);
 
     return <Grid container>

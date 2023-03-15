@@ -55,6 +55,7 @@ const Shortcut = () => {
   useEffect(() => {
     if (!shortcuts || shortcuts.length === 0)
       initData();
+
   }, [])
 
   const handlePageChange = useCallback((title, href, update, num, index) => {

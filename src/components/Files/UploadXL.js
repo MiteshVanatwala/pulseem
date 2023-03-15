@@ -55,13 +55,12 @@ const UploadXL = ({
     const [areaData, setareaData] = useState("");
     const [dropClick, setdropClick] = useState(false);
     const [typedData, settypedData] = useState([]);
-    // const [initialheadstate, setinitialheadstate] = useState([]);
     const [headers, setheaders] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
     const [highlighted, setHighlighted] = React.useState(false);
     const [contacts, setContacts] = React.useState([]);
     const [groupNameInput, setgroupNameInput] = useState("");
-    // const [toastMessage, setToastMessage] = useState(null);
+    //eslint-disable-next-line
     const [groupList, setGroupList] = useState([]);
     const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
@@ -101,6 +100,7 @@ const UploadXL = ({
         fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
 
         setselectArray(fields);
+
     }, [dialogType]);
 
 
@@ -358,7 +358,8 @@ const UploadXL = ({
                                     settypedData(b);
 
                                     let ddc = [];
-                                    for (let i in resultCsv[0]) {
+                                    //eslint-disable-next-line
+                                    for (let { } in resultCsv[0]) {
                                         ddc.push(t("sms.adjustTitle"))
                                     }
                                     if (ddc !== 0) {

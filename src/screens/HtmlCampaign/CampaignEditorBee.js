@@ -31,7 +31,6 @@ import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
 import { IoMdImages } from 'react-icons/io';
-import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
 import { PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
@@ -134,12 +133,14 @@ const CampaignEditor = ({ ...props }) => {
         return true;
       })
     }
+
   }, [dataReady]);
   //#endregion
   useEffect(() => {
     if (editorRef && editorRef.current) {
       initBeeEditor();
     }
+
   }, [isRTL]);
   // Get data by campaign id
   useEffect(() => {
@@ -160,6 +161,7 @@ const CampaignEditor = ({ ...props }) => {
     else {
       initOptions();
     }
+
   }, [language, userBlocks]);
 
   //#region Check session token -> tokenAlive
@@ -178,6 +180,7 @@ const CampaignEditor = ({ ...props }) => {
     if (alertLogout === true) {
       onLogoutAlert();
     }
+
   }, [alertLogout]);
 
   document.addEventListener('setAlert', () => {
@@ -325,6 +328,7 @@ const CampaignEditor = ({ ...props }) => {
     if (beeToken) {
       initBeeEditor();
     }
+
   }, [beeToken]);
 
   const initOptions = async () => {
@@ -345,6 +349,7 @@ const CampaignEditor = ({ ...props }) => {
   const doaminWithClientRef = (str) => {
     let finalStr = str;
     const startIndex = finalStr.substring(finalStr.indexOf(accountSettings?.SubAccountSettings.DomainAddress));
+    //eslint-disable-next-line
     const originalLink = startIndex.split(/[\s\n]+/);
     let originUrl = originalLink[0].replace('\"', '').replace('\\', '');
     let newUrl = originUrl.trim();

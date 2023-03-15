@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Checkbox, Tooltip, FormControlLabel
 } from '@material-ui/core'
-import Switch from "react-switch";
 import { ReportsIcon, GroupRemoval } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField
@@ -519,7 +518,6 @@ const NewslettersReport = () => {
   }
 
   const renderCellIcons = (RowIcon, row, index, mgmtIconProps) => {
-    const { CampaignID } = row
 
     return (
       <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }} className={'rowIconContainer'}>
@@ -620,7 +618,7 @@ const NewslettersReport = () => {
   }
   const renderPercetangeData = (percentage = 0, type, data = {}, clickable = true) => {
     const { title = '', href = '', icon = '', onClick } = data;
-    const innerHref = clickable ? href : '';
+    // const innerHref = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }} >
         {/* <Typography component={innerHref ? 'a' : 'p'} */}
@@ -700,7 +698,7 @@ const NewslettersReport = () => {
 
   }
   const renderRevenueData = (value, type, data = {}) => {
-    const { href = '', textStyle = null, isRevenueCol = false, onClick = () => null } = data
+    const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : null}>
         <Typography

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
@@ -404,6 +404,7 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
 
+
   useEffect(() => {
     windowSize !== screenSize && dispatch(setWindowSize(screenSize))
   }, [screenSize])
@@ -467,8 +468,9 @@ const App = ({ screenSize }) => {
     })
     updateToken()
     initFeatures()
-  }, [dispatch])
 
+  }, [dispatch])
+ 
 
   const classes = useClasses(windowSize, isRTL)()
   const theme = getTheme(language)

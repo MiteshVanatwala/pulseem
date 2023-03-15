@@ -85,6 +85,7 @@ const Gallery = ({
 
     useEffect(() => {
         initGallery();
+
     }, [])
 
     const useTreeItemStyles = makeStyles((theme) => ({
@@ -177,13 +178,13 @@ const Gallery = ({
     const handleSelectFile = (fileUrl, fileIndex) => () => {
         setSelectedFile(multiSelect ?
             (
-                selectedFile.indexOf(fileIndex) == -1 ?
+                selectedFile.indexOf(fileIndex) === -1 ?
                     [...selectedFile, fileIndex] : selectedFile.filter(obj => obj !== fileIndex)
             )
             : fileIndex);
         setSelectedFileURL(multiSelect ?
             (
-                selectedFileURL.indexOf(fileUrl) == -1 ?
+                selectedFileURL.indexOf(fileUrl) === -1 ?
                     [...selectedFileURL, fileUrl] : selectedFileURL.filter(obj => obj !== fileUrl)
             )
             : fileUrl);
@@ -194,6 +195,7 @@ const Gallery = ({
             // callbackSelectFile(encodeURI(selectedFileURL));
             callbackSelectFile(multiSelect ? selectedFileURL.join(',') : selectedFileURL);
         }
+
     }, [isConfirm])
 
     const [referenceNode, setReferenceNode] = useState();

@@ -5,12 +5,11 @@ import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box
 } from '@material-ui/core'
-import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { DuplicateIcon, PreviewIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon, DateField, SearchField } from '../../../components/managment/index'
 import { getArchiveCampaigns, cloneArchiveCampaign } from '../../../redux/reducers/newsletterSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/Functions/functions';

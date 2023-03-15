@@ -18,7 +18,6 @@ import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import useCore from "../../../../helpers/hooks/Core";
 
@@ -53,6 +52,7 @@ const EditGroupPopup = ({
         }
 
         initData();
+
     }, [groupData.Groups])
 
     const handleEditGroup = async (data) => {

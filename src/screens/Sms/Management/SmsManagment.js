@@ -6,7 +6,7 @@ import {
   Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction
 } from '@material-ui/core'
 import {
-  AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
+  AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon,
   GroupsIcon, PreviewIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
@@ -18,7 +18,6 @@ import {
 } from '../../../redux/reducers/smsSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -216,13 +215,13 @@ const SmsManagnentScreen = () => {
   }
 
   const renderManagmentLine = () => {
-    const handleVerificationDialog = async () => {
-      const numbers = await dispatch(getAuthorizeNumbers());
-      setDialogType({
-        type: 'verify',
-        data: numbers.payload
-      })
-    }
+    // const handleVerificationDialog = async () => {
+    //   const numbers = await dispatch(getAuthorizeNumbers());
+    //   setDialogType({
+    //     type: 'verify',
+    //     data: numbers.payload
+    //   })
+    // }
     return (
       <Grid container spacing={2} className={classes.linePadding} >
         <Grid item xs={windowSize === 'xs' && 12}>

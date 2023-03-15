@@ -22,15 +22,15 @@ const RecipientChart = () => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
-    const { windowSize, isRTL } = useSelector(state => state.core);
+    const { windowSize } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
-    const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const { Notifications = {}, Sms = {} } = packagesDetails || {};
     const { classes } = useCore();
 
     let slidesCount = 0;
     recipientsReport?.forEach(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-            report.ReportSection === 1 && !Sms.FeatureExist) {
+        if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+            (report.ReportSection === 1 && !Sms.FeatureExist)) {
             return
         }
         else {
@@ -85,7 +85,7 @@ const RecipientChart = () => {
 
     let data = [];
     if (recipientsReport) {
-        recipientsReport.map(report => {
+        recipientsReport.forEach(report => {
             if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                 (report.ReportSection === 1 && !Sms.FeatureExist)) {
                 return null;
@@ -219,7 +219,7 @@ const RecipientChart = () => {
                 tableRoot.appendChild(tableBody);
             }
 
-            const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            // const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
             tooltipEl.style.opacity = 1;
             tooltipEl.style.left = tooltip._eventPosition.x - 20 + 'px';
             tooltipEl.style.top = tooltip._eventPosition.y - 80 + 'px';
@@ -418,7 +418,7 @@ const RecipientChart = () => {
                         showThumbs={false}
                         showArrows={false}
                         selectedItem={carouselItem}>
-                        {recipientsReport.map((report, index) => {
+                        {recipientsReport.forEach((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)
                                 || (report.ReportSection === 1 && !Sms.FeatureExist)) {
                                 return;
@@ -458,7 +458,7 @@ const RecipientChart = () => {
 
         return (
             <Grid item container justifyContent='space-evenly'>
-                {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
+                {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.forEach((report, index) => {
                     if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                         (report.ReportSection === 1 && !Sms.FeatureExist)) {
                         return;

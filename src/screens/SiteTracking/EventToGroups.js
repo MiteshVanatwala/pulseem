@@ -8,11 +8,9 @@ import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import { FormControl, Typography, TextField, Box, Select, MenuItem, Button, InputAdornment } from '@material-ui/core'
 import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
-import { DeleteIcon } from '../../assets/images/managment/index';
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import { IoIosArrowDown } from 'react-icons/io';
-import Delete from '../../assets/images/managment/Delete';
 import { BsTrash } from 'react-icons/bs';
 import useCore from '../../helpers/hooks/Core';
 

@@ -3,9 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
-import WizardTitle from '../../components/Wizard/WizardTitle'
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
-import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox, ButtonBase } from '@material-ui/core'
+import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel, setPurchase } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
@@ -18,7 +17,6 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
 import { IsValidURL } from '../../helpers/Utils/Validations';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
-import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
@@ -43,15 +41,6 @@ const SiteTrackingEditor = () => {
     const [isValidDomain, setIsValidDomain] = useState(null);
     const [showActions, setShowActions] = useState(true);
     const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
-
-    const theme = createTheme({
-        palette: {
-            text: {
-                disabled: '#000'
-            }
-        },
-    });
-
 
     useEffect(() => {
         const getData = async () => {

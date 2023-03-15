@@ -1,14 +1,12 @@
 import { EventsOptions } from '../../helpers/Constants'
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
-import TabList from '@material-ui/lab/TabList';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Grid, Tab, Button, Box, Link, Divider, Tabs } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 import clsx from 'clsx';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';

@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { IoIosArrowDown, IoMdImages } from 'react-icons/io';
-import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, FormControlLabel, Checkbox, InputAdornment } from '@material-ui/core'
+import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, Button, FormControlLabel, Checkbox, InputAdornment } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import { Dialog } from "../../../components/managment/Dialog";
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
@@ -24,7 +23,6 @@ import { AdvancedSettings } from './components/AdvancedSettings';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
-import { BiSave } from 'react-icons/bi'
 import { sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
@@ -164,8 +162,6 @@ const NewsLetterInfo = () => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
-    const [newEditorDisabled, setNewEditorDisabled] = useState(false);
-    const [showEmoji, setShowEmoji] = useState(false);
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -246,14 +242,10 @@ const NewsLetterInfo = () => {
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
     }
-    const handleClickOutsideEmoji = () => {
-        setShowEmoji(false);
-    }
 
     useEffect(() => {
         const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
         if (htmlTemplate && htmlTemplate !== '') {
-            setNewEditorDisabled(true);
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
             sessionStorage.removeItem("Newlsetter_Html_Template");
 

@@ -291,6 +291,7 @@ const AccountSettingsEditor = () => {
         variant="emailTFA"
         textButtonOnSuccess={t('common.close')}
         isOpen={tfaEmailVerification}
+        // @ts-ignore
         value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
         onClose={() => {
@@ -302,6 +303,7 @@ const AccountSettingsEditor = () => {
         textButtonOnSuccess={t('common.close')}
         variant="email"
         isOpen={emailVerificationPopup}
+        // @ts-ignore
         value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
         onClose={() => {
@@ -312,6 +314,7 @@ const AccountSettingsEditor = () => {
         variant="smsTFA"
         textButtonOnSuccess={t('common.close')}
         isOpen={tfaSmsVerification}
+        // @ts-ignore
         value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
         onClose={() => {
@@ -322,6 +325,7 @@ const AccountSettingsEditor = () => {
       {smsVerificationPopup && <VerificationDialog
         textButtonOnSuccess={t('common.close')}
         variant="sms"
+        // @ts-ignore
         value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
         isOpen={smsVerificationPopup}

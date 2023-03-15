@@ -39,7 +39,7 @@ const LatestReports = () => {
     return <Tooltip arrow classes={localClasses} {...props} disableFocusListener />;
   }
 
-  const initData = async () => {
+  const initData = () => {
     dispatch(getLastCampaignReport());
   }
 

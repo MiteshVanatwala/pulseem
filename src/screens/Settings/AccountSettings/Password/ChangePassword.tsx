@@ -96,7 +96,7 @@ const ChangePassword = ({
   SetToast,
   Text,
 }: PasswordParams) => {
-  const { classes, isRTL } = useCore();
+  const { classes } = useCore();
   const { t } = useTranslation();
   const localClasses = useStyles();
   const [loginPass, setLoginPass] = useState<LoginPassword>({

@@ -6,7 +6,6 @@ import {
     TextField,
     Typography,
     FormControl,
-    OutlinedInput,
     InputAdornment
 } from '@material-ui/core'
 import clsx from "clsx";

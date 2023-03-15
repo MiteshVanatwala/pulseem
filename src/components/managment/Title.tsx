@@ -1,4 +1,4 @@
-import { Typography, Divider, Box } from "@material-ui/core";
+import { Typography, Box } from "@material-ui/core";
 import { ListIcon } from "../../assets/images/managment";
 import clsx from "clsx";
 import useCore from "../../helpers/hooks/Core";

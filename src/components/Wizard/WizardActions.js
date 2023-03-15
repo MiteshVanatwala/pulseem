@@ -2,12 +2,9 @@ import clsx from 'clsx'
 import { useTranslation } from "react-i18next";
 import { Grid, Button, Box } from '@material-ui/core'
 import { BsTrash } from "react-icons/bs";
-import { RiSendPlaneFill } from 'react-icons/ri'
 import { BiSave } from 'react-icons/bi'
 import { useSelector } from 'react-redux';
-import { MdArrowBackIos, MdArrowForwardIos, MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-icons/md'
-import { RiImageAddLine } from 'react-icons/ri'
-import { AiOutlineFileAdd } from 'react-icons/ai'
+import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md'
 import useCore from '../../helpers/hooks/Core';
 
 const WizardActions = ({

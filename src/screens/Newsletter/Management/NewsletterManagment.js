@@ -6,7 +6,7 @@ import {
   Grid, Button, TextField, Box, FormControlLabel, Checkbox
 } from '@material-ui/core'
 import {
-  AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
+  AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon,
   GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon, SendIcon
 } from '../../../assets/images/managment/index'
 import {
@@ -16,10 +16,8 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
 } from '../../../redux/reducers/newsletterSlice'
-import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/Functions/functions';
@@ -59,7 +57,6 @@ const NewsletterManagnentScreen = () => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
-  const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
 
@@ -218,11 +215,6 @@ const NewsletterManagnentScreen = () => {
         </Grid>}
       </Grid>
     )
-  }
-
-  const handleVerificationDialog = () => {
-
-    setShowEmailVerDialog(true)
   }
 
   const renderManagmentLine = () => {

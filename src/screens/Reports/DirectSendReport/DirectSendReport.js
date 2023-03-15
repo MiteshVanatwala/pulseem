@@ -9,7 +9,6 @@ import DirectSMSReportTab from './DirectSmsReport';
 import DirectWhatsappReportTab from './DirectWhatsappReportTab';
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
-import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
@@ -26,7 +25,6 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice'
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import { useSearchParams } from 'react-router-dom';
-import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import useCore from '../../../helpers/hooks/Core';

@@ -75,7 +75,6 @@ const SearchLine = ({
   };
 
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [request, setRequest] = useState<RequestObject>(DEFAULT_REQUEST);
   const [searchRequest, setSearchRequest] =
     useState<RequestObject>(DEFAULT_REQUEST);
   const [isFromDatePickerOpen, setIsFromDatePickerOpen] = useState<
@@ -138,6 +137,7 @@ const SearchLine = ({
     return (
       <>
         <Grid item>
+          {/* @ts-ignore */}
           <DateField
             toolbarDisabled={false}
             className={clsx(classes.textField, classes.NoPaddingtextField)}
@@ -160,6 +160,7 @@ const SearchLine = ({
           />
         </Grid>
         <Grid item>
+          {/* @ts-ignore */}
           <DateField
             toolbarDisabled={false}
             className={clsx(classes.textField, classes.NoPaddingtextField)}
@@ -237,7 +238,7 @@ const SearchLine = ({
     onSetPage(1);
     setIsSearching(true);
     onSetIsSearching(true);
-    onFilterRequest({ ...request, ...searchRequest });
+    onFilterRequest({ ...DEFAULT_REQUEST, ...searchRequest });
   };
   const handleClearSearchForm = (e: any) => {
     e.preventDefault();

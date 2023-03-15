@@ -10,7 +10,7 @@ import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
-import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon, NewBubbleIcon } from '../../assets/images/dashboard/index'
+import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import useCore from '../../helpers/hooks/Core';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
@@ -55,6 +55,7 @@ const BulkStatus = () => {
     }
 
     initPackages();
+
   }, []);
 
   const handleDialogClose = () => {

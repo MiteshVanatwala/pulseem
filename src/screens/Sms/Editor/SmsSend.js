@@ -7,7 +7,7 @@ import moment from "moment";
 import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-import { DateField, Dialog } from "../../../components/managment/index";
+import { DateField } from "../../../components/managment/index";
 import Toast from '../../../components/Toast/Toast.component';
 import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';
@@ -18,7 +18,6 @@ import { useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp, BsInfoCircle } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
-import WizardTitle from '../../../components/Wizard/WizardTitle'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
@@ -194,6 +193,7 @@ const SmsSend = () => {
       }
       case 8: {
         setDialogType({ type: "englishLetterDialog" });
+        break;
       }
       default: {
         break;

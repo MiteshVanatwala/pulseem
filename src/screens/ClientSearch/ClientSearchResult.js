@@ -12,9 +12,8 @@ import {
   TableRow,
   TableCell,
   makeStyles,
-  Divider
 } from "@material-ui/core";
-import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
+import { ExportIcon, EditIcon, DeleteRecipient, RemovePhone, RemoveEmail } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
 import {
   TablePagination,
@@ -22,7 +21,6 @@ import {
 } from "../../components/managment/index";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
 import "moment/locale/he";
 import { Loader } from "../../components/Loader/Loader";
@@ -60,7 +58,6 @@ import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDia
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
 import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
-import { sitePrefix } from "../../config";
 import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import useCore from "../../helpers/hooks/Core";
@@ -105,7 +102,6 @@ const ClientSearchResult = () => {
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
-  // const { groupData, ToastMessages } = useSelector((state) => state.group);
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
@@ -116,11 +112,12 @@ const ClientSearchResult = () => {
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
   const [filterMax, setFilterMax] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
+  // const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
+  //eslint-disable-next-line
   const [searchParams, setSearchParams] = useSearchParams();
   const [clientToEdit, setClientToEdit] = useState(null);
   const [date, setDate] = useState({
@@ -260,6 +257,7 @@ const ClientSearchResult = () => {
     }
     initSearchData();
     initExtraFields();
+
   }, []);
   useEffect(() => {
     if (extraData && Object.entries(extraData).length > 0) {
@@ -317,6 +315,7 @@ const ClientSearchResult = () => {
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
+
   }, [extraData])
 
 
@@ -327,6 +326,7 @@ const ClientSearchResult = () => {
       }
       getData();
     }
+
   }, [dispatch, searchData, page, rowsPerPage]);
 
   const handleFromDateChange = (value) => {
@@ -449,7 +449,7 @@ const ClientSearchResult = () => {
     return;
   }
   const handleFilter = () => {
-    setIsSearching(true);
+    // setIsSearching(true);
     if (filterMin !== '' || filterMax !== '') {
       const sortedData = [...ClientData].filter((f) => {
         return f.Revenue >= parseInt(filterMin !== "" ? filterMin : 0) && f.Revenue <= parseInt(filterMax !== "" ? filterMax : 1000000)
@@ -671,6 +671,7 @@ const ClientSearchResult = () => {
         { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
       ]);
     }
+
   }, [ClientData, isRTL]);
   //  HANDLERS  //
   const handleResponses = (response, actions = {
@@ -1212,7 +1213,7 @@ const ClientSearchResult = () => {
   };
   const renderWebNameCell = (row, fullwidth) => {
     let date = null;
-    const { FirstName, LastName, CreationDate, ClientID } = row;
+    const { FirstName, LastName } = row;
     let text = t("common.UpdatedOn");
     date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
     return (
@@ -1254,7 +1255,6 @@ const ClientSearchResult = () => {
       FirstName,
       LastName,
       UpdateDate,
-      LogSms_ErrorType,
       SentDate,
       CreationDate,
       LastSendDate,

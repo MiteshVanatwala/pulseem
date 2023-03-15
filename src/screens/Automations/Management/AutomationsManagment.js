@@ -6,7 +6,7 @@ import {
   Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
-  DeleteIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
+  DeleteIcon, EditIcon, ReportsIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, RestorDialogContent, Switch, SearchField
@@ -17,7 +17,6 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/Functions/functions';
@@ -62,6 +61,7 @@ const AutomationsManagnentScreen = () => {
   useEffect(() => {
     setLoader(true);
     getData();
+
   }, [dispatch])
 
   const clearSearch = () => {

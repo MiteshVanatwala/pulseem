@@ -1,15 +1,13 @@
-import React, { useEffect, useState, createRef, useRef } from "react";
+import React from "react";
 import clsx from "clsx";
 import { Box, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { RiSendPlaneFill } from 'react-icons/ri'
 import "moment/locale/he";
-import { Dialog } from "../../../components/managment/Dialog";
 import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
-import { useSelector } from "react-redux";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import useCore from "../../../helpers/hooks/Core";
 
@@ -21,7 +19,6 @@ const ResponseModal = ({
 }) => {
   const { t } = useTranslation();
   const { classes } = useCore();
-  const { windowSize, isRTL } = useSelector(state => state.core);
 
   return !isOpen ? (<></>) :
     (

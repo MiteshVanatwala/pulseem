@@ -7,13 +7,11 @@ import { getPaymentURL, getAccountCards } from '../../../redux/reducers/paymentS
 import PackagesList from './Dialogs/PackagesList';
 import TranzilaIframe from './Dialogs/TranzilaIframe';
 import PaymentResult from './Dialogs/PaymentResult';
-import useCore from '../../../helpers/hooks/Core';
 
 const PurchaseWizard = ({
     packageType
 }) => {
     const { isRTL } = useSelector(state => state.core);
-    const { classes } = useCore();
     const { accountAvailablePackages } = useSelector(state => state.dashboard);
     const { paymentUrl } = useSelector(state => state.payment);
     const { t } = useTranslation();
@@ -50,12 +48,14 @@ const PurchaseWizard = ({
         }
 
         initData();
+
     }, []);
 
     useEffect(() => {
         if (packageId) {
             dispatch(getPaymentURL({ PackageId: packageId, Culture: isRTL ? 'il' : 'us' }));
         }
+
     }, [packageId])
 
     const selectPackage = (packageId) => {

@@ -34,6 +34,7 @@ export const IsValidURL = (value: string) => {
       "(\\#[-a-z\\d_]*)?$",
     "i"
   ); // fragment locator
+
   return !!pattern.test(value);
 };
 

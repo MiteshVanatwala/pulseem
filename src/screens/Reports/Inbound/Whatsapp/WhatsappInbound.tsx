@@ -27,10 +27,7 @@ import {
 import SearchLine from "../SearchLine";
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { ImWhatsapp } from "react-icons/im";
-import {
-  ReplaceNull,
-  HandleExportData,
-} from "../../../../helpers/Export/ExportHelper";
+import { HandleExportData } from "../../../../helpers/Export/ExportHelper";
 import useCore from "../../../../helpers/hooks/Core";
 import { StateType } from "../../../../Models/StateTypes";
 import {
@@ -81,8 +78,8 @@ const WhatsappInbound = () => {
   };
   const [request, setRequest] =
     useState<wpInbdDefaultFilterType>(defaultRequest);
-  const [searchRequest, setSearchRequest] =
-    useState<wpInbdDefaultFilterType>(defaultRequest);
+  // const [searchRequest, setSearchRequest] =
+  //   useState<wpInbdDefaultFilterType>(defaultRequest);
 
   const getInboundData = async () => {
     setShowLoader(true);
@@ -104,11 +101,11 @@ const WhatsappInbound = () => {
     }
   }, [request, page, rowsPerPage]);
 
-  useEffect(() => {
-    if (!isSearching) {
-      setSearchRequest(defaultRequest);
-    }
-  }, [isSearching]);
+  // useEffect(() => {
+  //   if (!isSearching) {
+  //     setSearchRequest(defaultRequest);
+  //   }
+  // }, [isSearching]);
 
   const renderHeader = () => {
     return (
@@ -387,7 +384,7 @@ const WhatsappInbound = () => {
             isOpen={dialog === "exportFormat"}
             title={t("campaigns.exportFile")}
             radioTitle={t("common.SelectFormat")}
-            onConfirm={(e) => handleDownloadCsv(e)}
+            onConfirm={(e: any) => handleDownloadCsv(e)}
             onCancel={() => setDialog(null)}
             cookieName={"exportFormat"}
             defaultValue="xls"

@@ -1,7 +1,6 @@
 import { Box, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
-import { Dialog } from "../../../components/managment/Dialog";
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import useCore from "../../../helpers/hooks/Core";
