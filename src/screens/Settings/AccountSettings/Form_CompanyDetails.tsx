@@ -7,8 +7,7 @@ import {
   OutlinedInput,
   Select,
   TextField,
-  Typography,
-  FormControlLabel
+  Typography
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
@@ -20,7 +19,6 @@ import {
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
 import { DataAnalysis, UnLockIcon } from "../../../assets/images/settings";
-import { Title } from "../../../components/managment/Title";
 import { DateField } from "../../../components/managment";
 import {
   IsNumberField,
@@ -35,7 +33,8 @@ import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
-import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
+import { Title } from "../../../components/managment/Title";
+import { getCookie } from "../../../helpers/cookies";
 
 
 const FORM_COMPANY_DETAILS = ({
@@ -72,6 +71,9 @@ const FORM_COMPANY_DETAILS = ({
     ZipCode: null,
     TwoFactorAuthTestMethodID: null
   } as AccountSettings);
+
+  const accSettings = getCookie("accountSettings");
+  const accFeatures = accSettings?.AccountFeatures;
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -133,7 +135,10 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    setCompanyDetails(Settings);
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accFeatures.indexOf(45) === -1 } as AccountSettings;
+    setCompanyDetails(newSettings);
+    if (Settings)
+      handleQueryString2FA();
   }, [Settings]);
 
   useEffect(() => {
@@ -408,35 +413,7 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            <Grid item xs={12} sm={3} md={2} className={clsx(classes.mt3)}>
-              <FormControlLabel
-                control={
-                  <PulseemSwitch
-                    switchType="ios"
-                    classes={classes}
-                    checked={companyDetails?.TwoFactorAuthEnabled === true}
-                    //@ts-ignore
-                    onColor="#0371ad"
-                    handleDiameter={20}
-                    boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                    activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-                    height={15}
-                    width={40}
-                    className={clsx({ [classes.rtlSwitch]: isRTL })}
-                    id="switchIDS425"
-                    onChange={(e: any) => handleChange(e, "TwoFactorAuth")}
-                  />
-                }
-                label={
-                  <>
-                    {t(
-                      "settings.accountSettings.fixedComDetails.fields.enableTwoFactorAuth"
-                    )}
-                  </>
-                }
-              />
-            </Grid>
-            <Grid
+            {accFeatures.indexOf(45) === -1 && <Grid
               item
               xs={12}
               sm={3}
@@ -494,11 +471,11 @@ const FORM_COMPANY_DETAILS = ({
                   })}
                 </Select>
               </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            </Grid>}
+            {accFeatures.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
-                justifyContent: 'flex-end',
+                justifyContent: 'flex-start',
                 alignItems: 'center',
                 height: '100%'
               }}>
@@ -545,7 +522,7 @@ const FORM_COMPANY_DETAILS = ({
                   </>
                 </Button>
               </Box>
-            </Grid>
+            </Grid>}
             <Grid
               item
               xs={12}

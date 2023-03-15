@@ -291,7 +291,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         switch (variant) {
             case 'email':
             case 'emailTFA': {
-                const res = await dispatch(checkEmailAuthorization(selectedVerificationContact));
+                const request = { value: selectedVerificationContact, isTwoFa: variant === 'emailTFA' }
+                const res = await dispatch(checkEmailAuthorization(request));
                 if (res?.payload?.StatusCode === 404) {
                     dispatch(newAuthorizeEmail({ email: val })).then((result) => {
                         setCodeResend(isResend);
