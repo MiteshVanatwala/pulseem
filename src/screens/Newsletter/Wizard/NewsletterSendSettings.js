@@ -155,6 +155,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     });
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
+
     const initOnReady = () => {
         if (newsletterSettings?.error) {
             logout();
@@ -248,10 +249,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setDialogType({ type: "delete" });
     };
 
-    const handleDeleteCampaign = () => {
+    const handleDeleteCampaign = async () => {
         let response = null;
         try {
-            response = dispatch(deleteCampaign(params.id))
+            response = await dispatch(deleteCampaign(params.id))
             setLoader(false)
         }
         catch (error) {
@@ -263,16 +264,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const handleDeleteResponse = (response) => {
-        switch (response?.StatusCode) {
-            case 201: {
+        switch (response) {
+            case -1: {
                 setToastMessage(ToastMessages.CAMPAIGN_DELETED_SUCCESS);
                 break;
             }
-            case 401: {
-                setToastMessage(ToastMessages.INVALID_API_MISSING_KEY);
-                break;
-            }
-            case 500:
+            case -2:
             default: {
                 setToastMessage(ToastMessages.GENERAL_ERROR);
             }
@@ -800,7 +797,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }),
             delete: DeleteDialog({
                 classes: classes,
-                onConfirm: handleDeleteCampaign,
+                onConfirm: () => handleDeleteCampaign().then(() => {
+                    setDialogType(null);
+                    setTimeout(() => {
+                        navigate("/react/Campaigns/")
+                    }, 200);
+                }),
                 onCancel: () => setDialogType(null),
                 onClose: () => setDialogType(null),
             }),
@@ -1148,15 +1150,19 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     </Grid>
                 </Grid>
             </Box>
-            <WizardActions
-                classes={classes}
-                onBack={{
-                    callback: () => { handlePreviousPage() }
-                }}
-                onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
-                onExit={() => { setDialogType({ type: "exit" }) }}
-                additionalButtons={newsletterSettings?.Status === 1 && renderButtons()}
-            />
+            {
+                <Box className={{ [classes.disabled]: newsletterInfo.IsDeleted }}>
+                    <WizardActions
+                        classes={classes}
+                        onBack={{
+                            callback: () => { handlePreviousPage() }
+                        }}
+                        onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
+                        onExit={() => { setDialogType({ type: "exit" }) }}
+                        additionalButtons={newsletterSettings?.Status === 1 && renderButtons()}
+                    />
+                </Box>
+            }
             {renderDialog()}
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
                 classes={classes}
