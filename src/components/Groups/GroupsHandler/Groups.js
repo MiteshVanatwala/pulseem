@@ -201,7 +201,7 @@ const Groups = ({ classes,
     const sortBy = (sortBy, direction) => {
         if (list) {
             let tempList = [...list];
-            if (sortBy === "Group Name") {
+            if (sortBy === "Group Name" && !isCampaign) {
                 direction === 'asc'
                     ? tempList.sort((a, b) =>
                         a.GroupName.trim().toUpperCase() < b.GroupName.trim().toUpperCase()
