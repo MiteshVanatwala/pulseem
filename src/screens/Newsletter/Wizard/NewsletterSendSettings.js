@@ -30,7 +30,7 @@ import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
-import { getCampaignInfo, getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
+import { getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
 import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
@@ -155,7 +155,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     });
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
-
     const initOnReady = () => {
         if (newsletterSettings?.error) {
             logout();
@@ -172,14 +171,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 return;
 
             const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null } = newsletterSettings;
-            const Groups = subAccountAllGroups;
+            const Groups = subAccountAllGroups || [];
             let selecteddGroup = [];
 
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
 
-            selecteddGroup = Groups?.filter((c) => GroupList?.indexOf(c.GroupID) > -1)
+            selecteddGroup = [...Groups, ...testGroups]?.filter((c) => GroupList?.indexOf(c.GroupID) > -1)
             selecteddGroup.length > 0 && setSelectedGroups(selecteddGroup);
 
             setFilterValues({
@@ -360,7 +359,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 }
             });
         }
-        else{
+        else {
             // Set error - clients were not uploaded
             setToastMessage(ToastMessages.GENERAL_ERROR);
         }
