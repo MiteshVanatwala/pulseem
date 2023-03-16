@@ -30,7 +30,7 @@ import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
-import { getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
+import { getEmailSendSettings, setEmailSendSettings, getSendSummary, deleteCampaign } from "../../../redux/reducers/newsletterSlice";
 import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
@@ -247,6 +247,37 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const onHandleDelete = () => {
         setDialogType({ type: "delete" });
     };
+
+    const handleDeleteCampaign = () => {
+        let response = null;
+        try {
+            response = dispatch(deleteCampaign(params.id))
+            setLoader(false)
+        }
+        catch (error) {
+            console.log("ERROR-SAVE-SEND-SETTINGS:", error)
+        }
+        finally {
+            handleDeleteResponse(response.payload);
+        }
+    }
+
+    const handleDeleteResponse = (response) => {
+        switch (response?.StatusCode) {
+            case 201: {
+                setToastMessage(ToastMessages.CAMPAIGN_DELETED_SUCCESS);
+                break;
+            }
+            case 401: {
+                setToastMessage(ToastMessages.INVALID_API_MISSING_KEY);
+                break;
+            }
+            case 500:
+            default: {
+                setToastMessage(ToastMessages.GENERAL_ERROR);
+            }
+        }
+    }
 
     const onSaveSettings = async (showSummary = false, overrideGroupIds = null) => {
         setLoader(true)
@@ -769,6 +800,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }),
             delete: DeleteDialog({
                 classes: classes,
+                onConfirm: handleDeleteCampaign,
+                onCancel: () => setDialogType(null),
                 onClose: () => setDialogType(null),
             }),
             exit: ExitDialog({
