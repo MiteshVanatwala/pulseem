@@ -731,6 +731,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		} else {
 			setCampaignListData([]);
 			setDeletedCampaignListData([]);
+			setTotalRecord(0);
 		}
 	};
 

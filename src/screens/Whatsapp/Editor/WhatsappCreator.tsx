@@ -458,23 +458,14 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
 			return {
 				id: button.id,
-				title: getValueByFieldName(
-					button,
-					translator('whatsapp.websiteButtonText')
-				),
+				title: getValueByFieldName(button, 'whatsapp.websiteButtonText'),
 			};
 		});
 	};
 
 	const getActionPhoneNumber = (button: quickReplyButtonProps) => {
-		const phoneNumber = getValueByFieldName(
-			button,
-			translator('whatsapp.phoneNumber')
-		);
-		const countryCode = getValueByFieldName(
-			button,
-			translator('whatsapp.country')
-		);
+		const phoneNumber = getValueByFieldName(button, 'whatsapp.phoneNumber');
+		const countryCode = getValueByFieldName(button, 'whatsapp.country');
 		return countryCode && phoneNumber
 			? '+' + countryCode?.replace(/\D/g, '') + phoneNumber
 			: phoneNumber;
@@ -486,12 +477,14 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				type: button.typeOfAction === 'phonenumber' ? 'PHONE_NUMBER' : 'URL',
 				title: getValueByFieldName(
 					button,
-					translator('whatsapp.websiteButtonText')
+					button.typeOfAction === 'phonenumber'
+						? 'whatsapp.phoneButtonText'
+						: 'whatsapp.websiteButtonText'
 				),
 				[button.typeOfAction === 'phonenumber' ? 'phone' : 'url']:
 					button.typeOfAction === 'phonenumber'
 						? getActionPhoneNumber(button)
-						: getValueByFieldName(button, translator('whatsapp.websiteURL')),
+						: getValueByFieldName(button, 'whatsapp.websiteURL'),
 			};
 		});
 	};

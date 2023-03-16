@@ -695,8 +695,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			} else {
 				if (whatsAppChatContactsData?.Message === 'No Data Found') {
+					setSideChatContacts([]);
+					setFilteredSideChatContacts([]);
 					setContactsPaginationSetting({
 						...contactsPaginationSetting,
+						PageNo: 1,
 						hasMore: false,
 					});
 				}
