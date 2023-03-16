@@ -439,7 +439,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const validationCheck = () => {
-        if (filterValues.filterValues === "") {
+        if (filterValues.toggleReci && (!filterValues?.exceptionalDays || filterValues?.exceptionalDays <= 0)) {
             setFilterValues({ ...filterValues, RecipientsBool: true })
             setSnackbarValues({ ...snackbarValues, recipientsSnackbar: true })
             return false;
