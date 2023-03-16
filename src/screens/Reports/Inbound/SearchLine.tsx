@@ -282,7 +282,7 @@ const SearchLine = ({
                         onChange={(option: any, selected: any) => {
                             setSearchRequest({
                                 ...searchRequest, PageIndex: 1,
-                                CampaignID: selected?.CampaignID
+                                CampaignID: selected?.CampaignID ?? selected?.SMSCampaignID
                             });
                         }}
                         disableClearable={false}
