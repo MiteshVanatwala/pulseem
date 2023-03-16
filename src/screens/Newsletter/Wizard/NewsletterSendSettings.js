@@ -779,7 +779,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         navigate("/react/Campaigns/")
                     })
                 },
-                onClose: () => navigate("/react/Campaigns/"),
+                onClose: () => setDialogType(null),
                 onCancel: () => setDialogType(null),
             }),
             sendSuccess: SendSuccessDialog({
