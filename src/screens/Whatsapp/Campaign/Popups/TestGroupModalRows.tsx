@@ -1,7 +1,10 @@
 import { FaCheck } from 'react-icons/fa';
 import { HiOutlineUserGroup } from 'react-icons/hi';
 import clsx from 'clsx';
-import { testGroupDataProps, TestGroupModalRowsProps } from '../Types/WhatsappCampaign.types';
+import {
+	testGroupDataProps,
+	TestGroupModalRowsProps,
+} from '../Types/WhatsappCampaign.types';
 import { Box } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 
@@ -26,9 +29,6 @@ const TestGroupModalRows = ({
 								onSelectGroup(group.GroupID);
 							}}>
 							<span
-								// style={{
-								// 	marginInlineEnd: windowSize !== 'xs' ? '25px' : '10px',
-								// }}
 								className={
 									isSelectdGroup(group.GroupID)
 										? classes.greenDoc
@@ -82,9 +82,11 @@ const TestGroupModalRows = ({
 									</span>
 									<span style={{ whiteSpace: 'nowrap' }}>
 										{group.Recipients}{' '}
-										{group.Recipients === 1
-											? <>{translator('sms.recipient')}</>
-											: <>{translator('sms.recipients')}</>}
+										{group.Recipients === 1 ? (
+											<>{translator('sms.recipient')}</>
+										) : (
+											<>{translator('sms.recipients')}</>
+										)}
 									</span>
 								</div>
 							</div>

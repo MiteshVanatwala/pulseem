@@ -64,6 +64,10 @@ const DynamicModalFields = ({
 		setLinkInput(linkInput, !isTrackLink);
 	};
 
+	const onAddRemovalLinkClick = () => {
+		onAddRemovalLink(true);
+	};
+
 	return (
 		<>
 			{activeDynamicButton?.includes('pField') && (
@@ -81,13 +85,15 @@ const DynamicModalFields = ({
 					onChange={(e: BaseSyntheticEvent) =>
 						setPersonalField(e.target.value)
 					}>
-					{Object.keys(personalFields)?.map(
-						(personalFieldKey: string, index: number) => (
+					{Object.values(personalFields)
+						?.filter(
+							(personalField) => personalField && personalField?.length > 0
+						)
+						?.map((personalFieldKey: string, index: number) => (
 							<MenuItem key={index} value={personalFieldKey}>
 								{personalFieldKey}
 							</MenuItem>
-						)
-					)}
+						))}
 				</Select>
 			)}
 
@@ -150,7 +156,7 @@ const DynamicModalFields = ({
 						color='primary'
 						size='small'
 						className={classes.whatsappCampaignDynamicFieldLinkRemoval}
-						onClick={() => onAddRemovalLink(isTrackLink)}>
+						onClick={() => onAddRemovalLinkClick()}>
 						<>{translator('whatsappCampaign.removalLinkTooltip')}</>
 					</Button>
 				</div>
@@ -207,9 +213,17 @@ const DynamicModalFields = ({
 							placeholder={translator('whatsappCampaign.navigationPlaceholder')}
 							className={classes.whatsappCampaignDynamicFieldNavigationText}
 							onChange={(e: BaseSyntheticEvent) =>
-								setNavAddress(e.target.value)
+								setNavAddress(
+									`${
+										navApp === 'Waze'
+											? 'https://waze.to/?q='
+											: 'http://maps.google.com/?q='
+									}${e.target.value}`
+								)
 							}
-							value={navAddress}
+							value={
+								navAddress?.split('?q=')[navAddress?.split('?q=')?.length - 1]
+							}
 						/>
 					</Grid>
 				</Grid>

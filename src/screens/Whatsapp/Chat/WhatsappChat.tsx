@@ -38,6 +38,7 @@ import { useTranslation } from 'react-i18next';
 import uniqid from 'uniqid';
 import {
 	checkSiteTrackingLink,
+	formatUpdatedDynamicVariable,
 	getDynamicFields,
 	getTemplatePreviewData,
 } from '../Common';
@@ -588,7 +589,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			};
 			if (savedTemplate?.length > 0) {
 				chatReqPayload.TemplateId = savedTemplate;
-				chatReqPayload.Variables = updatedDynamicVariable;
+				chatReqPayload.Variables = formatUpdatedDynamicVariable(
+					updatedDynamicVariable,
+					personalFields,
+					landingPages
+				);
 			} else {
 				chatReqPayload.TextMessage = newMessage;
 				chatReqPayload.mediaUrl = '';

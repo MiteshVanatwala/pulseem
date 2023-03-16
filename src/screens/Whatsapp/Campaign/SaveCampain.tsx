@@ -34,6 +34,9 @@ import {
 	CampaignDetailById,
 	ApiQuickSend,
 	SubAccountSettings,
+	TestSendReq,
+	SaveQuickSendGroupsPayload,
+	SaveQuickSendGroups,
 } from './Types/WhatsappCampaign.types';
 import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
@@ -63,6 +66,7 @@ import {
 	getCampaignDetailById,
 	quickSend,
 	deleteCampaign,
+	saveQuickSendGroups,
 } from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
@@ -72,6 +76,7 @@ import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
 	checkSiteTrackingLink,
+	formatUpdatedDynamicVariable,
 	getDynamicFields,
 	getTemplatePreviewData,
 } from '../Common';
@@ -91,6 +96,7 @@ import {
 import AlertModal from '../Editor/Popups/AlertModal';
 import { useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
+import SummaryModal from './Popups/SummaryModal';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -174,6 +180,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
+	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
 	const [fileData, setFileData] = useState<{
@@ -480,9 +487,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setSelectedTestGroup(updatedSelectedGroup);
 	};
 
-	const validateSaveCampaign = () => {
+	const validateSaveCampaign = (validateDynamicVaraiable: boolean = false) => {
+		let validationErrors = [];
+		let isValidated = true;
 		if (campaignName?.length <= 0 || savedTemplate?.length <= 0) {
-			let validationErrors = [];
 			if (campaignName?.length <= 0 && savedTemplate?.length <= 0) {
 				validationErrors.push(translator('whatsappCampaign.setCampaign'));
 				validationErrors.push(translator('whatsappCampaign.selectTemplate'));
@@ -491,12 +499,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			} else if (savedTemplate?.length <= 0) {
 				validationErrors.push(translator('whatsappCampaign.selectTemplate'));
 			}
+			isValidated = false;
+		}
+		if (
+			validateDynamicVaraiable &&
+			savedTemplate?.length > 0 &&
+			getDynamicFields(templateData?.templateText)?.length !==
+				updatedDynamicVariable?.length
+		) {
+			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
+			isValidated = false;
+		}
+		if (!isValidated) {
 			setGroupSendValidationErrors([...validationErrors]);
 			setShowValidation(true);
-			return false;
-		} else {
-			return true;
 		}
+		return isValidated;
 	};
 
 	const onDeleteClick = () => {
@@ -526,30 +544,27 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setIsDeleteCampaignOpen(false);
 	};
 
-	const onOkTestSending = async (isSingle: boolean = false) => {
-		let campaignIdForTestSend: number | null = Number(campaignID);
-		if (!campaignID) {
-			const saveCampaign = await onSaveCampaign(false);
-			campaignIdForTestSend = saveCampaign?.WACampaignId || null;
+	const onTestSend = async (isSingle: boolean = false, campaignID: number) => {
+		setIsSummaryModal(false);
+		setIsTestGroupModal(false);
+		let payload: TestSendReq = {
+			WACampaignID: campaignID,
+		};
+		if (isSingle) {
+			payload.PhoneNumber = testSendOneContact;
+		} else {
+			payload.TestGroupsIds = selectedTestGroup?.map((group) => group?.GroupID);
 		}
-		if (campaignIdForTestSend) {
-			if (validateSaveCampaign()) {
+		if (campaignID) {
+			if (validateSaveCampaign(true)) {
+				setIsLoader(true);
 				const { payload: quickSendData }: ApiQuickSend = await dispatch<any>(
-					quickSend({
-						WACampaignID: campaignIdForTestSend || 0,
-						TestGroupsIds: isSingle
-							? Number(testSendOneContact)
-							: selectedTestGroup?.map((group) => group?.GroupID),
-					})
+					quickSend(payload)
 				);
+				setIsLoader(false);
 				if (quickSendData?.Status === apiStatus.SUCCESS) {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
-					if (!campaignID) {
-						navigate(
-							`/react/whatsapp/campaign/edit/page1/${campaignIdForTestSend}`
-						);
-					}
 				} else {
 					quickSendData?.Message
 						? setToastMessage({
@@ -562,6 +577,38 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			} else {
 				setIsTestGroupModal(false);
 				setIsValidationAlert(true);
+			}
+		}
+	};
+
+	const onOkTestSending = async () => {
+		let campaignIdForTestSend: number = Number(campaignID) || 0;
+		setIsLoader(true);
+		const saveCampaign = await onSaveCampaign(false);
+		campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
+		if (testSendSelection !== 'onecontact') {
+			const { payload: quickSendGroupsData }: SaveQuickSendGroups =
+				await dispatch<any>(
+					saveQuickSendGroups({
+						WACampaignID: campaignIdForTestSend,
+						TestGroupsIds: selectedTestGroup?.map((group) => group?.GroupID),
+					})
+				);
+		}
+		setIsLoader(false);
+		if (campaignIdForTestSend) {
+			if (validateSaveCampaign(true)) {
+				if (!campaignID) {
+					navigate(
+						`/react/whatsapp/campaign/edit/page1/${campaignIdForTestSend}`
+					);
+				}
+				if (testSendSelection === 'onecontact') {
+					onTestSend(true, campaignIdForTestSend);
+				} else {
+					setIsSummaryModal(true);
+				}
+			} else {
 			}
 		}
 	};
@@ -582,7 +629,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		const reqData: saveCampaignDataProps = {
 			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
-			Variables: updatedDynamicVariable,
+			Variables: formatUpdatedDynamicVariable(
+				updatedDynamicVariable,
+				personalFields,
+				landingPages
+			),
 			name: campaignName,
 			fromnumber: from,
 			IsTestCampaign: isTestSend,
@@ -594,7 +645,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onSaveCampaign = async (showSuccess: boolean = true) => {
-		if (validateSaveCampaign()) {
+		if (validateSaveCampaign(true)) {
 			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
 			setIsLoader(false);
@@ -896,7 +947,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 													variant='outlined'
 													color='primary'
 													className={classes.testOneContactSendButton}
-													onClick={() => onOkTestSending(true)}>
+													onClick={() => onOkTestSending()}>
 													<>{translator('whatsappCampaign.sendButton')}</>
 												</Button>
 											</Stack>
@@ -1060,6 +1111,24 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				subtitle={translator('whatsappManagement.LeaveCampaignCreationDesc')}
 				type='delete'
 				onConfirmOrYes={() => onExitCampaign()}
+			/>
+			<SummaryModal
+				classes={classes}
+				isOpen={isSummaryModal}
+				campaignName={''}
+				fromNumber={''}
+				onSummaryModalClose={() => setIsSummaryModal(false)}
+				onConfirmOrYes={() => onTestSend(false, Number(campaignID || 0))}
+				selectedGroups={selectedTestGroup}
+				selectedFilterGroups={[]}
+				selectedFilterCampaigns={[]}
+				sendType={'1'}
+				sendDate={null}
+				sendTime={null}
+				isSpecialDateBefore={false}
+				daysBeforeAfter={''}
+				specialDatedropDown={[]}
+				spectialDateFieldID={'0'}
 			/>
 		</DefaultScreen>
 	);

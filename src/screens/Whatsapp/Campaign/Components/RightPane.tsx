@@ -11,13 +11,9 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import { RightPaneProps, coreProps } from '../Types/WhatsappCampaign.types';
-import { FiClock } from 'react-icons/fi';
-import { CalendarIcon } from '../../../../assets/images/managment/index';
 import { DateField } from '../../../../components/managment';
 
 const RightPane = ({
@@ -179,7 +175,9 @@ const RightPane = ({
 								value={sendType === '3' ? spectialDateFieldID : '0'}>
 								<option value='0'>{translator('common.select')}</option>
 								<option value='1'>{translator('mainReport.birthday')}</option>
-								<option value='2'>{translator('mainReport.creationDay')}</option>
+								<option value='2'>
+									{translator('mainReport.creationDay')}
+								</option>
 								{specialDatedropDown?.map(
 									(specialDate: string, index: number) => (
 										<option

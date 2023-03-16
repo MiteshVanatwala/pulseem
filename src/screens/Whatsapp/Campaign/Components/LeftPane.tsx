@@ -41,9 +41,7 @@ const LeftPane = ({
 }: ClassesType & LeftPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
-	const [alertModalSubtitle, setAlertModalSubtitle] = useState<string>('');
 	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
-	const [isFilterSelected, setIsFilterSelected] = useState<boolean>(false);
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
 
@@ -176,7 +174,7 @@ const LeftPane = ({
 				isOpen={isAlert}
 				onClose={() => setIsAlert(false)}
 				title={translator('whatsapp.alertModal.alert')}
-				subtitle={alertModalSubtitle}
+				subtitle={''}
 				type='alert'
 				onConfirmOrYes={() => setIsAlert(false)}
 			/>

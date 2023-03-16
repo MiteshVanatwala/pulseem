@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { Button } from '@material-ui/core';
@@ -19,7 +19,6 @@ const Buttons = ({
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const [isFromAutomation, setIsFromAutomation] = useState<boolean>(false);
 	const navigate = useNavigate();
 
 	const handlePreviousPage = () => {
@@ -108,11 +107,7 @@ const Buttons = ({
 					color='primary'
 					style={{ margin: '8px' }}
 					onClick={(e) => onFormButtonClick(buttons.SEND)}>
-					{!isFromAutomation ? (
-						<>{translator('whatsappCampaign.send')}</>
-					) : (
-						<>{translator('whatsapp.saveAndExit')}</>
-					)}
+					<>{translator('whatsappCampaign.send')}</>
 				</Button>
 			</div>
 		</div>
