@@ -62,9 +62,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
             defaultRows: false,
         },
         editorFonts: FONTS(),
-        workspace: {
-            type: 'mixed',
-        },
+        // workspace: {
+        //     type: 'mixed',
+        // },
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
