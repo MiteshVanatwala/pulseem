@@ -390,6 +390,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         else {
             // Set error - clients were not uploaded
             setToastMessage(ToastMessages.GENERAL_ERROR);
+            setLoader(false);
         }
 
     };
@@ -816,8 +817,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         navigate("/react/Campaigns/")
                     })
                 },
-                onClose: () => setDialogType(null),
-                onCancel: () => setDialogType(null),
+                onClose: () => {
+                    setDialogType(null);
+                    navigate("/react/Campaigns/")
+                },
+                onCancel: () => { setDialogType(null) },
             }),
             sendSuccess: SendSuccessDialog({
                 classes,
