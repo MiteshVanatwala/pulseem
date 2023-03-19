@@ -585,6 +585,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showGallery}
           onClose={() => { setShowGallery(false); }}
+          onCancel={() => { setShowGallery(false); }}
           onConfirm={() => { setShowGallery(false); }}
           {...dialog}>
           {dialog.content}
@@ -616,6 +617,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
+          onCancel={() => { setShowDocuments(false); }}
           onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}

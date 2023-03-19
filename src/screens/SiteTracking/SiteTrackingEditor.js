@@ -246,6 +246,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
+                    onCancel={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
                 </BaseDialog>

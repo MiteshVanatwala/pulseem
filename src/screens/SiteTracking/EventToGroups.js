@@ -81,6 +81,7 @@ const EventToGroups = ({
                 classes={classes}
                 open={showGroupsDialog}
                 onClose={() => { setShowGroupsDialog(false) }}
+                onCancel={() => { setShowGroupsDialog(false) }}
                 {...dialog}>
                 {dialog.content}
             </BaseDialog>

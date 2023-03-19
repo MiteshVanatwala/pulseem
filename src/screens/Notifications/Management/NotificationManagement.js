@@ -1271,6 +1271,7 @@ const NotificationManagement = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleDialogClose}
+        onCancel={handleDialogClose}
         {...dialog}>
         {dialog.content}
       </BaseDialog>);

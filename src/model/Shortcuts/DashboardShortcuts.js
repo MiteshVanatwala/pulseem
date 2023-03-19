@@ -58,6 +58,10 @@ export const DASHBOARD_SHORTCUT = {
         {
           title: 'master.newslatterBasicEditor',
           link: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic'
+        },
+        {
+          title: 'master.campaignsArchive',
+          link: '/react/Campaigns/Archive'
         }
       ]
     },

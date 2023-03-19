@@ -118,6 +118,7 @@ const ConfirmRadioDialog = ({
         classes={classes}
         open={isOpen ?? false}
         onClose={() => onCancel()}
+        onCancel={() => onCancel()}
         {...dialog}>
         {dialog.content}
     </BaseDialog>);

@@ -90,8 +90,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
-        if (pageTitle === '') {
+        if (pageTitle === '' && categoryTitle === selectedShortcut.CategoryName) {
           pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
+        }
+        else {
+          pageTitle = t('common.SelectPage');
         }
         if (categoryTitle === '') {
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
@@ -139,15 +142,18 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
                 <Divider />
                 <List component="div">
                   {Object.keys(categories).map(cat => {
-                    return (
-                      <ListItem
-                        key={`category${Math.round(Math.random() * 999999999)}`}
-                        button
-                        className={clsx(classes.pt0, classes.pb0)}
-                        onClick={() => handleCategoryChange(cat)}>
-                        <ListItemText primary={t(categories[cat].title)} />
-                      </ListItem>
-                    )
+                    if (cat !== categoryTitle) {
+                      return (
+                        <ListItem
+                          key={`category${Math.round(Math.random() * 999999999)}`}
+                          button
+                          className={clsx(classes.pt0, classes.pb0)}
+                          onClick={() => handleCategoryChange(cat)}>
+                          <ListItemText primary={t(categories[cat].title)} />
+                        </ListItem>
+                      )
+                    }
+                    return null;
                   })}
                 </List>
               </Collapse>

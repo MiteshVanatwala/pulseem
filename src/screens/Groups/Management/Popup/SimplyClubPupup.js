@@ -425,12 +425,12 @@ const SimplyClubPupup = ({
                 classes={classes}
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
+                onCancel={() => setShowGroups(false)}
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
                 childrenStyle={{ margin: 0 }}
                 className={classes.sidebar}
-
                 renderButtons={
                     () => (<Grid
                         container

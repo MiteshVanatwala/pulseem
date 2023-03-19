@@ -922,6 +922,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
       setPage(1)
       await dispatch(duplicteCampaign({ CampaignID: campaignId, CloneOptions: duplicateOptions }))
       getData()
+    },
+    onCancel: () => {
+      handleClose()
     }
   })
 
@@ -942,6 +945,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
+        onCancel={handleClose}
         onClose={handleClose}
         renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>

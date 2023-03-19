@@ -435,6 +435,7 @@ const SmsMarketingDialog = ({
         classes={classes}
         open={isOpen}
         onClose={() => { setDialogType(null) }}
+        onCancel={() => { setDialogType(null) }}
         {...currentDialog}>
         {currentDialog.content}
     </BaseDialog>
