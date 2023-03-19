@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, Select, MenuItem, Button
 } from '@material-ui/core'
@@ -45,6 +45,16 @@ const Groups = ({ classes,
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
     const [showTestGroups, setShowTestGroups] = useState(false);
+    const [groupList, setGroupList] = useState([])
+
+    useEffect(() => {
+        if (
+            list?.length > 0 &&
+            list?.length !== groupList.length
+        ) {
+            sortBy("Group Name", 'asc');
+        }
+    }, [list])
 
     const handleShowTestGroup = () => {
         callbackShowTestGroup(showTestGroups);
@@ -75,7 +85,7 @@ const Groups = ({ classes,
     const renderGroups = () => {
         const groupIdKey = isNotifications ? "Id" : "GroupID";
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
-        return list && list.length > 0 ? list?.filter((g) => {
+        return groupList && groupList.length > 0 ? groupList?.filter((g) => {
             return g.GroupName.trim().toLowerCase().indexOf(groupNameSearch?.trim().toLowerCase()) > -1;
         }).map((group) => {
             const isExist = selectedList?.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
@@ -106,7 +116,7 @@ const Groups = ({ classes,
     }
 
     const renderCampaigns = () => {
-        return list && list.length > 0 ? list?.filter((c) => {
+        return groupList && groupList.length > 0 ? groupList?.filter((c) => {
             return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((campaign) => {
             const isExist = selectedList.map((c) => { return c.CampaignID }).includes(campaign.CampaignID);
@@ -133,7 +143,7 @@ const Groups = ({ classes,
     }
 
     const renderSelectAll = () => {
-        const allSelected = list?.length === selectedList?.length;
+        const allSelected = groupList?.length === selectedList?.length;
 
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
@@ -190,30 +200,31 @@ const Groups = ({ classes,
 
     const sortBy = (sortBy, direction) => {
         if (list) {
-            if (sortBy === "Group Name") {
+            let tempList = [...list];
+            if (sortBy === "Group Name" && !isCampaign) {
                 direction === 'asc'
-                    ? list.sort((a, b) =>
-                        a.GroupName.toUpperCase() < b.GroupName.toUpperCase()
+                    ? tempList.sort((a, b) =>
+                        a.GroupName.trim().toUpperCase() < b.GroupName.trim().toUpperCase()
                             ? -1
                             : Number(
                                 a.GroupName.toUpperCase() > b.GroupName.toUpperCase()
                             )
                     )
-                    : list.sort((a, b) =>
+                    : tempList.sort((a, b) =>
                         b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
                             ? -1
                             : Number(
                                 b.GroupName.toUpperCase() > a.GroupName.toUpperCase()
                             )
                     );
-            } else if (sortBy === "Update Date" && list[0] && list[0].UpdateDate) {
+            } else if (sortBy === "Update Date" && tempList[0] && tempList[0].UpdateDate) {
                 direction === 'asc'
-                    ? list.sort((a, b) =>
+                    ? tempList.sort((a, b) =>
                         a.UpdateDate !== null && b.UpdateDate !== null
                             ? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
                             : -1
                     )
-                    : list.sort((a, b) =>
+                    : tempList.sort((a, b) =>
                         a.UpdateDate !== null && b.UpdateDate !== null
                             ? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
                             : -1
@@ -222,12 +233,12 @@ const Groups = ({ classes,
             else if (sortBy === "Creation Date") {
                 if (isSms) {
                     direction === 'asc'
-                        ? list.sort((a, b) =>
+                        ? tempList.sort((a, b) =>
                             a.CreationDate !== null && b.CreationDate !== null
                                 ? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
                                 : -1
                         )
-                        : list.sort((a, b) =>
+                        : tempList.sort((a, b) =>
                             a.CreationDate !== null && b.CreationDate !== null
                                 ? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
                                 : -1
@@ -235,18 +246,20 @@ const Groups = ({ classes,
                 }
                 else {
                     direction === 'asc'
-                        ? list.sort((a, b) =>
+                        ? tempList.sort((a, b) =>
                             a.CreatedDate !== null && b.CreatedDate !== null
                                 ? Date.parse(a.CreatedDate) - Date.parse(b.CreatedDate)
                                 : -1
                         )
-                        : list.sort((a, b) =>
+                        : tempList.sort((a, b) =>
                             a.CreatedDate !== null && b.CreatedDate !== null
                                 ? Date.parse(b.CreatedDate) - Date.parse(a.CreatedDate)
                                 : -1
                         );
                 }
             }
+
+            setGroupList(tempList);
         }
     }
 

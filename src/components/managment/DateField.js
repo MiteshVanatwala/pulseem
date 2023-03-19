@@ -61,7 +61,7 @@ export const DateField = ({
       onChange={date => onTimeChange(date)}
       KeyboardButtonProps={{
         'aria-label': 'change time',
-        className: classes.datePickerButton
+        className: classes.datePickerButton,
       }}
       cancellabel={buttons && buttons.cancel}
       oklabel={buttons && buttons.ok}
@@ -71,11 +71,12 @@ export const DateField = ({
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
       onClick={() => setIsTimePickerOpen(true)}
+      helperText={props?.errorMessage}
       InputProps={{
         readOnly: true,
-        style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null, border: props?.errorMessage ? '1px solid #f44336' : null }
       }}
-      autoOk={false}
+      autoOk={true}
       style={{ borderRadius: isRoundedOnMobile === true ? 50 : null }}
     />
   ) :

@@ -94,7 +94,8 @@ const TFA = ({ classes,
     return (<BaseDialog
         classes={classes}
         open={showTFA}
-        onClose={() => { onCancel() }}
+        onClose={() => onCancel()}
+        onCancel={() => onCancel()}
         {...dialog}>
         {dialog.content}
     </BaseDialog>);

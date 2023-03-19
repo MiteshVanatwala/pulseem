@@ -1921,6 +1921,7 @@ const SmsCreator = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>
@@ -1956,7 +1957,12 @@ const SmsCreator = ({ classes }) => {
       </Grid>
       {renderDialog()}
       {renderSummary()}
-      {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+      {otpOpen && <OTP
+        classes={classes}
+        campaignNumber={campaignNumber}
+        isOpen={otpOpen}
+        onClose={() => { setOTPOpen(false); setDialogType(null); }}
+        onCancel={() => { setOTPOpen(false); setDialogType(null); }} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen >
   );

@@ -35,7 +35,7 @@ const SummaryDialog = ({ classes,
     const { isRTL } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
-    const { newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
+    const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
 
     const {
         FinalClients,
@@ -128,6 +128,19 @@ const SummaryDialog = ({ classes,
             <span className={classes.summaryDetailsSpanBold}>{value}</span>
         </Box>;
     }
+    const renderExceptionalGroups = (property, list) => {
+        return <Box>
+            <span style={{ display: 'flex', paddingTop: 10, paddingInline: 10 }}>{property} <span className={classes.summaryDetailsSpanBold}>({t("common.Total")}: {ExceptionalGroupsClientsCount})</span></span>
+            <ul>
+                {list.map((l) => {
+                    return <li>
+                        <span className={classes.summaryDetailsSpanBold}>{l}</span>
+                    </li>
+                })
+                }
+            </ul>
+        </Box>;
+    }
     const renderFilterDetails = () => {
         return detailsHide ? <></> : (<Box className={classes.summaryExpandRecipientFilter}>
             {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients.toLocaleString())}
@@ -139,13 +152,13 @@ const SummaryDialog = ({ classes,
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
             {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
             {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), ExceptionalOpensClicksClientsCount.toLocaleString())}
-            {ExceptionalGroups > 0 && renderDetailsLine(t("smsReport.inputTextFilter"), `${ExceptionalGroups.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalGroupsClientsCount})`)}
+            {ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
         </Box>)
     }
     const handleFromEmailChanged = (event) => {
-        if (campaignInfo && campaignInfo.CampaignID) {
+        if (newsletterInfo && newsletterInfo.CampaignID) {
             setFromEmail(event.target.value);
-            const updateInfo = { ...campaignInfo };
+            const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = event.target.value;
             dispatch(saveCampaignInfo(updateInfo));
         }

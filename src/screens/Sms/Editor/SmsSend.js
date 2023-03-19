@@ -1721,6 +1721,7 @@ const SmsSend = ({ classes, ...props }) => {
         classes={classes}
         open={sendType2Dialog}
         onClose={() => { setsendType2Dialog(false) }}
+        onCancel={() => { setsendType2Dialog(false) }}
         showDefaultButtons={false}
         icon={
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
@@ -1763,6 +1764,7 @@ const SmsSend = ({ classes, ...props }) => {
         classes={classes}
         open={specialSettingValidation}
         onClose={() => { setspecialSettingValidation(false) }}
+        onCancel={() => { setspecialSettingValidation(false) }}
         showDefaultButtons={false}
         icon={
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />

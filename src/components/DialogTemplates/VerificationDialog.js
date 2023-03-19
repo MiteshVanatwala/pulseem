@@ -1212,6 +1212,10 @@ const VerificationDialog = ({
                     setDeleteValue(null);
                     setShowConfirmDelete(false);
                 }}
+                onCancel={() => {
+                    setDeleteValue(null);
+                    setShowConfirmDelete(false);
+                }}
                 onConfirm={removeValue}
                 title={t('settings.accountSettings.2fa.deleteValueTitle')}
             >
@@ -1222,6 +1226,7 @@ const VerificationDialog = ({
                 contentStyle={classes.maxWidth900}
                 open={isOpen}
                 onClose={handleClose}
+                onCancel={handleClose}
                 renderButtons={Popup().renderButtons || null}
                 {...Popup()}>
                 {Popup().content}

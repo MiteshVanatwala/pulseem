@@ -315,7 +315,6 @@ const SmsMarketingDialog = ({
                         {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.sendingTime')}
                     </Typography>
                     <DateField
-                        minDate={moment()}
                         classes={classes}
                         value={smsModel.SendTime}
                         onTimeChange={(value) => {
@@ -325,7 +324,7 @@ const SmsMarketingDialog = ({
                         isTimePicker={true}
                         ampm={false}
                         error={!!errors.SendTime}
-                        helperText={!!errors.SendTime && errors.SendTime}
+                        errorMessage={!!errors.SendTime && errors.SendTime}
                     />
                 </Grid>
                 <Grid item md={12}>
@@ -435,6 +434,7 @@ const SmsMarketingDialog = ({
         classes={classes}
         open={isOpen}
         onClose={() => { setDialogType(null) }}
+        onCancel={() => { setDialogType(null) }}
         {...currentDialog}>
         {currentDialog.content}
     </BaseDialog>

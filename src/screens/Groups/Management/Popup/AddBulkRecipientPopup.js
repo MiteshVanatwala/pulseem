@@ -80,6 +80,7 @@ const AddBulkRecipientPopup = ({ classes,
             </div>}
             showDivider={true}
             onClose={onClose}
+            onCancel={onClose}
             renderButtons={() => (<></>)}
             customContainerStyle={classes.addRecipientDialog}
         >

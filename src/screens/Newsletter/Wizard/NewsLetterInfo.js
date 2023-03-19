@@ -800,6 +800,7 @@ const NewsLetterInfo = ({ classes }) => {
                     classes={classes}
                     open={showGallery}
                     onClose={() => { setShowGallery(false) }}
+                    onCancel={() => { setShowGallery(false) }}
                     onConfirm={handleGalleryConfirm}
                     {...dialog}>
                     {dialog.content}

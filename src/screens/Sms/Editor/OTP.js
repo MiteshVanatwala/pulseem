@@ -241,6 +241,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
         }
     }
     const handleClose = () => {
+        setLoader(false);
         setDialogType(null);
     };
 
@@ -260,6 +261,7 @@ const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) 
                 classes={classes}
                 open={dialogType}
                 onClose={handleClose}
+                onCancel={handleClose}
                 {...currentDialog}>
                 {currentDialog.content}
             </BaseDialog>

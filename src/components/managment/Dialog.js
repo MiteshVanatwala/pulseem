@@ -138,6 +138,7 @@ export const Dialog = ({
       style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
+      onCancel={onClose}
       onClose={(event, reason) => {
         if (reason !== 'backdropClick' || !disableBackdropClick) {
           onClose();

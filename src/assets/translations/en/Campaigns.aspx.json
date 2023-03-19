@@ -577,6 +577,7 @@
         "invalidTime": "Invalid time",
         "enterVerifiedNumber": "Please enter the verified phone number"
       },
+      "deleted": "Campaign deleted successfully",
       "send": "Send",
       "doNotSend": "Do not send",
       "smsComplementary": "Complementary SMS Marketing"
