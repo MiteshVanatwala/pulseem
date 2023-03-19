@@ -924,7 +924,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
       getData()
     },
     onCancel: () => {
-      handleClose()
+      setDuplicateOptions([]);
+      handleClose();
+    },
+    onClose: () => {
+      setDuplicateOptions([]);
+      handleClose();
     }
   })
 
