@@ -490,6 +490,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const createNewGroup = async (groupName) => {
+        setLoader(true);
         const nameExist = subAccountAllGroups?.filter((g) => { return g?.GroupName === groupName });
         if (nameExist.length > 0) {
             setNewGroupDetails({ ...newGroupDetails, groupNameExist: true });
@@ -509,6 +510,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         await dispatch(combinedGroup(payload));
         setNewGroupDetails({ toggleChecked: false, groupNameExist: false, groupValue: '' });
         setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
+        setLoader(false);
     };
 
     const callbackSelectedGroups = (group) => {
@@ -565,7 +567,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onChange={handleInputNewGroup}
                 value={newGroupDetails.groupValue}
             />
-            <span className={classes.saveBtn}
+            <span className={clsx(classes.saveBtn, !newGroupDetails.groupValue || newGroupDetails.groupValue === '' ? classes.disabled : null)}
                 onClick={() => createNewGroup(newGroupDetails.groupValue)}
             >
                 {t("mainReport.save")}
