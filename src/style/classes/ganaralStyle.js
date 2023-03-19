@@ -2789,5 +2789,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     opacity: ".65",
     pointerEvents: "unset !important",
     cursor: "not-allowed !important",
+  },
+  disableChildButtons: {
+    '& button': {
+      opacity: ".65",
+      pointerEvents: "none !important",
+      cursor: "not-allowed !important",
+    }
   }
 });
