@@ -34,6 +34,7 @@ import { getCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { setCookie } from '../../../helpers/Functions/cookies';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
@@ -851,7 +852,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
     showDivider: false,
     content: (
       <>
-        <Typography align='center' className={classes.mb5}>{t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `"${campaignName}"`)}</Typography>
+        <Typography align='center'
+          className={classes.mb5}
+        >{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `<b>"${campaignName}"</b>`))}
+        </Typography>
         <FormControl>
           <FormGroup>
             <FormControlLabel
@@ -912,9 +916,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
           </FormGroup>
         </FormControl>
       </>
-      // <Typography style={{ fontSize: 18 }}>
-      //   {t('campaigns.dialogDuplicateContent')}
-      // </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
@@ -941,7 +942,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
+      duplicate: getDuplicateDialog(campaign?.CampaignID, campaign?.Name),
       cautionEditorChange: getCautionEditorChangeDialog(data),
     }
 
