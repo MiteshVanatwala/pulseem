@@ -167,21 +167,21 @@ const LatestReports = ({ classes, t, isRTL }) => {
 
     if (tabType === "newsletter") {
       datasets.push(
-        { stack: 2, label: `${t('common.Opens')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: opens, title: 'aaa' },
-        { stack: 3, label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks, title: 'bbb' }
+        { label: `${t('common.Opens')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: opens },
+        { label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
       );
     }
 
     if (tabType === 'sms') {
       datasets.push(
-        { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
-        { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
+        { label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
+        { label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
       );
     }
     if (tabType === 'whatsapp') {
       datasets.push(
-        // { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
-        // { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
+        // { label: `${t('common.Removed')}`, backgroundColor: "#FF0076", hoverBackgroundColor: "#FF0076", data: removed },
+        // { label: `${t('common.Clicks')}`, backgroundColor: "#CCFF00", hoverBackgroundColor: "#CCFF00", data: clicks }
       );
     }
 
