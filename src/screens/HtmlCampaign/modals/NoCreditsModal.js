@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { FaExclamationCircle } from 'react-icons/fa'
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 const renderHtml = (html) => {
   function createMarkup() {

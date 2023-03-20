@@ -6,6 +6,8 @@ import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+import { RiSendPlaneFill } from "react-icons/ri";
 
 const ResponseModal = ({
   classes,
