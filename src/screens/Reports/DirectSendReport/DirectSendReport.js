@@ -27,6 +27,7 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import { useSearchParams } from 'react-router-dom';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import Title from '../../../components/Wizard/Title';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
