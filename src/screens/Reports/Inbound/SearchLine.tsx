@@ -274,7 +274,7 @@ const SearchLine = ({
                         key={autoCompleteKey}
                         id='searchByCampaign'
                         getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
-                        //@ts-ignore
+                        // @ts-ignore
                         noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
                         clearOnBlur={false}
                         options={autoCompleteOptions}

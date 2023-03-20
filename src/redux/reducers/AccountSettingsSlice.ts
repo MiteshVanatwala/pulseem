@@ -81,9 +81,9 @@ export const deleteAuthorizationValue = createAsyncThunk(
     })
 
 export const checkEmailAuthorization = createAsyncThunk(
-    'CheckEmailAuthorization', async (value: string, thunkAPI) => {
+    'CheckEmailAuthorization', async (emailAuth: AuthorizationValues, thunkAPI) => {
         try {
-            const response = await instence.get(`authorization/CheckEmailAuthorization/${value}`);
+            const response = await instence.get(`authorization/CheckEmailAuthorization/${emailAuth.value}/${emailAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -100,7 +100,7 @@ export const deleteAuthorization2FA = createAsyncThunk(
         }
     })
 export const checkCellphoneAuthorization = createAsyncThunk(
-    'CheckCellphoneAuthorization', async (cellphoneAuth: CellphoneAuthorization, thunkAPI) => {
+    'CheckCellphoneAuthorization', async (cellphoneAuth: AuthorizationValues, thunkAPI) => {
         try {
             const response = await instence.get(`authorization/CheckCellphoneAuthorization/${cellphoneAuth.value}/${cellphoneAuth.isTwoFa}`);
             return response.data
@@ -109,7 +109,7 @@ export const checkCellphoneAuthorization = createAsyncThunk(
         }
     })
 
-interface CellphoneAuthorization {
+interface AuthorizationValues {
     value: string,
     isTwoFa: boolean
 }
