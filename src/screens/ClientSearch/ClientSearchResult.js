@@ -1686,6 +1686,7 @@ const ClientSearchResult = ({ classes }) => {
       switch (dialog) {
         case DialogType.ADD_GROUP: {
           return <AddGroupPopUp
+            classes={classes}
             isOpen={dialog === DialogType.ADD_GROUP}
             onClose={() => setDialog(null)}
             setLoader={setLoader}
@@ -1712,6 +1713,7 @@ const ClientSearchResult = ({ classes }) => {
           }
 
           return <AddRecipientPopup
+            classes={classes}
             isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
             onClose={() => { setDialog(null); setSelectedClients([]); }}
             setLoader={setLoader}
@@ -1732,6 +1734,7 @@ const ClientSearchResult = ({ classes }) => {
         }
         case DialogType.UNSUB_RECIPIENT: {
           return <UnsubscribeOrDeletePopup
+            classes={classes}
             isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
             onClose={() => { setDialog(null); }}
             setLoader={setLoader}
