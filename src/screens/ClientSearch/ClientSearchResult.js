@@ -1591,7 +1591,7 @@ const ClientSearchResult = ({ classes }) => {
         }
         // title={t("group.delete")}
         title={DialogObject[dialog]?.title || ''}
-        showDivider={true}
+        showDivider={false}
         onClose={DialogObject[dialog]?.onClose || ''}
         onCancel={DialogObject[dialog]?.onClose || ''}
         onConfirm={DialogObject[dialog]?.onConfirm || null}

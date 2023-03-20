@@ -22,7 +22,7 @@ const Package = ({ classes,
                         <NumberFormat value={pack.Quantity} displayType={'text'} thousandSeparator={true} />
                     </Typography>
                     <Typography className={clsx(classes.black, classes.bold, classes.mb2, classes.textCenter)}>
-                        <NumberFormat className={clsx(classes.f20, classes.textCenter)} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={'₪'} />
+                        <NumberFormat className={clsx(classes.f20, classes.textCenter, classes.packagePriceText)} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={'₪'} />
                     </Typography>
                     <Button
                         variant='contained'

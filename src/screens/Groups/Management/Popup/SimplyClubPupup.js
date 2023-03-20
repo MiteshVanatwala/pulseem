@@ -451,7 +451,7 @@ const SimplyClubPupup = ({
                         {t("group.externalImportTitle")}
                     </>
                 }
-                showDivider={true}
+                showDivider={false}
                 childrenStyle={classes.mt0}
             >
                 <Box className={clsx(localClasses.dialogContainer, classes.sidebar)}>
@@ -550,7 +550,7 @@ const SimplyClubPupup = ({
                     {'\uE0D5'}
                 </div >}
                 title={t("group.simplyClubLoginTitle")}
-                showDivider={true}
+                showDivider={false}
             >
                 <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: error ? 0 : 15 }}>
                     <Box

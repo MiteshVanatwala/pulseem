@@ -142,7 +142,7 @@ const TestSend = ({
                     icon={<div className={classes.dialogIconContent}>
                         <RiSendPlaneFill />
                     </div>}
-                    showDivider={true}
+                    showDivider={false}
                     onClose={onClose}
                     onCancel={onClose}
                     onConfirm={prepareForSubmit}

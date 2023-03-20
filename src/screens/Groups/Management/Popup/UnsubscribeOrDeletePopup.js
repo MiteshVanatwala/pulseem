@@ -592,7 +592,7 @@ const UnsubscribeOrDeletePopup = ({
                     {'\uE0D5'}
                 </div>}
                 showDefaultButtons={false}
-                showDivider={true}
+                showDivider={false}
                 onClose={() => { setLimitationWarning(false) }}
                 onCancel={() => { setLimitationWarning(false) }}
                 renderButtons={() => {

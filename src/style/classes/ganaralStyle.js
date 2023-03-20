@@ -182,6 +182,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "500",
     color: "#fff",
     whiteSpace: "pre-line",
+    paddingInlineEnd: isRTL ? 15 : 0,
+    paddingInlineStart: isRTL ? 0 : 15
   },
   resetDialogTitle: {
     fontSize: "2rem",
@@ -618,10 +620,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 30,
   },
   packageBoxTitle: {
-    color: "#f5370d",
+    color: "#fff",
+  },
+  packagePriceText: {
+    color: "rgb(204, 255, 0)",
   },
   blue: {
-    color: "#0a74a9",
+    color: "#FF0054",
   },
   bgLightBlue: {
     backgroundColor: "#E3E9F0",
@@ -645,7 +650,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   packageBox: {
     borderRadius: 30,
-    background: 'linear-gradient(145deg, #fff3f3, #ffc2b0)',
+    // background: 'linear-gradient(145deg, #fff3f3, #ffc2b0)',
+    background: 'linear-gradient(0deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
     boxShadow: '5px 5px 10px #999999, -5px -5px 10px #ffffff',
     padding: 5,
   },
@@ -2603,18 +2609,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   //#region Dialog
   dialogIconContainer: {
+    paddingInlineStart: isRTL ? 0 : 15,
+    paddingInlineEnd: isRTL ? 15 : 0,
     fontSize: 25,
-    marginTop: -2,
     textAlign: "center",
     color: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  dialogIconContainerRTL: {
-    paddingInlineStart: 10,
-  },
-  dialogIconContainerLTR: {
-    paddingInlineEnd: 10,
   },
   solidDialogExitButton: {
     fontSize: 30,
@@ -2628,22 +2627,32 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dialogTopBar: {
     height: 50,
-    padding: "2px 0px 0 15px",
+    width: '100%',
+    display: 'flex',
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: isRTL ? 'row-reverse !important' : 'row',
+    alignItems: 'center',
     color: "#fff",
     fontWeight: 600,
     textTransform: "capitalize",
-    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)'
+    background: 'linear-gradient(90deg, #FF0076 0%, #FF0054 23.8%, #FF4D2A 100%)',
+    '& .MuiStack-root': {
+      display: 'flex',
+      flexDirection: isRTL ? 'row-reverse' : 'row',
+      paddingInlineStart: 15,
+      paddingInlineEnd: 15,
+    },
+
   },
   dialogExitButton: {
-    width: 27,
-    height: 27,
-    textAlign: "center",
+    paddingInlineStart: isRTL ? 15 : 0,
+    paddingInlineEnd: isRTL ? 0 : 15,
+    marginInlineStart: isRTL ? null : 'auto',
+    marginInlineEnd: isRTL ? 'auto' : null,
     color: "#fff",
     fontWeight: "700",
-    position: "absolute",
-    top: "-0.2rem",
     cursor: "pointer",
-    borderBottomLeftRadius: 17,
     fontSize: 18
   },
   btnBgExitDialog: {
@@ -2653,14 +2662,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: "none",
     color: "#000"
   },
-  dialogExitButtonRTL: {
-    right: 15,
-    top: 15
-  },
-  dialogExitButtonLTR: {
-    left: 15,
-    top: 15
-  },
+  // dialogExitButtonRTL: {
+  //   right: 15,
+  //   top: 15
+  // },
+  // dialogExitButtonLTR: {
+  //   left: 15,
+  //   top: 15
+  // },
   solidDialog: {
     display: "flex",
     flexDirection: "column",
@@ -3007,6 +3016,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       },
 
       '& .MuiSelect-root': {
+        minHeight: 25,
         maxHeight: 29,
         overflow: "hidden",
         padding: '3px 0 7px 0',

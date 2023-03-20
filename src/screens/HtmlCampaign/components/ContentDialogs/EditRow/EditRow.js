@@ -1,8 +1,8 @@
 import React from 'react'
-import { SolidDialog } from '../../../../../components/managment/SolidDialog';
 import { useTranslation } from "react-i18next";
 import { Box, TextField, Typography } from '@material-ui/core'
 import clsx from 'clsx';
+import { BaseDialog } from '../../../../../components/DialogTemplates/BaseDialog';
 
 const EditRow = ({ onClose, save, args, classes }) => {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ const EditRow = ({ onClose, save, args, classes }) => {
 
   return (
     <>
-      <SolidDialog
+      <BaseDialog
         classes={classes}
         key={123}
         disableBackdropClick={true}
@@ -64,7 +64,7 @@ const EditRow = ({ onClose, save, args, classes }) => {
           </>
         }
       >
-      </SolidDialog>
+      </BaseDialog>
     </>
   )
 }

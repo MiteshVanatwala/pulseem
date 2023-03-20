@@ -176,7 +176,7 @@ const ColumnAdjustmentDialog = ({
             icon={<div className={classes.dialogIconContent}>
                 {'\u0056'}
             </div>}
-            showDivider={true}
+            showDivider={false}
         >
 
             {data.length > 0 ?

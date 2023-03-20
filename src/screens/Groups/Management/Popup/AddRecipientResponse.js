@@ -21,7 +21,7 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
       icon={<div className={classes.dialogIconContent}>
         {'\uE0D5'}
       </div>}
-      showDivider={true}
+      showDivider={false}
       onClose={onClose}
       onConfirm={onClose}
       confirmText="common.Ok"

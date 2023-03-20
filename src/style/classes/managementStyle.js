@@ -89,7 +89,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "Assistant",
     fontWeight: "bold",
     whiteSpace: windowSize === "xs" ? "break-spaces" : null,
-    fontWeight: 300,
+    fontWeight: 500,
     color: '#4D4D4D',
     width: '100%'
   },

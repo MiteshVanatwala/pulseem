@@ -524,7 +524,7 @@ const NewsLetterInfo = ({ classes }) => {
                 gridArr={[
                     {
                         content:
-                            <Box className='textBoxWrapper'>
+                            <Box>
                                 <Typography title={t("campaigns.camapignName")} className={classes.alignDir}>{t("campaigns.camapignName")}</Typography>
                                 <TextField
                                     id="campaignName"
@@ -538,16 +538,18 @@ const NewsLetterInfo = ({ classes }) => {
                                     error={errors.Name}
                                     title={campaingnValues.Name}
                                 />
-                                <Typography className={clsx(errors.Name ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                    {errors.Name ? errors.Name : helperTexts.Name}
-                                </Typography>
+                                <Box className='textBoxWrapper'>
+                                    <Typography className={clsx(errors.Name ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                        {errors.Name ? errors.Name : helperTexts.Name}
+                                    </Typography>
+                                </Box>
                             </Box>,
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
                         content:
-                            <Box className='textBoxWrapper'>
-                                <Typography title={t("campaigns.newsLetterEditor.fromName")} className={classes.alignDir}>{t("campaigns.camapignName")}</Typography>
+                            <Box>
+                                <Typography title={t("campaigns.newsLetterEditor.fromName")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromName")}</Typography>
                                 <TextField
                                     id="outlined-basic"
                                     label=""
@@ -561,9 +563,11 @@ const NewsLetterInfo = ({ classes }) => {
                                     title={campaingnValues.FromName}
                                 // helperText={errors.FromName ? errors.FromName : helperTexts.FromName}
                                 />
-                                <Typography className={clsx(errors.FromName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                    {errors.FromName ? errors.FromName : helperTexts.FromName}
-                                </Typography>
+                                <Box className='textBoxWrapper'>
+                                    <Typography className={clsx(errors.FromName ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                        {errors.FromName ? errors.FromName : helperTexts.FromName}
+                                    </Typography>
+                                </Box>
                             </Box>
                         ,
                         gridSize: { xs: 12, sm: 4 }
@@ -571,7 +575,7 @@ const NewsLetterInfo = ({ classes }) => {
                     {
                         content:
                             <Box className='selectWrapper'>
-                                <Typography title={t("campaigns.newsLetterEditor.fromName")} className={classes.alignDir}>{t("campaigns.camapignName")}</Typography>
+                                <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>
                                 <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100)} >
                                     <Select
                                         labelId="FromEmail"
@@ -627,7 +631,7 @@ const NewsLetterInfo = ({ classes }) => {
                         content:
                             <>
                                 {/* // <Box className={classes.flex}> */}
-                                <Box className={clsx('textBoxWrapper', classes.w100)}>
+                                <Box className={classes.w100}>
                                     <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>
                                     <Box className={classes.flex}>
 
@@ -650,9 +654,11 @@ const NewsLetterInfo = ({ classes }) => {
                                             }}
                                         />
                                     </Box>
-                                    <Typography className={clsx(errors.Subject ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
-                                        {errors.Subject ? errors.Subject : helperTexts.Subject}
-                                    </Typography>
+                                    <Box className='textBoxWrapper'>
+                                        <Typography className={clsx(errors.Subject ? classes.errorText : 'MuiFormHelperText-root', classes.f14)}>
+                                            {errors.Subject ? errors.Subject : helperTexts.Subject}
+                                        </Typography>
+                                    </Box>
                                 </Box>
 
                             </>
@@ -1058,7 +1064,7 @@ const NewsLetterInfo = ({ classes }) => {
                 </Box>
                 <Box className={"containerBody"}>
                     {CampaignBox1()}
-                    <Divider />
+                    {/* <Divider /> */}
                     <Grid container spacing={3} className={classes.ps15}>
                         {/* Additional Text */}
                         <Grid item xs={12} sm={5} >
@@ -1098,7 +1104,7 @@ const NewsLetterInfo = ({ classes }) => {
                         classes={classes}
                         open={confirmExit}
                         title={t("campaigns.GridButtonColumnResource2.confirmExit")}
-                        showDivider={true}
+                        showDivider={false}
                         onClose={() => handleExit(false)}
                         onCancel={() => handleExit(null)}
                         onConfirm={() => handleExit(true)}
@@ -1116,7 +1122,7 @@ const NewsLetterInfo = ({ classes }) => {
                         classes={classes}
                         open={confirmDelete}
                         title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
-                        showDivider={true}
+                        showDivider={false}
                         onClose={() => setConfirmDelete(false)}
                         onCancel={() => setConfirmDelete(false)}
                         onConfirm={() => handleDelete()}

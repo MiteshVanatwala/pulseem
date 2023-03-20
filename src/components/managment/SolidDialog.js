@@ -39,6 +39,7 @@ export const SolidDialog = ({
 
   const { t } = useTranslation()
   const { isRTL, windowSize } = useSelector(state => state.core)
+  const { exit = null, maxHeight = null } = props;
 
   const onExit = () => {
     if (onCancel !== null) {

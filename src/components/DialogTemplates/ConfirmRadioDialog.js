@@ -2,9 +2,9 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
-import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
+import { BaseDialog } from './BaseDialog';
 
 const ConfirmRadioDialog = ({
     classes,
@@ -110,13 +110,13 @@ const ConfirmRadioDialog = ({
         )
     };
 
-    return (<SolidDialog
+    return (<BaseDialog
         classes={classes}
         open={isOpen ?? false}
         onClose={() => onCancel()}
         {...dialog}>
         {dialog.content}
-    </SolidDialog>);
+    </BaseDialog>);
 }
 
 export default ConfirmRadioDialog;

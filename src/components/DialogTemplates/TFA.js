@@ -6,6 +6,7 @@ import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
 import { setCookie } from '../../helpers/Functions/cookies';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { BaseDialog } from './BaseDialog';
 
 
 const TFA = ({ classes,
@@ -91,13 +92,13 @@ const TFA = ({ classes,
         )
     };
 
-    return (<SolidDialog
+    return (<BaseDialog
         classes={classes}
         open={showTFA}
         onClose={() => { onCancel() }}
         {...dialog}>
         {dialog.content}
-    </SolidDialog>);
+    </BaseDialog>);
 }
 
 export default TFA;

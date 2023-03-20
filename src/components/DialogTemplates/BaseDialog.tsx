@@ -6,7 +6,6 @@ import {
   Grid,
   Dialog,
   Paper,
-  Divider,
 } from "@material-ui/core";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
@@ -24,9 +23,9 @@ export const BaseDialog = ({
   icon = "",
   children,
   showDivider = false,
-  onClose = () => {},
-  onCancel = () => {},
-  onConfirm = () => {},
+  onClose = () => { },
+  onCancel = () => { },
+  onConfirm = () => { },
   renderButtons = null,
   renderTitle = null,
   disableBackdropClick = false,
@@ -86,7 +85,7 @@ export const BaseDialog = ({
       >
         {title}
       </Typography>
-      {showDivider && <Divider />}
+      {/* {showDivider && <Divider />} */}
     </>
   );
 
@@ -138,12 +137,7 @@ export const BaseDialog = ({
     if (icon === false) return <></>;
     const alertIcon = <IoAlertCircleOutline />;
     return (
-      <Stack
-        className={clsx(classes.dialogIconContainer, {
-          [classes.dialogIconContainerRTL]: isRTL,
-          [classes.dialogIconContainerLTR]: !isRTL,
-        })}
-      >
+      <Stack className={classes.dialogIconContainer}>
         {icon || alertIcon}
       </Stack>
     );
@@ -152,12 +146,11 @@ export const BaseDialog = ({
   const RenderTopBar = () => {
     return (
       <Stack
-        style={{ width: '100%' }}
         className={clsx(classes.dialogTopBar)}
         direction="row"
         justifyContent={"space-between"}
       >
-        <Stack direction={"row"}>
+        <Stack direction={isRTL ? "row-reverse" : "row"}>
           {RenderIcon()}
           <Stack alignSelf="center">
             {renderTitle ? renderTitle() : RenderTitleDefault()}
@@ -176,8 +169,8 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-            ? "calc(65vh)"
-            : "calc(45vh)",
+              ? "calc(65vh)"
+              : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
         }}

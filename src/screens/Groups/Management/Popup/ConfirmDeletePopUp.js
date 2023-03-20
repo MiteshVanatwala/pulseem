@@ -18,7 +18,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
             title={t("group.delete")}
 
             icon={<MdDeleteForever />}
-            showDivider={true}
+            showDivider={false}
             onClose={onClose}
             onCancel={onClose}
             onConfirm={() => handleDeleteGroup()}

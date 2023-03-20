@@ -78,10 +78,11 @@ const BulkStatus = ({ classes }) => {
         classes: classes,
         open: isOpenPackageDialog,
         title: selectedPackageType.title,
-        onCancel: handleDialogClose,
+        // onCancel: handleDialogClose,
         onClose: handleDialogClose,
-        onConfirm: handleDialogClose,
-        ShowDefaultButtons: false,
+        // onConfirm: handleDialogClose,
+        renderButtons: false,
+        showDefaultButtons: false,
         Style: availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null,
         children: dialog.content,
         paperStyle: classes.packageDialogPpaper
@@ -190,7 +191,7 @@ const BulkStatus = ({ classes }) => {
                 {getBillingTypeText(Newsletters)}
               </Typography>
             </Box>
-            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 2, title: t('dashboard.purchaseNewsletter') })}>
+            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 2, title: t('common.newsletterBulkTitle') })}>
               <Button className={clsx(classes.btn, classes.btnRounded, !isAllowNewsletter() ? classes.btnDisabled : '')}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -217,7 +218,7 @@ const BulkStatus = ({ classes }) => {
                 {getBillingTypeText(Sms)}
               </Typography>
             </Box>
-            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 3, title: t('dashboard.purchaseSms') })}>
+            <Box className={clsx(classes.flex1)} onClick={() => showPackageDialogType({ type: 3, title: t('common.smsBulkTitle') })}>
               <Button className={clsx(classes.btn, classes.btnRounded, !isAllowSms() ? classes.btnDisabled : '')}>
                 {t('dashboard.purchase')}
                 {isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}

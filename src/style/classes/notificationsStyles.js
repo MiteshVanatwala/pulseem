@@ -517,7 +517,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundColor: 'transparent'
     },
     blue: {
-        color: '#1c82b2',
+        color: '#FF0054',
         stroke: '#1c82b2 !important'
     },
     green: {

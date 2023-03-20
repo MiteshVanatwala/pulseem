@@ -136,12 +136,7 @@ export const Dialog = (options: Options) => {
   const renderIcon = () => {
     const alertIcon = <AlertIcon />;
     return (
-      <Box
-        className={clsx(options.Classes.dialogIconContainer, {
-          [options.Classes.dialogIconContainerRTL]: isRTL,
-          [options.Classes.dialogIconContainerLTR]: !isRTL,
-        })}
-      >
+      <Box className={options.Classes.dialogIconContainer}>
         {options.icon || alertIcon}
       </Box>
     );

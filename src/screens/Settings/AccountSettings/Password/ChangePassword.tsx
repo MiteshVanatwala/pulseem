@@ -226,7 +226,7 @@ const ChangePassword = ({
         onCancel={OnClose}
         onConfirm={handleConfirm}
         title={t("settings.changePassword.title")}
-        showDivider={true}
+        showDivider={false}
       >
         <Grid
           container

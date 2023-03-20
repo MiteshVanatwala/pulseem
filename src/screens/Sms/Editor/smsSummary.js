@@ -38,7 +38,7 @@ const SmsSummary = ({ classes,
       {open && <BaseDialog
         style={{ paddingBottom: 20 }}
         title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
-        showDivider={true}
+        showDivider={false}
         classes={classes}
         open={open}
         onClose={() => { handleSmsSettings() }}
