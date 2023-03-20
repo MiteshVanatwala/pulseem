@@ -302,6 +302,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
             setTfaEmailVerification(false);
             setVerificationStep(0);
           }}
+          onCancel={() => {
+            setTfaEmailVerification(false);
+            setVerificationStep(0);
+          }}
         />
       }
       {
@@ -314,6 +318,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
           value={verificationStep > 0 && emailToVerify}
           step={verificationStep}
           onClose={() => {
+            setEmailVerificationPopup(false);
+            setVerificationStep(0);
+          }}
+          onCancel={() => {
             setEmailVerificationPopup(false);
             setVerificationStep(0);
           }} />
@@ -331,7 +339,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
             setTfaSmsVerification(false);
             setVerificationStep(0);
           }}
-        />
+          onCancel={() => {
+            setTfaSmsVerification(false);
+            setVerificationStep(0);
+          }} />
       }
       {
         smsVerificationPopup && <VerificationDialog
@@ -343,6 +354,10 @@ const AccountSettingsEditor = ({ classes }: any) => {
           step={verificationStep}
           isOpen={smsVerificationPopup}
           onClose={() => {
+            setSmsVerificationPopup(false);
+            setVerificationStep(0);
+          }}
+          onCancel={() => {
             setSmsVerificationPopup(false);
             setVerificationStep(0);
           }} />

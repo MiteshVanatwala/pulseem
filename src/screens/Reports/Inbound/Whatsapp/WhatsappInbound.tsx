@@ -76,7 +76,7 @@ const WhatsappInbound = ({ classes }: any) => {
     PageIndex: 1,
     PageSize: rowsPerPage,
     IsExport: false,
-  };
+  } as wpInbdDefaultFilterType;
   const [request, setRequest] =
     useState<wpInbdDefaultFilterType>(defaultRequest);
   // const [searchRequest, setSearchRequest] =
@@ -376,10 +376,13 @@ const WhatsappInbound = ({ classes }: any) => {
         <Box>
           {renderHeader()}
           <SearchLine
+            key="sl"
+            currentPage={page}
+            showAutoCompleteForm={false}
             classes={classes}
-            onSetPage={(val) => setPage(val)}
-            onFilterRequest={(val) => setRequest(val)}
-            onSetIsSearching={(val) => setIsSearching(val)}
+            onSetPage={(val: number) => setPage(val)}
+            onFilterRequest={(val: wpInbdDefaultFilterType) => setRequest(val)}
+            onSetIsSearching={(val: boolean) => setIsSearching(val)}
           />
           {renderTable()}
           {renderTablePagination()}

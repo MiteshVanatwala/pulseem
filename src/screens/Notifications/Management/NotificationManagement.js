@@ -352,7 +352,7 @@ const NotificationManagement = ({ classes }) => {
         {<Grid item>
           <Button
             component="a"
-            href='/react/Notification/create'
+            href={`${sitePrefix}Notification/create`}
             onClick={(e) => {
               e.preventDefault()
               Redirect({ url: `${sitePrefix}Notification/create` })

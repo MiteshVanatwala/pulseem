@@ -13,10 +13,3 @@ export type ERROR_TYPE = {
 export const VoidFunction: () => void = () => {
   return false;
 };
-
-export interface TOAST_TYPE {
-  severity: "success" | "error";
-  color: "success" | "error";
-  message: string;
-  showAnimtionCheck: boolean;
-}

@@ -127,10 +127,31 @@ export const getExternalClientsByGroups = createAsyncThunk(
         }
     });
 
+export const combinedGroup = createAsyncThunk(
+    'group/CreateCombinedGroup', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`group/CreateCombinedGroup`, data);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const createAndGetGroupIdForManualSend = createAsyncThunk(
+    'Group/CreateAndGetGroupIdForManualSend', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`Group/CreateAndGetGroupIdForManualSend`);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+
 
 export const groupSlice = createSlice({
     name: 'group',
     initialState: {
+        defaultGroupId: -1,
         selectedGroups: [],
         subAccountAllGroups: [],
         groupData: null,
@@ -184,6 +205,12 @@ export const groupSlice = createSlice({
         })
         builder.addCase(getGroups.fulfilled, (state, { payload }) => {
             state.groupData = payload;
+        })
+        builder.addCase(combinedGroup.fulfilled, (state, action) => {
+            state.subAccountAllGroups.push(action.payload);
+        })
+        builder.addCase(createAndGetGroupIdForManualSend.fulfilled, (state, { payload }) => {
+            state.defaultGroupId = payload;
         })
         builder.addCase(createGroup.rejected, (state, { error }) => {
             state.error = error.message;

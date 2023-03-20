@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, FormControlLabel, Checkbox
+  Grid, Button, TextField, Box, FormControlLabel, Checkbox, FormControl, FormGroup
 } from '@material-ui/core'
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon,
@@ -32,9 +32,10 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
+import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const NewsletterManagnentScreen = ({ classes }) => {
-
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -57,6 +58,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const accountFeatures = getCookie("accountFeatures")
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
+  const [duplicateOptions, setDuplicateOptions] = useState([])
 
   moment.locale(language)
 
@@ -327,7 +329,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        href: `/react/Campaigns/SendSettings/${CampaignID}`
+        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -657,7 +660,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
     } else {
       setRestoreArray([...restoreArray, CampaignID])
     }
+  }
 
+  const handleDuplicateOptions = (option) => {
+    let tempArray = [...duplicateOptions]
+    if (tempArray.indexOf(option) > -1) {
+      tempArray = tempArray.filter((opt) => opt !== option)
+    }
+    else {
+      tempArray = [...tempArray, option]
+    }
+    setDuplicateOptions(tempArray)
   }
 
   const handleHideDuplicateCationMessage = (e) => {
@@ -810,30 +823,88 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
   })
 
-  const getDuplicateDialog = (data = '') => ({
+  const getDuplicateDialog = (campaignId, campaignName) => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('campaigns.dialogDuplicateContent')}
-      </Typography>
+      <>
+        <Typography align='center' className={classes.mb5}>{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `"${campaignName}"`))}</Typography>
+        <FormControl>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Groups)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Groups) > -1}
+                />
+              }
+              label={t("common.Groups")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Filters)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Filters) > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.filters")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.SendDate)}
+                  checked={duplicateOptions.indexOf(CloneOptions.SendDate) > -1}
+                />
+              }
+              label={t("sms.sendingTime")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.SmsMarketing)}
+                  checked={duplicateOptions.indexOf(CloneOptions.SmsMarketing) > -1}
+                />
+              }
+              label={t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
+                  checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}
+                />
+              }
+              label={t("smsReport.pulseSending")}
+            />
+          </FormGroup>
+        </FormControl>
+      </>
+      // <Typography style={{ fontSize: 18 }}>
+      //   {t('campaigns.dialogDuplicateContent')}
+      // </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
       setPage(1)
-      await dispatch(duplicteCampaign(data))
+      await dispatch(duplicteCampaign({ CampaignID: campaignId, CloneOptions: duplicateOptions }))
       getData()
     }
   })
 
   const renderDialog = () => {
     const { data, type } = dialogType || {}
+    const campaign = newslettersData?.find((e) => { return parseInt(e.CampaignID) === parseInt(data) });
 
     const dialogContent = {
       restore: getRestorDialog(data),
@@ -872,7 +943,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderDialog()}
       <VerificationDialog isOpen={dialogType?.type === "verifyEmail"} onClose={() => setDialogType(null)} variant="email" classes={classes} />
       <Loader isOpen={showLoader} />
-    </DefaultScreen>
+    </DefaultScreen >
   )
 }
 

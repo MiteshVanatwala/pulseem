@@ -12,7 +12,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
-import { BsArrowClockwise, BsInfoCircle } from "react-icons/bs";
+import { BsArrowClockwise } from "react-icons/bs";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { useLocation, useParams } from "react-router";
@@ -44,7 +44,7 @@ import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import MobilePreview from '../../../components/MobilePreive/Mobile'
+import MobilePreview from '../../../components/MobilePreivew/MobilePreivew'
 import EmojiPicker from "../../../components/Emojis/EmojiPicker";
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
 import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
@@ -56,6 +56,7 @@ import { Stack } from "@mui/material";
 import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -239,16 +240,7 @@ const SmsCreator = ({ classes }) => {
       }
       setShowRemovalLink(!accountFeatures.includes('39'))
     }
-  }, [isPageLoaded || accountFeatures]);
-
-  const renderHtml = (html) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
+  }, [isPageLoaded, accountFeatures]);
 
   const handleSendResult = async (smsSendResult) => {
     switch (smsSendResult) {
@@ -369,7 +361,6 @@ const SmsCreator = ({ classes }) => {
     if (!commonSettings || Object.keys(commonSettings).length === 0)
       await dispatch(getCommonFeatures());
     setInitFromNumber(true);
-    setIsPageLoaded(true);
   }
 
   useEffect(() => {
@@ -401,6 +392,7 @@ const SmsCreator = ({ classes }) => {
         setrestoreBool(false);
         setremovalMessageButtonDisabled(true);
       }
+      setIsPageLoaded(true);
       setLoader(false);
     }
 
@@ -483,9 +475,15 @@ const SmsCreator = ({ classes }) => {
 
   const getcredits = (count) => {
     dispatch(getCreditsforSMS(count)).then((res) => {
-      let credits = res.payload.split("#");
-      setmessageCount(credits[0]);
-      handleSmsModelChange("CreditsPerSms", credits[0]);
+      let credits = res.payload?.split("#");
+      if (credits && credits !== '') {
+        setmessageCount(credits[0]);
+        handleSmsModelChange("CreditsPerSms", credits[0]);
+      }
+      else {
+        setmessageCount(0);
+        handleSmsModelChange("CreditsPerSms", 0);
+      }
     });
   }
   const onCamppaignChange = (e) => {
@@ -1027,7 +1025,7 @@ const SmsCreator = ({ classes }) => {
   const renderPhone = () => {
     return (
       <Box className={classes.mobilePreviewContainer}>
-        <MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text} keyItem="edtiorPreview" />
+        <MobilePreview classes={classes} fromNumber={campaignNumber} text={smsModel.Text} keyItem="edtiorPreview" />
         <div
           className={classes.testDiv}
         >
@@ -1173,13 +1171,13 @@ const SmsCreator = ({ classes }) => {
   const validationCheckpoint = async (callbackFunc) => {
     if (validationCheck()) {
       if (isSiteTracking === true) {
-        if (!smsModel.Text.includes('ref') && isLinksStatistics) {
+        if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics) {
           let text = smsModel.Text;
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
           const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
           let originUrl = originalLink[0];
           let newUrl = originUrl.trim();
-          newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+          newUrl += newUrl.indexOf('?') > -1 ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
           text = smsModel.Text.replace(originUrl, newUrl);
           setSmsModel((currentState) => {
             currentState.Text = text;
@@ -1861,8 +1859,8 @@ const SmsCreator = ({ classes }) => {
       content: (
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
-          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{renderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
+          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{RenderHtml(t("sms.englishLetterNotApprovedTitle"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.englishLetterNotApprovedDescription"))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               size='small'

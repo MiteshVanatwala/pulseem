@@ -255,6 +255,12 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         <Button
           variant='contained'
           color='primary'
+          component="a"
+          href={data.ShortcutUrl}
+          onClick={(e) => {
+            e.preventDefault();
+            Redirect({ url: data.ShortcutUrl })
+          }}
           classes={{
             label: classes.shortcutLabel,
             root: classes.shortcutButton

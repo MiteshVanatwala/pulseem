@@ -146,7 +146,6 @@ const ProductsReport = ({ classes }) => {
 
         try {
             const result = await HandleExportData(exportPRData, exportOptions);
-
             ExportFile({
                 data: result,
                 fileName: 'productsReport',

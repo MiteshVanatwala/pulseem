@@ -13,17 +13,17 @@ import { Loader } from '../../../components/Loader/Loader';
 import Papa from 'papaparse';
 import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
-import Groups from "../../../components/Notifications/Groups/Groups";
+import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp, BsInfoCircle } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
-  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
+  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
-import { getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
+import { getGroupsBySubAccountId, combinedGroup } from "../../../redux/reducers/groupSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
@@ -467,7 +467,7 @@ const SmsSend = ({ classes, ...props }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    await dispatch(smsCombinedGroup(payload));
+    await dispatch(combinedGroup(payload));
     await dispatch(getGroupsBySubAccountId());
     settoggleChecked(false);
     setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);

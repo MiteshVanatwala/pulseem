@@ -132,28 +132,40 @@ const SmsReplies = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
-        let orderList = await OrderItems(smsReplies, Object.keys(exportColumnHeader));
+        setDialog(null);
+        setShowLoader(true);
+        let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
+        let finalData = response?.payload;
+        finalData = ReplaceNull(finalData, 'FirstName', '');
+        finalData = ReplaceNull(finalData, 'LastName', '');
+        finalData = ReplaceNull(finalData, 'CellPhone', '');
+        finalData = ReplaceNull(finalData, 'CampaignName', '');
+        finalData = DeletePropertyFromArrayObject(finalData, 'Status');
 
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
-            ConvertStatusToString: true,
-            Statuses: ClientStatus.Email.concat(ClientStatus.Sms),
-            Order: Object.keys(exportColumnHeader),
-            DeleteProperties: ["Status"]
+            ConvertStatusDescription: true,
+            Statuses: ClientStatus.Sms,
+            ReplaceClientStatus: true,
+            ReplaceNull: true,
+            Order: Object.keys(exportColumnHeader)
         };
 
         try {
-            const result = await HandleExportData(orderList, exportOptions);
+            const result = await HandleExportData(finalData, exportOptions);
 
             ExportFile({
                 data: result,
-                fileName: `smsReplies_${id}`,
+                fileName: `ResponsesReport${id ? '_' + id : ''}`,
                 exportType: formatType,
                 fields: exportColumnHeader
             });
         } catch (e) {
             console.log(e);
+        }
+        finally {
+            setShowLoader(false);
         }
     }
 

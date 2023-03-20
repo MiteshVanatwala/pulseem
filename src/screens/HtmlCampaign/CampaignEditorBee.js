@@ -21,11 +21,8 @@ import ResponseModal from './modals/ResponseModal'
 import NoCreditsModal from './modals/NoCreditsModal'
 import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
-import { GiExitDoor } from 'react-icons/gi'
-import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
-import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
@@ -190,11 +187,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('common.systemNotice'),
       message: t("common.autoLogoutMessage"),
-      icon: (
-        <AiOutlineExclamationCircle
-          style={{ fontSize: 30, color: "#fff" }}
-        />
-      ),
       showDefaultButtons: false,
       renderButtons: () =>
       (<Button
@@ -379,7 +371,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadBeeEditor', 1);
-          window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          window.location = saveRef.current?.redirectUrl ?? `${sitePrefix}Campaigns/SendSettings/${args.campaignId}`;
           return false;
         }
         else if (saveRef.current?.showAnimation) {
@@ -404,7 +396,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLastSaveText(`${t('campaigns.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
-
   }
 
   const onAutoSaveCampaign = debounce(() => {
@@ -426,7 +417,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
       message: t("mainReport.confirmSure"),
-      icon: <BsTrash />,
       onConfirm: () => deleteNewsletter(),
       onCancel: () => setDialog(null),
       onClose: () => setDialog(null)
@@ -446,7 +436,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('mainReport.handleExitTitle'),
       message: t("mainReport.leaveCampaign"),
-      icon: <GiExitDoor />,
       onClose: () => handleExitCampaign(false),
       onConfirm: () => handleExitCampaign(true),
       onCancel: () => setDialog(null)
@@ -619,9 +608,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (showDocs) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-        ),
         title: t("common.documentGallery"),
         content: (
           <Gallery

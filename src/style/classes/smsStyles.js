@@ -972,6 +972,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         },
     },
     groupsFooter: {
+        marginTop: 12,
         display: "flex",
         justifyContent: "space-between",
         flexDirection: flexDirection[windowSize]
@@ -1129,6 +1130,20 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         alignItems: 'center',
         fontWeight: 700,
         boxShadow: '1px ​1px 10px 2px black'
+    },
+    expandTextLink: {
+        textDecoration: 'underline',
+        marginTop: "6px",
+        fontSize: "16px",
+        color: "gray",
+        width: "50px",
+        cursor: "pointer"
+    },
+    summaryExpandRecipientFilter: {
+        borderTop: '1px solid #ccc',
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center"
     }
 
 });

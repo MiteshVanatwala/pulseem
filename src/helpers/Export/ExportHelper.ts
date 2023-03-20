@@ -2,6 +2,7 @@ import 'moment/locale/he';
 import i18n from 'i18next';
 import moment from 'moment';
 import Papa from 'papaparse';
+import { AccountExtraFields } from '../../Models/Account/AccountExtraFields';
 export interface ExportConditions {
     IsBoolean: boolean;
     OrderItems: boolean;
@@ -55,7 +56,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
         }
         if (options.ReplaceNull === true) {
             try {
-                finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue);
+                finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue) as ExportData;
             } catch (error) {
                 // Log({
                 //     MethodName: 'ReplaceNull',
@@ -79,7 +80,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
         }
         if (options.BooleanToNumber === true) {
             try {
-                finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean);
+                finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean) as ExportData;
             } catch (error) {
                 // Log({
                 //     MethodName: 'BooleanToNumber',
@@ -207,13 +208,14 @@ export async function ReplaceClientStatus(obj: ExportData | any) {
 }
 export async function DeletePropertyFromArrayObject(data: ExportData | any, properties: string[]) {
     const retValData: any = [];
-
-    data.forEach((obj: { [x: string]: any; }) => {
-        properties.forEach((property: string) => {
-            delete obj[property];
-        })
-        retValData.push(obj);
-    });
+    if (data && data?.length > 0) {
+        data.forEach((obj: { [x: string]: any; }) => {
+            properties.forEach((property: string) => {
+                delete obj[property];
+            })
+            retValData.push(obj);
+        });
+    }
     return retValData as ExportData;
 }
 export const JsonToCSV = async (data: any, options: any) => {

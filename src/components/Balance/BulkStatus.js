@@ -89,7 +89,7 @@ const BulkStatus = ({ classes }) => {
       }
 
       return (
-        <BaseDialog {...options}></BaseDialog>
+        <BaseDialog {...options} />
       );
     }
   }

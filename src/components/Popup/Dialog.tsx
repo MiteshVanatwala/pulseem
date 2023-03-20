@@ -10,7 +10,6 @@ import {
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { AlertIcon } from "../icons/index";
 
 export class Props {
   exit: boolean = false;
@@ -20,7 +19,6 @@ export class Props {
 export class Options extends Props {
   Classes: any;
   Children: any;
-  icon: string = "";
   Title: string = "";
   Style: any = null;
   Open: boolean = false;
@@ -133,14 +131,6 @@ export const Dialog = (options: Options) => {
       )
     );
   };
-  const renderIcon = () => {
-    const alertIcon = <AlertIcon />;
-    return (
-      <Box className={options.Classes.dialogIconContainer}>
-        {options.icon || alertIcon}
-      </Box>
-    );
-  };
   const renderChildren = () => {
     return (
       <Box
@@ -175,7 +165,7 @@ export const Dialog = (options: Options) => {
   };
   return (
     <BaseDialog
-      classes={classes}
+      classes={options.Classes}
       style={options.Style}
       open={!!options.Open}
       className={clsx(
@@ -199,7 +189,6 @@ export const Dialog = (options: Options) => {
       >
         {renderExitButton()}
         {renderContent()}
-        {renderIcon()}
       </Paper>
     </BaseDialog>
   );

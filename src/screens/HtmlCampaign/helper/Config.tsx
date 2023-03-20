@@ -14,8 +14,8 @@ export interface ConfigOptions {
   SetDialog: dialog;
   EditRow: Function;
   SaveCampaign: save;
-    AutoSaveCampaign: Function,
-    DesignChange: Function,
+  AutoSaveCampaign: Function,
+  DesignChange: Function,
   DeleteBlock: Function;
   CampaignId: Number;
   PulseemEditBlock: Function;
@@ -37,34 +37,33 @@ export const BeeConfig = (Options: ConfigOptions) => {
     CampaignId,
     DeleteBlock,
     SaveCampaign,
-        AutoSaveCampaign,
-        DesignChange,
+    AutoSaveCampaign,
+    DesignChange,
     getRows,
     handleEditRow,
     // HandleAutoSave,
     handleDeleteRow,
     PulseemEditBlock,
-    t,
+    t
   } = Options;
   return {
-    uid: "f7768f7b-06af-4ada-bbd3-18a237524c31", //needed for identify resources of the that user and billing stuff
-    container: "bee-plugin-container", //Identifies the id of div element that contains BEE Plugin
-    language: Options.IsRTL ? "he-IL" : "en-US",
+    uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
+    container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
+    language: Options.IsRTL ? 'he-IL' : 'en-US',
     trackChanges: true,
     autosave: AUTO_SAVE_SECONDS,
     loadingSpinnerDisableOnSave: true,
-    // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
-    sidebarPosition: IsRTL ? "right" : "left",
-    loadingSpinnerTheme: "light",
+    sidebarPosition: IsRTL ? 'right' : 'left',
+    loadingSpinnerTheme: 'light',
     saveRows: true,
     rowsConfiguration: {
       emptyRows: true,
       defaultRows: false,
     },
-        editorFonts: FONTS(),
-        workspace: {
-            type: 'mixed',
-        },
+    editorFonts: FONTS(),
+    workspace: {
+      type: 'mixed',
+    },
     hooks: {
       getRows: {
         handler: async (resolve: Function, reject: Function, args: any) => {
@@ -122,50 +121,50 @@ export const BeeConfig = (Options: ConfigOptions) => {
               row.metadata.name = results?.name;
               row.metadata.tags = results?.tags ?? t("campaigns.savedBlocks");
 
-                            const saveBlockObj = {
-                                Category: results?.name,
-                                Tags: results?.tags?.split(',') ?? t('campaigns.savedBlocks'),
-                                Data: JSON.stringify(JSON.stringify(row)),
-                                uuid: args.row?.metadata?.uuid ?? uuidv4(),
-                                Json: row
-                            }
-                            await PulseemEditBlock(saveBlockObj);
-                            await handleEditRow(args, results?.name, results?.tags ?? t('campaigns.savedBlocks'));
-                        }
-                        resolve(true);
-                    }
-                    catch (e) {
-                        reject(e);
-                    }
+              const saveBlockObj = {
+                Category: results?.name,
+                Tags: results?.tags?.split(',') ?? t('campaigns.savedBlocks'),
+                Data: JSON.stringify(JSON.stringify(row)),
+                uuid: args.row?.metadata?.uuid ?? uuidv4(),
+                Json: row
+              }
+              await PulseemEditBlock(saveBlockObj);
+              await handleEditRow(args, results?.name, results?.tags ?? t('campaigns.savedBlocks'));
+            }
+            resolve(true);
+          }
+          catch (e) {
+            reject(e);
+          }
 
-                }
+        }
 
-            },
-        },
-        //#region Methods
-        onSave: async (jsonFile: any, htmlFile: any, ampHtml: any) => {
-            await SaveCampaign({
-                campaignId: CampaignId,
-                JsonData: jsonFile,
-                HtmlData: ampHtml ?? htmlFile
-            });
-        },
-        onSend: () => {
-            SetDialog(DialogType.TEST_SEND);
-        },
-        onWarning: (alertMessage: any) => {
-            // console.log('onWarning ', alertMessage)
-        },
-        onError: (errorMessage: any) => {
-            // console.log('onError ', errorMessage)
-        },
-        onLoad: (jsonFile: any) => {
-            // console.log(jsonFile);
-        },
-        onAutoSave: () => AutoSaveCampaign(),
-        onChange: () => DesignChange()
-        //#endregion
-    }
+      },
+    },
+    //#region Methods
+    onSave: async (jsonFile: any, htmlFile: any, ampHtml: any) => {
+      await SaveCampaign({
+        campaignId: CampaignId,
+        JsonData: jsonFile,
+        HtmlData: ampHtml ?? htmlFile
+      });
+    },
+    onSend: () => {
+      SetDialog(DialogType.TEST_SEND);
+    },
+    onWarning: (alertMessage: any) => {
+      // console.log('onWarning ', alertMessage)
+    },
+    onError: (errorMessage: any) => {
+      // console.log('onError ', errorMessage)
+    },
+    onLoad: (jsonFile: any) => {
+      // console.log(jsonFile);
+    },
+    onAutoSave: () => AutoSaveCampaign(),
+    onChange: () => DesignChange()
+    //#endregion
+  }
 };
 export const DefaultContent = (IsRTL: Boolean) => {
   return {

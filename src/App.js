@@ -15,7 +15,7 @@ import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
-import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
+import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
@@ -46,6 +46,7 @@ import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSet
 import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
+import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
 
 const renderRoutes = (classes) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -63,6 +64,7 @@ const renderRoutes = (classes) => {
   return (
     <Routes>
       <Route
+        exact
         path={sitePrefix}
         element={<DashboardScreen classes={classes} />}
       />
@@ -109,10 +111,6 @@ const renderRoutes = (classes) => {
         path={`/ClientSearch`}
         component={transferUrl('/Pulseem/ClientSearch.aspx')}
       />
-      {/* <Route
-        path={`/ClientAdvancedSearch`}
-        element={transferUrl('/Pulseem/ClientAdvancedSearch.aspx')}
-      /> */}
       <Route
         path={`/DynamicGroups`}
         component={transferUrl('/Pulseem/DynamicGroups.aspx')}
@@ -134,7 +132,7 @@ const renderRoutes = (classes) => {
       />
       <Route
         path={`${sitePrefix}Campaigns/Create/:id`}
-        element={<NewsLetterInfo  classes={classes}/>}
+        element={<NewsLetterInfo classes={classes} />}
       />
       <Route
         exact
@@ -146,6 +144,10 @@ const renderRoutes = (classes) => {
         element={<CampaignEditorBee classes={classes} />}
       />
       <Route
+        path={`${sitePrefix}Campaigns/SendSettings/:id`}
+        element={<NewsletterSendSettings classes={classes} />}
+      />
+      <Route
         exact
         path={`${sitePrefix}Campaigns/Archive`}
         element={<ArchiveManagement classes={classes} />}
@@ -154,6 +156,31 @@ const renderRoutes = (classes) => {
       <Route
         path={`${sitePrefix}SMSCampaigns`}
         element={<SmsManagment classes={classes} />}
+      />
+      <Route
+        exact
+        path="/react/Campaigns/Archive"
+        element={<ArchiveManagement classes={classes} />}
+      />
+      <Route
+        path={`/CampaignsByResults`}
+        element={transferUrl('/Pulseem/CampaignsByResults.aspx')}
+      />
+      <Route
+        path={`/CampaignsAbTestings`}
+        element={transferUrl('/Pulseem/CampaignsAbTestings.aspx')}
+      />
+      <Route
+        path={`/AutoSendPlans`}
+        element={transferUrl('/Pulseem/AutoSendPlans.aspx')}
+      />
+      <Route
+        path={`/CampaignTemplates`}
+        element={transferUrl('/Pulseem/CampaignTemplates.aspx')}
+      />
+      <Route
+        path={`/CampaignEdit`}
+        element={transferUrl('/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic')}
       />
       <Route
         path={`/SMSSmartResponses`}
@@ -279,11 +306,6 @@ const renderRoutes = (classes) => {
         path={`${sitePrefix}Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />
-      {/* <Route
-        exact
-        path={`${sitePrefix}Reports/ResponsesReports`}
-        element={<ResponsesReports />}
-      /> */}
       <Route
         path={`/EmailCampaignStatistics`}
         component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
@@ -399,25 +421,23 @@ const renderRoutes = (classes) => {
 
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
-  const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
+  const userName = useRef();
+  const { language, isRTL, windowSize, accountSettings, isClal } = useSelector(state => state.core);
 
 
   useEffect(() => {
     windowSize !== screenSize && dispatch(setWindowSize(screenSize))
   }, [screenSize])
 
-  const userName = useRef();
-
 
   useEffect(() => {
     const initFeatures = async () => {
-      const isClal = getCookie('isClal');
       if (!accountSettings) {
         //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
         const settings = await dispatch(getCommonFeatures({ companyName: userName.current }));
         dispatch(setAccountFeatures(settings.payload));
       }
-      if (isClal === undefined) {
+      if (isClal === null) {
         const response = await dispatch(isClalAccount());
         dispatch(setIsClal(response.payload));
       }
@@ -471,7 +491,7 @@ const App = ({ screenSize }) => {
     initFeatures()
 
   }, [dispatch])
- 
+
 
   const classes = useClasses(windowSize, isRTL)()
   const theme = getTheme(language)
@@ -488,7 +508,7 @@ const App = ({ screenSize }) => {
           {renderRoutes(classes, redirect)}
         </div>
       </MuiThemeProvider>
-    </MuiPickersUtilsProvider>
+    </MuiPickersUtilsProvider >
 
   )
 }

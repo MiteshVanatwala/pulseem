@@ -22,6 +22,7 @@ import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
@@ -261,6 +262,10 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async (formatType) => {
+    setLoader(true);
+    setDialog(null)
+    if (hasRevenue)
+      exportColumnHeader["Revenue"] = t("common.revenue");
     let listToExport = null;
 
     if (toFileArray.length > 0) {
@@ -289,9 +294,12 @@ const NewslettersReport = ({ classes }) => {
       });
 
       setToFileArray([]);
-      setDialog(null);
+      setDialog(null)
     } catch (error) {
       console.log(error);
+    }
+    finally {
+      setLoader(false);
     }
   }
 
@@ -660,7 +668,7 @@ const NewslettersReport = ({ classes }) => {
         }}>
         <Box className={classes.cellText}
           style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
-          onClick={isLink ? onClick : null}>
+          onClick={isLink ? onClick : VoidFunction}>
           <Typography
             // component={clickable && value > 0 ? 'a' : 'p'}
             component={'p'}
@@ -669,7 +677,7 @@ const NewslettersReport = ({ classes }) => {
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
             {value?.toLocaleString() ?? '0'}
-          </Typography >
+          </Typography>
           <Typography style={{ textDecoration: isLink ? 'underline' : null }}
             className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
@@ -684,7 +692,7 @@ const NewslettersReport = ({ classes }) => {
     const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
       <Box className={classes.cellText}
-        onClick={isLink ? onClick : null}
+        onClick={isLink ? onClick : VoidFunction}
         style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
           style={{ textDecoration: isLink ? 'underline' : null }}
@@ -704,7 +712,7 @@ const NewslettersReport = ({ classes }) => {
   const renderRevenueData = (value, type, data = {}) => {
     const { textStyle = null, isRevenueCol = false, onClick = () => null } = data
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : null}>
+      <Box style={{ display: 'flex', flexDirection: 'column' }} onClick={(isRevenueCol && value > 0) ? onClick : VoidFunction}>
         <Typography
           component={'p'}
           style={{ ...textStyle, textDecoration: (value > 0 || (isRevenueCol && value > 0)) ? 'underline' : null, cursor: (value > 0 || (isRevenueCol && value > 0)) ? 'pointer' : null }}
@@ -1012,7 +1020,7 @@ const NewslettersReport = ({ classes }) => {
     <DefaultScreen
       currentPage='reports'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.management, classes.mb50)}>
       <Box className={'topSection'}>
         <Title Text={t('mainReport.logPageHeaderResource1.Text')} classes={classes} />
         {renderSearchSection()}

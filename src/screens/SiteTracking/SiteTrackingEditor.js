@@ -531,19 +531,31 @@ const SiteTrackingEditor = ({ classes }) => {
 
     const PageHeader = () => {
         return (
-            <>
-                <Title
-                    Element={(
-                        <Box className='stepHead'>
-                            <Typography className={'stepTitle'}>
-                                {t("siteTracking.setUp")}
-                            </Typography>
-                        </Box>
-                    )}
-                    classes={classes}
-                    isIcon={false}
-                />
-            </>
+            <Grid container>
+                <Grid item xs={7}>
+                    <Title
+                        Element={(
+                            <Box className='stepHead'>
+                                <Typography className={'stepTitle'}>
+                                    {t("siteTracking.setUp")}
+                                </Typography>
+                            </Box>
+                        )}
+                        classes={classes}
+                        isIcon={false}
+                    />
+                </Grid>
+                <Grid item xs={5} style={{ alignItems: 'center', display: 'flex', marginTop: -10 }}>
+                    <Button
+                        onClick={() => setDialogType({ type: 'scriptImplementation' })}
+                        variant='contained'
+                        style={{ lineHeight: windowSize === 'xs' ? 1 : null, marginInlineStart: 'auto' }}
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonDarkBlue)}
+                    >{t("siteTracking.scriptImplementation")}</Button>
+                </Grid>
+            </Grid>
         )
     }
     const PageFooter = () => {

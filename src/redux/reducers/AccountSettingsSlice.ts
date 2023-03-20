@@ -81,9 +81,9 @@ export const deleteAuthorizationValue = createAsyncThunk(
     })
 
 export const checkEmailAuthorization = createAsyncThunk(
-    'CheckEmailAuthorization', async (value: string, thunkAPI) => {
+    'CheckEmailAuthorization', async (emailAuth: CellphoneAuthorization, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`authorization/CheckEmailAuthorization/${value}`);
+            const response = await PulseemReactInstance.get(`authorization/CheckEmailAuthorization/${emailAuth.value, emailAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });

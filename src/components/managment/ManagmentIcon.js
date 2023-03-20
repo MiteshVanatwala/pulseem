@@ -42,6 +42,7 @@ export const ManagmentIcon = ({
           else {
             onClick(buttonRef)
           }
+          return false;
         }}
         className={clsx({
           [classes.managmentIconHide]: hide

@@ -116,8 +116,8 @@ const ClientSearchResult = ({ classes }) => {
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
   //eslint-disable-next-line
-  const [searchParams, setSearchParams] = useSearchParams();
   const [clientToEdit, setClientToEdit] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -401,28 +401,12 @@ const ClientSearchResult = ({ classes }) => {
           };
 
           HandleExportData(orderList, exportOptions).then((result) => {
-            // Pay attention -> We set XLSX for better header's order.
-            // CSV not supporting numeric extra fields order.
-
             ExportFile({
               data: result,
               exportType: formatType,
               fields: exportColumnHeader.current,
               fileName: fileName
             });
-
-            // if (formatType === 'csv') {
-            //   ExportFile({
-            //     data: result,
-            //     exportType: formatType,
-            //     fields: exportColumnHeader.current,
-            //     fileName: fileName
-            //   });
-            // }
-            // else {
-            //   exportAsXLSX(result, exportColumnHeader.current, `${fileName}.XLSX`);
-            // }
-
           });
         });
       }
@@ -489,7 +473,6 @@ const ClientSearchResult = ({ classes }) => {
       type="number"
     />
   </Grid>
-
   const EL_FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
@@ -1430,11 +1413,6 @@ const ClientSearchResult = ({ classes }) => {
               LogSms_ErrorType: ErrorTypeText
             })}
           </TableCell>}
-        {/* <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-          <Typography className={clsx(classes.bold, classes.f16)}>
-            {Revenue} {t("common.NIS")}
-          </Typography>
-        </TableCell> */}
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>
           <FlexGrid
             customStyle={{ justifyContent: 'space-between' }}
@@ -1797,10 +1775,11 @@ const ClientSearchResult = ({ classes }) => {
       {renderConfirmDialog()}
       {showDialog()}
       <ConfirmRadioDialog
+        classes={classes}
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
         radioTitle={t('common.SelectFormat')}
-        onConfirm={(e) => handleDownloadCsv(e)}
+        onConfirm={(e) => { setShowConfirmDialog(false); handleDownloadCsv(e) }}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
         defaultValue="xls"

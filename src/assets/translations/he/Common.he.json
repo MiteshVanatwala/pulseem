@@ -2,6 +2,7 @@
   "ActionCompleted": "פעולה בוצעה",
   "AddPersonalization": "הוסף פרסונליזציה",
   "All": "הכל",
+  "Default": "ברירת מחדל",
   "Clicked": "הקליקו",
   "Copyrights": "##Year## © כל הזכויות שמורות לפולסים בע\"מ",
   "ForSupport": "לתמיכה",
@@ -569,6 +570,7 @@
   "clientSubscriptionResultTitle": "הרשמות לפי ",
   "OpenTime": "זמן פתיחה",
   "SelectFormat": "בחר פורמט",
+  "pageNotFound": "<h1>אווופס... 404!</h1><br/><p>הלכת לאיבוד :(</p><p>אל דאגה. השארנו את שורת תפריט הניווט כאן למעלה, במיוחד בשבילך :)</p>",
   "saveTemplate": "שמור תבנית",
   "exit": "צא",
   "phone": "טלפון",
@@ -605,8 +607,9 @@
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
   "remove": "הסר",
   "searchByCampaign": "חפש לפי קמפיין",
-  "pageNotFound": "<h1>אווופס... 404!</h1><br/><p>הלכת לאיבוד :(</p><p>אל דאגה. השארנו את שורת תפריט הניווט כאן למעלה, במיוחד בשבילך :)</p>",
   "next": "הבא",
   "new": "חדש",
-  "comingSoon": "מגיע בקרוב"
+  "comingSoon": "בקרוב",
+  "backToHome": "לדף הבית",
+  "backToCampaigns": "לניהול קמפיינים"
 }

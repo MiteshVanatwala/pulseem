@@ -15,7 +15,7 @@ export const coreSlice = createSlice({
     isWhiteLabel: false,
     companyName: '',
     rowsPerPage: getCookie('rpp') || 6,
-    isClal: false,
+    isClal: null,
     accountFeatures: null,
     cameFromSubAccount: null,
     isAdmin: null,
@@ -29,7 +29,6 @@ export const coreSlice = createSlice({
   reducers: {
     setIsClal: (state, action) => {
       state.isClal = action.payload;
-      setCookie("isClal", action.payload);
     },
     setAccountFeatures: (state, action) => {
       const data = action.payload?.Data;

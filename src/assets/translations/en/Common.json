@@ -2,6 +2,7 @@
   "ActionCompleted": "Action Completed",
   "AddPersonalization": "Add Personalization",
   "All": "All",
+  "Default": "Default",
   "Clicked": "Clicked",
   "Copyrights": "##Year## © All Rights Reserved by Pulseem LTD",
   "ForSupport": "For Support",
@@ -572,6 +573,7 @@
   "back": "Back",
   "clientSubscriptionResultTitle": "Subscribers of Landing page ",
   "SelectFormat": "Select format",
+  "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>",
   "saveTemplate": "Save template",
   "exit": "Exit",
   "phone": "Phone",
@@ -608,8 +610,9 @@
   "xssError": "Html, Scripts or other then a normal string does not allowed!",
   "remove": "Remove",
   "searchByCampaign": "Search by Campaign",
-  "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>",
   "next": "Next",
   "new": "New",
-  "comingSoon": "Coming Soon"
+  "comingSoon": "Coming Soon",
+  "backToHome": "To Home page",
+  "backToCampaigns": "To Campaigns"
 }

@@ -90,3 +90,112 @@ export const WhatsappStatus = [
     { id: 10, value: 'report.invalidFromNumber' },
     { id: 11, value: 'common.NoInboundIn24Session' }
 ];
+export const UploadSettings = {
+    SMS: {
+        ShowGroupName: true,
+        Fields: [
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "FirstName",
+                label: "common.first_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "LastName",
+                label: "common.last_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "CellPhone",
+                label: "common.cellphone"
+            }
+        ]
+    },
+    GROUPS: {
+        ShowGroupName: false,
+        Fields: [
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "FirstName",
+                label: "common.first_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "LastName",
+                label: "common.last_name"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "CellPhone",
+                label: "common.cellphone"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Email",
+                label: "common.email"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Telephone",
+                label: "common.telephone"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Address",
+                label: "common.address"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "City",
+                label: "common.city"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "State",
+                label: "common.state"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Country",
+                label: "common.country"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Zip",
+                label: "common.zip"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "Company",
+                label: "common.company"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "BirthDate",
+                label: "common.birth_date"
+            },
+            {
+                isdisabled: false,
+                idx: -1,
+                value: "ReminderDate",
+                label: "common.reminder_date"
+            }
+        ]
+    }
+
+};

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControlLabel, Checkbox } from '@material-ui/core';
-import { SolidDialog } from '../managment/index';
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState } from 'react';
 import { setCookie } from '../../helpers/Functions/cookies';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';

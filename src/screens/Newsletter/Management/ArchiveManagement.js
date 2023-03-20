@@ -604,7 +604,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       currentPage="newsletter"
       subPage='archiveManagement'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={clsx(classes.managmentNarrow, classes.mb50)}>
       <Box className={classes.mb50}>
         <Box className={'topSection'}>
           <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />

@@ -174,7 +174,6 @@ const BillingSettingsEditor = ({ classes }: any) => {
       <Title
         Text={t("settings.billingSettings.titleBillingInfo")}
         classes={classes}
-        isIcon={false}
         ContainerStyle={{
           padding: `6px ${isRTL ? "14.69px" : 0} 5px ${isRTL ? 0 : "14.69px"}`,
         }}

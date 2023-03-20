@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Box, TextField, Button } from "@material-ui/core";
+import { Typography, Grid, Box, TextField, Button, Tooltip } from "@material-ui/core";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -8,7 +8,6 @@ import {
     addRecipient,
     addRecipients
 } from "../../redux/reducers/groupSlice";
-import { Tooltip } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
@@ -35,12 +34,16 @@ const useStyles = makeStyles((theme) => ({
 
 const UploadXL = ({
     classes,
+    areaStyle,
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
     uploadToGroups = [],
     setToastMessage,
     settings = null,
-    tooltipText = "smsReport.manualTotalTooltip"
+    tooltipText = "smsReport.manualTotalTooltip",
+    onlyMapping = false,
+    extraButtons = <></>,
+    onType = null
 }) => {
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
@@ -170,6 +173,7 @@ const UploadXL = ({
         if (records?.length < 100) {
             setareaData(pastedData);
             setdropClick(false);
+            onType && onType(pastedData);
         }
         else {
             handlePasted(pastedData);
@@ -426,6 +430,7 @@ const UploadXL = ({
 
     const handleDataManual = async () => {
         if (manualUploadValidationscheck()) {
+            let uploadAsFile = false;
             setLoader(true);
             let r = null;
             let requestPayload = [];
@@ -476,12 +481,20 @@ const UploadXL = ({
                 return x !== undefined;
             });
 
-            if (fileToUpload !== null && dataToUpload.length >= 5000) {
+            uploadAsFile = fileToUpload !== null && dataToUpload.length >= 5000;
+            if (uploadAsFile) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
                 formData.append("mapping", JSON.stringify(mapping));
-                r = await dispatch(addRecipients(formData))
+
+                if (onlyMapping === true) {
+                    onDone(groupNameInput, formData, uploadAsFile);
+                }
+                else {
+                    r = await dispatch(addRecipients(formData));
+                    onDone(groupNameInput, r);
+                }
             }
             else {
                 const finalPayload = {
@@ -489,11 +502,16 @@ const UploadXL = ({
                     GroupIds: uploadToGroups,
                     Mapping: mapping
                 }
-                r = await dispatch(addRecipient(finalPayload))
+                if (onlyMapping === true) {
+                    onDone(groupNameInput, finalPayload, uploadAsFile);
+                }
+                else {
+                    r = await dispatch(addRecipient(finalPayload));
+                    onDone(groupNameInput, r);
+                }
             }
 
             setFileToUpload(null);
-            onDone(r);
             setTimeout(() => {
                 setLoader(false);
             }, 1000);
@@ -704,6 +722,7 @@ const UploadXL = ({
                 settypedData([]);
                 settotalRecords(0)
                 setDialogType(null);
+                onType && onType('');
             }
         }
     }
@@ -767,6 +786,7 @@ const UploadXL = ({
                     highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
                 )
                 }
+                style={{ ...areaStyle }}
                 value={areaData}
                 onDragEnter={() => {
                     setHighlighted(true);
@@ -794,9 +814,9 @@ const UploadXL = ({
             />
         </Grid>
         <Grid item md={12} xs={12}>
-            <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
+            <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "flex-start" }}>
                 {areaData !== "" ? (
-                    <div>
+                    <>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
@@ -812,13 +832,15 @@ const UploadXL = ({
                                 setContacts([]);
                                 settypedData([]);
                                 settotalRecords(0)
+                                onType && onType('');
                             }}
                         >
                             {t("sms.clearList")}
                         </Button>
-                    </div>
+                        {extraButtons}
+                    </>
                 ) : null}
-                <span>{t("sms.totalRecords")}:  {totalRecords}</span>
+                <span style={{ marginTop: areaData === "" ? 12 : null }}>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
         </Grid>
         <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />

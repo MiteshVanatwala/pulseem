@@ -428,7 +428,6 @@ const FORM_COMPANY_DETAILS = ({
         <Title
           Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
           classes={classes}
-          isIcon={false}
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>

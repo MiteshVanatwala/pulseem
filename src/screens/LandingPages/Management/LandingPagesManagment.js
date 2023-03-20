@@ -435,6 +435,13 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
     return (
       <>
         <Link
+          component='a'
+          href={`${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({
+            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+            CampaignID: ID,
+            PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+            ResultTitle: `${t("common.clientSubscriptionResultTitle")} "${Name}"`
+          })}`}
           style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
           component='a'
           href={`${CLIENT_CONSTANTS.BASEURL}${ConvertObjectToQueryString({

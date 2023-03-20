@@ -2158,5 +2158,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       right: isRTL ? 'auto !important' : '0 !important',
       left: isRTL ? '0 !important' : 'auto !important'
     }
+  },
+  implementButtonFlex: {
+    maxHeight: '45',
+    marginTop: 'auto',
+    marginBottom: 15,
+    marginInlineStart: 'auto',
+    lineHeight: windowSize === 'xs' ? 1 : null,
   }
 });

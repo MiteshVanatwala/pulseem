@@ -12,11 +12,9 @@ import {
     makeStyles,
     FormControl,
     Select,
-    MenuItem,
-
+    MenuItem
 } from "@material-ui/core";
 import { DateField } from '../../../../components/managment/index'
-
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
@@ -179,8 +177,6 @@ const AddRecipientPopup = ({ classes,
             }
         }
     }
-
-
     const StatusDropdown = ({ data = [], onSelect = () => null, label = '', value = null }) => {
         return (
             <FormControl variant="standard" className={classes.selectInputFormControl}>

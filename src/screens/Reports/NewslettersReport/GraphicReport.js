@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Avatar, Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, Tab, Typography } from "@material-ui/core";
+import React, { useState, useEffect, useRef } from 'react';
+import { Avatar, Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, Tab, Tabs, Typography } from "@material-ui/core";
 import { useTranslation } from 'react-i18next';
 import DefaultScreen from '../../DefaultScreen';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,9 +20,9 @@ import { sitePrefix } from '../../../config';
 const GraphicReport = ({ props, classes }) => {
   const { isRTL } = useSelector(state => state.core)
   const [tabValue, setTabValue] = useState(0);
-  const Redirect = useRedirect();
   const [showLoader, setLoader] = useState(true);
   const [campaignData, setData] = useState(null);
+  //const [campaignPreviewImage, setCampaignPreviewImage] = useState(null);
   const { t } = useTranslation()
   const dispatch = useDispatch()
   const { tab } = useParams();
@@ -56,7 +56,9 @@ const GraphicReport = ({ props, classes }) => {
               }}
               className={classes.middleTxt}
             >
-              {t("mainReport.backToNewsletterReports")}
+              <Typography>
+                {t("mainReport.backToNewsletterReports")}
+              </Typography>
             </Button>
           </Grid>
         </Grid>
@@ -519,7 +521,7 @@ const GraphicReport = ({ props, classes }) => {
           {<RenderCampaignSummary chartData={campaignData} />}
         </TabPanel>
         <TabPanel value={1} index={1} className={classes.p0}>
-          {/* <RecipientsTab classes={classes} /> */}
+          <RecipientsTab classes={classes} />
         </TabPanel>
         <TabPanel value={2} index={2} className={classes.p0}>
           {<RenderOpenClickTab />}

@@ -50,7 +50,7 @@ const AppBarItem = ({
     setOpen(false)
   }
   const currentStyle = showIcon ? classes.appBarItemIcon : classes.appBarItemText
-  /* Top menu */
+  {/* Top menu */ }
   return (
     <Box
       zIndex='tooltip'
@@ -189,30 +189,11 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
     cookieFeature = null;
   }
 
-  const { accountSettings, companyName, windowSize, isRTL, cameFromSubAccount, isAdmin, isAllowSwitchAccount } = useSelector(state => state.core) // smsOldVersion
+  const { accountSettings, companyName, windowSize, isRTL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, imageURL } = useSelector(state => state.core) // smsOldVersion
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
-  // const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const [settingsLoaded, setSettingsLoaded] = useState(false);
   const topNavRef = useRef(null)
-
-  // const handleScriptDialog = () => {
-  //   let scriptDialog = getCookie('scriptDialog');
-  //   scriptDialog = (scriptDialog === 'true');
-  //   dispatch(setScriptDialog(scriptDialog));
-  // }
-
-  // useEffect(() => {
-  //   handleScriptDialog();
-  // const resizeWindow = () => {
-  //   setWindowWidth(window.innerWidth)
-  // }
-  //   window.addEventListener('resize', resizeWindow)
-
-  //   return () => {
-  //     window.removeEventListener('resize', resizeWindow)
-  //   }
-  // }, [])
 
   useEffect(() => {
     if (accountSettings && accountSettings !== '') {
@@ -227,13 +208,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const routes = getRoutes(t, cookieIsClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), companyName)
 
-  // const navigate = ({ uri }) => {
-  //   if (!!uri) {
-  //     setCookie('scriptDialog', false, { maxAge: 36000000000 });
-  //     dispatch(setScriptDialog(false));
-  //     Redirect({ url: uri });
-  //   }
-  // }
   const returnToAdmin = () => {
     setCookie('accountSettings', '');
     window.location = '/Pulseem/ReactRedirect.aspx';
@@ -385,9 +359,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
 
   const renderAppBar = windowSize === 'xs' || windowSize === 'sm' ? renderPhoneAppBar : renderRegularAppBar
 
-  // const question = <SvgIcon style={{ marginBottom: 5, marginInlineEnd: 5 }}>
-  //   <QuestionIcon />
-  // </SvgIcon>
   return (
     <Box style={{ flexGrow: 1 }} className={clsx(classes.pl25, classes.ps25)}>
       <AppBar position='static' className={classes.appBar} ref={topNavRef} style={{ display: showAppBar === true ? null : 'none' }}>
@@ -402,12 +373,13 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
             // className={clsx(classes.pulseemAppBarLogo, isRTL ? 'logoRTL' : 'logoLTR')}
             className={clsx(classes.pulseemAppBarLogo, 'logo')}
           >
-            <PulseemNewLogo />
-            {/* <Box
+            {imageURL !== '' ? (<Box
               component='img'
               src={`${imageURL}`}
               alt='Logo'
-              className={classes.appBarLogo} /> */}
+              className={classes.appBarLogo} />)
+              :
+              (<PulseemNewLogo />)}
           </Button>
           {settingsLoaded && <>
             {renderAppBar()}

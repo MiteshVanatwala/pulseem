@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { Box, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
 import "moment/locale/he";
 import { FaExclamationCircle } from 'react-icons/fa'
 import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";

@@ -1,9 +1,6 @@
-import React from "react";
 import clsx from "clsx";
 import { Box, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
-import { RiSendPlaneFill } from 'react-icons/ri'
 import "moment/locale/he";
 import {
   CheckAnimation

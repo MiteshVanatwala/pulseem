@@ -8,9 +8,9 @@ import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
+import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
@@ -160,6 +160,7 @@ const NewsLetterInfo = ({ classes }) => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
+    const [newEditorDisabled, setNewEditorDisabled] = useState(false);
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -247,6 +248,15 @@ const NewsLetterInfo = ({ classes }) => {
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
             sessionStorage.removeItem("Newlsetter_Html_Template");
 
+        }
+    }, []);
+
+    useEffect(() => {
+        const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
+        if (htmlTemplate && htmlTemplate !== '') {
+            setNewEditorDisabled(true);
+            setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
+            sessionStorage.removeItem("Newlsetter_Html_Template");
         }
     }, []);
 
@@ -785,7 +795,6 @@ const NewsLetterInfo = ({ classes }) => {
         setIsSilenceUpdated(true);
         const response = await dispatch(getCreditsByFileTotalBytes({ ...campaingnValues, FilesProperties: [...existsFiles] }));
         handleGetNewsletterResponse(response.payload)
-
     }
     const showGalleryModal = () => {
         if (showGallery) {
@@ -811,9 +820,6 @@ const NewsLetterInfo = ({ classes }) => {
     const renderGalleryDialog = () => {
         return {
             showDivider: false,
-            icon: (
-                <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-            ),
             title: t("common.documentGallery"),
             content: (
                 <Gallery
@@ -899,6 +905,7 @@ const NewsLetterInfo = ({ classes }) => {
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                     >{t('common.saveAndContinue')}</Button>
                     {(id === null || id === undefined) && <Button
+                        disabled={newEditorDisabled}
                         onClick={() => showCautionNewEditor ? setDialogType({ type: "cautionOldEditor" }) : handleSubmit(true, false, true)}
                         className={clsx(
                             classes.btn,
@@ -1143,4 +1150,4 @@ const NewsLetterInfo = ({ classes }) => {
     )
 }
 
-export default NewsLetterInfo
+export default NewsLetterInfo;

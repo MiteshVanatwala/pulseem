@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Button,
   Grid,
@@ -67,7 +67,7 @@ const RecipientsTab = ({ classes }) => {
   const [searchValue, setsearchValue] = useState("");
   const dispatch = useDispatch();
   const [SearchNewResults, setSearchNewResults] = useState(null);
-  const tableData = [
+  const [tableData, settableData] = useState([
     {
       email: "mohit.gupta@gmail.com",
       openingDate: "12.06.2020",
@@ -511,7 +511,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={EditIcon}
           lable="Edited"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -519,7 +519,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Delete from Group"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -527,7 +527,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove email"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -535,7 +535,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove phone"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
       </Box>
     );
