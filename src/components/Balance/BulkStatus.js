@@ -78,7 +78,7 @@ const BulkStatus = ({ classes }) => {
         classes: classes,
         open: isOpenPackageDialog,
         title: selectedPackageType.title,
-        // onCancel: handleDialogClose,
+        onCancel: handleDialogClose,
         onClose: handleDialogClose,
         // onConfirm: handleDialogClose,
         renderButtons: false,
