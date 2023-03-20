@@ -40,7 +40,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
-import { BsTrash } from "react-icons/bs";
+import { BsTrash, BsInfoCircle } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
@@ -56,7 +56,6 @@ import { Stack } from "@mui/material";
 import PulseemSwitch from "../../../components/Controlls/PulseemSwitch";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
-
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {

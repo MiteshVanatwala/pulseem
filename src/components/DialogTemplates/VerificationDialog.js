@@ -25,7 +25,7 @@ import { Loader } from '../Loader/Loader';
 const VerificationDialog = ({
     classes,
     isOpen = false,
-    onClose = () => null,
+    onClose,
     variant = 'email',
     Option = null,
     ...props }) => {
