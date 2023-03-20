@@ -1036,6 +1036,7 @@ const ClientSearchResult = ({ classes }) => {
       return (
         <Grid container className={'searchLine'}>
           <SearchField
+            classes={classes}
             value={searchStr}
             onChange={(e) => setSearchStr(e.target.value)}
             onClick={() => {
@@ -1340,6 +1341,7 @@ const ClientSearchResult = ({ classes }) => {
               key={icon.key}
               item >
               <ManagmentIcon
+                classes={classes}
                 {...icon}
                 uIcon={<icon.uIcon width={18} height={20} className={'rowIcon'} />}
               />
@@ -1639,6 +1641,7 @@ const ClientSearchResult = ({ classes }) => {
           </Box>
         </DataTable>
         <TablePagination
+          classes={classes}
           rows={TotalCount}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleRowsPerPageChange}
@@ -1762,9 +1765,11 @@ const ClientSearchResult = ({ classes }) => {
     <DefaultScreen
       currentPage="groups"
       containerClass={clsx(classes.management, classes.mb50)}
+      classes={classes}
     >
       <Box className={'topSection'}>
         <Title
+          classes={classes}
           Element={renderHeader()}
         />
         {renderSearchLine()}
