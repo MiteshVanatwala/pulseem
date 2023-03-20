@@ -2183,6 +2183,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			resize: 'none',
 			maxHeight: '172px',
 			overflowY: 'auto',
+			outline: 'none',
 		},
 		'&.chat__input::placeholder': {
 			color: 'rgb(153, 153, 153)',

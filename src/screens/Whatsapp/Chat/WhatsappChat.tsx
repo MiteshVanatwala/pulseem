@@ -725,7 +725,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				currentPage='whatsapp'
 				classes={classes}
 				customPadding={false}
-				containerClass={null}>
+				containerClass={classes.mb50}>
 				{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
 				<div className={`${classes.whatsappChat} app`}>
 					<div className={`${classes.whatsappChat} app-content`}>

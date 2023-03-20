@@ -74,7 +74,7 @@ const ChatFooterContent = ({
 	const onEditableDivChange = (e: BaseSyntheticEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-		setNewMessage(e.target.textContent);
+		setNewMessage(e.target.value);
 	};
 
 	return (
@@ -121,13 +121,12 @@ const ChatFooterContent = ({
 										/>
 									</Box>
 								) : (
-									<div
+									<input
 										className={`${classes.whatsappChat} chat__input s`}
 										id={'free-from-input'}
-										data-text='Type a message'
-										contentEditable={true}
-										suppressContentEditableWarning={true}
-										onKeyUp={onEditableDivChange}
+										placeholder='Type a message'
+										value={newMessage}
+										onChange={onEditableDivChange}
 									/>
 								)}
 							</>
