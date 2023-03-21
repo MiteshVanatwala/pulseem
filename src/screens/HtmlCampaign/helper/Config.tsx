@@ -55,16 +55,16 @@ export const BeeConfig = (Options: ConfigOptions) => {
         rowsConfiguration: {
             emptyRows: true,
             defaultRows: false,
-            externalContentURLs: [{
-                name: "Saved Rows",
-                value: "saved-rows",
-                handle: 'saved-rows',
-                isLocal: true,
-                behaviors: {
-                  canEdit: true,
-                  canDelete: true,
-                },
-            }]
+            // externalContentURLs: [{
+            //     name: "Saved Rows",
+            //     value: "saved-rows",
+            //     handle: 'saved-rows',
+            //     isLocal: true,
+            //     behaviors: {
+            //       canEdit: true,
+            //       canDelete: true,
+            //     },
+            // }]
         },
         workspace:{
             type: 'mixed',
@@ -87,19 +87,18 @@ export const BeeConfig = (Options: ConfigOptions) => {
         contentDialog: {
             externalContentURLs: {
                 label: 'Add Product Block',
-                handler: async function(resolve: any, reject: any, args: any) {
-                    const results = await openModal(ProductCatalog, { ...args, open: true }, classes);
-                    console.log(results)
-                    // const results = await openModal(ProductCatalog, {
-                    //     hasTitleBar: false,
-                    //     title: 'Set-up Dynamic Product'
-                    // })
-                    // if (results?.newValue) {
-                    //     resolve({ name: results?.newValue })
-                    // } else {
-                    //     reject('')
-                    // }
-                    resolve();
+                handler: async function(resolve: any, reject: any) {
+                    const results = await openModal(ProductCatalog, {}, classes);
+                    let newRow = results.row;
+                    if (newRow === '') reject();
+                    else {
+                        newRow['uuid'] = uuidv4();
+                        newRow['metadata']['uuid'] = uuidv4();
+                        newRow['metadata']['name'] = 'Product Catalog';
+                        newRow['metadata']['tags'] = 'product-catalog';
+                        await onSaveUserBlock(JSON.stringify(newRow), newRow)
+                        resolve();
+                    }
                 }
             },
             saveRow: {

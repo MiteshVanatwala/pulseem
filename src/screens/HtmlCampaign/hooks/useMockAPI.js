@@ -34,7 +34,7 @@ const useMockAPI = () => {
     return new Promise((resolve) => resolve);
   }
 
-  const getRows = async (handle) => {
+  const getRows = async (handle, all=true) => {
     let items = ref.current;
     if (ref?.current.length > 0) {
       items = ref?.current.filter((row) => {
@@ -51,7 +51,7 @@ const useMockAPI = () => {
     }
 
     return new Promise((resolve) => {
-      resolve(items)
+      resolve(all ? ref.current : items)
     })
   }
 

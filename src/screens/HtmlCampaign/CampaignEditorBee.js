@@ -124,7 +124,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (dataReady) {
       Promise.all([initFields(), siteTrackingLogic()]).then(() => {
         return true;
-      })
+      });
     }
   }, [dataReady]);
   //#endregion
@@ -497,13 +497,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
       dispatch(getUserblocks());
-      await setRow(json);
+      await setRow(blockRequest?.Data);
     });
   }
   const onEditBlock = (blockRequest) => {
     setLoader(true);
     dispatch(saveUserBlock(blockRequest)).then(async () => {
       setLoader(false);
+      dispatch(getUserblocks());
       await setRow(JSON.stringify(blockRequest?.Json));
     });
   }

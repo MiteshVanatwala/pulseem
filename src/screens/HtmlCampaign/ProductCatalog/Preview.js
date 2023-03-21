@@ -1,15 +1,13 @@
-import React from 'react'
 import noImagePreview from '../../../assets/images/no-image-preview.jpg';
 
 const card = {
   backgroundColor: '#fff',
   borderRadius: '5px',
-  border: 'solid 0.5px #d9d9d9',
+  // border: 'solid 0.5px #d9d9d9',
   marginBottom: '10px',
   marginRight: '10px',
-  display: 'table',
+  display: 'inline-table',
   width: '100%',
-  // position: 'absolute'
 };
 
 const imageBlock = {
@@ -21,9 +19,11 @@ const imageBlock = {
 };
 
 const imageStyle = {
-  // left: '0px',
-  // height: '100%',
-  // width: '100%'
+  width: '100%'
+}
+
+const imageHorizontalStyle = {
+  width: 'auto'
 }
 
 const contentBlock = {
@@ -104,7 +104,7 @@ const Preview = ({
               ...(structure === 'vertical' && {...width100Percent})
             }}
           >
-            <img src={noImagePreview} style={imageStyle} />
+            <img src={noImagePreview} style={structure === 'vertical' ? imageHorizontalStyle : imageStyle} />
           </div>
         )
       }
