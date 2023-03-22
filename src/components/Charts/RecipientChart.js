@@ -320,7 +320,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.newsletter.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.sms.Pending');
                     break;
@@ -355,7 +355,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.sms.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.email.Pending');
                     break;
