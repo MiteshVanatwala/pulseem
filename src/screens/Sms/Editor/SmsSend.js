@@ -1905,7 +1905,8 @@ const SmsSend = ({ classes, ...props }) => {
     if (!campaignSettings?.SendExeptional?.ExceptionalDays || campaignSettings?.SendExeptional?.ExceptionalDays === ''
       || campaignSettings?.SendExeptional?.ExceptionalDays === -1)
       settoggleReci(false)
-
+    else
+      settoggleReci(true)
   }
   const filterRecipientsDialog = () => {
     return {
