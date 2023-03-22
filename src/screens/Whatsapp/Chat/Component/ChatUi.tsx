@@ -153,6 +153,7 @@ const ChatUi = ({
 												position: 'absolute',
 												borderRadius: '10px',
 												textAlign: 'center',
+												marginTop: '-6px',
 										  }
 										: {
 												display: 'none',
@@ -171,9 +172,7 @@ const ChatUi = ({
 							</Select>
 						</span>
 					</h2>
-					<p className={`${classes.whatsappChat} chat__contact-desc`}>
-						<>{translator('whatsappChat.online')}</>
-					</p>
+					<p className={`${classes.whatsappChat} chat__contact-desc`}></p>
 				</div>
 
 				{whatsappChatSession?.IsIn24Window &&

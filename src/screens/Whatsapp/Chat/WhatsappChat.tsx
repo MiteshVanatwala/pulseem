@@ -673,7 +673,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
 				setContactsPaginationSetting({
 					...contactsPaginationSetting,
-					hasMore: true,
+					hasMore:
+						whatsAppChatContactsData?.Data?.Items?.length <
+						contactsPaginationSetting?.PageSize
+							? false
+							: true,
 					PageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
 				});
 				if (isPaginationReset) {
@@ -695,8 +699,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				}
 			} else {
 				if (whatsAppChatContactsData?.Message === 'No Data Found') {
+					setSideChatContacts([]);
+					setFilteredSideChatContacts([]);
 					setContactsPaginationSetting({
 						...contactsPaginationSetting,
+						PageNo: 1,
 						hasMore: false,
 					});
 				}
@@ -722,7 +729,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				currentPage='whatsapp'
 				classes={classes}
 				customPadding={false}
-				containerClass={null}>
+				containerClass={classes.mb50}>
 				{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
 				<div className={`${classes.whatsappChat} app`}>
 					<div className={`${classes.whatsappChat} app-content`}>
@@ -737,6 +744,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							sideChatContacts={sideChatContacts}
 							filteredSideChatContacts={filteredSideChatContacts}
 							setFilteredSideChatContacts={setFilteredSideChatContacts}
+							setContactsPaginationSetting={setContactsPaginationSetting}
 							phoneNumbersList={phoneNumbersList}
 							handleUserStatus={handleUserStatus}
 							getStatusClass={getStatusClass}

@@ -21,6 +21,7 @@ const SideBar = ({
 	sideChatContacts,
 	filteredSideChatContacts,
 	setFilteredSideChatContacts,
+	setContactsPaginationSetting,
 	phoneNumbersList,
 	handleUserStatus,
 	getStatusClass,
@@ -28,7 +29,7 @@ const SideBar = ({
 	fetchMoreContacts,
 	fetchSearchedContacts,
 	contactsPaginationSetting,
-	isLoader
+	isLoader,
 }: WhatsappChatSideBarProps) => {
 	const [filterBySelected, setFilterBySelected] = useState(0);
 	const { t: translator } = useTranslation();
@@ -66,6 +67,21 @@ const SideBar = ({
 					return data.ConversationStatusId === value;
 				}
 			);
+		}
+		if (e.target.value !== 0 && result?.length <= 0) {
+			setContactsPaginationSetting({
+				...contactsPaginationSetting,
+				hasMore: false,
+			});
+		}
+		if (
+			e.target.value === 0 &&
+			result?.length > contactsPaginationSetting?.PageSize
+		) {
+			setContactsPaginationSetting({
+				...contactsPaginationSetting,
+				hasMore: true,
+			});
 		}
 		setFilteredSideChatContacts(result);
 	};
@@ -144,6 +160,7 @@ const SideBar = ({
 					fetchMoreContacts={() => fetchMoreContacts(searchText)}
 					contactsPaginationSetting={contactsPaginationSetting}
 					isLoader={isLoader}
+					searchText={searchText}
 				/>
 			</aside>
 		</>

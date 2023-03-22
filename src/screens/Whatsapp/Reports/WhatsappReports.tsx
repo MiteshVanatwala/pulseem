@@ -294,6 +294,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			setTotalRecord(campaignData?.payload?.Data?.TotalRecord);
 		} else {
 			setReportListData([]);
+			setTotalRecord(0);
 		}
 	};
 

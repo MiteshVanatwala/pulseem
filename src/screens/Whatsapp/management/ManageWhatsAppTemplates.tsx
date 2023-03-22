@@ -171,13 +171,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		const templateData: templateListAPIProps = await dispatch<any>(
 			getAllTemplates(pagination)
 		);
+		setIsLoader(false);
 		if (templateData.payload.Status === apiStatus.SUCCESS) {
 			setTemplateListData(templateData.payload?.Data?.Items);
 			setTotalRecord(templateData?.payload?.Data?.TotalRecord);
-			setIsLoader(false);
 		} else {
 			setTemplateListData([]);
-			setIsLoader(false);
+			setTotalRecord(0);
 		}
 	};
 

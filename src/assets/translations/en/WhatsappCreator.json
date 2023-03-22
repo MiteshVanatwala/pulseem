@@ -89,7 +89,7 @@
 		"DeleteTitle": "Are you sure?",
 		"ConfirmText": "Submit Campaign",
 		"ConfirmTitle": "Are you sure you want to submit your template?",
-		"fileSizeAlert": "File size should be less than 16MB",
+		"fileSizeAlert": "File is larger than 16MB",
 		"alert": "Alert"
 	}
 }

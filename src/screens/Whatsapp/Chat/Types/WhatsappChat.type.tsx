@@ -63,6 +63,7 @@ export type SideBarContactListProps = {
 	fetchMoreContacts: () => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	isLoader: boolean;
+	searchText: string;
 };
 
 export type SideHeaderContactDropDownProps = {
@@ -118,6 +119,9 @@ export type WhatsappChatSideBarProps = {
 	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	setFilteredSideChatContacts: (
 		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[]
+	) => void;
+	setContactsPaginationSetting: (
+		contactsPaginationSetting: ContactsPaginationSetting
 	) => void;
 	phoneNumbersList: string[];
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;

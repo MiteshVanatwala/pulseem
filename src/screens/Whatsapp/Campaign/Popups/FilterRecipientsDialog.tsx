@@ -124,6 +124,7 @@ const FilterRecipientsDialog = ({
 			if (exceptionalDays?.length > 0) {
 				return true;
 			} else {
+				setRecipientsBool(true);
 				setIsValidated(false);
 				setGroupSendValidationErrors([translator('sms.FillDay')]);
 				setIsValidationAlert(true);
