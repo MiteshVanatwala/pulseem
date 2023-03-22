@@ -246,7 +246,7 @@ const SmsSend = ({ classes, ...props }) => {
         }
         setFilterCampaigns(selectedCampaigns);
       }
-      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1) {
+      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
 
@@ -976,7 +976,15 @@ const SmsSend = ({ classes, ...props }) => {
         setbsDot(true);
       }
       else {
+        settoggleReci(false)
         setbsDot(false);
+        setCampaignSettings({
+          ...campaignSettings, SendExeptional: {
+            Groups: campaignSettings?.SendExeptional?.Groups ?? [],
+            Campaigns: campaignSettings?.SendExeptional?.Campaigns ?? [],
+            ExceptionalDays: ''
+          }
+        })
       }
     }
     if (formIsvalid) {
@@ -1898,14 +1906,9 @@ const SmsSend = ({ classes, ...props }) => {
   //#region Filter modal
   const handleCancelFilter = () => {
     setDialogType(null);
-    console.log(campaignSettings);
     setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
     setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
-    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
-    if (!campaignSettings?.SendExeptional?.ExceptionalDays || campaignSettings?.SendExeptional?.ExceptionalDays === ''
-      || campaignSettings?.SendExeptional?.ExceptionalDays === -1)
-      settoggleReci(false)
-
+    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
   }
   const filterRecipientsDialog = () => {
     return {
