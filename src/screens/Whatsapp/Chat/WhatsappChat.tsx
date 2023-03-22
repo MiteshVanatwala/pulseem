@@ -744,6 +744,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							sideChatContacts={sideChatContacts}
 							filteredSideChatContacts={filteredSideChatContacts}
 							setFilteredSideChatContacts={setFilteredSideChatContacts}
+							setContactsPaginationSetting={setContactsPaginationSetting}
 							phoneNumbersList={phoneNumbersList}
 							handleUserStatus={handleUserStatus}
 							getStatusClass={getStatusClass}
