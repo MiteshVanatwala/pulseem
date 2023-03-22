@@ -895,9 +895,9 @@ const SmsSend = ({ classes, ...props }) => {
                     onChange={inputGroup}
                     value={groupValue}
                   />
-                  <span className={classes.saveBtn} onClick={handleCombined}>
+                  <Button className={clsx(classes.saveBtn, !groupValue || groupValue === '' ? classes.disabled : null)} onClick={handleCombined}>
                     {t("mainReport.save")}
-                  </span>
+                  </Button>
                   {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", groupValue)}</span> : null}
                 </div>
               ) : null}
@@ -1896,6 +1896,17 @@ const SmsSend = ({ classes, ...props }) => {
     );
   }
   //#region Filter modal
+  const handleCancelFilter = () => {
+    setDialogType(null);
+    console.log(campaignSettings);
+    setFilterGroups(campaignSettings?.SendExeptional?.Groups);
+    setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns);
+    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
+    if (!campaignSettings?.SendExeptional?.ExceptionalDays || campaignSettings?.SendExeptional?.ExceptionalDays === ''
+      || campaignSettings?.SendExeptional?.ExceptionalDays === -1)
+      settoggleReci(false)
+
+  }
   const filterRecipientsDialog = () => {
     return {
       title: t('mainReport.recipientFilter'),
@@ -1987,7 +1998,8 @@ const SmsSend = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
-      onClose: () => { setDialogType(null) },
+      onCancel: () => { handleCancelFilter() },
+      onClose: () => { handleCancelFilter() },
       onConfirm: () => { handleFilterConfirm() }
     }
   }
