@@ -673,7 +673,11 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			if (whatsAppChatContactsData?.Status === apiStatus.SUCCESS) {
 				setContactsPaginationSetting({
 					...contactsPaginationSetting,
-					hasMore: true,
+					hasMore:
+						whatsAppChatContactsData?.Data?.Items?.length <
+						contactsPaginationSetting?.PageSize
+							? false
+							: true,
 					PageNo: isPaginationReset ? 1 : contactsPaginationSetting?.PageNo + 1,
 				});
 				if (isPaginationReset) {

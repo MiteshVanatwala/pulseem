@@ -144,6 +144,7 @@ const SideBar = ({
 					fetchMoreContacts={() => fetchMoreContacts(searchText)}
 					contactsPaginationSetting={contactsPaginationSetting}
 					isLoader={isLoader}
+					searchText={searchText}
 				/>
 			</aside>
 		</>

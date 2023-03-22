@@ -63,6 +63,7 @@ export type SideBarContactListProps = {
 	fetchMoreContacts: () => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	isLoader: boolean;
+	searchText: string;
 };
 
 export type SideHeaderContactDropDownProps = {
