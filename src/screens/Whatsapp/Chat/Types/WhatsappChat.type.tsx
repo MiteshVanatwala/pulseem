@@ -120,6 +120,9 @@ export type WhatsappChatSideBarProps = {
 	setFilteredSideChatContacts: (
 		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[]
 	) => void;
+	setContactsPaginationSetting: (
+		contactsPaginationSetting: ContactsPaginationSetting
+	) => void;
 	phoneNumbersList: string[];
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
