@@ -79,6 +79,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const NodeToEdit = queryParams.get("NodeToEdit");
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   //#endregion State
 
@@ -289,9 +290,7 @@ const CampaignEditor = ({ classes, ...props }) => {
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
-              // else {
-              //   getData();
-              // }
+              setButtonDisabled(false);
             });
           }
           break;
@@ -739,6 +738,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         <div id="bee-plugin-container" className={classes.containerFullHeight}></div>
       </Box>
       <WizardActions
+        disabled={buttonDisabled}
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
         classes={classes}
