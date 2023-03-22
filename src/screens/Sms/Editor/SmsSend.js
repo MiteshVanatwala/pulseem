@@ -1899,8 +1899,8 @@ const SmsSend = ({ classes, ...props }) => {
   const handleCancelFilter = () => {
     setDialogType(null);
     console.log(campaignSettings);
-    setFilterGroups(campaignSettings?.SendExeptional?.Groups);
-    setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns);
+    setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
+    setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
     setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
     if (!campaignSettings?.SendExeptional?.ExceptionalDays || campaignSettings?.SendExeptional?.ExceptionalDays === ''
       || campaignSettings?.SendExeptional?.ExceptionalDays === -1)
