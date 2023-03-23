@@ -13,10 +13,12 @@ import { range } from 'lodash';
 import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulPrice, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
+import { ProductCatalogTypes } from './Types';
+import { Direction, Items, Structure } from '../../config/enum';
 
-const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
+const ProductCatalog = ({classes, isOpen = true, save}: ProductCatalogTypes) => {
   const { t } = useTranslation();
-  const [isSingleOrMultiple, setSingleOrMultiple] = useState('single');
+  const [isSingleOrMultiple, setSingleOrMultiple] = useState(Items.Single);
   const [uptoProducts, setUptoProducts] = useState(1);
   const [isFilterByEventType, setFilterIsByEventType] = useState(true);
   const [isFilterIsByProductCategory, setFilterIsByProductCategory] = useState(true);
@@ -25,13 +27,13 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
   const [isDescriptionVisible, setDescriptionVisibility] = useState(true);
   const [isPriceVisible, setPriceVisibility] = useState(true);
   const [isButtonVisible, setButtonVisibility] = useState(true);
-  const [buttonText, setButtonText] = useState(t('campaigns.buyNow'));
-  const [structure, setStructure] = useState('horizontal');
+  const [buttonText, setButtonText] = useState('');
+  const [structure, setStructure] = useState(Structure.Horizontal);
   const [direction, setDirection] = useState('ltr');
   const [eventType, setEventType] = useState('purchase');
   const [category, setCategory] = useState('page');
   const [maxProducts, setMaxProducts] = useState(4);
-  const [productOrder, setProductOrder] = useState('horizontal');
+  const [productOrder, setProductOrder] = useState(Structure.Horizontal);
 
   useEffect(() => {
     if (productOrder === 'vertical') {
@@ -40,21 +42,25 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
     } else {
       setMaxProducts(4);
     }
-  }, [productOrder])
+  }, [productOrder]);
+
+  useEffect(() => {
+    setButtonText(t('campaigns.buyNow'));
+  }, []);
 
   const onHandleSave = () => {
     let dynamicRow = Object.assign({}, PulRow);
     dynamicRow['container']['style']['direction'] = direction;
     dynamicRow['content']['style']['direction'] = direction;
-    var productJSON = getProductJSON();
+    var productJSON: any = getProductJSON();
 
     if (uptoProducts > 0) {
-      if (productOrder === 'horizontal') {
+      if (productOrder === Structure.Horizontal) {
         for (let ind=0; ind<uptoProducts; ind++) {
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
         }
-      } else if (productOrder === 'vertical') {
-        var modules = [];
+      } else if (productOrder === Structure.Vertical) {
+        var modules: any = [];
         for (let ind=0; ind<uptoProducts; ind++) {
           for (let indJ=0; indJ<productJSON.length; indJ++) {
             modules = modules.concat(productJSON[indJ]['modules']);
@@ -62,7 +68,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
           if (ind < uptoProducts-1) modules = modules.concat(PulDivider);
         }
 
-        if (structure === 'vertical') {
+        if (structure === Structure.Vertical) {
           productJSON[0]['modules'] = modules;
           dynamicRow['columns'] = dynamicRow['columns'].concat(productJSON);
         }
@@ -77,7 +83,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
   
   const getProductJSON = () => {
     const productJSON = [];
-    if (structure === 'horizontal') {
+    if (structure === Structure.Horizontal) {
       var productCol = JSON.parse(JSON.stringify(PulColItem));
       productCol['uuid'] = uuidv4();
       if (isImageVisible) {
@@ -89,7 +95,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
         productJSON.push(productCol);
       }
 
-      var productCol = Object.assign({}, PulColItem);
+      var productCol: any = Object.assign({}, PulColItem);
       productCol['uuid'] = uuidv4();
       const moduleItems = [];
       if (isNameVisible) {
@@ -119,7 +125,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
       if (isButtonVisible) {
         let button = Object.assign({}, PulButton);
         button['uuid'] = uuidv4();
-        button['descriptor']['button']['label'] = buttonText || 'Click';
+        button['descriptor']['button']['label'] = buttonText;
         button['descriptor']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(button);
       }
@@ -184,13 +190,12 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
   }, []);
 
   const getProductNumbers = () => {
-    return range(1, maxProducts+1).map(item => <MenuItem key={item} value={item}>{item}</MenuItem>)
+    return range(1, maxProducts+1).map((item: string) => <MenuItem key={item} value={item}>{item}</MenuItem>)
   }
   return (
     <BaseDialog
       open={isOpen}
       className={clsx(classes.dialogContainers)}
-      reduceTitle
     >
       <div className='product-block'>
         <Box>
@@ -199,42 +204,42 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
               <h2 className={clsx(classes.mt0)}>{t('campaigns.setupDynamicProduct')}</h2>
               <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1">
                 <FormControlLabel
-                  value='single'
+                  value={Items.Single}
                   className={clsx(classes.fullSize)}
                   control={<Radio
                     color="primary"
-                    checked={isSingleOrMultiple === 'single'}
-                    onChange={event => {
+                    checked={isSingleOrMultiple === Items.Single}
+                    onChange={(event: any) => {
                       setSingleOrMultiple(event.target.value);
                       setUptoProducts(1);
                     }}
-                    value='single'
+                    value={Items.Single}
                     />
                   }
                   label={t('campaigns.singleProduct')}
                 />
                 <FormControlLabel
-                  value='multiple'
+                  value={Items.Multiple}
                   className={clsx(classes.fullSize)}
                   control={
                     <Radio
                       color="primary"
-                      checked={isSingleOrMultiple === 'multiple'}
-                      onChange={event => setSingleOrMultiple(event.target.value)}
-                      value='multiple'
+                      checked={isSingleOrMultiple === Items.Multiple}
+                      onChange={(event: any) => setSingleOrMultiple(event.target.value)}
+                      value={Items.Multiple}
                     />
                   }
                   label={t("campaigns.multipleProduct")}
                 />
               </RadioGroup>
               {
-                isSingleOrMultiple === 'multiple' && (
+                isSingleOrMultiple === Items.Multiple && (
                   <div className={clsx(classes.pl30, classes.pt5)}>
                     <label className={clsx(classes.pe15)}>{t('campaigns.upto')}</label>
                     <Select
                       className={clsx(classes.borderAround, classes.txtCenter, classes.pl10)}
                       value={uptoProducts}
-                      onChange={event => setUptoProducts(event.target.value)}
+                      onChange={(event: any) => setUptoProducts(event.target.value)}
                     >
                       {getProductNumbers()}
                     </Select>
@@ -260,7 +265,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                   <Select
                     className={clsx(classes.dBlock, classes.borderAround, classes.ml25, classes.pl10)}
                     value={eventType}
-                    onChange={event => setEventType(event.target.value)}
+                    onChange={(event: any) => setEventType(event.target.value)}
                   >
                     <MenuItem key='all' value='all'>{t('campaigns.allEvents')}</MenuItem>
                     <MenuItem key='page' value='page'>{t('campaigns.pageView')}</MenuItem>
@@ -284,7 +289,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                   <Select
                     className={clsx(classes.dBlock, classes.borderAround, classes.ml25, classes.pl10)}
                     value={category}
-                    onChange={event => setCategory(event.target.value)}
+                    onChange={(event: any) => setCategory(event.target.value)}
                   >
                     <MenuItem key='all' value='all'>{t('campaigns.allCategories')}</MenuItem>
                     <MenuItem key='page' value='page'>{t('campaigns.pageView')}</MenuItem>
@@ -375,8 +380,8 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
               <Input
                 className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
                 placeholder={t('campaigns.buyNow')}
-                value={buttonText}
-                onChange={event => setButtonText(event.target.value)}
+                defaultValue={buttonText}
+                onChange={(event: any) => setButtonText(event.target.value)}
               ></Input>
             </Grid>
             <Grid item md={7}>
@@ -386,10 +391,10 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                   <Select
                     className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
                     value={structure}
-                    onChange={event => setStructure(event.target.value)}
+                    onChange={(event: any) => setStructure(event.target.value)}
                   >
-                    <MenuItem key='horizontal' value='horizontal'>{t('campaigns.horizontal')}</MenuItem>
-                    <MenuItem key='vertical' value='vertical'>{t('campaigns.vertical')}</MenuItem>
+                    <MenuItem key={Structure.Horizontal} value={Structure.Horizontal}>{t('campaigns.horizontal')}</MenuItem>
+                    <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
                   </Select>
                 </Grid>
 
@@ -397,16 +402,16 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                   <Select
                     className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
                     value={direction}
-                    onChange={event => setDirection(event.target.value)}
+                    onChange={(event: any) => setDirection(event.target.value)}
                   >
-                    <MenuItem key='ltr' value='ltr'>{t('campaigns.leftToRight')}</MenuItem>
-                    <MenuItem key='rtl' value='rtl'>{t('campaigns.rightToLeft')}</MenuItem>
+                    <MenuItem key={Direction.LeftToRight} value={Direction.LeftToRight}>{t('campaigns.leftToRight')}</MenuItem>
+                    <MenuItem key={Direction.RightToLeft} value={Direction.RightToLeft}>{t('campaigns.rightToLeft')}</MenuItem>
                   </Select>
                 </Grid>
               </Grid>
                 
               {
-                isSingleOrMultiple === 'multiple' && (
+                isSingleOrMultiple === Items.Multiple && (
                   <>
                     <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.productOrder')}:</h4>
                     <Grid container spacing={5}>
@@ -414,10 +419,10 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                         <Select
                           className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
                           value={productOrder}
-                          onChange={event => setProductOrder(event.target.value)}
+                          onChange={(event: any) => setProductOrder(event.target.value)}
                         >
-                          <MenuItem key='horizontal' value='horizontal'>{t('campaigns.horizontal')}</MenuItem>
-                          <MenuItem key='vertical' value='vertical'>{t('campaigns.vertical')}</MenuItem>
+                          <MenuItem key={Structure.Horizontal} value={Structure.Horizontal}>{t('campaigns.horizontal')}</MenuItem>
+                          <MenuItem key={Structure.Vertical} value={Structure.Vertical}>{t('campaigns.vertical')}</MenuItem>
                         </Select>
                       </Grid>
                     </Grid>
@@ -426,14 +431,14 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
               }
               
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.preview')}:</h4>
-              <div className='preview' style={{ display: productOrder === 'horizontal' ? 'flex' : 'block' }}>
+              <div className='preview' style={{ display: productOrder === Structure.Horizontal ? 'flex' : 'block' }}>
                   {
                     [
                       times(uptoProducts, (i) => {
                         return (
                           <Preview
                             classes={classes}
-                            width={productOrder === 'horizontal' ? 100/uptoProducts : 100}
+                            width={productOrder === Structure.Horizontal ? 100/uptoProducts : 100}
                             key={i}
                             isImageVisible={isImageVisible}
                             isNameVisible={isNameVisible}

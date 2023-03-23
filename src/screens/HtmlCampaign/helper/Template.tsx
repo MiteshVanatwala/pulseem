@@ -10,6 +10,7 @@ export const PulImage = {
       "href": "",
       "style": {
         "width": "100%",
+        "text-align": "left"
       },
       "width": "200",
     },
@@ -19,6 +20,7 @@ export const PulImage = {
       "padding-right": "0px",
       "padding-bottom": "0px",
       "padding-left": "0px",
+      "text-align": "left"
     },
     "computedStyle": {
       "class": "center fixedwidth",
@@ -231,6 +233,7 @@ export const PulRow = {
       "background-image": "none",
       "background-repeat": "no-repeat",
       "background-position": "top left",
+      "direction": "rtl",
     }
   },
   "content": {
@@ -245,7 +248,8 @@ export const PulRow = {
       "border-right": "0px solid transparent",
       "border-bottom": "0px solid transparent",
       "border-left": "0px solid transparent",
-      "border-radius": "0px"
+      "border-radius": "0px",
+      "direction": "rtl",
     },
     "computedStyle": {
       "rowColStackOnMobile": true,
