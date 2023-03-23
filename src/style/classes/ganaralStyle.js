@@ -418,9 +418,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ml15: {
     marginInlineStart: 15,
   },
-  mt5: {
-    marginTop: 5,
-  },
   mt10: {
     marginTop: 10,
   },
@@ -667,6 +664,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font30: {
     fontSize: 30,
+  },
+  directionRTL: {
+    direction: 'rtl',
+  },
+  wAuto: {
+    width: 'auto'
   },
   w100: {
     width: '100%'

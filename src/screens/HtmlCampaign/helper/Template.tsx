@@ -231,7 +231,6 @@ export const PulRow = {
       "background-image": "none",
       "background-repeat": "no-repeat",
       "background-position": "top left",
-      // "width": "100%",
     }
   },
   "content": {

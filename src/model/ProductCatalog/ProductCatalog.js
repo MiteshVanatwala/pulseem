@@ -4,11 +4,13 @@ import times from 'lodash/times';
 import {
   Box,
   Grid,
-  Dialog as BaseDialog, makeStyles
+  RadioGroup,
+  Radio,
+  Dialog as BaseDialog, FormControlLabel, Select, MenuItem, Checkbox, Button, Input
 } from '@material-ui/core'
 import clsx from 'clsx';
 import { range } from 'lodash';
-import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulPrice, PulRow } from '../helper/Template';
+import { PulButton, PulColItem, PulDivider, PulHead, PulImage, PulPara, PulPrice, PulRow } from '../../screens/HtmlCampaign/helper/Template';
 import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 
@@ -27,7 +29,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
   const [structure, setStructure] = useState('horizontal');
   const [direction, setDirection] = useState('ltr');
   const [eventType, setEventType] = useState('purchase');
-  const [category, setCategory] = useState('pv');
+  const [category, setCategory] = useState('page');
   const [maxProducts, setMaxProducts] = useState(4);
   const [productOrder, setProductOrder] = useState('horizontal');
 
@@ -93,7 +95,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
       if (isNameVisible) {
         let head = Object.assign({}, PulHead);
         head['uuid'] = uuidv4();
-        head['descriptor']['heading']['text'] = '#Name';
+        head['descriptor']['heading']['text'] = '#Name#';
         head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(head);
       }
@@ -101,7 +103,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
       if (isDescriptionVisible) {
         let desc = Object.assign({}, PulPara);
         desc['uuid'] = uuidv4();
-        desc['descriptor']['paragraph']['html'] = '#Description';
+        desc['descriptor']['paragraph']['html'] = '#Description#';
         desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(desc);
       }
@@ -109,7 +111,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
       if (isPriceVisible) {
         let price = Object.assign({}, PulPrice);
         price['uuid'] = uuidv4();
-        price['descriptor']['paragraph']['html'] = '#Price';
+        price['descriptor']['paragraph']['html'] = '#Price#';
         price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(price);
       }
@@ -139,7 +141,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
       if (isNameVisible) {
         let head = Object.assign({}, PulHead);
         head['uuid'] = uuidv4();
-        head['descriptor']['heading']['text'] = '#Name';
+        head['descriptor']['heading']['text'] = '#Name#';
         head['descriptor']['heading']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(head);
       }
@@ -147,7 +149,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
       if (isDescriptionVisible) {
         let desc = Object.assign({}, PulPara);
         desc['uuid'] = uuidv4();
-        desc['descriptor']['paragraph']['html'] = '#Description';
+        desc['descriptor']['paragraph']['html'] = '#Description#';
         desc['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(desc);
       }
@@ -155,7 +157,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
       if (isPriceVisible) {
         let price = Object.assign({}, PulPrice);
         price['uuid'] = uuidv4();
-        price['descriptor']['paragraph']['html'] = '#Price';
+        price['descriptor']['paragraph']['html'] = '#Price#';
         price['descriptor']['paragraph']['style']['text-align'] = direction === 'ltr' ? 'left' : 'right';
         moduleItems.push(price);
       }
@@ -181,85 +183,61 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
     })
   }, []);
 
-  const style = {
-    maxWidth: '70% !important',
-    width: '70% !important',
-    padding: '10px !important'
-  }
-
-  const useStyles = makeStyles({
-    dialogContainers: {
-      width: '100%',
-      '& .MuiPaper-root': {
-        width: '70% !important',
-        maxWidth: '70% !important',
-        padding: '20px'
-      }
-    },
-  });
-
   const getProductNumbers = () => {
-    return range(1, maxProducts+1).map(item => <option key={item}>{item}</option>)
+    return range(1, maxProducts+1).map(item => <MenuItem key={item} value={item}>{item}</MenuItem>)
   }
-
-  const styles = useStyles();
   return (
     <BaseDialog
       open={isOpen}
-      className={clsx(styles.dialogContainers)}
+      className={clsx(classes.dialogContainers)}
       reduceTitle
     >
-      <div className='product-block' style={style}>
+      <div className='product-block'>
         <Box>
           <Grid container spacing={5}>
             <Grid item md={5}>
               <h2 className={clsx(classes.mt0)}>{t('campaigns.setupDynamicProduct')}</h2>
-              <div onChange={event => setSingleOrMultiple(event.target.value)} value={isSingleOrMultiple}>
-                <div className={clsx(classes.pt5, classes.pb10)}>
-                  <input
-                    value="single"
-                    type="radio"
-                    className='radio-btn'
-                    id='single_product'
-                    name="product_type"
-                    defaultChecked={isSingleOrMultiple === 'single'}
-                  /> 
-                  <label
-                    className={clsx(classes.paddingSides10)}
-                    htmlFor='single_product'
-                  >
-                    {t('campaigns.singleProduct')}
-                  </label>
-                </div>
-                <div className={clsx(classes.pb10)}>
-                  <input
-                    value="multiple"
-                    type="radio"
-                    className='radio-btn'
-                    id='multiple_product'
-                    name="product_type"
-                    defaultChecked={isSingleOrMultiple === 'multiple'}
-                  />
-                  <label
-                    className={clsx(classes.paddingSides10)}
-                    htmlFor='multiple_product'
-                  >
-                    {t('campaigns.multipleProduct')}
-                  </label>
-                </div>
-              </div>
-
+              <RadioGroup row aria-label="WebViewLocation" name="WebViewLocation" defaultValue="1">
+                <FormControlLabel
+                  value='single'
+                  className={clsx(classes.fullSize)}
+                  control={<Radio
+                    color="primary"
+                    checked={isSingleOrMultiple === 'single'}
+                    onChange={event => {
+                      setSingleOrMultiple(event.target.value);
+                      setUptoProducts(1);
+                    }}
+                    value='single'
+                    />
+                  }
+                  label={t('campaigns.singleProduct')}
+                />
+                <FormControlLabel
+                  value='multiple'
+                  className={clsx(classes.fullSize)}
+                  control={
+                    <Radio
+                      color="primary"
+                      checked={isSingleOrMultiple === 'multiple'}
+                      onChange={event => setSingleOrMultiple(event.target.value)}
+                      value='multiple'
+                    />
+                  }
+                  label={t("campaigns.multipleProduct")}
+                />
+              </RadioGroup>
               {
                 isSingleOrMultiple === 'multiple' && (
                   <div className={clsx(classes.pl30, classes.pt5)}>
                     <label className={clsx(classes.pe15)}>{t('campaigns.upto')}</label>
-                    <select
-                      className={clsx(classes.p5)}
+                    <Select
+                      className={clsx(classes.borderAround, classes.txtCenter, classes.pl10)}
                       value={uptoProducts}
                       onChange={event => setUptoProducts(event.target.value)}
                     >
                       {getProductNumbers()}
-                    </select>
+                    </Select>
                     <label className={clsx(classes.pl10)}>{t('campaigns.products')}</label>
                   </div>
                 )
@@ -268,145 +246,162 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.filter')}:</h4>
               <div className={clsx(classes.mb25)}>
                 <div className={clsx(classes.pb10)}>
-                  <input
-                    type="checkbox"
-                    id="by_event_type"
-                    onChange={(event) => setFilterIsByEventType(event.target.checked)}
-                    defaultChecked={isFilterByEventType}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={isFilterByEventType}
+                        onChange={(event) => setFilterIsByEventType(event.target.checked)}
+                        name="by_event_type"
+                        color="primary"
+                      />
+                    }
+                    label={t('campaigns.byEventType')}
                   />
-                  <label className={clsx(classes.pl10)} htmlFor="by_event_type">{t('campaigns.byEventType')}:</label>
-                  <select
-                    className={clsx(classes.dBlock, classes.mt2, classes.ml25, classes.p5, classes.w100)}
-                    defaultValue={eventType}
+                  <Select
+                    className={clsx(classes.dBlock, classes.borderAround, classes.ml25, classes.pl10)}
+                    value={eventType}
                     onChange={event => setEventType(event.target.value)}
                   >
-                    <option value="all">{t('campaigns.allEvents')}</option>
-                    <option value="page">{t('campaigns.pageView')}</option>
-                    <option value="purchase">{t('campaigns.purchase')}</option>
-                    <option value="cart_abandon">{t('campaigns.cartAbandonment')}</option>
-                  </select>
+                    <MenuItem key='all' value='all'>{t('campaigns.allEvents')}</MenuItem>
+                    <MenuItem key='page' value='page'>{t('campaigns.pageView')}</MenuItem>
+                    <MenuItem key='purchase' value='purchase'>{t('campaigns.purchase')}</MenuItem>
+                    <MenuItem key='cart_abandon' value='cart_abandon'>{t('campaigns.cartAbandonment')}</MenuItem>
+                  </Select>
                 </div>
 
                 <div className='product-type'>
-                  <input
-                    type="checkbox"
-                    id="by_product_category"
-                    onChange={(event) => setFilterIsByProductCategory(event.target.checked)}
-                    defaultChecked={isFilterIsByProductCategory}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={isFilterIsByProductCategory}
+                        onChange={(event) => setFilterIsByProductCategory(event.target.checked)}
+                        name="by_product_category"
+                        color="primary"
+                      />
+                    }
+                    label={t('campaigns.byProductCategory')}
                   />
-                  <label className={clsx(classes.pl10)} htmlFor="by_product_category">{t('campaigns.byProductCategory')}:</label>
-                  <select
-                    className={clsx(classes.dBlock, classes.mt2, classes.ml25, classes.p5, classes.w100)}
-                    defaultValue={category}
+                  <Select
+                    className={clsx(classes.dBlock, classes.borderAround, classes.ml25, classes.pl10)}
+                    value={category}
                     onChange={event => setCategory(event.target.value)}
                   >
-                    <option value="all">{t('campaigns.allCategories')}</option>
-                    <option value="pv">{t('campaigns.pageView')}</option>
-                  </select>
+                    <MenuItem key='all' value='all'>{t('campaigns.allCategories')}</MenuItem>
+                    <MenuItem key='page' value='page'>{t('campaigns.pageView')}</MenuItem>
+                  </Select>
                 </div>
               </div>
 
               <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.display')}:</h4>
               <div className={clsx(classes.mb10)}>
                 <div className={clsx(classes.dInlineBlock, classes.pb10)}>
-                  <input
-                    type="checkbox"
-                    id="image"
-                    name="display"
-                    defaultChecked={isImageVisible}
-                    onChange={(event) => setImageVisibility(event.target.checked)}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={isImageVisible}
+                        onChange={(event) => setImageVisibility(event.target.checked)}
+                        name="display"
+                        color="primary"
+                      />
+                    }
+                    label={t('campaigns.image')}
                   />
-                  <label className={clsx(classes.pl5, classes.mr10)} htmlFor="image">{t('campaigns.image')}</label>
                 </div>
                 
                 <div className={clsx(classes.dInlineBlock, classes.pb10)}>
-                  <input
-                    type="checkbox"
-                    id="name"
-                    name="display"
-                    value="Name"
-                    defaultChecked={isNameVisible}
-                    onChange={(event) => setNameVisibility(event.target.checked)}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={isNameVisible}
+                        onChange={(event) => setNameVisibility(event.target.checked)}
+                        name="display"
+                        color="primary"
+                        value="Name"
+                      />
+                    }
+                    label={t('campaigns.name')}
                   />
-                  <label className={clsx(classes.pl5, classes.mr10)} htmlFor="name">
-                    {t('campaigns.name')}
-                  </label>
                 </div>
                 
                 <div className={clsx(classes.dInlineBlock, classes.pb10)}>
-                  <input
-                    type="checkbox"
-                    id="description"
-                    name="display"
-                    value="Description"
-                    defaultChecked={isDescriptionVisible}
-                    onChange={(event) => setDescriptionVisibility(event.target.checked)}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={isDescriptionVisible}
+                        onChange={(event) => setDescriptionVisibility(event.target.checked)}
+                        name="display"
+                        color="primary"
+                        value="Description"
+                      />
+                    }
+                    label={t('campaigns.description')}
                   />
-                  <label className={clsx(classes.pl5, classes.mr10)} htmlFor="description">{t('campaigns.description')}</label>
                 </div>
 
                 <div className={clsx(classes.dInlineBlock, classes.pb10)}>
-                  <input
-                    type="checkbox"
-                    id="price"
-                    name="display"
-                    value="Price"
-                    defaultChecked={isPriceVisible}
-                    onChange={(event) => setPriceVisibility(event.target.checked)}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={isPriceVisible}
+                        onChange={(event) => setPriceVisibility(event.target.checked)}
+                        name="display"
+                        color="primary"
+                        value="Price"
+                      />
+                    }
+                    label={t('campaigns.price')}
                   />
-                  <label className={clsx(classes.pl5, classes.mr10)} htmlFor="price">
-                    {t('campaigns.price')}
-                  </label>
                 </div>
 
                 <div className={clsx(classes.dInlineBlock, classes.pb10)}>
-                  <input
-                    type="checkbox"
-                    id="button"
-                    name="display"
-                    value="Button"
-                    defaultChecked={isButtonVisible}
-                    onChange={(event) => setButtonVisibility(event.target.checked)}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={isButtonVisible}
+                        onChange={(event) => setButtonVisibility(event.target.checked)}
+                        name="display"
+                        color="primary"
+                        value="Button"
+                      />
+                    }
+                    label={t('campaigns.button')}
                   />
-                  <label className={clsx(classes.pl5, classes.mr10)} htmlFor="button">
-                    {t('campaigns.button')}
-                  </label>
                 </div>
               </div>
 
               <div className={clsx(classes.mb5)}>
                 {t('campaigns.buttonText')}
               </div>
-              <input
-                className={clsx(classes.p5, classes.mb10, classes.w100)}
-                type="text"
-                defaultValue={t('campaigns.buyNow')}
-                onChange={event => setButtonText(event.target.value)} />
+              <Input
+                className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
+                placeholder={t('campaigns.buyNow')}
+                value={buttonText}
+                onChange={event => setButtonText(event.target.value)}
+              ></Input>
             </Grid>
             <Grid item md={7}>
             <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.productStructure')}:</h4>
               <Grid container spacing={5}>
                 <Grid item md={4}>
-                  <select
-                    defaultValue={structure}
+                  <Select
+                    className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
                     value={structure}
                     onChange={event => setStructure(event.target.value)}
-                    className={clsx(classes.p5, classes.w100)}
                   >
-                    <option value="horizontal">{t('campaigns.horizontal')}</option>
-                    <option value="vertical">{t('campaigns.vertical')}</option>
-                  </select>
+                    <MenuItem key='horizontal' value='horizontal'>{t('campaigns.horizontal')}</MenuItem>
+                    <MenuItem key='vertical' value='vertical'>{t('campaigns.vertical')}</MenuItem>
+                  </Select>
                 </Grid>
 
                 <Grid item md={4}>
-                  <select
-                    defaultValue={direction}
+                  <Select
+                    className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
+                    value={direction}
                     onChange={event => setDirection(event.target.value)}
-                    className={clsx(classes.p5, classes.w100)}
                   >
-                    <option value="ltr">{t('campaigns.leftToRight')}</option>
-                    <option value="rtl">{t('campaigns.rightToLeft')}</option>
-                  </select>
+                    <MenuItem key='ltr' value='ltr'>{t('campaigns.leftToRight')}</MenuItem>
+                    <MenuItem key='rtl' value='rtl'>{t('campaigns.rightToLeft')}</MenuItem>
+                  </Select>
                 </Grid>
               </Grid>
                 
@@ -416,14 +411,14 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                     <h4 className={clsx(classes.bold, classes.pt5, classes.mb10)}>{t('campaigns.productOrder')}:</h4>
                     <Grid container spacing={5}>
                       <Grid item md={4}>
-                        <select
-                          className={clsx(classes.p5, classes.w100)}
-                          defaultValue={productOrder}
+                        <Select
+                          className={clsx(classes.dBlock, classes.borderAround, classes.pl10)}
+                          value={productOrder}
                           onChange={event => setProductOrder(event.target.value)}
                         >
-                          <option value="horizontal">{t('campaigns.horizontal')}</option>
-                          <option value="vertical">{t('campaigns.vertical')}</option>
-                        </select>
+                          <MenuItem key='horizontal' value='horizontal'>{t('campaigns.horizontal')}</MenuItem>
+                          <MenuItem key='vertical' value='vertical'>{t('campaigns.vertical')}</MenuItem>
+                        </Select>
                       </Grid>
                     </Grid>
                   </>
@@ -437,6 +432,7 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                       times(uptoProducts, (i) => {
                         return (
                           <Preview
+                            classes={classes}
                             width={productOrder === 'horizontal' ? 100/uptoProducts : 100}
                             key={i}
                             isImageVisible={isImageVisible}
@@ -444,13 +440,15 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                             isDescriptionVisible={isDescriptionVisible}
                             isPriceVisible={isPriceVisible}
                             isButtonVisible={isButtonVisible}
-                            imageURL='#ImageURL'
-                            name='#Name'
-                            description='#Description'
-                            price='#Price'
+                            imageURL='#ImageURL#'
+                            name='#Name#'
+                            description='#Description#'
+                            price='#Price#'
                             buttonText={buttonText}
                             structure={structure}
                             direction={direction}
+                            eventType={isFilterByEventType ? eventType : ''}
+                            category={isFilterIsByProductCategory ? category : ''}
                           />
                         )
                       }
@@ -458,37 +456,27 @@ const ProductCatalog = ({classes, isOpen = true, onClose, save}) => {
                   }
               </div>
               <div className={clsx(classes.textCenter, classes.mt25)}>
-                <button
+                <Button
                   onClick={onHandleSave}
-                  className={
-                    clsx(
-                      classes.pt5,
-                      classes.pb5,
-                      classes.paddingSides25,
-                      classes.greyButtonWithRoundCorder,
-                      classes.bold
-                    )
-                  }
+                  variant='contained'
+                  size='medium'
+                  className={clsx(
+                    classes.actionButton,
+                    classes.actionButtonLightBlue,
+                    classes.backButton
+                  )}
+                  color="primary"
                 >
                   {t('campaigns.addProductBlock')}
-                </button>
-
-                <button
+                </Button>
+                <Button
                   onClick={onHandleCancel}
-                  className={
-                    clsx(
-                      classes.pt5,
-                      classes.pb5,
-                      classes.paddingSides25,
-                      classes.bgLightGray,
-                      classes.borderRadius30,
-                      classes.bold,
-                      classes.ml10
-                    )
-                  }
+                  variant='contained'
+                  size='medium'
+                  className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue, classes.ml10)}
                 >
                   {t('common.cancel')}
-                </button>
+                </Button>
               </div>
             </Grid>
           </Grid>
