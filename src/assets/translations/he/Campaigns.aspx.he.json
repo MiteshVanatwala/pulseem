@@ -543,6 +543,7 @@
       "duplicatedClients": "לקוחות כפולים",
       "filters": "סינון",
       "segmentations": "פילוחים",
+      "totalNotToSend":"סה\"כ לקוחות לא לשליחה",
       "smsMarketing": {
         "title": "SMS שיווק משלים",
         "sendTo": "שלח ל-",

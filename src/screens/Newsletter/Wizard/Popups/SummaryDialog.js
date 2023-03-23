@@ -54,7 +54,16 @@ const SummaryDialog = ({ classes,
         ExceptionalOpensClicksClientsCount,
         ExceptionalDaysClientsCount,
         ExceptionalCampaignsClientsCount,
-        ExceptionalGroupsClientsCount
+        ExceptionalGroupsClientsCount,
+        IsOpened,
+        IsOpenedClicked,
+        IsNotClicked,
+        IsNotOpened,
+        ClickedCount,
+        OpenedCount,
+        NotOpenedCount,
+        NotClickedCount,
+        IsBestTime
     } = newsletterSendSummary;
 
     const { t } = useTranslation();
@@ -74,10 +83,10 @@ const SummaryDialog = ({ classes,
     const renderWhenToSend = () => {
         switch (newsletterSendSummary?.SendingMethod) {
             case 1: {
-                return t("sms.SendNow");
+                return `${t("sms.SendNow")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 2: {
-                return `${moment(newsletterSendSummary?.SendDate).format('dddd , MMMM Do YYYY, h:mm a')}`;
+                return `${moment(newsletterSendSummary?.SendDate).format('dddd , MMMM Do YYYY, h:mm a')} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 3: {
                 const exDates = { ...extraData };
@@ -85,19 +94,19 @@ const SummaryDialog = ({ classes,
                 switch (newsletterSendSummary.AutoSendingByUserField) {
                     case "1":
                     case 1: {
-                        specialField = t("mainReport.birthday");
+                        specialField = `${t("mainReport.birthday")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
                     case "2":
                     case 2: {
-                        specialField = t("mainReport.creationDay")
+                        specialField = `${t("mainReport.creationDay")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
                     default: {
                         specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField - 2}`];
                     }
                 }
-                return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")} ` + `<span>&nbsp;${specialField}</span>` + `&nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
+                return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")}  <span>&nbsp;${specialField}</span> &nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
             }
             default: {
                 //alert("לא נבחר זמן שליחה")
@@ -143,16 +152,20 @@ const SummaryDialog = ({ classes,
     }
     const renderFilterDetails = () => {
         return detailsHide ? <></> : (<Box className={classes.summaryExpandRecipientFilter}>
-            {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients.toLocaleString())}
-            {InvalidClients > 0 && renderDetailsLine(t("sms.invalidRecipients"), InvalidClients.toLocaleString())}
-            {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients.toLocaleString())}
-            {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients.toLocaleString())}
-            {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients.toLocaleString())}
-            {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients.toLocaleString())}
+            {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients?.toLocaleString())}
+            {InvalidClients > 0 && renderDetailsLine(t("sms.invalidRecipients"), InvalidClients?.toLocaleString())}
+            {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients?.toLocaleString())}
+            {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients?.toLocaleString())}
+            {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients?.toLocaleString())}
+            {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients?.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
             {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
-            {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), ExceptionalOpensClicksClientsCount.toLocaleString())}
-            {ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
+            {IsOpened && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), OpenedCount?.toLocaleString())}
+            {IsNotOpened && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb2'), NotOpenedCount?.toLocaleString() ?? 0)}
+            {IsOpenedClicked && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb3'), ClickedCount?.toLocaleString())}
+            {IsNotClicked && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb4'), NotClickedCount?.toLocaleString() ?? 0)}
+            {ExceptionalGroups !== '' && ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
+            {TotalNotToSend >= 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.totalNotToSend'), TotalNotToSend?.toLocaleString())}
         </Box>)
     }
     const handleFromEmailChanged = (event) => {
