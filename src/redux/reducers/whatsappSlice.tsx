@@ -507,6 +507,38 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 	}
 );
 
+export const getWhatsappChatContactsByUserNumber = createAsyncThunk(
+	'WhatsAppChat/GetWhatsAppChatContacts',
+	async (
+		{
+			PhoneNumber,
+			IsPagination = false,
+			pageNo = 1,
+			pageSize = 6,
+			UserNumber,
+		}: APIGetWhatsappChatContactsReq,
+		thunkAPI
+	) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`WhatsAppChat/GetWhatsAppChatContacts`,
+				{
+					PhoneNumber,
+					IsPagination,
+					pageNo,
+					pageSize,
+					UserNumber,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const getWhatsappChat = createAsyncThunk(
 	'WhatsAppChat/GetWhatsAppChat',
 	async (

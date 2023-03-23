@@ -30,6 +30,7 @@ import {
 	getInboundWhatsappChatStatus,
 	getSavedTemplates,
 	getWhatsappChatContactsByPhoneNumber,
+	getWhatsappChatContactsByUserNumber,
 	manageWhatsappChatCoversationStatus,
 	sendWhatsAppMessage,
 	userPhoneNumbers,
@@ -580,6 +581,40 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		return isValidated;
 	};
 
+	const updateContactList = async () => {
+		const {
+			payload: whatsAppChatContactsData,
+		}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+			getWhatsappChatContactsByUserNumber({
+				PhoneNumber: activePhoneNumber,
+				IsPagination: false,
+				pageNo: 1,
+				pageSize: 6,
+				UserNumber: activeChatContacts?.PhoneNumber,
+			})
+		);
+		if (
+			whatsAppChatContactsData?.Status === apiStatus?.SUCCESS &&
+			whatsAppChatContactsData?.Data?.Items?.length > 0
+		) {
+			const updatedContacts = sideChatContacts?.map((contact) => {
+				if (
+					contact?.PhoneNumber ===
+					whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber
+				) {
+					return whatsAppChatContactsData?.Data?.Items[0];
+				}
+				return contact;
+			});
+
+			changeContactReadStatus(
+				activeChatContacts,
+				updatedContacts,
+				updatedContacts
+			);
+		}
+	};
+
 	const onChatSend = async () => {
 		if (validateDynamicVaraiable()) {
 			let chatReqPayload: APISendWhatsAppChatReqPayload = {
@@ -625,6 +660,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 						inputElement.innerText = '';
 					}
 				}
+
+				// To update contact list
+				updateContactList();
 			} else {
 				sendWhatsappChat?.Message
 					? setToastMessage({
@@ -787,6 +825,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							setSavedTemplate={setSavedTemplate}
 							activeChatContacts={activeChatContacts}
 							isContactLoader={isLoader}
+							updateContactList={updateContactList}
 						/>
 					</div>
 				</div>
