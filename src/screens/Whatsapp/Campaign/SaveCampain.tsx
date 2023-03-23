@@ -402,23 +402,29 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
 		)?.VariableValue;
+
 		return variableValue ? variableValue : variable;
 	};
 
 	const highlightText = (tagData: tagDataProps) => {
-		const isUpdated = isUpdatedVaraiable(tagData?.children);
-		return (
-			<strong
-				className={clsx(
-					classes.whatsappCampainHighlightText,
-					`${isUpdated && 'updated'}`
-				)}
-				onClick={() => openDynamcFieldModal(tagData?.children)}>
-				{isUpdated
-					? getUpdatedVariableValue(tagData?.children)
-					: tagData?.children}
-			</strong>
+		let updatedVariables = getDynamicFields(tagData?.children);
+		const highlightVariables = (
+			<>
+				{updatedVariables?.map((variable) => (
+					<strong
+						className={clsx(
+							classes.whatsappCampainHighlightText,
+							`${isUpdatedVaraiable(variable) && 'updated'}`
+						)}
+						onClick={() => openDynamcFieldModal(variable)}>
+						{isUpdatedVaraiable(variable)
+							? getUpdatedVariableValue(variable)
+							: variable}
+					</strong>
+				))}
+			</>
 		);
+		return highlightVariables;
 	};
 
 	const resetDynamicFields = () => {

@@ -1485,6 +1485,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginTop: '17px',
 		padding: '0 8px',
 		'& table': {
+			minWidth: '918px',
 			'& tr': {
 				'& th': {
 					fontWeight: 'bolder',
