@@ -30,6 +30,7 @@ import Switch from "react-switch";
 import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
+import debounce from 'lodash.debounce';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -212,7 +213,8 @@ const Editorbox = ({
     }, [smsModel, isSiteTracking, isLinksStatistics])
 
     useEffect(() => {
-        getcredits(characterCount);
+        debouncedCallback(characterCount)
+        //getcredits(characterCount);
     }, [characterCount])
 
     const handleSmsModelChange = (name, value) => {
@@ -326,6 +328,8 @@ const Editorbox = ({
             setmessageCount(0);
         }
     }
+
+
     const getcredits = (count) => {
         dispatch(getCreditsforSMS(count)).then((res) => {
             let credits = res.payload?.split("#");
@@ -339,6 +343,7 @@ const Editorbox = ({
             }
         });
     }
+    const debouncedCallback = debounce(getcredits, 1000);
     const onAddText = (text) => {
         text = text.trim();
         let afterUpdateCharCount =

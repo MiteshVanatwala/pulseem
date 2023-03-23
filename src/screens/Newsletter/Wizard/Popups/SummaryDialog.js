@@ -160,10 +160,10 @@ const SummaryDialog = ({ classes,
             {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients?.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
             {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
-            {IsOpened && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), OpenedCount?.toLocaleString())}
-            {IsNotOpened && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb2'), NotOpenedCount?.toLocaleString() ?? 0)}
-            {IsOpenedClicked && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb3'), ClickedCount?.toLocaleString())}
-            {IsNotClicked && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb4'), NotClickedCount?.toLocaleString() ?? 0)}
+            {IsOpened && OpenedCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), OpenedCount?.toLocaleString())}
+            {IsNotOpened && NotOpenedCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb2'), NotOpenedCount?.toLocaleString() ?? 0)}
+            {ExceptionalOpensClicksClientsCount && ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb3'), ExceptionalOpensClicksClientsCount?.toLocaleString())}
+            {IsNotClicked && NotClickedCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb4'), NotClickedCount?.toLocaleString() ?? 0)}
             {ExceptionalGroups !== '' && ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
             {TotalNotToSend >= 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.totalNotToSend'), TotalNotToSend?.toLocaleString())}
         </Box>)
