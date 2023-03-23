@@ -751,6 +751,23 @@ export const sendWhatsAppMessage = createAsyncThunk(
 	}
 );
 
+export const saveQuickSendGroups = createAsyncThunk(
+	'whatsAppCampaign/SaveQuickSendGroups',
+	async (data: SaveQuickSendGroupReq, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/SaveQuickSendGroups`,
+				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -775,7 +792,7 @@ export const whatsappSlice = createSlice({
 				severity: 'error',
 				color: 'error',
 				message: 'whatsapp.error',
-				showAnimtionCheck: true,
+				showAnimtionCheck: false,
 			},
 			SAVE_CAMPAIGN_SUCCESS: {
 				severity: 'success',
@@ -829,7 +846,7 @@ export const whatsappSlice = createSlice({
 				severity: 'success',
 				color: 'success',
 				message: 'campaigns.newsLetterEditor.success',
-				showAnimtionCheck: false,
+				showAnimtionCheck: true,
 			},
 			INVALID_API_MISSING_KEY: {
 				severity: 'error',
@@ -887,22 +904,5 @@ export const whatsappSlice = createSlice({
 		});
 	},
 });
-
-export const saveQuickSendGroups = createAsyncThunk(
-	'whatsAppCampaign/SaveQuickSendGroups',
-	async (data: SaveQuickSendGroupReq, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.post(
-				`whatsAppCampaign/SaveQuickSendGroups`,
-				data
-			);
-
-			return response.data;
-		} catch (error) {
-			const err = error as ApiError;
-			return thunkAPI.rejectWithValue({ error: err.message });
-		}
-	}
-);
 
 export default whatsappSlice.reducer;
