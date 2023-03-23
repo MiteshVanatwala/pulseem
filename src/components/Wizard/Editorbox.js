@@ -19,6 +19,7 @@ import {
     getTestGroups,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
+import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -217,6 +218,11 @@ const Editorbox = ({
         //getcredits(characterCount);
     }, [characterCount])
 
+    useEffect(() => {
+        if (!commonSettings || Object.keys(commonSettings).length === 0)
+            dispatch(getCommonFeatures());
+    }, [])
+
     const handleSmsModelChange = (name, value) => {
         setSmsModel(prevState => ({
             ...prevState,
@@ -264,20 +270,21 @@ const Editorbox = ({
     }, [dispatch]);
 
     const initFromNumber = async () => {
-        let fromNumber = '';
+        let fromNumber = null;
         if (commonSettings?.DefaultCellNumber) {
             fromNumber = commonSettings.DefaultCellNumber;
         }
 
-        setstoredValue(fromNumber);
-
+        
         const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
-        if (fromNumber === -1 || fromNumber === '') {
+        if (fromNumber === -1 || fromNumber === '' || fromNumber === null) {
             fromNumber = virtualNumber.payload.Number;
         }
 
+        setstoredValue(fromNumber);
         setcampaignNumber(fromNumber);
+        
         setremovalNumber(virtualNumber.payload.RemovalKey);
         if (fromNumber !== virtualNumber.payload.Number) {
             setrestoreBool(false);
