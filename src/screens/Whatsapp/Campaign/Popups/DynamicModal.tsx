@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
 	Button,
 	Box,
@@ -18,6 +18,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import DynamicModalFields from './DynamicModalFields';
 import { fieldIDs, fieldNames } from '../../Constant';
+import { useParams } from 'react-router-dom';
 
 const DynamicModal = ({
 	classes,
@@ -32,10 +33,13 @@ const DynamicModal = ({
 	setIsTrackLink,
 }: dynamicModalProps) => {
 	const theme = useTheme();
+	const { campaignID } = useParams();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('lg'));
 	const { t: translator } = useTranslation();
 
 	const [navApp, setNavApp] = React.useState<string>('');
+	const [isDynamcVariableUpdated, setIsDynamcVariableUpdated] =
+		useState<boolean>(false);
 
 	const [activeDynamicButton, setActiveDynamicButton] = useState<string>(
 		'whatsappCampaign.pField'
@@ -43,6 +47,13 @@ const DynamicModal = ({
 	const [updatedDynamicVariable, setUpdatedDynamicVariable] = useState<
 		updatedVariable[]
 	>([]);
+
+	useEffect(() => {
+		if (campaignID && !isDynamcVariableUpdated && dynamicVariable?.length > 0) {
+			setUpdatedDynamicVariable(dynamicVariable);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dynamicVariable]);
 
 	const onClose = () => {
 		setUpdatedDynamicVariable(dynamicVariable);

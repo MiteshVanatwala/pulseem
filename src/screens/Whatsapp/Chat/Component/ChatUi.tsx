@@ -50,6 +50,7 @@ const ChatUi = ({
 	activeChatContacts,
 	filteredSideChatContacts,
 	isContactLoader,
+	updateContactList
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
@@ -105,6 +106,7 @@ const ChatUi = ({
 
 			if (allWhatsAppChatData.payload.Status === apiStatus.SUCCESS) {
 				setAllWhatsappChat(allWhatsAppChatData.payload?.Data?.Items);
+				updateContactList();
 			} else {
 				setAllWhatsappChat(undefined);
 			}

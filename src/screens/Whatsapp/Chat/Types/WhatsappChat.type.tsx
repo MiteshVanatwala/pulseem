@@ -49,6 +49,7 @@ export type WhatsappChatUiProps = {
 	setSavedTemplate: (template: string) => void;
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
 	isContactLoader: boolean;
+	updateContactList: () => void;
 };
 
 export type SideBarContactListProps = {
@@ -319,6 +320,7 @@ export type APIGetWhatsappChatContactsReq = {
 	pageNo: number;
 	pageSize: number;
 	Searchtext?: string;
+	UserNumber?: string;
 };
 
 export type Timer = {
