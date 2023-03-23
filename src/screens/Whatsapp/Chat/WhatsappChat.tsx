@@ -582,36 +582,38 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	};
 
 	const updateContactList = async () => {
-		const {
-			payload: whatsAppChatContactsData,
-		}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
-			getWhatsappChatContactsByUserNumber({
-				PhoneNumber: activePhoneNumber,
-				IsPagination: false,
-				pageNo: 1,
-				pageSize: 6,
-				UserNumber: activeChatContacts?.PhoneNumber,
-			})
-		);
-		if (
-			whatsAppChatContactsData?.Status === apiStatus?.SUCCESS &&
-			whatsAppChatContactsData?.Data?.Items?.length > 0
-		) {
-			const updatedContacts = sideChatContacts?.map((contact) => {
-				if (
-					contact?.PhoneNumber ===
-					whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber
-				) {
-					return whatsAppChatContactsData?.Data?.Items[0];
-				}
-				return contact;
-			});
-
-			changeContactReadStatus(
-				activeChatContacts,
-				updatedContacts,
-				updatedContacts
+		if (sideChatContacts?.length > 0) {
+			const {
+				payload: whatsAppChatContactsData,
+			}: APIWhatsappChatSidebarContactsData = await dispatch<any>(
+				getWhatsappChatContactsByUserNumber({
+					PhoneNumber: activePhoneNumber,
+					IsPagination: false,
+					pageNo: 1,
+					pageSize: 6,
+					UserNumber: activeChatContacts?.PhoneNumber,
+				})
 			);
+			if (
+				whatsAppChatContactsData?.Status === apiStatus?.SUCCESS &&
+				whatsAppChatContactsData?.Data?.Items?.length > 0
+			) {
+				const updatedContacts = sideChatContacts?.map((contact) => {
+					if (
+						contact?.PhoneNumber ===
+						whatsAppChatContactsData?.Data?.Items[0]?.PhoneNumber
+					) {
+						return whatsAppChatContactsData?.Data?.Items[0];
+					}
+					return contact;
+				});
+
+				changeContactReadStatus(
+					activeChatContacts,
+					updatedContacts,
+					updatedContacts
+				);
+			}
 		}
 	};
 
