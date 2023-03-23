@@ -50,7 +50,7 @@ const ChatUi = ({
 	activeChatContacts,
 	filteredSideChatContacts,
 	isContactLoader,
-	updateContactList
+	updateContactList,
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
