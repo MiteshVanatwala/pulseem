@@ -112,6 +112,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         SendingMethod: 1,
         CampaignID: params?.id
     });
+    const [filterParameters, setFilterParameters] = useState({});
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
@@ -703,8 +704,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const MergedSegmentationDialog = () => {
         let segDialog = SegmentationDialog({
             classes: classes,
-            campaign: campaignValues,
-            handleSetValues: (values) => setCampaignValues({ ...values }),
+            campaign: filterParameters,
+            handleSetValues: (values) => setFilterParameters({ ...values }),
             onClose: () => setDialogType(null),
             onCancel: () => setDialogType(null),
             onConfirm: () => setDialogType(null)
@@ -768,9 +769,19 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             showDefaultButtons: true,
             confirmText: t("common.Ok"),
             cancelText: t("common.Cancel"),
-            onClose: () => setDialogType(null),
-            onCancel: () => setDialogType(null),
+            onClose: () => {
+                setFilterParameters({});
+                setDialogType(null)
+            },
+            onCancel: () => {
+                setFilterParameters({});
+                setDialogType(null);
+            },
             onConfirm: () => {
+                setCampaignValues({
+                    ...campaignValues,
+                    ...filterParameters
+                })
                 mergedSegmentationDialog === 0 && setDialogType(null)
                 mergedSegmentationDialog === 1 && handleFilterConfirm()
             }
@@ -1133,7 +1144,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
                                                 disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
-                                                onClick={() => setDialogType({ type: 'filterRecipients' })}
+                                                onClick={() => {
+                                                    setFilterParameters(campaignValues);
+                                                    setDialogType({ type: 'filterRecipients' });
+                                                }}
                                             >
                                                 {t('mainReport.recipientFilter')}
                                             </Button>
