@@ -164,10 +164,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
 
         try {
-            const isVerified = verifiedEmails.find((email) => {
+            const isVerified = verifiedEmails.filter((email) => {
                 return email?.Number === newsletterInfo.FromEmail;
             });
-            setIsEmailVerified(isVerified);
+            setIsEmailVerified(isVerified?.length > 0);
             setNewEmailVerification(!isVerified || isVerified === false);
             if (newsletterSettings.length === 0)
                 return;
@@ -350,6 +350,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleSendResponse = (response) => {
         if (response?.StatusCode === 201) {
             setDialogType({ type: 'sendSuccess' });
+        }
+        else if (response?.StatusCode === 403) {
+            setNewEmailVerification(newsletterInfo.FromEmail)
         }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);

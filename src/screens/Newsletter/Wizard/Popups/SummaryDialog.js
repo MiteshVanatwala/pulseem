@@ -73,8 +73,8 @@ const SummaryDialog = ({ classes,
     }, [])
 
     useEffect(() => {
-        const verifiedEmail = verifiedEmails.find((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
-        if (verifiedEmail)
+        const verifiedEmail = verifiedEmails.filter((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
+        if (verifiedEmail?.length > 0)
             setFromEmail(newsletterSendSummary?.FromEmail);
     }, [newsletterSendSummary])
 
@@ -212,7 +212,7 @@ const SummaryDialog = ({ classes,
                                     onChange={handleFromEmailChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
-                                        className: classes.p10,
+                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null) && classes.error),
                                         style: { maxWidth: '70%' }
                                     }}
                                     variant='outlined'
