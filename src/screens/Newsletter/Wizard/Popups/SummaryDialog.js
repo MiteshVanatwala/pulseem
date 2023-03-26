@@ -151,6 +151,27 @@ const SummaryDialog = ({ classes,
         </Box>;
     }
     const renderFilterDetails = () => {
+        let exceptionalClientsCountText = '';
+
+        if ((IsOpened || IsNotOpened || IsNotClicked || IsOpenedClicked) && ExceptionalOpensClicksClientsCount > 0) {
+            if (IsOpened) { // לקוחות שלא פתחו דיוור
+                exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb2');
+            }
+            if (IsNotOpened && IsNotClicked) {
+                exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb5');
+            }
+            else {
+                if (IsNotOpened) { // לקוחות שפתחו דיוור
+                    exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb1');
+                }
+                if (IsNotClicked) { // לקוחות שהקליקו על קישור
+                    exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb3');
+                }
+            }
+            if (IsOpenedClicked) { // לקוחות שלא הקליקו על קישור
+                exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb4');
+            }
+        }
         return detailsHide ? <></> : (<Box className={classes.summaryExpandRecipientFilter}>
             {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients?.toLocaleString())}
             {InvalidClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.invalidRecipients"), InvalidClients?.toLocaleString())}
@@ -160,10 +181,7 @@ const SummaryDialog = ({ classes,
             {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients?.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
             {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
-            {IsOpened && OpenedCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), OpenedCount?.toLocaleString())}
-            {IsNotOpened && NotOpenedCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb2'), NotOpenedCount?.toLocaleString() ?? 0)}
-            {ExceptionalOpensClicksClientsCount && ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.DidNotClicked'), ExceptionalOpensClicksClientsCount?.toLocaleString())}
-            {IsNotClicked && NotClickedCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb4'), NotClickedCount?.toLocaleString() ?? 0)}
+            {ExceptionalOpensClicksClientsCount && ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(exceptionalClientsCountText, ExceptionalOpensClicksClientsCount?.toLocaleString())}
             {ExceptionalGroups !== '' && ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
             {TotalNotToSend >= 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.totalNotToSend'), TotalNotToSend?.toLocaleString())}
         </Box>)
