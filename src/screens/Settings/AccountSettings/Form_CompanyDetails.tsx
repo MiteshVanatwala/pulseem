@@ -34,7 +34,6 @@ import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSe
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
-import { getCookie } from "../../../helpers/cookies";
 
 
 const FORM_COMPANY_DETAILS = ({
@@ -46,7 +45,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
-  const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize, accountSettings } = useSelector((state: any) => state.core);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -58,6 +57,7 @@ const FORM_COMPANY_DETAILS = ({
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [companyDetails, setCompanyDetails] = useState<AccountSettings | null>({} as AccountSettings);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [accFeatures, setAccountFeatures] = useState<any>(null);
 
   const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
@@ -72,8 +72,8 @@ const FORM_COMPANY_DETAILS = ({
     TwoFactorAuthTestMethodID: null
   } as AccountSettings);
 
-  const accSettings = getCookie("accountSettings");
-  const accFeatures = accSettings?.AccountFeatures;
+  // const accSettings = getCookie("accountSettings") ?? accountSettings;
+  // const accFeatures = accSettings?.AccountFeatures;
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -135,11 +135,16 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    const newSettings = { ...Settings, TwoFactorAuthEnabled: accFeatures.indexOf(45) === -1 } as AccountSettings;
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accFeatures?.indexOf(45) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
     if (Settings)
       handleQueryString2FA();
-  }, [Settings]);
+  }, [accountSettings]);
+
+  useEffect(() => {
+    if (accountSettings)
+      setAccountFeatures(accountSettings?.Account?.AccountFeatures);
+  }, [accountSettings])
 
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {
@@ -236,7 +241,9 @@ const FORM_COMPANY_DETAILS = ({
     setCompanyDetails({ ...req } as AccountSettings);
     on2FAUpdate({ ...req } as AccountSettings);
   }
-
+  if (!accountSettings) {
+    return <></>
+  }
   return (
     <>
       <Box
@@ -245,8 +252,8 @@ const FORM_COMPANY_DETAILS = ({
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
-          classes={classes}
-          isIcon={false}
+          Classes={classes}
+          Element={null}
         />
         <Box className={"formContainer"}>
           <Grid container className={"form"}>
@@ -408,12 +415,11 @@ const FORM_COMPANY_DETAILS = ({
         </Box>
         <Title
           Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
-          classes={classes}
-          isIcon={false}
+          Classes={classes}
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            {accFeatures.indexOf(45) === -1 && <Grid
+            {accFeatures?.indexOf(45) === -1 && <Grid
               item
               xs={12}
               sm={3}
@@ -472,7 +478,7 @@ const FORM_COMPANY_DETAILS = ({
                 </Select>
               </FormControl>
             </Grid>}
-            {accFeatures.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            {accFeatures?.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',
