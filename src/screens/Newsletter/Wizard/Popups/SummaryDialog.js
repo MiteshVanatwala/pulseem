@@ -59,16 +59,12 @@ const SummaryDialog = ({ classes,
         IsOpenedClicked,
         IsNotClicked,
         IsNotOpened,
-        ClickedCount,
-        OpenedCount,
-        NotOpenedCount,
-        NotClickedCount,
         IsBestTime
     } = newsletterSendSummary;
 
     const { t } = useTranslation();
 
-    const handleSmsSettings = async () => {
+    const handleSendCampaign = async () => {
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
         handleSendResponse(sendResponse.payload);
     }
@@ -77,7 +73,9 @@ const SummaryDialog = ({ classes,
     }, [])
 
     useEffect(() => {
-        setFromEmail(newsletterSendSummary?.FromEmail);
+        const verifiedEmail = verifiedEmails.find((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
+        if (verifiedEmail)
+            setFromEmail(newsletterSendSummary?.FromEmail);
     }, [newsletterSendSummary])
 
     const renderWhenToSend = () => {
@@ -306,11 +304,11 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => { handleSmsSettings() }}
+                            onClick={() => { handleSendCampaign() }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
-                                FinalClients <= 0 ? classes.disabled : null
+                                FinalClients <= 0 || fromEmail === '' || fromEmail === null ? classes.disabled : null
                             )}>
                             {t("sms.sendDialog")}
                         </Button>
