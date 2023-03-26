@@ -2413,6 +2413,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flex: 1,
     alignContent: "center",
     justifyContent: "center",
+    maxWidth: '100%',
     "@media screen and (max-width: 375px)": {
       "& .MuiGrid-item": {
         padding: "5px !important",
