@@ -437,6 +437,7 @@ const VerificationDialog = ({
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}
+                                style={{ direction: 'ltr' }}
                             />
                         </Box>
                         <Box mt={2}>
@@ -628,6 +629,7 @@ const VerificationDialog = ({
                                         setSelectedVerificationContact(e.target.value?.trim())
                                     }
                                 }}
+                                style={{ direction: 'ltr' }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('sms.enterNumberText')}
                                 error={!!verificationError?.Number}
@@ -820,6 +822,7 @@ const VerificationDialog = ({
                                         setSelectedVerificationContact(e.target.value?.trim())
                                     }
                                 }}
+                                style={{ direction: 'ltr' }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('sms.enterNumberText')}
                                 error={!!verificationError?.Number}
@@ -1032,6 +1035,7 @@ const VerificationDialog = ({
                                     !!verificationError?.email && setVerificationError({ email: '' })
                                     setSelectedVerificationContact(e.target.value?.trim())
                                 }}
+                                style={{ direction: 'ltr' }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}

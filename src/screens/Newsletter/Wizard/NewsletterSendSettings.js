@@ -633,7 +633,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleAddClientsResponse = (res) => {
         switch (res?.StatusCode) {
             case 201: {
-                setToastMessage(ToastMessages.SUCEESS);
+                setActiveTab(0);
+                setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
                 break;
             }
             case 401: {
