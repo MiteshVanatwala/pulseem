@@ -2540,6 +2540,7 @@ const SmsSend = ({ classes, ...props }) => {
           classes={classes}
           open={dialogType}
           onClose={() => { setDialogType(null) }}
+          onCancel={() => { setDialogType(null) }}
           {...currentDialog}>
           {currentDialog.content}
         </BaseDialog>
