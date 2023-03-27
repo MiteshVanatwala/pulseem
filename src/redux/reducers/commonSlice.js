@@ -23,18 +23,8 @@ export const getAccountFeatures = createAsyncThunk(
 export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (req = null, thunkAPI) => {
     try {
-      const settings = getCookie('accountSettings');
-      if ((!settings || settings === '') || (req && req.forceRequest === true) ||
-        document.referrer.toLocaleLowerCase().indexOf('accountsmanage.aspx') > -1 ||
-        document.referrer.toLocaleLowerCase().indexOf('login') > -1 ||
-        req?.companyName !== settings?.SubAccountName) {
-        const response = await PulseemReactInstance.get(`GetSubAccountWithFeatureAndSettings`);
-        return response.data
-      }
-      else {
-        return { Data: settings }
-      }
-
+      const response = await PulseemReactInstance.get(`GetSubAccountWithFeatureAndSettings`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -114,9 +104,10 @@ export const commonSlice = createSlice({
     verifiedEmails: [],
     verifiedNumbers: [],
     tokenAlive: true,
-    commonSettings: {},
     twoFactorAuthEmails: [],
-    twoFactorAuthNumbers: []
+    twoFactorAuthNumbers: [],
+    accountSettings: null,
+    accountFeatures: null
   },
   extraReducers: builder => {
     builder
@@ -130,17 +121,20 @@ export const commonSlice = createSlice({
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
         const data = payload?.Data;
-        state.commonSettings = data;
-        setCookie("accountSettings", {
-          Account: data.Account,
-          AccountFeatures: data?.Account?.AccountFeatures,
-          DefaultLinkChars: data?.DefaultLinkChars,
-          DefaultCellNumber: data?.DefaultCellNumber,
+        state.accountSettings = {
+          Account: {
+            IsPaying: data?.Account?.IsPaying,
+            IsBillingAccount: data?.Account?.IsBillingAccount
+          },
+          SubAccountName: data?.SubAccountName,
           DefaultFromMail: data?.DefaultFromMail,
           DefaultFromName: data?.DefaultFromName,
-          SubAccountSettings: data?.SubAccountSettings,
-          SubAccountName: data?.SubAccountName
-        });
+          DefaultLinkChars: data?.DefaultLinkChars,
+          DefaultCellNumber: data?.DefaultCellNumber,
+          SubAccountSettings: data?.SubAccountSettings
+        };
+        state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
+        //setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;

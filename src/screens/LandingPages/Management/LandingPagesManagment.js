@@ -31,7 +31,8 @@ import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
-  const { windowSize, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+  const { windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')

@@ -29,7 +29,8 @@ const WhatsappInbound = ({ classes }) => {
     const [isSearching, setIsSearching] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { inboundWhatsappReport } = useSelector(state => state.whatsapp);
-    const { accountFeatures, windowSize } = useSelector(state => state.core);
+    const { windowSize } = useSelector(state => state.core);
+    const { accountFeatures } = useSelector(state => state.common);
 
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }

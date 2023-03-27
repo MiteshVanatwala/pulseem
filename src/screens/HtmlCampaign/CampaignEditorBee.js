@@ -57,8 +57,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [mergeData, setPulseemMergeData] = useState({});
   const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language, isRTL, accountSettings } = useSelector(state => state.core)
-  const { tokenAlive } = useSelector(state => state.common)
+  const { language, isRTL } = useSelector(state => state.core)
+  const { tokenAlive, accountSettings } = useSelector(state => state.common)
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);

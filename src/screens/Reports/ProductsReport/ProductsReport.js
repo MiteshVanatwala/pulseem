@@ -35,9 +35,9 @@ const DEFAULT_FILTER = {
 
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
-
     const { t } = useTranslation()
     const [searchData, setSearchData] = useState(DEFAULT_FILTER)
     const [isSearching, setIsSearching] = useState(true);

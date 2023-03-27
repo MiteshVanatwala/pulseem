@@ -12,8 +12,6 @@ export const logout = async () => {
     try {
         await axios.get(logoutURL)
         setCookie('jtoken', '')
-        setCookie('accountFeatures', '');
-        setCookie('accountSettings', '');
         redirectToLogin()
     } catch (err) {
         console.log("logout error", err)

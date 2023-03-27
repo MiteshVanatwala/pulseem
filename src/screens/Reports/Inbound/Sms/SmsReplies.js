@@ -38,7 +38,8 @@ const SmsReplies = ({ classes, ...other }) => {
     const { ToastMessages } = useSelector(state => state.client);
     const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { accountFeatures } = useSelector(state => state.common);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }

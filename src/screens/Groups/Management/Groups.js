@@ -51,7 +51,8 @@ const Groups = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
-    const { language, windowSize, isRTL, rowsPerPage, accountFeatures, CoreToastMessages } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
     const rowsOptions = [6, 10, 20, 50];

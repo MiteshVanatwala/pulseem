@@ -28,7 +28,7 @@ const SmsMarketingDialog = ({
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
-    const { verifiedNumbers, commonSettings } = useSelector(state => state.common);
+    const { verifiedNumbers, accountSettings } = useSelector(state => state.common);
 
     const [smsModel, setSmsModel] = useState({ ...smsMarketingModel })
     const [linkToUpdate, setLinkToUpdate] = useState(null);
@@ -105,7 +105,7 @@ const SmsMarketingDialog = ({
             return;
         }
         setSmsModel({ ...smsModel, FromNumber: value });
-        if (value === commonSettings?.DefaultCellNumber) {
+        if (value === accountSettings?.DefaultCellNumber) {
             setNumberVerified(true);
         }
         else {
@@ -259,10 +259,10 @@ const SmsMarketingDialog = ({
                         </Box>
                         <Box>
                             <Link
-                                className={clsx(classes.textColorGrey, classes.link, commonSettings?.DefaultCellNumber === smsModel.FromNumber ? classes.disabled : null)}
+                                className={clsx(classes.textColorGrey, classes.link, accountSettings?.DefaultCellNumber === smsModel.FromNumber ? classes.disabled : null)}
                                 style={{ fontSize: '0.9rem' }}
                                 onClick={() => {
-                                    handleFromNumber(commonSettings?.DefaultCellNumber);
+                                    handleFromNumber(accountSettings?.DefaultCellNumber);
                                 }}
                             >
                                 {t("mainReport.restore")}

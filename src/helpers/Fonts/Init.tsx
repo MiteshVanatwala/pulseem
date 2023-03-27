@@ -1,4 +1,5 @@
-import { getCookie } from '../Functions/cookies';
+import { useSelector } from 'react-redux';
+//import { getCookie } from '../Functions/cookies';
 import { googleFonts } from './GoogleFonts';
 
 interface font {
@@ -7,14 +8,14 @@ interface font {
 }
 
 export const FONTS = () => {
-    const accountSettings = getCookie("accountSettings")
+    const { accountFeatures } = useSelector((state: any) => state.common);
 
     const allowedFonts = {
         showDefaultFonts: true,
         customFonts: []
     } as font;
 
-    if (accountSettings?.AccountFeatures?.indexOf(44) > -1) { // EnableBeeGoogleFonts
+    if (accountFeatures?.indexOf(44) > -1) { // EnableBeeGoogleFonts
         allowedFonts.customFonts.push(googleFonts.Rubik);
     }
 

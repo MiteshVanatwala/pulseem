@@ -92,7 +92,7 @@ const Editorbox = ({
     const styles = useStyles();
     const btnStyle = useStyleNew();
     const dispatch = useDispatch();
-    const { windowSize, isRTL, accountFeatures } = useSelector(
+    const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
     const {
@@ -101,7 +101,7 @@ const Editorbox = ({
         previousLandingData,
         previousCampaignData,
     } = useSelector((state) => state.sms);
-    const { commonSettings } = useSelector(state => state.common);
+    const { accountSettings, accountFeatures } = useSelector(state => state.common);
     const [dialogType, setDialogType] = useState(null)
     const [alignment, setAlignment] = useState('right');
     const [editmenuClick, seteditmenuClick] = useState(false);
@@ -198,11 +198,11 @@ const Editorbox = ({
     }
 
     useEffect(() => {
-        if (commonSettings.SubAccountSettings) {
+        if (accountSettings.SubAccountSettings) {
             siteTrackingLogic();
         }
         onUpdate(smsModel);
-    }, [commonSettings]);
+    }, [accountSettings]);
 
     // useEffect(() => {
     //     onUpdate(smsModel);
@@ -219,7 +219,7 @@ const Editorbox = ({
     }, [characterCount])
 
     useEffect(() => {
-        if (!commonSettings || Object.keys(commonSettings).length === 0)
+        if (!accountSettings || Object.keys(accountSettings).length === 0)
             dispatch(getCommonFeatures());
     }, [])
 
@@ -271,8 +271,8 @@ const Editorbox = ({
 
     const initFromNumber = async () => {
         let fromNumber = null;
-        if (commonSettings?.DefaultCellNumber) {
-            fromNumber = commonSettings.DefaultCellNumber;
+        if (accountSettings?.DefaultCellNumber) {
+            fromNumber = accountSettings.DefaultCellNumber;
         }
 
         
@@ -631,8 +631,8 @@ const Editorbox = ({
         );
     }
     const siteTrackingLogic = () => {
-        if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
-            const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+        if (accountSettings.SubAccountSettings.DomainAddress && accountSettings.SubAccountSettings.DomainAddress !== '') {
+            const domainName = accountSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
             if (smsModel.Text.includes(domainName)) {
                 setIsSiteTracking(true);
             }

@@ -85,15 +85,12 @@ const useStyles = makeStyles({
 });
 const ClientSearchResult = ({ props, classes }) => {
   const {
-    accountFeatures,
     language,
     windowSize,
-    // email,
-    // phone,
     rowsPerPage,
-    // smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
+  const { accountFeatures } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()

@@ -12,7 +12,7 @@ import useRedirect from '../../helpers/Routes/Redirect';
 
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
-  const { accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common)
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});

@@ -140,14 +140,14 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { accountSettings, isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { verifiedEmails } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings, accountFeatures } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -213,7 +213,6 @@ const NewsLetterInfo = ({ classes }) => {
     const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
-    const accountFeatures = getCookie("accountFeatures")
 
     //#region default values
     useEffect(() => {

@@ -35,7 +35,8 @@ const NewslettersReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
 
-  const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);

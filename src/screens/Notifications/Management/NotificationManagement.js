@@ -197,6 +197,7 @@ const NotificationManagement = ({ classes }) => {
       <BaseDialog
         classes={classes}
         open={showScriptDialog}
+        onCancel={() => setShowScriptDialog(false)}
         onClose={() => setShowScriptDialog(false)}
         {...dialog}>
         {dialog.content}

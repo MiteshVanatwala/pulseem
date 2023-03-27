@@ -42,7 +42,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
-  const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+  const { accountFeatures } = useSelector(state => state.common);
+  const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const { directWhatsappReport } = useSelector(state => state.whatsapp);

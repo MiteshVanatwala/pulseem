@@ -187,13 +187,9 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
   const Redirect = useRedirect();
-  let cookieFeature = getCookie("accountFeatures");
 
-  if (cookieFeature && cookieFeature.constructor.name !== 'Array') {
-    cookieFeature = null;
-  }
-
-  const { accountSettings, companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
+  const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, isClal } = useSelector(state => state.core) // smsOldVersion
+  const { accountSettings, accountFeatures } = useSelector(state => state.common);
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -229,18 +225,10 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, isClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
+  const routes = getRoutes(t, isClal, accountFeatures, accountSettings?.SubAccountSettings, windowSize, isRTL) // smsOldVersion
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
-  // const navigate = ({ uri }) => {
-  //   if (!!uri) {
-  //     setCookie('scriptDialog', false, { maxAge: 36000000000 });
-  //     dispatch(setScriptDialog(false));
-  //     Redirect({ url: uri });
-  //   }
-  // }
   const returnToAdmin = () => {
-    setCookie('accountSettings', '');
     window.location = '/Pulseem/ReactRedirect.aspx';
   }
 

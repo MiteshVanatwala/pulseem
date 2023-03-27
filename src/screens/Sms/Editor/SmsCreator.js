@@ -111,7 +111,7 @@ const SmsCreator = ({ classes }) => {
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
-  const { language, windowSize, isRTL, accountFeatures, CoreToastMessages } = useSelector(
+  const { windowSize, isRTL, CoreToastMessages } = useSelector(
     (state) => state.core
   );
   const {
@@ -123,7 +123,7 @@ const SmsCreator = ({ classes }) => {
     ToastMessages,
     extraData
   } = useSelector((state) => state.sms);
-  const { commonSettings } = useSelector((state) => state.common)
+  const { accountSettings, accountFeatures } = useSelector((state) => state.common)
   const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
@@ -281,10 +281,10 @@ const SmsCreator = ({ classes }) => {
   }
 
   useEffect(() => {
-    if (commonSettings?.SubAccountSettings) {
+    if (accountSettings?.SubAccountSettings) {
       siteTrackingLogic();
     }
-  }, [commonSettings, smsModel]);
+  }, [accountSettings, smsModel]);
 
   useEffect(() => {
     linkCalculation();
@@ -355,7 +355,7 @@ const SmsCreator = ({ classes }) => {
       setIsFromAutomation(true);
     }
     await getSavedData();
-    if (!commonSettings || Object.keys(commonSettings).length === 0)
+    if (!accountSettings || Object.keys(accountSettings).length === 0)
       await dispatch(getCommonFeatures());
     setInitFromNumber(true);
   }
@@ -371,8 +371,8 @@ const SmsCreator = ({ classes }) => {
       if (smsModel && smsModel.FromNumber) {
         fromNumber = smsModel.FromNumber;
       }
-      else if (commonSettings.DefaultCellNumber !== "") {
-        fromNumber = commonSettings.DefaultCellNumber;
+      else if (accountSettings.DefaultCellNumber !== "") {
+        fromNumber = accountSettings.DefaultCellNumber;
       }
 
       const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
@@ -384,7 +384,7 @@ const SmsCreator = ({ classes }) => {
       setcampaignNumber(fromNumber);
       setStaticNumber(virtualNumber.payload.Number);
       setremovalNumber(virtualNumber.payload.RemovalKey);
-      setstoredValue(commonSettings.DefaultCellNumber);
+      setstoredValue(accountSettings.DefaultCellNumber);
       if (fromNumber !== virtualNumber.payload.Number) {
         setrestoreBool(false);
         setremovalMessageButtonDisabled(true);
@@ -537,7 +537,7 @@ const SmsCreator = ({ classes }) => {
       if (id) {
         const smsQuickSendData = {
           ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: id, Credits: messageCount,
+            SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: id, Credits: messageCount,
             TotalRecipients: 1
           }
         }
@@ -550,7 +550,7 @@ const SmsCreator = ({ classes }) => {
         if (smsCampaignId !== "") {
           const smsQuickSendData = {
             ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-              SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: smsCampaignId, Credits: messageCount,
+              SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: smsCampaignId, Credits: messageCount,
               TotalRecipients: 1
             }
           }
@@ -563,7 +563,7 @@ const SmsCreator = ({ classes }) => {
         else {
           const smsQuickSendData = {
             ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-              SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: -1, Credits: messageCount,
+              SubAccountID: accountSettings.SubAccountId, AccountID: accountSettings.AccountID, SmsCampaignID: -1, Credits: messageCount,
               TotalRecipients: 1
             }
           }
@@ -591,7 +591,7 @@ const SmsCreator = ({ classes }) => {
     setLoader(false);
     // setcampaignNumber(r.payload.DefaultCellNumber)
     setLoader(true);
-    let response = await dispatch(getSMSVirtualNumber(commonSettings.DefaultCellNumber));
+    let response = await dispatch(getSMSVirtualNumber(accountSettings.DefaultCellNumber));
     setLoader(false);
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
@@ -1146,8 +1146,8 @@ const SmsCreator = ({ classes }) => {
   };
 
   const siteTrackingLogic = () => {
-    if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
-      const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+    if (accountSettings.SubAccountSettings.DomainAddress && accountSettings.SubAccountSettings.DomainAddress !== '') {
+      const domainName = accountSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
       if (smsModel.Text.includes(domainName)) {
         setIsSiteTracking(true);
       }
@@ -1162,7 +1162,7 @@ const SmsCreator = ({ classes }) => {
       if (isSiteTracking === true) {
         if (!smsModel.Text.indexOf('ref') > -1 && isLinksStatistics) {
           let text = smsModel.Text;
-          const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
+          const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(accountSettings.SubAccountSettings.DomainAddress));
           const originalLink = startIndex.split(/[\s\n]+/); //.split(' ') || startIndex.split('\n');
           let originUrl = originalLink[0];
           let newUrl = originUrl.trim();
@@ -1188,7 +1188,7 @@ const SmsCreator = ({ classes }) => {
 
   const onSave = async (isSave, returnToAutomation = false) => {
     linkCalculation();
-    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
+    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: accountSettings.AccountID, SubAccountID: accountSettings.SubAccountId, SmsCampaignID: smsCampaignId }
     setLoader(true);
     let r = await dispatch(smsSave(payloadToPush));
     const campaignId = r.payload.Message;

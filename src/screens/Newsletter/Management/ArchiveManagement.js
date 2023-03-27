@@ -27,7 +27,8 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const ArchiveManagementScreen = ({ classes }) => {
-  const { accountFeatures, language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);

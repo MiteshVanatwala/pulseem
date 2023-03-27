@@ -100,7 +100,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
-    const { verifiedEmails, commonSettings } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings } = useSelector(state => state.common);
     const { defaultGroupId, subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
@@ -225,7 +225,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     await dispatch(getAccountExtraData());
                 if (!previousLandingData || previousLandingData?.length === 0)
                     dispatch(getPreviousLandingData());
-                if (!commonSettings || !commonSettings?.Account) {
+                if (!accountSettings || !accountSettings?.Account) {
                     await dispatch(getCommonFeatures());
                 }
                 resolve();

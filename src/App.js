@@ -14,7 +14,7 @@ import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/s
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
+import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal } from './redux/reducers/coreSlice' //smsOldVersion
 import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
@@ -429,17 +429,18 @@ const renderRoutes = (classes, redirect) => {
 const App = ({ screenSize }) => {
   const userName = useRef();
   const dispatch = useDispatch()
-  const { language, isRTL, windowSize, accountSettings, isClal } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
+  const { accountSettings } = useSelector(state => state.common)
+  setCookie('accountSettings', '');
 
   useEffect(() => {
     screenSize && dispatch(setWindowSize(screenSize));
   }, [screenSize]);
-  
+
   useEffect(() => {
     const initFeatures = async () => {
       if (!accountSettings) {
-        const settings = await dispatch(getCommonFeatures());
-        dispatch(setAccountFeatures(settings.payload));
+        await dispatch(getCommonFeatures());
       }
       if (isClal === null) {
         const response = await dispatch(isClalAccount());
@@ -504,7 +505,7 @@ const App = ({ screenSize }) => {
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
-  return (
+  return accountSettings && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'}>

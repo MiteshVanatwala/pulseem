@@ -37,6 +37,7 @@ import { setCookie } from '../../../helpers/Functions/cookies';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const NewsletterManagnentScreen = ({ classes }) => {
+  const { accountFeatures } = useSelector(state => state.common);
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -56,7 +57,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
-  const accountFeatures = getCookie("accountFeatures")
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
