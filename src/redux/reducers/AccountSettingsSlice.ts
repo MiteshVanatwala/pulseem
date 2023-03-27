@@ -117,7 +117,7 @@ interface AuthorizationValues {
 const AccountSettingsSlice = createSlice({
     name: 'AccountSettings',
     initialState: {
-        accountSettings: {
+        account: {
             StatusCode: 200,
             Message: '',
             Data: {} as AccountSettings,
@@ -158,7 +158,7 @@ const AccountSettingsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(getAccountSettings.fulfilled, (state, action) => {
-            state.accountSettings = action.payload;
+            state.account = action.payload;
         })
         builder.addCase(update2FASettings.fulfilled, (state, action) => {
             state.twoFAUpdated = action.payload;

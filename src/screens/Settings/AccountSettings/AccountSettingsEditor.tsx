@@ -26,8 +26,8 @@ const AccountSettingsEditor = () => {
   const dispatch = useDispatch();
   const { classes } = useCore();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { ToastMessages } = useSelector((state: any) => state?.accountSettings);
-  const { CoreToastMessages, accountSettings } = useSelector((state: any) => state?.core);
+  const { ToastMessages, account } = useSelector((state: any) => state?.accountSettings);
+  const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
   const [smsVerificationPopup, setSmsVerificationPopup] = useState(false);
@@ -86,8 +86,8 @@ const AccountSettingsEditor = () => {
   }, []);
 
   useEffect(() => {
-    setSettingRequest(accountSettings?.Data);
-  }, [accountSettings]);
+    setSettingRequest(account?.Data);
+  }, [account]);
 
   const handleUpdate = async (updatedObject: AccountSettings, saveType: string, sendRequest: boolean) => {
 
