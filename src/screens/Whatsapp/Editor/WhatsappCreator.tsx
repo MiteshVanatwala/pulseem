@@ -54,7 +54,12 @@ import {
 	getLastDynamicFieldByValue,
 	getLastDynamicFieldValue,
 } from '../Common';
-import { apiStatus, resetToastData } from '../Constant';
+import {
+	apiStatus,
+	categoryId,
+	categoryName,
+	resetToastData,
+} from '../Constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 
@@ -114,6 +119,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 	const [templateName, setTemplateName] = useState<string>('');
+	const [category, setCategory] = useState<string>('marketing');
 	const [savedTemplate, setSavedTemplate] = useState<string>('');
 	const [buttonType, setButtonType] = useState<string>('');
 	const [templateData, setTemplateData] = useState<templateDataProps>({
@@ -282,7 +288,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				return buttonData ? buttonData : [];
 			case 'callToAction':
 				buttonData = data?.map((button: buttonsDataProps) => {
-					if (button?.type === 'PHONE') {
+					if (button?.type === 'PHONE_NUMBER') {
 						return {
 							id: uniqid(),
 							typeOfAction: 'phonenumber',
@@ -442,6 +448,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setFileData(updatedFileData);
 				setButtonType(updatedButtonType);
 				setTemplateData(updatedTemplateData);
+				setCategory(categoryName[templates?.CategoryId || 1]);
 				if (updatedButtonType === 'quickReply') {
 					setQuickReplyButtons(updatedTemplateData.templateButtons);
 				} else {
@@ -524,6 +531,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
 					text: {
@@ -536,6 +544,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
 					media: {
@@ -550,6 +559,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
 					'quick-reply': {
@@ -563,6 +573,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
 					'call-to-action': {
@@ -576,6 +587,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				templateName: generatedTemplatename,
 				variables: variables,
 				language: isRTL ? 'he' : 'en',
+				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
 					card: {
@@ -697,7 +709,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				...templateData,
 				templateText: `${templateData.templateText} ${
 					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
-				}`,
+				}`?.substring(0, 1024),
 			});
 		}
 	};
@@ -888,6 +900,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						}
 						setFileData={(fileData) => uploadFile(fileData)}
 						savedTemplateList={savedTemplateList}
+						category={category}
+						onCategoryChange={setCategory}
 					/>
 					<Grid
 						container

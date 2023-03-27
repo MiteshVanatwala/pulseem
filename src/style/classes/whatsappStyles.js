@@ -1900,6 +1900,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			position: 'relative',
 			whiteSpace: 'pre-line',
 			display: 'flex',
+			wordBreak: 'break-word',
 			'& .rhap_container': {
 				boxShadow: 'none',
 				padding: '0px',
@@ -2185,6 +2186,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			maxHeight: '172px',
 			overflowY: 'auto',
 			outline: 'none',
+			wordBreak: 'break-word',
 		},
 		'&.chat__input::placeholder': {
 			color: 'rgb(153, 153, 153)',

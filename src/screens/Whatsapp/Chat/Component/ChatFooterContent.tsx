@@ -5,7 +5,12 @@ import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import Highlighter from 'react-highlight-words';
 import { ChatFooterContentProps } from '../Types/WhatsappChat.type';
 import { useTranslation } from 'react-i18next';
-import { BaseSyntheticEvent, useState } from 'react';
+import {
+	BaseSyntheticEvent,
+	KeyboardEvent,
+	KeyboardEventHandler,
+	useState,
+} from 'react';
 import {
 	tagDataProps,
 	updatedVariable,
@@ -77,6 +82,12 @@ const ChatFooterContent = ({
 		setNewMessage(e.target.value);
 	};
 
+	const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+		if (e?.keyCode === 13 || e.key === 'Enter') {
+			onChatSend();
+		}
+	};
+
 	return (
 		<>
 			<div className={`${classes.whatsappChat} chat__input-wrapper`}>
@@ -127,6 +138,7 @@ const ChatFooterContent = ({
 										placeholder='Type a message'
 										value={newMessage}
 										onChange={onEditableDivChange}
+										onKeyDown={(e) => onInputKeyDown(e)}
 									/>
 								)}
 							</>

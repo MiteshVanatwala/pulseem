@@ -44,6 +44,10 @@ export type statusByNameProps = { [key: string]: string };
 
 export type TemplatesStatusIdByStatusName = { [key: string]: number };
 
+export type CategoryId = { [key: string]: number };
+
+export type CategoryName = { [key: number]: string };
+
 export type campaignStatusProps = { [key: number]: string };
 
 export type ManagmentIconProps = {

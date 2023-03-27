@@ -35,6 +35,8 @@ export type TemplateFieldsProps = {
 	};
 	setFileData: (fileData: File | undefined) => void;
 	savedTemplateList: savedTemplateListProps[];
+	onCategoryChange: (category: string) => void;
+	category: string;
 };
 
 export type ReduxUserProps = {
@@ -317,6 +319,8 @@ export type savedTemplateAPIProps = {
 };
 
 export type getTemplateByIdDataAPIProps = {
+	Category: string;
+	CategoryId: number;
 	Data: savedTemplateDataProps;
 	FileName: string;
 	FilePath: string;

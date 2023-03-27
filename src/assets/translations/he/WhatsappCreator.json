@@ -56,6 +56,10 @@
 	"website": "אתר אינטרנט",
 	"websiteURLPlaceholder": "הזן את כתובת האתר שלך",
 
+	"marketing": "שיווקי",
+	"utility": "תפעולי",
+	"authentication": "אימות",
+
 	"template": {
 		"textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
 		"callToActionTooltip": "כפתור פעולה",
