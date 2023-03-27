@@ -134,7 +134,6 @@ export const commonSlice = createSlice({
           SubAccountSettings: data?.SubAccountSettings
         };
         state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
-        //setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;
