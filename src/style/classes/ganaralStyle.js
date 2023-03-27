@@ -2254,7 +2254,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "700",
     position: "absolute",
     top: '0.2rem',
-    cursor: "pointer"
+    cursor: "pointer",
   },
   btnBgExitDialog: {
     backgroundColor: "#0371ad",
@@ -2550,7 +2550,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ltr: {
     direction: 'ltr'
   },
-
+  rtl: {
+    direction: 'rtl'
+  },
   selectPlaceholderInput: {
     height: '90%',
     opacity: 1,
