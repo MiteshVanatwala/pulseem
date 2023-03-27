@@ -279,7 +279,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				return buttonData ? buttonData : [];
 			case 'callToAction':
 				buttonData = data?.map((button: buttonsDataProps) => {
-					if (button?.type === 'PHONE') {
+					if (button?.type === 'PHONE_NUMBER') {
 						return {
 							id: uniqid(),
 							typeOfAction: 'phonenumber',

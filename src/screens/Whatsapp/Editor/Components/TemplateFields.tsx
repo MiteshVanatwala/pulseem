@@ -3,7 +3,14 @@ import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { coreProps, TemplateFieldsProps } from '../Types/WhatsappCreator.types';
 import { ClassesType } from '../../../Classes.types';
-import { TextField, Typography, Grid, Button } from '@material-ui/core';
+import {
+	TextField,
+	Typography,
+	Grid,
+	Button,
+	Select,
+	MenuItem,
+} from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import AlertModal from '../Popups/AlertModal';
 import { Autocomplete } from '@mui/material';
@@ -22,6 +29,8 @@ const TemplateFields = ({
 	fileData,
 	setFileData,
 	savedTemplateList,
+	onCategoryChange,
+	category,
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -134,6 +143,35 @@ const TemplateFields = ({
 
 			<Grid item xs={12} sm={12} md={12} lg={5}>
 				<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
+					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
+						<Typography className={classes.buttonHead}>
+							<>{translator('report.ProductsReport.category')}</>
+						</Typography>
+
+						<Select
+							type='text'
+							className={
+								isCampaign
+									? clsx(classes.buttonField, classes.error)
+									: clsx(classes.buttonField, classes.success)
+							}
+							onChange={(e: BaseSyntheticEvent) =>
+								onCategoryChange(e.target.value)
+							}
+							placeholder={translator('report.ProductsReport.category')}
+							value={category}>
+							<MenuItem key={'marketing'} value={'marketing'}>
+								<>{translator('whatsapp.marketing')}</>
+							</MenuItem>
+							<MenuItem key={'utility'} value={'utility'}>
+								<>{translator('whatsapp.utility')}</>
+							</MenuItem>
+							<MenuItem key={'authentication'} value={'authentication'}>
+								<>{translator('whatsapp.authentication')}</>
+							</MenuItem>
+						</Select>
+					</Grid>
+
 					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
 							<>{translator('whatsapp.uploadFileTitle')}</>

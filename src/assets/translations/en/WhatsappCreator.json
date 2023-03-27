@@ -56,6 +56,10 @@
 	"website": "Website",
 	"websiteURLPlaceholder": "Enter Your Website URL",
 
+	"marketing": "Marketing",
+	"utility": "Utility",
+	"authentication": "Authentication",
+
 	"template": {
 		"textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
 		"callToActionTooltip": "Call To Action",
