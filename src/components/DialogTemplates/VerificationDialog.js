@@ -444,7 +444,7 @@ const VerificationDialog = ({
                             <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
                                 onClick={() => {
                                     if (selectedVerificationContact) {
-                                        if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                                        if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/)) {
                                             handleSendCode(selectedVerificationContact);
                                             NextSlide();
                                         }
@@ -1055,7 +1055,7 @@ const VerificationDialog = ({
                                             })
                                         }
                                         else {
-                                            if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                                            if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/)) {
                                                 handleSendCode(selectedVerificationContact)
                                                 NextSlide()
                                             }

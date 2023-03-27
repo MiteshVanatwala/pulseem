@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, Box, Grid, Paper, Typography, Link, Tooltip } from '@material-ui/core';
+import { IconButton, Box, Grid, Paper, Typography, Tooltip } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Doughnut } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
@@ -19,14 +19,14 @@ const RecipientChart = ({ classes, }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
-    const { windowSize, isRTL } = useSelector(state => state.core);
+    const { windowSize } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
-    const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const { Notifications = {}, Sms = {} } = packagesDetails || {};
 
     let slidesCount = 0;
     recipientsReport?.forEach(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-            report.ReportSection === 1 && !Sms.FeatureExist) {
+        if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+            (report.ReportSection === 1 && !Sms.FeatureExist)) {
             return
         }
         else {
@@ -59,7 +59,7 @@ const RecipientChart = ({ classes, }) => {
 
     let data = [];
     if (recipientsReport) {
-        recipientsReport.map(report => {
+        recipientsReport.forEach(report => {
             if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                 (report.ReportSection === 1 && !Sms.FeatureExist)) {
                 return null;
@@ -178,7 +178,8 @@ const RecipientChart = ({ classes, }) => {
                 tableRoot.appendChild(tableBody);
             }
 
-            const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            // const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            const { offsetLeft: positionX } = chart.canvas;
             tooltipEl.style.opacity = 1;
             tooltipEl.style.left = positionX + tooltip.caretX + 'px';
             tooltipEl.style.top = '50px';
@@ -401,7 +402,7 @@ const RecipientChart = ({ classes, }) => {
                         {recipientsReport.map((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)
                                 || (report.ReportSection === 1 && !Sms.FeatureExist)) {
-                                return;
+                                return null;
                             }
                             if (report.Total) {
                                 return renderDoughnut(report, index)
@@ -442,7 +443,7 @@ const RecipientChart = ({ classes, }) => {
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                         (report.ReportSection === 1 && !Sms.FeatureExist)) {
-                        return;
+                        return null;
                     }
                     if (report.Total) {
                         return renderDoughnut(report, index)

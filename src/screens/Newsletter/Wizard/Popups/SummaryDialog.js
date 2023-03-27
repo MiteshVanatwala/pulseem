@@ -131,8 +131,8 @@ const SummaryDialog = ({ classes,
     const renderDetailsLine = (property, value) => {
         return <Box className={classes.summaryListItem}
         >
-            <span>{property}</span>
-            <span className={classes.summaryDetailsSpanBold}>{value}</span>
+            <span>{RenderHtml(property)}</span>
+            <span className={classes.summaryDetailsSpanBold}>{RenderHtml(value)}</span>
         </Box>;
     }
     const renderExceptionalGroups = (property, list) => {
@@ -179,9 +179,9 @@ const SummaryDialog = ({ classes,
             {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients?.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
             {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
-            {ExceptionalOpensClicksClientsCount && ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(exceptionalClientsCountText, ExceptionalOpensClicksClientsCount?.toLocaleString())}
+            {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(exceptionalClientsCountText, ExceptionalOpensClicksClientsCount?.toLocaleString())}
             {ExceptionalGroups !== '' && ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
-            {TotalNotToSend >= 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.totalNotToSend'), TotalNotToSend?.toLocaleString())}
+            {TotalNotToSend >= 0 && renderDetailsLine(`<b>${t('campaigns.newsLetterEditor.sendSettings.totalNotToSend')}</b>`, TotalNotToSend?.toLocaleString())}
         </Box>)
     }
     const handleFromEmailChanged = (event) => {
