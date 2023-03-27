@@ -130,7 +130,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         selectedFilterCampaigns: [],
         displayFilter: false,
         reciFilter: false,
-    })
+    });
+    const [doNotSendFilterValues, setDoNotSendFilterValues] = useState({});
     const [sourcePulses, setSourcePulses] = useState({});
     const [snackbarValues, setSnackbarValues] = useState({
         snackbarTimeBoolean: false,
@@ -775,10 +776,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             cancelText: t("common.Cancel"),
             onClose: () => {
                 setFilterParameters({});
+                setFilterValues(doNotSendFilterValues);
                 setDialogType(null)
             },
             onCancel: () => {
                 setFilterParameters({});
+                setFilterValues(doNotSendFilterValues);
                 setDialogType(null);
             },
             onConfirm: () => {
@@ -1150,6 +1153,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                 disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
                                                 onClick={() => {
                                                     setFilterParameters(campaignValues);
+                                                    setDoNotSendFilterValues(filterValues);
                                                     setDialogType({ type: 'filterRecipients' });
                                                 }}
                                             >
