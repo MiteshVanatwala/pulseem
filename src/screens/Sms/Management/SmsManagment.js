@@ -1033,7 +1033,7 @@ const SmsManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
-        onCnacel={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>
