@@ -720,7 +720,7 @@ const SmsManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
       </Typography>
     ),
@@ -741,7 +741,7 @@ const SmsManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.dialogDuplicateContent')}
       </Typography>
     ),
