@@ -43,7 +43,10 @@ const TestGroupModal = ({
 	useEffect(() => {
 		const searchedGroup = testGroupData.filter(
 			(testGroup: testGroupDataProps) =>
-				testGroup?.GroupName?.substring(0, searchText?.length) === searchText
+				testGroup?.GroupName?.substring(
+					0,
+					searchText?.length
+				)?.toLowerCase() === searchText?.toLowerCase()
 		);
 		setSearchGroupResult(searchedGroup);
 	}, [searchText, testGroupData]);

@@ -5,7 +5,7 @@ import {
 	testGroupDataProps,
 	TestGroupModalRowsProps,
 } from '../Types/WhatsappCampaign.types';
-import { Box } from '@material-ui/core';
+import { Box, Tooltip } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 
 const TestGroupModalRows = ({
@@ -41,7 +41,11 @@ const TestGroupModalRows = ({
 								)}
 							</span>
 							<div className={classes.testGroupModalGroupDiv}>
-								<span className={classes.ellipsisText}>{group.GroupName}</span>
+								<Tooltip title={group.GroupName} arrow>
+									<span className={classes.ellipsisText}>
+										{group.GroupName}
+									</span>
+								</Tooltip>
 								<span style={{ whiteSpace: 'nowrap' }}>
 									{group.Recipients}{' '}
 									{group.Recipients === 1 ? (
@@ -77,9 +81,11 @@ const TestGroupModalRows = ({
 									)}
 								</span>
 								<div className={classes.testGroupModalGroupDiv}>
-									<span className={classes.ellipsisText}>
-										{group.GroupName}
-									</span>
+									<Tooltip title={group.GroupName} arrow>
+										<span className={classes.ellipsisText}>
+											{group.GroupName}
+										</span>
+									</Tooltip>
 									<span style={{ whiteSpace: 'nowrap' }}>
 										{group.Recipients}{' '}
 										{group.Recipients === 1 ? (

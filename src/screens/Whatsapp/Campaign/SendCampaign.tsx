@@ -310,6 +310,7 @@ const SendCampaign = ({
 
 	const onCampaignSave = async (
 		showMessage: boolean = true,
+		isLoading: boolean = false,
 		ApiSelectedGroups: testGroupDataProps[] = selectedGroups
 	) => {
 		if (validateSendSetting()) {
@@ -341,8 +342,10 @@ const SendCampaign = ({
 					sendhour: moment(sendTime).format('YYYY-MM-DD hh:mm a'),
 				};
 			}
+			isLoading && setIsLoader(true);
 			const { payload: saveCampaignSettingData }: ApiSaveCampaignSettings =
 				await dispatch<any>(saveCampaignSettings(saveCampaignSettingsPayload));
+			setIsLoader(false);
 			if (saveCampaignSettingData.Status === apiStatus.SUCCESS) {
 				if (showMessage) {
 					setToastMessage(ToastMessages.CAMPAIGN_SAVE_SUCCESS);
@@ -362,7 +365,7 @@ const SendCampaign = ({
 
 	const onCampaignSend = async () => {
 		if (validateSendSetting()) {
-			const saveCampaignData = await onCampaignSave(false);
+			const saveCampaignData = await onCampaignSave(false, true);
 			if (saveCampaignData) {
 				setIsSummaryModal(true);
 			}
@@ -403,7 +406,7 @@ const SendCampaign = ({
 				setIsExitCampaignOpen(true);
 				break;
 			case buttons.SAVE:
-				onCampaignSave();
+				onCampaignSave(true, true);
 				break;
 			case buttons.SEND:
 				onCampaignSend();
@@ -449,7 +452,7 @@ const SendCampaign = ({
 				setNewGroupName('');
 				setIsCreateNewGroup(false);
 			}
-			await onCampaignSave(false, [createdGroupData?.payload]);
+			await onCampaignSave(false, false, [createdGroupData?.payload]);
 		} else {
 			setGroupSendValidationErrors([
 				translator('whatsappCampaign.selectGroup'),
@@ -538,7 +541,10 @@ const SendCampaign = ({
 				setIsLoader(false);
 				if (latestAddedGroup) {
 					setSelectedGroups([...selectedGroups, latestAddedGroup]);
-					await onCampaignSave(false, [...selectedGroups, latestAddedGroup]);
+					await onCampaignSave(false, false, [
+						...selectedGroups,
+						latestAddedGroup,
+					]);
 				}
 				break;
 			}
