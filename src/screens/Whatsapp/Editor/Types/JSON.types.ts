@@ -20,6 +20,7 @@ export type callToActionButton = {
 export type CallToAction = {
 	friendlyTemplateName: string;
 	templateName: string;
+	TemplateCategory: string;
 	variables: { [key: string]: string };
 	language: string;
 	types: CallToActionTypes;
@@ -44,6 +45,7 @@ export type quickReplyClass = {
 export type QuickReply = {
 	friendlyTemplateName: string;
 	templateName: string;
+	TemplateCategory: string;
 	variables: { [key: string]: string };
 	language: string;
 	types: QuickReplyTypes;
@@ -61,6 +63,7 @@ export type JSONPropsText = {
 	variables: { [key: string]: string };
 	language: string;
 	types: TextTypes;
+	TemplateCategory: string;
 	isSaveOnly?: boolean;
 	id?: number;
 };
@@ -76,6 +79,7 @@ export type TypesText = {
 export type TextMedia = {
 	friendlyTemplateName: string;
 	templateName: string;
+	TemplateCategory: string;
 	variables: { [key: string]: string };
 	language: string;
 	types: TextMediaTypes;
@@ -96,6 +100,7 @@ export type Media = {
 export type TextMediaAndButton = {
 	friendlyTemplateName: string;
 	templateName: string;
+	TemplateCategory: string;
 	variables: { [key: string]: string };
 	language: string;
 	types: TextMediaAndButtonTypes;

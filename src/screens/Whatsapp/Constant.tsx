@@ -4,6 +4,8 @@ import {
 	AllReportReq,
 	AllTemplateReq,
 	campaignStatusProps,
+	CategoryId,
+	CategoryName,
 	statusByNameProps,
 	statusProps,
 	TemplatesStatusIdByStatusName,
@@ -369,6 +371,18 @@ export const templateStatusIdsByStatusName: TemplatesStatusIdByStatusName = {
 	Approved: 3,
 	Received: 4,
 	Created: 50,
+};
+
+export const categoryId: CategoryId = {
+	marketing: 1,
+	utility: 2,
+	authentication: 3,
+};
+
+export const categoryName: CategoryName = {
+	1: 'marketing',
+	2: 'utility',
+	3: 'authentication',
 };
 
 export const campaignStatus: campaignStatusProps = {

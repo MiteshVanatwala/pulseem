@@ -147,7 +147,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const renderNameCell = (row: reportDataProps) => {
 		let date = null;
 		let text = '';
-		date = moment(row.CreateDate, dateFormat);
+		date = moment(row.UpdateDate, dateFormat);
 		text = translator('common.UpdatedOn');
 
 		return (
