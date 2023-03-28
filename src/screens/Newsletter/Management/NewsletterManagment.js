@@ -835,7 +835,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
       </Typography>
     ),
@@ -955,9 +955,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         onClose={handleClose}
         renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
-        <div  className={clsx(classes.textCenter)}>
           {currentDialog.content}
-        </div>
       </BaseDialog>
     )
   }
