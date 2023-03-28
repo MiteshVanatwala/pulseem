@@ -43,7 +43,10 @@ const TestGroupModal = ({
 	useEffect(() => {
 		const searchedGroup = testGroupData.filter(
 			(testGroup: testGroupDataProps) =>
-				testGroup?.GroupName?.substring(0, searchText?.length) === searchText
+				testGroup?.GroupName?.substring(
+					0,
+					searchText?.length
+				)?.toLowerCase() === searchText?.toLowerCase()
 		);
 		setSearchGroupResult(searchedGroup);
 	}, [searchText, testGroupData]);
@@ -100,7 +103,7 @@ const TestGroupModal = ({
 							/>
 						</Box>
 					</Box>
-					<div className={classes.alertModalContent}>
+					<div className={classes.testGroupModalContent}>
 						<div className={classes.testGroupModalContentWrapper}>
 							<Grid container className={classes.testGroupModalContentSearch}>
 								<Grid item lg={12} className={classes.buttonForm}>

@@ -68,6 +68,7 @@ import {
 import {
 	allTemplateInitialPagination,
 	apiStatus,
+	categoryName,
 	resetToastData,
 	statusesByName,
 	templateStatusIdsByStatusName,
@@ -253,6 +254,18 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							{rejectionReason}
 						</Typography>
 					)}
+				</Typography>
+			</>
+		);
+	};
+
+	const renderCategoryCell = (categoryId: number) => {
+		return (
+			<>
+				<Typography
+					className={clsx(classes.middleText)}
+					style={{ textTransform: 'capitalize' }}>
+					{categoryName[categoryId || 1]}
 				</Typography>
 			</>
 		);
@@ -774,6 +787,12 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 											<>{translator('sms.StatusResource1.HeaderText')}</>
 										</TableCell>
 										<TableCell
+											classes={cellStyle}
+											className={classes.flex2}
+											align='center'>
+											<>{translator('report.ProductsReport.category')}</>
+										</TableCell>
+										<TableCell
 											classes={{ root: classes.tableCellRoot }}
 											className={classes.flex5}></TableCell>
 									</TableRow>
@@ -814,6 +833,15 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 														classes.tableCellBody
 													)}>
 													{renderStatusCell(row.Status, row.RejectionReason)}
+												</TableCell>
+												<TableCell
+													classes={cellStyle}
+													align='center'
+													className={clsx(
+														classes.flex2,
+														classes.tableCellBody
+													)}>
+													{renderCategoryCell(row.CategoryId)}
 												</TableCell>
 												<TableCell
 													component='th'

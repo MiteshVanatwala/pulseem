@@ -588,6 +588,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onOkTestSending = async () => {
+		setIsTestGroupModal(false)
 		let campaignIdForTestSend: number = Number(campaignID) || 0;
 		setIsLoader(true);
 		const saveCampaign = await onSaveCampaign(false);

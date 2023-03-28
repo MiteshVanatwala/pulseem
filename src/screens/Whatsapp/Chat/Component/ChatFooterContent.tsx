@@ -5,12 +5,7 @@ import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import Highlighter from 'react-highlight-words';
 import { ChatFooterContentProps } from '../Types/WhatsappChat.type';
 import { useTranslation } from 'react-i18next';
-import {
-	BaseSyntheticEvent,
-	KeyboardEvent,
-	KeyboardEventHandler,
-	useState,
-} from 'react';
+import { BaseSyntheticEvent, KeyboardEvent, useEffect, useState } from 'react';
 import {
 	tagDataProps,
 	updatedVariable,
@@ -36,6 +31,14 @@ const ChatFooterContent = ({
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
+	const freeFormInputHeight = '40px';
+	useEffect(() => {
+		const textElement = document.getElementById('free-from-input');
+		if (textElement) {
+			textElement.style.height = '5px';
+			textElement.style.height = textElement.scrollHeight + 'px';
+		}
+	}, [newMessage]);
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
 		const isAvaliable = updatedDynamicVariable?.find(
@@ -44,6 +47,7 @@ const ChatFooterContent = ({
 		);
 		return !!isAvaliable;
 	};
+
 	const openDynamcFieldModal = async (variable: string) => {
 		setDynamicModalVariable(Number(variable?.replace(/[{}]/g, '')));
 		setIsDynamcFieldModal(true);
@@ -80,12 +84,6 @@ const ChatFooterContent = ({
 		e.preventDefault();
 		e.stopPropagation();
 		setNewMessage(e.target.value);
-	};
-
-	const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-		if (e?.keyCode === 13 || e.key === 'Enter') {
-			onChatSend();
-		}
 	};
 
 	return (
@@ -132,13 +130,17 @@ const ChatFooterContent = ({
 										/>
 									</Box>
 								) : (
-									<input
+									<textarea
 										className={`${classes.whatsappChat} chat__input s`}
 										id={'free-from-input'}
+										style={{
+											minHeight: freeFormInputHeight,
+											resize: 'none',
+											overflowY: 'hidden',
+										}}
 										placeholder='Type a message'
 										value={newMessage}
 										onChange={onEditableDivChange}
-										onKeyDown={(e) => onInputKeyDown(e)}
 									/>
 								)}
 							</>

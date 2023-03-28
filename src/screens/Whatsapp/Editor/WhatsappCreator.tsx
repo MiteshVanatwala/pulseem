@@ -222,6 +222,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			fileLink: '',
 			fileType: '',
 		});
+		setCategory('marketing');
 		setQuickReplyButtons(initialQuickReplyButtons);
 		setCallToActionFieldRows([initialFieldRow]);
 	};
