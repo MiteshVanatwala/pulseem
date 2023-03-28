@@ -955,7 +955,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
         onClose={handleClose}
         renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
-        {currentDialog.content}
+        <div  className={clsx(classes.textCenter)}>
+          {currentDialog.content}
+        </div>
       </BaseDialog>
     )
   }
