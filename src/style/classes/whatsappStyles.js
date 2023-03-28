@@ -832,6 +832,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
 	},
+	testGroupModalContent: {
+		padding: '8px 4px 0px 4px',
+		color: '#525252',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+		width: '508px',
+		height: '345px',
+	},
 
 	templateListWrapper: {},
 	templateListModal: {

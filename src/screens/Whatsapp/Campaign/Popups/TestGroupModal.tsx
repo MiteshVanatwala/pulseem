@@ -100,7 +100,7 @@ const TestGroupModal = ({
 							/>
 						</Box>
 					</Box>
-					<div className={classes.alertModalContent}>
+					<div className={classes.testGroupModalContent}>
 						<div className={classes.testGroupModalContentWrapper}>
 							<Grid container className={classes.testGroupModalContentSearch}>
 								<Grid item lg={12} className={classes.buttonForm}>
