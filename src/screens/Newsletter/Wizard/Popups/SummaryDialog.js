@@ -66,7 +66,10 @@ const SummaryDialog = ({ classes,
 
     const handleSendCampaign = async () => {
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
-        handleSendResponse(sendResponse.payload);
+        handleSendResponse({
+            ...sendResponse.payload,
+            fromEmail: fromEmail
+        });
     }
     useEffect(() => {
         dispatch(getAuthorizedEmails());

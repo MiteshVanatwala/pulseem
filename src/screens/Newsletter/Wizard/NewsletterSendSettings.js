@@ -157,6 +157,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     });
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
+    const [summaryEmail, setSummaryEmail] = useState(newsletterInfo.FromEmail);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -353,6 +354,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setDialogType({ type: 'sendSuccess' });
         }
         else if (response?.StatusCode === 403) {
+            setSummaryEmail(response.fromEmail);
             setNewEmailVerification(newsletterInfo.FromEmail)
         }
         else {
@@ -500,6 +502,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const nameExist = subAccountAllGroups?.filter((g) => { return g?.GroupName === groupName });
         if (nameExist.length > 0) {
             setNewGroupDetails({ ...newGroupDetails, groupNameExist: true });
+            setLoader(false);
             return;
         }
 
@@ -1315,7 +1318,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => setNewEmailVerification(false)}
                 Option={{
                     Step: 1,
-                    Value: newsletterInfo.FromEmail
+                    Value: summaryEmail || newsletterInfo.FromEmail
                 }}
             />}
             <Loader isOpen={showLoader} />
