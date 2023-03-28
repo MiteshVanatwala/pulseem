@@ -500,6 +500,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const nameExist = subAccountAllGroups?.filter((g) => { return g?.GroupName === groupName });
         if (nameExist.length > 0) {
             setNewGroupDetails({ ...newGroupDetails, groupNameExist: true });
+            setLoader(false);
             return;
         }
 
