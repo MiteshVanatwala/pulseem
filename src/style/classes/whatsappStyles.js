@@ -832,6 +832,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
 	},
+	testGroupModalContent: {
+		padding: '8px 4px 0px 4px',
+		color: '#525252',
+		fontFamily: 'OpenSansHebrew',
+		fontSize: '12px',
+		width: '508px',
+		height: '345px',
+	},
 
 	templateListWrapper: {},
 	templateListModal: {
@@ -1365,6 +1373,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: isRTL ? '0px 0px 0px 24px' : '0px 43px 0px 0px',
 		overflow: 'hidden',
 		textOverflow: 'ellipsis',
+		minHeight: '22px',
 	},
 	campaignSummaryTextDetail: {
 		'& a': {
@@ -1383,6 +1392,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '14px 26px',
 		direction: isRTL ? 'rtl' : 'ltr',
 		position: 'relative',
+		width: '786px',
 	},
 	campaignSummaryImportantText: {
 		textAlign: 'center',
@@ -2180,13 +2190,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			padding: '11px 10px',
 			borderRadius: '22px',
 			flex: '1',
-			height: '100%',
+			height: '40px',
 			fontSize: '14px',
 			resize: 'none',
 			maxHeight: '172px',
 			overflowY: 'auto',
 			outline: 'none',
 			wordBreak: 'break-word',
+			border: '1px solid #e0e0e0',
 		},
 		'&.chat__input::placeholder': {
 			color: 'rgb(153, 153, 153)',

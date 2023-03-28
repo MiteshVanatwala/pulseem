@@ -300,6 +300,8 @@ export type saveTemplateItemsProps = {
 	Id: number;
 	IsAllowEdit: boolean;
 	UpdatedOn: string;
+	Category: string;
+	CategoryId: number;
 };
 
 export type saveTemplateDataProps = {
@@ -370,6 +372,8 @@ export type templateListItemsProps = {
 	Id: number;
 	IsAllowEdit: boolean;
 	UpdatedOn: string;
+	Category: string;
+	CategoryId: number;
 };
 
 export type templateListDataProps = {
