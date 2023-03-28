@@ -76,7 +76,7 @@ const ResetGroupPopup = ({
             </span>}
             showDivider
         >
-            <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} >
+            <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null, classes.textCenter)} >
                 {t("group.resetConfirm")}
             </Typography>
         </BaseDialog>
