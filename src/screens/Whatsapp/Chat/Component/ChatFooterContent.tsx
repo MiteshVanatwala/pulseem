@@ -86,10 +86,6 @@ const ChatFooterContent = ({
 		setNewMessage(e.target.value);
 	};
 
-	const onInputKeyUp = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-		console.log(e);
-	};
-
 	return (
 		<>
 			<div className={`${classes.whatsappChat} chat__input-wrapper`}>
@@ -145,7 +141,6 @@ const ChatFooterContent = ({
 										placeholder='Type a message'
 										value={newMessage}
 										onChange={onEditableDivChange}
-										onKeyUp={(e) => onInputKeyUp(e)}
 									/>
 								)}
 							</>
