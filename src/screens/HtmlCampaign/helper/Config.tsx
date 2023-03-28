@@ -51,7 +51,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
-        autosave: AUTO_SAVE_SECONDS,
+        //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
         // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
