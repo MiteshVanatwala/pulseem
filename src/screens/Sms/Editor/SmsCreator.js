@@ -1786,8 +1786,8 @@ const SmsCreator = ({ classes }) => {
       showDefaultButtons: true,
       confirmText: t("common.Yes"),
       cancelText: t("common.No"),
-      onClose: () => { validationCheckpoint(() => handleExit(false)) },
-      onCancel: () => { setDialogType(null) },
+      onClose: () => { handleExit(true) },
+      onCancel: () => { handleExit(true) },
       onConfirm: () => { validationCheckpoint(() => handleExit(true)); }
     }
   }
