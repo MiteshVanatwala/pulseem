@@ -196,7 +196,9 @@ const ActionCallPopOver = ({
 														value={field.value}
 														fullWidth>
 														{countryCodes.map((countryCode) => (
-															<MenuItem key={countryCode} value={countryCode}>
+															<MenuItem
+																key={countryCode}
+																value={'+' + countryCode?.replace(/\D/g, '')}>
 																{countryCode}
 															</MenuItem>
 														))}

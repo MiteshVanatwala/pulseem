@@ -6,6 +6,7 @@ import TemplateFields from './Components/TemplateFields';
 import ActionCallPopOver from './Popups/ActionCallPopOver';
 import Buttons from './Components/Buttons';
 import {
+	ApiButtonData,
 	buttonsDataProps,
 	callToActionProps,
 	callToActionRowProps,
@@ -54,14 +55,10 @@ import {
 	getLastDynamicFieldByValue,
 	getLastDynamicFieldValue,
 } from '../Common';
-import {
-	apiStatus,
-	categoryId,
-	categoryName,
-	resetToastData,
-} from '../Constant';
+import { apiStatus, categoryName, resetToastData } from '../Constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
+import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -79,6 +76,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
+	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
+		string[]
+	>([]);
+	const [showValidation, setShowValidation] = useState<boolean>(false);
+	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const getSavedTemplateFields = async () => {
 		let savedTemplate: savedTemplateAPIProps = await dispatch<any>(
 			getSavedTemplates({ templateStatus: 3 })
@@ -222,6 +224,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			fileLink: '',
 			fileType: '',
 		});
+		setShowValidation(false);
 		setCategory('marketing');
 		setQuickReplyButtons(initialQuickReplyButtons);
 		setCallToActionFieldRows([initialFieldRow]);
@@ -304,7 +307,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
+									value: button?.phoneCode || '',
 								},
 								{
 									fieldName: 'whatsapp.phoneNumber',
@@ -473,15 +476,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const getActionPhoneNumber = (button: quickReplyButtonProps) => {
 		const phoneNumber = getValueByFieldName(button, 'whatsapp.phoneNumber');
-		const countryCode = getValueByFieldName(button, 'whatsapp.country');
-		return countryCode && phoneNumber
-			? '+' + countryCode?.replace(/\D/g, '') + phoneNumber
-			: phoneNumber;
+		return phoneNumber;
 	};
 
 	const getCallTOActionActions = () => {
 		return templateData.templateButtons.map((button: quickReplyButtonProps) => {
-			return {
+			let apiButtonData: ApiButtonData = {
 				type: button.typeOfAction === 'phonenumber' ? 'PHONE_NUMBER' : 'URL',
 				title: getValueByFieldName(
 					button,
@@ -494,6 +494,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						? getActionPhoneNumber(button)
 						: getValueByFieldName(button, 'whatsapp.websiteURL'),
 			};
+			if (button.typeOfAction === 'phonenumber') {
+				const countryCode = getValueByFieldName(button, 'whatsapp.country');
+				apiButtonData.phoneCode = '+' + countryCode?.replace(/\D/g, '');
+			}
+			return apiButtonData;
 		});
 	};
 
@@ -626,6 +631,25 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitCampaignOpen(true);
+	};
+
+	const validateSaveTemplate = () => {
+		let validationErrors = [];
+		let isValidated = true;
+		if (templateData?.templateText?.length <= 0) {
+			validationErrors.push('Template text is required');
+			isValidated = false;
+		}
+		if (templateName?.length <= 0) {
+			validationErrors.push('Template name is required');
+			isValidated = false;
+		}
+		if (!isValidated) {
+			setGroupSendValidationErrors([...validationErrors]);
+			setShowValidation(true);
+			setIsValidationAlert(true);
+		}
+		return isValidated;
 	};
 
 	const addDynamicField = (
@@ -771,31 +795,33 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const saveTemplate = async () => {
-		let requestJSON = getRequestJSON(true);
-		if (requestJSON) {
-			if (templateID) {
-				requestJSON.id = Number(templateID);
-			}
-			setIsLoader(true);
-			let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
-				submitTemplates(requestJSON)
-			);
-			setIsLoader(false);
-			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
-				setIsSubmitCampaignOpen(false);
-				setToastMessage(ToastMessages.SAVE_SUCCESS);
-				resetFields();
-				navigate('/react/whatsapp/template/create');
-			} else if (submitTemplate?.payload?.Status === 'Error') {
-				if (submitTemplate?.payload?.Message?.length > 0) {
-					setToastMessage({
-						...ToastMessages.ERROR,
-						message: submitTemplate?.payload?.Message,
-					});
-				} else {
-					setToastMessage(ToastMessages.ERROR);
+		if (validateSaveTemplate()) {
+			let requestJSON = getRequestJSON(true);
+			if (requestJSON) {
+				if (templateID) {
+					requestJSON.id = Number(templateID);
 				}
-				setIsSubmitCampaignOpen(false);
+				setIsLoader(true);
+				let submitTemplate: submitTemplateAPIProps = await dispatch<any>(
+					submitTemplates(requestJSON)
+				);
+				setIsLoader(false);
+				if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
+					setIsSubmitCampaignOpen(false);
+					setToastMessage(ToastMessages.SAVE_SUCCESS);
+					resetFields();
+					navigate('/react/whatsapp/template/create');
+				} else if (submitTemplate?.payload?.Status === 'Error') {
+					if (submitTemplate?.payload?.Message?.length > 0) {
+						setToastMessage({
+							...ToastMessages.ERROR,
+							message: submitTemplate?.payload?.Message,
+						});
+					} else {
+						setToastMessage(ToastMessages.ERROR);
+					}
+					setIsSubmitCampaignOpen(false);
+				}
 			}
 		}
 	};
@@ -903,6 +929,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						savedTemplateList={savedTemplateList}
 						category={category}
 						onCategoryChange={setCategory}
+						showValidation={showValidation}
 					/>
 					<Grid
 						container
@@ -991,6 +1018,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
 				type='delete'
 				onConfirmOrYes={() => onDeleteTemplate()}
+			/>
+			<ValidationAlert
+				classes={classes}
+				isOpen={isValidationAlert}
+				onClose={() => setIsValidationAlert(false)}
+				title={translator('whatsappCampaign.sendValidation')}
+				requiredFields={groupSendValidationErrors}
 			/>
 			<AlertModal
 				classes={classes}
