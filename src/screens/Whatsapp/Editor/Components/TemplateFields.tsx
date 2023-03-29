@@ -31,13 +31,13 @@ const TemplateFields = ({
 	savedTemplateList,
 	onCategoryChange,
 	category,
+	showValidation,
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
-	const [isCampaign, setIsCampaign] = useState(false);
 
 	const units = ['bytes', 'KB', 'MB'];
 
@@ -97,7 +97,7 @@ const TemplateFields = ({
 							type='text'
 							placeholder={translator('whatsapp.templateNamePlaceholder')}
 							className={
-								isCampaign
+								showValidation && templateName?.length === 0
 									? clsx(classes.buttonField, classes.error)
 									: clsx(classes.buttonField, classes.success)
 							}
@@ -117,20 +117,11 @@ const TemplateFields = ({
 
 						<Autocomplete
 							id='template-list'
-							className={
-								isCampaign
-									? clsx(
-											classes.buttonField,
-											classes.buttonWhatsappAutocomplete,
-											classes.error
-									  )
-									: clsx(
-											classes.buttonField,
-											classes.buttonWhatsappAutocomplete,
-											classes.success
-									  )
-							}
-							options={savedTemplateList.map((template) =>
+							className={clsx(
+								classes.buttonField,
+								classes.buttonWhatsappAutocomplete
+							)}
+							options={savedTemplateList?.map((template) =>
 								getTemplateName(template)
 							)}
 							renderInput={(params) => <TextField {...params} />}
@@ -150,11 +141,7 @@ const TemplateFields = ({
 
 						<Select
 							type='text'
-							className={
-								isCampaign
-									? clsx(classes.buttonField, classes.error)
-									: clsx(classes.buttonField, classes.success)
-							}
+							className={classes.buttonField}
 							onChange={(e: BaseSyntheticEvent) =>
 								onCategoryChange(e.target.value)
 							}

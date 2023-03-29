@@ -399,6 +399,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			setAPIWhatsAppChatContacts(phoneNumberData?.Data[0], true);
 			setPhoneNumbersList(phoneNumberData?.Data);
 			return phoneNumberData?.Data;
+		} else {
+			setIsLoader(false);
+			setToastMessage(ToastMessages.ERROR);
+			setContactsPaginationSetting({
+				...contactsPaginationSetting,
+				hasMore: false,
+			});
 		}
 		setPhoneNumbersList([]);
 		return [];

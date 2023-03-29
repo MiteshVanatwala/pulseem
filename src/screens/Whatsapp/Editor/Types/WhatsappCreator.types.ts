@@ -37,6 +37,7 @@ export type TemplateFieldsProps = {
 	savedTemplateList: savedTemplateListProps[];
 	onCategoryChange: (category: string) => void;
 	category: string;
+	showValidation: boolean;
 };
 
 export type ReduxUserProps = {
@@ -130,6 +131,14 @@ export type quickReplyButtonProps = {
 	id: string;
 	typeOfAction: string;
 	fields: quickReplyButtonsFieldProps[];
+};
+
+export type ApiButtonData = {
+	type: string;
+	title: string;
+	phone?: string;
+	url?: string;
+	phoneCode?: string;
 };
 
 export type templateDataProps = {
@@ -282,6 +291,7 @@ export type buttonsDataProps = {
 	type: string;
 	url: string;
 	phone: string;
+	phoneCode?: string;
 };
 export type JSONFreetextVariableProps = {
 	[key: string]: string;
