@@ -194,11 +194,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
         } catch (e) {
-            dispatch(sendToTeamChannel({
-                MethodName: 'onReady',
-                ComponentName: 'NewsletterSendSettings.js',
-                Message: e
-            }));
+            // dispatch(sendToTeamChannel({
+            //     MethodName: 'onReady',
+            //     ComponentName: 'NewsletterSendSettings.js',
+            //     Message: e
+            // }));
         }
     }
 
@@ -245,7 +245,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }, [dispatch]);
 
     const handlePreviousPage = () => {
-        navigate(`/react/campaigns/editor/${params.id}`)
+        if (newsletterInfo?.IsNewEditor) {
+            navigate(`/react/campaigns/editor/${params.id}`)
+        }
+        else {
+            window.location = `/Pulseem/Editor/CampaignEdit/${params.id}`;
+        }
     }
 
     const onHandleDelete = () => {

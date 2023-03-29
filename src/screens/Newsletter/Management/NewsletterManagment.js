@@ -536,7 +536,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const renderNameCell = (row) => {
     let date = null
     let text = ''
-    if (!row.SendDate) {
+    if (!row.SendDate || row.Status === 1) {
       date = moment(row.UpdatedDate, dateFormat)
       text = t('common.UpdatedOn')
     } else {
