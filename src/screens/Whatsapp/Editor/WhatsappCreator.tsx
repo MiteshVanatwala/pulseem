@@ -313,7 +313,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 									fieldName: 'whatsapp.phoneNumber',
 									type: 'tel',
 									placeholder: 'whatsapp.phoneNumberPlaceholder',
-									value: button.phone,
+									value: button?.phoneCode
+										? button.phone?.replace(button?.phoneCode, '')
+										: button.phone,
 								},
 							],
 						};
@@ -476,7 +478,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const getActionPhoneNumber = (button: quickReplyButtonProps) => {
 		const phoneNumber = getValueByFieldName(button, 'whatsapp.phoneNumber');
-		return phoneNumber;
+		const countryCode = getValueByFieldName(
+			button,
+			'whatsapp.country'
+		)?.replace(/\D/g, '');
+		return countryCode ? '+' + countryCode + phoneNumber : phoneNumber;
 	};
 
 	const getCallTOActionActions = () => {

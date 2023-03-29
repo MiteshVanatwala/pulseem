@@ -588,10 +588,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onOkTestSending = async () => {
-		setIsTestGroupModal(false)
+		setIsTestGroupModal(false);
 		let campaignIdForTestSend: number = Number(campaignID) || 0;
 		setIsLoader(true);
-		const saveCampaign = await onSaveCampaign(false);
+		const saveCampaign = await onSaveCampaign(false, false);
 		campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
 		if (testSendSelection !== 'onecontact') {
 			const { payload: quickSendGroupsData }: SaveQuickSendGroups =
@@ -651,7 +651,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		return payload;
 	};
 
-	const onSaveCampaign = async (showSuccess: boolean = true) => {
+	const onSaveCampaign = async (
+		showSuccess: boolean = true,
+		isNavigate: boolean = true
+	) => {
 		if (validateSaveCampaign(true)) {
 			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
@@ -659,6 +662,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
 					setToastMessage(ToastMessages.SAVE_CAMPAIGN_SUCCESS);
+				}
+				if (isNavigate) {
+					navigate(
+						`/react/whatsapp/campaign/edit/page1/${data?.Data?.WACampaignId}`
+					);
 				}
 				return data?.Data;
 			} else {
