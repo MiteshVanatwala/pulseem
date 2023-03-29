@@ -57,8 +57,8 @@ const SmsManagnentScreen = ({ classes }) => {
   moment.locale(language)
   const Redirect = useRedirect();
 
-  const getData = useCallback(() => {
-    dispatch(getSmsData())
+  const getData = useCallback(async () => {
+    await dispatch(getSmsData())
     setLoader(false);
   }, [dispatch])
 

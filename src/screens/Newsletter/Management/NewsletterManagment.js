@@ -65,8 +65,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
 
-  const getData = () => {
-    dispatch(getNewslatterData())
+  const getData = async () => {
+    await dispatch(getNewslatterData())
     dispatch(getAuthorizedEmails());
     setLoader(false);
   }
