@@ -197,7 +197,9 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(report.ReportSection, activeChart?.index);
+                    setTimeout(() => {
+                        openReports(report.ReportSection, activeChart?.index);
+                    }, 100);
                 }
             },
             plugins: {
