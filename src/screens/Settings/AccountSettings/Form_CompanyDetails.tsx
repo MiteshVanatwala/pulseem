@@ -135,16 +135,12 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    const newSettings = { ...Settings, TwoFactorAuthEnabled: accFeatures?.indexOf(45) === -1 } as AccountSettings;
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountSettings?.AccountFeatures?.indexOf(45) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
+    setAccountFeatures(accountSettings?.Account?.AccountFeatures);
     if (Settings)
       handleQueryString2FA();
-  }, [accountSettings]);
-
-  useEffect(() => {
-    if (accountSettings)
-      setAccountFeatures(accountSettings?.Account?.AccountFeatures);
-  }, [accountSettings])
+  }, [accountSettings, Settings]);
 
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {
@@ -252,7 +248,7 @@ const FORM_COMPANY_DETAILS = ({
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
-          Classes={classes}
+          classes={classes}
           Element={null}
         />
         <Box className={"formContainer"}>
@@ -415,7 +411,7 @@ const FORM_COMPANY_DETAILS = ({
         </Box>
         <Title
           Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
-          Classes={classes}
+          classes={classes}
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
