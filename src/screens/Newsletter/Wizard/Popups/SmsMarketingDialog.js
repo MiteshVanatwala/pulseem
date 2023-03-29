@@ -12,6 +12,7 @@ import { setSmsMarketing } from '../../../../redux/reducers/smsSlice'
 import VerificationDialog from '../../../../components/DialogTemplates/VerificationDialog.js';
 import { Loader } from '../../../../components/Loader/Loader';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import Toast from '../../../../components/Toast/Toast.component';
 
 const SmsMarketingDialog = ({
     classes,
@@ -40,6 +41,7 @@ const SmsMarketingDialog = ({
     const [numberVerified, setNumberVerified] = useState(true);
     const [errors, setErrors] = useState({});
     const [isLinksStatistics, setIsLinksStatistics] = useState(true);
+    const [toastMessage, setToastMessage] = useState(null);
     const toggleLinkStatistics = () => {
         setIsLinksStatistics(!isLinksStatistics);
     };
@@ -160,7 +162,9 @@ const SmsMarketingDialog = ({
                 const r = await dispatch(setSmsMarketing(smsCampaignPayload));
                 handleTotalMarketingResponse(r.payload);
                 setLoader(false);
-                onConfirm();
+                setTimeout(() => {
+                    onConfirm();
+                }, 3000);
             }
         }
 
@@ -169,7 +173,7 @@ const SmsMarketingDialog = ({
     const handleTotalMarketingResponse = (response) => {
         switch (response?.StatusCode) {
             case 201: {
-                alert('success');
+                setToastMessage({ severity: 'success', color: 'success', message: t('common.savedSuccessfully'), showAnimtionCheck: true });
                 break;
             }
             case 401: {
@@ -181,7 +185,7 @@ const SmsMarketingDialog = ({
                 break;
             }
             default: {
-                alert(response?.Message);
+                setToastMessage({ severity: 'success', color: 'success', message: response?.Message, showAnimtionCheck: true });
             }
         }
     }
@@ -430,14 +434,19 @@ const SmsMarketingDialog = ({
         onConfirm: handleConfirm
     }
 
-    return <BaseDialog
-        classes={classes}
-        open={isOpen}
-        onClose={() => { setDialogType(null) }}
-        onCancel={() => { setDialogType(null) }}
-        {...currentDialog}>
-        {currentDialog.content}
-    </BaseDialog>
+    return (
+        <>
+            <BaseDialog
+                classes={classes}
+                open={isOpen}
+                onClose={() => { setDialogType(null) }}
+                onCancel={() => { setDialogType(null) }}
+                {...currentDialog}>
+                {currentDialog.content}
+            </BaseDialog>
+            { toastMessage &&  <Toast data={toastMessage} /> }
+        </>
+    )
 }
 
 export default SmsMarketingDialog

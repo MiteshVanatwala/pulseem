@@ -610,5 +610,6 @@
   "remove": "Remove",
   "backToHome": "To Home page",
   "backToCampaigns": "To Campaigns",
-  "searchByCampaign": "Search by Campaign"
+  "searchByCampaign": "Search by Campaign",
+  "savedSuccessfully": "Saved Successfully"
 }
