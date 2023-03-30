@@ -138,7 +138,10 @@ const SmsMarketingDialog = ({
 
         setSmsModel({ ...smsModel, SendDate: finalDate, Text: textRef.current.value });
 
-        if (!textRef.current.value || textRef.current.value === '') {
+        if (finalDate < moment(smsModel.MinSendDate)) {
+            setErrors({ SendDate: t('campaigns.newsLetterEditor.sendSettings.errors.selectFutureDate') })
+        }
+        else if (!textRef.current.value || textRef.current.value === '') {
             setErrors({ Text: t('campaigns.newsLetterEditor.sendSettings.errors.reqText') })
         }
         else {
@@ -203,6 +206,9 @@ const SmsMarketingDialog = ({
         if (!smsModel.SendDate) {
             tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.reqDate');
 
+        }
+        else if (moment(smsModel.SendDate) < moment(smsModel.MinSendDate)) {
+            tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.selectFutureDate');
         }
         else if (Object.prototype.toString.call(smsModel.SendDate) === "[object Date]") {
             tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.invalidDate');
@@ -302,7 +308,7 @@ const SmsMarketingDialog = ({
                         {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.sendingDate')}
                     </Typography>
                     <DateField
-                        minDate={moment()}
+                        minDate={moment(smsModel.MinSendDate)}
                         classes={classes}
                         value={smsModel.SendDate}
                         onChange={(value) => {
@@ -312,6 +318,7 @@ const SmsMarketingDialog = ({
                         timePickerOpen={true}
                         error={!!errors.SendDate}
                         helperText={!!errors.SendDate && errors.SendDate}
+                        errorMessage={errors.SendDate}
                     />
                 </Grid>
                 <Grid item sm={12} md={6}>

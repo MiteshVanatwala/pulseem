@@ -584,7 +584,8 @@
         "reqSendTo": "Send to is required",
         "invalidDate": "Invalid date",
         "invalidTime": "Invalid time",
-        "enterVerifiedNumber": "Please enter the verified phone number"
+        "enterVerifiedNumber": "Please enter the verified phone number",
+        "selectFutureDate": "Supplementary marketing cannot be sent before the campaign send date. Please select a future date."
       },
       "deleted": "Campaign deleted successfully",
       "send": "Send",

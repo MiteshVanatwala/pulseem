@@ -907,6 +907,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         const restData = response?.payload.Data;
                         setSmsMarketingModel({
                             SendDate: sendDate,
+                            MinSendDate: campaignValues.SendingMethod === 2 ? campaignValues.SendDate : sendDate,
                             SendTime: moment(sendTime),
                             IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData

@@ -118,8 +118,8 @@ export const DateField = ({
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
       invalidDateMessage={t("common.invalidDate")}
-      maxDateMessage={t("common.maximalDateRequired")}
-      minDateMessage={t("common.minimalDateRequired")}
+      maxDateMessage={ props.errorMessage || t("common.maximalDateRequired")}
+      minDateMessage={ props.errorMessage || t("common.minimalDateRequired")}
       InputProps={{
         readOnly: true,
         style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
