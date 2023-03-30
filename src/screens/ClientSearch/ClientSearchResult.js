@@ -1825,8 +1825,8 @@ const ClientSearchResult = ({ props, classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
-        options={ExportFileTypes}
+        defaultValue={TotalCount > 100000 ? "csv" : "xls"}
+        options={TotalCount > 100000 ? [[...ExportFileTypes].pop()] : ExportFileTypes}
       />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
