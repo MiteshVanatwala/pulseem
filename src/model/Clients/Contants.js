@@ -22,7 +22,8 @@ const CLIENT_CONSTANTS = {
 		WhatsappSentCount: 18,
 		WhatsappRead: 19,
 		WhatsappFailed: 20,
-		WhatsappRemoved: 21
+		WhatsappRemoved: 21,
+		WhatsappUniqueClick: 22,
 	},
 	SMS_STATUS: {
 		NoSms: -1,
