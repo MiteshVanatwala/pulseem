@@ -59,6 +59,8 @@ import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -179,7 +181,8 @@ const ClientSearchResult = ({ props, classes }) => {
     CONFIRM_REMOVE_PHONE: "CONFIRM_REMOVE_PHONE",
     UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
     CONFIRM_INVALID: "CONFIRM_INVALID",
-    EXPORT_FORMAT: "EXPORT_FORMAT"
+    EXPORT_FORMAT: "EXPORT_FORMAT",
+    UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS"
   };
   useEffect(() => {
     const initExtraFields = async () => {
@@ -672,6 +675,11 @@ const ClientSearchResult = ({ props, classes }) => {
       message: '',
       Func: () => getData()
     },
+    'S_202': {
+      code: 202,
+      message: '',
+      Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
+    },
     'S_400': {
       code: 400,
       message: '',
@@ -721,6 +729,11 @@ const ClientSearchResult = ({ props, classes }) => {
       case 201: {
         actions?.S_201?.Func?.();
         actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+        break;
+      }
+      case 202: {
+        actions?.S_202?.Func?.();
+        // actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
         break;
       }
       case 400: {
@@ -840,6 +853,10 @@ const ClientSearchResult = ({ props, classes }) => {
             message: ToastMessages.SUCCESS,
             Func: () => null
           },
+          S_202: {
+            code: 202,
+            Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
+          },
           S_400: {
             code: 400,
             message: ToastMessages.SOMETHING_WENT_WRONG,
@@ -879,6 +896,10 @@ const ClientSearchResult = ({ props, classes }) => {
             code: 201,
             message: ToastMessages.SUCCESS,
             Func: () => null
+          },
+          S_202: {
+            code: 202,
+            Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
           },
           S_400: {
             code: 400,
@@ -924,7 +945,9 @@ const ClientSearchResult = ({ props, classes }) => {
   const handleUnSubscribe = async (opt) => {
     setDialog(null);
     setLoader(true);
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount })).then(res => {
+    let groupName = location?.state?.ResultTitle;
+
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
@@ -941,6 +964,13 @@ const ClientSearchResult = ({ props, classes }) => {
               window.history.back();
             }, 4000);
             //getData()
+          }
+        },
+        'S_202': {
+          code: 202,
+          // message: ToastMessages.UNSUBSCRIBED_IN_PROGRESS,
+          Func: () => {
+            setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS);
           }
         },
         'S_401': {
@@ -1727,6 +1757,39 @@ const ClientSearchResult = ({ props, classes }) => {
             showDropBox={false}
           />;
         }
+        case DialogType.UNSUBSCRIBED_IN_PROGRESS: {
+          return <BaseDialog
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={dialog === DialogType.UNSUBSCRIBED_IN_PROGRESS}
+            renderButtons={() => (<>
+              <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+              >
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      sessionStorage.removeItem('searchData');
+                      window.history.back();
+                    }}
+                    className={clsx(
+                      classes.solidDialogButton,
+                      classes.dialogConfirmButton
+                    )}>
+                    {t('common.confirm')}
+                  </Button>
+                </Grid>
+              </Grid>
+            </>)}
+          >
+            {RenderHtml(t("recipient.unsubscribed.inProgress"))}
+          </BaseDialog>
+        }
         case DialogType.CONFIRM_INVALID:
         case DialogType.CONFIRM_DELETE_FROM_GROUPS:
         case DialogType.CONFIRM_REMOVE_EMAIL:
@@ -1762,8 +1825,8 @@ const ClientSearchResult = ({ props, classes }) => {
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
-        options={ExportFileTypes}
+        defaultValue={TotalCount > 100000 ? "csv" : "xls"}
+        options={TotalCount > 100000 ? [[...ExportFileTypes].pop()] : ExportFileTypes}
       />
       <Loader isOpen={showLoader} />
     </DefaultScreen>

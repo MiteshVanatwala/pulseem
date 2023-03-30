@@ -105,7 +105,7 @@ export const setUnsubscribedClients = createAsyncThunk(
   'client/SetUnsubscribedClients', async (payload, thunkAPI) => {
     try {
       const response = await instence.post(`client/SetUnsubscribedClients`, { ...payload });
-      return JSON.parse(response.data)
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -154,6 +154,7 @@ export const clientSlice = createSlice({
       AUTOMATION_CLIENTS_UPDATED: { severity: 'success', color: 'success', message: 'client.automationClientsUpdated', showAnimtionCheck: false },
       NO_CLIENTS_FOUND: { severity: 'success', color: 'success', message: 'client.noClientsFound', showAnimtionCheck: false },
       UNSUBSCRIBED_SUCCESS: { severity: 'success', color: 'success', message: 'recipient.unsubscribed.succeeded', showAnimtionCheck: false },
+      UNSUBSCRIBED_IN_PROGRESS: { severity: 'success', color: 'success', message: 'recipient.unsubscribed.inProgress', showAnimtionCheck: false },
       SET_INVALID_SUCCESS: { severity: 'success', color: 'success', message: 'client.setInvalidSucceeded', showAnimtionCheck: false },
       STATUS_UPDATED: { severity: 'success', color: 'success', message: 'client.statusUpdated', showAnimtionCheck: false },
       INVALID_CLIENT_ID: { severity: 'error', color: 'error', message: 'client.errors.invalidClientId', showAnimtionCheck: false },
