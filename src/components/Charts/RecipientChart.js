@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
 import { useNavigate } from 'react-router';
-
+import { Loader } from '../Loader/Loader';
 
 const RecipientChart = ({ classes, }) => {
     const navigate = useNavigate()
@@ -377,16 +377,14 @@ const RecipientChart = ({ classes, }) => {
 
     const renderChartsCarousel = () => {
         if (!recipientsReport) {
-            return;
+            return (<Loader showBackdrop={false} contained containerSize={240} />);
         }
 
         let totalRecipientsReport = 0;
 
-        if (recipientsReport) {
-            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
-                return a + b["Total"];
-            }, 0);
-        }
+        totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+            return a + b["Total"];
+        }, 0);
 
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
@@ -426,16 +424,14 @@ const RecipientChart = ({ classes, }) => {
 
     const renderCharts = () => {
         if (!recipientsReport) {
-            return;
+            return (<Loader showBackdrop={false} contained containerSize={240} />);
         }
 
         let totalRecipientsReport = 0;
 
-        if (recipientsReport) {
-            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
-                return a + b["Total"];
-            }, 0);
-        }
+        totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+            return a + b["Total"];
+        }, 0);
 
         return (
             <Grid item container justifyContent='space-evenly'>
