@@ -105,7 +105,7 @@ export const setUnsubscribedClients = createAsyncThunk(
   'client/SetUnsubscribedClients', async (payload, thunkAPI) => {
     try {
       const response = await instence.post(`client/SetUnsubscribedClients`, { ...payload });
-      return JSON.parse(response.data)
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

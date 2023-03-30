@@ -945,7 +945,9 @@ const ClientSearchResult = ({ props, classes }) => {
   const handleUnSubscribe = async (opt) => {
     setDialog(null);
     setLoader(true);
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount })).then(res => {
+    let groupName = location?.state?.ResultTitle;
+
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
