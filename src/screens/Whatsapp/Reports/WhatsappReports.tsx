@@ -232,27 +232,26 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const onExport = async () => {
 		const header: {} = {
-			1: 'Campaign Id',
-			2: 'Status',
-			3: 'Campaign Name',
-			4: 'From Number',
-			5: 'Total Send Plan',
-			6: 'Clicks Count',
-			7: 'Unique Clicks Count',
-			8: 'Created Date',
-			9: 'Total Sent',
-			10: 'Total Read',
+			1: 'Campaign Number',
+			2: 'Campaign Name',
+			3: 'From Number',
+			4: 'Total Send Plan',
+			5: 'Total Sent',
+			6: 'Total Read',
+			7: 'Clicks Count',
+			8: 'Unique Clicks Count',
+			9: 'Total Feedback',
+			10: 'Removed',
 			11: 'Failure',
-			12: 'Removed',
-			13: 'Total Feedback',
-			14: 'Send Date',
+			12: 'Status',
+			13: 'Created Date',
+			14: 'Update Date',
 		};
 
 		setIsLoader(true);
 		const { payload: campaignData }: reportListAPIProps = await dispatch<any>(
 			getAllReports({
-				...allReportInitialPagination,
-				campaignName: '',
+				...paginationSetting,
 				isPagination: false,
 			})
 		);
@@ -261,14 +260,25 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			const exportData: exportDataProps[] = campaignData?.Data?.Items?.map(
 				(row: reportDataProps) => {
 					let updatedRow: exportDataProps = {
-						...row,
+						WACampaignID: row.WACampaignID,
+						Name: row?.Name,
+						FromNumber: row?.FromNumber,
+						ToSend: row?.ToSend,
+						Sent: row?.Sent,
+						Read: row?.Read,
+						ClicksCount: row?.ClicksCount,
+						UniqueClicksCount: row?.UniqueClicksCount,
+						FeedBack: row?.FeedBack,
+						Removed: row?.Removed,
+						Failed: row?.Failed,
 						Status: campaignStatus[row.Status],
-						CreateDate: row.CreateDate
-							? moment(row.CreateDate).format('DD/MM/YYYY')
+						CreateDate: row?.CreateDate
+							? moment(row?.CreateDate).format('DD/MM/YYYY')
+							: '',
+						UpdateDate: row?.UpdateDate
+							? moment(row?.UpdateDate).format('DD/MM/YYYY')
 							: '',
 					};
-					delete updatedRow.statusId;
-					delete updatedRow.TemplateID;
 					return updatedRow;
 				}
 			);

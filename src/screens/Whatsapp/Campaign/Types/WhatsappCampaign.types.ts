@@ -398,6 +398,7 @@ export type reportDataProps = {
 	UpdateDate: string;
 	FromNumber: string;
 	TemplateID: string;
+	Revenue: number;
 };
 
 export type exportDataProps = {
@@ -416,6 +417,8 @@ export type exportDataProps = {
 	CreateDate: string;
 	FromNumber: string;
 	TemplateID?: string;
+	Revenue?: number;
+	UpdateDate: string;
 };
 
 export type groupSelectorProps = {
