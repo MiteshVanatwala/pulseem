@@ -55,7 +55,13 @@ import {
 	getLastDynamicFieldByValue,
 	getLastDynamicFieldValue,
 } from '../Common';
-import { apiStatus, categoryName, resetToastData } from '../Constant';
+import {
+	apiStatus,
+	buttonTextLimits,
+	buttonTypes,
+	categoryName,
+	resetToastData,
+} from '../Constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
@@ -73,6 +79,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			state.whatsapp.ToastMessages
 	);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [savedTemplateList, setSavedTemplateList] = useState<
 		savedTemplateListProps[]
 	>([]);
@@ -208,6 +215,22 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const [callToActionFieldRows, setCallToActionFieldRows] =
 		useState<callToActionProps>([initialFieldRow]);
 
+	useEffect(() => {
+		if (buttonType === buttonTypes.CALL_TO_ACTION) {
+			setTemplateTextLimit(buttonTextLimits.callToAction);
+			setTemplateData({
+				...templateData,
+				templateText: templateData.templateText?.substring(
+					0,
+					buttonTextLimits.callToAction
+				),
+			});
+		} else {
+			setTemplateTextLimit(buttonTextLimits.quickReply);
+		}
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
+	}, [buttonType]);
+
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
 		setTemplateName(e.target.value.toLowerCase());
 	};
@@ -274,7 +297,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
 		switch (buttonType) {
-			case 'quickReply':
+			case buttonTypes.QUICK_REPLY:
 				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
@@ -290,7 +313,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					};
 				});
 				return buttonData ? buttonData : [];
-			case 'callToAction':
+			case buttonTypes.CALL_TO_ACTION:
 				buttonData = data?.map((button: buttonsDataProps) => {
 					if (button?.type === 'PHONE_NUMBER') {
 						return {
@@ -347,8 +370,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
 		const quickReplyData: savedTemplateQuickReplyProps =
 			templateData?.types['quick-reply'];
-		updatedButtonType = 'quickReply';
-		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		updatedButtonType = buttonTypes.QUICK_REPLY;
+		const buttonData = setButtonsData(
+			buttonTypes.QUICK_REPLY,
+			quickReplyData?.actions
+		);
 		updatedTemplateData.templateText = quickReplyData?.body;
 		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 	};
@@ -356,9 +382,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
 		const callToActionData: savedTemplateCallToActionProps =
 			templateData?.types['call-to-action'];
-		updatedButtonType = 'callToAction';
+		updatedButtonType = buttonTypes.CALL_TO_ACTION;
 		const buttonData = setButtonsData(
-			'callToAction',
+			buttonTypes.CALL_TO_ACTION,
 			callToActionData?.actions
 		);
 		updatedTemplateData.templateText = callToActionData?.body;
@@ -370,12 +396,18 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		updatedTemplateData.templateText = cardData?.title;
 		if (cardData?.actions?.length > 0) {
 			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-				updatedButtonType = 'callToAction';
-				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				updatedButtonType = buttonTypes.CALL_TO_ACTION;
+				const buttonData = setButtonsData(
+					buttonTypes.CALL_TO_ACTION,
+					cardData?.actions
+				);
 				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			} else {
-				updatedButtonType = 'quickReply';
-				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				updatedButtonType = buttonTypes.QUICK_REPLY;
+				const buttonData = setButtonsData(
+					buttonTypes.QUICK_REPLY,
+					cardData?.actions
+				);
 				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
 			}
 		}
@@ -426,7 +458,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		// setTemplateName(savedTemplateData?.TemplateName || '');
 		setButtonType(updatedButtonType);
 		setTemplateData(updatedTemplateData);
-		if (updatedButtonType === 'quickReply') {
+		if (updatedButtonType === buttonTypes.QUICK_REPLY) {
 			setQuickReplyButtons(updatedTemplateData.templateButtons);
 		} else {
 			setCallToActionFieldRows(updatedTemplateData.templateButtons);
@@ -455,7 +487,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setButtonType(updatedButtonType);
 				setTemplateData(updatedTemplateData);
 				setCategory(categoryName[templates?.CategoryId || 1]);
-				if (updatedButtonType === 'quickReply') {
+				if (updatedButtonType === buttonTypes.QUICK_REPLY) {
 					setQuickReplyButtons(updatedTemplateData.templateButtons);
 				} else {
 					setCallToActionFieldRows(updatedTemplateData.templateButtons);
@@ -609,7 +641,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						subtitle: getSubtitle(),
 						media: [fileData?.fileLink],
 						actions:
-							buttonType === 'quickReply'
+							buttonType === buttonTypes.QUICK_REPLY
 								? getQuickReplyActions()
 								: getCallTOActionActions(),
 					},
@@ -623,9 +655,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			fileData?.fileLink?.length > 0
 		) {
 			return requestJSON.textMediaAndButton;
-		} else if (templateText?.length > 0 && buttonType === 'quickReply') {
+		} else if (
+			templateText?.length > 0 &&
+			buttonType === buttonTypes.QUICK_REPLY
+		) {
 			return requestJSON.quickReply;
-		} else if (templateText?.length > 0 && buttonType === 'callToAction') {
+		} else if (
+			templateText?.length > 0 &&
+			buttonType === buttonTypes.CALL_TO_ACTION
+		) {
 			return requestJSON.callToAction;
 		} else if (templateText?.length > 0 && fileData?.fileLink?.length > 0) {
 			return requestJSON.textMedia;
@@ -717,17 +755,17 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onButtonClick = (button: actionButtonProps) => {
-		if (button.buttonTitle?.includes('callToAction')) {
+		if (button.buttonTitle?.includes(buttonTypes.CALL_TO_ACTION)) {
 			setIsCallToActionOpen(true);
-		} else if (button.buttonTitle?.includes('quickReplay')) {
+		} else if (button.buttonTitle?.includes(buttonTypes.QUICK_REPLY)) {
 			setIsQuickReplyOpen(true);
 		} else if (button.buttonTitle?.includes('dynamicField')) {
-			if (templateData?.templateText?.length < 1024) {
+			if (templateData?.templateText?.length < templateTextLimit) {
 				const selectionEnd = templateTextRef.current?.selectionEnd;
 				const textLength = templateTextRef.current?.textLength;
 				const updatedTemplateText = reOrderDynamicFieldValue(
 					addDynamicField(selectionEnd, textLength)
-				)?.substring(0, 1024);
+				)?.substring(0, templateTextLimit);
 				setDynamicFieldCount(getDynamicFieldIndex(updatedTemplateText)?.length);
 				setTemplateData({
 					...templateData,
@@ -740,7 +778,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				...templateData,
 				templateText: `${templateData.templateText} ${
 					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
-				}`?.substring(0, 1024),
+				}`?.substring(0, templateTextLimit),
 			});
 		}
 	};
@@ -954,12 +992,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								templateText={templateData.templateText}
 								templateTextRef={templateTextRef}
 								OnEditorActionButtonClick={() =>
-									buttonType === 'quickReply'
+									buttonType === buttonTypes.QUICK_REPLY
 										? setIsQuickReplyOpen(true)
 										: setIsCallToActionOpen(true)
 								}
 								dynamicFieldCount={dynamicFieldCount}
 								linkCount={linkCount}
+								templateTextLimit={templateTextLimit}
 							/>
 						</Grid>
 
@@ -997,7 +1036,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					setQuickReplyButtons(data)
 				}
 				updateTemplateData={(data: quickReplyButtonProps[]) =>
-					updateTemplateButton(data, 'quickReply')
+					updateTemplateButton(data, buttonTypes.QUICK_REPLY)
 				}
 				templateButtons={templateData.templateButtons}
 				isEditable={true}
@@ -1015,6 +1054,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					updateTemplateButton(data, 'callToAction')
 				}
 				isEditable={true}
+				buttonType={buttonType}
+				templateText={templateData.templateText}
 			/>
 			<AlertModal
 				classes={classes}

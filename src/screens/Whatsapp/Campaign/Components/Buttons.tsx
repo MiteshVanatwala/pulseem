@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
 import { coreProps } from '../Types/WhatsappCampaign.types';
 import { buttons } from '../../Constant';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const Buttons = ({
 	classes,
@@ -19,10 +19,18 @@ const Buttons = ({
 	const { isRTL, windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+	const { campaignID } = useParams();
 	const navigate = useNavigate();
+	const { state: locationState } = useLocation();
 
 	const handlePreviousPage = () => {
-		navigate(-1);
+		if (locationState?.from === 'edit/page1' && campaignID) {
+			navigate(`/react/whatsapp/campaign/edit/page2/${campaignID}`, {
+				state: { from: 'edit/page1' },
+			});
+		} else {
+			navigate(-1);
+		}
 	};
 
 	return (

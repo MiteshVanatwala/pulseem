@@ -3,6 +3,7 @@ import {
 	AllCampaignReq,
 	AllReportReq,
 	AllTemplateReq,
+	ButtonTextLimits,
 	campaignStatusProps,
 	CategoryId,
 	CategoryName,
@@ -355,6 +356,11 @@ export const statuses: statusProps = {
 	5: 'campaigns.Canceled',
 	6: 'campaigns.Optin',
 	7: 'campaigns.Approve',
+};
+
+export const buttonTextLimits: ButtonTextLimits = {
+	quickReply: 1024,
+	callToAction: 640,
 };
 
 export const statusesByName: statusByNameProps = {

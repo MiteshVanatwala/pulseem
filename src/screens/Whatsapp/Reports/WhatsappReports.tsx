@@ -193,6 +193,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			Sent: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount,
 			Removed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
 			Unique: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick,
+			Clicks: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick,
 		};
 		navigate(CLIENT_CONSTANTS.BASEURL, {
 			state: {

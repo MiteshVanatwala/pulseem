@@ -31,6 +31,7 @@ const DynamicModal = ({
 	dynamicVariable,
 	isTrackLink,
 	setIsTrackLink,
+	savedTemplate,
 }: dynamicModalProps) => {
 	const theme = useTheme();
 	const { campaignID } = useParams();
@@ -51,9 +52,17 @@ const DynamicModal = ({
 	useEffect(() => {
 		if (campaignID && !isDynamcVariableUpdated && dynamicVariable?.length > 0) {
 			setUpdatedDynamicVariable(dynamicVariable);
+			setIsDynamcVariableUpdated(true);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dynamicVariable]);
+
+	useEffect(() => {
+		if (savedTemplate?.length === 0) {
+			setUpdatedDynamicVariable([]);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [savedTemplate]);
 
 	const onClose = () => {
 		setUpdatedDynamicVariable(dynamicVariable);
