@@ -25,7 +25,7 @@ const Buttons = ({
 
 	const handlePreviousPage = () => {
 		if (locationState?.from === 'edit/page1' && campaignID) {
-			navigate(`/react/whatsapp/campaign/edit/page2/${campaignID}`, {
+			navigate(`/react/whatsapp/campaign/edit/page1/${campaignID}`, {
 				state: { from: 'edit/page1' },
 			});
 		} else {
