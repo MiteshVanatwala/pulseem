@@ -118,6 +118,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [searchReferrer, setSearchReferrer] = useState(false);
   const [clientToEdit, setClientToEdit] = useState(null);
   const [isDownloadProgress, setIsDownloadProgress] = useState(false);
+  const [emailToNotify, setEmailToNotify] = useState('');
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -945,9 +946,10 @@ const ClientSearchResult = ({ props, classes }) => {
   const handleUnSubscribe = async (opt, notifyEmail) => {
     setDialog(null);
     setLoader(true);
+    setEmailToNotify(notifyEmail);
     let groupName = location?.state?.ResultTitle;
 
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail})).then(res => {
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
@@ -1788,7 +1790,7 @@ const ClientSearchResult = ({ props, classes }) => {
               </Grid>
             </>)}
           >
-            {RenderHtml(t("recipient.unsubscribed.inProgress"))}
+            {RenderHtml(t("recipient.unsubscribed.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.unsubscribed.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
           </BaseDialog>
         }
         case DialogType.CONFIRM_INVALID:
