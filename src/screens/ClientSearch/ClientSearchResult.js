@@ -776,8 +776,8 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
-        setLoader(false);
     }
+    setLoader(false);
   }
   const renderToast = () => {
     if (toastMessage) {
