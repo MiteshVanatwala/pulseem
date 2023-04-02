@@ -90,17 +90,14 @@ const ClientSearchResult = ({ props, classes }) => {
     accountFeatures,
     language,
     windowSize,
-    email,
-    phone,
     rowsPerPage,
-    smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
   const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
-  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages, downloadProgress } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
   // const { groupData, ToastMessages } = useSelector((state) => state.group);
@@ -120,6 +117,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
   const [clientToEdit, setClientToEdit] = useState(null);
+  const [isDownloadProgress, setIsDownloadProgress] = useState(false);
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -348,6 +346,7 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   const handleDownloadCsv = async (formatType) => {
     setDialog(null);
+    setIsDownloadProgress(true);
     setLoader(true);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
@@ -391,6 +390,7 @@ const ClientSearchResult = ({ props, classes }) => {
       }
     }
     setLoader(false);
+    setIsDownloadProgress(false);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
@@ -1804,6 +1804,12 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     return <></>;
   }
+
+  useEffect(() => {
+    if (downloadProgress) {
+      setIsDownloadProgress(false);
+    }
+  }, [downloadProgress])
   return (
     <DefaultScreen
       currentPage="groups"
@@ -1828,7 +1834,7 @@ const ClientSearchResult = ({ props, classes }) => {
         defaultValue={TotalCount > 100000 ? "csv" : "xls"}
         options={TotalCount > 100000 ? [[...ExportFileTypes].pop()] : ExportFileTypes}
       />
-      <Loader isOpen={showLoader} />
+      <Loader isOpen={showLoader} progress={downloadProgress} message={t("common.downloadInProgress")} isDownloadProgress={isDownloadProgress} />
     </DefaultScreen>
   );
 };

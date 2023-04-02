@@ -94,8 +94,21 @@ export const AddClientsToGroup = createAsyncThunk(
 export const getExportData = createAsyncThunk(
   'client/GetExportData', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post('client/GetExportData', payload);
-      return response.data;
+      //const dispatch = useDispatch()
+      const response = await instence.post(`Client/GetExportData`, payload
+        ,
+        {
+          onDownloadProgress: progressEvent => {
+            const total = parseFloat(progressEvent.srcElement.getResponseHeader('content-length'))
+            const loaded = progressEvent.currentTarget.response.length
+
+            let percent = Math.floor(loaded * 100 / total);
+            thunkAPI.dispatch(setDownloadProgress(percent));
+          },
+        });
+
+      ///return { payload: { StatusCode: response?.data?.StatusCode, Clients: response.data } }
+      return response?.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -139,6 +152,7 @@ export const clientSlice = createSlice({
     TotalRevenue: 0,
     CampaignClicks: 0,
     error: "",
+    downloadProgress: 0,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'common.Success', showAnimtionCheck: false },
       CLIENT_ZERO_SELECT: { severity: 'error', color: 'error', message: 'client.errors.zeroSelected', showAnimtionCheck: false },
@@ -163,6 +177,12 @@ export const clientSlice = createSlice({
       RECIPIENT_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'recipient.incorrectRecipientInput', showAnimtionCheck: false },
     }
   },
+  reducers: {
+    setDownloadProgress: (state, action) => {
+      state.downloadProgress = action.payload;
+
+    }
+  },
   extraReducers: builder => {
     builder.addCase(searchAllClients.fulfilled, (state, { payload }) => {
       state.ClientData = payload.Clients;
@@ -182,8 +202,12 @@ export const clientSlice = createSlice({
     builder.addCase(searchAdvancedClients.rejected, (state, { error }) => {
       state.error = error.message;
     })
+    builder.addCase(getExportData.fulfilled, (state, { payload }) => {
+      state.downloadProgress = null;
+  })
   }
 })
 
 
+export const { setDownloadProgress } = clientSlice.actions
 export default clientSlice.reducer
