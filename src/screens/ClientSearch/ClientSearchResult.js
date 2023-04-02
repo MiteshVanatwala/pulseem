@@ -946,7 +946,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const handleUnSubscribe = async (opt, notifyEmail) => {
     setDialog(null);
     setLoader(true);
-    setEmailToNotify(notifyEmail);
+    setEmailToNotify(notifyEmail === -1 ? '' : notifyEmail);
     let groupName = location?.state?.ResultTitle;
 
     await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail })).then(res => {
