@@ -82,7 +82,7 @@ const UnsubscribeOrDeletePopup = ({
                         {showEmailToNotify && <>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{t("recipient.unsubscribed.notifyEmail")}</Typography>
-                                <FormControl style={{ width: '50%', maxWidth: 250 }}>
+                                <FormControl style={{ width: '50%', maxWidth: 250 }}  variant="filled" size="small">
                                     <Select
                                         native
                                         displayEmpty
@@ -98,7 +98,6 @@ const UnsubscribeOrDeletePopup = ({
                                         MenuProps={{
                                             PaperProps: {
                                                 style: {
-                                                    maxHeight: 30,
                                                     width: '100%',
                                                 },
                                             },
