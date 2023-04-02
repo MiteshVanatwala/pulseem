@@ -100,7 +100,7 @@
   "unsubscribed": {
     "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה.",
     "inProgress": "שימו לב<br/>ביקשתם להסיר כמות גדולה של נמענים<br/>המערכת מבצעת את ההסרה ובעוד מספר דקות הפעולה תושלם<br/>##notifyEmailPlaceHolder##",
-    "inProgressNotifyOnDone":"ומייל יישלח לכתובת ##notifyEmail## כשהתהליך יסתיים.",
+    "inProgressNotifyOnDone":"ומייל יישלח לכתובת ##notifyEmail##.",
     "notifyEmail": "בסיום ההסרה, שלח מייל עדכון לכתובת"
   },
   "bulkRecUpldTooltipText": "על מנת להעלות את הנמענים שלכם למערכת, התאימו את הכותרות מטה. שימו לב: חובה להתאים אימייל או סלולרי",
