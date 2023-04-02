@@ -99,7 +99,8 @@
   },
   "unsubscribed": {
     "succeeded": "The recipients successfully unsubscribed from the selected groups",
-    "inProgress": "Please notice<br/>You asked to remove a large amount of recipients<br/>The system is will finish removing the recipients in a couple of minutes"
+    "inProgress": "Please notice<br/>You asked to remove a large amount of recipients<br/>The system is will finish removing the recipients in a couple of minutes",
+    "notifyEmail": "In the end of the Unsubscribe process, Send Email to "
   },
   "bulkRecUpldTooltipText": "To upload your recipients to our system, add titles to the columns below. Please note: you must add a title for either email or cellphone",
   "reactiveUnsubscriber": "Reactivate removed recipient",

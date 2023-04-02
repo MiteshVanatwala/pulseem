@@ -448,7 +448,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '50vh'
   },
   h10v: {
-    height: '10vh'
+    height: '20vh'
   },
   line1: {
     lineHeight: 1,

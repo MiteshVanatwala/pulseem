@@ -942,12 +942,12 @@ const ClientSearchResult = ({ props, classes }) => {
     dispatch(getGroupsBySubAccountId());
     getData();
   }
-  const handleUnSubscribe = async (opt) => {
+  const handleUnSubscribe = async (opt, notifyEmail) => {
     setDialog(null);
     setLoader(true);
     let groupName = location?.state?.ResultTitle;
 
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName })).then(res => {
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail})).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
@@ -1749,12 +1749,13 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             // selectedGroups={selectedGroups}
-            onSubmit={(opt) => handleUnSubscribe(opt)}
+            onSubmit={(opt, notifyEmail) => handleUnSubscribe(opt, notifyEmail)}
             clientData={{ ...searchData }}
             dialogType={dialog}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}
             showDropBox={false}
+            showEmailToNotify={TotalCount > 10000}
           />;
         }
         case DialogType.UNSUBSCRIBED_IN_PROGRESS: {
