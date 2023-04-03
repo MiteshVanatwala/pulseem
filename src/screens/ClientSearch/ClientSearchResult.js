@@ -90,17 +90,14 @@ const ClientSearchResult = ({ props, classes }) => {
     accountFeatures,
     language,
     windowSize,
-    email,
-    phone,
     rowsPerPage,
-    smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
   const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
-  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages, downloadProgress } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
   // const { groupData, ToastMessages } = useSelector((state) => state.group);
@@ -120,6 +117,8 @@ const ClientSearchResult = ({ props, classes }) => {
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
   const [clientToEdit, setClientToEdit] = useState(null);
+  const [isDownloadProgress, setIsDownloadProgress] = useState(false);
+  const [emailToNotify, setEmailToNotify] = useState('');
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -348,6 +347,7 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   const handleDownloadCsv = async (formatType) => {
     setDialog(null);
+    setIsDownloadProgress(true);
     setLoader(true);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
@@ -391,6 +391,7 @@ const ClientSearchResult = ({ props, classes }) => {
       }
     }
     setLoader(false);
+    setIsDownloadProgress(false);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
@@ -776,8 +777,8 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
-        setLoader(false);
     }
+    setLoader(false);
   }
   const renderToast = () => {
     if (toastMessage) {
@@ -942,12 +943,13 @@ const ClientSearchResult = ({ props, classes }) => {
     dispatch(getGroupsBySubAccountId());
     getData();
   }
-  const handleUnSubscribe = async (opt) => {
+  const handleUnSubscribe = async (opt, notifyEmail) => {
     setDialog(null);
     setLoader(true);
+    setEmailToNotify(notifyEmail === -1 ? '' : notifyEmail);
     let groupName = location?.state?.ResultTitle;
 
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName })).then(res => {
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
@@ -1749,12 +1751,13 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             // selectedGroups={selectedGroups}
-            onSubmit={(opt) => handleUnSubscribe(opt)}
+            onSubmit={(opt, notifyEmail) => handleUnSubscribe(opt, notifyEmail)}
             clientData={{ ...searchData }}
             dialogType={dialog}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}
             showDropBox={false}
+            showEmailToNotify={TotalCount > 10000}
           />;
         }
         case DialogType.UNSUBSCRIBED_IN_PROGRESS: {
@@ -1787,7 +1790,7 @@ const ClientSearchResult = ({ props, classes }) => {
               </Grid>
             </>)}
           >
-            {RenderHtml(t("recipient.unsubscribed.inProgress"))}
+            {RenderHtml(t("recipient.unsubscribed.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.unsubscribed.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
           </BaseDialog>
         }
         case DialogType.CONFIRM_INVALID:
@@ -1804,6 +1807,12 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     return <></>;
   }
+
+  useEffect(() => {
+    if (downloadProgress) {
+      setIsDownloadProgress(false);
+    }
+  }, [downloadProgress])
   return (
     <DefaultScreen
       currentPage="groups"
@@ -1828,7 +1837,7 @@ const ClientSearchResult = ({ props, classes }) => {
         defaultValue={TotalCount > 100000 ? "csv" : "xls"}
         options={TotalCount > 100000 ? [[...ExportFileTypes].pop()] : ExportFileTypes}
       />
-      <Loader isOpen={showLoader} />
+      <Loader isOpen={showLoader} progress={downloadProgress} message={t("common.downloadInProgress")} isDownloadProgress={isDownloadProgress} />
     </DefaultScreen>
   );
 };
