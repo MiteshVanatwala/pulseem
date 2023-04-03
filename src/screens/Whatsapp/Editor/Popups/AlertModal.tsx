@@ -26,9 +26,13 @@ const AlertModal = ({
 				onClose={onClose}
 				aria-labelledby='responsive-dialog-title'>
 				<div className={classes.alertModal}>
-					<div id='responsive-dialog-title' className={classes.alertModalTitle}>
-						{title}
-					</div>
+					{title?.length > 0 && (
+						<div
+							id='responsive-dialog-title'
+							className={classes.alertModalTitle}>
+							{title}
+						</div>
+					)}
 					<Box className={classes.alertModalClose}>
 						<Close fontSize={'small'} onClick={onClose} />
 					</Box>

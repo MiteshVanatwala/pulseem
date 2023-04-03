@@ -29,6 +29,7 @@ const WhatsappTemplateEditor = ({
 	OnEditorActionButtonClick,
 	dynamicFieldCount,
 	linkCount,
+	templateTextLimit,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -70,7 +71,7 @@ const WhatsappTemplateEditor = ({
 	}, [isRTL]);
 
 	const onEditorChange = (e: BaseSyntheticEvent) => {
-		if (e.target.value?.length <= 1024) {
+		if (e.target.value?.length <= templateTextLimit) {
 			// TO STOP RESETTING CURSOR
 			const caret = e.target.selectionStart;
 			const element = e.target;
@@ -132,7 +133,7 @@ const WhatsappTemplateEditor = ({
 					required
 					ref={templateTextRef}
 					placeholder={translator('whatsapp.template.textareaPlaceholder')}
-					maxLength={1024}
+					maxLength={templateTextLimit}
 					id='whatsapp-template-text'
 					className={clsx(classes.msgArea, classes.sidebar)}
 					style={{
@@ -194,8 +195,12 @@ const WhatsappTemplateEditor = ({
 					</span>
 				</span>
 
-				<span className={classes.textInfoWrapper}>
-					{templateText?.length}/1024
+				<span
+					className={clsx(
+						classes.textInfoWrapper,
+						`${templateText?.length > templateTextLimit && 'limit-exceed'}`
+					)}>
+					{templateText?.length}/{templateTextLimit}
 					<span className={classes.textInfo}>
 						<>{translator('mainReport.char')}</>
 					</span>

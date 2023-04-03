@@ -42,6 +42,8 @@ export type statusProps = { [key: number]: string };
 
 export type statusByNameProps = { [key: string]: string };
 
+export type ButtonTextLimits = { [key: string]: number };
+
 export type TemplatesStatusIdByStatusName = { [key: string]: number };
 
 export type CategoryId = { [key: string]: number };

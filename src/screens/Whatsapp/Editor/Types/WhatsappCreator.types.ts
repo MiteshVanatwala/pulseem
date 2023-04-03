@@ -21,6 +21,7 @@ export type WhatsappCreatorProps = {
 	): void;
 	dynamicFieldCount: number;
 	linkCount: number;
+	templateTextLimit: number;
 };
 
 export type TemplateFieldsProps = {
@@ -74,6 +75,8 @@ export type actionProps = {
 	addMore: () => void;
 	updateTemplateData: (data: callToActionProps) => void;
 	isEditable: boolean;
+	buttonType: string;
+	templateText: string;
 };
 
 export type whatsappMobilePreviewProps = {

@@ -71,7 +71,9 @@
 		"removalTextTooltip": "Removal Text",
 		"removalText": "Removal Text",
 		"dynamicFieldTooltip": "Dynamic Field",
-		"dynamicField": "Dynamic Field"
+		"dynamicField": "Dynamic Field",
+		"textLimitAlert": "Text Limit",
+		"textLimitAlertDesc": "Please notice Because you chose 'Call to Action'. character limit will be reduced to 640 characters."
 	},
 
 	"quickReply": {

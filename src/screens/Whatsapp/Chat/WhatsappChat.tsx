@@ -851,6 +851,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					dynamicVariable={updatedDynamicVariable}
 					isTrackLink={isTrackLink}
 					setIsTrackLink={setIsTrackLink}
+					savedTemplate={savedTemplate}
 				/>
 				<Loader isOpen={isLoader} showBackdrop={true} />
 				<ValidationAlert

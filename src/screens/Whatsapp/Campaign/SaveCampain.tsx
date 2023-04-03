@@ -689,7 +689,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`/react/whatsapp/campaign/edit/page2/${data.Data.WACampaignId}`
+					`/react/whatsapp/campaign/edit/page2/${data.Data.WACampaignId}`,
+					{ state: { from: 'edit/page1' } }
 				);
 			} else {
 				data?.Message
@@ -1063,6 +1064,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				dynamicVariable={updatedDynamicVariable}
 				isTrackLink={isTrackLink}
 				setIsTrackLink={setIsTrackLink}
+				savedTemplate={savedTemplate}
 			/>
 
 			<ValidationAlert
@@ -1107,6 +1109,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				addMore={() => {}}
 				updateTemplateData={() => {}}
 				isEditable={false}
+				buttonType={buttonType}
+				templateText={templateData.templateText}
 			/>
 
 			<AlertModal
