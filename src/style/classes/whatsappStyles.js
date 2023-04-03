@@ -170,6 +170,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontWeight: '400',
 		marginRight: '10px',
 		color: '#1c82b2',
+		'&.limit-exceed': {
+			color: '#c9302c',
+		},
 	},
 	callToActionDialogHeaderDescription: {
 		fontSize: 12,

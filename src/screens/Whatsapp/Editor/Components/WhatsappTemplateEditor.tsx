@@ -29,7 +29,7 @@ const WhatsappTemplateEditor = ({
 	OnEditorActionButtonClick,
 	dynamicFieldCount,
 	linkCount,
-	templateTextLimit
+	templateTextLimit,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -195,7 +195,11 @@ const WhatsappTemplateEditor = ({
 					</span>
 				</span>
 
-				<span className={classes.textInfoWrapper}>
+				<span
+					className={clsx(
+						classes.textInfoWrapper,
+						`${templateText?.length > templateTextLimit && 'limit-exceed'}`
+					)}>
 					{templateText?.length}/{templateTextLimit}
 					<span className={classes.textInfo}>
 						<>{translator('mainReport.char')}</>
