@@ -218,13 +218,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	useEffect(() => {
 		if (buttonType === buttonTypes.CALL_TO_ACTION) {
 			setTemplateTextLimit(buttonTextLimits.callToAction);
-			setTemplateData({
-				...templateData,
-				templateText: templateData.templateText?.substring(
-					0,
-					buttonTextLimits.callToAction
-				),
-			});
+			// setTemplateData({
+			// 	...templateData,
+			// 	// templateText: templateData.templateText?.substring(
+			// 	// 	0,
+			// 	// 	buttonTextLimits.callToAction
+			// 	// ),
+			// });
 		} else {
 			setTemplateTextLimit(buttonTextLimits.quickReply);
 		}
@@ -674,7 +674,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const onSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsSubmitCampaignOpen(true);
+		if (validateSaveTemplate()) {
+			setIsSubmitCampaignOpen(true);
+		}
 	};
 
 	const validateSaveTemplate = () => {
@@ -688,6 +690,27 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			validationErrors.push('Template name is required');
 			isValidated = false;
 		}
+
+		// to validate template text length
+		if (
+			buttonType === buttonTypes.CALL_TO_ACTION &&
+			templateData.templateText?.length > buttonTextLimits.callToAction
+		) {
+			validationErrors.push(
+				`Template length should be less then or equals to ${buttonTextLimits.callToAction}`
+			);
+			isValidated = false;
+		}
+		if (
+			buttonType === buttonTypes.CALL_TO_ACTION &&
+			templateData.templateText?.length > buttonTextLimits.quickReply
+		) {
+			validationErrors.push(
+				`Template length should be less then or equals to ${buttonTextLimits.quickReply}`
+			);
+			isValidated = false;
+		}
+
 		if (!isValidated) {
 			setGroupSendValidationErrors([...validationErrors]);
 			setShowValidation(true);
@@ -1051,7 +1074,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				websiteField={websiteField}
 				addMore={() => addMore()}
 				updateTemplateData={(data: callToActionProps) =>
-					updateTemplateButton(data, 'callToAction')
+					updateTemplateButton(data, buttonTypes.CALL_TO_ACTION)
 				}
 				isEditable={true}
 				buttonType={buttonType}

@@ -73,7 +73,7 @@
 		"dynamicFieldTooltip": "שדה דינמי",
 		"dynamicField": "שדה דינמי",
 		"textLimitAlert": "Text Limit",
-		"textLimitAlertDesc": "Message text character limit will be changed to 640 from 1024"
+		"textLimitAlertDesc": "שימו לב! בגלל שבחרתם בכפתור פעולה, מגבלת התווים תצטמצם ל-640 תווים"
 	},
 
 	"quickReply": {

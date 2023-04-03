@@ -73,7 +73,7 @@
 		"dynamicFieldTooltip": "Dynamic Field",
 		"dynamicField": "Dynamic Field",
 		"textLimitAlert": "Text Limit",
-		"textLimitAlertDesc": "Message text character limit will be changed to 640 from 1024"
+		"textLimitAlertDesc": "Please notice Because you chose 'Call to Action'. character limit will be reduced to 640 characters."
 	},
 
 	"quickReply": {

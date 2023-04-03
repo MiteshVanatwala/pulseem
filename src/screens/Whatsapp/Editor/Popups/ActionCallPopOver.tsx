@@ -278,7 +278,7 @@ const ActionCallPopOver = ({
 				classes={classes}
 				isOpen={isTextLimitAlert}
 				onClose={() => onCancelTextLimit()}
-				title={translator('whatsapp.template.textLimitAlert')}
+				title={''}
 				subtitle={translator('whatsapp.template.textLimitAlertDesc')}
 				type='delete'
 				onConfirmOrYes={() => onConfirmTextLimit()}
