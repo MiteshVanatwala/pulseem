@@ -24,7 +24,7 @@ import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
 import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-import { getAuthorizedEmails } from '../../../../redux/reducers/commonSlice'
+import { getAuthorizedEmails, getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice'
 
 
 const UnsubscribeOrDeletePopup = ({
@@ -40,7 +40,7 @@ const UnsubscribeOrDeletePopup = ({
     showEmailToNotify = false
 }) => {
     const { isRTL } = useSelector(state => state.core);
-    const { verifiedEmails } = useSelector(state => state.common);
+    const { twoFactorAuthEmails } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
     const dispatch = useDispatch();
@@ -64,9 +64,9 @@ const UnsubscribeOrDeletePopup = ({
     const AdvanceOptions = () => {
         useEffect(() => {
             const initVerifiedEmails = async () => {
-                await dispatch(getAuthorizedEmails());
+                await dispatch(getTwoFactorAuthValues(1));
             }
-            if (showEmailToNotify && verifiedEmails?.length === 0) {
+            if (showEmailToNotify && twoFactorAuthEmails?.length === 0) {
                 initVerifiedEmails();
             }
         }, [showEmailToNotify]);
@@ -82,7 +82,7 @@ const UnsubscribeOrDeletePopup = ({
                         {showEmailToNotify && <>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{t("recipient.unsubscribed.notifyEmail")}</Typography>
-                                <FormControl style={{ width: '50%', maxWidth: 250 }}  variant="filled" size="small">
+                                <FormControl style={{ width: '50%', maxWidth: 250 }} variant="filled" size="small">
                                     <Select
                                         native
                                         displayEmpty
@@ -105,15 +105,13 @@ const UnsubscribeOrDeletePopup = ({
                                         inputProps={{ 'aria-label': 'Without label' }}
                                     >
                                         <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                        {verifiedEmails.map((item, index) => {
-                                            if (item.IsOptIn) {
-                                                return <option
-                                                    key={`exd_${index}`}
-                                                    value={item.Number}
-                                                >
-                                                    {t(item.Number)}
-                                                </option>
-                                            }
+                                        {twoFactorAuthEmails.map((item, index) => {
+                                            return <option
+                                                key={`exd_${index}`}
+                                                value={item.AuthValue}
+                                            >
+                                                {t(item.AuthValue)}
+                                            </option>
                                         }
                                         )}
                                     </Select>
