@@ -294,7 +294,9 @@ const CampaignEditor = ({ classes, ...props }) => {
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
-              setButtonDisabled(false);
+              setTimeout(() => {
+                setButtonDisabled(false);
+              }, 2000);
             });
           }
           break;
