@@ -349,7 +349,9 @@ const ClientSearchResult = ({ props, classes }) => {
     setDialog(null);
     setIsDownloadProgress(true);
     setLoader(true);
-    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
+    const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName }));
     if (response && response.payload) {
       const data = response.payload;
       if (data.StatusCode === 201) {
@@ -370,7 +372,6 @@ const ClientSearchResult = ({ props, classes }) => {
         }
         orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
         orderList = formatDateTime(orderList, t);
-        const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
         if (formatType === 'csv') {
           // Pay attention -> We set XLSX for better header's order.
