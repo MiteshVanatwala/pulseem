@@ -32,6 +32,7 @@ import downArrow from '../../../../assets/images/down-arrow.svg';
 import upArrow from '../../../../assets/images/up-arrow.svg';
 import moment from 'moment';
 import { getTemplatePreviewData } from '../../Common';
+import clsx from 'clsx';
 
 const SummaryModal = ({
 	classes,
@@ -324,6 +325,75 @@ const SummaryModal = ({
 												)}
 											</Grid>
 										</Grid>
+
+										{isRecipientFilter && (
+											<>
+												{campaignSummary &&
+													campaignSummary.DuplicateCellphoneSharedWithClienCount >
+														0 && (
+														<Box
+															className={clsx(
+																classes.summaryModalDuplicateRecipients,
+																classes.recipientsStatistics
+															)}>
+															<span>
+																{translator('sms.duplicateRecipients')}:{' '}
+															</span>{' '}
+															<span
+																className={classes.recipientsStatisticsData}>
+																{
+																	campaignSummary?.DuplicateCellphoneSharedWithClienCount
+																}
+															</span>
+														</Box>
+													)}
+
+												{campaignSummary && campaignSummary.Removed > 0 && (
+													<Box
+														className={clsx(
+															classes.summaryModalRemoved,
+															classes.recipientsStatistics
+														)}>
+														<span>{translator('sms.removedRecipients')}: </span>{' '}
+														<span className={classes.recipientsStatisticsData}>
+															{campaignSummary?.Removed}
+														</span>
+													</Box>
+												)}
+
+												{campaignSummary &&
+													campaignSummary.EmptyCellphoneCount > 0 && (
+														<Box
+															className={clsx(
+																classes.summaryModalEmptyNumbers,
+																classes.recipientsStatistics
+															)}>
+															<span>{translator('sms.emptyNumbers')}: </span>{' '}
+															<span
+																className={classes.recipientsStatisticsData}>
+																{campaignSummary?.EmptyCellphoneCount}
+															</span>
+														</Box>
+													)}
+
+												{campaignSummary &&
+													campaignSummary.EmptyCellphoneCount > 0 && (
+														<Box
+															className={clsx(
+																classes.summaryModalInvalidRecipients,
+																classes.recipientsStatistics
+															)}>
+															<span>
+																{translator('sms.invalidRecipients')}:{' '}
+															</span>{' '}
+															<span
+																className={classes.recipientsStatisticsData}>
+																{campaignSummary?.EmptyCellphoneCount}
+															</span>
+														</Box>
+													)}
+											</>
+										)}
 
 										{isRecipientFilter && selectedFilterGroups?.length > 0 && (
 											<>

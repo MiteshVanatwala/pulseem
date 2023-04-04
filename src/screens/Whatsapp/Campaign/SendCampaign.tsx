@@ -174,14 +174,20 @@ const SendCampaign = ({
 	};
 
 	const getSpecialDateDropDown = async () => {
-		const specialDateDropDownData: specialDateDropDownData =
+		const { payload: specialDateDropDownData }: specialDateDropDownData =
 			await dispatch<any>(getAccountExtraData());
-		if (specialDateDropDownData?.payload) {
-			setSpecialDatedropDown(
-				Object.values(specialDateDropDownData?.payload)?.filter(
-					(specialDay) => specialDay?.length > 0
-				)
-			);
+		console.log(specialDateDropDownData);
+		if (specialDateDropDownData) {
+			let finalDropDownData: string[] = [];
+			Object.keys(specialDateDropDownData)?.forEach((specialDayKey) => {
+				if (
+					specialDayKey?.toLowerCase()?.includes('extradate') &&
+					specialDateDropDownData[specialDayKey]?.length > 0
+				) {
+					finalDropDownData.push(specialDateDropDownData[specialDayKey]);
+				}
+			});
+			setSpecialDatedropDown(finalDropDownData);
 		}
 	};
 

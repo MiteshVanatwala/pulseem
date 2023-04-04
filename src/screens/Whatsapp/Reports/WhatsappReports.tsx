@@ -193,7 +193,6 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			Sent: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount,
 			Removed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
 			Unique: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick,
-			Clicks: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick,
 		};
 		navigate(CLIENT_CONSTANTS.BASEURL, {
 			state: {
@@ -210,20 +209,25 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		title: string,
 		cellValue: number,
 		cellName: string,
-		row: reportDataProps
+		row: reportDataProps,
+		isClickable: boolean = false
 	) => {
 		return (
 			<>
 				<Typography
 					onClick={() =>
-						cellValue >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
+						cellValue >= 1 && isClickable
+							? onTableCellClick(cellName, row.WACampaignID)
+							: {}
 					}
 					className={classes.middleText}>
 					{cellValue ? cellValue : '0'}
 				</Typography>
 				<Typography
 					onClick={() =>
-						cellValue >= 1 ? onTableCellClick(cellName, row.WACampaignID) : {}
+						cellValue >= 1 && isClickable
+							? onTableCellClick(cellName, row.WACampaignID)
+							: {}
 					}
 					className={classes.middleText}>
 					{title}
@@ -566,7 +570,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 																translator('whatsappReport.sent'),
 																report.Sent,
 																reportCellNames.SENT,
-																report
+																report,
+																true
 															)}
 														</Grid>
 													</Grid>
@@ -583,7 +588,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 														translator('whatsappReport.read'),
 														report.Read,
 														reportCellNames.READ,
-														report
+														report,
+														true
 													)}
 												</TableCell>
 												<TableCell
@@ -611,7 +617,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 																translator('whatsappReport.unique'),
 																report.UniqueClicksCount,
 																reportCellNames.UNIQUE,
-																report
+																report,
+																true
 															)}
 														</Grid>
 													</Grid>
@@ -647,7 +654,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 																translator('common.Removed'),
 																report.Removed,
 																reportCellNames.REMOVED,
-																report
+																report,
+																true
 															)}
 														</Grid>
 														<Grid
@@ -659,7 +667,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 																translator('common.failedStatus'),
 																report.Failed,
 																reportCellNames.FAILED,
-																report
+																report,
+																true
 															)}
 														</Grid>
 													</Grid>

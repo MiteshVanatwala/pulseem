@@ -1535,6 +1535,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 							color: '#E74C3C',
 						},
 					},
+					'&.underline': {
+						textDecoration: 'underline',
+						cursor: 'pointer',
+					},
 					'& .underline': {
 						textDecoration: 'underline',
 						cursor: 'pointer',
@@ -2787,6 +2791,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
 		overflowY: 'auto',
+	},
+	recipientsStatistics: {
+		fontSize: '12px',
+		padding: '2px 0px 2px 0px',
+	},
+	summaryModalInvalidRecipients: {
+		marginBottom: '12px',
+	},
+	recipientsStatisticsData: {
+		color: '#101010',
 	},
 	summaryModalAccordionGroupFilter: {
 		padding: '14px 0px 14px 0px',
