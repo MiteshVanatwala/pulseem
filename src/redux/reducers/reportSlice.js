@@ -12,13 +12,70 @@ export const GetProductReports = createAsyncThunk(
     }
   });
 
+export const GetFileDownloadList = createAsyncThunk(
+  'filedownloadlist', async (_, thunkAPI) => {
+  try {
+    const list = [
+      {
+        ID: 1,
+        FileName: 'A.txt',
+        IsDeleted: false,
+        Status: 1,
+        CreatedDate: ''
+      }, {
+        ID: 2,
+        FileName: 'B.txt',
+        IsDeleted: false,
+        Status: 2,
+        CreatedDate: ''
+      }, {
+        ID: 3,
+        FileName: 'C.txt',
+        IsDeleted: false,
+        Status: 3,
+        CreatedDate: ''
+      }, {
+        ID: 4,
+        FileName: 'D.txt',
+        IsDeleted: false,
+        Status: 4,
+        CreatedDate: ''
+      }, {
+        ID: 5,
+        FileName: 'E.txt',
+        IsDeleted: false,
+        Status: 5,
+        CreatedDate: ''
+      }, {
+        ID: 6,
+        FileName: 'F.txt',
+        IsDeleted: false,
+        Status: 0,
+        CreatedDate: ''
+      }, {
+        ID: 7,
+        FileName: 'G.txt',
+        IsDeleted: false,
+        Status: -1,
+        CreatedDate: ''
+      },
+    ];
+    return list;
+    // const response = await instence.get(`filedownloadlist`);
+    // return JSON.parse(response.data)
+  } catch (error) {
+    return thunkAPI.rejectWithValue({ error: error.message });
+  }
+})
+
 export const reportSlice = createSlice({
   name: 'report',
   initialState: {
     showContent: false,
     productsReportDetails: [],
     productCategories: [],
-    exportPRData: []
+    exportPRData: [],
+    downloadFileList: [],
   },
   reducers: {
     setShowContent: (state, action) => {
@@ -39,6 +96,9 @@ export const reportSlice = createSlice({
       else {
         state.exportPRData = payload?.Data?.Products || [];
       }
+    })
+    .addCase(GetFileDownloadList.fulfilled, (state, { meta, payload }) => {
+      state.downloadFileList = payload;
     })
   }
 })

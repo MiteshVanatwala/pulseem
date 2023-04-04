@@ -111,5 +111,10 @@
   "clientName": "Client Name",
   "filterSearch": "Apply filter",
   "closeFilterSearch": "Close filter",
-  "virtualNumber": "Virtual Number"
+  "virtualNumber": "Virtual Number",
+  "fileName": "File Name",
+  "action": "Action",
+  "ReadyForDownload": "Ready For Download",
+  "InProcess": "In Process",
+  "Failed": "Failed"
 }

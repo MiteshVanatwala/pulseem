@@ -607,5 +607,6 @@
   "whatsappCommingSoon": "Comming Soon!<br/>Sending Whatsapp messages<br/>via Pulseem",
   "xssError": "Html, Scripts or other then a normal string does not allowed!",
   "remove": "Remove",
-  "searchByCampaign": "Search by Campaign"
+  "searchByCampaign": "Search by Campaign",
+  "fileDownloads": "File Downloads"
 }

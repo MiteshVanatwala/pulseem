@@ -56,6 +56,15 @@ const instence = axios.create({
   timeout: 900000
 })
 
+const fileInstence = axios.create({
+  baseURL: apiURL,
+  headers: {
+    'Content-Type': 'application/json; charset=UTF-8'
+  },
+  responseType: "blob",
+  timeout: 900000
+})
+
 const customInstance = axios.create({
   baseURL: pulseemBaseUrl,
   headers: {
@@ -203,4 +212,4 @@ uploaderInstance.interceptors.response.use(
   })
 
 
-export { instence, customInstance, eventsInstance, uploaderInstance }
+export { instence, customInstance, eventsInstance, uploaderInstance, fileInstence }

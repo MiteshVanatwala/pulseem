@@ -111,5 +111,10 @@
   "clientName": "שם לקוח",
   "filterSearch": "החל סינון",
   "closeFilterSearch": "סגור סינון",
-  "virtualNumber": "מספר וירטואלי"
+  "virtualNumber": "מספר וירטואלי",
+  "fileName": "שם קובץ",
+  "action": "פעולה",
+  "ReadyForDownload": "מוכן להורדה",
+  "InProcess": "בתהליך יצירת קובץ",
+  "Failed": "יצירת קובץ נכשלה"
 }

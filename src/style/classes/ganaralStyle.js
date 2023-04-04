@@ -742,6 +742,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "white",
     cursor: "pointer",
   },
+  noBorderOnLastCell: {
+    borderInlineEnd: 'none',
+  },
   headNo: {
     backgroundColor: "#1c82b2",
     color: "#fff",
