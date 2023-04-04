@@ -53,7 +53,7 @@ const instence = axios.create({
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'
   },
-  timeout: 300000
+  timeout: 900000
 })
 
 const customInstance = axios.create({
@@ -62,7 +62,7 @@ const customInstance = axios.create({
     'Content-Type': 'application/json; charset=UTF-8',
     dataType: "json"
   },
-  timeout: 300000
+  timeout: 900000
 })
 
 customInstance.defaults.withCredentials = true;
@@ -74,7 +74,7 @@ const eventsInstance = axios.create({
     'Content-Type': 'application/json; charset=UTF-8',
     dataType: "json"
   },
-  timeout: 300000
+  timeout: 600000
 });
 
 // eventsInstance.defaults.withCredentials = true;

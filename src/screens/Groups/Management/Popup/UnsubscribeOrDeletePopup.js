@@ -3,13 +3,13 @@ import {
     Grid,
     Typography,
     FormControlLabel,
-    Switch,
+    OutlinedInput,
     Button,
     FormControl,
     FormLabel,
     RadioGroup,
     Radio,
-    Tooltip
+    Select
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../../components/managment/Dialog";
@@ -24,6 +24,7 @@ import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
 import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
+import { getAuthorizedEmails, getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice'
 
 
 const UnsubscribeOrDeletePopup = ({
@@ -35,9 +36,11 @@ const UnsubscribeOrDeletePopup = ({
     ToastMessages,
     getData,
     showDropBox = true,
-    onSubmit = null
+    onSubmit = null,
+    showEmailToNotify = false
 }) => {
     const { isRTL } = useSelector(state => state.core);
+    const { twoFactorAuthEmails } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
     const dispatch = useDispatch();
@@ -56,15 +59,66 @@ const UnsubscribeOrDeletePopup = ({
     const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [unsubscribeOption, setUnsubscribeOption] = useState(0);
+    const [notifyEmail, setNotifyEmail] = useState(-1);
 
     const AdvanceOptions = () => {
+        useEffect(() => {
+            const initVerifiedEmails = async () => {
+                await dispatch(getTwoFactorAuthValues(1));
+            }
+            if (showEmailToNotify && twoFactorAuthEmails?.length === 0) {
+                initVerifiedEmails();
+            }
+        }, [showEmailToNotify]);
         return (
             <>
                 {!showDropBox ? (<>
-                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} style={{ height: 26 }}>
+                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
                         <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
                         <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
+                    </Box>
+                    <Box style={{ display: 'flex' }}>
+                        {showEmailToNotify && <>
+                            <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
+                                <Typography>{t("recipient.unsubscribed.notifyEmail")}</Typography>
+                                <FormControl style={{ width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                    <Select
+                                        native
+                                        displayEmpty
+                                        value={notifyEmail}
+                                        onChange={(event, val) => {
+                                            setNotifyEmail(event.target.value);
+                                        }}
+                                        label={t("recipient.unsubscribed.notifyEmail")}
+                                        name="FromEmail"
+                                        input={
+                                            <OutlinedInput />
+                                        }
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    width: '100%',
+                                                },
+                                            },
+                                        }}
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                    >
+                                        <option disabled value="-1" key="-1">{t("common.select")}</option>
+                                        {twoFactorAuthEmails.map((item, index) => {
+                                            return <option
+                                                key={`exd_${index}`}
+                                                value={item.AuthValue}
+                                            >
+                                                {t(item.AuthValue)}
+                                            </option>
+                                        }
+                                        )}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+
+                        </>}
                     </Box>
                 </>) : (
                     <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
@@ -440,7 +494,7 @@ const UnsubscribeOrDeletePopup = ({
     const handleUnsubSubmit = async () => {
 
         if (onSubmit) {
-            return onSubmit(activeTab);
+            return onSubmit(activeTab, notifyEmail);
         }
         if (!finalData || finalData.length === 0) {
             setError(t("recipient.errors.noDeleteRecFound"))

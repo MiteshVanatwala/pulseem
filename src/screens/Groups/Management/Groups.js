@@ -1502,6 +1502,26 @@ const Groups = ({ classes }) => {
         setShowConfirmDialog(false);
     }
     const renderConfirmDialog = () => {
+        let csvOnly = false;
+        let exportTypeOptions = ExportFileTypes;
+        if (selectedGroups && selectedGroups.length > 0) {
+            const clientsTotalCount = [...groupData?.Groups].filter((g) => {
+                return selectedGroups.includes(g.GroupID);
+            }).reduce(
+                (accumulator, currentValue) => {
+                    return accumulator + currentValue.TotalRecipients
+                }, 0);
+
+            if (clientsTotalCount > 100000) {
+                csvOnly = true;
+                exportTypeOptions = [[...ExportFileTypes].pop()];
+            }
+        }
+        else {
+            csvOnly = true;
+            exportTypeOptions = [[...ExportFileTypes].pop()];
+        }
+
         return (
             <ConfirmRadioDialog
                 classes={classes}
@@ -1512,8 +1532,8 @@ const Groups = ({ classes }) => {
                 onConfirm={(e) => handleConfirmExport(e)}
                 onCancel={() => setShowConfirmDialog(false)}
                 cookieName={'exportFormat'}
-                defaultValue="xls"
-                options={ExportFileTypes}
+                defaultValue={csvOnly ? 'csv' : 'xls'}
+                options={exportTypeOptions}
             />
         );
     }
