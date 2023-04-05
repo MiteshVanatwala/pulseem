@@ -581,11 +581,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onChange={handleInputNewGroup}
                 value={newGroupDetails.groupValue}
             />
-            <span className={clsx(classes.saveBtn, !newGroupDetails.groupValue || newGroupDetails.groupValue === '' ? classes.disabled : null)}
+            <Button
+                size='medium'
+                color="primary"
+                variant='contained'
+                key={"extraButton"}
+                className={
+                    clsx(
+                        classes.actionButton, classes.actionButtonOutlinedBlue,
+                        !newGroupDetails.groupValue.trim() ? classes.disabled : ''
+                    )
+                }
                 onClick={() => createNewGroup(newGroupDetails.groupValue)}
             >
                 {t("mainReport.save")}
-            </span>
+            </Button>
             {newGroupDetails.groupNameExist ?
                 <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#",
                     newGroupDetails.groupValue
