@@ -12,6 +12,7 @@ const TranzilaIframe = ({
     data,
     isRTL,
     packageId,
+    packageType,
     windowSize,
     paymentUrl = null,
     onStepBack = () => null,
@@ -52,6 +53,7 @@ const TranzilaIframe = ({
                 classes={classes}
                 isRTL={isRTL}
                 packageId={packageId}
+                packageType={packageType}
                 showTitle={false}
                 showButtons={false} />
 

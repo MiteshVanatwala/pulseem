@@ -101,6 +101,7 @@ const PurchaseWizard = ({ classes,
                     classes={classes}
                     isRTL={isRTL}
                     packageId={packageId}
+                    packageType={packageType}
                     onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
                     onStepBack={onStepBack}
