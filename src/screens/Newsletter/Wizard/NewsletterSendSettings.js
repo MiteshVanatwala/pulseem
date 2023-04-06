@@ -426,7 +426,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }
         }
         else {
-            if (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
+            if (filterValues.selectedFilterGroups.length || filterValues.selectedFilterCampaigns.length) {
                 tempData = { ...tempData, reciFilter: false }
                 setSnackbarValues({ ...snackbarValues, snackbarRecipients: true })
                 setSegmantIndication(true)
