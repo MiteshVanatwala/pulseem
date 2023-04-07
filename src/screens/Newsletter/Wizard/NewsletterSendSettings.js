@@ -875,7 +875,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         const currentDialog = dialogContent[type] || {}
 
-        if (type) {
+        if (Object.keys(currentDialog).length) {
             return (
                 dialogType && <BaseDialog
                     classes={classes}
