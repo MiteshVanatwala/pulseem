@@ -77,7 +77,7 @@ const DownloadFiles = ({ classes }: any) => {
             [classes.recipientsStatusCanceled]: status === 5
           }
         )}>
-          {t(statuses[status])}
+          {/* {t(statuses[status])} */}
         </Typography>
       </>
     )
@@ -123,8 +123,8 @@ const DownloadFiles = ({ classes }: any) => {
         arrow={true}
         placement={'top'}
         title={<Typography noWrap={false}>{row.FileName}</Typography>}
-        text={row.FileName}
-      >
+        text={row.FileName} icon={undefined} style={undefined}>
+          <Typography noWrap={false}>{row.FileName}</Typography>
       </CustomTooltip>
     )
   }
@@ -200,19 +200,20 @@ const DownloadFiles = ({ classes }: any) => {
     )
   }
 
+  const handleRowsPerPageChange = (val: number) => {
+    dispatch(setRowsPerPage(val))
+  }
+
   const renderTablePagination = () => {
-    const handleRowsPerPageChange = (val: number) => {
-      dispatch(setRowsPerPage(val))
-    }
     return (
       <TablePagination
         classes={classes}
         rows={downloadFileList.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleRowsPerPageChange}
+        onRowsPerPageChange={(val: any) => handleRowsPerPageChange(val)}
         rowsPerPageOptions={rowsOptions}
         page={page}
-        onPageChange={setPage}
+        onPageChange={(val: any) => setPage(val)}
       />
     )
   }
@@ -221,6 +222,7 @@ const DownloadFiles = ({ classes }: any) => {
     <DefaultScreen
       currentPage="downloadfiles"
       classes={classes}
+      containerClass={clsx(classes.management, classes.mb50)}
     >
       {renderHeader()}
       {renderTable()}
