@@ -105,6 +105,7 @@ export type coreProps = {
 	windowSize: string;
 	isRTL: boolean;
 	rowsPerPage: string | number;
+	accountFeatures: string;
 };
 
 export type actionButtonProps = {

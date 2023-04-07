@@ -58,7 +58,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { windowSize, rowsPerPage } = useSelector(
+	const { windowSize, rowsPerPage, accountFeatures } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
@@ -67,6 +67,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
 	const [campaignNameSearch, setCampaineNameSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
+	const [hasRevenue, setHasRevenue] = useState<boolean>(false);
 	const [totalRecord, setTotalRecord] = useState<number>(0);
 
 	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
@@ -105,6 +106,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		 */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (accountFeatures && accountFeatures.includes('42')) {
+			setHasRevenue(true);
+		}
+	}, [accountFeatures]);
 
 	useEffect(() => {
 		if (
@@ -514,12 +521,14 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 											align='center'>
 											<>{}</>
 										</TableCell>
-										<TableCell
-											classes={cellStyle}
-											className={classes.flex1}
-											align='center'>
-											<>{translator('common.revenue')}</>
-										</TableCell>
+										{hasRevenue && (
+											<TableCell
+												classes={cellStyle}
+												className={classes.flex1}
+												align='center'>
+												<>{translator('common.revenue')}</>
+											</TableCell>
+										)}
 									</TableRow>
 								</TableHead>
 							)}
@@ -642,7 +651,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 													align='center'
 													className={clsx(
 														classes.tableCellBody,
-														classes.flex2
+														classes.flex2,
+														`${!hasRevenue && classes.tableCellNoBorder}`
 													)}>
 													<Grid container justifyContent='space-around'>
 														<Grid
@@ -673,15 +683,23 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 														</Grid>
 													</Grid>
 												</TableCell>
-												<TableCell
-													component='th'
-													scope='row'
-													className={clsx(
-														classes.tableCellRoot,
-														classes.flex1
-													)}>
-													{/* {'Revenue'} */}
-												</TableCell>
+												{hasRevenue && (
+													<TableCell
+														classes={cellStyle}
+														align='center'
+														className={clsx(
+															classes.tableCellBody,
+															classes.flex1,
+															classes.tableCellNoBorder
+														)}>
+														{getTableTypographyCells(
+															translator('common.revenue'),
+															report.Revenue,
+															reportCellNames.REVENUE,
+															report
+														)}
+													</TableCell>
+												)}
 											</TableRow>
 										)
 									)}

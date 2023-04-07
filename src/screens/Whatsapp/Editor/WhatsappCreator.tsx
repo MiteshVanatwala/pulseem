@@ -683,11 +683,15 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let validationErrors = [];
 		let isValidated = true;
 		if (templateData?.templateText?.length <= 0) {
-			validationErrors.push('Template text is required');
+			validationErrors.push(
+				translator('whatsapp.alertModal.templateTextRequired')
+			);
 			isValidated = false;
 		}
 		if (templateName?.length <= 0) {
-			validationErrors.push('Template name is required');
+			validationErrors.push(
+				translator('whatsapp.alertModal.templateNameRequired')
+			);
 			isValidated = false;
 		}
 
@@ -697,7 +701,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			templateData.templateText?.length > buttonTextLimits.callToAction
 		) {
 			validationErrors.push(
-				`Template length should be less then or equals to ${buttonTextLimits.callToAction}`
+				`${translator('whatsapp.alertModal.templateLengthError')} ${
+					buttonTextLimits.callToAction
+				}`
 			);
 			isValidated = false;
 		}

@@ -96,6 +96,9 @@
 		"ConfirmText": "שלח מסע פרסום",
 		"ConfirmTitle": "האם אתה בטוח שברצונך להגיש את התבנית?",
 		"fileSizeAlert": "קובץ גדול מ-16 מגה בייט",
-		"alert": "עֵרָנִי"
+		"alert": "עֵרָנִי",
+		"templateTextRequired": "טקסט תבנית - חובה",
+		"templateNameRequired": "שם תבנית - חובה",
+		"templateLengthError": "מגבלת תווים - 640"
 	}
 }

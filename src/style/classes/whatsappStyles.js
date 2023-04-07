@@ -2847,4 +2847,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappOppsMsg: {
 		color: '#FD4445',
 	},
+	tableCellNoBorder: {
+		border: '0px',
+	},
 });
