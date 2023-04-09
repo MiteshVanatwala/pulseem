@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
 import { SolidDialog } from '../managment/index';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { setCookie, getCookie } from '../../helpers/cookies';
 import { voidFunction } from '../../helpers/utils';
 
@@ -21,7 +21,7 @@ const ConfirmRadioDialog = ({
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
-    const [value, setValue] = useState(getCookie(cookieName) ?? defaultValue);
+    const [value, setValue] = useState(getCookie(cookieName));
 
     const handleValue = (e) => {
         if (cookieName) {
@@ -29,6 +29,11 @@ const ConfirmRadioDialog = ({
         }
         setValue(e.target.value);
     }
+
+    useEffect(() => {
+        if (defaultValue && defaultValue !== '')
+            setValue(defaultValue)
+    }, [defaultValue])
 
     const dialog = {
         title: title,
