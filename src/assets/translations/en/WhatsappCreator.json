@@ -96,6 +96,9 @@
 		"ConfirmText": "Submit Campaign",
 		"ConfirmTitle": "Are you sure you want to submit your template?",
 		"fileSizeAlert": "File is larger than 16MB",
-		"alert": "Alert"
+		"alert": "Alert",
+		"templateTextRequired": "Template text is required",
+		"templateNameRequired": "Template name is required",
+		"templateLengthError": "Template length should be less then or equals to 640"
 	}
 }

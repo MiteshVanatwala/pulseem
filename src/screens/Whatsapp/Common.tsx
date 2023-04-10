@@ -306,7 +306,13 @@ export const getKeyByValue = (
 	object: { [key: string]: string },
 	value: string
 ) => {
-	return Object.keys(object).find((key) => object[key] === value) || '';
+	return (
+		Object.keys(object).find(
+			(key) =>
+				object[key] ===
+				value?.replaceAll('#', '')?.replace(/([a-z])([A-Z])/g, '$1 $2')
+		) || ''
+	);
 };
 
 export const getCampaignLink = (
