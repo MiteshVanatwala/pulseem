@@ -116,5 +116,6 @@
   "action": "Action",
   "ReadyForDownload": "Ready For Download",
   "InProcess": "In Process",
-  "Failed": "Failed"
+  "Failed": "Failed",
+  "Completed": "completed" 
 }

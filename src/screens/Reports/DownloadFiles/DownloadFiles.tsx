@@ -5,37 +5,35 @@ import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Box
 } from '@material-ui/core'
 import { TablePagination } from '../../../components/managment/index'
-import { GetFileDownloadList } from '../../../redux/reducers/reportSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import moment from 'moment'
-import 'moment/locale/he'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { fileInstence } from '../../../helpers/api';
+import { instence } from '../../../helpers/api';
+import { get, includes } from 'lodash';
+import { rowsOptions } from '../../../helpers/Constants';
 
 const DownloadFiles = ({ classes }: any) => {
-  const { language, windowSize, rowsPerPage } = useSelector((state: any) => state.core)
-  const { downloadFileList } = useSelector((state: any) => state.report)
+  const { windowSize, rowsPerPage } = useSelector((state: any) => state.core)
   const { t } = useTranslation();
-  const rowsOptions = [6, 10, 20, 50];
   const [page, setPage] = useState(1);
+  const [fileDownoadList, setFileDownloadList] = useState([]);
+  const [progressList, setProgressList] = useState({});
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   const [showLoader, setLoader] = useState(true);
-  const dispatch = useDispatch()
-  moment.locale(language)
+  const dispatch = useDispatch();
 
   const getData = async () => {
-    await dispatch(GetFileDownloadList())
+    await getDownloadFileList();
     setLoader(false);
   }
 
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
+  }, [])
 
   const renderHeader = () => {
     return (
@@ -60,10 +58,14 @@ const DownloadFiles = ({ classes }: any) => {
     )
   }
 
-  const renderStatusCell = (status: string|number) => {
-    const statuses = {
+  const renderStatusCell = (status: number) => {
+    interface Istatuses {
+      [key: string]: string;
+    }
+    const statuses: Istatuses = {
       1: 'report.InProcess',
       2: 'report.ReadyForDownload',
+      4: 'report.ReadyForDownload',
       5: 'report.Failed'
     }
     return (
@@ -73,33 +75,57 @@ const DownloadFiles = ({ classes }: any) => {
           classes.recipientsStatus,
           {
             [classes.recipientsStatusSending]: status === 1,
-            [classes.recipientsStatusSent]: status === 2,
+            [classes.recipientsStatusSent]: includes([2, 4], status),
             [classes.recipientsStatusCanceled]: status === 5
           }
         )}>
-          {/* {t(statuses[status])} */}
+          {t(statuses[status])}
         </Typography>
       </>
     )
   }
 
   const renderActionCell = (row: any) => {
-    return row.Status === 2 && (
+    return includes([2, 4], row.Status) && (
       <>
-        <Typography className={clsx(
-            classes.middleText,
-            classes.blueLink
-          )}
-          onClick={() => downloadFile(row.ID, row.FileName)}
-        >
-          {t('master.download')}
-        </Typography>
+        {
+          get(progressList, row.ID, 0) > 0 ? (
+            `${get(progressList, row.ID)}% ${t('report.Completed')}`
+          ) : (
+            <Typography className={clsx(
+                classes.middleText,
+                classes.blueLink
+              )}
+              onClick={() => downloadFile(row.ID, row.FileName)}
+            >
+              {t('master.download')}
+            </Typography>
+          )
+        }
       </>
     )
   }
 
+  const getDownloadFileList = async () => {
+    const response = await instence.get(`/LargeFiles/GetAllFiles`);
+    setFileDownloadList(response.data.Data)
+  }
+
+  const setPercentage = (ID: number, percentage: number) => {
+    setProgressList({
+      ...progressList,
+      [ID]: percentage
+    })
+  }
+
   const downloadFile = async (fileID: number, FileName: string) => {
-    const response = await fileInstence.get(`/LargeFiles/DonwloadFile/${fileID}`);
+    const response = await instence.get(`/LargeFiles/DonwloadFile/${fileID}`, {
+      onDownloadProgress: (progressEvent: any) => {
+        console.log(Math.floor(progressEvent.loaded / progressEvent.total * 100));
+        setPercentage(fileID, Math.floor(progressEvent.loaded / progressEvent.total * 100));
+      },
+    });
+    setPercentage(fileID, 0);
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
@@ -109,8 +135,6 @@ const DownloadFiles = ({ classes }: any) => {
     );
     document.body.appendChild(link);
     link.click();
-    // https://github.com/eligrey/FileSaver.js#readme
-    // 
   }
 
   const renderNameCell = (row: any) => {
@@ -178,7 +202,7 @@ const DownloadFiles = ({ classes }: any) => {
   }
 
   const renderTableBody = () => {
-    let sortData = downloadFileList;
+    let sortData = fileDownoadList;
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
@@ -200,17 +224,13 @@ const DownloadFiles = ({ classes }: any) => {
     )
   }
 
-  const handleRowsPerPageChange = (val: number) => {
-    dispatch(setRowsPerPage(val))
-  }
-
   const renderTablePagination = () => {
     return (
       <TablePagination
         classes={classes}
-        rows={downloadFileList.length}
+        rows={fileDownoadList.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={(val: any) => handleRowsPerPageChange(val)}
+        onRowsPerPageChange={(val: any) => dispatch(setRowsPerPage(val))}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={(val: any) => setPage(val)}

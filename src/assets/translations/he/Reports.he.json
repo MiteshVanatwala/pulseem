@@ -116,5 +116,6 @@
   "action": "פעולה",
   "ReadyForDownload": "מוכן להורדה",
   "InProcess": "בתהליך יצירת קובץ",
-  "Failed": "יצירת קובץ נכשלה"
+  "Failed": "יצירת קובץ נכשלה",
+  "Completed": "הושלמה"
 }
