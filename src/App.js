@@ -436,7 +436,7 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={'/reports/Download'}
+        path={'/Groups/Download'}
         element={<DownloadFiles classes={classes} />}
       />
     </Routes>
