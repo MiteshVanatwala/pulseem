@@ -103,6 +103,11 @@
     "inProgressNotifyOnDone":"Email will be sent to ##notifyEmail## when the process will be done.",
     "notifyEmail": "In the end of the Unsubscribe process, Send Email to "
   },
+  "exportGroups": {
+    "inProgress": "Please notice<br/>You asked to export a large amount of recipients<br/>The system is will prepare the file in the background<br/>##notifyEmailPlaceHolder##",
+    "inProgressNotifyOnDone":"Email will be sent to ##notifyEmail## when the process will be done.",
+    "notifyEmail": "In the end of the file creation process, Send Email to "
+  },
   "bulkRecUpldTooltipText": "To upload your recipients to our system, add titles to the columns below. Please note: you must add a title for either email or cellphone",
   "reactiveUnsubscriber": "Reactivate removed recipient",
   "advanceOptions": "Advanced Options",

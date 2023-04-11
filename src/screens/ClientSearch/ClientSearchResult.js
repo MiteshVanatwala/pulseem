@@ -181,7 +181,8 @@ const ClientSearchResult = ({ props, classes }) => {
     UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
     CONFIRM_INVALID: "CONFIRM_INVALID",
     EXPORT_FORMAT: "EXPORT_FORMAT",
-    UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS"
+    UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS",
+    EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
   };
   useEffect(() => {
     const initExtraFields = async () => {
@@ -1761,6 +1762,38 @@ const ClientSearchResult = ({ props, classes }) => {
             showEmailToNotify={TotalCount > 10000}
           />;
         }
+        case DialogType.EXPORT_IN_PROGRESS: {
+          return <BaseDialog
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={dialog === DialogType.EXPORT_IN_PROGRESS}
+            renderButtons={() => (<>
+              <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+              >
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      setDialog(null)
+                    }}
+                    className={clsx(
+                      classes.solidDialogButton,
+                      classes.dialogConfirmButton
+                    )}>
+                    {t('common.confirm')}
+                  </Button>
+                </Grid>
+              </Grid>
+            </>)}
+          >
+            {RenderHtml(t("recipient.exportGroups.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.exportGroups.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
+          </BaseDialog>
+        }
         case DialogType.UNSUBSCRIBED_IN_PROGRESS: {
           return <BaseDialog
             showDefaultButtons={false}
@@ -1831,12 +1864,13 @@ const ClientSearchResult = ({ props, classes }) => {
         classes={classes}
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
-        radioTitle={t('common.SelectFormat')}
+        radioTitle={TotalCount > 100000 ? '' : t('common.SelectFormat')}
         onConfirm={(e) => handleDownloadCsv(e)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
         defaultValue={TotalCount > 100000 ? "csv" : "xls"}
-        options={TotalCount > 100000 ? [[...ExportFileTypes].pop()] : ExportFileTypes}
+        showEmailToNotify={TotalCount > 100000}
+        options={TotalCount > 100000 ? null : ExportFileTypes}
       />
       <Loader isOpen={showLoader} progress={downloadProgress} message={t("common.downloadInProgress")} isDownloadProgress={isDownloadProgress} />
     </DefaultScreen>

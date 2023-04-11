@@ -103,6 +103,11 @@
     "inProgressNotifyOnDone":"ברגע שהפעולה תסתיים, מייל ישלח לכתובת ##notifyEmail##.",
     "notifyEmail": "בסיום ההסרה, שלח מייל עדכון לכתובת"
   },
+  "exportGroups": {
+    "inProgress": "שימו לב<br/>ביקשתם לייצא כמות גדולה של נמענים<br/>תהליך הכנת הקובץ יקח מספר דקות",
+    "inProgressNotifyOnDone":"ברגע שהקובץ יהיה מוכן מייל ישלח לכתובת ##notifyEmail##.",
+    "notifyEmail": "כשהקובץ יהיה מוכן להורדה,<br/> שלח מייל עדכון לכתובת"
+  },
   "bulkRecUpldTooltipText": "על מנת להעלות את הנמענים שלכם למערכת, התאימו את הכותרות מטה. שימו לב: חובה להתאים אימייל או סלולרי",
   "reactiveUnsubscriber": "הפעל נמען מוסר",
   "advanceOptions": "אפשרויות הסרה מתקדמות",

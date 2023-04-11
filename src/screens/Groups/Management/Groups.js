@@ -20,6 +20,7 @@ import {
     deleteGroups,
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
+import { exportGroupsClients } from '../../../redux/reducers/clientSlice';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import AddGroupPopUp from "./Popup/AddGroupPopUp";
@@ -90,7 +91,8 @@ const Groups = ({ classes }) => {
         SUMMARY: "SUMMARY",
         EXPORT_ALL: "EXPORT_ALL",
         EXPORT_SELECTED: "EXPORT_SELECTED",
-        SIMPLY_CLUB: "SIMPLY_CLUB"
+        SIMPLY_CLUB: "SIMPLY_CLUB",
+        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
     };
     const TABLE_HEAD = [
         {
@@ -1488,18 +1490,48 @@ const Groups = ({ classes }) => {
             }
         }
     }
-    const handleConfirmExport = (formatType) => {
-        let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
-        if (selectedGroups && selectedGroups.length > 0) {
-            queryString += `&Groups=${selectedGroups.join(',')}`;
+    const handleConfirmExport = async (formatType, notifyEmail) => {
+        setLoader(true);
+        const requestObject = {
+            GroupIds: selectedGroups,
+            NotifyEmail: notifyEmail,
+            FileType: formatType,
+            Culture: isRTL ? 'he-il' : 'en-us'
+        };
+
+        try {
+            const response = await dispatch(exportGroupsClients(requestObject));
+
+            switch (response.StatusCode) {
+                case 200: {
+                    break;
+                }
+                case 201: { // Donwloadable
+                    break;
+                }
+                case 202: { // Run in background
+                    break;
+                }
+                case 403: { // Feature not allowed
+                    break;
+                }
+                case 401: {
+                    break;
+                }
+                default:
+                case 500: {
+                    break;
+                }
+            }
+            setShowConfirmDialog(false);
+        } catch (e) {
+
         }
-        if (selectedGroups.length === 1) {
-            const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
-            queryString += `&GroupName=${groupName.replace(' ', '-')}`;
+        finally {
+            setLoader(false);
         }
-        // This should be change in the .NET site for support the format file selection POP UP 
-        window.open(`/Pulseem/ClientExport.csv?${queryString}`);
-        setShowConfirmDialog(false);
+
+
     }
     const renderConfirmDialog = () => {
         let csvOnly = false;
@@ -1528,12 +1560,13 @@ const Groups = ({ classes }) => {
                 isOpen={showConfirmDialog}
                 title={t('common.ExportGroups')}
                 text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
-                radioTitle={t('common.SelectFormat')}
-                onConfirm={(e) => handleConfirmExport(e)}
+                radioTitle={csvOnly ? '' : t('common.SelectFormat')}
+                onConfirm={(e, notifyEmail) => handleConfirmExport(e, notifyEmail)}
                 onCancel={() => setShowConfirmDialog(false)}
                 cookieName={'exportFormat'}
                 defaultValue={csvOnly ? 'csv' : 'xls'}
-                options={exportTypeOptions}
+                showEmailToNotify={csvOnly}
+                options={csvOnly ? null : exportTypeOptions}
             />
         );
     }
