@@ -9,7 +9,6 @@ const PurchaseSummary = ({
     classes,
     isRTL,
     packageId,
-    packageType,
     showTitle = true,
     showButtons = true,
     onConfirm = () => null,
@@ -30,7 +29,7 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.productName')}</Typography>
             </Grid>
             <Grid item xs={6}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{`${pack.Quantity} ${t(packageType === 3 ? 'common.smsMessages' : 'common.newsletterPackage')}`}</Typography>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{`${pack.Quantity} ${t('common.smsMessages')}`}</Typography>
             </Grid>
             <Grid item xs={12}>
                 <Divider />
