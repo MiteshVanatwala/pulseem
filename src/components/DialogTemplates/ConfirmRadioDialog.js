@@ -88,11 +88,6 @@ const ConfirmRadioDialog = ({
                     </FormControl>)
                     }
                     {showEmailToNotify && <>
-                        <Box className={clsx(classes.dFlex, classes.flexCenter, classes.mb50)} style={{ textAlign: 'center' }}>
-                            <Typography>
-                                {RenderHtml(t("recipient.exportGroups.inProgress"))}
-                            </Typography>
-                        </Box>
                         <Box style={{ display: 'flex' }}>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>

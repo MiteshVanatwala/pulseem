@@ -346,51 +346,69 @@ const ClientSearchResult = ({ props, classes }) => {
       handleFilter();
     }
   };
-  const handleDownloadCsv = async (formatType) => {
+  const handleDownloadCsv = async (formatType, notifyEmail) => {
     setDialog(null);
     setIsDownloadProgress(true);
     setLoader(true);
+    setEmailToNotify(notifyEmail);
     const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName }));
     if (response && response.payload) {
       const data = response.payload;
-      if (data.StatusCode === 201) {
-        let orderList = await data.Clients.map((client) => {
-          let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
-          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
-          client.Status = t(tempStatus.value);
-          client.SmsStatus = t(tempSmsStatus.value);
-          return client;
-        }, []);
-        orderList = orderList.map((ol) => { return flatObject(ol) });
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
-        }
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
-          searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          orderList = deletePropertyFromArrayObject(orderList, "SendDate");
-        }
-        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
-        orderList = formatDateTime(orderList, t);
 
-        if (formatType === 'csv') {
-          // Pay attention -> We set XLSX for better header's order.
-          // CSV not supporting numeric extra fields order.
-          exportFile({
-            data: orderList,
-            exportType: formatType,
-            fields: exportColumnHeader.current,
-            fileName: fileName
-          })
+      switch (data?.StatusCode) {
+        case 201: {
+          let orderList = await data.Clients.map((client) => {
+            let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
+            let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+            client.Status = t(tempStatus.value);
+            client.SmsStatus = t(tempSmsStatus.value);
+            return client;
+          }, []);
+          orderList = orderList.map((ol) => { return flatObject(ol) });
+          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+            orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+          }
+          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+            searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+            orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+          }
+          orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
+          orderList = formatDateTime(orderList, t);
+
+          if (formatType === 'csv') {
+            // Pay attention -> We set XLSX for better header's order.
+            // CSV not supporting numeric extra fields order.
+            exportFile({
+              data: orderList,
+              exportType: formatType,
+              fields: exportColumnHeader.current,
+              fileName: fileName
+            })
+          }
+          else {
+            await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
+          }
+          break;
         }
-        else {
-          await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
+        case 202: {
+          setDialog(DialogType.EXPORT_IN_PROGRESS);
+          break;
+        }
+        case 403: { // Feature not allowed
+          break;
+        }
+        case 405: {
+          setToastMessage(t("recipient.exportGroups.exportLimitationErrorMessage"));
+          break;
+        }
+        default: {
+          setToastMessage(t('common.errorOccured'));
+          break;
         }
       }
-      else {
-        setToastMessage(t('common.errorOccured'));
-      }
+
     }
     setLoader(false);
     setIsDownloadProgress(false);
@@ -1865,7 +1883,7 @@ const ClientSearchResult = ({ props, classes }) => {
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
         radioTitle={TotalCount > 100000 ? '' : t('common.SelectFormat')}
-        onConfirm={(e) => handleDownloadCsv(e)}
+        onConfirm={(e, notifyEmail) => handleDownloadCsv(e, notifyEmail)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
         defaultValue={TotalCount > 100000 ? "csv" : "xls"}
