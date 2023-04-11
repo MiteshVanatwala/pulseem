@@ -95,10 +95,10 @@ const DownloadFiles = ({ classes }: any) => {
             <Grid container spacing={1}>
               <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter)}>
                 <Typography
-                  onClick={() => downloadFile(row.ID, row.FileName, 'XLS')}
+                  onClick={() => downloadFile(row.ID, row.FileName, 'XLSX')}
                   className={classes.blueLink}
                 >
-                  {`${t('master.download')} XLS`}
+                  {`${t('master.download')} XLSX`}
                 </Typography>
               </Grid>
               <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter, classes.blueLink)}>
@@ -139,9 +139,10 @@ const DownloadFiles = ({ classes }: any) => {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
+
     link.setAttribute(
         "download",
-        FileName
+        FileName.toLocaleLowerCase().replace('csv', Type)
     );
     document.body.appendChild(link);
     link.click();
