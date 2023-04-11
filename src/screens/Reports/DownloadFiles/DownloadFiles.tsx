@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Box
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Box, Grid
 } from '@material-ui/core'
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux'
@@ -50,9 +50,9 @@ const DownloadFiles = ({ classes }: any) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex6} align='center'>{t("report.fileName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex5} align='center'>{t("report.fileName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("report.action")}</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align='center'>{t("report.action")}</TableCell>
         </TableRow>
       </TableHead>
     )
@@ -92,14 +92,24 @@ const DownloadFiles = ({ classes }: any) => {
           get(progressList, row.ID, 0) > 0 ? (
             `${get(progressList, row.ID)}% ${t('report.Completed')}`
           ) : (
-            <Typography className={clsx(
-                classes.middleText,
-                classes.blueLink
-              )}
-              onClick={() => downloadFile(row.ID, row.FileName)}
-            >
-              {t('master.download')}
-            </Typography>
+            <Grid container spacing={1}>
+              <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter)}>
+                <Typography
+                  onClick={() => downloadFile(row.ID, row.FileName, 'XLS')}
+                  className={classes.blueLink}
+                >
+                  {`${t('master.download')} XLS`}
+                </Typography>
+              </Grid>
+              <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter, classes.blueLink)}>
+                <Typography
+                  onClick={() => downloadFile(row.ID, row.FileName, 'CSV')}
+                  className={classes.blueLink}
+                >
+                  {`${t('master.download')} CSV`}
+                </Typography>
+              </Grid>
+            </Grid>
           )
         }
       </>
@@ -118,8 +128,8 @@ const DownloadFiles = ({ classes }: any) => {
     })
   }
 
-  const downloadFile = async (fileID: number, FileName: string) => {
-    const response = await instence.get(`/LargeFiles/DonwloadFile/${fileID}`, {
+  const downloadFile = async (fileID: number, FileName: string, Type: string) => {
+    const response = await instence.get(`/LargeFiles/DonwloadFile/${Type}/${fileID}`, {
       onDownloadProgress: (progressEvent: any) => {
         console.log(Math.floor(progressEvent.loaded / progressEvent.total * 100));
         setPercentage(fileID, Math.floor(progressEvent.loaded / progressEvent.total * 100));
@@ -161,7 +171,7 @@ const DownloadFiles = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex6}>
+          className={classes.flex5}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell
@@ -173,7 +183,7 @@ const DownloadFiles = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
+          className={clsx(classes.flex2, classes.noBorderOnLastCell)}>
           {renderActionCell(row)}
         </TableCell>
       </TableRow>
