@@ -414,13 +414,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             formIsvalid = validationCheck();
             if (formIsvalid) {
                 if (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
-                    setSegmantIndication(true)
                     tempData = { ...tempData, displayFilter: true, reciFilter: false }
                     setSnackbarValues({ ...snackbarValues, snackbarRecipients: true })
-
                 }
                 else {
-                    setSegmantIndication(false)
                     tempData = { ...tempData, displayFilter: false, reciFilter: false }
                 }
             }
@@ -429,11 +426,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             if (filterValues.selectedFilterGroups.length || filterValues.selectedFilterCampaigns.length) {
                 tempData = { ...tempData, reciFilter: false }
                 setSnackbarValues({ ...snackbarValues, snackbarRecipients: true })
-                setSegmantIndication(true)
             }
             else {
                 tempData = { ...tempData, reciFilter: false }
-                setSegmantIndication(false)
             }
         }
         if (formIsvalid) {
@@ -807,8 +802,27 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     ...campaignValues,
                     ...filterParameters
                 })
-                mergedSegmentationDialog === 0 && setDialogType(null)
-                mergedSegmentationDialog === 1 && handleFilterConfirm()
+                mergedSegmentationDialog === 0 && setDialogType(null);
+                mergedSegmentationDialog === 1 && handleFilterConfirm();
+                
+                let segmantIndication = false;
+                if (filterParameters.FromDate || filterParameters.ToDate || filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked) {
+                    segmantIndication = true;
+                }
+
+                if (!segmantIndication) {
+                    if (filterValues.toggleReci) {
+                        if (validationCheck() && filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
+                            segmantIndication = true;
+                        }
+                    }
+                    else {
+                        if (filterValues.selectedFilterGroups.length || filterValues.selectedFilterCampaigns.length) {
+                            segmantIndication = true;
+                        }
+                    }
+                }
+                setSegmantIndication(segmantIndication);
             }
         }
 
