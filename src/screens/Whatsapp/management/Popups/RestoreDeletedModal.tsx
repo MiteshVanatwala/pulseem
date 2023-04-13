@@ -22,7 +22,7 @@ const RestoreDeletedModal = ({
 	title,
 	restoreIds,
 	setRestoreIds,
-	deletedCampaignListData
+	deletedCampaignListData,
 }: RestoreDeletedModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -45,7 +45,7 @@ const RestoreDeletedModal = ({
 			}
 		}
 	};
-
+	
 	return (
 		<>
 			<Dialog
@@ -67,12 +67,15 @@ const RestoreDeletedModal = ({
 					</Box>
 					<div className={classes.alertModalContent}>
 						<div className={classes.testGroupModalContentWrapper}>
-							<Box border={'1px solid'}>
+							<Box
+								border={
+									deletedCampaignListData?.length > 0 ? '1px solid' : '0px'
+								}>
 								<FormGroup
 									aria-label='position'
 									className={classes.restoreDeletedModalFormGroup}>
-									{deletedCampaignListData?.map(
-										(campaign) => (
+									{deletedCampaignListData?.length > 0 ? (
+										deletedCampaignListData?.map((campaign) => (
 											<FormControlLabel
 												className={classes.restoreDeletedModalFormLabel}
 												key={campaign.WACampaignID}
@@ -87,7 +90,9 @@ const RestoreDeletedModal = ({
 													)
 												}
 											/>
-										)
+										))
+									) : (
+										<>{translator('common.NoDataTryFilter')}</>
 									)}
 								</FormGroup>
 							</Box>

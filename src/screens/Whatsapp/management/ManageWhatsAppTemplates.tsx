@@ -72,6 +72,7 @@ import {
 	resetToastData,
 	statusesByName,
 	templateStatusIdsByStatusName,
+	templateStatusResonTextLength,
 } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
@@ -249,10 +250,24 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							: status}
 					</>
 					{status === 'Rejected' && (
-						<Typography
-							className={classes.whatsappTemplateStatusRejectedReason}>
-							{rejectionReason}
-						</Typography>
+						<CustomTooltip
+							isSimpleTooltip={false}
+							interactive={true}
+							classes={{
+								tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+								arrow: classes.fBlack,
+							}}
+							arrow={true}
+							placement={'top'}
+							title={rejectionReason}
+							text={rejectionReason}
+							icon={undefined}
+							style={undefined}>
+							<Typography
+								className={classes.whatsappTemplateStatusRejectedReason}>
+								{rejectionReason?.substring(0, templateStatusResonTextLength)}
+							</Typography>
+						</CustomTooltip>
 					)}
 				</Typography>
 			</>
@@ -265,7 +280,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				<Typography
 					className={clsx(classes.middleText)}
 					style={{ textTransform: 'capitalize' }}>
-					{categoryName[categoryId || 1]}
+					{translator(`whatsapp.${categoryName[categoryId || 1]}`)}
 				</Typography>
 			</>
 		);

@@ -19,6 +19,7 @@ import {
 	updatedVariable,
 } from './Campaign/Types/WhatsappCampaign.types';
 import { APIWhatsappChatVariablesData } from './Chat/Types/WhatsappChat.type';
+import { buttonTypes } from './Constant';
 
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -131,7 +132,7 @@ export const getTemplatePreviewData = (
 	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
 		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
 		switch (buttonType) {
-			case 'quickReply':
+			case buttonTypes.QUICK_REPLY:
 				buttonData = data?.map((button: buttonsDataProps) => {
 					return {
 						id: uniqid(),
@@ -147,7 +148,7 @@ export const getTemplatePreviewData = (
 					};
 				});
 				return buttonData ? buttonData : [];
-			case 'callToAction':
+			case buttonTypes.CALL_TO_ACTION:
 				buttonData = data?.map((button: buttonsDataProps) => {
 					if (button?.type === 'PHONE_NUMBER') {
 						return {
@@ -201,18 +202,21 @@ export const getTemplatePreviewData = (
 	const saveQuickreplyTemplate = (templateData: savedTemplateTypesProps) => {
 		const quickReplyData: savedTemplateQuickReplyProps =
 			templateData?.['quick-reply'];
-		templatePreviewData.buttonType = 'quickReply';
+		templatePreviewData.buttonType = buttonTypes.QUICK_REPLY;
 		templatePreviewData.templateData.templateText = quickReplyData?.body;
-		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		const buttonData = setButtonsData(
+			buttonTypes.QUICK_REPLY,
+			quickReplyData?.actions
+		);
 		templatePreviewData.templateData.templateButtons = buttonData || [];
 	};
 
 	const saveCallToActionTemplate = (templateData: savedTemplateTypesProps) => {
 		const callToActionData: savedTemplateCallToActionProps =
 			templateData?.['call-to-action'];
-		templatePreviewData.buttonType = 'callToAction';
+		templatePreviewData.buttonType = buttonTypes.CALL_TO_ACTION;
 		const buttonData = setButtonsData(
-			'callToAction',
+			buttonTypes.CALL_TO_ACTION,
 			callToActionData?.actions
 		);
 		templatePreviewData.templateData.templateText = callToActionData?.body;
@@ -224,12 +228,18 @@ export const getTemplatePreviewData = (
 		templatePreviewData.templateData.templateText = cardData?.title;
 		if (cardData?.actions?.length > 0) {
 			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
-				templatePreviewData.buttonType = 'callToAction';
-				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				templatePreviewData.buttonType = buttonTypes.CALL_TO_ACTION;
+				const buttonData = setButtonsData(
+					buttonTypes.CALL_TO_ACTION,
+					cardData?.actions
+				);
 				templatePreviewData.templateData.templateButtons = buttonData || [];
 			} else {
-				templatePreviewData.buttonType = 'quickReply';
-				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				templatePreviewData.buttonType = buttonTypes.QUICK_REPLY;
+				const buttonData = setButtonsData(
+					buttonTypes.QUICK_REPLY,
+					cardData?.actions
+				);
 				templatePreviewData.templateData.templateButtons = buttonData || [];
 			}
 		}

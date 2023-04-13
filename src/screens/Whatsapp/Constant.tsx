@@ -364,6 +364,8 @@ export const buttonTextLimits: ButtonTextLimits = {
 	callToAction: 640,
 };
 
+export const templateStatusResonTextLength: number = 26;
+
 export const statusesByName: statusByNameProps = {
 	Pending: 'whatsappManagement.pending',
 	Rejected: 'whatsappManagement.rejected',
