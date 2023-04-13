@@ -27,7 +27,7 @@ const DownloadFiles = ({ classes }: any) => {
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   const [showLoader, setLoader] = useState(true);
   const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
-  
+
   const dispatch = useDispatch();
   moment.locale(language);
   const getData = async () => {
@@ -154,8 +154,8 @@ const DownloadFiles = ({ classes }: any) => {
       link.href = url;
 
       link.setAttribute(
-          "download",
-          FileName.toLocaleLowerCase().replace('csv', Type)
+        "download",
+        FileName.toLocaleLowerCase().replace('csv', Type)
       );
       document.body.appendChild(link);
       link.click();
@@ -175,7 +175,7 @@ const DownloadFiles = ({ classes }: any) => {
         placement={'top'}
         title={<Typography noWrap={false}>{row.FileName}</Typography>}
         text={row.FileName} icon={undefined} style={undefined}>
-          <Typography noWrap={false}>{get(row, 'SourceFileName', row.FileName)}</Typography>
+        <Typography noWrap={false}>{get(row, (row.SourceFileName !== null && row.SourceFileName !== '') ? 'SourceFileName' : 'FileName', row.FileName)}</Typography>
       </CustomTooltip>
     )
   }
