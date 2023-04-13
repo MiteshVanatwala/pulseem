@@ -2253,6 +2253,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     margin: "1rem",
     padding: "1rem",
     minWidth: dialogWidth[windowSize],
+    maxWidth: dialogWidth[windowSize],
     backgroundColor: '#f5f5f5',
     '& .title': {
       '& p': {
