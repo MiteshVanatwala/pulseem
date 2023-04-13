@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
+import moment from 'moment';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Box, Grid
 } from '@material-ui/core'
@@ -15,7 +16,7 @@ import { get, includes } from 'lodash';
 import { rowsOptions } from '../../../helpers/Constants';
 
 const DownloadFiles = ({ classes }: any) => {
-  const { windowSize, rowsPerPage } = useSelector((state: any) => state.core)
+  const { language, windowSize, rowsPerPage } = useSelector((state: any) => state.core)
   const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [fileDownoadList, setFileDownloadList] = useState([]);
@@ -24,7 +25,7 @@ const DownloadFiles = ({ classes }: any) => {
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   const [showLoader, setLoader] = useState(true);
   const dispatch = useDispatch();
-
+  moment.locale(language);
   const getData = async () => {
     await getDownloadFileList();
     setLoader(false);
@@ -56,6 +57,8 @@ const DownloadFiles = ({ classes }: any) => {
           {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
           {/* @ts-ignore */}
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.CreationDate")}</TableCell>
+          {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align='center'>{t("report.action")}</TableCell>
         </TableRow>
       </TableHead>
@@ -81,7 +84,8 @@ const DownloadFiles = ({ classes }: any) => {
             [classes.recipientsStatusSending]: status === 1,
             [classes.recipientsStatusSent]: includes([2, 4], status),
             [classes.recipientsStatusCanceled]: status === 5
-          }
+          },
+          classes.font15
         )}>
           {/* @ts-ignore */}
           {t(statuses[status])}
@@ -185,6 +189,12 @@ const DownloadFiles = ({ classes }: any) => {
           align='center'
           className={classes.flex1}>
           {renderStatusCell(row.Status)}
+        </TableCell>
+        <TableCell
+          classes={cellStyle}
+          align='center'
+          className={classes.flex1}>
+          {moment(row.CreationDate).format("DD/MM/YYYY hh:mm A")}
         </TableCell>
         <TableCell
           classes={cellStyle}
