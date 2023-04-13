@@ -108,7 +108,7 @@ const DownloadFiles = ({ classes }: any) => {
             <Grid container spacing={1}>
               <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter)}>
                 <Typography
-                  onClick={() => downloadFile(row.ID, row.FileName, 'XLSX', row.SourceFileName)}
+                  onClick={() => downloadFile(row.ID, row.FileName, 'XLS', row.SourceFileName)}
                   className={classes.blueLink}
                 >XLS</Typography>
               </Grid>
