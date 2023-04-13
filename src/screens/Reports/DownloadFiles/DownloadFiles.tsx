@@ -39,6 +39,7 @@ const DownloadFiles = ({ classes }: any) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
+          {/* @ts-ignore */}
           {t('common.fileDownloads')}
         </Typography>
         <Divider />
@@ -50,8 +51,11 @@ const DownloadFiles = ({ classes }: any) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
+          {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={classes.flex5} align='center'>{t("report.fileName")}</TableCell>
+          {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
+          {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align='center'>{t("report.action")}</TableCell>
         </TableRow>
       </TableHead>
@@ -79,6 +83,7 @@ const DownloadFiles = ({ classes }: any) => {
             [classes.recipientsStatusCanceled]: status === 5
           }
         )}>
+          {/* @ts-ignore */}
           {t(statuses[status])}
         </Typography>
       </>
