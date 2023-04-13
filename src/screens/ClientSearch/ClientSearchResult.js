@@ -353,7 +353,7 @@ const ClientSearchResult = ({ props, classes }) => {
     setEmailToNotify(notifyEmail);
     const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
-    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName }));
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName, NotifyEmail: notifyEmail }));
     if (response && response.payload) {
       const data = response.payload;
 
