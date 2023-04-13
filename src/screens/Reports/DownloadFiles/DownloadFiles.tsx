@@ -108,7 +108,7 @@ const DownloadFiles = ({ classes }: any) => {
             <Grid container spacing={1}>
               <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter)}>
                 <Typography
-                  onClick={() => downloadFile(row.ID, row.FileName, 'XLSX')}
+                  onClick={() => downloadFile(row.ID, row.FileName, 'XLSX', row.SourceFileName)}
                   className={classes.blueLink}
                 >
                   {`${t('master.download')} XLSX`}
@@ -116,7 +116,7 @@ const DownloadFiles = ({ classes }: any) => {
               </Grid>
               <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter, classes.blueLink)}>
                 <Typography
-                  onClick={() => downloadFile(row.ID, row.FileName, 'CSV')}
+                  onClick={() => downloadFile(row.ID, row.FileName, 'CSV', row.SourceFileName)}
                   className={classes.blueLink}
                 >
                   {`${t('master.download')} CSV`}
@@ -141,7 +141,7 @@ const DownloadFiles = ({ classes }: any) => {
     })
   }
 
-  const downloadFile = async (fileID: number, FileName: string, Type: string) => {
+  const downloadFile = async (fileID: number, FileName: string, Type: string, SourceFileName: string) => {
     await instence.get(`/LargeFiles/DonwloadFile/${Type}/${fileID}`, {
       onDownloadProgress: (progressEvent: any) => {
         console.log(Math.floor(progressEvent.loaded / progressEvent.total * 100));
@@ -153,9 +153,19 @@ const DownloadFiles = ({ classes }: any) => {
       const link = document.createElement("a");
       link.href = url;
 
+      let fileName = '';
+      if (SourceFileName && SourceFileName !== '') {
+        fileName = `${SourceFileName}.${Type}`
+      }
+      else {
+        if (FileName.indexOf('csv') > -1) {
+          fileName = fileName.toLocaleLowerCase().replace('csv', Type)
+        }
+      }
+
       link.setAttribute(
         "download",
-        FileName.toLocaleLowerCase().replace('csv', Type)
+        fileName
       );
       document.body.appendChild(link);
       link.click();
