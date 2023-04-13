@@ -45,7 +45,7 @@ const DownloadFiles = ({ classes }: any) => {
       <>
         <Typography className={classes.managementTitle}>
           {/* @ts-ignore */}
-          {t('common.fileDownloads')}
+          {t('master.fileDownload')}
         </Typography>
         <Divider />
       </>
