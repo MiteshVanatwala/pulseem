@@ -62,8 +62,7 @@ const DownloadFiles = ({ classes }: any) => {
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
           {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.CreationDate")}</TableCell>
-          {/* @ts-ignore */}
-          <TableCell classes={cellStyle} className={clsx(classes.flex2, classes.noBorderOnLastCell)} align='center'>{t("report.action")}</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("master.download")}</TableCell>
         </TableRow>
       </TableHead>
     )
@@ -110,17 +109,13 @@ const DownloadFiles = ({ classes }: any) => {
                 <Typography
                   onClick={() => downloadFile(row.ID, row.FileName, 'XLSX', row.SourceFileName)}
                   className={classes.blueLink}
-                >
-                  {`${t('master.download')} XLSX`}
-                </Typography>
+                >XLS</Typography>
               </Grid>
               <Grid item sm={6} className={clsx(classes.justifyCenterOfCenter, classes.blueLink)}>
                 <Typography
                   onClick={() => downloadFile(row.ID, row.FileName, 'CSV', row.SourceFileName)}
                   className={classes.blueLink}
-                >
-                  {`${t('master.download')} CSV`}
-                </Typography>
+                >CSV</Typography>
               </Grid>
             </Grid>
           )
@@ -170,7 +165,7 @@ const DownloadFiles = ({ classes }: any) => {
       document.body.appendChild(link);
       link.click();
     }).catch(err => {
-      setToastMessage({ severity: 'error', color: 'error', message: 'Oops.. Something went wrong while downloading the file.', showAnimtionCheck: false });
+      setToastMessage({ severity: 'error', color: 'error', message: t('common.fileDownloadError'), showAnimtionCheck: false });
     });
   }
 
@@ -185,7 +180,7 @@ const DownloadFiles = ({ classes }: any) => {
         placement={'top'}
         title={<Typography noWrap={false}>{row.FileName}</Typography>}
         text={row.FileName} icon={undefined} style={undefined}>
-        <Typography noWrap={false}>{get(row, (row.SourceFileName !== null && row.SourceFileName !== '') ? 'SourceFileName' : 'FileName', row.FileName)}</Typography>
+          <Typography noWrap={false}>{row.SourceFileName && row.SourceFileName != '' && row.SourceFileName != null ? row.SourceFileName : row.FileName}</Typography>
       </CustomTooltip>
     )
   }
@@ -216,7 +211,7 @@ const DownloadFiles = ({ classes }: any) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex2, classes.noBorderOnLastCell)}>
+          className={clsx(classes.flex1, classes.noBorderOnLastCell)}>
           {renderActionCell(row)}
         </TableCell>
       </TableRow>

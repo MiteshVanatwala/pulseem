@@ -608,5 +608,6 @@
   "xssError": "Html, Scripts or other then a normal string does not allowed!",
   "remove": "Remove",
   "searchByCampaign": "Search by Campaign",
-  "fileDownloads": "File Downloads"
+  "fileDownloads": "File Downloads",
+  "fileDownloadError": "Oops...Something went wrong while downloading the file"
 }
