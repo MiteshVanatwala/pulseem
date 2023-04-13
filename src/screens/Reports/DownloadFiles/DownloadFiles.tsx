@@ -62,6 +62,7 @@ const DownloadFiles = ({ classes }: any) => {
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
           {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.CreationDate")}</TableCell>
+          {/* @ts-ignore */}
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.noBorderOnLastCell)} align='center'>{t("master.download")}</TableCell>
         </TableRow>
       </TableHead>
