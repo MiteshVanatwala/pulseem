@@ -11,9 +11,11 @@ import { useTranslation } from 'react-i18next'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import Toast from '../../../components/Toast/Toast.component';
 import { instence } from '../../../helpers/api';
 import { get, includes } from 'lodash';
 import { rowsOptions } from '../../../helpers/Constants';
+import { ERROR_TYPE } from '../../../helpers/Types/common';
 
 const DownloadFiles = ({ classes }: any) => {
   const { language, windowSize, rowsPerPage } = useSelector((state: any) => state.core)
@@ -24,6 +26,8 @@ const DownloadFiles = ({ classes }: any) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   const [showLoader, setLoader] = useState(true);
+  const [toastMessage, setToastMessage] = useState<ERROR_TYPE>(null);
+  
   const dispatch = useDispatch();
   moment.locale(language);
   const getData = async () => {
@@ -138,23 +142,26 @@ const DownloadFiles = ({ classes }: any) => {
   }
 
   const downloadFile = async (fileID: number, FileName: string, Type: string) => {
-    const response = await instence.get(`/LargeFiles/DonwloadFile/${Type}/${fileID}`, {
+    await instence.get(`/LargeFiles/DonwloadFile/${Type}/${fileID}`, {
       onDownloadProgress: (progressEvent: any) => {
         console.log(Math.floor(progressEvent.loaded / progressEvent.total * 100));
         setPercentage(fileID, Math.floor(progressEvent.loaded / progressEvent.total * 100));
       },
-    });
-    setPercentage(fileID, 0);
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
-    link.href = url;
+    }).then(response => {
+      setPercentage(fileID, 0);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
 
-    link.setAttribute(
-        "download",
-        FileName.toLocaleLowerCase().replace('csv', Type)
-    );
-    document.body.appendChild(link);
-    link.click();
+      link.setAttribute(
+          "download",
+          FileName.toLocaleLowerCase().replace('csv', Type)
+      );
+      document.body.appendChild(link);
+      link.click();
+    }).catch(err => {
+      setToastMessage({ severity: 'error', color: 'error', message: 'Oops.. Something went wrong while downloading the file.', showAnimtionCheck: false });
+    });
   }
 
   const renderNameCell = (row: any) => {
@@ -168,7 +175,7 @@ const DownloadFiles = ({ classes }: any) => {
         placement={'top'}
         title={<Typography noWrap={false}>{row.FileName}</Typography>}
         text={row.FileName} icon={undefined} style={undefined}>
-          <Typography noWrap={false}>{row.FileName}</Typography>
+          <Typography noWrap={false}>{get(row, 'SourceFileName', row.FileName)}</Typography>
       </CustomTooltip>
     )
   }
@@ -250,6 +257,13 @@ const DownloadFiles = ({ classes }: any) => {
     )
   }
 
+  const renderToast = () => {
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+    return <Toast data={toastMessage} />;
+  };
+
   const renderTablePagination = () => {
     return (
       <TablePagination
@@ -274,6 +288,7 @@ const DownloadFiles = ({ classes }: any) => {
       {renderTable()}
       {renderTablePagination()}
       <Loader isOpen={showLoader} />
+      {toastMessage && renderToast()}
     </DefaultScreen>
   )
 }
