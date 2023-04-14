@@ -229,6 +229,7 @@ export type SummaryModalProps = {
 	daysBeforeAfter: string;
 	specialDatedropDown: string[];
 	spectialDateFieldID: string;
+	campaignSummary: ApiGetCampaignSummaryPayloadData | undefined
 };
 
 export type tagDataProps = {

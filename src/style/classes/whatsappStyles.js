@@ -1047,6 +1047,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			boxShadow: '0px 3px 3px #345233',
 			backgroundImage: 'linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)',
 			backgroundRepeat: 'repeat-x',
+			'&:disabled': {
+				backgroundImage: 'none',
+				boxShadow: '0px 3px 3px #4d4d4d',
+				backgroundColor: 'gray',
+				color: 'white',
+				cursor: 'not-allowed',
+				border: '1px solid #565656',
+			},
 		},
 		'& .cancel-button': {
 			border: '1px solid darkred',
@@ -2599,9 +2607,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappTemplatesStatus: {
 		fontSize: 18,
 		color: 'black',
+		width: '100%',
 		'& p': {
 			wordBreak: 'break-all',
 			whiteSpace: 'normal',
+		},
+		'& span': {
+			fontWeight: 700,
 		},
 	},
 	whatsappTemplateStatusCreated: {
@@ -2812,6 +2824,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	buttonWhatsappAutocomplete: {
 		padding: '10px 12px 10px 4px',
+		'& .MuiAutocomplete-endAdornment': {
+			right: isRTL ? 'unset' : '0px',
+			left: isRTL ? '0px' : 'unset',
+		},
+		'& .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiAutocomplete-inputRoot.MuiInputBase-fullWidth.MuiInput-fullWidth.MuiInputBase-formControl.MuiInput-formControl.MuiInputBase-adornedEnd':
+			{
+				paddingRight: isRTL ? '0px !important' : '0px',
+			},
 	},
 	calltoActionButtonChatWrapper: {
 		margin: '8px 0px 0px 0px',

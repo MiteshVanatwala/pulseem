@@ -5,7 +5,7 @@ import EmojiPicker from '../../../../components/Emojis/EmojiPicker';
 import Highlighter from 'react-highlight-words';
 import { ChatFooterContentProps } from '../Types/WhatsappChat.type';
 import { useTranslation } from 'react-i18next';
-import { BaseSyntheticEvent, KeyboardEvent, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
 	tagDataProps,
 	updatedVariable,
@@ -165,7 +165,7 @@ const ChatFooterContent = ({
 								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
 								<Stack
 									direction='row'
-									justifyContent='center'
+									justifyContent='space-around'
 									alignItems='center'
 									spacing={2}>
 									<Typography color='textSecondary'>

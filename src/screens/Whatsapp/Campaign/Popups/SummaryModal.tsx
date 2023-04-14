@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from '@material-ui/core';
+import { Link, Tooltip } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import {
 	ApiGetCampaignSummary,
@@ -18,21 +18,23 @@ import {
 	getSavedTemplatesPreviewById,
 	getWhatsAppCampaignSummary,
 } from '../../../../redux/reducers/whatsappSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
 	savedTemplateDataProps,
 	saveTemplateItemsProps,
 	templateDataProps,
 	templateListAPIProps,
 	templatePreviewDataProps,
+	toastProps,
 } from '../../Editor/Types/WhatsappCreator.types';
-import { apiStatus } from '../../Constant';
+import { apiStatus, resetToastData } from '../../Constant';
 import WhatsappMobilePreview from '../../Editor/Components/WhatsappMobilePreview';
 import downArrow from '../../../../assets/images/down-arrow.svg';
 import upArrow from '../../../../assets/images/up-arrow.svg';
 import moment from 'moment';
 import { getTemplatePreviewData } from '../../Common';
 import clsx from 'clsx';
+import Toast from '../../../../components/Toast/Toast.component';
 
 const SummaryModal = ({
 	classes,
@@ -49,6 +51,7 @@ const SummaryModal = ({
 	daysBeforeAfter,
 	specialDatedropDown,
 	spectialDateFieldID,
+	campaignSummary,
 }: SummaryModalProps) => {
 	const theme = useTheme();
 	const dispatch = useDispatch();
@@ -59,9 +62,12 @@ const SummaryModal = ({
 	const [isRecipientFilter, setIsRecipientFilter] = useState<boolean>(false);
 	const [detailsHide, setdetailsHide] = useState<boolean>(true);
 	const { t: translator } = useTranslation();
-
-	const [campaignSummary, setCampaignSummary] =
-		useState<ApiGetCampaignSummaryPayloadData>();
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
 
 	const [campaignDetails, setCampaignDetails] =
 		useState<CampaignDetailByIdData>();
@@ -85,29 +91,31 @@ const SummaryModal = ({
 		(async () => {
 			if (campaignID && isOpen === true) {
 				setIsLoader(true);
-				const { payload: campaignSummaryData }: ApiGetCampaignSummary =
-					await dispatch<any>(getWhatsAppCampaignSummary(campaignID));
-				if (campaignSummaryData?.Status === apiStatus?.SUCCESS) {
-					setCampaignSummary(campaignSummaryData?.Data);
-				}
 				const { payload: campaignData }: CampaignDetailById =
 					await dispatch<any>(getCampaignDetailById(campaignID));
 				if (campaignData?.Status === apiStatus?.SUCCESS) {
 					setCampaignDetails(campaignData?.Data);
-				}
-				const { payload: templateData }: templateListAPIProps =
-					await dispatch<any>(
-						getSavedTemplatesPreviewById({
-							templateId: campaignData?.Data?.TemplateID,
-						})
-					);
-				if (
-					templateData?.Status === apiStatus?.SUCCESS &&
-					templateData?.Data?.Items?.length > 0
-				) {
-					setTemplateDetails(templateData?.Data?.Items[0]);
-					const template = templateData?.Data?.Items[0];
-					onSavedTemplateChange(template?.Data);
+					const { payload: templateData }: templateListAPIProps =
+						await dispatch<any>(
+							getSavedTemplatesPreviewById({
+								templateId: campaignData?.Data?.TemplateID,
+							})
+						);
+					if (
+						templateData?.Status === apiStatus?.SUCCESS &&
+						templateData?.Data?.Items?.length > 0
+					) {
+						setTemplateDetails(templateData?.Data?.Items[0]);
+						const template = templateData?.Data?.Items[0];
+						onSavedTemplateChange(template?.Data);
+					}
+				} else {
+					campaignData?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: campaignData?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
 				}
 				setIsLoader(false);
 			}
@@ -145,6 +153,20 @@ const SummaryModal = ({
 		}
 	};
 
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} />;
+		}
+		return null;
+	};
+
 	return (
 		<Dialog
 			fullScreen={fullScreen}
@@ -152,6 +174,7 @@ const SummaryModal = ({
 			onClose={onSummaryModalClose}
 			aria-labelledby='responsive-dialog-title'
 			maxWidth={'md'}>
+			{renderToast()}
 			<div className={classes.summaryModal}>
 				<div id='responsive-dialog-title' className={classes.alertModalTitle}>
 					<>{translator('whatsappCampaign.summary')}</>
@@ -328,27 +351,24 @@ const SummaryModal = ({
 
 										{isRecipientFilter && (
 											<>
-												{campaignSummary &&
-													campaignSummary.DuplicateCellphoneSharedWithClienCount >
-														0 && (
-														<Box
-															className={clsx(
-																classes.summaryModalDuplicateRecipients,
-																classes.recipientsStatistics
-															)}>
-															<span>
-																{translator('sms.duplicateRecipients')}:{' '}
-															</span>{' '}
-															<span
-																className={classes.recipientsStatisticsData}>
-																{
-																	campaignSummary?.DuplicateCellphoneSharedWithClienCount
-																}
-															</span>
-														</Box>
-													)}
+												{campaignSummary && (
+													<Box
+														className={clsx(
+															classes.summaryModalDuplicateRecipients,
+															classes.recipientsStatistics
+														)}>
+														<span>
+															{translator('sms.duplicateRecipients')}:{' '}
+														</span>{' '}
+														<span className={classes.recipientsStatisticsData}>
+															{
+																campaignSummary?.DuplicateCellphoneSharedWithClienCount
+															}
+														</span>
+													</Box>
+												)}
 
-												{campaignSummary && campaignSummary.Removed > 0 && (
+												{campaignSummary && (
 													<Box
 														className={clsx(
 															classes.summaryModalRemoved,
@@ -361,37 +381,31 @@ const SummaryModal = ({
 													</Box>
 												)}
 
-												{campaignSummary &&
-													campaignSummary.EmptyCellphoneCount > 0 && (
-														<Box
-															className={clsx(
-																classes.summaryModalEmptyNumbers,
-																classes.recipientsStatistics
-															)}>
-															<span>{translator('sms.emptyNumbers')}: </span>{' '}
-															<span
-																className={classes.recipientsStatisticsData}>
-																{campaignSummary?.EmptyCellphoneCount}
-															</span>
-														</Box>
-													)}
+												{campaignSummary && (
+													<Box
+														className={clsx(
+															classes.summaryModalEmptyNumbers,
+															classes.recipientsStatistics
+														)}>
+														<span>{translator('sms.emptyNumbers')}: </span>{' '}
+														<span className={classes.recipientsStatisticsData}>
+															{campaignSummary?.EmptyCellphoneCount}
+														</span>
+													</Box>
+												)}
 
-												{campaignSummary &&
-													campaignSummary.EmptyCellphoneCount > 0 && (
-														<Box
-															className={clsx(
-																classes.summaryModalInvalidRecipients,
-																classes.recipientsStatistics
-															)}>
-															<span>
-																{translator('sms.invalidRecipients')}:{' '}
-															</span>{' '}
-															<span
-																className={classes.recipientsStatisticsData}>
-																{campaignSummary?.EmptyCellphoneCount}
-															</span>
-														</Box>
-													)}
+												{campaignSummary && (
+													<Box
+														className={clsx(
+															classes.summaryModalInvalidRecipients,
+															classes.recipientsStatistics
+														)}>
+														<span>{translator('sms.invalidRecipients')}: </span>{' '}
+														<span className={classes.recipientsStatisticsData}>
+															{campaignSummary?.EmptyCellphoneCount}
+														</span>
+													</Box>
+												)}
 											</>
 										)}
 
@@ -439,15 +453,21 @@ const SummaryModal = ({
 						)}
 					</div>
 				</div>
-				<Grid container className={classes.alertModalAction}>
-					<Button
-						className='ok-button'
-						variant='contained'
-						color='primary'
-						autoFocus
-						onClick={onConfirmOrYes}>
-						<>{translator('whatsapp.alertModal.okButtonText')}</>
-					</Button>
+				<Grid
+					container
+					className={classes.alertModalAction}
+					style={{ marginTop: '16px' }}>
+					<Tooltip title='Add' placement='top' arrow>
+						<Button
+							className='ok-button'
+							variant='contained'
+							color='primary'
+							autoFocus
+							disabled={campaignSummary && campaignSummary?.FinalCount <= 0}
+							onClick={onConfirmOrYes}>
+							<>{translator('whatsapp.alertModal.okButtonText')}</>
+						</Button>
+					</Tooltip>
 					<Button
 						className='cancel-button'
 						color='primary'

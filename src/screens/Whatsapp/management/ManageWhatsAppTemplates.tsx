@@ -245,9 +245,25 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						[classes.whatsappTemplateStatusRejected]: status === 'Rejected',
 					})}>
 					<>
-						{statusesByName[status]
-							? translator(statusesByName[status])
-							: status}
+						<CustomTooltip
+							isSimpleTooltip={false}
+							interactive={true}
+							classes={{
+								tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+								arrow: classes.fBlack,
+							}}
+							arrow={true}
+							placement={'top'}
+							title={translator(statusesByName[status] || status)}
+							text={translator(statusesByName[status] || status)}
+							icon={undefined}
+							style={undefined}>
+							<span>
+								{statusesByName[status]
+									? translator(statusesByName[status])
+									: status}
+							</span>
+						</CustomTooltip>
 					</>
 					{status === 'Rejected' && (
 						<CustomTooltip

@@ -22,6 +22,8 @@ import {
 	whatsappCampaignNameFilterData,
 	whatsappCampaignNameFilterPayloadData,
 	WhatsappCampaignSecondProps,
+	ApiGetCampaignSummary,
+	ApiGetCampaignSummaryPayloadData,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
@@ -42,6 +44,7 @@ import {
 	getAccountExtraData,
 	getAllGroups,
 	getCampaignSettings,
+	getWhatsAppCampaignSummary,
 	getWhatsappCampaignNameFilter,
 	saveCampaignSettings,
 	sendCampaign,
@@ -124,6 +127,8 @@ const SendCampaign = ({
 	const [finishedCampaigns, setFinishedCampaigns] = useState<
 		selectedFilterCampaignsProps[]
 	>([]);
+	const [campaignSummary, setCampaignSummary] =
+		useState<ApiGetCampaignSummaryPayloadData>();
 
 	useEffect(() => {
 		/**
@@ -317,9 +322,10 @@ const SendCampaign = ({
 	const onCampaignSave = async (
 		showMessage: boolean = true,
 		isLoading: boolean = false,
+		isValidate: boolean = true,
 		ApiSelectedGroups: testGroupDataProps[] = selectedGroups
 	) => {
-		if (validateSendSetting()) {
+		if (isValidate === true ? validateSendSetting() : true) {
 			let saveCampaignSettingsPayload: ApiSaveCampaignSettingsData = {
 				WACampaignID: Number(campaignID),
 				SendTypeID: Number(sendType),
@@ -370,12 +376,33 @@ const SendCampaign = ({
 	};
 
 	const onCampaignSend = async () => {
-		if (validateSendSetting()) {
-			const saveCampaignData = await onCampaignSave(false, true);
+		if (validateSendSetting() && campaignID) {
+			const saveCampaignData = await onCampaignSave(false, true, true);
+			setIsLoader(true);
+			const { payload: campaignSummaryData }: ApiGetCampaignSummary =
+				await dispatch<any>(getWhatsAppCampaignSummary(campaignID));
 			if (saveCampaignData) {
-				setIsSummaryModal(true);
+				if (campaignSummaryData.Status === apiStatus.SUCCESS) {
+					if (campaignSummaryData?.Data?.FinalCount > 0) {
+						setCampaignSummary(campaignSummaryData?.Data);
+						setIsSummaryModal(true);
+					} else {
+						setToastMessage({
+							...ToastMessages.ERROR,
+							message: translator('whatsappCampaign.noRecipient'),
+						});
+					}
+				} else {
+					campaignSummaryData?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: campaignSummaryData?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+				}
 			}
 		}
+		setIsLoader(false);
 	};
 
 	const onDeleteClick = () => {
@@ -412,7 +439,7 @@ const SendCampaign = ({
 				setIsExitCampaignOpen(true);
 				break;
 			case buttons.SAVE:
-				onCampaignSave(true, true);
+				onCampaignSave(true, true, true);
 				break;
 			case buttons.SEND:
 				onCampaignSend();
@@ -458,8 +485,9 @@ const SendCampaign = ({
 				setNewGroupName('');
 				setIsCreateNewGroup(false);
 			}
-			await onCampaignSave(false, false, [createdGroupData?.payload]);
+			await onCampaignSave(false, false, false, [createdGroupData?.payload]);
 		} else {
+			setIsLoader(false);
 			setGroupSendValidationErrors([
 				translator('whatsappCampaign.selectGroup'),
 			]);
@@ -547,7 +575,7 @@ const SendCampaign = ({
 				setIsLoader(false);
 				if (latestAddedGroup) {
 					setSelectedGroups([...selectedGroups, latestAddedGroup]);
-					await onCampaignSave(false, false, [
+					await onCampaignSave(false, false, false, [
 						...selectedGroups,
 						latestAddedGroup,
 					]);
@@ -718,6 +746,7 @@ const SendCampaign = ({
 					daysBeforeAfter={daysBeforeAfter}
 					specialDatedropDown={specialDatedropDown}
 					spectialDateFieldID={spectialDateFieldID}
+					campaignSummary={campaignSummary}
 				/>
 				<ValidationAlert
 					classes={classes}

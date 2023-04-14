@@ -66,5 +66,6 @@
 	"deleteTemplate": "Template deleted successfully",
 	"submitTemplate": "Template submitted successfully",
 	"saveTemplate": "Template saved successfully",
-	"chatMediaErrorMsg": "Can not view media in chat - click here to view the media"
+	"chatMediaErrorMsg": "Can not view media in chat - click here to view the media",
+	"noRecipient": "no recipients selected"
 }

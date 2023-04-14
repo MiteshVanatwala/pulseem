@@ -1,8 +1,8 @@
 {
 	"note": "שימו לב להקפיד על מגבלות השליחה היומיות - הודעות החורגות ממגבלת השליחה יחויבו אך לא יגיעו ליעדן",
-	"summaryNote": "הערה חשובה!",
-	"summaryNote2": "אל תחרוג מהיום",
-	"summaryNote3": "מגבלת הודעות",
+	"summaryNote": "!הערה חשובה",
+	"summaryNote2": "שימו לב שאינכם חורגים ממגבלת השליחה",
+	"summaryNote3": "לבדיקת המגבלה",
 	"header": "שליחת קמפיין WhatsApp",
 	"campaignName": "שם הקמפיין",
 	"campaignNamePlaceholder": "שם הקמפיין",
@@ -34,9 +34,9 @@
 	"summary": "סיכום",
 	"campaignFrom": "קמפיין מאת",
 	"when": "מתי",
-	"for": "ל",
-	"details": "פרטים",
-	"sendRandomlyTo": "שלח באופן אקראי אל -",
+	"for": "עבור",
+	"details": "פירוט",
+	"sendRandomlyTo": "שלח רנדומלית ל -",
 	"insert": "לְהַכנִיס",
 	"recipient": "נמענים מתוך סך הכל",
 	"limit": "בדוק את המגבלה שלך",
@@ -66,5 +66,6 @@
 	"deleteTemplate": "תבנית נמחקה",
 	"submitTemplate": "תבנית הוגשה בהצלחה",
 	"saveTemplate": "תבנית נשמרה בהצלחה",
-	"chatMediaErrorMsg": "לא ניתן להציג מדיה זאת בצ'אט - לחץ על הקישור כדי לצפות במדיה"
+	"chatMediaErrorMsg": "לא ניתן להציג מדיה זאת בצ'אט - לחץ על הקישור כדי לצפות במדיה",
+	"noRecipient": "לא נבחרו נמענים"
 }
