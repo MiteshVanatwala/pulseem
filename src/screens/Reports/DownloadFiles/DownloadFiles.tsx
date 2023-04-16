@@ -138,36 +138,37 @@ const DownloadFiles = ({ classes }: any) => {
   }
 
   const downloadFile = async (fileID: number, FileName: string, Type: string, SourceFileName: string) => {
-    await instence.get(`/LargeFiles/DonwloadFile/${Type}/${fileID}`, {
-      onDownloadProgress: (progressEvent: any) => {
-        console.log(Math.floor(progressEvent.loaded / progressEvent.total * 100));
-        setPercentage(fileID, Math.floor(progressEvent.loaded / progressEvent.total * 100));
-      },
-    }).then(response => {
-      setPercentage(fileID, 0);
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
+    window.open(`DownloadFile.ashx?fileFormat=${Type}&fileId=${fileID}`);
+    // await instence.get(`/LargeFiles/DonwloadFile/${Type}/${fileID}`, {
+    //   onDownloadProgress: (progressEvent: any) => {
+    //     console.log(Math.floor(progressEvent.loaded / progressEvent.total * 100));
+    //     setPercentage(fileID, Math.floor(progressEvent.loaded / progressEvent.total * 100));
+    //   },
+    // }).then(response => {
+    //   setPercentage(fileID, 0);
+    //   const url = window.URL.createObjectURL(new Blob([response.data]));
+    //   const link = document.createElement("a");
+    //   link.href = url;
 
-      let fileName = '';
-      if (SourceFileName && SourceFileName !== '') {
-        fileName = `${SourceFileName}.${Type}`
-      }
-      else {
-        if (FileName.indexOf('csv') > -1) {
-          fileName = fileName.toLocaleLowerCase().replace('csv', Type)
-        }
-      }
+    //   let fileName = '';
+    //   if (SourceFileName && SourceFileName !== '') {
+    //     fileName = `${SourceFileName}.${Type}`
+    //   }
+    //   else {
+    //     if (FileName.indexOf('csv') > -1) {
+    //       fileName = fileName.toLocaleLowerCase().replace('csv', Type)
+    //     }
+    //   }
 
-      link.setAttribute(
-        "download",
-        fileName
-      );
-      document.body.appendChild(link);
-      link.click();
-    }).catch(err => {
-      setToastMessage({ severity: 'error', color: 'error', message: t('common.fileDownloadError'), showAnimtionCheck: false });
-    });
+    //   link.setAttribute(
+    //     "download",
+    //     fileName
+    //   );
+    //   document.body.appendChild(link);
+    //   link.click();
+    // }).catch(err => {
+    //   setToastMessage({ severity: 'error', color: 'error', message: t('common.fileDownloadError'), showAnimtionCheck: false });
+    // });
   }
 
   const renderNameCell = (row: any) => {
