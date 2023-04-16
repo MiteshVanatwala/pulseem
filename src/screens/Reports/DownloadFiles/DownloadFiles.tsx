@@ -138,7 +138,7 @@ const DownloadFiles = ({ classes }: any) => {
   }
 
   const downloadFile = async (fileID: number, FileName: string, Type: string, SourceFileName: string) => {
-    window.open(`DownloadFile.ashx?fileFormat=${Type}&fileId=${fileID}`);
+    window.open(`/Pulseem/DownloadFile.ashx?fileFormat=${Type}&fileId=${fileID}`);
     // await instence.get(`/LargeFiles/DonwloadFile/${Type}/${fileID}`, {
     //   onDownloadProgress: (progressEvent: any) => {
     //     console.log(Math.floor(progressEvent.loaded / progressEvent.total * 100));
