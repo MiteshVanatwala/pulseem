@@ -1600,11 +1600,21 @@ const Groups = ({ classes }) => {
     const renderConfirmDialog = () => {
         let csvOnly = false;
         let exportTypeOptions = ExportFileTypes;
-        const clientsTotalCount = [...groupData?.Groups].reduce(
-            (accumulator, currentValue) => {
-                return accumulator + currentValue.TotalRecipients
-            }, 0);
-        if (clientsTotalCount > 100000) {
+
+        if (selectedGroups && selectedGroups.length > 0) {
+            const clientsTotalCount = [...groupData?.Groups].filter((g) => {
+                return selectedGroups.includes(g.GroupID);
+            }).reduce(
+                (accumulator, currentValue) => {
+                    return accumulator + currentValue.TotalRecipients
+                }, 0);
+
+            if (clientsTotalCount > 100000) {
+                csvOnly = true;
+                exportTypeOptions = [[...ExportFileTypes].pop()];
+            }
+        }
+        else {
             csvOnly = true;
             exportTypeOptions = [[...ExportFileTypes].pop()];
         }
