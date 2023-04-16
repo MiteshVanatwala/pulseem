@@ -1550,11 +1550,14 @@ const Groups = ({ classes }) => {
     }
     const handleConfirmExport = async (formatType, notifyEmail) => {
         setLoader(true);
+        const groupName = subAccountAllGroups.filter((g) => { return g.GroupID === selectedGroups[0] });
+
         const requestObject = {
             GroupIds: selectedGroups,
             NotifyEmail: notifyEmail,
             FileType: formatType,
-            Culture: isRTL ? 'he-il' : 'en-us'
+            Culture: isRTL ? 'he-il' : 'en-us',
+            FileName: selectedGroups.length === 1 ? groupName : 'PulseemGroups'
         };
 
         try {
@@ -1605,7 +1608,7 @@ const Groups = ({ classes }) => {
             csvOnly = true;
             exportTypeOptions = [[...ExportFileTypes].pop()];
         }
-        
+
         return (
             <ConfirmRadioDialog
                 classes={classes}
