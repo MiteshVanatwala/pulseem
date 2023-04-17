@@ -178,7 +178,7 @@ const DownloadFiles = ({ classes }: any) => {
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {moment(row.CreationDate).format("DD/MM/YYYY hh:mm A")}
+          {moment(row.CreationDate).format("DD/MM/YYYY HH:mm")}
         </TableCell>
         <TableCell
           classes={cellStyle}
