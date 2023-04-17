@@ -19,12 +19,11 @@ import VerificationDialog from '../../../components/DialogTemplates/Verification
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
-import { getCookie } from '../../../helpers/Functions/cookies';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { BiSave } from 'react-icons/bi'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { setCookie } from '../../../helpers/Functions/cookies';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -483,7 +482,7 @@ const NewsLetterInfo = ({ classes }) => {
                         window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                         return false;
                     }
-                    navigate(`/Campaigns`);
+                    navigate(`/react/Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
@@ -500,7 +499,7 @@ const NewsLetterInfo = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        navigate('/Campaigns');
+        navigate('/react/Campaigns');
     }
     const renderToast = () => {
         if (toastMessage) {
@@ -837,7 +836,7 @@ const NewsLetterInfo = ({ classes }) => {
                 window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                 return false;
             }
-            navigate('/Campaigns');
+            navigate('/react/Campaigns');
         }
     }
 
@@ -884,11 +883,16 @@ const NewsLetterInfo = ({ classes }) => {
                     className={clsx(
                         classes.actionButton,
                         classes.actionButtonLightGreen,
-                        classes.backButton
+                        classes.backButton,
+                        classes.ribbonContainer
                     )}
                     style={{ marginInlineStart: '8px' }}
                     color="primary"
-                >{t('master.continueToNewEditor')}
+                >
+                    {t('master.continueToNewEditor')}
+                    <div className="wrap">
+                        <span className="ribbon">{t('mainReport.newFeature')}</span>
+                    </div>
                 </Button>)
             }
             else {

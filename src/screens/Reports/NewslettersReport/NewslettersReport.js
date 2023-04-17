@@ -298,6 +298,7 @@ const NewslettersReport = ({ classes }) => {
     } catch (error) {
       console.log(error);
     }
+    setLoader(false);
   }
 
 

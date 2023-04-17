@@ -52,7 +52,7 @@ const SearchLine = ({
     onSetIsSearching,
     showAutoCompleteForm
 }: SearchObject) => {
-    const { t } = useTranslation();
+    const { t: translator } = useTranslation();
     const localClasses = useStyles();
 
     const priorDate = moment().subtract(30, 'days').utcOffset(0).format('YYYY-MM-DD HH:mm').toString();
@@ -119,6 +119,57 @@ const SearchLine = ({
     const renderDateFields = () => {
         return (
             <>
+                {showAutoCompleteForm && <Grid item>
+                    <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
+                        <Autocomplete
+                            disableListWrap
+                            key={autoCompleteKey}
+                            id='searchByCampaign'
+                            getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
+                            noOptionsText={translator("campaigns.newsLetterEditor.errors.CampaignNotFound")}
+                            clearOnBlur={false}
+                            options={autoCompleteOptions}
+                            renderOption={renderOptions}
+                            onChange={(option: any, selected: any) => {
+                                setSearchRequest({
+                                    ...searchRequest, PageIndex: 1,
+                                    CampaignID: selected?.CampaignID
+                                });
+                            }}
+                            disableClearable={false}
+                            onInputChange={(e: any, searchTerm: any) => {
+                                if (searchTerm === '') {
+                                    setAutoCompleteOptions(finishedCampaigns.slice(0, 200));
+                                }
+                            }}
+                            renderInput={(params) => {
+                                return (<TextField
+                                    {...params}
+                                    onChange={(e: any) => {
+                                        if (e.target.value !== '') {
+                                            const campaigns = finishedCampaigns.map((item: any, idx: number) => {
+                                                return { Name: item.Name, CampaignID: item.SMSCampaignID, key: idx }
+                                            });
+                                            const filtered = campaigns.filter((cmp: any) => { return cmp.Name.indexOf(e.target.value) > -1 })
+                                            setAutoCompleteOptions(filtered);
+                                        }
+                                        else {
+                                            setAutoCompleteOptions(finishedCampaigns.slice(0, 200));
+                                        }
+                                    }}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        placeholder: translator('common.searchByCampaign'),
+
+                                    }}
+                                    style={{
+                                        width: 240,
+                                    }}
+                                    variant="outlined" />)
+                            }}
+                        />
+                    </FormControl>
+                </Grid>}
                 {dateFields()}
                 {windowSize !== 'xs' && <Grid item>
                     <TextField
@@ -133,7 +184,7 @@ const SearchLine = ({
                         value={searchRequest.FromNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
+                        placeholder={translator('common.FrmNumber')}
                     />
                 </Grid>
                 }
@@ -154,7 +205,7 @@ const SearchLine = ({
                     variant='inline'
                     keyboardIcon={<CalendarIcon />}
                     format={'DD/MM/YYYY'}
-                    placeholder={t(
+                    placeholder={translator(
                         'mms.locFromDateResource1.Text'
                     )}
                     initialFocusedDate={moment()}
@@ -182,7 +233,7 @@ const SearchLine = ({
                     variant='inline'
                     keyboardIcon={<CalendarIcon />}
                     format={'DD/MM/YYYY'}
-                    placeholder={t('mms.locToDateResource1.Text')}
+                    placeholder={translator('mms.locToDateResource1.Text')}
                     initialFocusedDate={moment()}
                     value={searchRequest?.ToDate}
                     onChange={(date: any, value?: string | null | undefined) => {
@@ -212,7 +263,7 @@ const SearchLine = ({
                         value={searchRequest.FromNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, FromNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.FrmNumber')}
+                        placeholder={translator('common.FrmNumber')}
                     />
                 </Grid>
                 <Grid item>
@@ -228,7 +279,7 @@ const SearchLine = ({
                         value={searchRequest.ToNumber}
                         onChange={(e) => setSearchRequest({ ...searchRequest, ToNumber: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.ToNumber')}
+                        placeholder={translator('common.ToNumber')}
                     />
                 </Grid>
                 {dateFields()}
@@ -239,7 +290,7 @@ const SearchLine = ({
                         value={searchRequest.TextMessage}
                         onChange={(e) => setSearchRequest({ ...searchRequest, TextMessage: e.target.value })}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('common.messageContent')}
+                        placeholder={translator('common.messageContent')}
                     />
                 </Grid>
             </>
@@ -275,7 +326,7 @@ const SearchLine = ({
                         id='searchByCampaign'
                         getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
                         // @ts-ignore
-                        noOptionsText={t("campaigns.newsLetterEditor.errors.CampaignNotFound")}
+                        noOptionsText={translator("campaigns.newsLetterEditor.errors.CampaignNotFound")}
                         clearOnBlur={false}
                         options={autoCompleteOptions}
                         renderOption={renderOptions}
@@ -308,7 +359,7 @@ const SearchLine = ({
                                 }}
                                 InputProps={{
                                     ...params.InputProps,
-                                    placeholder: t('common.searchByCampaign'),
+                                    placeholder: translator('common.searchByCampaign'),
 
                                 }}
                                 style={{
@@ -327,8 +378,7 @@ const SearchLine = ({
                     onClick={handleSearch}
                     className={classes.searchButton}
                     endIcon={<SearchIcon />}>
-                    {/* @ts-ignore */}
-                    {t('campaigns.btnSearchResource1.Text')}
+                    {translator<string>('campaigns.btnSearchResource1.Text')}
                 </Button>
                 {windowSize !== 'xs' && <Link
                     color='initial'
@@ -336,8 +386,7 @@ const SearchLine = ({
                     underline='none'
                     onClick={() => setAdvanceSearch(!advanceSearch)}
                     className={clsx(localClasses.dBlock, classes.dBlock, classes.mt1, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-                    {/* @ts-ignore */}
-                    {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+                    {translator<string>(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
                 </Link>
                 }
             </Grid>
@@ -350,8 +399,7 @@ const SearchLine = ({
                     }}
                     className={classes.searchButton}
                     endIcon={<ClearIcon />}>
-                    {/* @ts-ignore */}
-                    {t('common.clear')}
+                    {translator<string>('common.clear')}
                 </Button>
             </Grid>
             }

@@ -18,7 +18,9 @@ import { DeletePropertyFromArrayObject, HandleExportData, ReplaceNull } from '..
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus, WhatsappStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
+import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useLocation } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
 import { Title } from '../../../components/managment/Title';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
@@ -280,113 +282,122 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   };
 
   const handleExportFile = async (formatType) => {
-    setDialog(false);
+    setDialog(null);
     setLoader(true);
     let response, fileName = null;
 
-    if (tabValue === 0) {
-      searchData.sms.ShowContent = showContent;
-      response = dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
+    switch (tabValue) {
+      case 0: // sms
+        {
+          searchData.sms.ShowContent = showContent;
+          response = dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
 
-      const exportOption = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusToString: false,
-        ConvertStatusDescription: true,
-        Statuses: SmsStatus,
-        ReplaceClientStatus: true,
-        DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
-        Order: Object.keys(excelHeaders.SMS)
-      };
+          const exportOption = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: SmsStatus,
+            ReplaceClientStatus: true,
+            DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
+            Order: Object.keys(excelHeaders.SMS)
+          };
 
-      try {
-        const result = await HandleExportData(response.payload, exportOption);
+          try {
+            const result = await HandleExportData(response.payload, exportOption);
 
-        fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: formatType,
-          fields: excelHeaders.SMS
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
+            fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.SMS
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
+      case 1: // Email
+        {
+          response = dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: EmailStatus,
+            ReplaceClientStatus: true,
+            PropertyToReplace: "Status",
+            PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
+            ReplaceNull: true,
+            DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
+            Order: Object.keys(excelHeaders.EMAIL)
+          };
 
+          try {
+            const result = await HandleExportData(response.payload, exportOptions);
+
+            fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.EMAIL
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
+      case 2: // Whatsapp
+        {
+          const requestPayload = { ...defaultRequests.WHATSAPP };
+          requestPayload.IsExport = true;
+          response = await dispatch(getDirectReport(requestPayload));
+
+          const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            ConvertStatusDescription: true,
+            Statuses: WhatsappStatus,
+            ReplaceClientStatus: true,
+            PropertyToReplace: '',
+            ReplaceNull: true,
+            Order: Object.keys(excelHeaders.WHATSAPP)
+          };
+
+          try {
+            let result = await HandleExportData(response.payload?.Data, exportOptions);
+            result = await ReplaceNull(result, 'ErrorMessage', '');
+            result = await ReplaceNull(result, 'TemplateVariables', '');
+            result = await ReplaceNull(result, 'ReferenceId', '');
+
+
+
+            fileName = "Whatsapp_DirectReports";
+            ExportFile({
+              data: result,
+              fileName: fileName,
+              exportType: formatType,
+              fields: excelHeaders.WHATSAPP
+            });
+          } catch (e) {
+            console.log(e);
+          }
+          finally {
+            setLoader(false);
+          }
+          break;
+        }
     }
-    if (tabValue === 1) {
-      response = dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-      const exportOptions = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusToString: false,
-        ConvertStatusDescription: true,
-        Statuses: EmailStatus,
-        ReplaceClientStatus: true,
-        PropertyToReplace: "Status",
-        PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
-        ReplaceNull: true,
-        DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
-        Order: Object.keys(excelHeaders.EMAIL)
-      };
-
-      try {
-        const result = await HandleExportData(response.payload, exportOptions);
-
-        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: formatType,
-          fields: excelHeaders.EMAIL
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
-    }
-    if (tabValue === 2) {
-      response = await dispatch(getDirectReport(searchData.whatsapp));
-      searchData.whatsapp.IsExport = true;
-      let finalData = response?.payload;
-      finalData = ReplaceNull(finalData, 'ErrorMessage', '');
-      finalData = ReplaceNull(finalData, 'ReferenceId', '');
-      finalData = DeletePropertyFromArrayObject(finalData, 'Status');
-      fileName = "Whatsapp_DirectReports";
-
-      const exportOptions = {
-        OrderItems: true,
-        FormatDate: true,
-        ConvertStatusDescription: true,
-        Statuses: WhatsappStatus,
-        ReplaceClientStatus: true,
-        ReplaceNull: true,
-        Order: Object.keys(excelHeaders.WHATSAPP)
-      };
-
-      try {
-        const result = await HandleExportData(finalData, exportOptions);
-
-        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
-        ExportFile({
-          data: result,
-          fileName: fileName,
-          exportType: formatType,
-          fields: excelHeaders.EMAIL
-        });
-      } catch (e) {
-        console.log(e);
-      }
-      finally {
-        setLoader(false);
-      }
-    }
-
   }
   const renderTabs = () => {
     return (
@@ -540,4 +551,4 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   );
 }
 
-export default DirectSendReport
+export default DirectSendReport;

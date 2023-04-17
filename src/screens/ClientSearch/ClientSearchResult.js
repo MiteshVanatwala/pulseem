@@ -50,7 +50,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, FlatObject, FormatDate, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
+import { HandleExportData, FlatObject, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
 import { ClientStatus, SmsStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -1343,11 +1343,11 @@ const ClientSearchResult = ({ props, classes }) => {
             setLoader(true);
             setSelectedClients([ClientID]);
             const recipientRequest = await dispatch(getClientsById([ClientID]));
-            const clientToEdit = recipientRequest?.payload?.Data[0];
+            const cte = recipientRequest?.payload?.Data[0];
             //const existsClient = data.find((c) => { return c.ClientID === ClientID });
             //const tempData = data.filter((c) => { return c.ClientID !== ClientID });
             //setData([ ...tempData, clientToEdit ])
-            setClientToEdit(clientToEdit);
+            setClientToEdit(cte);
             setDialog(DialogType.EDIT_RECIPIENT);
             setLoader(false);
           }

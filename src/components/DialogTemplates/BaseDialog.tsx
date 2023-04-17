@@ -11,7 +11,6 @@ import {
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
@@ -79,7 +78,7 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
-        style={{ textAlign: 'center', marginTop: 15 }}
+        style={{ textAlign: 'center', marginTop: 15, color: "#000" }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -221,7 +220,7 @@ export const BaseDialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {RenderTopBar()}
         {RenderContent()}
-      </Paper>
-    </Dialog>
+      </Paper >
+    </Dialog >
   );
 };

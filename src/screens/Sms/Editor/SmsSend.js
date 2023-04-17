@@ -15,8 +15,8 @@ import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useParams } from 'react-router-dom';
-import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
-import Gif from "../../../assets/images/managment/check-circle.gif";
+import { BsTrash, BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import Gif from '../../../assets/images/managment/check-circle.gif';
 import * as XLSX from 'xlsx';
 import Title from '../../../components/Wizard/Title'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
@@ -28,15 +28,15 @@ import { getGroupsBySubAccountId, combinedGroup } from "../../../redux/reducers/
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
-import { FaExclamationCircle } from 'react-icons/fa'
-import { logout } from '../../../helpers/Api/PulseemReactAPI'
-import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
-import useRedirect from "../../../helpers/Routes/Redirect";
-import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
-import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+import { FaExclamationCircle } from 'react-icons/fa';
+import { logout } from '../../../helpers/Api/PulseemReactAPI';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import useRedirect from '../../../helpers/Routes/Redirect';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from '../../../redux/reducers/ConnectorsSlice';
 
 function Alert(props) {
-  return <MuiAlert elevation={0} variant="filled" {...props} />;
+	return <MuiAlert elevation={0} variant='filled' {...props} />;
 }
 
 const SmsSend = ({ classes, ...props }) => {

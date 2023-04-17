@@ -2158,7 +2158,7 @@ const Groups = ({ classes }) => {
                         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
                         selectedGroups={selectedGroups}
                         selectGroup={(idArr) => setSelectedGroups(idArr)}
-                        onAddRecipient={handleAddRecipientResponse}
+                        onAddRecipient={(_, result) => handleAddRecipientResponse(result)}
                     />
                 }
                 case DialogType.DELETE_RECIPIENT:

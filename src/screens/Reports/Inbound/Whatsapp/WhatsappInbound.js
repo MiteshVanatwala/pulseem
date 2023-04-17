@@ -47,8 +47,6 @@ const WhatsappInbound = ({ classes }) => {
         IsExport: false
     };
     const [request, setRequest] = useState(defaultRequest);
-    const [searchRequest, setSearchRequest] = useState(defaultRequest)
-
 
     const getInboundData = async () => {
         setShowLoader(true);
@@ -68,13 +66,6 @@ const WhatsappInbound = ({ classes }) => {
             getInboundData();
         }
     }, [request, page, rowsPerPage]);
-
-    useEffect(() => {
-        if (!isSearching) {
-            setSearchRequest(defaultRequest);
-        }
-    }, [isSearching]);
-
 
     const renderHeader = () => {
         return (

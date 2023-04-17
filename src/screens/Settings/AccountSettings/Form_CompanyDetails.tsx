@@ -182,7 +182,7 @@ const FORM_COMPANY_DETAILS = ({
     if (name === "TwoFactorAuth") {
       const req = {
         ...companyDetails,
-        TwoFactorAuthEnabled: !!!companyDetails?.TwoFactorAuthEnabled,
+        TwoFactorAuthEnabled: true,
       };
       on2FAUpdate({ ...req } as AccountSettings);
 

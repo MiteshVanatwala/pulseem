@@ -30,7 +30,6 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { Title } from '../../../components/managment/Title';
 import { useNavigate } from 'react-router-dom';
-import { getCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { setCookie } from '../../../helpers/Functions/cookies';

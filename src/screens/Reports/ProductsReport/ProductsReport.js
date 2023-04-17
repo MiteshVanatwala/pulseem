@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
+import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,10 +18,10 @@ import { GetProductReports } from '../../../redux/reducers/reportSlice';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { HandleExportData } from '../../../helpers/Export/ExportHelper';
-import { ExportFile } from '../../../helpers/Export/ExportFile';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -104,7 +104,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
+                    EventTypeID: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
                 }
             }),
         },
@@ -115,7 +115,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
+                    EventTypeID: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
                 }
             }),
         },
@@ -136,7 +136,6 @@ const ProductsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
-        setDialogType(null);
         setLoader(true);
 
         const exportOptions = {
@@ -299,10 +298,8 @@ const ProductsReport = ({ classes }) => {
                     target="_blank">
                     {value && value.toLocaleString() || '0'}
                 </Typography>
-
             </Box>
         )
-
     }
 
     const renderRow = (row) => {

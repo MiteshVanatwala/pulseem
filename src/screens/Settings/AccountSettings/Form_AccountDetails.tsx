@@ -14,7 +14,6 @@ import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { Title } from "../../../components/managment/Title";
-import Illustration_app_Settings from "../../../assets/images/settings/Illustration_app_Settings";
 import { AccDtlPropTypes } from "../../../Models/Settings/AccountDetails";
 import useCore from "../../../helpers/hooks/Core";
 import { IsNumberField } from "../../../helpers/Utils/Validations";
@@ -78,7 +77,6 @@ const FORM_ACCOUNT_DETAILS = ({
         Element={null}
       />
       <Box className={"formContainer"}>
-        {/* <Illustration_app_Settings className={"svg_app_settings"} /> */}
         <Grid container className={"form"}>
           <Grid item xs={12} sm={6} md={4} className={"textBoxWrapper"}>
             <Typography>

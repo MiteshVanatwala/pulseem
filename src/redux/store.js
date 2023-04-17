@@ -12,7 +12,7 @@ import recipientReportsReducer from './reducers/recipientsReportSlice';
 import shortcutReducer from './reducers/shortcutSlice';
 import paymentReducer from './reducers/paymentSlice';
 import commonReducer from './reducers/commonSlice';
-import siteTrackingReducer from './reducers/siteTrackingSlice'
+import siteTrackingReducer from './reducers/siteTrackingSlice';
 import clientReducer from './reducers/clientSlice';
 import campaignReducer from './reducers/campaignEditorSlice';
 import groupSlice from './reducers/groupSlice';

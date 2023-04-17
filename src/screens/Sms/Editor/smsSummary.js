@@ -85,7 +85,7 @@ const SmsSummary = ({ classes,
               </Box>
             </Box>
             <Box className={classes.sumRight}>
-              <MobilePreview classes={classes} fromNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
+              <MobilePreview classes={classes} campaignNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
             </Box>
           </Box>
 
