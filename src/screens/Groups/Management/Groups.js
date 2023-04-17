@@ -20,6 +20,7 @@ import {
     deleteGroups,
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
+import { exportGroupsClients } from '../../../redux/reducers/clientSlice';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import AddGroupPopUp from "./Popup/AddGroupPopUp";
@@ -44,6 +45,10 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes'
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import queryString from 'query-string';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { exportAsXLSX, exportFile } from '../../../helpers/exportFromJson';
+import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { ClientStatus } from "../../../helpers/PulseemArrays";
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -76,6 +81,52 @@ const Groups = ({ classes }) => {
     const from = state?.from || "/";
     const pageProperty = useRef();
     const qs = (window.location.search && queryString.parse(window.location.search)) || state;
+    const exportColumnHeader = useRef(null);
+
+    useEffect(() => {
+        if (extraData && Object.entries(extraData).length > 0) {
+            let updatingObject = {
+                "Status": t('common.Status'),
+                "SmsStatus": t('common.smsStatus'),
+                "CreationDate": t('common.CreationDate'),
+                "FirstName": t('smsReport.firstName'),
+                "LastName": t('smsReport.lastName'),
+                "Email": t("common.Mail"),
+                "Telephone": t('common.telephone'),
+                "Cellphone": t('common.Cellphone'),
+                "Address": t('common.address'),
+                "BirthDate": t('common.birthDate'),
+                "City": t('common.city'),
+                "State": t('common.state'),
+                "Country": t('common.country'),
+                "Zip": t('common.zip'),
+                "Company": t('common.company'),
+                "ReminderDate": t('recipient.reminderDate'),
+            };
+            updatingObject = {
+                ...updatingObject,
+                "ExtraDate1": t('common.ExtraDate1'),
+                "ExtraDate2": t('common.ExtraDate2'),
+                "ExtraDate3": t('common.ExtraDate3'),
+                "ExtraDate4": t('common.ExtraDate4'),
+                "ExtraField1": t('common.ExtraField1'),
+                "ExtraField2": t('common.ExtraField2'),
+                "ExtraField3": t('common.ExtraField3'),
+                "ExtraField4": t('common.ExtraField4'),
+                "ExtraField5": t('common.ExtraField5'),
+                "ExtraField6": t('common.ExtraField6'),
+                "ExtraField7": t('common.ExtraField7'),
+                "ExtraField8": t('common.ExtraField8'),
+                "ExtraField9": t('common.ExtraField9'),
+                "ExtraField10": t('common.ExtraField10'),
+                "ExtraField11": t('common.ExtraField11'),
+                "ExtraField12": t('common.ExtraField12'),
+                "ExtraField13": t('common.ExtraField13'),
+            }
+            updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
+            exportColumnHeader.current = updatingObject;
+        }
+    }, [extraData])
 
     const DialogType = {
         ADD_GROUP: "ADD_GROUP",
@@ -90,7 +141,8 @@ const Groups = ({ classes }) => {
         SUMMARY: "SUMMARY",
         EXPORT_ALL: "EXPORT_ALL",
         EXPORT_SELECTED: "EXPORT_SELECTED",
-        SIMPLY_CLUB: "SIMPLY_CLUB"
+        SIMPLY_CLUB: "SIMPLY_CLUB",
+        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
     };
     const TABLE_HEAD = [
         {
@@ -128,14 +180,6 @@ const Groups = ({ classes }) => {
             </>
         );
     };
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -475,18 +519,6 @@ const Groups = ({ classes }) => {
                 </Grid>
             </Grid>
         );
-    };
-
-    const REDIRECT_OPTIONS = {
-        ShowGroup: 0,
-        ShowMails: 10,
-        ShowMailsActive: 11,
-        ShowMailsRemoved: 12,
-        ShowMailsErrored: 13,
-        ShowSms: 20,
-        ShowSmsActive: 21,
-        ShowSmsRemoved: 22,
-        ShowSmsErrored: 23
     };
 
     const renderRow = (row) => {
@@ -1468,7 +1500,7 @@ const Groups = ({ classes }) => {
                 break;
             }
             case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
                 setDialog(DialogType.MESSAGE);
                 break;
             }
@@ -1488,22 +1520,93 @@ const Groups = ({ classes }) => {
             }
         }
     }
-    const handleConfirmExport = (formatType) => {
-        let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}&formatType=${formatType}`;
-        if (selectedGroups && selectedGroups.length > 0) {
-            queryString += `&Groups=${selectedGroups.join(',')}`;
+    const handleDownloadFile = async (response, formatType) => {
+        let orderList = await response?.Clients.map((client) => {
+            let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
+            let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+            client.Status = t(tempStatus.value);
+            client.SmsStatus = t(tempSmsStatus.value);
+            return client;
+        }, []);
+        orderList = orderList.map((ol) => { return flatObject(ol) });
+        orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+        orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
+        orderList = formatDateTime(orderList, t);
+
+        if (formatType === 'csv') {
+            // Pay attention -> We set XLSX for better header's order.
+            // CSV not supporting numeric extra fields order.
+            exportFile({
+                data: orderList,
+                exportType: formatType,
+                fields: exportColumnHeader.current,
+                fileName: 'PulseemClientsExport'
+            })
         }
-        if (selectedGroups.length === 1) {
-            const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
-            queryString += `&GroupName=${groupName.replace(' ', '-')}`;
+        else {
+            await exportAsXLSX(orderList, exportColumnHeader.current, `PulseemClientsExport.XLSX`);
         }
-        // This should be change in the .NET site for support the format file selection POP UP 
-        window.open(`/Pulseem/ClientExport.csv?${queryString}`);
+    }
+    const handleConfirmExport = async (formatType, notifyEmail) => {
         setShowConfirmDialog(false);
+        setLoader(true);
+        const group = subAccountAllGroups.find((g) => { return g.GroupID === selectedGroups[0] });
+
+        const requestObject = {
+            GroupIds: selectedGroups,
+            NotifyEmail: notifyEmail,
+            FileType: formatType,
+            Culture: isRTL ? 0 : 1,
+            FileName: selectedGroups.length === 1 ? group.GroupName : 'PulseemGroups'
+        };
+
+        try {
+            const response = await dispatch(exportGroupsClients(requestObject));
+
+            switch (response?.payload?.StatusCode) {
+                case 201: { // Donwloadable
+                    handleDownloadFile(response?.payload, formatType);
+                    break;
+                }
+                case 202: { // Run in background
+                    setResponseMessage({
+                        title: '',
+                        message:
+                            RenderHtml(t("recipient.exportGroups.inProgress")
+                                .replace("##notifyEmailPlaceHolder##", notifyEmail !== null ? t('recipient.exportGroups.inProgressNotifyOnDone')
+                                    .replace("##notifyEmail##", `<b>${notifyEmail}</b>`) : t('recipient.exportGroups.downloadPageRedirect')))
+                    })
+                    setDialog(DialogType.MESSAGE);
+                    break;
+                }
+                case 403: { // Feature not allowed
+                    break;
+                }
+                case 405: {
+                    setResponseMessage({ title: '', message: t("recipient.exportGroups.exportLimitationErrorMessage") })
+                    setDialog(DialogType.MESSAGE);
+                    break;
+                }
+
+                default:
+                case 500: {
+                    setResponseMessage({ title: '', message: t("common.somethingWentWrong") })
+                    setDialog(DialogType.MESSAGE);
+                    break;
+                }
+            }
+        } catch (e) {
+            // Log
+        }
+        finally {
+            setLoader(false);
+        }
     }
     const renderConfirmDialog = () => {
         let csvOnly = false;
         let exportTypeOptions = ExportFileTypes;
+
         if (selectedGroups && selectedGroups.length > 0) {
             const clientsTotalCount = [...groupData?.Groups].filter((g) => {
                 return selectedGroups.includes(g.GroupID);
@@ -1528,12 +1631,13 @@ const Groups = ({ classes }) => {
                 isOpen={showConfirmDialog}
                 title={t('common.ExportGroups')}
                 text={!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
-                radioTitle={t('common.SelectFormat')}
-                onConfirm={(e) => handleConfirmExport(e)}
+                radioTitle={csvOnly ? '' : t('common.SelectFormat')}
+                onConfirm={(e, notifyEmail) => handleConfirmExport(e, notifyEmail)}
                 onCancel={() => setShowConfirmDialog(false)}
                 cookieName={'exportFormat'}
                 defaultValue={csvOnly ? 'csv' : 'xls'}
-                options={exportTypeOptions}
+                showEmailToNotify={csvOnly}
+                options={csvOnly ? null : exportTypeOptions}
             />
         );
     }
