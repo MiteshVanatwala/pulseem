@@ -1549,15 +1549,16 @@ const Groups = ({ classes }) => {
         }
     }
     const handleConfirmExport = async (formatType, notifyEmail) => {
+        setShowConfirmDialog(false);
         setLoader(true);
-        const groupName = subAccountAllGroups.filter((g) => { return g.GroupID === selectedGroups[0] });
+        const group = subAccountAllGroups.find((g) => { return g.GroupID === selectedGroups[0] });
 
         const requestObject = {
             GroupIds: selectedGroups,
             NotifyEmail: notifyEmail,
             FileType: formatType,
-            Culture: isRTL ? 'he-il' : 'en-us',
-            FileName: selectedGroups.length === 1 ? groupName : 'PulseemGroups'
+            Culture: isRTL ? 0 : 1,
+            FileName: selectedGroups.length === 1 ? group.GroupName : 'PulseemGroups'
         };
 
         try {
@@ -1569,7 +1570,13 @@ const Groups = ({ classes }) => {
                     break;
                 }
                 case 202: { // Run in background
-                    setResponseMessage({ title: '', message: RenderHtml(t("recipient.exportGroups.inProgress").replace("##notifyEmailPlaceHolder##", notifyEmail !== '' ? t('recipient.exportGroups.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${notifyEmail}</b>`) : '')) })
+                    setResponseMessage({
+                        title: '',
+                        message:
+                            RenderHtml(t("recipient.exportGroups.inProgress")
+                                .replace("##notifyEmailPlaceHolder##", notifyEmail !== null ? t('recipient.exportGroups.inProgressNotifyOnDone')
+                                    .replace("##notifyEmail##", `<b>${notifyEmail}</b>`) : t('recipient.exportGroups.downloadPageRedirect')))
+                    })
                     setDialog(DialogType.MESSAGE);
                     break;
                 }
@@ -1584,18 +1591,17 @@ const Groups = ({ classes }) => {
 
                 default:
                 case 500: {
+                    setResponseMessage({ title: '', message: t("common.somethingWentWrong") })
+                    setDialog(DialogType.MESSAGE);
                     break;
                 }
             }
-            setShowConfirmDialog(false);
         } catch (e) {
-
+            // Log
         }
         finally {
             setLoader(false);
         }
-
-
     }
     const renderConfirmDialog = () => {
         let csvOnly = false;

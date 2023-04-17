@@ -25,7 +25,7 @@ const ConfirmRadioDialog = ({
     const { isRTL } = useSelector(state => state?.core);
     const { verifiedEmails } = useSelector(state => state.common);
     const [value, setValue] = useState(getCookie(cookieName) ?? defaultValue);
-    const [notifyEmail, setNotifyEmail] = useState(-1);
+    const [notifyEmail, setNotifyEmail] = useState(null);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -95,7 +95,7 @@ const ConfirmRadioDialog = ({
                                     <Select
                                         native
                                         displayEmpty
-                                        value={notifyEmail}
+                                        value={notifyEmail ?? -1}
                                         onChange={(event, val) => {
                                             setNotifyEmail(event.target.value);
                                         }}
