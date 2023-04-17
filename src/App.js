@@ -41,6 +41,7 @@ import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
+import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -432,6 +433,11 @@ const renderRoutes = (classes, history) => {
         exact
         path={'/reports/Inbound/:type/:id'}
         element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/Groups/Download'}
+        element={<DownloadFiles classes={classes} />}
       />
     </Routes>
   )

@@ -181,7 +181,8 @@ const ClientSearchResult = ({ props, classes }) => {
     UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
     CONFIRM_INVALID: "CONFIRM_INVALID",
     EXPORT_FORMAT: "EXPORT_FORMAT",
-    UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS"
+    UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS",
+    EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
   };
   useEffect(() => {
     const initExtraFields = async () => {
@@ -345,50 +346,69 @@ const ClientSearchResult = ({ props, classes }) => {
       handleFilter();
     }
   };
-  const handleDownloadCsv = async (formatType) => {
+  const handleDownloadCsv = async (formatType, notifyEmail) => {
     setDialog(null);
     setIsDownloadProgress(true);
     setLoader(true);
-    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
+    setEmailToNotify(notifyEmail);
+    const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName, NotifyEmail: notifyEmail }));
     if (response && response.payload) {
       const data = response.payload;
-      if (data.StatusCode === 201) {
-        let orderList = await data.Clients.map((client) => {
-          let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
-          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
-          client.Status = t(tempStatus.value);
-          client.SmsStatus = t(tempSmsStatus.value);
-          return client;
-        }, []);
-        orderList = orderList.map((ol) => { return flatObject(ol) });
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
-        }
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
-          searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          orderList = deletePropertyFromArrayObject(orderList, "SendDate");
-        }
-        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
-        orderList = formatDateTime(orderList, t);
-        const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
 
-        if (formatType === 'csv') {
-          // Pay attention -> We set XLSX for better header's order.
-          // CSV not supporting numeric extra fields order.
-          exportFile({
-            data: orderList,
-            exportType: formatType,
-            fields: exportColumnHeader.current,
-            fileName: fileName
-          })
+      switch (data?.StatusCode) {
+        case 201: {
+          let orderList = await data.Clients.map((client) => {
+            let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
+            let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+            client.Status = t(tempStatus.value);
+            client.SmsStatus = t(tempSmsStatus.value);
+            return client;
+          }, []);
+          orderList = orderList.map((ol) => { return flatObject(ol) });
+          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+            orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+          }
+          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+            searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+            orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+          }
+          orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
+          orderList = formatDateTime(orderList, t);
+
+          if (formatType === 'csv') {
+            // Pay attention -> We set XLSX for better header's order.
+            // CSV not supporting numeric extra fields order.
+            exportFile({
+              data: orderList,
+              exportType: formatType,
+              fields: exportColumnHeader.current,
+              fileName: fileName
+            })
+          }
+          else {
+            await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
+          }
+          break;
         }
-        else {
-          await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
+        case 202: {
+          setDialog(DialogType.EXPORT_IN_PROGRESS);
+          break;
+        }
+        case 403: { // Feature not allowed
+          break;
+        }
+        case 405: {
+          setToastMessage(t("recipient.exportGroups.exportLimitationErrorMessage"));
+          break;
+        }
+        default: {
+          setToastMessage(t('common.errorOccured'));
+          break;
         }
       }
-      else {
-        setToastMessage(t('common.errorOccured'));
-      }
+
     }
     setLoader(false);
     setIsDownloadProgress(false);
@@ -1760,6 +1780,38 @@ const ClientSearchResult = ({ props, classes }) => {
             showEmailToNotify={TotalCount > 10000}
           />;
         }
+        case DialogType.EXPORT_IN_PROGRESS: {
+          return <BaseDialog
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={dialog === DialogType.EXPORT_IN_PROGRESS}
+            renderButtons={() => (<>
+              <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+              >
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      setDialog(null)
+                    }}
+                    className={clsx(
+                      classes.solidDialogButton,
+                      classes.dialogConfirmButton
+                    )}>
+                    {t('common.confirm')}
+                  </Button>
+                </Grid>
+              </Grid>
+            </>)}
+          >
+            {RenderHtml(t("recipient.exportGroups.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.exportGroups.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
+          </BaseDialog>
+        }
         case DialogType.UNSUBSCRIBED_IN_PROGRESS: {
           return <BaseDialog
             showDefaultButtons={false}
@@ -1830,12 +1882,13 @@ const ClientSearchResult = ({ props, classes }) => {
         classes={classes}
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
-        radioTitle={t('common.SelectFormat')}
-        onConfirm={(e) => handleDownloadCsv(e)}
+        radioTitle={TotalCount > 100000 ? '' : t('common.SelectFormat')}
+        onConfirm={(e, notifyEmail) => handleDownloadCsv(e, notifyEmail)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
         defaultValue={TotalCount > 100000 ? "csv" : "xls"}
-        options={TotalCount > 100000 ? [[...ExportFileTypes].pop()] : ExportFileTypes}
+        showEmailToNotify={TotalCount > 100000}
+        options={TotalCount > 100000 ? null : ExportFileTypes}
       />
       <Loader isOpen={showLoader} progress={downloadProgress} message={t("common.downloadInProgress")} isDownloadProgress={isDownloadProgress} />
     </DefaultScreen>

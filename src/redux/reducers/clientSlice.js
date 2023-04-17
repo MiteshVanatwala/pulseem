@@ -141,8 +141,15 @@ export const getClientsById = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-
-
+export const exportGroupsClients = createAsyncThunk(
+  'client/ExportGroupsClients', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.post(`client/ExportGroupsClients`, { ...payload });
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const clientSlice = createSlice({
   name: 'client',
@@ -204,7 +211,7 @@ export const clientSlice = createSlice({
     })
     builder.addCase(getExportData.fulfilled, (state, { payload }) => {
       state.downloadProgress = null;
-  })
+    })
   }
 })
 

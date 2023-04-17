@@ -18,7 +18,7 @@ export const reportSlice = createSlice({
     showContent: false,
     productsReportDetails: [],
     productCategories: [],
-    exportPRData: []
+    exportPRData: [],
   },
   reducers: {
     setShowContent: (state, action) => {
