@@ -1303,7 +1303,7 @@ const ClientSearchResult = ({ props, classes }) => {
             //const existsClient = data.find((c) => { return c.ClientID === ClientID });
             //const tempData = data.filter((c) => { return c.ClientID !== ClientID });
             //setData([ ...tempData, clientToEdit ])
-            setClientToEdit(clientToEdit);
+            setClientToEdit(cte);
             setDialog(DialogType.EDIT_RECIPIENT);
             setLoader(false);
           }
