@@ -25,7 +25,7 @@
     "@types/react-dom": "^18.0.6",
     "axios": "^0.21.1",
     "browserlist": "^1.0.1",
-    "browserslist": "^4.17.5",
+    "browserslist": "^4.21.5",
     "chart.js": "^3.3.2",
     "chartjs-plugin-datalabels": "2.0.0-rc.1",
     "dotenv": "^10.0.0",
@@ -92,6 +92,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.192",
     "@types/react-router-dom": "^5.3.3",
     "@types/uuid": "^8.3.4",
     "babel-core": "^6.26.3",

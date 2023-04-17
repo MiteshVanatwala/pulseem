@@ -59,6 +59,7 @@ import { useNavigate } from 'react-router';
 import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDialog'
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 import { ConvertClientStatus, SourceType } from '../../helpers/UI/TableText';
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -95,7 +96,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
   const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
-  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages, downloadProgress } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
   // const { groupData, ToastMessages } = useSelector((state) => state.group);
@@ -117,6 +118,8 @@ const ClientSearchResult = ({ props, classes }) => {
   const [filterSearch, setFilterSearch] = useState(null);
   const [searchReferrer, setSearchReferrer] = useState(false);
   const [clientToEdit, setClientToEdit] = useState(null);
+  const [isDownloadProgress, setIsDownloadProgress] = useState(false);
+  const [emailToNotify, setEmailToNotify] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
   const [date, setDate] = useState({
     FromDate: null,
@@ -179,7 +182,9 @@ const ClientSearchResult = ({ props, classes }) => {
     CONFIRM_REMOVE_PHONE: "CONFIRM_REMOVE_PHONE",
     UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
     CONFIRM_INVALID: "CONFIRM_INVALID",
-    EXPORT_FORMAT: "EXPORT_FORMAT"
+    EXPORT_FORMAT: "EXPORT_FORMAT",
+    UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS",
+    EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
   };
   useEffect(() => {
     const initExtraFields = async () => {
@@ -362,59 +367,80 @@ const ClientSearchResult = ({ props, classes }) => {
       handleFilter();
     }
   };
-  const handleDownloadCsv = async (formatType) => {
+  const handleDownloadCsv = async (formatType, notifyEmail) => {
     setDialog(null);
+    setIsDownloadProgress(true);
     setLoader(true);
-    setDialog(null);
-    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
+    setEmailToNotify(notifyEmail);
+    const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName, NotifyEmail: notifyEmail }));
     if (response && response.payload) {
       const data = response.payload;
-      const promiseArray = [];
-      if (data.StatusCode === 201) {
-        let orderList = [];
-        orderList = data.Clients.map((ol) => { return FlatObject(ol) });
-        if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
-        }
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
-          searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
-        }
 
-        Promise.all(promiseArray).then(() => {
-          const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
-          const exportOptions = {
-            OrderItems: true,
-            FormatDate: true,
-            ConvertStatusToString: true,
-            Statuses: ClientStatus.Sms,
-            Order: Object.keys(exportColumnHeader.current),
-            DeleteProperties: ["Status"]
-          };
+      switch (data?.StatusCode) {
+        case 201: {
+          const promiseArray = [];
+          let orderList = [];
+          orderList = data.Clients.map((ol) => { return FlatObject(ol) });
+          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
+          }
+          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+            searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
+          }
 
-          HandleExportData(orderList, exportOptions).then((result) => {
-            // Pay attention -> We set XLSX for better header's order.
-            // CSV not supporting numeric extra fields order.
-            if (formatType === 'csv') {
-              ExportFile({
-                data: result,
-                exportType: formatType,
-                fields: exportColumnHeader.current,
-                fileName: fileName
-              });
-            }
-            else {
-              exportAsXLSX(result, exportColumnHeader.current, `${fileName}.XLSX`);
-            }
+          Promise.all(promiseArray).then(() => {
+            const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+            const exportOptions = {
+              OrderItems: true,
+              FormatDate: true,
+              ConvertStatusToString: true,
+              Statuses: ClientStatus.Sms,
+              Order: Object.keys(exportColumnHeader.current),
+              DeleteProperties: ["Status"]
+            };
 
+            HandleExportData(orderList, exportOptions).then((result) => {
+              // Pay attention -> We set XLSX for better header's order.
+              // CSV not supporting numeric extra fields order.
+              if (formatType === 'csv') {
+                ExportFile({
+                  data: result,
+                  exportType: formatType,
+                  fields: exportColumnHeader.current,
+                  fileName: fileName
+                });
+              }
+              else {
+                exportAsXLSX(result, exportColumnHeader.current, `${fileName}.XLSX`);
+              }
+
+            });
           });
-        });
+          break;
+        }
+        case 202: {
+          setDialog(DialogType.EXPORT_IN_PROGRESS);
+          break;
+        }
+        case 403: { // Feature not allowed
+          break;
+        }
+        case 405: {
+          setToastMessage(t("recipient.exportGroups.exportLimitationErrorMessage"));
+          break;
+        }
+        default: {
+          setToastMessage(ToastMessages.GENERIC_ERROR);
+          break;
+        }
       }
-      else {
-        setToastMessage(ToastMessages.GENERIC_ERROR);
-      }
+
     }
     setLoader(false);
+    setIsDownloadProgress(false);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
@@ -699,6 +725,11 @@ const ClientSearchResult = ({ props, classes }) => {
       message: '',
       Func: () => getData()
     },
+    'S_202': {
+      code: 202,
+      message: '',
+      Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
+    },
     'S_400': {
       code: 400,
       message: '',
@@ -750,6 +781,11 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
         break;
       }
+      case 202: {
+        actions?.S_202?.Func?.();
+        // actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+        break;
+      }
       case 400: {
         actions?.S_400?.Func?.();
         actions?.S_400?.message && setToastMessage(actions?.S_400?.message);
@@ -790,8 +826,8 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
-        setLoader(false);
     }
+    setLoader(false);
   }
   const renderToast = () => {
     if (toastMessage) {
@@ -866,6 +902,10 @@ const ClientSearchResult = ({ props, classes }) => {
             message: ToastMessages.SUCCESS,
             Func: () => null
           },
+          S_202: {
+            code: 202,
+            Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
+          },
           S_400: {
             code: 400,
             message: ToastMessages.SOMETHING_WENT_WRONG,
@@ -905,6 +945,10 @@ const ClientSearchResult = ({ props, classes }) => {
             code: 201,
             message: ToastMessages.SUCCESS,
             Func: () => null
+          },
+          S_202: {
+            code: 202,
+            Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
           },
           S_400: {
             code: 400,
@@ -947,10 +991,13 @@ const ClientSearchResult = ({ props, classes }) => {
     dispatch(getGroupsBySubAccountId());
     getData();
   }
-  const handleUnSubscribe = async (opt) => {
+  const handleUnSubscribe = async (opt, notifyEmail) => {
     setDialog(null);
     setLoader(true);
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount })).then(res => {
+    setEmailToNotify(notifyEmail === -1 ? '' : notifyEmail);
+    let groupName = location?.state?.ResultTitle;
+
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
@@ -967,6 +1014,13 @@ const ClientSearchResult = ({ props, classes }) => {
               window.history.back();
             }, 4000);
             //getData()
+          }
+        },
+        'S_202': {
+          code: 202,
+          // message: ToastMessages.UNSUBSCRIBED_IN_PROGRESS,
+          Func: () => {
+            setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS);
           }
         },
         'S_401': {
@@ -1738,13 +1792,79 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             // selectedGroups={selectedGroups}
-            onSubmit={(opt) => handleUnSubscribe(opt)}
+            onSubmit={(opt, notifyEmail) => handleUnSubscribe(opt, notifyEmail)}
             clientData={{ ...searchData }}
             dialogType={dialog}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}
             showDropBox={false}
+            showEmailToNotify={TotalCount > 10000}
           />;
+        }
+        case DialogType.EXPORT_IN_PROGRESS: {
+          return <BaseDialog
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={dialog === DialogType.EXPORT_IN_PROGRESS}
+            renderButtons={() => (<>
+              <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+              >
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      setDialog(null)
+                    }}
+                    className={clsx(
+                      classes.solidDialogButton,
+                      classes.dialogConfirmButton
+                    )}>
+                    {t('common.confirm')}
+                  </Button>
+                </Grid>
+              </Grid>
+            </>)}
+          >
+            {RenderHtml(t("recipient.exportGroups.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.exportGroups.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
+          </BaseDialog>
+        }
+        case DialogType.UNSUBSCRIBED_IN_PROGRESS: {
+          return <BaseDialog
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={dialog === DialogType.UNSUBSCRIBED_IN_PROGRESS}
+            renderButtons={() => (<>
+              <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+              >
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      sessionStorage.removeItem('searchData');
+                      window.history.back();
+                    }}
+                    className={clsx(
+                      classes.solidDialogButton,
+                      classes.dialogConfirmButton
+                    )}>
+                    {t('common.confirm')}
+                  </Button>
+                </Grid>
+              </Grid>
+            </>)}
+          >
+            {RenderHtml(t("recipient.unsubscribed.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.unsubscribed.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
+          </BaseDialog>
         }
         case DialogType.CONFIRM_INVALID:
         case DialogType.CONFIRM_DELETE_FROM_GROUPS:
@@ -1760,6 +1880,12 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     return <></>;
   }
+
+  useEffect(() => {
+    if (downloadProgress) {
+      setIsDownloadProgress(false);
+    }
+  }, [downloadProgress])
   return (
     <DefaultScreen
       currentPage="groups"
@@ -1777,14 +1903,15 @@ const ClientSearchResult = ({ props, classes }) => {
         classes={classes}
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
-        radioTitle={t('common.SelectFormat')}
-        onConfirm={(e) => { setShowConfirmDialog(false); handleDownloadCsv(e) }}
+        radioTitle={TotalCount > 100000 ? '' : t('common.SelectFormat')}
+        onConfirm={(e, notifyEmail) => handleDownloadCsv(e, notifyEmail)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
-        options={ExportFileTypes}
+        defaultValue={TotalCount > 100000 ? "csv" : "xls"}
+        showEmailToNotify={TotalCount > 100000}
+        options={TotalCount > 100000 ? null : ExportFileTypes}
       />
-      <Loader isOpen={showLoader} />
+      <Loader isOpen={showLoader} progress={downloadProgress} message={t("common.downloadInProgress")} isDownloadProgress={isDownloadProgress} />
     </DefaultScreen>
   );
 };

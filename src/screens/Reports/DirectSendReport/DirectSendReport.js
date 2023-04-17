@@ -61,7 +61,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
   const [dialogType, setDialog] = useState(null);
-  const priorDate = moment().subtract(30, 'days').utcOffset(0);
+  const priorDate = moment().subtract(24, "hours").format("YYYY-MM-DD HH:mm"); //moment().subtract(30, 'days').utcOffset(0);
 
 
   useEffect(() => {

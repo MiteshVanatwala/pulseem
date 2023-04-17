@@ -44,6 +44,7 @@ import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSet
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import PageNotFound from './screens/404';
 import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
+import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -421,6 +422,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         path="*"
         element={<PageNotFound classes={classes} />}
+      />
+      <Route
+        exact
+        path={'/Groups/Download'}
+        element={<DownloadFiles classes={classes} />}
       />
     </Routes>
   )

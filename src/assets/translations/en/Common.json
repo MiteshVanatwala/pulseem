@@ -569,6 +569,7 @@
   "NIS": "₪",
   "birthDate": "Birth Date",
   "uploadInProgress": "Upload in progress...",
+  "downloadInProgress": "Download in progress...",
   "back": "Back",
   "clientSubscriptionResultTitle": "Subscribers of Landing page ",
   "SelectFormat": "Select format",
@@ -611,5 +612,7 @@
   "backToHome": "To Home page",
   "backToCampaigns": "To Campaigns",
   "searchByCampaign": "Search by Campaign",
-  "savedSuccessfully": "Saved Successfully"
+  "savedSuccessfully": "Saved Successfully",
+  "fileDownloads": "File Downloads",
+  "fileDownloadError": "Oops...Something went wrong while downloading the file"
 }
