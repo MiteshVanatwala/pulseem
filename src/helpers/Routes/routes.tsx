@@ -100,6 +100,7 @@ export const getRoutes = (
           href: "/Pulseem/FileUploads.aspx?fromreact=true",
           isShow: true,
         },
+        { key: 'downloadReports', title: t('master.fileDownload'), href: '/react/groups/Download', isShow: true },
       ],
     },
     {
