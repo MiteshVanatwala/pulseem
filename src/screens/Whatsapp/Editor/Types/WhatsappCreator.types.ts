@@ -109,9 +109,7 @@ export type coreProps = {
 };
 
 export type CommonRedux = {
-	Account: {
-		isRTL: boolean;
-	};
+	accountFeatures: string[];
 };
 
 export type actionButtonProps = {

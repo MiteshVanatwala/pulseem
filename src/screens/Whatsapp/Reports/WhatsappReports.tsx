@@ -21,6 +21,7 @@ import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
 import {
+	CommonRedux,
 	coreProps,
 	reportListAPIProps,
 } from '../Editor/Types/WhatsappCreator.types';
@@ -61,7 +62,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { isRTL, windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { accountFeatures } = useSelector((state: any) => state.common);
+	const { accountFeatures } = useSelector(
+		(state: { common: CommonRedux }) => state.common
+	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);
@@ -123,7 +126,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	useEffect(() => {
 		if (
 			accountFeatures &&
-			accountFeatures?.map((feature: { toString: () => any; }) => feature?.toString()).includes('42')
+			accountFeatures?.map((feature) => feature?.toString()).includes('42')
 		) {
 			setHasRevenue(true);
 		}
