@@ -1584,7 +1584,7 @@ const Groups = ({ classes }) => {
                     break;
                 }
                 case 405: {
-                    setResponseMessage({ title: '', message: t("recipient.exportGroups.exportLimitationErrorMessage") })
+                    setResponseMessage({ title: '', message: RenderHtml(t("recipient.exportGroups.exportLimitationErrorMessage")) })
                     setDialog(DialogType.MESSAGE);
                     break;
                 }
