@@ -474,3 +474,19 @@ export type restoreCampaignPayloadData = {
 export type restoreCampaignData = {
 	payload: restoreCampaignPayloadData;
 };
+
+export type CommonFeaturesAPIData = {
+	Account: {
+		AccountFeatures: number[];
+	};
+};
+
+export type CommonFeaturesAPIPayload = {
+	Data: CommonFeaturesAPIData;
+	Message: string;
+	StatusCode: number;
+};
+
+export type CommonFeaturesAPI = {
+	payload: CommonFeaturesAPIPayload;
+};
