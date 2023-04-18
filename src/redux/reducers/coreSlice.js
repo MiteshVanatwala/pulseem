@@ -16,13 +16,13 @@ export const coreSlice = createSlice({
     companyName: '',
     rowsPerPage: getCookie('rpp') || 6,
     isClal: null,
-    accountFeatures: null,
     cameFromSubAccount: null,
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
     // smsOldVersion: false,
     accountSettings: getCookie('accountSettings'),
+    accountFeatures: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     }

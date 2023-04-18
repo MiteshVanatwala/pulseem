@@ -108,6 +108,12 @@ export type coreProps = {
 	accountFeatures: string;
 };
 
+export type CommonRedux = {
+	Account: {
+		isRTL: boolean;
+	};
+};
+
 export type actionButtonProps = {
 	tooltipTitle: string;
 	buttonTitle: string;
