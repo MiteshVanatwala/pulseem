@@ -25,7 +25,7 @@ const AccountSettingsEditor = () => {
   const dispatch = useDispatch();
   const { classes } = useCore();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { ToastMessages, account } = useSelector((state: any) => state?.accountSettings);
+  const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
@@ -85,8 +85,8 @@ const AccountSettingsEditor = () => {
   }, []);
 
   useEffect(() => {
-    setSettingRequest(account?.Data);
-  }, [account]);
+    setSettingRequest(accountSettings?.Data);
+  }, [accountSettings]);
 
   const handleUpdate = async (updatedObject: AccountSettings, saveType: string, sendRequest: boolean) => {
 
@@ -293,62 +293,45 @@ const AccountSettingsEditor = () => {
       </Box>
       {tfaEmailVerification && <VerificationDialog
         variant="emailTFA"
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
-        // @ts-ignore
         isOpen={tfaEmailVerification}
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && emailToVerify
-        }}
+        value={verificationStep > 0 && emailToVerify}
+        step={verificationStep}
         onClose={() => {
           setTfaEmailVerification(false);
           setVerificationStep(0);
         }}
       />}
       {emailVerificationPopup && <VerificationDialog
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="email"
-        // @ts-ignore
         isOpen={emailVerificationPopup}
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && emailToVerify
-        }}
+        value={verificationStep > 0 && emailToVerify}
+        step={verificationStep}
         onClose={() => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
         }} />}
       {tfaSmsVerification && <VerificationDialog
         variant="smsTFA"
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
-        // @ts-ignore
         isOpen={tfaSmsVerification}
-        // @ts-ignore
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && cellphoneToVerify
-        }}
+        value={verificationStep > 0 && cellphoneToVerify}
+        step={verificationStep}
         onClose={() => {
           setTfaSmsVerification(false);
           setVerificationStep(0);
         }}
       />}
       {smsVerificationPopup && <VerificationDialog
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
-        // @ts-ignore
         variant="sms"
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && cellphoneToVerify
-        }}
+        value={verificationStep > 0 && cellphoneToVerify}
+        step={verificationStep}
         isOpen={smsVerificationPopup}
         onClose={() => {
           setSmsVerificationPopup(false);

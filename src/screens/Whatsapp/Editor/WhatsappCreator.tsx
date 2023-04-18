@@ -982,7 +982,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			{renderToast()}
 			<Title
 				Text={translator('whatsapp.header')}
-				classes={classes}
+				Classes={classes}
 				ContainerStyle={{}}
 				Element={null}
 			/>
