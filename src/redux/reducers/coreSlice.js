@@ -22,7 +22,6 @@ export const coreSlice = createSlice({
     billingTypeId: null,
     // smsOldVersion: false,
     accountSettings: getCookie('accountSettings'),
-    accountFeatures: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     }
