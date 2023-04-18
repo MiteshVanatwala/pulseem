@@ -192,7 +192,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.CampaignID) > -1) : [],
                 exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
             });
-            setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
+            setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting || false);
         } catch (e) {
             // dispatch(sendToTeamChannel({
             //     MethodName: 'onReady',
@@ -1235,7 +1235,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 smsMarketingModel={{ ...smsMarketingModel }}
                 onClose={() => setDialogType(null)}
                 onCancel={() => setDialogType(null)}
-                onConfirm={() => setDialogType(null)}
+                onConfirm={() => {
+                    setDialogType(null);
+                    setSmsMarketingIndication(true);
+                }}
             />}
             {dialogType?.type === 'SummaryDialog' && newsletterSendSummary !== null && <SummaryDialog
                 classes={classes}
