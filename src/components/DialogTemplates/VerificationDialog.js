@@ -17,6 +17,7 @@ import {
     checkCellphoneAuthorization
 } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', step = 0, value, ...props }) => {

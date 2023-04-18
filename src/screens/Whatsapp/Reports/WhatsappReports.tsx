@@ -58,9 +58,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { windowSize, rowsPerPage, accountFeatures } = useSelector(
+	const { windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+	const { accountFeatures } = useSelector((state: any) => state.common);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);

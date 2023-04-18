@@ -1,21 +1,21 @@
 import {
-	AutomationsIcon,
-	DashboardIcon,
-	GroupsIcon,
-	LandingPageIcon,
-	MmsIcon,
-	NewsletterIcon,
-	NotificationsIcon,
-	ReportsIcon,
-	SmsIcon,
+  AutomationsIcon,
+  DashboardIcon,
+  GroupsIcon,
+  LandingPageIcon,
+  MmsIcon,
+  NewsletterIcon,
+  NotificationsIcon,
+  ReportsIcon,
+  SmsIcon,
 } from '../../assets/images/drawer/index';
 import {
-	CodeMenuIcon,
-	DolarMenuIcon,
-	SettingsMenuIcon,
-	StarMenuIcon,
-	GrafMenuIcon,
-	GroupMenuIcon,
+  CodeMenuIcon,
+  DolarMenuIcon,
+  SettingsMenuIcon,
+  StarMenuIcon,
+  GrafMenuIcon,
+  GroupMenuIcon,
 } from '../../assets/images/settings/index';
 import { FaBinoculars } from 'react-icons/fa';
 import SettingsLogo from '../../assets/images/settings-white.png';
@@ -23,9 +23,9 @@ import { FaHome } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 
 export const getSettingsItem = (
-	t: (text: string) => null | VoidFunction = () => null,
-	style: string = '',
-	isAllowSwitchAccount: Boolean = false
+  t: (text: string) => null | VoidFunction = () => null,
+  style: string = '',
+  isAllowSwitchAccount: Boolean = false
 ) => ({
   key: "settings",
   title: <img alt="settings" src={SettingsLogo} className={style} />,
@@ -43,12 +43,12 @@ export const getSettingsItem = (
 });
 
 export const getRoutes = (
-	t: (text: string) => null | VoidFunction = (par: string) => null,
-	isClalAccount: Boolean | string = false,
-	features: any = null,
-	subAccountSettings: any = null,
-	windowSize: string | number | null = null,
-	isRTL: Boolean = false
+  t: (text: string) => null | VoidFunction = (par: string) => null,
+  isClalAccount: Boolean | string = false,
+  features: any = null,
+  subAccountSettings: any = null,
+  windowSize: string | number | null = null,
+  isRTL: Boolean = false
 ) => [
     // smsOldVersion
     {
@@ -192,6 +192,53 @@ export const getRoutes = (
         {
           title: t("master.linkSMSResponsesReport.Text"),
           href: "/Pulseem/ResponsesReport.aspx?fromreact=true",
+          isShow: true,
+        },
+      ],
+    },
+    {
+      key: 'whatsapp',
+      title: 'Whatsapp',
+      pageTitle: t('whatsapp.Title'),
+      iconUnicode: '\ue181',
+      href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
+      isShow: true,
+      icon: <img alt='Sms' src={SmsIcon} />,
+      options: [
+        {
+          key: 'create',
+          title: t('whatsapp.NewWhatsappCampaign'),
+          href: whatsappRoutes.CREATE_TEMPLATE,
+          isShow: true,
+        },
+        {
+          key: 'send',
+          title: t('whatsapp.SendWhatsappCampaign'),
+          href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
+          isShow: true,
+        },
+        {
+          key: 'templatemanagement',
+          title: t('whatsapp.ManageWhatsappTemplate'),
+          href: whatsappRoutes.TEMPLATE_MANAGEMENT,
+          isShow: true,
+        },
+        {
+          key: 'campaignmanagement',
+          title: t('whatsapp.ManageWhatsappCampaign'),
+          href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
+          isShow: true,
+        },
+        {
+          key: 'reports',
+          title: t('whatsapp.ReportsWhatsapp'),
+          href: whatsappRoutes.REPORTS,
+          isShow: true,
+        },
+        {
+          key: 'chat',
+          title: t('whatsapp.ChatWhatsapp'),
+          href: whatsappRoutes.CHAT,
           isShow: true,
         },
       ],

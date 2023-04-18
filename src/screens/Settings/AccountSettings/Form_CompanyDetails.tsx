@@ -58,7 +58,6 @@ const FORM_COMPANY_DETAILS = ({
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [companyDetails, setCompanyDetails] = useState<AccountSettings | null>({} as AccountSettings);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [accFeatures, setAccountFeatures] = useState<any>(null);
 
   const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
@@ -135,15 +134,9 @@ const FORM_COMPANY_DETAILS = ({
   useEffect(() => {
     const newSettings = { ...Settings, TwoFactorAuthEnabled: accountSettings?.AccountFeatures?.indexOf(45) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
-    setAccountFeatures(accountSettings?.Account?.AccountFeatures);
     if (Settings)
       handleQueryString2FA();
   }, [accountSettings, Settings]);
-
-  // useEffect(() => {
-  //   if (accountSettings)
-  //     setAccountFeatures(accountSettings?.Account?.AccountFeatures);
-  // }, [accountSettings])
 
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {
@@ -477,7 +470,7 @@ const FORM_COMPANY_DETAILS = ({
                 </Select>
               </FormControl>
             </Grid>}
-            {accFeatures?.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            {accountFeatures?.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',

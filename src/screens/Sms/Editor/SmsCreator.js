@@ -14,27 +14,24 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
-import queryString from 'query-string';
-import Title from '../../../components/Wizard/WizardTitle'
 import Title from '../../../components/Wizard/Title'
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
-
-import { useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import {
-	getPreviousCampaignData,
-	getPreviousLandingData,
-	getAccountExtraData,
-	getGroupsBySubAccountId,
-	smsSave,
-	deleteSms,
-	smsSaveGroup,
-	getSmsByID,
-	smsQuick,
-	getCampaignSumm,
-	getCreditsforSMS,
-	getTestGroups,
-	getSMSVirtualNumber
+  getPreviousCampaignData,
+  getPreviousLandingData,
+  getAccountExtraData,
+  // getGroupsBySubAccountId,
+  smsSave,
+  deleteSms,
+  smsSaveGroup,
+  getSmsByID,
+  smsQuick,
+  getCampaignSumm,
+  getCreditsforSMS,
+  getTestGroups,
+  getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
@@ -51,62 +48,66 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreivew/MobilePreivew'
 import { logout } from '../../../helpers/Api/PulseemReactAPI'
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
+import useRedirect from "../../../helpers/Routes/Redirect";
+import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import EmojiPicker from "../../../components/Emojis/EmojiPicker";
 import { getCommonFeatures } from "../../../redux/reducers/commonSlice";
 
 const useStyles = makeStyles((theme) => ({
-	customWidth: {
-		maxWidth: 200,
-		backgroundColor: "black",
-		fontSize: "14px",
-		textAlign: 'center'
-	},
-	noMaxWidth: {
-		maxWidth: "none",
-	},
+  customWidth: {
+    maxWidth: 200,
+    backgroundColor: "black",
+    fontSize: "14px",
+    textAlign: 'center'
+  },
+  noMaxWidth: {
+    maxWidth: "none",
+  },
 }));
 const useStyleNew = makeStyles((theme) => ({
-	root: {
-		padding: "2px 4px",
-		display: "flex",
-		alignItems: "center",
-		width: "100%",
-		border: "1px solid #efefef",
-	},
-	input: {
-		marginLeft: theme.spacing(1),
-		flex: 1,
-	},
-	iconButton: {
-		padding: 10,
-	},
+  root: {
+    padding: "2px 4px",
+    display: "flex",
+    alignItems: "center",
+    width: "100%",
+    border: "1px solid #efefef",
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
 }));
 
 const defaultAccountExtraData = [
-	{ "FirstName": "common.first_name" },
-	{ "LastName": "common.last_name" },
-	{ "Email": "common.email" },
-	{ "Telephone": "common.telephone" },
-	{ "Cellphone": "common.cellphone" },
-	{ "Address": "common.address" },
-	{ "City": "common.city" },
-	{ "Company": "common.company" },
-	{ "BirthDate": "common.birth_date" },
-	{ "ReminderDate": "common.reminder_date" },
-	{ "Country": "common.country" },
-	{ "State": "common.state" },
-	{ "Zip": "common.zip" }
+  { "FirstName": "common.first_name" },
+  { "LastName": "common.last_name" },
+  { "Email": "common.email" },
+  { "Telephone": "common.telephone" },
+  { "Cellphone": "common.cellphone" },
+  { "Address": "common.address" },
+  { "City": "common.city" },
+  { "Company": "common.company" },
+  { "BirthDate": "common.birth_date" },
+  { "ReminderDate": "common.reminder_date" },
+  { "Country": "common.country" },
+  { "State": "common.state" },
+  { "Zip": "common.zip" }
 ];
 
 
-const SmsCreator = ({ classes, ...props }) => {
-	const { t } = useTranslation();
-	document.title = t("sms.pageTitle");
-	const styles = useStyles();
-	const btnStyle = useStyleNew();
-	const inputProps = {
-		maxLength: "13"
-	}
+const SmsCreator = ({ classes }) => {
+  const { t } = useTranslation();
+  const { id, FromAutomation, NodeToEdit } = useParams();
+  document.title = t("sms.pageTitle");
+  const styles = useStyles();
+  const btnStyle = useStyleNew();
+  const inputProps = {
+    maxLength: "13"
+  }
 
   const Redirect = useRedirect();
   const dispatch = useDispatch();
@@ -215,87 +216,69 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   };
 
-	useEffect(() => {
-		setAlignment(isRTL ? "right" : "left");
-	}, [isRTL])
+  useEffect(() => {
+    setAlignment(isRTL ? "right" : "left");
+  }, [isRTL])
 
-	useEffect(() => {
-		if (isPageLoaded && accountFeatures) {
-			if (accountFeatures.includes('38')) {
-				setSmsModel((currentState) => {
-					if (currentState.Text === '') {
-						onAddText(`${t("sms.toUnsubscribe")}${removalNumber}`);
-						setremovalMessageButtonDisabled(true);
-						setTimeout(() => {
-							const cName = document.getElementById('campaignName');
-							cName.focus();
-						}, 500);
-					}
-					return currentState;
-				});
-			}
-			setShowRemovalLink(!accountFeatures.includes('39'))
-		}
-	}, [isPageLoaded || accountFeatures]);
+  useEffect(() => {
+    if (isPageLoaded && accountFeatures) {
+      if (accountFeatures.includes('38')) {
+        setSmsModel((currentState) => {
+          if (currentState.Text === '') {
+            onAddText(`${t("sms.toUnsubscribe")}${removalNumber}`);
+            setremovalMessageButtonDisabled(true);
+            setTimeout(() => {
+              const cName = document.getElementById('campaignName');
+              cName.focus();
+            }, 500);
+          }
+          return currentState;
+        });
+      }
+      setShowRemovalLink(!accountFeatures.includes('39'))
+    }
+  }, [isPageLoaded, accountFeatures]);
 
-	const params = useParams()
-
-	const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
-
-	const renderHtml = (html) => {
-		function createMarkup() {
-			return { __html: html };
-		}
-		return (
-			<label dangerouslySetInnerHTML={createMarkup()}></label>
-		);
-	}
-
-	const handleSendResult = async (smsSendResult) => {
-		switch (smsSendResult) {
-			case -2: {// ALREADY_SENT
-				setToastMessage(ToastMessages.SENT_ALREADY)
-				break;
-			}
-			case -1: {// ERROR
-				setToastMessage(ToastMessages.QUICK_SEND_ERROR)
-				break;
-			}
-			case 0: {// SUCCESS
-				setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS)
-				break;
-			}
-			case 1: {// PROVISION
-				setToastMessage(ToastMessages.PROVISION)
-				break;
-			}
-			case 2: {// NO_CREDITS
-				//setToastMessage(ToastMessages.NO_CREDITS)
-				setDialogType({ type: "noCredit" });
-				break;
-			}
-			case 3: {// INVALID_NUMBER
-				setToastMessage(ToastMessages.INVALID_NUMBER)
-				break;
-			}
-			case 4: {// OTP_NEEDED
-				setOTPOpen(true);
-				break;
-			}
-			case 8: {// English letters not allowed
-				setDialogType({ type: "englishLetterDialog" });
-				break;
-			}
-			default:
-			case 5: {// ACCEPTED
-				break;
-			}
-		}
-	}
-
-	useEffect(async () => {
-		await handleSendResult();
-	}, [smsSendResult]);
+  const handleSendResult = async (smsSendResult) => {
+    switch (smsSendResult) {
+      case -2: {// ALREADY_SENT
+        setToastMessage(ToastMessages.SENT_ALREADY)
+        break;
+      }
+      case -1: {// ERROR
+        setToastMessage(ToastMessages.QUICK_SEND_ERROR)
+        break;
+      }
+      case 0: {// SUCCESS
+        setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS)
+        break;
+      }
+      case 1: {// PROVISION
+        setToastMessage(ToastMessages.PROVISION)
+        break;
+      }
+      case 2: {// NO_CREDITS
+        setDialogType({ type: "noCredit" });
+        break;
+      }
+      case 3: {// INVALID_NUMBER
+        setToastMessage(ToastMessages.INVALID_NUMBER)
+        break;
+      }
+      case 4: {// OTP_NEEDED
+        setOTPOpen(true);
+        break;
+      }
+      case 8: {// English letters not allowed
+        setDialogType({ type: "englishLetterDialog" });
+        break;
+      }
+      default:
+      case 5: {// ACCEPTED
+        break;
+      }
+    }
+  }
 
   useEffect(() => {
     if (accountSettings?.SubAccountSettings) {
@@ -303,56 +286,66 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   }, [accountSettings, smsModel]);
 
-	useEffect(() => {
-		linkCalculation();
-	}, [smsModel, isSiteTracking, isLinksStatistics])
+  useEffect(() => {
+    linkCalculation();
+  }, [smsModel, isSiteTracking, isLinksStatistics])
 
-	useEffect(() => {
-		getcredits(characterCount);
-	}, [characterCount])
+  useEffect(() => {
+    getcredits(characterCount);
+  }, [characterCount])
 
-	const handleSmsModelChange = (name, value) => {
-		setSmsModel(prevState => ({
-			...prevState,
-			[name]: value
-		}));
-	};
+  const handleSmsModelChange = (name, value) => {
+    setSmsModel(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
-	const onApiCall = async () => {
-		setLoader(true);
-		setsummary(false);
-		const groupIds = selectedGroup.map((g) => { return g.GroupID });
-		const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount };
-		const FinalPayloadData = {
-			...smsModel,
-			fromNumber: campaignNumber,
-			Name: smsModel.Name,
-			Text: smsModel.Text,
-			TestGroupsIds: groupIds,
-			IsTestCampaign: isTestCampaign,
-			IsTest: true,
-			IsLinksStatistics: isLinksStatistics,
-			LogData: logData,
-			SmsCampaignID: smsCampaignId
-		}
-		await dispatch(smsQuick(FinalPayloadData));
-		setfinalApi(true);
-		setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS);
-		setLoader(false);
-	};
+  const onApiCall = async () => {
+    setLoader(true);
+    setsummary(false);
+    const groupIds = selectedGroup.map((g) => { return g.GroupID });
+    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount };
+    const FinalPayloadData = {
+      ...smsModel,
+      fromNumber: campaignNumber,
+      Name: smsModel.Name,
+      Text: smsModel.Text,
+      TestGroupsIds: groupIds,
+      IsTestCampaign: isTestCampaign,
+      IsTest: true,
+      IsLinksStatistics: isLinksStatistics,
+      LogData: logData,
+      SmsCampaignID: smsCampaignId
+    }
+    await dispatch(smsQuick(FinalPayloadData));
+    setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS);
+    setLoader(false);
+  };
 
 
-	const initDispatch = async () => {
-		setLoader(true);
-		setCampaignId(props && params?.id ? params?.id : -1);
-		await dispatch(getPreviousLandingData());
-		await dispatch(getTestGroups());
-		await dispatch(getPreviousCampaignData());
-		let resp = await dispatch(getAccountExtraData());
-		let arr = Object.keys(resp.payload)
-		let additionalExtraData = arr.map(function (key) {
-			return { [key]: resp.payload[key] };
-		})
+  const initDispatch = async () => {
+    setLoader(true);
+    setCampaignId(id ?? -1);
+    await dispatch(getPreviousLandingData());
+    await dispatch(getPreviousCampaignData());
+
+    if (!testGroups || testGroups?.length === 0)
+      await dispatch(getTestGroups());
+
+    let resp = null;
+    if (!extraData || extraData?.length === 0) {
+      const ed = await dispatch(getAccountExtraData());
+      resp = ed.payload;
+    }
+    else {
+      resp = extraData;
+    }
+
+    let arr = Object.keys(resp)
+    let additionalExtraData = arr.map(function (key) {
+      return { [key]: resp[key] };
+    });
 
     for (let i = 0; i < additionalExtraData.length; i++) {
       defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
@@ -367,23 +360,14 @@ const SmsCreator = ({ classes, ...props }) => {
     setInitFromNumber(true);
   }
 
-	useEffect(() => {
-		initDispatch();
-	}, [dispatch]);
+  useEffect(() => {
+    initDispatch();
+  }, [dispatch]);
 
-	const initFromNumber = async () => {
-		const smsCampaign = await getSavedData();
-		const commonFeatures = await dispatch(getCommonFeatures());
-		let fromNumber = -1;
+  useEffect(() => {
+    const initFromNumber = async () => {
+      let fromNumber = -1;
 
-		if (smsCampaign && smsCampaign.FromNumber) {
-			fromNumber = smsCampaign.FromNumber;
-		}
-		else if (commonFeatures.payload?.Data?.DefaultCellNumber !== "") {
-			fromNumber = commonFeatures.payload?.Data?.DefaultCellNumber;
-		}
-
-		const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
       if (smsModel && smsModel.FromNumber) {
         fromNumber = smsModel.FromNumber;
       }
@@ -393,20 +377,10 @@ const SmsCreator = ({ classes, ...props }) => {
 
       const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
-		if (fromNumber === -1) {
-			fromNumber = virtualNumber.payload.Number;
-		}
+      if (fromNumber === -1) {
+        fromNumber = virtualNumber.payload.Number;
+      }
 
-		setcampaignNumber(fromNumber);
-		setStaticNumber(virtualNumber.payload.Number);
-		setremovalNumber(virtualNumber.payload.RemovalKey);
-		setstoredValue(commonFeatures.payload?.Data?.DefaultCellNumber);
-		if (fromNumber !== virtualNumber.payload.Number) {
-			setrestoreBool(false);
-			setremovalMessageButtonDisabled(true);
-		}
-		setLoader(false);
-	}
       setcampaignNumber(fromNumber);
       setStaticNumber(virtualNumber.payload.Number);
       setremovalNumber(virtualNumber.payload.RemovalKey);
@@ -419,26 +393,6 @@ const SmsCreator = ({ classes, ...props }) => {
       setLoader(false);
     }
 
-	const getAutomationReturnUrl = (campaignId) => {
-		const nodeToEdit = qs.NodeToEdit ?? null;
-		return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
-	}
-	const getSavedData = async () => {
-		if (props && params?.id) {
-			let response = await dispatch(getSmsByID(params?.id))
-			if (response && !response.error) {
-				setcampaignNumber(response.payload.FromNumber);
-				setmessageCount(response.payload.CreditsPerSms);
-				setSmsModel(response.payload);
-				setIsLinksStatistics(response.payload.IsLinksStatistics);
-				setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
-				return response.payload;
-			}
-			else {
-				logout();
-			}
-		}
-	}
     if (reInitFromNumber === true) {
       initFromNumber();
 
@@ -465,68 +419,57 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   }
 
-	const toggleChecked = () => {
-		setChecked((prev) => !prev);
-		setIsTestCampaign(!isTestCampaign)
-	};
-	const toggleKeep = () => {
-		setIsLinksStatistics(!isLinksStatistics);
-	};
+  const toggleChecked = () => {
+    setChecked((prev) => !prev);
+    setIsTestCampaign(!isTestCampaign)
+  };
+  const toggleKeep = () => {
+    setIsLinksStatistics(!isLinksStatistics);
+  };
 
-	const linkCalculation = () => {
-		const text = document.getElementById("yourMessage").value;
-		let t = text.toLowerCase();
-		let totalCount = t.length;
+  const linkCalculation = () => {
+    const text = document.getElementById("yourMessage").value;
+    let t = text.toLowerCase();
+    let totalCount = t.length;
 
-		let arr = t.split("\n");
-		setsplittedMsg(arr);
+    let arr = t.split("\n");
+    setsplittedMsg(arr);
 
-		if (t && t.length > 0) {
-			const res = t.replace('\r\n', ' ');
-			// eslint-disable-next-line
-			const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[\-\+=&;%@\.\w_]*)##?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
-			const links = res.match(regex);
+    if (t && t.length > 0) {
+      const res = t.replace('\r\n', ' ');
+      // eslint-disable-next-line
+      const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[\-\+=&;%@\.\w_]*)##?(?:[\.\!\/\\\w+]*)##)?[^\s]+)/g;
+      const links = res.match(regex);
 
-			if (links && links.length > 0) {
-				setlinkCount(links.length);
-				if (isLinksStatistics) {
-					setSplittedLinks(links);
-					for (var i = 0; i < links.length; i++) {
-						var linkLength = links[i].length;
-						totalCount += 35 - linkLength;
-					}
-				}
-				else {
-					if (isSiteTracking === true && text.includes('ref=##ClientIDEnc##')) {
-						totalCount += 9;
-					}
-				}
+      if (links && links.length > 0) {
+        setlinkCount(links.length);
+        if (isLinksStatistics) {
+          setSplittedLinks(links);
+          for (var i = 0; i < links.length; i++) {
+            var linkLength = links[i].length;
+            totalCount += 35 - linkLength;
+          }
+        }
+        else {
+          if (isSiteTracking === true && text.includes('ref=##ClientIDEnc##')) {
+            totalCount += 9;
+          }
+        }
 
-				setcharacterCount(totalCount);
-			}
-			else {
-				setlinkCount(0);
-				setcharacterCount(text.length);
-			}
-		}
-		else {
-			setlinkCount(0);
-			setcharacterCount(0);
-			setmessageCount(0);
-		}
-	}
+        setcharacterCount(totalCount);
+      }
+      else {
+        setlinkCount(0);
+        setcharacterCount(text.length);
+      }
+    }
+    else {
+      setlinkCount(0);
+      setcharacterCount(0);
+      setmessageCount(0);
+    }
+  }
 
-	const getcredits = (count) => {
-		dispatch(getCreditsforSMS(count)).then((res) => {
-			let credits = res.payload.split("#");
-			setmessageCount(credits[0]);
-			handleSmsModelChange("CreditsPerSms", credits[0]);
-		});
-	}
-	const onCamppaignChange = (e) => {
-		handleSmsModelChange("Name", e.target.value);
-		setcampaignBool(false);
-	};
   const getcredits = (count) => {
     dispatch(getCreditsforSMS(count)).then((res) => {
       let credits = res.payload?.split("#");
@@ -545,36 +488,36 @@ const SmsCreator = ({ classes, ...props }) => {
     setcampaignBool(false);
   };
 
-	const onCampaignNumber = (e) => {
-		const text = e.target.value;
-		var lastChar = text.substring(text.length, text.length - 1);
-		var isNumber = /^[0-9]*$/;
-		var english = /^[A-Za-z0-9 ]*$/;
+  const onCampaignNumber = (e) => {
+    const text = e.target.value;
+    var lastChar = text.substring(text.length, text.length - 1);
+    var isNumber = /^[0-9]*$/;
+    var english = /^[A-Za-z0-9 ]*$/;
 
-		if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
-			e.target.value = text.substring(0, 10);
-		}
-		if (text.match(isNumber) && text.length >= 13) {
-			e.target.value = text.substring(0, 13);
-		}
-		if (!text.match(english)) {
-			e.target.value = e.target.value.replace(lastChar, '');
-		}
+    if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
+      e.target.value = text.substring(0, 10);
+    }
+    if (text.match(isNumber) && text.length >= 13) {
+      e.target.value = text.substring(0, 13);
+    }
+    if (!text.match(english)) {
+      e.target.value = e.target.value.replace(lastChar, '');
+    }
 
-		setrestoreBool(false);
-		setremovalMessageButtonDisabled(true);
-		setcampaignNumber(e.target.value);
-		setcampaignNumberValidated(false);
-		e.preventDefault();
-		e.stopPropagation();
-	};
+    setrestoreBool(false);
+    setremovalMessageButtonDisabled(true);
+    setcampaignNumber(e.target.value);
+    setcampaignNumberValidated(false);
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
-	const validationCheck = () => {
-		let isValid = true;
-		if (smsModel.Name === "") {
-			setcampaignBool(true);
-			isValid = false;
-		}
+  const validationCheck = () => {
+    let isValid = true;
+    if (smsModel.Name === "") {
+      setcampaignBool(true);
+      isValid = false;
+    }
 
     if (smsModel.Text === "") {
       isValid = false
@@ -656,555 +599,551 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalMessageButtonDisabled(false);
   }
 
-	const onAddText = (text) => {
-		text = text.trim();
-		let afterUpdateCharCount =
-			smsModel.Text.length + text.length;
-		if (isLinksStatistics) {
-			afterUpdateCharCount = characterCount + text.length;
-		}
-		if (afterUpdateCharCount < 1000) {
-			var tArea = document.getElementById("yourMessage");
-			// filter:
-			if (0 === text) {
-				return;
-			}
-			if (0 === cursorPos) {
-				return;
-			}
+  const onAddText = (text) => {
+    text = text.trim();
+    let afterUpdateCharCount =
+      smsModel.Text.length + text.length;
+    if (isLinksStatistics) {
+      afterUpdateCharCount = characterCount + text.length;
+    }
+    if (afterUpdateCharCount < 1000) {
+      var tArea = document.getElementById("yourMessage");
+      // filter:
+      if (0 === text) {
+        return;
+      }
 
-			// get cursor's position:
-			var startPos = tArea.selectionStart,
-				endPos = tArea.selectionEnd,
-				cursorPos = startPos,
-				tmpStr = tArea.value;
+      // get cursor's position:
+      var startPos = tArea.selectionStart,
+        endPos = tArea.selectionEnd,
+        cursorPos = startPos,
+        tmpStr = tArea.value;
 
-			// insert:
-			handleSmsModelChange("Text", tmpStr.substring(0, startPos) +
-				text +
-				tmpStr.substring(endPos, tmpStr.length));
+      // insert:
+      handleSmsModelChange("Text", tmpStr.substring(0, startPos) +
+        text +
+        tmpStr.substring(endPos, tmpStr.length));
 
-			// move cursor:
-			setTimeout(() => {
-				cursorPos += text.length;
-				tArea.selectionStart = tArea.selectionEnd = cursorPos;
-			}, 10);
+      // move cursor:
+      setTimeout(() => {
+        cursorPos += text.length;
+        tArea.selectionStart = tArea.selectionEnd = cursorPos;
+      }, 10);
 
-			focusOnMessage();
-		}
-	}
+      focusOnMessage();
+    }
+  }
 
-	const renderFields = () => {
-		return (
-			<Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
-				<Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
-					<Typography className={classes.buttonHead}>
-						{t("mainReport.campName")}
-					</Typography>
-					<TextField
-						id="campaignName"
-						type="text"
-						placeholder={t("mainReport.campaignNamePlaceholder")}
-						className={
-							campaignBool
-								? clsx(classes.buttonField, classes.error)
-								: clsx(classes.buttonField, classes.success)
-						}
-						onChange={onCamppaignChange}
-						value={smsModel.Name}
-					/>
-					<Typography className={classes.buttonContent}>
-						{t("mainReport.campDesc")}
-					</Typography>
-				</Grid>
-				<Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
-					<Box className={classes.inputCampDiv}>
-						<Typography className={classes.buttonHead}>
-							{t("mainReport.campFrom")}
-						</Typography>
-						<Typography
-							className={classes.restoreBtn}
-							onClick={() => {
-								handleRestore()
-							}}
-						>
-							{t("mainReport.restore")}
-						</Typography>
+  const renderFields = () => {
+    return (
+      <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
+        <Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
+          <Typography className={classes.buttonHead}>
+            {t("mainReport.campName")}
+          </Typography>
+          <TextField
+            id="campaignName"
+            type="text"
+            placeholder={t("mainReport.campaignNamePlaceholder")}
+            className={
+              campaignBool
+                ? clsx(classes.buttonField, classes.error)
+                : clsx(classes.buttonField, classes.success)
+            }
+            onChange={onCamppaignChange}
+            value={smsModel.Name}
+          />
+          <Typography className={classes.buttonContent}>
+            {t("mainReport.campDesc")}
+          </Typography>
+        </Grid>
+        <Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
+          <Box className={classes.inputCampDiv}>
+            <Typography className={classes.buttonHead}>
+              {t("mainReport.campFrom")}
+            </Typography>
+            <Typography
+              className={classes.restoreBtn}
+              onClick={() => {
+                handleRestore()
+              }}
+            >
+              {t("mainReport.restore")}
+            </Typography>
 
-					</Box>
+          </Box>
 
-					<TextField
-						id="outlined-basic"
-						type="text"
-						className={
-							campaignNumberValidated
-								? clsx(classes.buttonField, classes.error)
-								: clsx(classes.buttonField, classes.success)
-						}
-						onChange={onCampaignNumber}
-						inputProps={inputProps}
-						value={campaignNumber}
-						onBlur={onLeave}
-					/>
-					<Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
-						{t("mainReport.campRemovalDesc")}
-					</Typography>
-				</Grid>
-				<Grid item="true" xs={12} md={4} sm={12} >
-					{restoreBool && removalNumber !== null ? (
-						<Box className={classes.buttonForm}>
-							<Typography className={clsx(classes.buttonHead)}>
-								{t("mainReport.removalReply")}
-							</Typography>
-							<TextField
-								id="outlined-basic"
-								type="text"
-								placeholder="2"
-								disabled
-								className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : clsx(classes.buttonFieldRemoval)}
-								value={removalNumber}
-							/>
-						</Box>
-					) : null}
-				</Grid>
-			</Grid>
-		);
-	};
-	const onMsgChange = async (e) => {
-		handleSmsModelChange("Text", e.target.value);
+          <TextField
+            id="outlined-basic"
+            type="text"
+            className={
+              campaignNumberValidated
+                ? clsx(classes.buttonField, classes.error)
+                : clsx(classes.buttonField, classes.success)
+            }
+            onChange={onCampaignNumber}
+            inputProps={inputProps}
+            value={campaignNumber}
+            onBlur={onLeave}
+          />
+          <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
+            {t("mainReport.campRemovalDesc")}
+          </Typography>
+        </Grid>
+        <Grid item="true" xs={12} md={4} sm={12} >
+          {restoreBool && removalNumber !== null ? (
+            <Box className={classes.buttonForm}>
+              <Typography className={clsx(classes.buttonHead)}>
+                {t("mainReport.removalReply")}
+              </Typography>
+              <TextField
+                id="outlined-basic"
+                type="text"
+                placeholder="2"
+                disabled
+                className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : clsx(classes.buttonFieldRemoval)}
+                value={removalNumber}
+              />
+            </Box>
+          ) : null}
+        </Grid>
+      </Grid>
+    );
+  };
+  const onMsgChange = async (e) => {
+    handleSmsModelChange("Text", e.target.value);
 
-		if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
-			handleMsgSelect();
-		}
+    if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
+      handleMsgSelect();
+    }
 
-		// let arr = smsModel.Text.split("\n");
-		// setcharacterCount(characterCount + (arr.length - 1));
-	};
+    // let arr = smsModel.Text.split("\n");
+    // setcharacterCount(characterCount + (arr.length - 1));
+  };
 
-	const onRemovalLink = async () => {
-		onAddText(t('sms.smsUnsubscribeMessage'));
-		let total = splittedMsg;
-		total.push(t('sms.smsUnsubscribeMessage'))
-		if (isLinksStatistics && SplittedLinks !== null) {
-			setremovalLinkDisabled(true);
-		}
-		else {
-			setremovalLinkDisabled(true);
-		}
-		setremovalLinkDisabled(true);
-	};
+  const onRemovalLink = async () => {
+    onAddText(t('sms.smsUnsubscribeMessage'));
+    let total = splittedMsg;
+    total.push(t('sms.smsUnsubscribeMessage'))
+    if (isLinksStatistics && SplittedLinks !== null) {
+      setremovalLinkDisabled(true);
+    }
+    else {
+      setremovalLinkDisabled(true);
+    }
+    setremovalLinkDisabled(true);
+  };
 
-	const onRemovalMsg = async () => {
-		let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
-		onAddText(removelReplyText);
-		let total = splittedMsg;
-		total.push(removelReplyText)
-		setremovalMessageButtonDisabled(true);
-	};
+  const onRemovalMsg = async () => {
+    let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
+    onAddText(removelReplyText);
+    let total = splittedMsg;
+    total.push(removelReplyText)
+    setremovalMessageButtonDisabled(true);
+  };
 
-	const handleSelectChange = async (e) => {
-		setselectValue(e.target.value);
-		onAddText("##" + e.target.value + "##");
-	};
-	const handleMsgSelect = () => {
-		let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
-		if (smsModel.Text.includes(removelReplyText)) {
-			setremovalMessageButtonDisabled(true);
-		}
-		else {
-			if (restoreBool)
-				setremovalMessageButtonDisabled(false);
-		}
-		if (smsModel.Text.includes(t('sms.smsUnsubscribeMessage'))) {
-			setremovalLinkDisabled(true);
-		}
-		else {
-			setremovalLinkDisabled(false);
-		}
-	}
+  const handleSelectChange = async (e) => {
+    setselectValue(e.target.value);
+    onAddText("##" + e.target.value + "##");
+  };
+  const handleMsgSelect = () => {
+    let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
+    if (smsModel.Text.includes(removelReplyText)) {
+      setremovalMessageButtonDisabled(true);
+    }
+    else {
+      if (restoreBool)
+        setremovalMessageButtonDisabled(false);
+    }
+    if (smsModel.Text.includes(t('sms.smsUnsubscribeMessage'))) {
+      setremovalLinkDisabled(true);
+    }
+    else {
+      setremovalLinkDisabled(false);
+    }
+  }
 
-	const renderMsg = () => {
-		return (
-			<Grid container className={clsx(classes.msgDiv)}>
-				<Grid container>
-					<Grid item="true" xs={12} md={8} className={classes.boxDiv}>
-						<Typography className={classes.msgHead}>
-							{t("mainReport.yourMessage")}
-						</Typography>
-						<textarea
-							placeholder={t("mainReport.typeText")}
-							maxLength="1000"
-							outlined=""
-							id="yourMessage"
-							className={clsx(classes.msgArea, classes.sidebar)}
-							style={{ textAlign: alignment }}
-							onChange={onMsgChange}
-							onSelect={handleMsgSelect}
-							value={smsModel.Text}
-						></textarea>
+  const renderMsg = () => {
+    return (
+      <Grid container className={clsx(classes.msgDiv)}>
+        <Grid container>
+          <Grid item="true" xs={12} md={8} className={classes.boxDiv}>
+            <Typography className={classes.msgHead}>
+              {t("mainReport.yourMessage")}
+            </Typography>
+            <textarea
+              placeholder={t("mainReport.typeText")}
+              maxLength="1000"
+              outlined=""
+              id="yourMessage"
+              className={clsx(classes.msgArea, classes.sidebar)}
+              style={{ textAlign: alignment }}
+              onChange={onMsgChange}
+              onSelect={handleMsgSelect}
+              value={smsModel.Text}
+            ></textarea>
 
-						<Box className={classes.smallInfoDiv}>
-							<Typography style={{ marginInlineEnd: "18px" }}>
-								{linkCount} {linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
-							</Typography>
-							<Typography style={{ marginInlineEnd: "18px" }}>
-								{messageCount} {messageCount === 1 ? t("sms.message") : t("sms.messages")}
-							</Typography>
-							<Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
-						</Box>
-						<Box className={classes.funcDiv}>
-							<Box
-								className={isRTL ? classes.emojiHe : classes.emoji}
-							>
-								{isRTL ? (
-									<>
-										<Tooltip
-											disableFocusListener
-											title={t("mainReport.aligntoRight")}
-											classes={{ tooltip: styles.customWidth }}
-											placement="top-start"
-											arrow
-										>
-											<FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
-										</Tooltip>
-										<Tooltip
-											disableFocusListener
-											title={t("mainReport.alignToLeft")}
-											classes={{ tooltip: styles.customWidth }}
-											placement="top-start"
-											arrow
-										>
-											<FormatAlignLeftIcon onClick={() => { setAlignment('left') }} />
-										</Tooltip>
-									</>
-								) : (
-									<>
-										<Tooltip
-											disableFocusListener
-											title={t("mainReport.alignToLeft")}
-											classes={{ tooltip: styles.customWidth }}
-											placement="top-start"
-											arrow
-										>
-											<FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('left') }} />
-										</Tooltip>
-										<Tooltip
-											disableFocusListener
-											title={t("mainReport.aligntoRight")}
-											classes={{ tooltip: styles.customWidth }}
-											placement="top-start"
-											arrow
-										>
-											<FormatAlignRightIcon onClick={() => { setAlignment('right') }} />
-										</Tooltip>
-									</>
-								)}
+            <Box className={classes.smallInfoDiv}>
+              <Typography style={{ marginInlineEnd: "18px" }}>
+                {linkCount} {linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
+              </Typography>
+              <Typography style={{ marginInlineEnd: "18px" }}>
+                {messageCount} {messageCount === 1 ? t("sms.message") : t("sms.messages")}
+              </Typography>
+              <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
+            </Box>
+            <Box className={classes.funcDiv}>
+              <Box
+                className={isRTL ? classes.emojiHe : classes.emoji}
+              >
+                {isRTL ? (
+                  <>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.aligntoRight")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
+                    </Tooltip>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.alignToLeft")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignLeftIcon onClick={() => { setAlignment('left') }} />
+                    </Tooltip>
+                  </>
+                ) : (
+                  <>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.alignToLeft")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('left') }} />
+                    </Tooltip>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.aligntoRight")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignRightIcon onClick={() => { setAlignment('right') }} />
+                    </Tooltip>
+                  </>
+                )}
 
-								<EmojiPicker
-									classes={classes}
-									OnSelectEmoji={(emoji) => {
-										onAddText(emoji);
-									}}
-									boxStyles={{ alignItems: 'center' }}
-								/>
-							</Box>
-							<Box className={classes.baseButtons}>
-								<Tooltip
-									disableFocusListener
-									title={t("mainReport.removalMsgTooltip")}
-									classes={{ tooltip: styles.customWidth }}
-									placement="top"
-									arrow
-								>
-									<Button
-										className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
-										onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
-									>
-										<Typography className={classes.editorLink}>+</Typography>
-										{t("mainReport.removalMsg")}
-									</Button>
-								</Tooltip>
-								{showRemovalLink && <Tooltip
-									disableFocusListener
-									title={t("mainReport.removalLinkTooltip")}
-									classes={{ tooltip: styles.customWidth }}
-									placement="top"
-									arrow
-								>
-									<Button
-										className={classes.infoButtons}
-										onClick={removalLinkDisabled ? null : onRemovalLink}
-									>
-										<Typography className={classes.editorLink}>+</Typography>
-										{t("mainReport.removalLink")}
-									</Button>
-								</Tooltip>
-								}
-							</Box>
-							<Box className={classes.endButtons}>
-								<Box className={classes.selectMsg}>
-									<Tooltip
-										disableFocusListener
-										title={t("mainReport.selectTooltip")}
-										classes={{ tooltip: styles.customWidth }}
-										placement="top"
-										arrow
-									>
-										<select
-											className={clsx(classes.selectVal, classes.sidebar)}
-											value={selectValue}
-											onChange={handleSelectChange}
-										>
-											<option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-											{extraAccountDATA.map((item, i) => {
-												if (item.selected) {
-													return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>)
-												}
-												else {
-													return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</option>;
-												}
+                <EmojiPicker
+                  classes={classes}
+                  OnSelectEmoji={(emoji) => {
+                    onAddText(emoji);
+                  }}
+                  boxStyles={{ alignItems: 'center' }}
+                />
+              </Box>
+              <Box className={classes.baseButtons}>
+                <Tooltip
+                  disableFocusListener
+                  title={t("mainReport.removalMsgTooltip")}
+                  classes={{ tooltip: styles.customWidth }}
+                  placement="top"
+                  arrow
+                >
+                  <Button
+                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
+                    onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
+                  >
+                    <Typography className={classes.editorLink}>+</Typography>
+                    {t("mainReport.removalMsg")}
+                  </Button>
+                </Tooltip>
+                {showRemovalLink && <Tooltip
+                  disableFocusListener
+                  title={t("mainReport.removalLinkTooltip")}
+                  classes={{ tooltip: styles.customWidth }}
+                  placement="top"
+                  arrow
+                >
+                  <Button
+                    className={classes.infoButtons}
+                    onClick={removalLinkDisabled ? null : onRemovalLink}
+                  >
+                    <Typography className={classes.editorLink}>+</Typography>
+                    {t("mainReport.removalLink")}
+                  </Button>
+                </Tooltip>
+                }
+              </Box>
+              <Box className={classes.endButtons}>
+                <Box className={classes.selectMsg}>
+                  <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.selectTooltip")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top"
+                    arrow
+                  >
+                    <select
+                      className={clsx(classes.selectVal, classes.sidebar)}
+                      value={selectValue}
+                      onChange={handleSelectChange}
+                    >
+                      <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
+                      {extraAccountDATA.map((item, i) => {
+                        if (item.selected) {
+                          return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>)
+                        }
+                        else {
+                          return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</option>;
+                        }
 
-											})}
-										</select>
-									</Tooltip>
-								</Box>
-								<Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
-									<Typography
-										className={classes.addButtons}
-										onClick={() => {
-											seteditmenuClick(!editmenuClick);
-										}}
-									>
-										<AiOutlinePlusCircle className={classes.addOptionsIcon} />
-										{t("mainReport.add")}
-									</Typography>
-									{editmenuClick ? (
-										<Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
+                      })}
+                    </select>
+                  </Tooltip>
+                </Box>
+                <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
+                  <Typography
+                    className={classes.addButtons}
+                    onClick={() => {
+                      seteditmenuClick(!editmenuClick);
+                    }}
+                  >
+                    <AiOutlinePlusCircle className={classes.addOptionsIcon} />
+                    {t("mainReport.add")}
+                  </Typography>
+                  {editmenuClick ? (
+                    <Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
 
-											<Typography
-												className={classes.dropCon}
-												onClick={() => {
-													setDialogType({ type: 'latestLP' });
-													seteditmenuClick(false);
-												}}
-											>
-												{t("mainReport.landingLink")}
-											</Typography>
-											{previousCampaignData.length === 0 ? null : (
-												<Typography
-													className={classes.dropCon}
-													onClick={() => {
-														setDialogType({ type: 'latestCampaigns' });
-														seteditmenuClick(false);
-													}}
-												>
-													{t("mainReport.campLink")}
-												</Typography>
-											)}
-											<Typography
-												className={classes.dropCon}
-												onClick={() => {
-													setDialogType({ type: 'waze' })
-													seteditmenuClick(false);
-												}}
-											>
-												{t("mainReport.waize")}
-											</Typography>
-										</Box>
-									) : null}
-								</Box>
-							</Box>
-						</Box>
-					</Grid>
-					<Grid item="true" xs={12} md={4} sm={12}>
-						<Box className={classes.switchDiv}>
-							<FormGroup>
-								<Switch
-									className={
-										isRTL
-											? clsx(classes.reactSwitchHe, "react-switch")
-											: clsx(classes.reactSwitch, "react-switch")
-									}
-									checked={isLinksStatistics}
-									onChange={toggleKeep}
-									onColor="#28a745"
-									checkedIcon={false}
-									uncheckedIcon={false}
-									handleDiameter={30}
-									height={20}
-									width={48}
-									boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-									activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-									id="material-switch"
-								/>
-							</FormGroup>
-							<Box className={classes.radio}>
-								<Typography style={{ fontSize: "18px" }}>
-									{t("mainReport.keepTrack")}
-								</Typography>
-								<Typography
-									className={classes.descSwitch}
-								>
-									{t("mainReport.keepDesc")}
-								</Typography>
-							</Box>
-						</Box>
-					</Grid>
-				</Grid>
-			</Grid>
-		);
-	};
+                      <Typography
+                        className={classes.dropCon}
+                        onClick={() => {
+                          setDialogType({ type: 'latestLP' });
+                          seteditmenuClick(false);
+                        }}
+                      >
+                        {t("mainReport.landingLink")}
+                      </Typography>
+                      {previousCampaignData.length === 0 ? null : (
+                        <Typography
+                          className={classes.dropCon}
+                          onClick={() => {
+                            setDialogType({ type: 'latestCampaigns' });
+                            seteditmenuClick(false);
+                          }}
+                        >
+                          {t("mainReport.campLink")}
+                        </Typography>
+                      )}
+                      <Typography
+                        className={classes.dropCon}
+                        onClick={() => {
+                          setDialogType({ type: 'waze' })
+                          seteditmenuClick(false);
+                        }}
+                      >
+                        {t("mainReport.waize")}
+                      </Typography>
+                    </Box>
+                  ) : null}
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
+          <Grid item="true" xs={12} md={4} sm={12}>
+            <Box className={classes.switchDiv}>
+              <FormGroup>
+                <Switch
+                  className={
+                    isRTL
+                      ? clsx(classes.reactSwitchHe, "react-switch")
+                      : clsx(classes.reactSwitch, "react-switch")
+                  }
+                  checked={isLinksStatistics}
+                  onChange={toggleKeep}
+                  onColor="#28a745"
+                  checkedIcon={false}
+                  uncheckedIcon={false}
+                  handleDiameter={30}
+                  height={20}
+                  width={48}
+                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                  id="material-switch"
+                />
+              </FormGroup>
+              <Box className={classes.radio}>
+                <Typography style={{ fontSize: "18px" }}>
+                  {t("mainReport.keepTrack")}
+                </Typography>
+                <Typography
+                  className={classes.descSwitch}
+                >
+                  {t("mainReport.keepDesc")}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+  };
 
-	const onRadiochange = (e) => {
-		setradioBtn(e.target.value);
-		if (e.target.value === "bottom") {
-			setDialogType({ type: "groups" })
-		}
-	};
+  const onRadiochange = (e) => {
+    setradioBtn(e.target.value);
+    if (e.target.value === "bottom") {
+      setDialogType({ type: "groups" })
+    }
+  };
 
-	const handleNumberChange = (e) => {
-		const re = /^[0-9\b]+$/;
-		if (e.target.value === '' || re.test(e.target.value)) {
-			setphone(e.target.value);
-		}
-	};
+  const handleNumberChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setphone(e.target.value);
+    }
+  };
 
-	const renderPhone = () => {
-		return (
-			<Box className={classes.mobilePreviewContainer}>
-				<MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text} keyItem="edtiorPreview" />
-				<div
-					className={classes.testDiv}
-				>
-					<FormGroup>
-						<Switch
-							checked={checked}
-							onChange={toggleChecked}
-							name="checkedB"
-							handleDiameter={30}
-							onColor="#28a745"
-							checkedIcon={false}
-							uncheckedIcon={false}
-							height={20}
-							width={48}
-							boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-							activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-							id="material-switch"
-							className={clsx("react-switch", isRTL ? classes.reactSwitchHe : classes.reactSwitch)}
-						/>
-					</FormGroup>
-					<div
-						className={classes.testSendContaier}
-					>
-						<span style={{ fontSize: "18px" }}>{t("mainReport.testSend")}</span>
-						<span
-							className={classes.testSendDescriptionLabel}
-						>
-							{t("mainReport.testDesc")}
-						</span>
-					</div>
-				</div>
-				{checked ? (
-					<div className={classes.testRadios}>
-						<RadioGroup
-							row
-							aria-label="position"
-							name="position"
-							value={radioBtn}
-							onChange={onRadiochange}
-						>
-							<div className={classes.quickSendContainer}>
-								<div>
-									<FormControlLabel
-										value="top"
-										control={
-											<Radio
-												color="primary"
-												id="top"
-												style={{ color: "#007bff" }}
-											/>
-										}
-									/>
-									<span>{t("mainReport.sendToOne")}</span>
-								</div>
-								{radioBtn === "top" ? (
-									<div className={classes.rightForm}>
-										<input
-											type="text"
-											placeholder={t("mainReport.enterPhone")}
-											className={classes.rightInput}
-											value={phone}
-											maxLength="12"
-											onChange={handleNumberChange}
-										/>
-										<span className={classes.rightSend} onClick={() => { validationCheckpoint(() => handleSend()) }}>
-											{t("mainReport.send")}
-										</span>
+  const renderPhone = () => {
+    return (
+      <Box className={classes.mobilePreviewContainer}>
+        <MobilePreview classes={classes} fromNumber={campaignNumber} text={smsModel.Text} keyItem="edtiorPreview" />
+        <div
+          className={classes.testDiv}
+        >
+          <FormGroup>
+            <Switch
+              checked={checked}
+              onChange={toggleChecked}
+              name="checkedB"
+              handleDiameter={30}
+              onColor="#28a745"
+              checkedIcon={false}
+              uncheckedIcon={false}
+              height={20}
+              width={48}
+              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+              id="material-switch"
+              className={clsx('react-switch', isRTL ? classes.reactSwitchHe : classes.reactSwitch)}
+            />
+          </FormGroup>
+          <div
+            className={classes.testSendContaier}
+          >
+            <span style={{ fontSize: "18px" }}>{t("mainReport.testSend")}</span>
+            <span
+              className={classes.testSendDescriptionLabel}
+            >
+              {t("mainReport.testDesc")}
+            </span>
+          </div>
+        </div>
+        {checked ? (
+          <div className={classes.testRadios}>
+            <RadioGroup
+              row
+              aria-label="position"
+              name="position"
+              value={radioBtn}
+              onChange={onRadiochange}
+            >
+              <div className={classes.quickSendContainer}>
+                <div>
+                  <FormControlLabel
+                    value="top"
+                    control={
+                      <Radio
+                        color="primary"
+                        id="top"
+                        style={{ color: "#007bff" }}
+                      />
+                    }
+                  />
+                  <span>{t("mainReport.sendToOne")}</span>
+                </div>
+                {radioBtn === "top" ? (
+                  <div className={classes.rightForm}>
+                    <input
+                      type="text"
+                      placeholder={t("mainReport.enterPhone")}
+                      className={classes.rightInput}
+                      value={phone}
+                      maxLength="12"
+                      onChange={handleNumberChange}
+                    />
+                    <span className={classes.rightSend} onClick={() => { validationCheckpoint(() => handleSend()) }}>
+                      {t("mainReport.send")}
+                    </span>
 
-									</div>
-								) : null}
-								<div>
-									<FormControlLabel
-										value="bottom"
-										control={
-											<Radio
-												color="primary"
-												id="bottom"
-												style={{ color: "#007bff" }}
-											/>
-										}
-									/>
-									<span>
-										{t("mainReport.sendToGroups")}
-										<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>
-									</span>
-								</div>
-								{radioBtn === "bottom" ? (
-									<div className={classes.rightForm}>
-										<div
-											className={classes.contactGroupDiv}
-											onClick={() => {
-												setDialogType({ type: "groups" });
-											}}
-										>
-											{selectedGroup.length <= 0 && <div> {t("mainReport.ChooseLinks")}</div>}
-											{selectedGroup.length > 0 ? (
-												<div className={classes.mappedGroup}>
-													{selectedGroup.map((item, index) => {
-														return (
-															<div key={index} className={classes.selectedGroupsDiv}>
-																<span className={classes.nameGroup}>
-																	{item.GroupName}
-																</span>
-																<RiCloseFill
-																	className={classes.groupCloseicn}
-																	onClick={(event) => {
-																		handleCross(event, item.GroupID);
-																	}}
-																/>
-															</div>
-														);
-													})}
-												</div>
-											) : null}
-										</div>
-									</div>
-								) : null}
-							</div>
-						</RadioGroup>
-					</div>
-				) : null}
-			</Box>
-		);
-	};
+                  </div>
+                ) : null}
+                <div>
+                  <FormControlLabel
+                    value="bottom"
+                    control={
+                      <Radio
+                        color="primary"
+                        id="bottom"
+                        style={{ color: "#007bff" }}
+                      />
+                    }
+                  />
+                  <span>
+                    {t("mainReport.sendToGroups")}
+                    <span className={classes.newIcn}>{t("mainReport.newFeature")}</span>
+                  </span>
+                </div>
+                {radioBtn === "bottom" ? (
+                  <div className={classes.rightForm}>
+                    <div
+                      className={classes.contactGroupDiv}
+                      onClick={() => {
+                        setDialogType({ type: "groups" });
+                      }}
+                    >
+                      {selectedGroup.length <= 0 && <div> {t("mainReport.ChooseLinks")}</div>}
+                      {selectedGroup.length > 0 ? (
+                        <div className={classes.mappedGroup}>
+                          {selectedGroup.map((item, index) => {
+                            return (
+                              <div key={index} className={classes.selectedGroupsDiv}>
+                                <span className={classes.nameGroup}>
+                                  {item.GroupName}
+                                </span>
+                                <RiCloseFill
+                                  className={classes.groupCloseicn}
+                                  onClick={(event) => {
+                                    handleCross(event, item.GroupID);
+                                  }}
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </RadioGroup>
+          </div>
+        ) : null}
+      </Box>
+    );
+  };
 
-	const handleCross = (e, id) => {
-		e.stopPropagation();
-		e.preventDefault();
-		const newSelection = selectedGroup.filter((g) => { return g.GroupID !== id });
-		setselectedGroup(newSelection);
-		sethidden(newSelection.length === 0);
-	};
+  const handleCross = (e, id) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const newSelection = selectedGroup.filter((g) => { return g.GroupID !== id });
+    setselectedGroup(newSelection);
+  };
 
   const siteTrackingLogic = () => {
     if (accountSettings.SubAccountSettings.DomainAddress && accountSettings.SubAccountSettings.DomainAddress !== '') {
@@ -1289,179 +1228,173 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   };
 
-	const handleClose = () => {
-		setDialogType(null);
-	};
-	const handleAddLink = async (id, linkType) => {
-		let text = "";
-		let campaign = {};
-		if (linkType === 'campaign') {
-			campaign = previousCampaignData.filter((campaign) => { return campaign.CampaignID === id });
-			if (campaign && campaign.length > 0) {
-				text = campaign[0].EncryptURL;
-			}
-		}
-		else if (linkType === 'lp') {
-			campaign = previousLandingData.filter((campaign) => { return campaign.CampaignID === id });
-			if (campaign && campaign.length > 0) {
-				text = campaign[0].PageHref;
-			}
-		}
-		seteditmenuClick(false);
-		onAddText(text)
-		let lc = linkCount;
-		setlinkCount(++lc);
-		setDialogType(null);
-		setCampaignSearch('');
-		setlandingSearch('');
-	};
+  const handleClose = () => {
+    setDialogType(null);
+  };
+  const handleAddLink = async (id, linkType) => {
+    let text = "";
+    let campaign = {};
+    if (linkType === 'campaign') {
+      campaign = previousCampaignData.filter((campaign) => { return campaign.CampaignID === id });
+      if (campaign && campaign.length > 0) {
+        text = campaign[0].EncryptURL;
+      }
+    }
+    else if (linkType === 'lp') {
+      campaign = previousLandingData.filter((campaign) => { return campaign.CampaignID === id });
+      if (campaign && campaign.length > 0) {
+        text = campaign[0].PageHref;
+      }
+    }
+    seteditmenuClick(false);
+    onAddText(text)
+    let lc = linkCount;
+    setlinkCount(++lc);
+    setDialogType(null);
+    setCampaignSearch('');
+    setlandingSearch('');
+  };
 
-	const handleSelect = (id) => {
-		let tempArr = [];
-		const isExist = selectedGroup.filter((g) => { return g.GroupID === id }).length > 0;
-		if (isExist) {
-			tempArr = selectedGroup.filter((g) => { return g.GroupID !== id });
-			setselectedGroup(tempArr);
-		}
-		else {
-			const newItem = testGroups.filter((g) => { return g.GroupID === id })[0];
-			setselectedGroup([...selectedGroup, newItem]);
-		}
-	};
+  const handleSelect = (id) => {
+    let tempArr = [];
+    const isExist = selectedGroup.filter((g) => { return g.GroupID === id }).length > 0;
+    if (isExist) {
+      tempArr = selectedGroup.filter((g) => { return g.GroupID !== id });
+      setselectedGroup(tempArr);
+    }
+    else {
+      const newItem = testGroups.filter((g) => { return g.GroupID === id })[0];
+      setselectedGroup([...selectedGroup, newItem]);
+    }
+  };
 
-	const handleDelete = async () => {
-		if (props && params?.id) {
-			let response = await dispatch(getSmsByID(params?.id))
-			if (response) {
-				dispatch(deleteSms(response.payload.SMSCampaignID));
-				handleClose();
-				navigate("/react/SMSCampaigns");
-			}
-		}
-		else {
-			dispatch(deleteSms(-1));
-			handleClose();
-			navigate("/react/SMSCampaigns");
-		}
-	};
+  const handleDelete = async () => {
+    if (id) {
+      let response = await dispatch(getSmsByID(id))
+      if (response) {
+        dispatch(deleteSms(response.payload.SMSCampaignID));
+        handleClose();
+        Redirect({ url: "/react/SMSCampaigns" });
+      }
+    }
+    else {
+      dispatch(deleteSms(-1));
+      handleClose();
+      Redirect({ url: "/react/SMSCampaigns" });
+    }
+  };
 
-	const handleGroupClose = async () => {
-		if (selectedGroup.length > 0) {
-			const groupIds = selectedGroup.map((g) => { return g.GroupID });
-			settotal(selectedGroup.length);
-			const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
-			let r = await dispatch(smsSave(payloadToPush));
-			setCampaignId(r.payload.Message);
-			if (r.payload.Status === 2) {
-				let payload2 = {
-					IsTestGroups: true,
-					SMSCampaignID: r.payload.Message,
-					TestGroupsIds: groupIds,
-				};
-				handleSmsModelChange("SMSCampaignID", r.payload.Message);
-				let r2 = await dispatch(smsSaveGroup(payload2));
-				await dispatch(getCampaignSumm(r.payload.Message));
-				setsummary(true);
-				setDialogType(null);
-			}
-			else if (r.payload.Status === 3) {
-				setOTPOpen(true);
-			}
-			else {
-				setDialogType(null);
-			}
-		}
-		sethidden(true);
-	};
+  const handleGroupClose = async () => {
+    if (selectedGroup.length > 0) {
+      const groupIds = selectedGroup.map((g) => { return g.GroupID });
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
+      let r = await dispatch(smsSave(payloadToPush));
+      setCampaignId(r.payload.Message);
+      if (r.payload.Status === 2) {
+        let payload2 = {
+          IsTestGroups: true,
+          SMSCampaignID: r.payload.Message,
+          TestGroupsIds: groupIds,
+        };
+        handleSmsModelChange("SMSCampaignID", r.payload.Message);
+        await dispatch(smsSaveGroup(payload2));
+        await dispatch(getCampaignSumm(r.payload.Message));
+        setsummary(true);
+        setDialogType(null);
+      }
+      else if (r.payload.Status === 3) {
+        setOTPOpen(true);
+      }
+      else {
+        setDialogType(null);
+      }
+    }
+  };
 
-	const handlecaution = () => {
-		setalertToggle(false);
-		setcounterBool(false);
-		setmodalOpen(false);
-		setremovalNumber(null);
-		setDialogType(null);
-	};
-	const handleAlertoff = () => {
-		setcampaignNumber(storedValue);
-		setalertToggle(false);
-		setDialogType(null);
-	};
-	const handleExit = async (saveBeforeExit) => {
-		if (saveBeforeExit) {
-			const payloadToPush = { ...smsModel, SmsCampaignID: smsCampaignId, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
-			let saveResponse = await dispatch(smsSave(payloadToPush));
-			if (saveResponse) {
-				if (saveResponse.payload.Status === 3) {
-					setOTPOpen(true);
-					return;
-				}
-				else if (saveResponse.payload.Status === 2) {
-					setDialogType(null);
-					navigate("/react/SMSCampaigns");
+  const handlecaution = () => {
+    setmodalOpen(false);
+    setremovalNumber(null);
+    setDialogType(null);
+  };
+  const handleAlertoff = () => {
+    setcampaignNumber(storedValue);
+    setDialogType(null);
+  };
+  const handleExit = async (saveBeforeExit) => {
+    if (saveBeforeExit) {
+      const payloadToPush = { ...smsModel, SmsCampaignID: smsCampaignId, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
+      let saveResponse = await dispatch(smsSave(payloadToPush));
+      if (saveResponse) {
+        if (saveResponse.payload.Status === 3) {
+          setOTPOpen(true);
+          return;
+        }
+        else if (saveResponse.payload.Status === 2) {
+          setDialogType(null);
+          Redirect({ url: "/react/SMSCampaigns" });
 
-				}
-				else {
-					setDialogType(null);
-					setToastMessage(ToastMessages.ERROR);
-				}
-			}
-			else {
-				setDialogType(null);
-				setToastMessage(ToastMessages.ERROR);
-			}
-		}
-		else if (saveBeforeExit === false) {
-			navigate("/react/SMSCampaigns");
-			setDialogType(null);
-		}
-	};
-	const handleSummary = () => {
-		setsummary(false);
-	}
-	const renderSummary = () => {
-		return (
-			<>
-				<Summary
-					classes={classes}
-					campaignName={smsModel.Name}
-					fromNumber={campaignNumber}
-					textMsg={smsModel.Text}
-					groups={selectedGroup}
-					open={summary}
-					handleCallback={handleSummary}
-					summaryPayload={getCampaignSum}
-					onConfirm={onApiCall}
-				/>
-			</>
-		);
-	};
+        }
+        else {
+          setDialogType(null);
+          setToastMessage(ToastMessages.ERROR);
+        }
+      }
+      else {
+        setDialogType(null);
+        setToastMessage(ToastMessages.ERROR);
+      }
+    }
+    else if (saveBeforeExit === false) {
+      Redirect({ url: "/react/SMSCampaigns" });
+      setDialogType(null);
+    }
+  };
+  const handleSummary = () => {
+    setsummary(false);
+  }
+  const renderSummary = () => {
+    return (
+      <>
+        <Summary
+          classes={classes}
+          campaignName={smsModel.Name}
+          fromNumber={campaignNumber}
+          textMsg={smsModel.Text}
+          groups={selectedGroup}
+          open={summary}
+          handleCallback={handleSummary}
+          summaryPayload={getCampaignSum}
+          onConfirm={onApiCall}
+        />
+      </>
+    );
+  };
 
-	const focusOnMessage = () => {
-		const textArea = document.getElementById("yourMessage");
-		setTimeout(() => {
-			textArea.focus();
-		}, 500)
-	}
+  const focusOnMessage = () => {
+    const textArea = document.getElementById("yourMessage");
+    setTimeout(() => {
+      textArea.focus();
+    }, 500)
+  }
 
-	const onLocation = async () => {
-		onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
-		setlinkCount(linkCount + 1);
-		setwaize(false);
-		setDialogType(null);
-	};
+  const onLocation = async () => {
+    onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
+    setlinkCount(linkCount + 1);
+    setDialogType(null);
+  };
 
-	const renderToast = () => {
-		if (toastMessage) {
+  const renderToast = () => {
+    if (toastMessage) {
 
-			setTimeout(() => {
-				setToastMessage(null);
-			}, 4000);
-			return (
-				<Toast data={toastMessage} />
-			);
-		}
-		return null;
-	}
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
 
   const renderButtons = () => {
     return (
@@ -1968,19 +1901,19 @@ const SmsCreator = ({ classes, ...props }) => {
   const renderDialog = () => {
     const { type, data } = dialogType || {}
 
-		const dialogContent = {
-			latestLP: lpDialog(),
-			latestCampaigns: campaignsDialog(),
-			waze: wazeDialog(),
-			deleteSms: deleteDialog(),
-			valiateError: validationDialog(),
-			groups: groupDialog(),
-			exit: exitDialog(),
-			alert: alertDialog(),
-			noCredit: noCreditDialog(),
-			linkStatisticAlert: siteTrackingLinkDialog(data),
-			englishLetterDialog: englishLetterNotAllowed()
-		}
+    const dialogContent = {
+      latestLP: lpDialog(),
+      latestCampaigns: campaignsDialog(),
+      waze: wazeDialog(),
+      deleteSms: deleteDialog(),
+      valiateError: validationDialog(),
+      groups: groupDialog(),
+      exit: exitDialog(),
+      alert: alertDialog(),
+      noCredit: noCreditDialog(),
+      linkStatisticAlert: siteTrackingLinkDialog(data),
+      englishLetterDialog: englishLetterNotAllowed()
+    }
 
     const currentDialog = dialogContent[type] || {}
     return (

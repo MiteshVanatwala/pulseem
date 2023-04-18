@@ -33,8 +33,7 @@ import {
 	setCoreData,
 	setLanguage,
 	setRowsPerPage,
-	setIsClal,
-	setAccountFeatures,
+	setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
 import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice';

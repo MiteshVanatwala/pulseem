@@ -32,7 +32,7 @@ import { Title } from '../../../components/managment/Title';
 import { useNavigate } from 'react-router-dom';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
-import { setCookie } from '../../../helpers/Functions/cookies';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const NewsletterManagnentScreen = ({ classes }) => {
