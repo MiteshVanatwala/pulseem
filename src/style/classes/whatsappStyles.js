@@ -1313,7 +1313,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		borderTopRightRadius: '0.25rem',
 		padding: '8px',
 	},
-	whatsappCampainHighlightTextWrapper: {},
+	whatsappCampainHighlightTextWrapper: {
+		wordBreak: 'break-word',
+		overflowY: 'auto',
+		maxHeight: '124px',
+	},
 	whatsappCampainHighlightText: {
 		backgroundColor: '#169bd5',
 		color: '#ffffff',
