@@ -936,6 +936,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData
                         });
+                        setSegmantIndication(true)
+                    }
+                    else {
+                        setSegmantIndication(false)
                     }
                     resolve();
                 } catch (error) {
