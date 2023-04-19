@@ -254,17 +254,23 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							: {}
 					}
 					className={classes.middleText}>
-					{cellValue ? cellValue : '0'}
+					{cellName !== translator('common.revenue')
+						? cellValue || '0'
+						: `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
+								'common.NIS'
+						  )}`}
 				</Typography>
-				<Typography
-					onClick={() =>
-						cellValue >= 1 && isClickable
-							? onTableCellClick(cellName, row.WACampaignID)
-							: {}
-					}
-					className={classes.middleText}>
-					{title}
-				</Typography>
+				{cellName !== translator('common.revenue') && (
+					<Typography
+						onClick={() =>
+							cellValue >= 1 && isClickable
+								? onTableCellClick(cellName, row.WACampaignID)
+								: {}
+						}
+						className={classes.middleText}>
+						{title}
+					</Typography>
+				)}
 			</>
 		);
 	};
@@ -716,7 +722,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 														className={clsx(
 															classes.tableCellBody,
 															classes.flex1,
-															classes.tableCellNoBorder
+															classes.tableCellNoBorder,
+															classes.revenueTableCell,
+															`${
+																report && report.Revenue > 0
+																	? classes.revenueTableCellPointer
+																	: ''
+															}`
 														)}>
 														{getTableTypographyCells(
 															translator('common.revenue'),

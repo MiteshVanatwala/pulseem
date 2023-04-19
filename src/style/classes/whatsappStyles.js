@@ -2874,4 +2874,14 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	tableCellNoBorder: {
 		border: '0px',
 	},
+	revenueTableCell: {
+		'& p': {
+			fontWeight: '900 !important',
+		},
+	},
+	revenueTableCellPointer: {
+		'& p': {
+			cursor: 'pointer',
+		},
+	},
 });
