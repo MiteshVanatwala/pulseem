@@ -176,9 +176,8 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path="/SendCampaign"
-        element={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'id')}
-      // element={<NewsletterSendSettings classes={classes} />}
+        path="/react/Campaigns/SendSettings/:id"
+        element={<NewsletterSendSettings classes={classes} />}
       />
       <Route
         exact

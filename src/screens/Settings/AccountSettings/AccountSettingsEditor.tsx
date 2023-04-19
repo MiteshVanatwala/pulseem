@@ -296,8 +296,8 @@ const AccountSettingsEditor = () => {
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         isOpen={tfaEmailVerification}
-        value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && emailToVerify}
         onClose={() => {
           setTfaEmailVerification(false);
           setVerificationStep(0);
@@ -308,8 +308,8 @@ const AccountSettingsEditor = () => {
         classes={classes}
         variant="email"
         isOpen={emailVerificationPopup}
-        value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && emailToVerify}
         onClose={() => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
@@ -319,8 +319,8 @@ const AccountSettingsEditor = () => {
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         isOpen={tfaSmsVerification}
-        value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && cellphoneToVerify}
         onClose={() => {
           setTfaSmsVerification(false);
           setVerificationStep(0);
@@ -330,8 +330,8 @@ const AccountSettingsEditor = () => {
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="sms"
-        value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && cellphoneToVerify}
         isOpen={smsVerificationPopup}
         onClose={() => {
           setSmsVerificationPopup(false);

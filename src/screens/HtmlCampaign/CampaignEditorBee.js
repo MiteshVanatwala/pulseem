@@ -289,7 +289,9 @@ const CampaignEditor = ({ classes, ...props }) => {
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
-              setButtonDisabled(false);
+              setTimeout(() => {
+                setButtonDisabled(false);
+              }, 2000);
             });
           }
           break;
@@ -366,7 +368,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadBeeEditor', 1);
-          window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
+          // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           return false;
         }
         else if (saveRef.current?.showAnimation) {

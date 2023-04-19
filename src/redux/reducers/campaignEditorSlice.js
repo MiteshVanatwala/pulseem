@@ -48,7 +48,7 @@ export const getUserblocks = createAsyncThunk(
     '/CampaignEditor/GetUserblocks/', async (thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
-            return JSON.parse(response.data)
+            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
