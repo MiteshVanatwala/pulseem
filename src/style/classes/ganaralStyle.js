@@ -1,8 +1,8 @@
 const dialogWidth = {
-	xs: '200px',
-	sm: '350px',
-	md: '350px',
-	lg: '460px',
+	xs: "200px",
+	sm: "350px",
+	md: "350px",
+	lg: "460px",
 };
 
 const minDialogWidth = {
@@ -27,7 +27,7 @@ const summaryPadding = {
 };
 
 const iconWrapperMargin = {
-	xs: '10px 5px 5px',
+	xs: "10px 5px 5px",
 	sm: 10,
 	md: 15,
 	lg: 15,
@@ -44,7 +44,7 @@ const iconWrapperMinWidth = {
 const notificationTitleFontSize = {
 	xs: 12,
 	sm: 12,
-	md: '1rem',
+	md: "1rem",
 };
 
 const graphTextWidth = {
@@ -56,134 +56,106 @@ const graphTextWidth = {
 
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	sidebar: {
-		'&::-webkit-scrollbar': {
-			display: 'block !important',
+		"&::-webkit-scrollbar": {
+			display: "block !important",
 			width: 6,
 			height: 6,
 		},
 		/* Track */
-		'&::-webkit-scrollbar-track': {
-			boxShadow: 'inset 0 0 0px',
+		"&::-webkit-scrollbar-track": {
+			boxShadow: "inset 0 0 0px",
 			borderRadius: 10,
-			backgroundColor: '#fff !important',
+			backgroundColor: "#fff !important",
 		},
 		/* Handle */
-		'&::-webkit-scrollbar-thumb': {
-			background: '#ccc',
+		"&::-webkit-scrollbar-thumb": {
+			background: "#ccc",
 			borderRadius: 10,
 		},
 		/* Handle on hover */
-		'&::-webkit-scrollbar-thumb:hover': {
-			background: '#999',
+		"&::-webkit-scrollbar-thumb:hover": {
+			background: "#999",
 		},
 	},
-	ribbonContainer: {
-		position: 'relative',
-		'& .wrap': {
-			width: 'inherit',
-			height: '58px',
-			position: 'absolute',
-			top: '0px',
-			left: '0px',
-			overflow: 'hidden',
-			'& .ribbon': {
-				width: '45px',
-				height: '10px',
-				lineHeight: '10px',
-				position: 'absolute',
-				top: '5px',
-				right: isRTL ? 'auto' : '-14px',
-				left: isRTL ? '-14px' : 'auto',
-				zIndex: '2',
-				overflow: 'hidden',
-				transform: isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
-				'-webkit-transform': isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
-				boxShadow: '0px 0px 2px 1px #b7b7b7,  0px 21px 5px -18px rgba(0,0,0,0.6)',
-				background: '#ff0000',
-				textAlign: 'center',
-				fontSize: '0.5rem',
-			}
-		}
-	},
 	dialogCustomSize: {
-		height: '40vh',
-		width: windowSize === 'lg' || windowSize === 'xl' ? '550px' : null,
+		height: "40vh",
+		width: windowSize === "lg" || windowSize === "xl" ? "550px" : null,
 	},
 	solidDialogContainer: {
 		zIndex: '1500 !important',
-		'& .MuiPaper-root': {
+		"& .MuiPaper-root": {
 			borderRadius: 25,
-			overflowX: 'hidden',
+			overflowX: "hidden",
 			boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
-			backgroundColor: '#fff',
+			backgroundColor: '#f5f5f5'
 		},
-		'& .MuiDialog-paperWidthSm': {
+		"& .MuiDialog-paperWidthSm": {
 			minWidth: minDialogWidth[windowSize],
 			maxWidth: maxDialogWidth[windowSize],
 		},
-		'& .MuiDialog-paperScrollPaper': {
-			maxHeight: '100%',
+		"& .MuiDialog-paperScrollPaper": {
+			maxHeight: '100%'
 		},
 	},
 	dialogContainer: {
-		'& .MuiPaper-root': {
+		"& .MuiPaper-root": {
 			borderRadius: 25,
-			overflowX: 'hidden',
+			overflowX: "hidden",
 			// boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
 			backgroundColor: '#fff',
 		},
-		'& .MuiDialog-scrollPaper': {
-			'@media screen and (max-width: 450px)': {
-				zoom: '85%',
+		"& .MuiDialog-scrollPaper": {
+			"@media screen and (max-width: 450px)": {
+				zoom: '85%'
 			},
-			'@media screen and (max-width: 330px)': {
-				zoom: '70%',
-			},
+			"@media screen and (max-width: 330px)": {
+				zoom: '70%'
+			}
 		},
-		'& .MuiDialog-paperWidthSm': {
+		"& .MuiDialog-paperWidthSm": {
 			minWidth: minDialogWidth[windowSize],
 			maxWidth: maxDialogWidth[windowSize],
 		},
-		'& .MuiDialog-paperScrollPaper': {
-			maxHeight: '100%',
+		"& .MuiDialog-paperScrollPaper": {
+			maxHeight: "100%",
 		},
 	},
 	noPadding: {
-		padding: '0px !important',
+		padding: "0px !important",
 	},
 	noMargin: {
 		margin: 0,
 	},
 	wizardFlex: {
 		flex: 1,
-		alignContent: 'flex-end',
-		justifyContent: 'center',
+		alignContent: "flex-end",
+		justifyContent: "center",
 	},
 	dialogTitle: {
-		fontSize: '1.8rem',
-		fontWeight: '700',
-		color: '#0a74a9',
+		fontSize: "1.8rem",
+		fontWeight: "700",
+		color: "#0a74a9",
 		marginInline: 25,
-		whiteSpace: 'pre-line',
+		whiteSpace: "pre-line",
 	},
 	resetDialogTitle: {
-		fontSize: '2rem',
-		fontWeight: '400',
-		color: '#0a74a9',
+		fontSize: "2rem",
+		fontWeight: "400",
+		color: "#0a74a9",
 		// marginInline: 25,
-		whiteSpace: 'pre-line',
+		whiteSpace: "pre-line",
 	},
 	reducedTitle: {
-		'@media screen and (max-width: 768px)': {
-			fontSize: '1.3rem',
-		},
+		"@media screen and (max-width: 768px)": {
+			fontSize: "1.3rem",
+		}
 	},
 	dialogChildren: {
 		// marginInline: 25,
 		marginBlock: 30,
 		paddingRight: summaryPadding[windowSize],
 		paddingLeft: summaryPadding[windowSize],
-		overflowY: 'auto',
+		overflowY: "auto",
 	},
 	paddingSides15: {
 		paddingRight: 15,
@@ -194,36 +166,36 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		paddingLeft: 25,
 	},
 	copyClip: {
-		border: '1px solid #3476b0',
+		border: "1px solid #3476b0",
 		padding: 5,
-		color: '#3476b0',
+		color: "#3476b0",
 		fontWeight: 600,
-		backgroundColor: '#bde5f8',
+		backgroundColor: "#bde5f8",
 		opacity: 1,
 		zIndex: 10,
 	},
 	dialogIconContent: {
-		fontFamily: 'pulseemicons',
-		color: '#fff',
+		fontFamily: "pulseemicons",
+		color: "#fff",
 		fontSize: 30,
 		padding: 5,
 	},
 	dialogAlertIcon: {
 		fontSize: 28,
-		color: '#fff',
-		border: '1px solid #fff',
+		color: "#fff",
+		border: "1px solid #fff",
 		borderRadius: 50,
 		width: 40,
 		height: 40,
 	},
 	switchActive: {
-		color: '#27AE60',
+		color: "#27AE60",
 	},
 	switchInactive: {
-		color: '#F02039',
+		color: "#F02039",
 	},
 	dialogErrorText: {
-		fontFamily: 'Assistant',
+		fontFamily: "Assistant",
 		fontSize: 18,
 	},
 	boxDialog: {
@@ -231,42 +203,42 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		marginBottom: 15,
 	},
 	middle: {
-		alignSelf: 'center',
+		alignSelf: "center",
 	},
 	mainContainer: {
-		maxHeight: 'calc(100vh - 53px)',
-		overflow: 'auto',
+		maxHeight: "calc(100vh - 53px)",
+		overflow: "auto",
 	},
 	defaultScreen: {
-		overflow: 'visible',
+		overflow: "visible",
 		//maxHeight: 'calc(100vh - 53px)'
 	},
 	pulseemIcon: {
-		fontFamily: 'pulseemicons',
+		fontFamily: "pulseemicons",
 	},
 	borderBottom1: {
-		borderBottom: '1px solid #ccc',
+		borderBottom: "1px solid #ccc",
 	},
 	dFlex: {
-		display: 'flex',
+		display: "flex",
 	},
 	width_min_content: {
-		width: 'min-content',
+		width: 'min-content'
 	},
 	rtlSwitch: {
-		transform: 'rotateY(180deg)',
+		transform: "rotateY(180deg)",
 	},
 	dBlock: {
-		display: 'block',
+		display: "block",
 	},
 	dNone: {
-		display: 'none',
+		display: "none",
 	},
 	borderAround: {
-		border: '1px solid #000',
+		border: "1px solid #000",
 	},
 	alignItemsCenter: {
-		alignItems: 'center',
+		alignItems: "center",
 	},
 	w110: {
 		width: 110,
@@ -278,16 +250,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		width: 25,
 	},
 	maxHeight87: {
-		maxHeight: 'auto',
-		'@media screen and (min-width: 600px)': {
+		maxHeight: "auto",
+		"@media screen and (min-width: 600px)": {
 			maxHeight: 87,
 		},
 	},
 	w20: {
-		width: '20%',
+		width: "20%",
 	},
 	w80: {
-		width: '80%',
+		width: "80%",
 	},
 	minWidth100: {
 		minWidth: 100,
@@ -299,7 +271,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		maxWidth: 190,
 	},
 	widthUnset: {
-		width: 'unset',
+		width: "unset",
 	},
 	maxWidth540: {
 		maxWidth: 540,
@@ -311,10 +283,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		flex: 2,
 	},
 	dInline: {
-		display: 'inline',
+		display: "inline",
 	},
 	dInlineBlock: {
-		display: 'inline-block',
+		display: "inline-block",
 	},
 	pl25: {
 		paddingInlineEnd: 25,
@@ -326,7 +298,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		padding: 10,
 	},
 	pbt5: {
-		padding: '5px 0',
+		padding: "5px 0",
 	},
 	p20: {
 		padding: 20,
@@ -335,7 +307,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		padding: 0,
 	},
 	plr10: {
-		padding: '0 10px',
+		padding: "0 10px",
 	},
 	pr25: {
 		paddingInlineStart: 25,
@@ -359,7 +331,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		paddingTop: 0,
 	},
 	pt2rem: {
-		paddingTop: '2rem',
+		paddingTop: "2rem",
 	},
 	pt10: {
 		paddingTop: 10,
@@ -368,13 +340,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		paddingTop: 14,
 	},
 	pt15: {
-		paddingTop: 15,
+		paddingTop: 15
 	},
 	pt2: {
 		paddingTop: 1.4,
 	},
 	pb0: {
-		paddingBottom: 0,
+		paddingBottom: 0
 	},
 	pb10: {
 		paddingBottom: 10,
@@ -447,7 +419,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		fontSize: 12,
 	},
 	mxAuto: {
-		marginInline: 'auto',
+		marginInline: "auto",
 	},
 	f14: {
 		fontSize: 14,
@@ -477,112 +449,112 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		fontSize: 30,
 	},
 	f09rem: {
-		fontSize: '0.9rem',
+		fontSize: '0.9rem'
 	},
 	h50v: {
-		height: '50vh',
+		height: '50vh'
 	},
 	h10v: {
-		height: '10vh',
+		height: '10vh'
 	},
 	line1: {
 		lineHeight: 1,
 	},
 	bgWhite: {
-		backgroundColor: '#ffffff !important',
+		backgroundColor: "#ffffff !important",
 	},
 	bgBrown: {
-		backgroundColor: '#636363',
+		backgroundColor: "#636363",
 	},
 	colorWhite: {
-		color: '#fff',
+		color: "#fff",
 	},
 	colorGray: {
-		color: 'rgba(0,0,0,0.40)',
+		color: "rgba(0,0,0,0.40)",
 	},
 	colorBlue: {
-		color: '#0371AD',
+		color: "#0371AD",
 	},
 	bgGreen: {
-		backgroundColor: 'green',
+		backgroundColor: "green",
 	},
 	inlineGrid: {
-		display: 'inline-grid',
+		display: "inline-grid",
 	},
 	bgLightGray: {
-		backgroundColor: 'rgba(242, 242, 242, 1)',
+		backgroundColor: "rgba(242, 242, 242, 1)",
 	},
 	justifyBetween: {
-		display: 'flex',
-		justifyContent: 'space-between',
+		display: "flex",
+		justifyContent: "space-between",
 	},
 	justifyEvenly: {
-		display: 'flex',
-		justifyContent: 'space-evenly',
+		display: "flex",
+		justifyContent: "space-evenly",
 	},
 	flexColumn2: {
-		display: 'flex',
-		flexDirection: 'column',
+		display: "flex",
+		flexDirection: "column",
 		paddingTop: 14,
 		paddingInlineEnd: 10,
 	},
 	txtCenter: {
-		textAlign: 'center',
-		'& input': {
-			textAlign: 'center',
+		textAlign: "center",
+		"& input": {
+			textAlign: "center",
 		},
 	},
 	bold: {
-		fontWeight: 'bold',
+		fontWeight: "bold",
 	},
 	disabled: {
-		opacity: '.65',
-		pointerEvents: 'none !important',
-		cursor: 'not-allowed !important',
+		opacity: ".65",
+		pointerEvents: "none !important",
+		cursor: "not-allowed !important",
 	},
 	imageInfo: {
-		backgroundColor: 'rgba(255,255,255,.5)',
-		color: '#000 !important',
+		backgroundColor: "rgba(255,255,255,.5)",
+		color: "#000 !important",
 	},
 	alignCenter: {
-		display: 'flex',
-		alignContent: 'center',
+		display: "flex",
+		alignContent: "center",
 	},
 	justifyCenterOfCenter: {
-		display: 'flex',
-		justifyContent: 'center',
-		width: '100%',
-		height: '100%',
-		alignItems: 'center',
+		display: "flex",
+		justifyContent: "center",
+		width: "100%",
+		height: "100%",
+		alignItems: "center",
 	},
 	spaceBetween: {
-		display: 'flex',
-		justifyContent: 'space-between',
+		display: "flex",
+		justifyContent: "space-between",
 	},
 	spaceEvenly: {
-		display: 'flex',
-		justifyContent: 'space-evenly',
+		display: "flex",
+		justifyContent: "space-evenly",
 	},
 	textCapitalize: {
-		textTransform: 'capitalize',
+		textTransform: "capitalize",
 	},
 	textUppercase: {
-		textTransform: 'uppercase !important',
+		textTransform: "uppercase !important",
 	},
 	noborder: {
-		border: 'none',
+		border: "none",
 	},
 	floatRight: {
-		float: 'right',
+		float: "right",
 	},
 	wordBreak: {
-		wordBreak: 'break-all',
+		wordBreak: "break-all",
 	},
 	posRelative: {
-		position: 'relative',
+		position: "relative",
 	},
 	iconsFont: {
-		fontFamily: 'pulseemicons',
+		fontFamily: "pulseemicons",
 		fontSize: 22,
 	},
 	pageSubTitle: {
@@ -590,31 +562,31 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		fontSize: 28,
 	},
 	subTitle: {
-		margin: '0 10px !important',
-		color: '#157eaf',
+		margin: "0 10px !important",
+		color: "#157eaf",
 		fontSize: 30,
 	},
 	blue: {
-		color: '#0a74a9',
+		color: "#0a74a9",
 	},
 	bgLightBlue: {
-		backgroundColor: '#E3E9F0',
+		backgroundColor: "#E3E9F0",
 	},
 	bgBlack: {
-		backgroundColor: 'black',
+		backgroundColor: "black",
 	},
 	fBlack: {
-		color: 'black',
+		color: "black",
 	},
 	black: {
-		color: '#626262',
+		color: "#626262",
 	},
 	white: {
-		color: 'white',
+		color: "white",
 	},
 	whiteBox: {
-		backgroundColor: '#fff',
-		boxShadow: '5px 3px 3px 1px rgba(0,0,0,.2)',
+		backgroundColor: "#fff",
+		boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
 		padding: 5,
 	},
 	mt1: {
@@ -654,10 +626,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		marginBottom: 50,
 	},
 	m5: {
-		margin: '.5rem',
+		margin: ".5rem",
 	},
 	mr5: {
-		marginRight: 5,
+		marginRight: 5
 	},
 	font13: {
 		fontSize: 13,
@@ -675,8 +647,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		fontSize: 24,
 	},
 	linkNoDesign: {
-		textDecoration: 'none',
-		color: 'black',
+		textDecoration: "none",
+		color: "black",
 	},
 	font30: {
 		fontSize: 30,
@@ -685,43 +657,43 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		width: '50%',
 	},
 	w100: {
-		width: '100%',
+		width: '100%'
 	},
 	h100: {
-		height: '100%',
+		height: '100%'
 	},
 	hAuto: {
-		height: 'auto',
+		height: 'auto'
 	},
 	pRelative: {
-		position: 'ralative',
+		position: 'ralative'
 	},
 	borderBox: {
-		border: '3px solid #0371ad',
-		margin: '1rem',
-		display: 'flex',
-		padding: '1rem',
+		border: "3px solid #0371ad",
+		margin: "1rem",
+		display: "flex",
+		padding: "1rem",
 		borderRadius: 5,
-		flexDirection: 'column',
+		flexDirection: "column",
 	},
 	whiteLink: {
-		cursor: 'pointer',
-		color: '#fff',
-		textTransform: 'capitalize',
+		cursor: "pointer",
+		color: "#fff",
+		textTransform: "capitalize",
 		lineHeight: 1,
-		display: 'flex',
-		alignItems: 'center',
-		textDecoration: 'underline',
+		display: "flex",
+		alignItems: "center",
+		textDecoration: "underline",
 	},
 	blackDivider: {
 		height: 2,
-		backgroundColor: 'rgb(0, 0, 0, 0.5)',
-		textDecoration: 'none',
-		color: '#fff',
-		textTransform: 'capitalize',
+		backgroundColor: "rgb(0, 0, 0, 0.5)",
+		textDecoration: "none",
+		color: "#fff",
+		textTransform: "capitalize",
 		lineHeight: 1,
-		'&:hover': {
-			backgroundColor: 'transparent',
+		"&:hover": {
+			backgroundColor: "transparent",
 		},
 	},
 	blueLink: {
@@ -733,8 +705,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		cursor: 'pointer',
 		textDecoration: 'underline',
 		'&:hover': {
-			backgroundColor: 'transparent',
-		},
+			backgroundColor: 'transparent'
+		}
 	},
 	size150: {
 		width: 127,
@@ -745,86 +717,91 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		height: 110,
 	},
 	noWrap: {
-		flexWrap: 'nowrap',
+		flexWrap: "nowrap",
 	},
 	flexWrap: {
-		flexWrap: 'wrap',
+		flexWrap: "wrap",
 	},
 	infoDiv: {
-		height: '100px',
-		display: 'flex',
-		alignItems: 'center',
-		'@media screen and (max-width: 540px)': {
-			width: '100%',
-			height: 'auto',
+		height: "100px",
+		display: "flex",
+		alignItems: "center",
+		"@media screen and (max-width: 540px)": {
+			width: "100%",
+			height: "auto",
 			marginTop: 10,
 		},
 	},
 	headInfo: {
-		fontSize: '32px',
-		fontWeight: '600',
-		marginInlineEnd: '10px',
-		'@media screen and (max-width: 768px)': {
+		fontSize: "32px",
+		fontWeight: "600",
+		marginInlineEnd: "10px",
+		"@media screen and (max-width: 768px)": {
 			// width : '300px',
-			fontSize: '26px',
+			fontSize: "26px",
 		},
 	},
 	bodyInfo: {
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		width: '20px',
-		height: '20px',
-		backgroundColor: 'black',
-		borderRadius: '50%',
-		color: 'white',
-		cursor: 'pointer',
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		width: "20px",
+		height: "20px",
+		backgroundColor: "black",
+		borderRadius: "50%",
+		color: "white",
+		cursor: "pointer",
+	},
+	noBorderOnLastCell: {
+		borderInlineEnd: 'none',
 	},
 	headNo: {
-		backgroundColor: '#1c82b2',
-		color: '#fff',
-		fontSize: '25px',
-		border: '1px solid',
-		borderRadius: '50%',
-		width: '40px',
-		height: '40px',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginInlineEnd: '10px',
-		'@media screen and (max-width: 768px)': {
-			width: '30px',
-			fontSize: '24px',
-			height: '30px',
+		backgroundColor: "#1c82b2",
+		color: "#fff",
+		fontSize: "25px",
+		border: "1px solid",
+		borderRadius: "50%",
+		width: "40px",
+		height: "40px",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		marginInlineEnd: "10px",
+		"@media screen and (max-width: 768px)": {
+			width: "30px",
+			fontSize: "24px",
+			height: "30px",
 		},
 	},
 	headDiv: {
-		height: '60px',
-		display: 'flex',
-		alignItems: 'center',
+		height: "60px",
+		display: "flex",
+		alignItems: "center",
 	},
 	contentHead: {
-		color: '#157eaf',
-		fontSize: '30px',
-		'@media screen and (max-width: 768px)': {
+		color: "#157eaf",
+		fontSize: "30px",
+		"@media screen and (max-width: 768px)": {
 			// width : '300px',
-			fontSize: '24px',
+			fontSize: "24px",
 		},
 	},
 	fieldDiv: {
 		// height: "100px",
-		marginTop: '20px',
+		marginTop: "20px",
 		// "@media screen and (max-width: 960px)": {
+
+		//   height: "0"
 
 		// },
 	},
 	buttonForm: {
-		display: 'flex',
-		flexDirection: 'column',
+		display: "flex",
+		flexDirection: "column",
 	},
 	buttonHead: {
-		fontSize: '17px',
-		marginBottom: '10px',
+		fontSize: "17px",
+		marginBottom: "10px",
 		// "@media screen and (max-width: 414px)": {
 		//   fontSize: 16
 		// }
@@ -833,496 +810,496 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		fontSize: 14,
 	},
 	alertMsg: {
-		color: '#ca332f',
+		color: "#ca332f",
 	},
 	buttonField: {
-		borderRadius: '5px',
-		border: '1px solid #bbb',
-		outline: 'none',
-		padding: '8px 12px 8px 4px',
-		fontSize: '16px',
-		'&::placeholder': {
-			fontSize: '16px',
+		borderRadius: "5px",
+		border: "1px solid #bbb",
+		outline: "none",
+		padding: "8px 12px 8px 4px",
+		fontSize: "16px",
+		"&::placeholder": {
+			fontSize: "16px",
 		},
 	},
 	buttonFieldRemoval: {
-		borderRadius: '5px',
-		border: '1px solid #bbb',
-		outline: 'none',
-		padding: '8px',
+		borderRadius: "5px",
+		border: "1px solid #bbb",
+		outline: "none",
+		padding: "8px",
 		width: 100,
-		backgroundColor: '#e9ecef',
-		'&::placeholder': {
-			fontSize: '16px',
+		backgroundColor: "#e9ecef",
+		"&::placeholder": {
+			fontSize: "16px",
 		},
-		'& .Mui-disabled': {
-			color: '#000',
+		"& .Mui-disabled": {
+			color: "#000",
 		},
-		'@media screen and  (max-width: 960)': {
-			width: '100%',
+		"@media screen and  (max-width: 960)": {
+			width: "100%",
 		},
 	},
 	buttonFieldRemovalMobile: {
-		borderRadius: '5px',
-		border: '1px solid #bbb',
-		outline: 'none',
-		padding: '8px',
-		'&::placeholder': {
-			fontSize: '16px',
+		borderRadius: "5px",
+		border: "1px solid #bbb",
+		outline: "none",
+		padding: "8px",
+		"&::placeholder": {
+			fontSize: "16px",
 		},
-		'&:disabled': {
-			color: 'black',
+		"&:disabled": {
+			color: "black",
 		},
 	},
 	success: {
-		borderBottom: '1px solid green',
+		borderBottom: "1px solid green",
 	},
 	error: {
-		borderBottom: '1px solid red !important',
+		borderBottom: "1px solid red !important",
 	},
 	errorFullBorder: {
-		border: '3px solid red !important',
+		border: "3px solid red !important",
 	},
 	valid: {
-		borderBottom: '1px solid #008000 !important',
+		borderBottom: "1px solid #008000 !important",
 	},
 	msgHead: {
-		fontSize: '20px',
-		'@media screen and (max-width: 768px)': {
-			marginTop: '40px',
+		fontSize: "20px",
+		"@media screen and (max-width: 768px)": {
+			marginTop: "40px",
 		},
 	},
 	msgArea: {
-		resize: 'none',
-		height: '240px',
-		boxSizing: 'border-box',
-		fontSize: '16px',
-		fontFamily: 'Sans-serif',
-		overflow: 'hidden',
+		resize: "none",
+		height: "240px",
+		boxSizing: "border-box",
+		fontSize: "16px",
+		fontFamily: "Sans-serif",
+		overflow: "hidden",
 		marginTop: 5,
-		overflowY: 'auto',
-		width: '100%',
-		border: '1px solid #ced4da',
-		borderBottom: 'none',
-		outline: 'none',
-		padding: '10px',
-		borderTopLeftRadius: '.25rem',
-		borderTopRightRadius: '.25rem',
-		'&::placeholder': {
-			color: 'rgb(170, 170, 170)',
-			fontSize: '16px',
+		overflowY: "auto",
+		width: "100%",
+		border: "1px solid #ced4da",
+		borderBottom: "none",
+		outline: "none",
+		padding: "10px",
+		borderTopLeftRadius: ".25rem",
+		borderTopRightRadius: ".25rem",
+		"&::placeholder": {
+			color: "rgb(170, 170, 170)",
+			fontSize: "16px",
 		},
 	},
 	smallInfoDiv: {
-		display: 'flex',
-		width: '100%',
-		boxSizing: 'border-box',
-		position: 'relative',
-		top: '-4px',
-		justifyContent: 'flex-end',
-		alignItems: 'center',
-		color: '#1c82b2',
-		fontSize: '12px',
-		padding: '10px',
-		border: '1px solid #ced4da',
-		borderTop: 'none',
+		display: "flex",
+		width: "100%",
+		boxSizing: "border-box",
+		position: "relative",
+		top: "-4px",
+		justifyContent: "flex-end",
+		alignItems: "center",
+		color: "#1c82b2",
+		fontSize: "12px",
+		padding: "10px",
+		border: "1px solid #ced4da",
+		borderTop: "none",
 	},
 	funcDiv: {
-		width: '100%',
-		height: '60px',
-		boxSizing: 'border-box',
-		display: 'grid',
-		gridTemplateColumns: 'auto auto auto auto',
-		position: 'relative',
-		top: '-4px',
+		width: "100%",
+		height: "60px",
+		boxSizing: "border-box",
+		display: "grid",
+		gridTemplateColumns: "auto auto auto auto",
+		position: "relative",
+		top: "-4px",
 		padding: 5,
-		border: '1px solid #ced4da',
-		borderTop: 'none',
-		alignItems: 'center',
-		borderBottomLeftRadius: '.25rem',
-		borderBottomRightRadius: '.25rem',
-		'@media screen and (max-width: 768px)': {
-			height: '110px',
+		border: "1px solid #ced4da",
+		borderTop: "none",
+		alignItems: "center",
+		borderBottomLeftRadius: ".25rem",
+		borderBottomRightRadius: ".25rem",
+		"@media screen and (max-width: 768px)": {
+			height: "110px",
 		},
 	},
 	baseButtons: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-evenly',
-		height: '100%',
-		borderInlineEnd: '1px solid grey',
-		'@media screen and (max-width: 540px)': {
-			flexDirection: 'column-reverse',
-			paddingInlineEnd: '8px',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-evenly",
+		height: "100%",
+		borderInlineEnd: "1px solid grey",
+		"@media screen and (max-width: 540px)": {
+			flexDirection: "column-reverse",
+			paddingInlineEnd: "8px",
 		},
 	},
 	infoButtons: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
 		borderRadius: 20,
 		fontWeight: 600,
 		fontSize: 14,
-		color: 'white',
-		padding: '5px 15px 5px 15px',
-		backgroundColor: '#1c82b2',
-		cursor: 'pointer',
-		borderColor: '#1c82b2',
-		textTransform: 'none',
-		'&$disabled': {
-			cursor: 'not-allowed !important',
+		color: "white",
+		padding: "5px 15px 5px 15px",
+		backgroundColor: "#1c82b2",
+		cursor: "pointer",
+		borderColor: "#1c82b2",
+		textTransform: "none",
+		"&$disabled": {
+			cursor: "not-allowed !important",
 		},
-		'&:hover': {
-			backgroundColor: '#1c82b2',
+		"&:hover": {
+			backgroundColor: "#1c82b2",
 		},
-		'&:first-child': {
+		"&:first-child": {
 			marginInlineStart: 5,
 			marginInlineEnd: 5,
 		},
-		'&:nth-child(2)': {
+		"&:nth-child(2)": {
 			marginInlineStart: 0,
 			marginInlineEnd: 5,
 		},
-		'@media screen and (max-width: 1366px)': {
+		"@media screen and (max-width: 1366px)": {
 			fontSize: 11,
 		},
-		'@media screen and (max-width: 768px)': {
-			width: '110px',
-			padding: '8px',
+		"@media screen and (max-width: 768px)": {
+			width: "110px",
+			padding: "8px",
 			marginBottom: 5,
 			fontSize: 11,
 		},
-		'@media screen and (max-width: 530px)': {
-			'&:first-child': {
+		"@media screen and (max-width: 530px)": {
+			"&:first-child": {
 				marginInlineStart: 0,
 				marginInlineEnd: 0,
 			},
-			'&:nth-child(2)': {
+			"&:nth-child(2)": {
 				marginInlineStart: 0,
 				marginInlineEnd: 0,
 			},
 		},
-		'@media screen and (max-width: 375px)': {
-			'&:first-child': {
+		"@media screen and (max-width: 375px)": {
+			"&:first-child": {
 				marginInlineStart: 5,
 				marginInlineEnd: 0,
 			},
-			'&:nth-child(2)': {
+			"&:nth-child(2)": {
 				marginInlineStart: 5,
 				marginInlineEnd: 0,
 			},
 		},
 	},
 	selectMsg: {
-		height: '100%',
-		borderInlineEnd: '1px solid grey',
-		display: 'flex',
-		alignItems: 'center',
+		height: "100%",
+		borderInlineEnd: "1px solid grey",
+		display: "flex",
+		alignItems: "center",
 		paddingLeft: 20,
 		paddingRight: 20,
-		'@media screen and (max-width: 1366px)': {
+		"@media screen and (max-width: 1366px)": {
 			paddingLeft: 5,
 			paddingRight: 0,
 		},
-		'@media screen and (max-width: 768px)': {
-			borderRight: 'none',
-			borderLeft: 'none',
+		"@media screen and (max-width: 768px)": {
+			borderRight: "none",
+			borderLeft: "none",
 		},
 	},
 	selectGroupDiv: {
-		cursor: 'pointer',
-		display: 'flex',
-		justifyContent: 'space-between',
-		width: '90%',
-		'@media screen and (max-width: 450px)': {
-			width: 'calc(100% - 50px)',
+		cursor: "pointer",
+		display: "flex",
+		justifyContent: "space-between",
+		width: "90%",
+		"@media screen and (max-width: 450px)": {
+			width: "calc(100% - 50px)",
 		},
 	},
 	selectVal: {
-		outline: 'none',
-		padding: '10px',
-		width: '100%',
+		outline: "none",
+		padding: "10px",
+		width: "100%",
 		minWidth: 150,
-		marginInlineEnd: '5px',
-		marginInlineStart: '5px',
-		borderRadius: '5px',
-		border: '1px solid #ced4da',
-		backgroundColor: '#fff',
-		'@media screen and (max-width: 1366px)': {
+		marginInlineEnd: "5px",
+		marginInlineStart: "5px",
+		borderRadius: "5px",
+		border: "1px solid #ced4da",
+		backgroundColor: "#fff",
+		"@media screen and (max-width: 1366px)": {
 			minWidth: 130,
 		},
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
-			marginTop: '8px',
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
+			marginTop: "8px",
 		},
 	},
 	addDiv: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		position: 'relative',
-		cursor: 'pointer',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		position: "relative",
+		cursor: "pointer",
 
-		width: '80px',
+		width: "80px",
 	},
 	addButtons: {
-		padding: '10px',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontSize: '18px',
-		fontWeight: '600',
-		'@media screen and (max-width: 768px)': {
-			padding: '5px',
+		padding: "10px",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontSize: "18px",
+		fontWeight: "600",
+		"@media screen and (max-width: 768px)": {
+			padding: "5px",
 		},
 	},
 	rightForm: {
-		display: 'flex',
-		alignItems: 'center',
+		display: "flex",
+		alignItems: "center",
 	},
 	rightInput: {
-		outline: 'none',
-		padding: '10px',
-		width: '220px',
-		height: '23px',
-		border: '1px solid #BBBBBB',
-		borderRadius: '4px',
-		marginInlineEnd: '5px',
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
+		outline: "none",
+		padding: "10px",
+		width: "220px",
+		height: "23px",
+		border: "1px solid #BBBBBB",
+		borderRadius: "4px",
+		marginInlineEnd: "5px",
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
 		},
 	},
 	descSwitch: {
-		width: '200px',
-		fontSize: '15px',
-		marginTop: '5px',
-		color: '#C2C2C2',
-		fontWeight: '600',
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
+		width: "200px",
+		fontSize: "15px",
+		marginTop: "5px",
+		color: "#C2C2C2",
+		fontWeight: "600",
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
 		},
 	},
 	rightSend: {
-		display: 'flex',
-		width: '70px',
-		border: '1px solid green',
-		color: 'green',
-		height: '25px',
-		padding: '9px',
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderRadius: '8px',
-		cursor: 'pointer',
+		display: "flex",
+		width: "70px",
+		border: "1px solid green",
+		color: "green",
+		height: "25px",
+		padding: "9px",
+		alignItems: "center",
+		justifyContent: "center",
+		borderRadius: "8px",
+		cursor: "pointer",
 	},
 	rightInput2: {
-		outline: 'none',
-		padding: '10px',
-		border: '1px solid #efefef',
-		width: '240px',
-		marginInlineEnd: '5px',
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
+		outline: "none",
+		padding: "10px",
+		border: "1px solid #efefef",
+		width: "240px",
+		marginInlineEnd: "5px",
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
 		},
 	},
 
 	buttonDiv: {
-		display: 'flex',
-		alignItems: 'center',
-		position: 'relative',
-		bottom: '10px',
-		marginBottom: '40px',
-		'@media screen and (max-width: 768px)': {
-			flexDirection: 'column-reverse',
+		display: "flex",
+		alignItems: "center",
+		position: "relative",
+		bottom: "10px",
+		marginBottom: "40px",
+		"@media screen and (max-width: 768px)": {
+			flexDirection: "column-reverse",
 		},
 	},
 	buttonDivAct: {
-		position: 'relative',
-		bottom: '10px',
-		display: 'flex',
-		alignItems: 'center',
+		position: "relative",
+		bottom: "10px",
+		display: "flex",
+		alignItems: "center",
 
-		marginBottom: '40px',
-		'@media screen and (max-width: 768px)': {
-			flexDirection: 'column-reverse',
+		marginBottom: "40px",
+		"@media screen and (max-width: 768px)": {
+			flexDirection: "column-reverse",
 		},
 	},
 	rightInput3: {
-		outline: 'none',
-		padding: '10px',
-		marginInlineEnd: '15px',
-		borderRadius: '30px',
-		width: '50px',
-		cursor: 'pointer',
-		height: '40px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		borderColor: '#dc3545',
-		backgroundImage: 'linear-gradient(180deg,#d9534f 0,#c9302c)',
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		'@media screen and (max-width: 768px)': {
-			marginInlineEnd: '0px',
-			height: '30px',
-			width: '90%',
-			marginBottom: '8px',
+		outline: "none",
+		padding: "10px",
+		marginInlineEnd: "15px",
+		borderRadius: "30px",
+		width: "50px",
+		cursor: "pointer",
+		height: "40px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		borderColor: "#dc3545",
+		backgroundImage: "linear-gradient(180deg,#d9534f 0,#c9302c)",
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		"@media screen and (max-width: 768px)": {
+			marginInlineEnd: "0px",
+			height: "30px",
+			width: "90%",
+			marginBottom: "8px",
 		},
 	},
 	rightInput4: {
-		outline: 'none',
-		padding: '10px',
-		marginInlineEnd: '15px',
-		borderRadius: '30px',
-		cursor: 'pointer',
-		height: '40px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		width: '80px',
-		borderColor: '#5b9bcd',
-		background: 'linear-gradient(180deg,#5b9bcd 0,#4678a3)',
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		'@media screen and (max-width: 768px)': {
-			marginInlineEnd: '0px',
-			height: '30px',
-			width: '90%',
-			marginBottom: '8px',
+		outline: "none",
+		padding: "10px",
+		marginInlineEnd: "15px",
+		borderRadius: "30px",
+		cursor: "pointer",
+		height: "40px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		width: "80px",
+		borderColor: "#5b9bcd",
+		background: "linear-gradient(180deg,#5b9bcd 0,#4678a3)",
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		"@media screen and (max-width: 768px)": {
+			marginInlineEnd: "0px",
+			height: "30px",
+			width: "90%",
+			marginBottom: "8px",
 		},
 	},
 	rightInput5: {
-		outline: 'none',
-		padding: '10px',
-		marginInlineEnd: '15px',
-		borderRadius: '30px',
-		height: '40px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		cursor: 'pointer',
-		width: '80px',
-		borderColor: '#5b9bcd',
-		background: 'linear-gradient(180deg,#5b9bcd 0,#4678a3)',
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		'@media screen and (max-width: 768px)': {
-			marginInlineEnd: '0px',
-			height: '30px',
-			width: '90%',
-			marginBottom: '8px',
+		outline: "none",
+		padding: "10px",
+		marginInlineEnd: "15px",
+		borderRadius: "30px",
+		height: "40px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		cursor: "pointer",
+		width: "80px",
+		borderColor: "#5b9bcd",
+		background: "linear-gradient(180deg,#5b9bcd 0,#4678a3)",
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		"@media screen and (max-width: 768px)": {
+			marginInlineEnd: "0px",
+			height: "30px",
+			width: "90%",
+			marginBottom: "8px",
 		},
 	},
 	rightInput6: {
-		outline: 'none',
-		padding: '10px',
-		marginInlineEnd: '12px',
-		cursor: 'pointer',
-		borderRadius: '30px',
-		height: '40px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		width: '100px',
-		borderColor: '#449d44',
-		backgroundImage: 'linear-gradient(180deg,#5cb85c 0,#449d44)',
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		'@media screen and (max-width: 768px)': {
-			marginInlineEnd: '0px',
-			height: '30px',
-			width: '90%',
-			marginBottom: '8px',
+		outline: "none",
+		padding: "10px",
+		marginInlineEnd: "12px",
+		cursor: "pointer",
+		borderRadius: "30px",
+		height: "40px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		width: "100px",
+		borderColor: "#449d44",
+		backgroundImage: "linear-gradient(180deg,#5cb85c 0,#449d44)",
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		"@media screen and (max-width: 768px)": {
+			marginInlineEnd: "0px",
+			height: "30px",
+			width: "90%",
+			marginBottom: "8px",
 		},
 	},
 	summaryBtn: {
-		outline: 'none',
-		padding: '10px',
-		marginInlineEnd: '12px',
-		cursor: 'pointer',
-		borderRadius: '30px',
-		height: '40px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		width: '100px',
-		borderColor: '#449d44',
+		outline: "none",
+		padding: "10px",
+		marginInlineEnd: "12px",
+		cursor: "pointer",
+		borderRadius: "30px",
+		height: "40px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		width: "100px",
+		borderColor: "#449d44",
 		// backgroundImage: "linear-gradient(180deg,#5cb85c 0,#449d44)",
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		'@media screen and (max-width: 768px)': {
-			marginInlineEnd: '0px',
-			height: '30px',
-			width: '90%',
-			marginBottom: '8px',
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		"@media screen and (max-width: 768px)": {
+			marginInlineEnd: "0px",
+			height: "30px",
+			width: "90%",
+			marginBottom: "8px",
 		},
 	},
 	phoneNumber: {
-		position: 'absolute',
+		position: "absolute",
 		left: 0,
 		right: 0,
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
 		fontWeight: 700,
 		top: 95,
 		fontSize: 12,
-		'@media screen and (max-width: 768px)': {
+		"@media screen and (max-width: 768px)": {
 			top: 90,
 			right: 0,
-			margin: '0 auto',
+			margin: "0 auto",
 			fontSize: 16,
 		},
-		'@media screen and (max-width: 560px)': {
+		"@media screen and (max-width: 560px)": {
 			top: 100,
 			fontSize: 14,
 		},
-		'@media screen and (max-width: 414px)': {
+		"@media screen and (max-width: 414px)": {
 			top: 90,
 			fontSize: 14,
 		},
-		'@media screen and (max-width: 375px)': {
+		"@media screen and (max-width: 375px)": {
 			top: 80,
 			fontSize: 12,
 		},
-		'@media screen and (max-width: 360px)': {
+		"@media screen and (max-width: 360px)": {
 			top: 78,
 			fontSize: 12,
 		},
 	},
 	testDiv: {
-		marginInlineStart: '35px',
-		display: 'flex',
-		marginTop: '20px',
-		'@media screen and (max-width: 768px)': {
-			marginInlineStart: '0px',
+		marginInlineStart: "35px",
+		display: "flex",
+		marginTop: "20px",
+		"@media screen and (max-width: 768px)": {
+			marginInlineStart: "0px",
 		},
 	},
 	testRadios: {
-		marginTop: '10px',
-		marginInlineStart: '35px',
-		'@media screen and (max-width: 768px)': {
-			marginInlineStart: '0px',
+		marginTop: "10px",
+		marginInlineStart: "35px",
+		"@media screen and (max-width: 768px)": {
+			marginInlineStart: "0px",
 		},
 	},
 	phoneNumberSumm: {
-		position: 'absolute',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		top: '92px',
-		marginInlineStart: '133px',
-		fontSize: '15px',
+		position: "absolute",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		top: "92px",
+		marginInlineStart: "133px",
+		fontSize: "15px",
 	},
 	// phoneNumberSum: {
 	//   top: "24%",
@@ -1332,305 +1309,342 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	//   fontSize: "15px",
 	// },
 	chat: {
-		backgroundColor: '#3da6f6',
-		color: '#fff',
-		maxWidth: '260px',
-		backgroundAttachment: 'fixed',
-		minWidth: '100px',
-		padding: '8px',
-		minHeight: '30px',
-		wordBreak: 'break-all',
-		borderRadius: '12px',
-		fontWeight: '500',
-		maxHeight: '200px',
-		'@media screen and (max-width: 768px)': {
-			top: '180px',
-			bottom: '0',
-			left: '50px',
-			right: '0',
+		backgroundColor: "#3da6f6",
+		color: "#fff",
+		maxWidth: "260px",
+		backgroundAttachment: "fixed",
+		minWidth: "100px",
+		padding: "8px",
+		minHeight: "30px",
+		wordBreak: "break-all",
+		borderRadius: "12px",
+		fontWeight: "500",
+		maxHeight: "200px",
+		"@media screen and (max-width: 768px)": {
+			top: "180px",
+			bottom: "0",
+			left: "50px",
+			right: "0",
 		},
-		'@media screen and (device-width: 360px)': {
-			top: '180px',
-			bottom: '0',
-			left: '40px',
-			right: '0',
+		"@media screen and (device-width: 360px)": {
+			top: "180px",
+			bottom: "0",
+			left: "40px",
+			right: "0",
 		},
-		'@media screen and (device-width: 411px)': {
-			top: '180px',
-			bottom: '0',
-			left: '65px',
-			right: '0',
+		"@media screen and (device-width: 411px)": {
+			top: "180px",
+			bottom: "0",
+			left: "65px",
+			right: "0",
 		},
-		'@media screen and (device-width: 414px)': {
-			top: '180px',
-			bottom: '0',
-			left: '65px',
-			right: '0',
+		"@media screen and (device-width: 414px)": {
+			top: "180px",
+			bottom: "0",
+			left: "65px",
+			right: "0",
 		},
-		'@media screen and (device-width: 320px)': {
-			top: '180px',
-			bottom: '0',
-			left: '20px',
-			right: '0',
+		"@media screen and (device-width: 320px)": {
+			top: "180px",
+			bottom: "0",
+			left: "20px",
+			right: "0",
 		},
-		'&:before': {
-			content: '',
-			position: 'absolute',
+		"&:before": {
+			content: "",
+			position: "absolute",
 			zIndex: 0,
 			bottom: 0,
-			right: '-8px',
-			height: '20px',
-			width: '20px',
-			background: '#3da6f6',
-			backgroundAttachment: 'fixed',
-			bordeBottomLefRadius: '15px',
+			right: "-8px",
+			height: "20px",
+			width: "20px",
+			background: "#3da6f6",
+			backgroundAttachment: "fixed",
+			bordeBottomLefRadius: "15px",
 		},
-		'&:after': {
-			content: '',
-			position: 'absolute',
-			zIndex: '1',
-			bottom: '0',
-			right: '-10px',
-			width: '10px',
-			height: '20px',
-			background: '#fff',
-			borderBottomLeftRadius: '10px',
+		"&:after": {
+			content: "",
+			position: "absolute",
+			zIndex: "1",
+			bottom: "0",
+			right: "-10px",
+			width: "10px",
+			height: "20px",
+			background: "#fff",
+			borderBottomLeftRadius: "10px",
 		},
 	},
 	wrapChatSumm: {
-		position: 'absolute',
-		top: '130px',
-		left: '13%',
-		backgroundColor: '#fff',
-		color: '#fff',
-		borderRadius: '12px',
-		height: '200px',
-		overflowY: 'auto',
-		width: '260px',
-		wordBreak: 'break-all',
-		'&::-webkit-scrollbar': {
-			visibility: 'hidden',
-			width: '0px',
+		position: "absolute",
+		top: "130px",
+		left: "13%",
+		backgroundColor: "#fff",
+		color: "#fff",
+		borderRadius: "12px",
+		height: "200px",
+		overflowY: "auto",
+		width: "260px",
+		wordBreak: "break-all",
+		"&::-webkit-scrollbar": {
+			visibility: "hidden",
+			width: "0px",
 		},
 	},
 	chatBox: {
-		display: 'flex',
-		justifyContent: isRTL ? 'flex-start' : 'flex-end',
-		wordBreak: 'break-all',
+		display: "flex",
+		justifyContent: isRTL ? "flex-start" : "flex-end",
+		wordBreak: "break-all",
 	},
 	chatBoxHe: {
-		display: 'flex',
-		wordBreak: 'break-all',
+		display: "flex",
+		wordBreak: "break-all",
 	},
 	wrapChat: {
-		position: 'absolute',
-		top: '115px',
+		position: "absolute",
+		top: "115px",
 		width: 310,
 		height: 240,
-		left: 'auto',
+		left: "auto",
 		right: 45,
-		wordBreak: 'break-all',
-		color: '#fff',
-		borderRadius: '12px',
-		overflowY: 'auto',
+		wordBreak: "break-all",
+		color: "#fff",
+		borderRadius: "12px",
+		overflowY: "auto",
 		padding: 10,
-		'@media screen and (max-width: 1430px)': {
+		"@media screen and (max-width: 1430px)": {
 			right: 50,
 		},
-		'@media screen and (max-width: 1366px)': {
+		"@media screen and (max-width: 1366px)": {
 			width: 270,
 		},
-		'@media screen and (max-width: 1260px)': {
+		"@media screen and (max-width: 1260px)": {
 			top: 125,
 			right: 50,
 		},
-		'@media screen and (max-width: 768px)': {
+		"@media screen and (max-width: 768px)": {
 			right: 45,
 			width: 250,
 			height: 230,
 		},
 
-		'@media screen and (max-width: 414px)': {
+		"@media screen and (max-width: 414px)": {
 			top: 120,
 			right: 42,
 			width: 260,
 			height: 205,
 		},
-		'@media screen and (max-width: 360px)': {
+		"@media screen and (max-width: 360px)": {
 			top: 105,
 			right: 38,
 			width: 230,
 			height: 190,
 		},
-		'@media screen and (max-width: 320px)': {
+		"@media screen and (max-width: 320px)": {
 			top: 90,
 			right: 38,
-			left: 'auto',
+			left: "auto",
 			width: 200,
 			height: 165,
 		},
 	},
 	fromMe: {
-		alignSelf: 'flex-end',
-		borderRadius: '1.15rem',
-		lineHeight: '1.25',
+		alignSelf: "flex-end",
+		borderRadius: "1.15rem",
+		lineHeight: "1.25",
 		// maxWidth: '79%',
-		minHeight: '53px',
-		padding: '0.5rem .875rem',
-		position: 'relative',
+		minHeight: "53px",
+		padding: "0.5rem .875rem",
+		position: "relative",
 		minWidth: 200,
-		wordWrap: 'break-word',
-		backgroundColor: '#3da6f6',
-		color: '#fff',
+		wordWrap: "break-word",
+		backgroundColor: "#3da6f6",
+		color: "#fff",
 		fontSize: 16,
-		'& p': {
-			wordBreak: 'break-word',
+		"& p": {
+			wordBreak: "break-word",
 		},
-		'&::before': {
-			borderBottomLeftRadius: '0.8rem 0.7rem',
-			borderRight: '1rem solid #3da6f6',
-			right: '-0.35rem',
-			transform: 'translate(0, -0.1rem)',
-			bottom: '-0.1rem',
+		"&::before": {
+			borderBottomLeftRadius: "0.8rem 0.7rem",
+			borderRight: "1rem solid #3da6f6",
+			right: "-0.35rem",
+			transform: "translate(0, -0.1rem)",
+			bottom: "-0.1rem",
 			content: `''`,
-			height: '1rem',
-			position: 'absolute',
+			height: "1rem",
+			position: "absolute",
 		},
-		'&::after': {
-			backgroundColor: '#fff',
-			borderBottomLeftRadius: '0.5rem',
-			right: '-40px',
-			transform: 'translate(-30px, -2px)',
-			width: '10px',
-			bottom: '-0.1rem',
+		"&::after": {
+			backgroundColor: "#fff",
+			borderBottomLeftRadius: "0.5rem",
+			right: "-40px",
+			transform: "translate(-30px, -2px)",
+			width: "10px",
+			bottom: "-0.1rem",
 			content: `''`,
-			height: '1rem',
-			position: 'absolute',
+			height: "1rem",
+			position: "absolute",
 		},
-		'@media screen and (max-width: 414px)': {
+		"@media screen and (max-width: 414px)": {
 			minWidth: 150,
 		},
-		'@media screen and (max-width: 360px)': {
+		"@media screen and (max-width: 360px)": {
 			minWidth: 140,
 		},
 	},
 	groupName: {
-		display: 'block',
-		fontSize: '32px',
-		color: '#006996',
-		width: '700px',
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
-			fontSize: '22px',
+		display: "block",
+		fontSize: "32px",
+		color: "#006996",
+		width: "700px",
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
+			fontSize: "22px",
 		},
 	},
 	fieldsRequire: {
-		fontSize: '18px',
-		color: 'red',
-		fontWeight: '400',
-		'& li': {
+		fontSize: "18px",
+		color: "red",
+		fontWeight: "400",
+		"& li": {
 			marginTop: 5,
 		},
-		'@media screen and (max-width: 768px)': {
-			fontSize: '12px !important',
-			marginBottom: '4px',
+		"@media screen and (max-width: 768px)": {
+			fontSize: "12px !important",
+			marginBottom: "4px",
 		},
 	},
 	baseDialogSetup: {
-		height: '60px',
-		borderBottom: '1px solid #DEE2E7',
-		'@media screen and (max-width: 768px)': {
-			height: 'auto',
+		height: "60px",
+		borderBottom: "1px solid #DEE2E7",
+		"@media screen and (max-width: 768px)": {
+			height: "auto",
 		},
 	},
 	bodyTextDialog: {
-		fontSize: '22px',
-		marginTop: '5px',
-		'@media screen and (max-width: 768px)': {
-			fontSize: '16px',
+		fontSize: "22px",
+		marginTop: "5px",
+		"@media screen and (max-width: 768px)": {
+			fontSize: "16px",
 		},
 	},
 	modalDiv: {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-		justifyContent: 'center',
-		width: '700px',
-		marginTop: '20px',
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "center",
+		width: "700px",
+		marginTop: "20px",
 	},
 	modalSearch: {
-		width: '100%',
-		padding: '10px',
-		outline: 'none',
+		width: "100%",
+		padding: "10px",
+		outline: "none",
 	},
 	confirmButton: {
-		outline: 'none',
-		padding: '10px',
-		borderRadius: '30px',
-		height: '30px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		width: '130px',
-		borderColor: '#449d44',
-		backgroundColor: '#449d44',
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		marginTop: '20px',
+		outline: "none",
+		padding: "10px",
+		borderRadius: "30px",
+		height: "30px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		width: "130px",
+		borderColor: "#449d44",
+		backgroundColor: "#449d44",
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		marginTop: "20px",
+	},
+	cancelBtn: {
+		outline: "none",
+		padding: "10px",
+		borderRadius: "30px",
+		height: "30px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		width: "130px",
+		borderColor: "#c9302c",
+		backgroundColor: "#c9302c",
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		marginTop: "20px",
+	},
+	saveButton: {
+		outline: "none",
+		padding: "10px",
+		borderRadius: "30px",
+		height: "30px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		border: "0",
+		width: "130px",
+		borderColor: "#4678a1",
+		backgroundColor: "#4678a1",
+		color: "white",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
+		marginTop: "20px",
 	},
 	dropDiv: {
-		position: 'absolute',
-		width: '200px',
-		height: '150px',
-		top: '-150px',
-		left: '20px',
-		display: 'flex',
-		flexDirection: 'column',
-		'@media screen and (max-width: 768px)': {
-			top: '40px',
-			left: '0',
-			right: '0',
-			bottom: '0',
-			width: '100%',
-			zIndex: '999',
+		position: "absolute",
+		width: "200px",
+		height: "150px",
+		top: "-150px",
+		left: "20px",
+		display: "flex",
+		flexDirection: "column",
+		"@media screen and (max-width: 768px)": {
+			top: "40px",
+			left: "0",
+			right: "0",
+			bottom: "0",
+			width: "100%",
+			zIndex: "999",
 		},
 	},
 	dropCon: {
-		marginBottom: '8px',
-		border: '1px solid #1c82b2',
-		boxShadow: '0 3px 5px 1px #e0dada',
-		borderRadius: '15px',
-		backgroundColor: '#fff',
-		padding: '10px',
-		width: '100%',
-		color: '#1c82b2',
-		textAlign: 'center',
+		marginBottom: "8px",
+		border: "1px solid #1c82b2",
+		boxShadow: "0 3px 5px 1px #e0dada",
+		borderRadius: "15px",
+		backgroundColor: "#fff",
+		padding: "10px",
+		width: "100%",
+		color: "#1c82b2",
+		textAlign: "center",
 	},
 	listDiv: {
-		height: '300px',
-		maxHeight: '200px',
-		width: '100%',
-		overflowX: 'hidden',
-		marginTop: '20px',
-		overflow: 'auto',
+		height: "300px",
+		maxHeight: "200px",
+		width: "100%",
+		overflowX: "hidden",
+		marginTop: "20px",
+		overflow: "auto",
 	},
 	listDivFilter: {
 		height: 130,
-		width: '100%',
-		overflowY: 'auto',
-		borderBottom: '1px solid #efefef',
-		borderLeft: '1px solid #efefef',
-		borderRight: '1px solid #efefef',
-		marginTop: '0',
+		width: "100%",
+		overflowY: "auto",
+		borderBottom: "1px solid #efefef",
+		borderLeft: "1px solid #efefef",
+		borderRight: "1px solid #efefef",
+		marginTop: "0",
 	},
 	searchCon: {
 		padding: 5,
-		display: 'flex',
-		alignItems: 'center',
-		cursor: 'pointer',
+		display: "flex",
+		alignItems: "center",
+		cursor: "pointer",
 
+		"&:hover": {
+			backgroundColor: "#efefef",
+		},
 		'@media screen and (max-width: 414px)': {
 			top: 120,
 			right: 42,
@@ -1651,201 +1665,176 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 			height: 165,
 		},
 	},
-	cancelBtn: {
-		outline: 'none',
-		padding: '10px',
-		borderRadius: '30px',
-		height: '30px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		width: '130px',
-		borderColor: '#c9302c',
-		backgroundColor: '#c9302c',
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		marginTop: '20px',
+	conInfo: {
+		fontSize: "22px",
+		color: "#555",
+		marginInlineEnd: "5px",
 	},
-	saveButton: {
-		outline: 'none',
-		padding: '10px',
-		borderRadius: '30px',
-		height: '30px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		border: '0',
-		width: '130px',
-		borderColor: '#4678a1',
-		backgroundColor: '#4678a1',
-		color: 'white',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
-		marginTop: '20px',
+	tabDiv: {
+		display: "grid",
+		gridTemplateColumns: "50% 50%",
+
+		// "@media screen and (max-width: 768px)": {
+		//   width: "315px",
+		// },
+		// "@media screen and (device-width: 411px)": {
+		//   width: "355px",
+		// },
 	},
 	tab1: {
-		padding: '10px',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontSize: '19px',
-		color: '#777777',
-		'@media screen and (max-width: 768px)': {
-			fontSize: '14px',
+		padding: "10px",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontSize: "19px",
+		color: "#777777",
+		"@media screen and (max-width: 768px)": {
+			fontSize: "14px",
 		},
 	},
 	activeTab: {
-		borderBottom: '4px solid #168ee3',
-		color: '#007bff !important',
+		borderBottom: "4px solid #168ee3",
+		color: "#007bff !important",
 	},
 	areaManual: {
-		border: '2px dashed rgba(0,0,0,.2)',
+		border: "2px dashed rgba(0,0,0,.2)",
 		// height: "400px",
-		backgroundColor: 'white !important',
-		'@media screen and (max-width: 768px)': {
-			width: 'auto',
+		backgroundColor: "white !important",
+		"@media screen and (max-width: 768px)": {
+			width: "auto",
 		},
 	},
 	greenManual: {
-		border: '2px dashed #4BB543',
+		border: "2px dashed #4BB543",
 		// height: "400px",
-		backgroundColor: '#CCFFE5',
-		'@media screen and (max-width: 768px)': {
-			width: 'auto',
+		backgroundColor: "#CCFFE5",
+		"@media screen and (max-width: 768px)": {
+			width: "auto",
 		},
 	},
 	areaCon: {
-		width: 'calc(100% - 20px)',
-		outline: 'none',
-		border: 'none',
-		fontSize: '16px',
-		fontFamily: 'Sans-serif',
-		resize: 'none',
+		width: "calc(100% - 20px)",
+		outline: "none",
+		border: "none",
+		fontSize: "16px",
+		fontFamily: "Sans-serif",
+		resize: "none",
 		height: 315,
-		backgroundColor: 'white !important',
-		padding: '10px',
-		'&::placeholder': {
-			color: 'rgb(170, 170, 170)',
-			fontSize: '16px',
-			fontFamily: 'inherit',
+		backgroundColor: "white !important",
+		padding: "10px",
+		"&::placeholder": {
+			color: "rgb(170, 170, 170)",
+			fontSize: "16px",
+			fontFamily: "inherit",
 		},
-		'@media screen and (max-width: 965px)': {
-			maxHeight: 275,
+		"@media screen and (max-width: 965px)": {
+			maxHeight: 275
 		},
-		'@media screen and (max-width: 768px)': {
-			width: '90%',
+		"@media screen and (max-width: 768px)": {
+			width: "90%",
 		},
 	},
 	greenCon: {
-		width: 'calc(100% - 20px)',
-		outline: 'none',
-		border: 'none',
-		fontFamily: 'Sans-serif',
-		resize: 'none',
+		width: "calc(100% - 20px)",
+		outline: "none",
+		border: "none",
+		fontFamily: "Sans-serif",
+		resize: "none",
 		height: 315,
-		backgroundColor: '#CCFFE5',
-		padding: '10px',
-		'&::placeholder': {
-			color: 'rgb(170, 170, 170)',
-			fontSize: '16px',
-			fontFamily: 'inherit',
+		backgroundColor: "#CCFFE5",
+		padding: "10px",
+		"&::placeholder": {
+			color: "rgb(170, 170, 170)",
+			fontSize: "16px",
+			fontFamily: "inherit",
 		},
 	},
 	addManualDiv: {
-		padding: '8px !important',
-		backgroundColor: '#51AA51 !important',
-		color: '#fff !important',
-		marginInlineEnd: '6px !important',
-		borderRadius: '6px !important',
-		cursor: 'pointer !important',
-		'@media screen and (max-width: 768px)': {
-			fontSize: '10px !important',
+		padding: "8px !important",
+		backgroundColor: "#51AA51 !important",
+		color: "#fff !important",
+		marginInlineEnd: "6px !important",
+		borderRadius: "6px !important",
+		cursor: "pointer !important",
+		"@media screen and (max-width: 768px)": {
+			fontSize: "10px !important",
 		},
 	},
 	clearDiv: {
-		padding: '8px !important',
-		color: '#277BFF !important',
-		marginInlineEnd: '6px !important',
-		borderRadius: '6px !important',
-		cursor: 'pointer !important',
-		border: '1px solid #277BFF !important',
-		'@media screen and (max-width: 768px)': {
-			fontSize: '10px !important',
+		padding: "8px !important",
+		color: "#277BFF !important",
+		marginInlineEnd: "6px !important",
+		borderRadius: "6px !important",
+		cursor: "pointer !important",
+		border: "1px solid #277BFF !important",
+		"@media screen and (max-width: 768px)": {
+			fontSize: "10px !important",
 		},
 	},
 	backBtn: {
-		marginTop: '30px',
-		boxShadow: '0 1px 2px #a5a2a2',
-		padding: '12px',
-		backgroundColor: '#4F87B5',
-		width: '70px',
-		color: 'white',
-		borderRadius: '20px',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		fontWeight: '700',
+		marginTop: "30px",
+		boxShadow: "0 1px 2px #a5a2a2",
+		padding: "12px",
+		backgroundColor: "#4F87B5",
+		width: "70px",
+		color: "white",
+		borderRadius: "20px",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		fontWeight: "700",
 	},
 	pulseDiv: {
-		display: 'flex',
-		marginTop: '20px',
-		alignItems: 'center',
+		display: "flex",
+		marginTop: "20px",
+		alignItems: "center",
 	},
 	pulse: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
 		fontSize: 14,
-		border: '1px solid #277bff',
-		padding: '8px',
-		marginInlineEnd: '8px',
-		borderRadius: '4px',
-		cursor: 'pointer',
-		color: '#277bff',
-		'&:hover': {
-			color: '#ffffff',
-			backgroundColor: '#277bff',
+		border: "1px solid #277bff",
+		padding: "8px",
+		marginInlineEnd: "8px",
+		borderRadius: "4px",
+		cursor: "pointer",
+		color: "#277bff",
+		"&:hover": {
+			color: "#ffffff",
+			backgroundColor: "#277bff",
 		},
 	},
-
-	// "@media screen and (max-width: 768px)": {
-	//   width: "315px",
-	// },
-	// "@media screen and (device-width: 411px)": {
-	//   width: "355px",
-	// },
 
 	pulseDisable: {
 		padding: 8,
 		fontSize: 14,
 		borderRadius: 4,
-		display: 'flex',
-		color: '#808080',
+		display: "flex",
+		color: "#808080",
 		marginInlineEnd: 8,
-		alignItems: 'center',
-		pointerEvents: 'none',
-		cursor: 'not-allowed',
-		border: '1px solid  #808080',
-		justifyContent: 'space-between',
+		alignItems: "center",
+		pointerEvents: "none",
+		cursor: "not-allowed",
+		border: "1px solid  #808080",
+		justifyContent: "space-between",
 	},
 	toggleDiv: {
-		display: 'flex',
-		alignItems: 'center',
-		width: '100px',
+		display: "flex",
+		alignItems: "center",
+		width: "100px",
 	},
 	inputDays: {
-		padding: '10px',
-		outline: 'none',
-		width: '70px',
-		marginInlineEnd: '5px',
-		marginBottom: '8px',
-		textAlign: 'center',
+		padding: "10px",
+		outline: "none",
+		width: "70px",
+		marginInlineEnd: "5px",
+		marginBottom: "8px",
+		textAlign: "center",
 		paddingRight: 0,
 		paddingLeft: 0,
 		borderRadius: 5,
-		border: '1px solid #bbb',
+		border: "1px solid #bbb",
 	},
 	before: {
 		display: 'flex',
@@ -1863,17 +1852,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		cursor: 'pointer',
 	},
 	disabledBefore: {
-		display: 'flex',
-		width: '72px',
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderBottomLeftRadius: '4px',
-		borderTopLeftRadius: '4px',
-		border: '1px solid #D3D3D3',
-		padding: '10px',
-		marginBottom: '8px',
-		color: '#D3D3D3',
-		cursor: 'pointer',
+		display: "flex",
+		width: "72px",
+		alignItems: "center",
+		justifyContent: "center",
+		borderBottomLeftRadius: "4px",
+		borderTopLeftRadius: "4px",
+		border: "1px solid #D3D3D3",
+		padding: "10px",
+		marginBottom: "8px",
+		color: "#D3D3D3",
+		cursor: "pointer",
 	},
 	after: {
 		display: 'flex',
@@ -1892,18 +1881,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		cursor: 'pointer',
 	},
 	disabledAfter: {
-		display: 'flex',
-		width: '72px',
-		alignItems: 'center',
-		justifyContent: 'center',
-		borderBottomRightRadius: '4px',
-		borderTopRightRadius: '4px',
-		borderLeft: 'none',
-		border: '1px solid #D3D3D3',
-		padding: '10px',
-		marginBottom: '8px',
-		color: '#D3D3D3',
-		cursor: 'pointer',
+		display: "flex",
+		width: "72px",
+		alignItems: "center",
+		justifyContent: "center",
+		borderBottomRightRadius: "4px",
+		borderTopRightRadius: "4px",
+		borderLeft: "none",
+		border: "1px solid #D3D3D3",
+		padding: "10px",
+		marginBottom: "8px",
+		color: "#D3D3D3",
+		cursor: "pointer",
 	},
 	beforeActive: {
 		display: 'flex',
@@ -1943,95 +1932,95 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	// },
 	msgDiv: {
 		marginTop: 50,
-		height: '400px',
-		'@media screen and (max-width: 960px)': {
+		height: "400px",
+		"@media screen and (max-width: 960px)": {
 			marginTop: 0,
-			height: 'auto',
+			height: "auto",
 		},
-		'@media screen and (max-width: 768px)': {
-			flexDirection: 'column',
+		"@media screen and (max-width: 768px)": {
+			flexDirection: "column",
 		},
 	},
 	boxDiv: {
-		width: '100%',
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
-			marginBottom: '10px',
+		width: "100%",
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
+			marginBottom: "10px",
 		},
-		'@media screen and (max-width: 960px)': {
-			width: '100%',
-			marginBottom: '10px',
+		"@media screen and (max-width: 960px)": {
+			width: "100%",
+			marginBottom: "10px",
 		},
 	},
 	emoji: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		height: '100%',
-		borderInlineEnd: '1px solid black',
-		paddingInlineEnd: '0',
-		'@media screen and (max-width: 768px)': {
-			flexDirection: 'column',
-			borderRight: '1px solid black',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		height: "100%",
+		borderInlineEnd: "1px solid black",
+		paddingInlineEnd: "0",
+		"@media screen and (max-width: 768px)": {
+			flexDirection: "column",
+			borderRight: "1px solid black",
 		},
 	},
 	emojiHe: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-evenly',
-		borderInlineEnd: '1px solid grey',
-		paddingInlineStart: '8px',
-		height: '100%',
-		'@media screen and (max-width: 768px)': {
-			flexDirection: 'column',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-evenly",
+		borderInlineEnd: "1px solid grey",
+		paddingInlineStart: "8px",
+		height: "100%",
+		"@media screen and (max-width: 768px)": {
+			flexDirection: "column",
 			paddingInlineStart: 0,
 			// borderRight: "1px solid black",
 		},
 	},
 	pickerEmoji: {
-		position: 'relative',
-		height: '100%',
-		zIndex: '99',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		'@media screen and (max-width: 768px)': {
-			marginTop: '4px',
+		position: "relative",
+		height: "100%",
+		zIndex: "99",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		"@media screen and (max-width: 768px)": {
+			marginTop: "4px",
 		},
 		//#region emoji
-		'& .emoji-group': {
-			'&::before': {
-				direction: 'ltr',
+		"& .emoji-group": {
+			"&::before": {
+				direction: "ltr",
 			},
 		},
-		'& .emoji-search': {
-			direction: 'ltr',
+		"& .emoji-search": {
+			direction: "ltr",
 		},
 		//#endregion
 	},
 	endButtons: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		height: '100%',
-		'@media screen and (max-width: 768px)': {
-			flexDirection: 'column-reverse',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
+		height: "100%",
+		"@media screen and (max-width: 768px)": {
+			flexDirection: "column-reverse",
 			// borderRight: "1px solid black",
 		},
 	},
 	radio: {
-		display: 'flex',
-		flexDirection: 'column',
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
+		display: "flex",
+		flexDirection: "column",
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
 		},
 	},
 	switchDiv: {
-		display: 'flex',
+		display: "flex",
 
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
-			marginInlineStart: '0px',
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
+			marginInlineStart: "0px",
 			// marginBottom:"30px"
 		},
 	},
@@ -2039,137 +2028,137 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		position: 'relative',
 		maxHeight: '340px',
 		overflowY: 'clip',
-		'@media screen and (max-width: 960px)': {
+		"@media screen and (max-width: 960px)": {
 			marginTop: 0,
 		},
-		'@media screen and (max-width: 768px)': {
+		"@media screen and (max-width: 768px)": {
 			marginTop: 0,
-			display: 'block',
-			alignItems: 'center',
-			justifyContent: 'center',
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "center",
 		},
-		'@media screen and (max-width: 566px)': {
+		"@media screen and (max-width: 566px)": {
 			marginTop: 25,
 		},
 	},
 	groupsMan: {
-		width: '700px',
-		border: '1px solid #efefef',
-		padding: '4px',
-		'@media screen and (max-width: 768px)': {
-			width: '315px',
+		width: "700px",
+		border: "1px solid #efefef",
+		padding: "4px",
+		"@media screen and (max-width: 768px)": {
+			width: "315px",
 		},
-		'@media screen and (device-width: 411px)': {
-			width: '355px',
+		"@media screen and (device-width: 411px)": {
+			width: "355px",
 		},
 	},
 	groupsMan1: {
-		width: '700px',
-		display: 'flex',
-		'@media screen and (max-width: 768px)': {
-			width: '315px',
-			flexWrap: 'wrap',
+		width: "700px",
+		display: "flex",
+		"@media screen and (max-width: 768px)": {
+			width: "315px",
+			flexWrap: "wrap",
 		},
-		'@media screen and (device-width: 411px)': {
-			width: '355px',
-			flexWrap: 'wrap',
+		"@media screen and (device-width: 411px)": {
+			width: "355px",
+			flexWrap: "wrap",
 		},
 	},
 	reciFilter: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		color: '#007bff',
-		border: '1px solid #007bff',
-		padding: '8px',
-		borderRadius: '4px',
-		'&:hover': {
-			backgroundColor: '#007bff',
-			color: '#ffffff',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		color: "#007bff",
+		border: "1px solid #007bff",
+		padding: "8px",
+		borderRadius: "4px",
+		"&:hover": {
+			backgroundColor: "#007bff",
+			color: "#ffffff",
 		},
-		'@media screen and (max-width: 768px)': {
-			width: '30%',
-			fontSize: '14px',
+		"@media screen and (max-width: 768px)": {
+			width: "30%",
+			fontSize: "14px",
 		},
 	},
 	selectSort: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		color: '#007bff',
-		border: '1px solid #007bff',
-		padding: '7px',
-		borderRadius: '4px',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		color: "#007bff",
+		border: "1px solid #007bff",
+		padding: "7px",
+		borderRadius: "4px",
 		// width:"150px",
-		outline: 'none',
-		height: '40px',
-		fontSize: '17px',
-		'&:hover': {
-			backgroundColor: '#007bff',
-			color: '#ffffff',
+		outline: "none",
+		height: "40px",
+		fontSize: "17px",
+		"&:hover": {
+			backgroundColor: "#007bff",
+			color: "#ffffff",
 		},
-		'@media screen and (max-width: 768px)': {
-			width: '100%',
-			fontSize: '14px',
+		"@media screen and (max-width: 768px)": {
+			width: "100%",
+			fontSize: "14px",
 		},
 	},
 	arrowSort: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		color: '#007bff',
-		border: '1px solid #007bff',
-		padding: '7px',
-		borderRadius: '4px',
-		height: '25px',
-		fontSize: '17px',
-		'&:hover': {
-			backgroundColor: '#007bff',
-			color: '#ffffff',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		color: "#007bff",
+		border: "1px solid #007bff",
+		padding: "7px",
+		borderRadius: "4px",
+		height: "25px",
+		fontSize: "17px",
+		"&:hover": {
+			backgroundColor: "#007bff",
+			color: "#ffffff",
 		},
 	},
 	selectedContact: {
-		width: '700px',
-		maxWidth: '700px',
-		height: '50px',
-		backgroundColor: '#efefef',
-		maxHeight: '50px',
-		display: 'flex',
-		flexWrap: 'wrap',
-		overflowY: 'auto',
-		'@media screen and (max-width: 768px)': {
-			width: '315px',
-			fontSize: '14px',
+		width: "700px",
+		maxWidth: "700px",
+		height: "50px",
+		backgroundColor: "#efefef",
+		maxHeight: "50px",
+		display: "flex",
+		flexWrap: "wrap",
+		overflowY: "auto",
+		"@media screen and (max-width: 768px)": {
+			width: "315px",
+			fontSize: "14px",
 		},
-		'@media screen and (device-width: 411px)': {
-			width: '355px',
-			fontSize: '14px',
+		"@media screen and (device-width: 411px)": {
+			width: "355px",
+			fontSize: "14px",
 		},
 	},
 	bubble: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		backgroundColor: '#007bff',
-		height: '24px',
-		color: '#ffffff',
-		width: '70px',
-		borderRadius: '20px',
-		fontSize: '16px',
-		margin: '6px',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#007bff",
+		height: "24px",
+		color: "#ffffff",
+		width: "70px",
+		borderRadius: "20px",
+		fontSize: "16px",
+		margin: "6px",
 	},
 	row: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		height: '20px',
-		padding: '12px',
-		'&:hover': {
-			backgroundColor: '#efefef',
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "space-between",
+		height: "20px",
+		padding: "12px",
+		"&:hover": {
+			backgroundColor: "#efefef",
 		},
 	},
 	graphCampaignName: {
-		fontWeight: 'bold',
+		fontWeight: "bold",
 		maxWidth: graphTextWidth[windowSize],
 	},
 	mt24: {
@@ -2182,75 +2171,75 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		marginTop: 25,
 	},
 	fullSize: {
-		height: '100%',
-		width: '100%',
+		height: "100%",
+		width: "100%",
 	},
 	baseButtonsContainer: {
-		justifyContent: 'flex-end',
-		alignItems: 'center',
-		paddingTop: '15px',
-		width: '100%',
-		display: 'flex',
-		marginTop: 'auto',
-		'@media screen and (max-width: 768px)': {
-			flexDirection: 'column-reverse',
-			justifyContent: 'center',
-			paddingBottom: '45px',
-			marginTop: 'auto',
-			marginBottom: '40px',
-			width: '100% !important',
+		justifyContent: "flex-end",
+		alignItems: "center",
+		paddingTop: "15px",
+		width: "100%",
+		display: "flex",
+		marginTop: "auto",
+		"@media screen and (max-width: 768px)": {
+			flexDirection: "column-reverse",
+			justifyContent: "center",
+			paddingBottom: "45px",
+			marginTop: "auto",
+			marginBottom: "40px",
+			width: "100% !important",
 		},
 	},
 	flexColCenter: {
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-		textAlign: 'center',
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		textAlign: "center",
 	},
 	marginLeftAuto: {
-		marginLeft: 'auto !important',
+		marginLeft: "auto !important",
 	},
 	marginRightAuto: {
-		marginRight: 'auto !important',
+		marginRight: "auto !important",
 	},
 	deleteIcon: {
-		color: '#fff',
-		backgroundColor: 'transparent',
-		cursor: 'pointer',
+		color: "#fff",
+		backgroundColor: "transparent",
+		cursor: "pointer",
 		fontSize: 28,
 	},
 	fullWidth: {
 		maxWidth: '100% !important',
-		width: '100% !important',
+		width: "100% !important",
 	},
 	width90P: {
-		width: '90%',
+		width: "90%",
 	},
 	errorLabel: {
 		marginTop: 8,
-		color: 'red',
+		color: "red",
 		fontSize: 12,
 	},
 	columnError: {
-		borderBottom: '2px solid red',
+		borderBottom: "2px solid red",
 		// padding: "4px"
 	},
 	modalInputForm: {
-		'@media screen and (max-width: 375px)': {
-			maxWidth: 'calc(100% - 20px)',
+		"@media screen and (max-width: 375px)": {
+			maxWidth: "calc(100% - 20px)",
 		},
 	},
 	//#region Dialog
 	dialogIconContainer: {
 		paddingTop: 60,
 		paddingBottom: 15,
-		textAlign: 'center',
-		color: '#fff',
+		textAlign: "center",
+		color: "#fff",
 		borderRadius: 200,
-		backgroundColor: '#0371ad',
-		position: 'absolute',
-		justifyContent: 'center',
-		alignItems: 'center',
+		backgroundColor: "#0371ad",
+		position: "absolute",
+		justifyContent: "center",
+		alignItems: "center",
 		top: -50,
 	},
 	dialogIconContainerRTL: {
@@ -2266,12 +2255,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	solidDialogExitButton: {
 		fontSize: 30,
 		fontFamily: 'Assistant',
-		textAlign: 'center',
-		color: '#000',
-		fontWeight: '700',
-		position: 'absolute',
-		top: '0.5rem',
-		cursor: 'pointer',
+		textAlign: "center",
+		color: "#000",
+		fontWeight: "700",
+		position: "absolute",
+		top: "0.5rem",
+		cursor: "pointer"
 	},
 	dialogExitButton: {
 		fontSize: 30,
@@ -2283,6 +2272,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		top: '0.2rem',
 		cursor: 'pointer',
 	},
+	btnBgExitDialog: {
+		backgroundColor: "#0371ad",
+	},
+	btnNoBgExitDialog: {
+		background: "none",
+		color: "#000"
+	},
 	dialogExitButtonRTL: {
 		left: '1.2rem',
 	},
@@ -2290,69 +2286,70 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		right: '1rem',
 	},
 	solidDialog: {
-		display: 'flex',
-		flexDirection: 'column',
-		margin: '1rem',
-		padding: '1rem',
+		display: "flex",
+		flexDirection: "column",
+		margin: "1rem",
+		padding: "1rem",
 		paddingTop: 0,
 		minWidth: dialogWidth[windowSize],
-		backgroundColor: '#fff',
+		maxWidth: dialogWidth[windowSize],
+		backgroundColor: '#f5f5f5',
 		'& .title': {
 			'& p': {
 				color: '#000',
 				textAlign: 'center',
 				fontSize: 28,
-				fontWeight: 700,
-			},
-		},
+				fontWeight: 700
+			}
+		}
 	},
 	dialogContent: {
-		display: 'flex',
-		flexDirection: 'column',
-		// border: "3px solid #0371ad",
+		display: "flex",
+		flexDirection: "column",
+		border: "3px solid #0371ad",
 		borderRadius: 5,
-		margin: '1rem',
-		padding: '1rem',
+		margin: "1rem",
+		padding: "1rem",
 		minWidth: dialogWidth[windowSize],
-		'& $notification': {
-			'& $iconWrapper': {
+		"& $notification": {
+			"& $iconWrapper": {
 				margin: iconWrapperMargin[windowSize],
 				minWidth: iconWrapperMinWidth[windowSize],
 			},
-			'& b, & textarea': {
+			"& b, & textarea": {
 				fontSize: notificationTitleFontSize[windowSize],
 			},
 		},
-		'& $dialogChildren': {
+		"& $dialogChildren": {
 			maxHeight:
-				windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)',
-			'& $phoneNumber': {
-				'@media screen and (max-width: 560px)': {
-					top: '70px !important',
+				windowSize === "xs" || windowSize === "sm" ? "100vh" : "calc(65vh)",
+			"& $phoneNumber": {
+				"@media screen and (max-width: 560px)": {
+					top: "70px !important",
 					fontSize: 14,
 				},
-				'@media screen and (max-width: 414px)': {
-					top: '65px !important',
+				"@media screen and (max-width: 414px)": {
+					top: "65px !important",
 					fontSize: 12,
 				},
-				'@media screen and (max-width: 375px)': {
-					'& $phoneNumber': {
+				"@media screen and (max-width: 375px)": {
+					"& $phoneNumber": {
 						top: 58,
 						fontSize: 12,
 					},
 				},
 			},
-			'& $wrapChat': {
-				'@media screen and (max-width: 560px)': {
+			"& $wrapChat": {
+				"@media screen and (max-width: 560px)": {
 					top: 110,
 				},
-				'@media screen and (max-width: 414px)': {
-					top: '90px !important',
+				"@media screen and (max-width: 414px)": {
+					top: "90px !important",
 					right: 30,
 					width: 190,
 					height: 135,
 				},
-				'@media screen and (max-width: 375px)': {
+				"@media screen and (max-width: 375px)": {
 					top: 75,
 					right: 26,
 					width: 180,
@@ -2360,59 +2357,59 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 				},
 			},
 		},
-		'& $mobileBG': {
-			'& $iconWrapper': {
-				minWidth: windowSize === 'xs' ? 0 : 100,
+		"& $mobileBG": {
+			"& $iconWrapper": {
+				minWidth: windowSize === "xs" ? 0 : 100,
 			},
 		},
 	},
 	solidDialogButton: {
-		fontFamily: 'OpenSansHebrew',
-		color: '#fff',
-		textTransform: 'capitalize',
+		fontFamily: "OpenSansHebrew",
+		color: "#fff",
+		textTransform: "capitalize",
 		width: 120,
 		fontSize: 18,
 		borderRadius: 8,
 		boxShadow: 'none !important',
-		border: 'none !important',
+		border: 'none !important'
 	},
 	dialogButton: {
-		fontFamily: 'OpenSansHebrew',
-		color: '#fff',
-		textTransform: 'capitalize',
+		fontFamily: "OpenSansHebrew",
+		color: "#fff",
+		textTransform: "capitalize",
 		width: 120,
 		fontSize: 18,
 		borderRadius: 50,
 	},
 	dialogButtonResponive: {
 		marginInline: 10,
-		'@media screen and (max-width: 768px)': {
+		"@media screen and (max-width: 768px)": {
 			fontSize: 14,
 			marginTop: 5,
 			marginBottom: 5,
-			width: 100,
+			width: 100
 		},
 	},
 	dialogButtonCenter: {
-		margin: '0 auto',
+		margin: "0 auto",
 		height: 40,
 		fontSize: 18,
 		fontWeight: 400,
 	},
 	dialogConfirmButton: {
-		backgroundImage: 'linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)',
-		backgroundRepeat: 'repeat-x',
-		border: '1px solid #345233',
-		borderTop: '0px solid #345233',
-		boxShadow: '0px 3px 3px #345233',
+		backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
+		backgroundRepeat: "repeat-x",
+		border: "1px solid #345233",
+		borderTop: "0px solid #345233",
+		boxShadow: "0px 3px 3px #345233",
 		maxWidth: 250,
 	},
 	dialogCancelButton: {
-		background: '#c9302c',
-		backgroundImage: 'linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)',
-		border: '1px solid darkred',
-		borderTop: '0px solid darkred',
-		boxShadow: '0px 3px 3px darkred',
+		background: "#c9302c",
+		backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+		border: "1px solid darkred",
+		borderTop: "0px solid darkred",
+		boxShadow: "0px 3px 3px darkred",
 		maxWidth: 150,
 	},
 	dialogBlueButton: {
@@ -2424,16 +2421,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		// maxWidth: 150,
 	},
 	dialogConfirmBlueButton: {
-		backgroundImage: 'linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)',
+		backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
 		maxWidth: 150,
 	},
 	dialogButtonsContainer: {
 		flex: 1,
-		alignContent: 'center',
-		justifyContent: 'center',
-		'@media screen and (max-width: 375px)': {
-			'& .MuiGrid-item': {
-				padding: '5px !important',
+		alignContent: "center",
+		justifyContent: "center",
+		"@media screen and (max-width: 375px)": {
+			"& .MuiGrid-item": {
+				padding: "5px !important",
 				marginTop: 15,
 				marginBottom: 15,
 			},
@@ -2441,7 +2438,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	//#endregion
 	textCenter: {
-		textAlign: 'center',
+		textAlign: "center",
 	},
 	marginBlock10: {
 		marginBlock: 10,
@@ -2450,13 +2447,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		marginBlock: 20,
 	},
 	MuiChipRoot: {
-		backgroundColor: '#1c82b2 !important',
-		'& span': {
-			color: '#fff',
+		backgroundColor: "#1c82b2 !important",
+		"& span": {
+			color: "#fff",
 		},
-		'& .MuiChip-deleteIcon': {
-			color: '#fff',
-			fill: 'currentColor',
+		"& .MuiChip-deleteIcon": {
+			color: "#fff",
+			fill: "currentColor",
 		},
 	},
 	roundedBorder: {
@@ -2466,33 +2463,33 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		ontWeight: 400,
 		fontSize: 16,
 		direction: isRTL ? 'rtl' : 'ltr',
-		color: '#fff',
+		color: '#fff'
 	},
 	autoCompleteTag: {
 		'& .MuiAutocomplete-tag': {
 			backgroundColor: '#0371ad',
 			color: '#fff',
 			'& .MuiChip-deleteIcon': {
-				fill: '#fff',
-			},
-		},
+				fill: '#fff'
+			}
+		}
 	},
 	noHoverBg: {
 		'&:hover': {
-			backgroundColor: 'transparent',
-		},
+			backgroundColor: 'transparent'
+		}
 	},
 	p5: {
-		padding: 5,
+		padding: 5
 	},
 	p15: {
-		padding: 10,
+		padding: 10
 	},
 	maxContent: {
-		width: 'max-Content',
+		width: 'max-Content'
 	},
 	alignDir: {
-		textAlign: isRTL ? 'right' : 'left',
+		textAlign: isRTL ? "right" : "left"
 	},
 	'.MuiAccordion-root': {
 		'&::before': {
@@ -2500,63 +2497,56 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 			left: 0,
 			right: 0,
 			height: 1,
-			content: '',
+			content: "",
 			opacity: 1,
 			position: 'absolute',
-			transition:
-				'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-			backgroundColor: 'rgba(0, 0, 0, 0.12)',
-		},
+			transition: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+			backgroundColor: 'rgba(0, 0, 0, 0.12)'
+		}
 	},
 	customScroll: {
 		'&::-webkit-scrollbar': {
 			width: '6px',
 
-			'&::-webkit-scrollbar-thumb:hover': {
-				background: '#979595',
-			},
 		},
-		scrollY: {
-			overflowX: 'hidden',
-			overflowY: 'scroll',
+		'&::-webkit-scrollbar-track': {
+			'boxShadow': 'inset 0 0 5px #e9e9e9',
+			'borderRadius': '10px',
 		},
 
-		"@media screen and (max-width: 768px)": {
-			width: "100%",
-			marginInlineStart: "0px",
-			// marginBottom:"30px"
+		'&::-webkit-scrollbar-thumb': {
+			background: '#cccccc',
+			borderRadius: '10px'
 		},
-	},
-	btnBgExitDialog: {
-		backgroundColor: "#0371ad",
-	},
-	btnNoBgExitDialog: {
-		background: "none",
-		color: "#000"
+
+		'&::-webkit-scrollbar-thumb:hover': {
+			background: '#979595'
+		}
 	},
 	scrollY: {
 		overflowX: 'hidden',
 		overflowY: 'scroll',
+
 	},
 	switchButton: {
 		background: '#e4e4e4',
 		padding: '2px 10px 3px 10px',
 		boxShadow: 'inset 0px 0px 5px #898888',
 		fontWeight: 500,
-		cursor: 'pointer',
+		cursor: 'pointer'
 	},
 	switchButtonActive: {
 		background: '#a9d9a9',
 		padding: '2px 10px 3px 10px',
 		boxShadow: '0px 0px 5px #898888',
 		fontWeight: 500,
-		cursor: 'pointer',
+		cursor: 'pointer'
 	},
 	toggleSwitch: {
 		'& .MuiSwitch-switchBase.Mui-checked': {
 			color: '#339933',
 			'&:hover': {
-				backgroundColor: 'transparent',
+				backgroundColor: 'transparent'
 			},
 		},
 		'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
@@ -2565,14 +2555,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 
 	textFieldError: {
-		'& .MuiInputBase-root': {
-			'& input': {
-				borderBottom: '2px solid red',
-			},
-		},
+		"& .MuiInputBase-root": {
+			"& input": {
+				borderBottom: '2px solid red'
+			}
+		}
 	},
 	ltr: {
-		direction: 'ltr',
+		direction: 'ltr'
 	},
 
 	selectPlaceholderInput: {
@@ -2588,21 +2578,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		position: 'absolute',
 		pointerEvents: 'none',
 		'&::placeholder': {
-			color: '#bfbfbf',
-		},
+			color: '#bfbfbf'
+		}
 	},
 
 	selectInputFormControl: {
 		'&.MuiFormControl-root': {
 			marginInline: 3,
 			'& label': {
-				marginInline: 5,
+				marginInline: 5
 			},
 			'& .outerborder': {
 				border: '1px solid #c4c4c4',
 				borderRadius: 5,
 				'& .MuiSelect-select': {
-					border: 'none !important',
+					border: 'none !important'
 				},
 			},
 			'& .MuiSelect-select': {
@@ -2619,37 +2609,37 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 			'& svg': {
 				left: isRTL ? 10 : 'auto',
 				right: isRTL ? 'auto' : 10,
-			},
-		},
+			}
+		}
 	},
 
 	dialogZindex: {
-		zIndex: '1000 !important',
+		zIndex: '1000 !important'
 	},
 	testSendDialog: {
 		width: 440,
-		maxWidth: 440,
+		maxWidth: 440
 	},
 	containerFullHeight: {
 		minHeight: 'calc(100vh - 120px)',
-		height: 'calc(100vh - 120px)',
+		height: 'calc(100vh - 120px)'
 	},
 	pb15: {
-		paddingBottom: 15,
+		paddingBottom: 15
 	},
 	pb25: {
-		paddingBottom: 25,
+		paddingBottom: 25
 	},
 	pbt10: {
 		paddingTop: 10,
-		paddingBottom: 10,
+		paddingBottom: 10
 	},
 	pbt15: {
 		paddingTop: 15,
-		paddingBottom: 15,
+		paddingBottom: 15
 	},
 	buttonMinWidth: {
-		minWidth: 167,
+		minWidth: 167
 	},
 	noShadowAccordion: {
 		boxShadow: 'none',
@@ -2674,17 +2664,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		alignItems: 'center',
 	},
 	textRed: {
-		color: '#c9302c',
+		color: '#c9302c'
 	},
-	commingSoon: {
-		backgroundColor: '#dc3545',
+	commingSoon:
+	{
+		backgroundColor: "#dc3545",
 		padding: 5,
 		fontSize: 11,
-		color: '#fff',
+		color: "#fff",
 		borderRadius: 5,
 		fontWeight: 400,
-		marginInlineStart: '3px',
-		marginBottom: '0 !important',
+		marginInlineStart: "3px",
+		marginBottom: '0 !important'
 	},
 	flexCenterOfCenter: {
 		display: 'flex',
@@ -2692,18 +2683,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		justifyContent: 'center',
 		flexDirection: 'column',
 		alignItems: 'center',
-		textAlign: 'center',
-	},
-
-	//Taken from ganaralStyle
-	tabDiv: {
-		display: 'grid',
-		gridTemplateColumns: '50% 50%',
-	},
-	conInfo: {
-		fontSize: '22px',
-		color: '#555',
-		marginInlineEnd: '5px',
+		textAlign: 'center'
 	},
 	settingsContainer: {
 		marginBottom: 68,
@@ -2801,6 +2781,35 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	passwordDialog: {
 		maxWidth: windowSize !== 'xs' ? '25vw' : null
+	},
+	ribbonContainer: {
+		position: 'relative',
+		'& .wrap': {
+			width: 'inherit',
+			height: '58px',
+			position: 'absolute',
+			top: '-2px',
+			left: '1.5px',
+			overflow: 'hidden',
+			'& .ribbon': {
+				width: '45px',
+				height: '10px',
+				lineHeight: '10px',
+				position: 'absolute',
+				top: '8px',
+				right: isRTL ? 'auto' : '-10px',
+				left: isRTL ? '-10px' : 'auto',
+				zIndex: '2',
+				overflow: 'hidden',
+				transform: isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+				'-webkit-transform': isRTL ? 'rotate(-45deg)' : 'rotate(45deg)',
+				boxShadow: '0px 0px 2px 1px #b7b7b7,  0px 21px 5px -18px rgba(0,0,0,0.6)',
+				background: '#ff0000',
+				textAlign: 'center',
+				fontSize: '0.5rem',
+				color: "#fff"
+			}
+		}
 	},
 	disabledButPointer: {
 		opacity: ".65",
