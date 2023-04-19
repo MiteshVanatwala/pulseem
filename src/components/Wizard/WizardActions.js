@@ -67,7 +67,7 @@ const WizardActions = ({
                                 style={{ marginInline: 8, paddingInline: 10 }}
                                 className={clsx(classes.actionButton,
                                     classes.actionButtonOutlinedBlue)}>
-                                <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} />
+                                <AiOutlineFileAdd style={{ fontSize: "28", paddingInline: 5 }} />
                                 {t("common.documentGallery")}
                             </Button>
                         }

@@ -223,7 +223,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		display: "flex",
 	},
 	width_min_content: {
-		width: 'min-content'
+		width: 'auto'
 	},
 	rtlSwitch: {
 		transform: "rotateY(180deg)",
