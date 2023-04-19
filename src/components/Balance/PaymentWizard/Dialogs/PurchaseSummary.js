@@ -19,6 +19,10 @@ const PurchaseSummary = ({
     const vat = (pack.Price * israelTax).toFixed(2);
     const totalPrice = pack.Price + parseFloat(vat);
     const { windowSize } = useSelector(state => state.core);
+    const productName = {
+        2: t('common.newsletterMessages'),
+        3: t('common.smsMessages')
+    };
     return (
         <Grid container spacing={1} className={classes.paymentDialog}>
             {showTitle && <Grid item xs={12} className={clsx(classes.mb4)}>
@@ -29,7 +33,7 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.productName')}</Typography>
             </Grid>
             <Grid item xs={6}>
-                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{`${pack.Quantity} ${t('common.smsMessages')}`}</Typography>
+                <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{`${pack.Quantity} ${productName[pack?.CampaignType]}`}</Typography>
             </Grid>
             <Grid item xs={12}>
                 <Divider />
