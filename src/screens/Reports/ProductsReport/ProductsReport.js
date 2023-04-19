@@ -35,9 +35,9 @@ const DEFAULT_FILTER = {
 
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
-
     const { t } = useTranslation()
     const [searchData, setSearchData] = useState(DEFAULT_FILTER)
     const [isSearching, setIsSearching] = useState(true);
@@ -137,29 +137,26 @@ const ProductsReport = ({ classes }) => {
 
     const handleDownloadCsv = async (formatType) => {
         setLoader(true);
-        const exportOption = {
+
+        const exportOptions = {
             OrderItems: true,
             FormatDate: true,
-            ConvertStatusToString: false,
-            ConvertStatusDescription: false,
             Order: Object.keys(exportColumnHeader)
         };
 
         try {
-            const result = await HandleExportData(exportPRData, exportOption);
-
+            const result = await HandleExportData(exportPRData, exportOptions);
             ExportFile({
                 data: result,
                 fileName: 'productsReport',
                 exportType: formatType,
                 fields: exportColumnHeader
             });
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
         }
-        finally {
-            setLoader(false);
-        }
+
+        setLoader(false);
     }
     //  COMPONENTS  //
     const renderFilter = () => {

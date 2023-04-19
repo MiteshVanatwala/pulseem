@@ -14,7 +14,7 @@ import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
-import { HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHelper';
+import { DeletePropertyFromArrayObject, HandleExportData, ReplaceNull } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus, WhatsappStatus } from '../../../helpers/Constants';
 import { ExportIcon } from '../../../assets/images/managment/index'
@@ -39,12 +39,13 @@ const useStyles = makeStyles({
 });
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
-  const location = useLocation();
-  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
+
   const localClasses = useStyles();
+
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
-  const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+  const { accountFeatures } = useSelector(state => state.common);
+  const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const { directWhatsappReport } = useSelector(state => state.whatsapp);
@@ -532,7 +533,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} classes={classes} />
+      <Title Text={isArchive ? t('report.ArchiveDirectSendReport') : t('report.DirectSendReport')} Classes={classes} ShowDivider={true} />
       {renderTabs()}
       <ConfirmRadioDialog
         classes={classes}

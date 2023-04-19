@@ -111,7 +111,13 @@
   "clientName": "Client Name",
   "filterSearch": "Apply filter",
   "closeFilterSearch": "Close filter",
+  "virtualNumber": "Virtual Number",
   "errorReason": "Error reason",
-  "smsReplies": "SMS Incoming report",
-  "virtualNumber": "Virtual Number"
+  "fileName": "File Name",
+  "action": "Action",
+  "ReadyForDownload": "Ready For Download",
+  "InProcess": "In Process",
+  "Failed": "Failed",
+  "Completed": "completed" ,
+  "smsReplies": "SMS Incoming report"
 }

@@ -111,6 +111,12 @@
   "clientName": "שם לקוח",
   "filterSearch": "החל סינון",
   "closeFilterSearch": "סגור סינון",
+  "fileName": "שם קובץ",
+  "action": "פעולה",
+  "ReadyForDownload": "מוכן להורדה",
+  "InProcess": "בתהליך יצירת קובץ",
+  "Failed": "יצירת קובץ נכשלה",
+  "Completed": "הושלמה",
   "errorReason": "סיבת השגיאה",
   "smsReplies": "דו\"ח SMS נכנסים",
   "virtualNumber": "מספר וירטואלי"

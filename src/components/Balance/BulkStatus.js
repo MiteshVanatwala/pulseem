@@ -9,12 +9,12 @@ import clsx from 'clsx';
 import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
-import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 
 const BulkStatus = ({ classes }) => {
-  const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
+  const { billingTypeId } = useSelector(state => state.core)
+  const { accountSettings, accountFeatures } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
@@ -142,7 +142,6 @@ const BulkStatus = ({ classes }) => {
 
   const showPackageDialogType = async (packageType) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
-    dispatch(setAccountFeatures(settings.payload));
     if (!settings?.payload?.Data?.Account?.IsPaying) {
       packageType = -1;
       setPackageType(-1);

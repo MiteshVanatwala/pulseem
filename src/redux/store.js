@@ -42,9 +42,9 @@ export default configureStore({
     siteTracking: siteTrackingReducer,
     group: groupSlice,
     report: reportSlice,
-    connectors: ConnectorsSlice,
     gallery: galleryReducer,
     whatsapp: whatsappReducer,
-    accountSettings: AccountSettingsSlice
+    accountSettings: AccountSettingsSlice,
+    connectors: ConnectorsSlice
   },
 });

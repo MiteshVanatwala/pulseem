@@ -35,7 +35,8 @@ const NewslettersReport = ({ classes }) => {
   const { state } = useLocation();
   const from = state?.from || "/";
 
-  const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -1022,7 +1023,7 @@ const NewslettersReport = ({ classes }) => {
       currentPage='reports'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={t('mainReport.logPageHeaderResource1.Text')} classes={classes} />
+      <Title Text={t('mainReport.logPageHeaderResource1.Text')} Classes={classes} ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

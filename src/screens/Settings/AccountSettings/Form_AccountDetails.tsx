@@ -72,8 +72,9 @@ const FORM_ACCOUNT_DETAILS = ({
     >
       <Title
         Text={t("settings.accountSettings.actDetails.title")}
-        classes={classes}
-        isIcon={false}
+        Classes={classes}
+        ContainerStyle={undefined}
+        Element={null}
       />
       <Box className={"formContainer"}>
         <Grid container className={"form"}>

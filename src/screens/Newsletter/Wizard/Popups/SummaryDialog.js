@@ -12,8 +12,7 @@ import { getAuthorizedEmails } from "../../../../redux/reducers/commonSlice";
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
-import { saveCampaignInfo } from "../../../../redux/reducers/newsletterSlice";
-import { sendCampaign } from "../../../../redux/reducers/newsletterSlice";
+import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -26,6 +25,7 @@ const SummaryDialog = ({ classes,
     PreviewURL = null,
     SendDate = "",
     handleSendResponse = () => null,
+    IsQuickSend = false,
     ...props }) => {
     const dispatch = useDispatch();
     const [detailsHide, setdetailsHide] = useState(true);
@@ -35,7 +35,7 @@ const SummaryDialog = ({ classes,
     const { isRTL } = useSelector(state => state.core);
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
-    const { newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
+    const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
 
     const {
         FinalClients,
@@ -54,30 +54,40 @@ const SummaryDialog = ({ classes,
         ExceptionalOpensClicksClientsCount,
         ExceptionalDaysClientsCount,
         ExceptionalCampaignsClientsCount,
-        ExceptionalGroupsClientsCount
+        ExceptionalGroupsClientsCount,
+        IsOpened,
+        IsOpenedClicked,
+        IsNotClicked,
+        IsNotOpened,
+        IsBestTime
     } = newsletterSendSummary;
 
     const { t } = useTranslation();
 
-    const handleSmsSettings = async () => {
+    const handleSendCampaign = async () => {
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
-        handleSendResponse(sendResponse.payload);
+        handleSendResponse({
+            ...sendResponse.payload,
+            fromEmail: fromEmail
+        });
     }
     useEffect(() => {
         dispatch(getAuthorizedEmails());
     }, [])
 
     useEffect(() => {
-        setFromEmail(newsletterSendSummary?.FromEmail);
+        const verifiedEmail = verifiedEmails.filter((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
+        if (verifiedEmail?.length > 0)
+            setFromEmail(newsletterSendSummary?.FromEmail);
     }, [newsletterSendSummary])
 
     const renderWhenToSend = () => {
         switch (newsletterSendSummary?.SendingMethod) {
             case 1: {
-                return t("sms.SendNow");
+                return `${t("sms.SendNow")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 2: {
-                return `${moment(newsletterSendSummary?.SendDate).format('dddd , MMMM Do YYYY, h:mm a')}`;
+                return `${moment(newsletterSendSummary?.SendDate).format('dddd , MMMM Do YYYY, h:mm a')} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 3: {
                 const exDates = { ...extraData };
@@ -85,19 +95,19 @@ const SummaryDialog = ({ classes,
                 switch (newsletterSendSummary.AutoSendingByUserField) {
                     case "1":
                     case 1: {
-                        specialField = t("mainReport.birthday");
+                        specialField = `${t("mainReport.birthday")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
                     case "2":
                     case 2: {
-                        specialField = t("mainReport.creationDay")
+                        specialField = `${t("mainReport.creationDay")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
                     default: {
                         specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField - 2}`];
                     }
                 }
-                return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")} ` + `<span>&nbsp;${specialField}</span>` + `&nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
+                return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")}  <span>&nbsp;${specialField}</span> &nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
             }
             default: {
                 //alert("לא נבחר זמן שליחה")
@@ -117,35 +127,70 @@ const SummaryDialog = ({ classes,
 
             });
 
-            return groupWithRecipients.map((group, idx) => { return renderDetailsLine(group.GroupName, group.Recipients?.toLocaleString()) });
+            return groupWithRecipients.map((group, idx) => { return renderDetailsLine(group?.GroupName, group?.Recipients?.toLocaleString()) });
         }
         return <></>
     }
     const renderDetailsLine = (property, value) => {
         return <Box className={classes.summaryListItem}
         >
-            <span>{property}</span>
-            <span className={classes.summaryDetailsSpanBold}>{value}</span>
+            <span>{RenderHtml(property)}</span>
+            <span className={classes.summaryDetailsSpanBold}>{RenderHtml(value)}</span>
+        </Box>;
+    }
+    const renderExceptionalGroups = (property, list) => {
+        return <Box>
+            <span style={{ display: 'flex', paddingTop: 10, paddingInline: 10 }}>{property} <span className={classes.summaryDetailsSpanBold}>({t("common.Total")}: {ExceptionalGroupsClientsCount})</span></span>
+            <ul>
+                {list.map((l) => {
+                    return <li>
+                        <span className={classes.summaryDetailsSpanBold}>{l}</span>
+                    </li>
+                })
+                }
+            </ul>
         </Box>;
     }
     const renderFilterDetails = () => {
+        let exceptionalClientsCountText = '';
+
+        if ((IsOpened || IsNotOpened || IsNotClicked || IsOpenedClicked) && ExceptionalOpensClicksClientsCount > 0) {
+            if (IsOpened) { // לקוחות שלא פתחו דיוור
+                exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb2');
+            }
+            if (IsNotOpened && IsNotClicked) {
+                exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb5');
+            }
+            else {
+                if (IsNotOpened) { // לקוחות שפתחו דיוור
+                    exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb1');
+                }
+                if (IsNotClicked) { // לקוחות שהקליקו על קישור
+                    exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb3');
+                }
+            }
+            if (IsOpenedClicked) { // לקוחות שלא הקליקו על קישור
+                exceptionalClientsCountText = t('campaigns.newsLetterEditor.sendSettings.summarySegmCritCb4');
+            }
+        }
         return detailsHide ? <></> : (<Box className={classes.summaryExpandRecipientFilter}>
-            {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients.toLocaleString())}
-            {InvalidClients > 0 && renderDetailsLine(t("sms.invalidRecipients"), InvalidClients.toLocaleString())}
-            {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients.toLocaleString())}
-            {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients.toLocaleString())}
-            {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients.toLocaleString())}
-            {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients.toLocaleString())}
+            {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients?.toLocaleString())}
+            {InvalidClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.invalidRecipients"), InvalidClients?.toLocaleString())}
+            {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients?.toLocaleString())}
+            {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients?.toLocaleString())}
+            {DuplicateClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.duplicatedClients"), DuplicateClients?.toLocaleString())}
+            {RestrictedClients > 0 && renderDetailsLine(t("campaigns.restrictedClients"), RestrictedClients?.toLocaleString())}
             {ExceptionalDaysClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.emailFilterInput'), ExceptionalDaysClientsCount)}
             {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
-            {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(t('campaigns.newsLetterEditor.sendSettings.segmCritCb1'), ExceptionalOpensClicksClientsCount.toLocaleString())}
-            {ExceptionalGroups > 0 && renderDetailsLine(t("smsReport.inputTextFilter"), `${ExceptionalGroups.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalGroupsClientsCount})`)}
+            {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(exceptionalClientsCountText, ExceptionalOpensClicksClientsCount?.toLocaleString())}
+            {ExceptionalGroups !== '' && ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
+            {TotalClients >= 0 && renderDetailsLine(`<b>${t('campaigns.newsLetterEditor.sendSettings.totalNotToSend')}</b>`, TotalClients?.toLocaleString())}
         </Box>)
     }
     const handleFromEmailChanged = (event) => {
-        if (campaignInfo && campaignInfo.CampaignID) {
+        if (newsletterInfo && newsletterInfo.CampaignID) {
             setFromEmail(event.target.value);
-            const updateInfo = { ...campaignInfo };
+            const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = event.target.value;
             dispatch(saveCampaignInfo(updateInfo));
         }
@@ -170,7 +215,7 @@ const SummaryDialog = ({ classes,
                                     onChange={handleFromEmailChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
-                                        className: classes.p10,
+                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null) && classes.error),
                                         style: { maxWidth: '70%' }
                                     }}
                                     variant='outlined'
@@ -209,9 +254,11 @@ const SummaryDialog = ({ classes,
                                 <span className={classes.bodySum}>
                                     {`${t("sms.smsSummaryDialogTotalRecipients")}: ${FinalClients?.toLocaleString()}`}
                                 </span>
-                                <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
-                                    {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
-                                </Link>
+                                {
+                                    !IsQuickSend && <Link onClick={() => { setdetailsHide(!detailsHide) }} className={classes.expandTextLink}>
+                                        {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
+                                    </Link>
+                                }
                             </Box>
                         </Box>
                         {PreviewURL && <Box className={classes.sumRight}>
@@ -222,21 +269,23 @@ const SummaryDialog = ({ classes,
                             </Stack>
                         </Box>}
                     </Box>
-                    <Box>
-                        {detailsHide ? null : <ul className={classes.sumList}>
-                            <li>
-                                <Link onClick={() => { setsubDetailsActive(!subDetailsActive) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
-                                    {t("sms.smsSummaryGroups")} ({newsletterSendSummary.Groups !== '' ? newsletterSendSummary.Groups?.split(',')?.length : 0})
-                                    {subDetailsActive ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
-                                </Link>
-                            </li>
-                        </ul>}
+                    {!IsQuickSend &&
+                        <Box>
+                            {detailsHide ? null : <ul className={classes.sumList}>
+                                <li>
+                                    <Link onClick={() => { setsubDetailsActive(!subDetailsActive) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
+                                        {t("sms.smsSummaryGroups")} ({newsletterSendSummary.Groups !== '' ? newsletterSendSummary.Groups?.split(',')?.length : 0})
+                                        {subDetailsActive ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
+                                    </Link>
+                                </li>
+                            </ul>}
 
 
-                        {!detailsHide && subDetailsActive ? <Box style={{ borderTop: '1px solid #ccc' }}>{renderGroupForSend()}</Box> : null}
-                    </Box>
+                            {!detailsHide && subDetailsActive ? <Box style={{ borderTop: '1px solid #ccc' }}>{renderGroupForSend()}</Box> : null}
+                        </Box>
+                    }
                 </Box>
-                <Box>
+                {!IsQuickSend && <Box>
                     {detailsHide ? null : <ul className={classes.sumList}>
                         <li
                             onClick={() => { setsubRecipients(!subRecipientsDetails) }}
@@ -249,6 +298,7 @@ const SummaryDialog = ({ classes,
                     </ul>}
                     {subRecipientsDetails ? renderFilterDetails() : null}
                 </Box>
+                }
                 <Grid
                     container
                     spacing={4}
@@ -257,11 +307,11 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => { handleSmsSettings() }}
+                            onClick={() => { handleSendCampaign() }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
-                                FinalClients <= 0 ? classes.disabled : null
+                                FinalClients <= 0 || fromEmail === '' || fromEmail === null ? classes.disabled : null
                             )}>
                             {t("sms.sendDialog")}
                         </Button>
@@ -291,6 +341,7 @@ const SummaryDialog = ({ classes,
         classes={classes}
         open={isOpen}
         onClose={() => { setDialogType(null) }}
+        onCancel={() => { setDialogType(null) }}
         {...currentDialog}>
         {currentDialog.content}
     </BaseDialog>

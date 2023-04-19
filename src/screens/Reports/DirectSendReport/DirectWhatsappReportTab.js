@@ -15,12 +15,11 @@ import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { WhatsappStatus } from '../../../helpers/Constants';
-import { WhatsappStatusToString, WhatsappStatusColor } from '../../../helpers/UI/TableText';
-import TotalSection from '../../../components/managment/TotalSection';
+import { whatsappStatusToString, whatsappStatusColor } from '../../../helpers/Functions/functions';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ImWhatsapp } from 'react-icons/im';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -104,9 +103,9 @@ const DirectWhatsappReportTab = ({
             text = `${text.format('DD/MM/YYYY HH:mm')}`
         }
         if (dataType === 'status') {
-            text = t(WhatsappStatusToString(text));
+            text = t(whatsappStatusToString(text));
             return (
-                <Typography style={{ color: WhatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+                <Typography style={{ color: whatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
             )
         }
 

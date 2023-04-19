@@ -58,8 +58,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [mergeData, setPulseemMergeData] = useState({});
   const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language, isRTL, accountSettings } = useSelector(state => state.core)
-  const { tokenAlive } = useSelector(state => state.common)
+  const { language, isRTL } = useSelector(state => state.core)
+  const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -269,8 +269,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
-      const accountFeatures = getCookie("accountFeatures")
-      if (accountFeatures.indexOf(PulseemFeatures.BEE_AMP) > -1) {
+      if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
         config.workspace.type = 'mixed';
       }
 
@@ -366,9 +365,8 @@ const CampaignEditor = ({ classes, ...props }) => {
 
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
-          // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           localStorage.setItem('reloadBeeEditor', 1);
-          window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
+          window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           return false;
         }
         else if (saveRef.current?.showAnimation) {
@@ -393,7 +391,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLastSaveText(`${t('campaigns.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
-
   }
 
   const onAutoSaveCampaign = debounce(() => {
@@ -591,6 +588,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showGallery}
           onClose={() => { setShowGallery(false); }}
+          onCancel={() => { setShowGallery(false); }}
           onConfirm={() => { setShowGallery(false); }}
           {...dialog}>
           {dialog.content}
@@ -622,6 +620,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
+          onCancel={() => { setShowDocuments(false); }}
           onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}

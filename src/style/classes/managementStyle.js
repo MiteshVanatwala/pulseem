@@ -1828,19 +1828,19 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       }
     },
   },
-  implementButtonFlex: {
-    maxHeight: '45',
-    marginTop: 'auto',
-    marginBottom: 15,
-    marginInlineStart: 'auto',
-    lineHeight: windowSize === 'xs' ? 1 : null
-  },
   imgFluid: {
     maxWidth: '100%',
     height: '100%'
   },
   smallIcon: {
     width: 14
+  },
+  implementButtonFlex: {
+    maxHeight: '45',
+    marginTop: 'auto',
+    marginBottom: 15,
+    marginInlineStart: 'auto',
+    lineHeight: windowSize === 'xs' ? 1 : null
   },
   smsReplies: {
     '& .MuiOutlinedInput-root': {

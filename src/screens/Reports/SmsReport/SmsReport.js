@@ -36,7 +36,8 @@ const SmsReport = ({ classes }) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const from = state?.from || "/";
-  const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
+  const { language, windowSize, isRTL } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const rowsOptions = [6, 10, 20, 50]
@@ -792,7 +793,7 @@ const SmsReport = ({ classes }) => {
       containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
-      <Title Text={t('common.SMSReports')} classes={classes} />
+      <Title Text={t('common.SMSReports')} Classes={classes} ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

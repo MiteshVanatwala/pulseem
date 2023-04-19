@@ -21,7 +21,7 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getSubAccountApiKey, updateScriptPath, getSubAccountRegistrations
+  getScriptPath, getSubAccountApiKey, getSubAccountRegistrations, updateScriptPath
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -32,13 +32,13 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { MdNotificationsActive } from 'react-icons/md';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-// import { Title } from '../../../components/managment/Title';
+import { Title } from '../../../components/managment/Title';
 import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
 
 const NotificationManagement = ({ classes }) => {
   const Redirect = useRedirect();
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { notificationData, subAccountApiKey } = useSelector(state => state.notification)
+  const { notificationData, subAccountApiKey, hideScriptDialog } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
@@ -62,7 +62,6 @@ const NotificationManagement = ({ classes }) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const scriptDialogCookie = getCookie('scriptDialog')
-  const hideScriptDialog = (scriptDialogCookie === 'true')
   const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
   const [showLoader, setLoader] = useState(true);
   const [forceShowImplementation, setForceShowImplementation] = useState(false);
@@ -198,35 +197,12 @@ const NotificationManagement = ({ classes }) => {
       <BaseDialog
         classes={classes}
         open={showScriptDialog}
+        onCancel={() => setShowScriptDialog(false)}
         onClose={() => setShowScriptDialog(false)}
         {...dialog}>
         {dialog.content}
       </BaseDialog>
     );
-  }
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
-          <Typography className={classes.managementTitle}>
-            {t('notifications.notificationManagement')}
-          </Typography>
-          <Button
-            style={{ marginInlineStart: 'auto', height: 45, marginTop: 15 }}
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
-            onClick={() => { setForceShowImplementation(true); setShowScriptDialog(true) }}>
-            {t('master.implementScript')}
-          </Button>
-        </Box>
-        <Divider />
-      </>
-    )
   }
 
   const clearSearch = () => {
@@ -1296,6 +1272,7 @@ const NotificationManagement = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleDialogClose}
+        onCancel={handleDialogClose}
         {...dialog}>
         {dialog.content}
       </BaseDialog>);
@@ -1309,10 +1286,9 @@ const NotificationManagement = ({ classes }) => {
     <DefaultScreen
       currentPage='notifications'
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb50)}
-    >
-      {/* <Title
-        Text={t('notifications.notificationManagement')} classes={classes}
+      containerClass={clsx(classes.management, classes.mb50)}>
+      <Title
+        Text={t('notifications.notificationManagement')} Classes={classes}
         ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
         Element={
           <Button onClick={() => {
@@ -1325,8 +1301,7 @@ const NotificationManagement = ({ classes }) => {
               classes.actionButton,
               classes.implementButtonFlex,
               classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
-        } /> */}
-      {renderHeader()}
+        } ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

@@ -95,10 +95,10 @@ const SmsManagnentScreen = ({ classes }) => {
 	moment.locale(language);
 	const Redirect = useRedirect();
 
-	const getData = useCallback(() => {
-		dispatch(getSmsData());
+	const getData = useCallback(async () => {
+		await dispatch(getSmsData())
 		setLoader(false);
-	}, [dispatch]);
+	}, [dispatch])
 
 	useEffect(() => {
 		setLoader(true);
@@ -663,13 +663,13 @@ const SmsManagnentScreen = ({ classes }) => {
 		});
 	};
 
-  const handleSendVerificationCode = async () => {
-    const value = (dialogType && dialogType.type === 'shortVerify' && dialogType.data) ? dialogType.data : number;
-    if (!value || value.length < 10) {
-      handleNumberError(true);
-      return
-    }
-    const result = await dispatch(sendVerificationCode({ number: value }));
+	const handleSendVerificationCode = async () => {
+		const value = (dialogType && dialogType.type === 'shortVerify' && dialogType.data) ? dialogType.data : number;
+		if (!value || value.length < 10) {
+			handleNumberError(true);
+			return
+		}
+		const result = await dispatch(sendVerificationCode({ number: value }));
 
 		if (!result.error) {
 			setDialogType({
@@ -1063,44 +1063,33 @@ const SmsManagnentScreen = ({ classes }) => {
 			verificationSuccess: getVerificationSuccessDialog(data),
 		};
 
-		const currentDialog = dialogContent[type] || {};
+		const currentDialog = dialogContent[type] || {}
 		return (
-			dialogType && (
-				<BaseDialog
-					classes={classes}
-					open={dialogType}
-					onClose={handleClose}
-					{...currentDialog}>
-					{currentDialog.content}
-				</BaseDialog>
-			)
-		);
-	};
+			dialogType && <BaseDialog
+				classes={classes}
+				open={dialogType}
+				onClose={handleClose}
+				onCancel={handleClose}
+				{...currentDialog}>
+				{currentDialog.content}
+			</BaseDialog>
+		)
+	}
 	return (
 		<DefaultScreen
 			currentPage='sms'
 			classes={classes}
 			containerClass={clsx(classes.management, classes.mb50)}>
-			<Title
-				Text={t('sms.PageResource1.Title')}
-				classes={classes}
-			/>
+			<Title Text={t('sms.PageResource1.Title')} Classes={classes} ShowDivider={true} />
 			{renderSearchLine()}
 			{renderManagmentLine()}
 			{renderTable()}
 			{renderTablePagination()}
 			{renderDialog()}
-			{newSmsVerification && (
-				<VerificationDialog
-					classes={classes}
-					isOpen={newSmsVerification}
-					variant='sms'
-					onClose={() => setNewSmsVerification(false)}
-				/>
-			)}
+			{newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
 			<Loader isOpen={showLoader} />
 		</DefaultScreen>
-	);
-};
+	)
+}
 
 export default SmsManagnentScreen;

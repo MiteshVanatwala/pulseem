@@ -790,6 +790,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>
@@ -799,8 +800,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
     <DefaultScreen
       currentPage='automations'
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={t('automations.logPageHeaderResource1.Text')} classes={classes} />
+      containerClass={classes.management}>
+      <Title Text={t('automations.logPageHeaderResource1.Text')} Classes={classes} ShowDivider={true} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

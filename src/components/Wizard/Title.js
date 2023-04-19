@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const WizardTitle = ({ classes, title, tooltip = null, stepNumber, subTitle, topZero = false }) => {
+const Title = ({ classes, title, tooltip = null, stepNumber, subTitle, topZero = false }) => {
     const styles = useStyles();
     return (<Box>
         <Box className={classes.infoDiv} style={{ height: 'auto' }}>
@@ -41,4 +41,4 @@ const WizardTitle = ({ classes, title, tooltip = null, stepNumber, subTitle, top
     </Box>)
 }
 
-export default WizardTitle;
+export default Title;

@@ -377,7 +377,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			containerClass={clsx(classes.management, classes.mb50)}>
 			<Title
 				Text={translator('whatsappReport.report')}
-				classes={classes}
+				Classes={classes}
 				ContainerStyle={{}}
 				Element={null}
 			/>

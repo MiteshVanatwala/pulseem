@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { IoMdImages } from 'react-icons/io';
 import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, Checkbox, FormControlLabel } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
-import { deleteCampaign, saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
+import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
+import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
@@ -139,14 +139,14 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { accountSettings, isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { verifiedEmails } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings, accountFeatures } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -212,7 +212,6 @@ const NewsLetterInfo = ({ classes }) => {
     const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
-    const accountFeatures = getCookie("accountFeatures")
 
     //#region default values
     useEffect(() => {
@@ -244,7 +243,6 @@ const NewsLetterInfo = ({ classes }) => {
             setNewEditorDisabled(true);
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
             sessionStorage.removeItem("Newlsetter_Html_Template");
-
         }
     }, []);
 
@@ -272,7 +270,7 @@ const NewsLetterInfo = ({ classes }) => {
                 }
             }
             if (accountSettings?.DefaultFromName && accountSettings?.DefaultFromName !== '') {
-                setCampaingnValues({ ...campaingnValues, FromName: accountSettings?.DefaultFromName });
+                setCampaingnValues({ ...campaingnValues, FromName: campaingnValues.FromName === '' ? accountSettings?.DefaultFromName : campaingnValues.FromName });
             }
         }
     }
@@ -800,6 +798,7 @@ const NewsLetterInfo = ({ classes }) => {
                     classes={classes}
                     open={showGallery}
                     onClose={() => { setShowGallery(false) }}
+                    onCancel={() => { setShowGallery(false) }}
                     onConfirm={handleGalleryConfirm}
                     {...dialog}>
                     {dialog.content}

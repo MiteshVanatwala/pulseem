@@ -35,20 +35,22 @@ export const ManagmentIcon = ({
         disabled={!!disable || !!hide}
         size='small'
         style={{ backgroundColor: disableHover ? 'transparent' : null }}
-        onClick={() => {
+        onClick={(e) => {
+          e?.preventDefault();
           if (href) {
             Redirect({ url: href });
           }
           else {
             onClick(buttonRef)
           }
+          return false;
         }}
         className={clsx({
           [classes.managmentIconHide]: hide
         })}>
         <Box
-          // component={href? 'a':'div'}
-          // href={href}
+          component={href ? 'a' : 'div'}
+          href={href}
           style={style}
           className={clsx(disable && classes.disabledCursor,
             classes.managmentIconContainer,

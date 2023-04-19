@@ -18,37 +18,15 @@ import { useParams } from 'react-router-dom';
 import { BsTrash, BsChevronDown, BsChevronUp } from 'react-icons/bs';
 import Gif from '../../../assets/images/managment/check-circle.gif';
 import * as XLSX from 'xlsx';
-import WizardTitle from '../../../components/Wizard/WizardTitle';
+import Title from '../../../components/Wizard/Title'
+import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
-	Typography,
-	Button,
-	Grid,
-	Box,
-	FormControlLabel,
-	FormControl,
-	RadioGroup,
-	Radio,
-	FormHelperText,
-	Divider,
-	TextField,
-} from '@material-ui/core';
-import {
-	sendSms,
-	deleteSms,
-	getSmsByID,
-	IsOTPPassed,
-	getCampaignSumm,
-	smsCombinedGroup,
-	saveManualClients,
-	getAccountExtraData,
-	saveSmsCampSettings,
-	getCampaignSettings,
-	getFinishedCampaigns,
-	getTestGroups,
-} from '../../../redux/reducers/smsSlice';
-import { getGroupsBySubAccountId } from '../../../redux/reducers/groupSlice';
-import Summary from './smsSummary';
-import clsx from 'clsx';
+  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, saveManualClients,
+  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
+} from "../../../redux/reducers/smsSlice";
+import { getGroupsBySubAccountId, combinedGroup } from "../../../redux/reducers/groupSlice";
+import Summary from "./smsSummary";
+import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa';
 import { logout } from '../../../helpers/Api/PulseemReactAPI';
@@ -268,7 +246,7 @@ const SmsSend = ({ classes, ...props }) => {
         }
         setFilterCampaigns(selectedCampaigns);
       }
-      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1) {
+      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
 
@@ -484,7 +462,7 @@ const SmsSend = ({ classes, ...props }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    await dispatch(smsCombinedGroup(payload));
+    await dispatch(combinedGroup(payload));
     await dispatch(getGroupsBySubAccountId());
     settoggleChecked(false);
     setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
@@ -917,9 +895,9 @@ const SmsSend = ({ classes, ...props }) => {
                     onChange={inputGroup}
                     value={groupValue}
                   />
-                  <span className={classes.saveBtn} onClick={handleCombined}>
+                  <Button className={clsx(classes.saveBtn, !groupValue || groupValue === '' ? classes.disabled : null)} onClick={handleCombined}>
                     {t("mainReport.save")}
-                  </span>
+                  </Button>
                   {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", groupValue)}</span> : null}
                 </div>
               ) : null}
@@ -998,7 +976,15 @@ const SmsSend = ({ classes, ...props }) => {
         setbsDot(true);
       }
       else {
+        settoggleReci(false)
         setbsDot(false);
+        setCampaignSettings({
+          ...campaignSettings, SendExeptional: {
+            Groups: campaignSettings?.SendExeptional?.Groups ?? [],
+            Campaigns: campaignSettings?.SendExeptional?.Campaigns ?? [],
+            ExceptionalDays: ''
+          }
+        })
       }
     }
     if (formIsvalid) {
@@ -1743,6 +1729,7 @@ const SmsSend = ({ classes, ...props }) => {
         classes={classes}
         open={sendType2Dialog}
         onClose={() => { setsendType2Dialog(false) }}
+        onCancel={() => { setsendType2Dialog(false) }}
         showDefaultButtons={false}
         icon={
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
@@ -1785,6 +1772,7 @@ const SmsSend = ({ classes, ...props }) => {
         classes={classes}
         open={specialSettingValidation}
         onClose={() => { setspecialSettingValidation(false) }}
+        onCancel={() => { setspecialSettingValidation(false) }}
         showDefaultButtons={false}
         icon={
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
@@ -1916,6 +1904,12 @@ const SmsSend = ({ classes, ...props }) => {
     );
   }
   //#region Filter modal
+  const handleCancelFilter = () => {
+    setDialogType(null);
+    setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
+    setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
+    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
+  }
   const filterRecipientsDialog = () => {
     return {
       title: t('mainReport.recipientFilter'),
@@ -2007,7 +2001,8 @@ const SmsSend = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
-      onClose: () => { setDialogType(null) },
+      onCancel: () => { handleCancelFilter() },
+      onClose: () => { handleCancelFilter() },
       onConfirm: () => { handleFilterConfirm() }
     }
   }
@@ -2545,6 +2540,7 @@ const SmsSend = ({ classes, ...props }) => {
           classes={classes}
           open={dialogType}
           onClose={() => { setDialogType(null) }}
+          onCancel={() => { setDialogType(null) }}
           {...currentDialog}>
           {currentDialog.content}
         </BaseDialog>
@@ -2590,7 +2586,7 @@ const SmsSend = ({ classes, ...props }) => {
       <div>
 
         <div>
-          <WizardTitle title={t("mainReport.smsCampaign")}
+          <Title title={t("mainReport.smsCampaign")}
             classes={classes}
             stepNumber={2}
             subTitle={t("mainReport.sendSetting")}

@@ -6,18 +6,17 @@ import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../../components/Loader/Loader';
-import { ClientStatus, WhatsappStatus } from '../../../../helpers/Constants';
 import { ExportFileTypes } from '../../../../model/Export/ExportFileTypes';
 import { getInboundReport } from '../../../../redux/reducers/whatsappSlice';
 import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportIcon } from '../../../../assets/images/managment/index';
 import { TablePagination } from '../../../../components/managment/index';
-import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
-import { ExportFile } from '../../../../helpers/Export/ExportFile';
 import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 import { RenderHtml } from '../../../../helpers/Utils/HtmlUtils';
 import { ImWhatsapp } from 'react-icons/im';
+import { ExportFile } from '../../../../helpers/Export/ExportFile';
+import { HandleExportData } from '../../../../helpers/Export/ExportHelper';
 
 const WhatsappInbound = ({ classes }) => {
     const dispatch = useDispatch();
@@ -30,7 +29,8 @@ const WhatsappInbound = ({ classes }) => {
     const [isSearching, setIsSearching] = useState(false);
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0]);
     const { inboundWhatsappReport } = useSelector(state => state.whatsapp);
-    const { accountFeatures, windowSize } = useSelector(state => state.core);
+    const { windowSize } = useSelector(state => state.core);
+    const { accountFeatures } = useSelector(state => state.common);
 
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
@@ -101,28 +101,28 @@ const WhatsappInbound = ({ classes }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setShowLoader(true);
+        request.IsExport = true;
+        const response = await dispatch(getInboundReport(request));
+        let orderList = response?.payload?.Data;
+
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
+            ReplaceNull: true,
             Order: Object.keys(exportColumnHeader)
         };
-        try {
-            request.IsExport = true;
-            const response = await dispatch(getInboundReport(request));
-            let result = await HandleExportData(response?.payload?.Data, exportOptions)
 
-            ExportFile({
-                data: result,
-                fileName: `ResponsesReport${id ? '_' + id : ''}`,
-                exportType: formatType,
-                fields: exportColumnHeader
-            });
-        }
-        catch (e) {
-            console.error(e);
-        }
-        setShowLoader(false);
+        const result = await HandleExportData(orderList, exportOptions);
+
+        ExportFile({
+            data: result,
+            fileName: `Whatsapp_InboundReport`,
+            exportType: formatType,
+            fields: exportColumnHeader
+        });
+        setShowLoader(false)
     }
+
     const renderTable = () => {
         return (
             <>

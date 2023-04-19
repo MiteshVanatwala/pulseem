@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import SmsReplies from "./Sms/SmsReplies";
-import Title from '../../../components/Wizard/WizardTitle';
+import Title from '../../../components/Wizard/Title';
 import WhatsappInbound from './Whatsapp/WhatsappInbound';
 
 const useStyles = makeStyles({

@@ -565,6 +565,7 @@
   "NIS": "₪",
   "birthDate": "תאריך לידה",
   "uploadInProgress": "הקובץ בתהליך טעינה...",
+  "downloadInProgress": "הקובץ בתהליך הורדה...",
   "back": "חזור",
   "clientSubscriptionResultTitle": "הרשמות לפי ",
   "OpenTime": "זמן פתיחה",
@@ -607,5 +608,8 @@
   "whatsappCommingSoon": "בקרוב!<br/>שליחת הודעות Whatsapp<br/>דרך פולסים",
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
   "remove": "הסר",
-  "searchByCampaign": "חפש לפי קמפיין"
+  "searchByCampaign": "חפש לפי קמפיין",
+  "savedSuccessfully": "נשמר בהצלחה",
+  "fileDownloads": "הורדת קבצים",
+  "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ"
 }

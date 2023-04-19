@@ -26,7 +26,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
             confirmText="common.Ok"
         >
             <Box>
-                <Typography variant="subtitle1">
+                <Typography variant="subtitle1" className={classes.textCenter}>
                     {t("group.deleteConfirm")}
                 </Typography>
             </Box>

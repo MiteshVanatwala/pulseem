@@ -96,6 +96,7 @@ export const deleteCampaign = createAsyncThunk(
   'email/deleteEmailCampaign/', async (id, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.delete(`email/deleteEmailCampaign/${id}`);
+      console.log("RESPONSEDELETE:", response)
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -153,15 +154,7 @@ export const cloneArchiveCampaign = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const getEmailSendSettings = createAsyncThunk(
-  '/email/GetSendSettings', async (campaignId, thunkAPI) => {
-    try {
-      const response = await PulseemReactInstance.get(`/email/GetSendSettings/${campaignId}`);
-      return response.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  })
+
 export const setEmailSendSettings = createAsyncThunk(
   '/email/SetSendSettings', async (payload, thunkAPI) => {
     try {
@@ -191,6 +184,15 @@ export const sendCampaign = createAsyncThunk(
     }
   });
 
+export const getEmailSendSettings = createAsyncThunk(
+  'email/GetSendSettings', async (campaignId, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.get(`email/GetSendSettings/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 export const saveCampaignInfo = createAsyncThunk(
   'email/CreateOrUpdate', async (campaign, thunkAPI) => {
     return new Promise(async (resolve, reject) => {
@@ -201,9 +203,7 @@ export const saveCampaignInfo = createAsyncThunk(
         reject(thunkAPI.rejectWithValue({ error: error.message }));
       }
     })
-  }
-)
-
+  });
 export const getCampaignInfo = createAsyncThunk(
   'email/GetCampaignInfo', async (campaignId, thunkAPI) => {
     try {
@@ -223,6 +223,8 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
     }
   });
 
+
+
 export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {
@@ -236,9 +238,9 @@ export const newsletterSlice = createSlice({
     newsletterArchiveData: [],
     newsletterSendSummary: [],
     newsletterSettings: [],
+    campaignInfo: [],
     newsletterInfo: [],
     groupData: null,
-    campaignInfo: [],
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
       INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
@@ -251,6 +253,7 @@ export const newsletterSlice = createSlice({
       GROUP_CREATED_SUCCESS: { severity: 'success', color: 'success', message: "sms.groupSaved", showAnimtionCheck: true },
       SEND_DATE_MISSING: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.missingSendingDate", showAnimtionCheck: false },
       CAMPAIGN_ALREADY_SENT: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.campaignAlreadySent", showAnimtionCheck: false },
+      CAMPAIGN_DELETED_SUCCESS: { severity: 'success', color: 'success', message: "campaigns.newsLetterEditor.sendSettings.deleted", showAnimtionCheck: false },
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
     }
     //archiveDirectNewsletterReport: []
@@ -289,12 +292,12 @@ export const newsletterSlice = createSlice({
     builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
       state.directNewsletterReportError = action.error.message
     })
+    builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
+      state.newsletterSendSummary = payload.Data
+    })
     builder.addCase(getEmailSendSettings.fulfilled, (state, { payload }) => {
       state.newsletterSettings = payload?.Data?.Settings;
       state.newsletterInfo = payload?.Data?.Info;
-    })
-    builder.addCase(getSendSummary.fulfilled, (state, { payload }) => {
-      state.newsletterSendSummary = payload.Data
     })
     builder.addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
       state.campaignInfo = payload?.Message;

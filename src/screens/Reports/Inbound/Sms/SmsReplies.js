@@ -15,11 +15,11 @@ import ConfirmRadioDialog from '../../../../components/DialogTemplates/ConfirmRa
 import { getSmsReplies, getAccountExtraData, getFinishedCampaigns } from '../../../../redux/reducers/smsSlice';
 import { getClientsById } from "../../../../redux/reducers/clientSlice";
 import { getGroupsBySubAccountId } from '../../../../redux/reducers/groupSlice';
-import { Link, Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
-import { ExportFile } from '../../../../helpers/Export/ExportFile';
-import { HandleExportData, ReplaceNull } from '../../../../helpers/Export/ExportHelper';
+import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box } from '@material-ui/core'
 import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
+import { DeletePropertyFromArrayObject, HandleExportData, ReplaceNull } from '../../../../helpers/Export/ExportHelper';
+import { ExportFile } from '../../../../helpers/Export/ExportFile';
 
 
 const SmsReplies = ({ classes, ...other }) => {
@@ -38,7 +38,8 @@ const SmsReplies = ({ classes, ...other }) => {
     const { ToastMessages } = useSelector(state => state.client);
     const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { accountFeatures } = useSelector(state => state.common);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -135,41 +136,39 @@ const SmsReplies = ({ classes, ...other }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setShowLoader(true);
+        let response = await dispatch(getSmsReplies({ ...request, IsExport: true }));
+        let finalData = response?.payload;
+        finalData = ReplaceNull(finalData, 'FirstName', '');
+        finalData = ReplaceNull(finalData, 'LastName', '');
+        finalData = ReplaceNull(finalData, 'CellPhone', '');
+        finalData = ReplaceNull(finalData, 'CampaignName', '');
+        finalData = DeletePropertyFromArrayObject(finalData, 'Status');
+
         const exportOptions = {
             OrderItems: true,
             FormatDate: true,
-            BooleanToNumber: true,
-            ConvertStatusToString: true,
+            ConvertStatusDescription: true,
             Statuses: ClientStatus.Sms,
+            ReplaceClientStatus: true,
+            ReplaceNull: true,
             Order: Object.keys(exportColumnHeader)
         };
+
         try {
-            let result = await HandleExportData(smsReplies?.Data, exportOptions)
-
-            result = result.reduce(
-                (previousValue, currentValue) => {
-                    currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
-                    return [...previousValue, currentValue]
-                },
-                []
-            );
-
-            result = ReplaceNull(result, 'FirstName', '');
-            result = ReplaceNull(result, 'LastName', '');
-            result = ReplaceNull(result, 'CellPhone', '');
-            result = ReplaceNull(result, 'CampaignName', '');
+            const result = await HandleExportData(finalData, exportOptions);
 
             ExportFile({
                 data: result,
-                fileName: `SmsRepliesReport${id ? '_' + id : ''}`,
+                fileName: `ResponsesReport${id ? '_' + id : ''}`,
                 exportType: formatType,
                 fields: exportColumnHeader
             });
+        } catch (e) {
+            console.log(e);
         }
-        catch (e) {
-            console.error(e);
+        finally {
+            setShowLoader(false);
         }
-        setShowLoader(false);
     }
 
     const renderTable = () => {

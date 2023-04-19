@@ -27,14 +27,16 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { Title } from '../../../components/managment/Title';
 import { useNavigate } from 'react-router-dom';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const NewsletterManagnentScreen = ({ classes }) => {
+  const { accountFeatures } = useSelector(state => state.common);
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -54,8 +56,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
-  const accountFeatures = getCookie("accountFeatures")
-  // const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
+  const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
@@ -63,8 +64,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
 
-  const getData = () => {
-    dispatch(getNewslatterData())
+  const getData = async () => {
+    await dispatch(getNewslatterData())
     dispatch(getAuthorizedEmails());
     setLoader(false);
   }
@@ -345,8 +346,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/react/Campaigns/SendSettings/${CampaignID}`
-        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        //href: `/react/Campaigns/SendSettings/${CampaignID}`
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -534,7 +535,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const renderNameCell = (row) => {
     let date = null
     let text = ''
-    if (!row.SendDate) {
+    if (!row.SendDate || row.Status === 1) {
       date = moment(row.UpdatedDate, dateFormat)
       text = t('common.UpdatedOn')
     } else {
@@ -833,7 +834,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
       </Typography>
     ),
@@ -845,12 +846,15 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
   })
 
-  const getDuplicateDialog = (data, campaignName) => ({
+  const getDuplicateDialog = (campaignId, campaignName) => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
     content: (
       <>
-        <Typography align='center' className={classes.mb5}>{t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `"${campaignName}"`)}</Typography>
+        <Typography align='center'
+          className={classes.mb5}
+        >{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `<b>"${campaignName}"</b>`))}
+        </Typography>
         <FormControl>
           <FormGroup>
             <FormControlLabel
@@ -911,18 +915,21 @@ const NewsletterManagnentScreen = ({ classes }) => {
           </FormGroup>
         </FormControl>
       </>
-      // <Typography style={{ fontSize: 18 }}>
-      //   {t('campaigns.dialogDuplicateContent')}
-      // </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
       setPage(1)
-      //BUG:Duplicate option smust be included 
-      console.log(data.CampaignID);
-      await dispatch(duplicteCampaign({ CampaignID: data.CampaignID, CloneOptions: duplicateOptions }))
+      await dispatch(duplicteCampaign({ CampaignID: campaignId, CloneOptions: duplicateOptions }))
       getData()
+    },
+    onCancel: () => {
+      setDuplicateOptions([]);
+      handleClose();
+    },
+    onClose: () => {
+      setDuplicateOptions([]);
+      handleClose();
     }
   })
 
@@ -934,7 +941,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
+      duplicate: getDuplicateDialog(campaign?.CampaignID, campaign?.Name),
       cautionEditorChange: getCautionEditorChangeDialog(data),
     }
 
@@ -943,10 +950,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
       dialogType && <BaseDialog
         classes={classes}
         open={dialogType}
+        onCancel={handleClose}
         onClose={handleClose}
         renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
-        {currentDialog.content}
+          {currentDialog.content}
       </BaseDialog>
     )
   }
@@ -956,7 +964,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       currentPage='newsletter'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={t('campaigns.logPageHeaderResource1.Text')} classes={classes} />
+      <Title Text={t('campaigns.logPageHeaderResource1.Text')} Classes={classes} ShowDivider={true} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

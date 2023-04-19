@@ -780,7 +780,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			{renderToast()}
 			<Title
 				Text={translator('whatsappManagement.campaignManagement')}
-				classes={classes}
+				Classes={classes}
 				ContainerStyle={{}}
 				Element={null}
 			/>

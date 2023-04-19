@@ -83,7 +83,7 @@ const SegmentationDialog = ({
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        disabled={campaign.IsNotClicked}
+                        disabled={campaign.IsNotClicked || campaign.IsNotOpened}
                         checked={campaign.IsOpenedClicked}
                         onChange={(e) => handleSetValues({ ...campaign, IsOpenedClicked: e.target.checked })}
                         color="primary"
@@ -96,7 +96,7 @@ const SegmentationDialog = ({
                 <Stack direction='row' alignItems='center' spacing={1}>
                     <Checkbox
                         className={classes.p0}
-                        disabled={campaign.IsOpenedClicked}
+                        disabled={campaign.IsOpenedClicked || campaign.IsNotOpened}
                         checked={campaign.IsNotClicked}
                         onChange={(e) => handleSetValues({ ...campaign, IsNotClicked: e.target.checked })}
                         color="primary"

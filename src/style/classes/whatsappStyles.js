@@ -1,4 +1,4 @@
-import { color } from '@amcharts/amcharts4/core';
+// import { color } from '@amcharts/amcharts4/core';
 
 export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappCampaignTitle: {
@@ -1728,9 +1728,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			height: '40px',
 			backgroundSize: '400px',
 			backgroundRepeat: 'no-repeat',
-			width: '50px',
-			height: '50px',
-			backgroundSize: '500px',
+			// width: '50px',
+			// height: '50px',
+			// backgroundSize: '500px',
 		},
 
 		/* Begin search input  */

@@ -1,34 +1,37 @@
-import { Typography, Box } from "@material-ui/core";
+import { Typography, Divider, Box } from "@material-ui/core";
 import clsx from "clsx";
 
 interface TitleObject {
-  classes: any;
-  Text: string;
-  ContainerStyle?: object;
-  Element?: any;
-  isIcon?: boolean;
+    Classes: any;
+    Text: string;
+    ContainerStyle?: any;
+    Element?: any;
+    ShowDivider?: boolean;
 }
 
 export const Title = ({
-  Text,
-  classes,
-  ContainerStyle,
-  Element = null,
-  isIcon = true,
+    Text,
+    Classes,
+    ContainerStyle = null,
+    Element = null,
+    ShowDivider
 }: TitleObject) => {
-  return (
-    <Box
-      style={ContainerStyle}
-      className={clsx(
-        classes.flex,
-        classes.alignItemsCenter,
-        classes.mgmtTitleContainer
-      )}
-    >
-      <Typography className={clsx(classes.managementTitle, "mgmtTitle")}>
-        {Text}
-      </Typography>
-      {Element}
-    </Box>
-  );
+    return (
+        <>
+            <Box
+                style={ContainerStyle}
+                className={clsx(
+                    Classes?.flex,
+                    Classes?.alignItemsCenter,
+                    Classes?.mgmtTitleContainer
+                )}
+            >
+                <Typography className={clsx(Classes?.managementTitle, "mgmtTitle")}>
+                    {Text}
+                </Typography>
+                {Element}
+            </Box>
+            {ShowDivider && <Divider />}
+        </>
+    );
 };

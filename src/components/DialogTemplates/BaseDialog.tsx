@@ -15,11 +15,13 @@ import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
 import { CgClose } from "react-icons/cg";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
 export const BaseDialog = ({
   childrenPadding = true,
   open = true,
   title = "",
+  icon = "",
   children,
   showDivider = false,
   onClose = () => { },
@@ -57,16 +59,17 @@ export const BaseDialog = ({
   };
 
   const RenderExitButton = () =>
-    exitButton ?? (
+    exitButton && (
       <Stack
         onClick={onExit}
-        className={clsx(classes.dialogExitButton, classes.f20, {
-          [classes.dialogExitButtonRTL]: isRTL,
-          [classes.dialogExitButtonLTR]: !isRTL,
-        })}
+        className={clsx(classes.dialogExitButton, classes.f20, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
         justifyContent="center"
         alignItems="center"
         alignSelf="center"
+        style={{
+          left: isRTL ? 15 : 'auto',
+          right: isRTL ? 'auto' : 15,
+        }}
       >
         <CgClose />
       </Stack>
@@ -136,10 +139,44 @@ export const BaseDialog = ({
     );
   };
 
+  const RenderIcon = () => {
+    if (icon === false) return <></>;
+    const alertIcon = <IoAlertCircleOutline />;
+    return (
+      <Stack
+        className={clsx(classes.dialogIconContainer, {
+          [classes.dialogIconContainerRTL]: isRTL,
+          [classes.dialogIconContainerLTR]: !isRTL,
+        })}
+      >
+        {icon || alertIcon}
+      </Stack>
+    );
+  };
+
+  const RenderTopBar = () => {
+    return (
+      <Stack
+        style={{ width: '100%' }}
+        className={clsx(classes.dialogTopBar)}
+        direction="row"
+        justifyContent={"space-between"}
+      >
+        <Stack direction={"row"} style={{ width: '100%' }}>
+          {/* {RenderIcon()} */}
+          <Stack alignSelf="center" style={{ width: '100%' }}>
+            {renderTitle ? renderTitle() : RenderTitleDefault()}
+          </Stack>
+        </Stack>
+        {RenderExitButton()}
+      </Stack>
+    );
+  };
+
   const RenderChildren = () => {
     return (
       <Stack
-        className={clsx(classes.dialogChildren, childrenStyle)}
+        className={clsx(classes.dialogChildren, childrenStyle, classes.sidebar)}
         style={{
           maxHeight: maxHeight
             ? maxHeight
@@ -157,18 +194,15 @@ export const BaseDialog = ({
 
   const RenderContent = () => {
     return (
-      <>
-        <RenderExitButton />
-        <Stack
-          dir={direction[isRTL]}
-          className={clsx(classes.solidDialog, contentStyle)}
-        >
-          {renderTitle ? renderTitle() : RenderTitleDefault()}
-          {RenderChildren()}
+      <Stack
+        style={{ border: 'none', marginTop: 0 }}
+        dir={direction[isRTL]}
+        className={clsx(classes.dialogContent, contentStyle)}
+      >
+        {RenderChildren()}
 
-          {renderButtons ? renderButtons() : RenderButtonsDefault()}
-        </Stack>
-      </>
+        {renderButtons ? renderButtons() : RenderButtonsDefault()}
+      </Stack>
     );
   };
 
@@ -184,8 +218,9 @@ export const BaseDialog = ({
       }}
     >
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
+        {RenderTopBar()}
         {RenderContent()}
-      </Paper>
-    </Dialog>
+      </Paper >
+    </Dialog >
   );
 };

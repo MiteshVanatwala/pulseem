@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
-import WizardTitle from '../../components/Wizard/WizardTitle'
+import Title from '../../components/Wizard/Title'
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
@@ -246,6 +246,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
+                    onCancel={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
                 </BaseDialog>
@@ -548,11 +549,11 @@ const SiteTrackingEditor = ({ classes }) => {
         return <>
             <Grid container>
                 <Grid item xs={7}>
-                    <WizardTitle title={t("siteTracking.title")}
+                    <Title title={t("siteTracking.title")}
                         classes={classes}
                         subTitle={t("siteTracking.setUp")}
                         topZero={false}
-                    />
+                        ShowDivider={true} />
                 </Grid>
                 <Grid item xs={5} style={{ alignItems: 'center', display: 'flex', marginTop: -10 }}>
                     <Button

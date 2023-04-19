@@ -737,6 +737,7 @@ const MmsManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>
@@ -747,7 +748,7 @@ const MmsManagnentScreen = ({ classes }) => {
       currentPage='mms'
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}>
-      <Title Text={t('mms.logPageHeaderResource1.Text')} classes={classes} />
+      <Title Text={t('mms.logPageHeaderResource1.Text')} Classes={classes} ShowDivider={true} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

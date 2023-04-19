@@ -329,27 +329,14 @@ export const smsSaveGroup = createAsyncThunk(
 	}
 );
 export const saveSmsCampSettings = createAsyncThunk(
-	'smsCampaign/SaveCampaignSettings',
-	async (data, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.post(`smsCampaign/SaveCampaignSettings`, data);
-			return JSON.parse(response.data);
-		} catch (error) {
-			return thunkAPI.rejectWithValue({ error: error.message });
-		}
-	}
-);
-export const smsCombinedGroup = createAsyncThunk(
-	'smsCampaign/CreateCombinedGroup',
-	async (data, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.post(`smsCampaign/CreateCombinedGroup`, data);
-			return JSON.parse(response.data);
-		} catch (error) {
-			return thunkAPI.rejectWithValue({ error: error.message });
-		}
-	}
-);
+  'smsCampaign/SaveCampaignSettings', async (data, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`smsCampaign/SaveCampaignSettings`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 export const smsQuick = createAsyncThunk(
 	'smsCampaign/QuickSend',
 	async (data, thunkAPI) => {
@@ -447,14 +434,14 @@ export const getSmsMarketing = createAsyncThunk(
 		}
 	});
 export const setSmsMarketing = createAsyncThunk(
-	'smsCampaign/SetSmsMarketing', async (payload, thunkAPI) => {
-		try {
-			const response = await PulseemReactInstance.post(`smsCampaign/SetSmsMarketing/`, payload);
-			return response.data
-		} catch (error) {
-			return thunkAPI.rejectWithValue({ error: error.message });
-		}
-	});
+  'smsCampaign/SetSmsMarketing', async (payload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`smsCampaign/SetSmsMarketing/`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const smsSlice = createSlice({
 	name: 'newsletter',

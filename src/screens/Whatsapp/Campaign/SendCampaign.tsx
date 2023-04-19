@@ -1,6 +1,6 @@
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
-import WizardTitle from '../../../components/Wizard/WizardTitle';
+import Title from '../../../components/Wizard/Title';
 import { Grid } from '@material-ui/core';
 import {
 	APICreateGroupData,
@@ -667,7 +667,7 @@ const SendCampaign = ({
 			containerClass={null}>
 			<div>
 				<div>
-					<WizardTitle
+					<Title
 						title={translator('whatsappCampaign.whatsappCampaign')}
 						classes={classes}
 						stepNumber={2}

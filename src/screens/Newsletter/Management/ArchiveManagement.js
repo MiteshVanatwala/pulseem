@@ -27,7 +27,8 @@ import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadio
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 
 const ArchiveManagementScreen = ({ classes }) => {
-  const { accountFeatures, language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -593,6 +594,7 @@ const ArchiveManagementScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>
@@ -605,7 +607,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       subPage='archiveManagement'
       classes={classes}
       containerClass={clsx(classes.managmentNarrow, classes.mb50)}>
-      <Title Text={t('campaigns.logPageHeaderArchive.Text')} classes={classes} />
+      <Title Text={t('campaigns.logPageHeaderArchive.Text')} Classes={classes} ShowDivider={true} />
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}

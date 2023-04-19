@@ -33,7 +33,8 @@ const DEFAULT_FILTER = {
 
 const MmsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
     const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
@@ -636,7 +637,7 @@ const MmsReport = ({ classes }) => {
             containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
-            <Title Text={t('common.MMSReports')} classes={classes} />
+            <Title Text={t('common.MMSReports')} Classes={classes} ShowDivider={true} />
             {renderFilter()}
             {renderManagmentLine()}
             <DataTable

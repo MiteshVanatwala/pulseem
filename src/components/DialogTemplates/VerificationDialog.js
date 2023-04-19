@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { Typography, Button, TextField, Box, Divider, Avatar, FormControlLabel, Checkbox } from '@material-ui/core'
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import 'moment/locale/he'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,7 +9,6 @@ import { newAuthorizeEmail, verifyEmailCode, getTwoFactorAuthValues } from '../.
 import { getAuthorizedEmails, getAuthorizeNumbers } from '../../redux/reducers/commonSlice'
 import { sendVerificationCode, verifyCode } from '../../redux/reducers/smsSlice'
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { BaseDialog } from './BaseDialog';
 import {
     addTwoFactorAuthValues,
     deleteAuthorizationValue,
@@ -16,8 +16,8 @@ import {
     deleteAuthorization2FA,
     checkCellphoneAuthorization
 } from '../../redux/reducers/AccountSettingsSlice';
-import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { Loader } from '../Loader/Loader';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
 const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email', step = 0, value, ...props }) => {
@@ -25,8 +25,8 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     const { isRTL } = useSelector(state => state.core);
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
-    const [verificationStep, setVerificationStep] = useState(Option?.Step ?? 0)
     const [showLoader, setShowLoader] = useState(true);
+    const [verificationStep, setVerificationStep] = useState(Option?.Step ?? 0)
     const [verificationError, setVerificationError] = useState(null)
     const [selectedVerificationContact, setSelectedVerificationContact] = useState(Option?.Value ?? "")
     const [codeResend, setCodeResend] = useState(false)
@@ -429,13 +429,14 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}
+                                style={{ direction: 'ltr' }}
                             />
                         </Box>
                         <Box mt={2}>
                             <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
                                 onClick={() => {
                                     if (selectedVerificationContact) {
-                                        if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                                        if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/)) {
                                             handleSendCode(selectedVerificationContact);
                                             NextSlide();
                                         }
@@ -620,6 +621,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                         setSelectedVerificationContact(e.target.value?.trim())
                                     }
                                 }}
+                                style={{ direction: 'ltr' }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('sms.enterNumberText')}
                                 error={!!verificationError?.Number}
@@ -812,6 +814,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                         setSelectedVerificationContact(e.target.value?.trim())
                                     }
                                 }}
+                                style={{ direction: 'ltr' }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('sms.enterNumberText')}
                                 error={!!verificationError?.Number}
@@ -1024,6 +1027,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                     !!verificationError?.email && setVerificationError({ email: '' })
                                     setSelectedVerificationContact(e.target.value?.trim())
                                 }}
+                                style={{ direction: 'ltr' }}
                                 className={clsx(classes.textField, classes.maxWidth400, classes.txtCenter)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
                                 error={!!verificationError?.Number}
@@ -1043,7 +1047,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                                             })
                                         }
                                         else {
-                                            if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                                            if (selectedVerificationContact.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/)) {
                                                 handleSendCode(selectedVerificationContact)
                                                 NextSlide()
                                             }
@@ -1204,6 +1208,10 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                     setDeleteValue(null);
                     setShowConfirmDelete(false);
                 }}
+                onCancel={() => {
+                    setDeleteValue(null);
+                    setShowConfirmDelete(false);
+                }}
                 onConfirm={removeValue}
                 title={t('settings.accountSettings.2fa.deleteValueTitle')}
             >
@@ -1214,6 +1222,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 contentStyle={classes.maxWidth900}
                 open={isOpen}
                 onClose={handleClose}
+                onCancel={handleClose}
                 renderButtons={Popup().renderButtons || null}
                 {...Popup()}>
                 {Popup().content}

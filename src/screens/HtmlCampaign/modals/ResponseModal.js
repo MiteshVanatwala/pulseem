@@ -28,6 +28,7 @@ const ResponseModal = ({
         showDivider={message !== 'campaigns.successSent'}
         onClose={onClose}
         onConfirm={onClose}
+        onCancel={onClose}
         contentStyle={classes.testSendDialog}
         reduceTitle
         confirmText="common.Ok"
