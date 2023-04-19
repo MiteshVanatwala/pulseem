@@ -974,7 +974,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <Box>
                 <Title
                     title={t("campaigns.newsLetterSendSettings.title")}
-                    classes={classes}
+                    Classes={classes}
                 />
                 <Grid container style={{ marginBottom: "40px" }} spacing={5}>
                     <Grid item md={7} xs={12}>

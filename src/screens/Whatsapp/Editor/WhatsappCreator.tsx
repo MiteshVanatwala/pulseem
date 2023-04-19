@@ -701,8 +701,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			templateData.templateText?.length > buttonTextLimits.callToAction
 		) {
 			validationErrors.push(
-				`${translator('whatsapp.alertModal.templateLengthError')} ${
-					buttonTextLimits.callToAction
+				`${translator('whatsapp.alertModal.templateLengthError')} ${buttonTextLimits.callToAction
 				}`
 			);
 			isValidated = false;
@@ -805,9 +804,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle?.includes('removalText')) {
 			setTemplateData({
 				...templateData,
-				templateText: `${templateData.templateText} ${
-					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
-				}`?.substring(0, templateTextLimit),
+				templateText: `${templateData.templateText} ${isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
+					}`?.substring(0, templateTextLimit),
 			});
 		}
 	};
@@ -925,9 +923,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			} else {
 				deleteData?.payload?.Error
 					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: deleteData?.payload?.Error,
-					  })
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Error,
+					})
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		} else {
@@ -982,7 +980,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			{renderToast()}
 			<Title
 				Text={translator('whatsapp.header')}
-				classes={classes}
+				Classes={classes}
 				ContainerStyle={{}}
 				Element={null}
 			/>

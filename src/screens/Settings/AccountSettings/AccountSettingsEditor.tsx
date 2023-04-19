@@ -293,62 +293,45 @@ const AccountSettingsEditor = () => {
       </Box>
       {tfaEmailVerification && <VerificationDialog
         variant="emailTFA"
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
-        // @ts-ignore
         isOpen={tfaEmailVerification}
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && emailToVerify
-        }}
+        step={verificationStep}
+        value={verificationStep > 0 && emailToVerify}
         onClose={() => {
           setTfaEmailVerification(false);
           setVerificationStep(0);
         }}
       />}
       {emailVerificationPopup && <VerificationDialog
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="email"
-        // @ts-ignore
         isOpen={emailVerificationPopup}
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && emailToVerify
-        }}
+        step={verificationStep}
+        value={verificationStep > 0 && emailToVerify}
         onClose={() => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
         }} />}
       {tfaSmsVerification && <VerificationDialog
         variant="smsTFA"
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
-        // @ts-ignore
         isOpen={tfaSmsVerification}
-        // @ts-ignore
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && cellphoneToVerify
-        }}
+        step={verificationStep}
+        value={verificationStep > 0 && cellphoneToVerify}
         onClose={() => {
           setTfaSmsVerification(false);
           setVerificationStep(0);
         }}
       />}
       {smsVerificationPopup && <VerificationDialog
-        // @ts-ignore
         textButtonOnSuccess={t('common.close')}
         classes={classes}
-        // @ts-ignore
         variant="sms"
-        Option={{
-          Step: verificationStep,
-          Value: verificationStep > 0 && cellphoneToVerify
-        }}
+        step={verificationStep}
+        value={verificationStep > 0 && cellphoneToVerify}
         isOpen={smsVerificationPopup}
         onClose={() => {
           setSmsVerificationPopup(false);
