@@ -611,5 +611,6 @@
   "searchByCampaign": "חפש לפי קמפיין",
   "savedSuccessfully": "נשמר בהצלחה",
   "fileDownloads": "הורדת קבצים",
-  "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ"
+  "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ",
+  "newsletterMessages": "הודעות דיוור"
 }

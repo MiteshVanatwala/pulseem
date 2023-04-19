@@ -614,5 +614,6 @@
   "searchByCampaign": "Search by Campaign",
   "savedSuccessfully": "Saved Successfully",
   "fileDownloads": "File Downloads",
-  "fileDownloadError": "Oops...Something went wrong while downloading the file"
+  "fileDownloadError": "Oops...Something went wrong while downloading the file",
+  "newsletterMessages": "Newsletter messages"
 }
