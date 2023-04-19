@@ -11,7 +11,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useNavigate, useParams } from "react-router";
 import { BiSave } from 'react-icons/bi'
-import Title from '../../../components/Wizard/Title'
+import { Title } from "../../../components/managment/Title";
 import { Button, Grid, Box } from "@material-ui/core";
 import {
     getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing
@@ -804,7 +804,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 })
                 mergedSegmentationDialog === 0 && setDialogType(null);
                 mergedSegmentationDialog === 1 && handleFilterConfirm();
-                
+
                 let segmantIndication = false;
                 if (filterParameters.FromDate || filterParameters.ToDate || filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked) {
                     segmantIndication = true;
@@ -969,7 +969,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <RenderToast toastMessage={toastMessage} time={4000} />
             <Box>
                 <Title
-                    title={t("campaigns.newsLetterSendSettings.title")}
+                    Text={t("campaigns.newsLetterSendSettings.title")}
                     Classes={classes}
                 />
                 <Grid container style={{ marginBottom: "40px" }} spacing={5}>

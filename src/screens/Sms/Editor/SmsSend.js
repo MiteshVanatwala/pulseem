@@ -1172,7 +1172,7 @@ const SmsSend = ({ classes, ...props }) => {
                     backgroundColor: "white",
                     padding: "10px",
                     borderRadius: "4px",
-                    width: 300,
+                    width: '100%',
                     outline: "none",
                     marginBottom: "10px",
                   }}

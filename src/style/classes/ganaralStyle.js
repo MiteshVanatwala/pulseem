@@ -152,7 +152,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 	},
 	dialogChildren: {
 		// marginInline: 25,
-		marginBlock: 30,
+		marginBlock: 20,
 		paddingRight: summaryPadding[windowSize],
 		paddingLeft: summaryPadding[windowSize],
 		overflowY: "auto",
