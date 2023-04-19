@@ -139,7 +139,7 @@ const SmsMarketingDialog = ({
         setSmsModel({ ...smsModel, SendDate: finalDate, Text: textRef.current.value });
 
         if (finalDate < moment(smsModel.MinSendDate)) {
-            setErrors({ SendDate: t('campaigns.newsLetterEditor.sendSettings.errors.selectFutureDate') })
+            setErrors({ Text: t('campaigns.newsLetterEditor.sendSettings.errors.selectFutureDate') })
         }
         else if (!textRef.current.value || textRef.current.value === '') {
             setErrors({ Text: t('campaigns.newsLetterEditor.sendSettings.errors.reqText') })
