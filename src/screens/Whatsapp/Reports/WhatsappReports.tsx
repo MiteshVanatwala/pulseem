@@ -21,6 +21,7 @@ import { Title } from '../../../components/managment/Title';
 import { ClassesType } from '../../Classes.types';
 import DefaultScreen from '../../DefaultScreen';
 import {
+	CommonRedux,
 	coreProps,
 	reportListAPIProps,
 } from '../Editor/Types/WhatsappCreator.types';
@@ -58,10 +59,12 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { windowSize, rowsPerPage } = useSelector(
+	const { isRTL, windowSize, rowsPerPage } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
-	const { accountFeatures } = useSelector((state: any) => state.common);
+	const { accountFeatures } = useSelector(
+		(state: { common: CommonRedux }) => state.common
+	);
 	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
 		null
 	);
@@ -77,6 +80,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [reportListData, setReportListData] = useState<reportDataProps[]>([]);
+	// const [accountFeatures, setAccountFeatures] = useState<number[]>([]);
 
 	const [paginationSetting, setPaginationSetting] = useState<AllReportReq>(
 		allReportInitialPagination
@@ -102,6 +106,17 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 				pageSize: Number(rowsPerPage),
 			});
 		}
+
+		// (async () => {
+		// 	const { payload: commonFeatures }: CommonFeaturesAPI =
+		// 		await dispatch<any>(getCommonFeatures());
+		// 	if (
+		// 		commonFeatures?.Data?.Account?.AccountFeatures &&
+		// 		commonFeatures?.Data?.Account?.AccountFeatures?.length > 0
+		// 	) {
+		// 		setAccountFeatures(commonFeatures?.Data?.Account?.AccountFeatures);
+		// 	}
+		// })();
 		/**
 		 * we disable it because we want to run this code only when component loads
 		 */
@@ -109,7 +124,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	}, []);
 
 	useEffect(() => {
-		if (accountFeatures && accountFeatures.includes('42')) {
+		if (
+			accountFeatures &&
+			accountFeatures?.map((feature) => feature?.toString()).includes('42')
+		) {
 			setHasRevenue(true);
 		}
 	}, [accountFeatures]);
@@ -202,15 +220,22 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			Removed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
 			Unique: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick,
 		};
-		navigate(CLIENT_CONSTANTS.BASEURL, {
-			state: {
-				...CLIENT_CONSTANTS.QUERY_PARAMS,
-				CampaignID: campaignId,
-				PageType: pageTypeRequest[cellName],
-				ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
-				PageProperty: GetPageNyName('reports/WhatsappReports'),
-			},
-		});
+		if (cellName !== translator('whatsappReport.unique')) {
+			navigate(CLIENT_CONSTANTS.BASEURL, {
+				state: {
+					...CLIENT_CONSTANTS.QUERY_PARAMS,
+					CampaignID: campaignId,
+					PageType: pageTypeRequest[cellName],
+					ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
+					PageProperty: GetPageNyName('reports/WhatsappReports'),
+				},
+			});
+		} else {
+			const win: Window = window;
+			win.location = `/Pulseem/WhatsappLinksClicksReport.aspx?CampaignID=${campaignId}&fromreact=true&Culture=${
+				isRTL ? 'he-IL' : 'en-US'
+			}`;
+		}
 	};
 
 	const getTableTypographyCells = (

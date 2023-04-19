@@ -108,6 +108,10 @@ export type coreProps = {
 	accountFeatures: string;
 };
 
+export type CommonRedux = {
+	accountFeatures: string[];
+};
+
 export type actionButtonProps = {
 	tooltipTitle: string;
 	buttonTitle: string;
@@ -473,4 +477,20 @@ export type restoreCampaignPayloadData = {
 
 export type restoreCampaignData = {
 	payload: restoreCampaignPayloadData;
+};
+
+export type CommonFeaturesAPIData = {
+	Account: {
+		AccountFeatures: number[];
+	};
+};
+
+export type CommonFeaturesAPIPayload = {
+	Data: CommonFeaturesAPIData;
+	Message: string;
+	StatusCode: number;
+};
+
+export type CommonFeaturesAPI = {
+	payload: CommonFeaturesAPIPayload;
 };

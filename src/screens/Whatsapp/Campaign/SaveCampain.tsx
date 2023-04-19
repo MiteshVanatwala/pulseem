@@ -99,6 +99,7 @@ import AlertModal from '../Editor/Popups/AlertModal';
 import { useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import SummaryModal from './Popups/SummaryModal';
+import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -262,6 +263,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			await getPhoneNumber();
 			setIsLoader(false);
 		})();
+
+		// To fetch Sub Account Feature And Settings if not available
+		if(!SubAccountSettings?.DomainAddress) {
+			dispatch(getCommonFeatures())
+		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
