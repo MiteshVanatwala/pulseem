@@ -33,7 +33,6 @@ import {
 	phoneNumberAPIProps,
 	CampaignDetailById,
 	ApiQuickSend,
-	SubAccountSettings,
 	TestSendReq,
 	SaveQuickSendGroups,
 	ApiGetCampaignSummaryPayloadData,
@@ -43,6 +42,7 @@ import CampaignFields from './Components/CampaignFields';
 import clsx from 'clsx';
 import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
 import {
+	CommonRedux,
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
@@ -110,11 +110,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { testGroups } = useSelector(
 		(state: { sms: smsReducerProps }) => state.sms
 	);
-
-	const SubAccountSettings = useSelector(
-		(state: {
-			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
-		}) => state.common?.commonSettings?.SubAccountSettings
+	const { SubAccountSettings } = useSelector(
+		(state: { common: CommonRedux }) => state.common?.accountSettings
 	);
 	const websiteField = [
 		{
@@ -265,8 +262,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		})();
 
 		// To fetch Sub Account Feature And Settings if not available
-		if(!SubAccountSettings?.DomainAddress) {
-			dispatch(getCommonFeatures())
+		if (!SubAccountSettings?.DomainAddress) {
+			dispatch(getCommonFeatures());
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -599,32 +596,32 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onOkTestSending = async () => {
-		setIsTestGroupModal(false);
-		let campaignIdForTestSend: number = Number(campaignID) || 0;
-		setIsLoader(true);
-		const saveCampaign = await onSaveCampaign(false, false);
-		campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
-		if (testSendSelection !== 'onecontact') {
+		if (validateSaveCampaign(true)) {
+			setIsTestGroupModal(false);
+			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const { payload: quickSendGroupsData }: SaveQuickSendGroups =
-				await dispatch<any>(
-					saveQuickSendGroups({
-						WACampaignID: campaignIdForTestSend,
-						TestGroupsIds: selectedTestGroup?.map((group) => group?.GroupID),
-					})
-				);
-			if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
-				quickSendGroupsData?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: quickSendGroupsData?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
-				return;
+			const saveCampaign = await onSaveCampaign(false, false);
+			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
+			if (testSendSelection !== 'onecontact') {
+				setIsLoader(true);
+				const { payload: quickSendGroupsData }: SaveQuickSendGroups =
+					await dispatch<any>(
+						saveQuickSendGroups({
+							WACampaignID: campaignIdForTestSend,
+							TestGroupsIds: selectedTestGroup?.map((group) => group?.GroupID),
+						})
+					);
+				if (quickSendGroupsData?.Status !== apiStatus.SUCCESS) {
+					quickSendGroupsData?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: quickSendGroupsData?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+					return;
+				}
 			}
-		}
-		if (campaignIdForTestSend) {
-			if (validateSaveCampaign(true)) {
+			if (campaignIdForTestSend) {
 				if (!campaignID) {
 					navigate(
 						`/react/whatsapp/campaign/edit/page1/${campaignIdForTestSend}`
@@ -658,8 +655,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					}
 				}
 			}
+			setIsLoader(false);
+		} else {
+			setIsTestGroupModal(false);
+			setIsValidationAlert(true);
 		}
-		setIsLoader(false);
 	};
 
 	const onDynamcFieldModalSave = (

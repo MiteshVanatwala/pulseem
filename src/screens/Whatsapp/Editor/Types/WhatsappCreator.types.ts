@@ -110,6 +110,11 @@ export type coreProps = {
 
 export type CommonRedux = {
 	accountFeatures: string[];
+	accountSettings: {
+		SubAccountSettings: {
+			DomainAddress: string;
+		};
+	};
 };
 
 export type actionButtonProps = {
