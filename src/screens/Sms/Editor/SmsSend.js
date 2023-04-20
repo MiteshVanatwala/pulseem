@@ -34,9 +34,10 @@ import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import useRedirect from '../../../helpers/Routes/Redirect';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { sendToTeamChannel } from '../../../redux/reducers/ConnectorsSlice';
+import { FlatObject } from "../../../helpers/Export/ExportHelper";
 
 function Alert(props) {
-	return <MuiAlert elevation={0} variant='filled' {...props} />;
+  return <MuiAlert elevation={0} variant='filled' {...props} />;
 }
 
 const SmsSend = ({ classes, ...props }) => {
@@ -707,11 +708,13 @@ const SmsSend = ({ classes, ...props }) => {
                 settotalRecords(results.data.length)
 
                 const resultCsv = results.data;
+
                 setDialogType({ type: "manualUpload" });
                 let ddc = [];
-                resultCsv[0].foreach(() => {
+
+                for (let i in resultCsv[0]) {
                   ddc.push(t("sms.adjustTitle"))
-                })
+                }
                 setheaders(ddc);
               },
 
