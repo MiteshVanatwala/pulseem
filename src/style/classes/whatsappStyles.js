@@ -1957,7 +1957,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__msg': {
 			padding: '6px 7px 8px 9px',
-			marginBottom: '12px',
+			margin: '0px 0px 12px 0px',
 			fontSize: '0.85rem',
 			color: '#000000',
 			width: 'fit-content',
