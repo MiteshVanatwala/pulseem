@@ -615,5 +615,6 @@
   "savedSuccessfully": "Saved Successfully",
   "fileDownloads": "File Downloads",
   "fileDownloadError": "Oops...Something went wrong while downloading the file",
-  "newsletterMessages": "Newsletter messages"
+  "newsletterMessages": "Newsletter messages",
+  "ReadTime": "Read Time"
 }

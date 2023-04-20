@@ -268,13 +268,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							: {}
 					}
 					className={classes.middleText}>
-					{cellName !== translator('common.revenue')
+					{cellName !== reportCellNames.REVENUE
 						? cellValue || '0'
 						: `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
 								'common.NIS'
 						  )}`}
 				</Typography>
-				{cellName !== translator('common.revenue') && (
+				{cellName !== reportCellNames.REVENUE && (
 					<Typography
 						onClick={() =>
 							cellValue >= 1 && isClickable
@@ -748,7 +748,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 															translator('common.revenue'),
 															report.Revenue,
 															reportCellNames.REVENUE,
-															report
+															report,
+															true
 														)}
 													</TableCell>
 												)}
