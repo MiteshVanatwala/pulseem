@@ -219,17 +219,31 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			Sent: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount,
 			Removed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
 			Unique: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick,
+			Revenue: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue,
 		};
-		if (cellName !== translator('whatsappReport.unique')) {
-			navigate(CLIENT_CONSTANTS.BASEURL, {
-				state: {
-					...CLIENT_CONSTANTS.QUERY_PARAMS,
-					CampaignID: campaignId,
-					PageType: pageTypeRequest[cellName],
-					ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
-					PageProperty: GetPageNyName('reports/WhatsappReports'),
-				},
-			});
+		if (cellName !== reportCellNames.UNIQUE) {
+			if (cellName === reportCellNames.REVENUE) {
+				navigate(`${CLIENT_CONSTANTS.BASEURL}/${campaignId}`, {
+					state: {
+						...CLIENT_CONSTANTS.QUERY_PARAMS,
+						CampaignID: campaignId,
+						PageType: pageTypeRequest[cellName],
+						ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowWhatsapp,
+						ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
+						PageProperty: GetPageNyName('reports/WhatsappReports'),
+					},
+				});
+			} else {
+				navigate(CLIENT_CONSTANTS.BASEURL, {
+					state: {
+						...CLIENT_CONSTANTS.QUERY_PARAMS,
+						CampaignID: campaignId,
+						PageType: pageTypeRequest[cellName],
+						ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
+						PageProperty: GetPageNyName('reports/WhatsappReports'),
+					},
+				});
+			}
 		} else {
 			const win: Window = window;
 			win.location = `/Pulseem/WhatsappLinksClicksReport.aspx?CampaignID=${campaignId}&fromreact=true&Culture=${

@@ -165,7 +165,7 @@ export const getTemplatePreviewData = (
 									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
+									value: '+972',
 								},
 								{
 									fieldName: 'whatsapp.phoneNumber',

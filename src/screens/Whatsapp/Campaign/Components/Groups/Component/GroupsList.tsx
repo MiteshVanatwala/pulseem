@@ -29,7 +29,7 @@ const GroupsList = ({
 		.map((group: testGroupDataProps) => {
 			const isExist = selectedList
 				.map((group: testGroupDataProps) => {
-					return group['GroupID'];
+					return group['GroupID'] || group['WACampaignID'];
 				})
 				.includes(group['GroupID']);
 			return (

@@ -182,7 +182,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			fieldName: 'whatsapp.country',
 			type: 'select',
 			placeholder: 'Select Your Country Code',
-			value: '+972 Israel',
+			value: '+972',
 		},
 		{
 			fieldName: 'whatsapp.phoneNumber',
@@ -375,11 +375,22 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					changeContactReadStatus(updatedActiveChat, contactData, contactData);
 				}
 			}
-			setContactsPaginationSetting({
-				...contactsPaginationSetting,
-				hasMore: true,
-				PageNo: 1,
-			});
+			if (
+				isInitial &&
+				contactData?.length < contactsPaginationSetting.PageSize
+			) {
+				setContactsPaginationSetting({
+					...contactsPaginationSetting,
+					hasMore: false,
+					PageNo: 1,
+				});
+			} else {
+				setContactsPaginationSetting({
+					...contactsPaginationSetting,
+					hasMore: true,
+					PageNo: 1,
+				});
+			}
 		} else {
 			setContactsPaginationSetting({
 				...contactsPaginationSetting,

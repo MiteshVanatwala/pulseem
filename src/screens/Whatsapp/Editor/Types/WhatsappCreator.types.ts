@@ -368,6 +368,7 @@ export type getTemplateByIdAPIProps = {
 
 export type submitTemplateDataProps = {
 	createdDate: string;
+	id: number;
 	templateId: string;
 	templateName: string;
 };

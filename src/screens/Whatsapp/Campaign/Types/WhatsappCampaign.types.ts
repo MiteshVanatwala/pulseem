@@ -80,6 +80,7 @@ export type infoModalProps = {
 
 export type testGroupDataProps = {
 	GroupID: number;
+	WACampaignID?: number;
 	GroupName: string;
 	SubAccountID: number;
 	CreationDate: string;
@@ -229,7 +230,7 @@ export type SummaryModalProps = {
 	daysBeforeAfter: string;
 	specialDatedropDown: string[];
 	spectialDateFieldID: string;
-	campaignSummary: ApiGetCampaignSummaryPayloadData | undefined
+	campaignSummary: ApiGetCampaignSummaryPayloadData | undefined;
 };
 
 export type tagDataProps = {
