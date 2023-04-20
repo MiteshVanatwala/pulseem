@@ -16,7 +16,7 @@ import { BrowserRouter, useParams, Route, Routes, useNavigate, useLocation } fro
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
 import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
-import { getNotificationUpdates } from './redux/reducers/notificationSlice';
+import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'

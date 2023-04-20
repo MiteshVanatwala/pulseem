@@ -9,7 +9,7 @@ const NotificationBell = ({classes}) => {
   const [ displayNotifications, toggleDisplayNotifications ] = useState(false);
   const notificationIconRef = useRef(null)
   const { t } = useTranslation();
-  const { notificationList } = useSelector(state => state.notification)
+  const { notificationUpdateList  } = useSelector(state => state.notificationUpdate)
 
   const handleClose = () => {
     toggleDisplayNotifications(false);
@@ -19,7 +19,7 @@ const NotificationBell = ({classes}) => {
     return (
       <MenuList>
         {
-          notificationList && notificationList.map((option, index) => (
+          notificationUpdateList && notificationUpdateList.map((option, index) => (
             <MenuItem
               key={option.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}
@@ -38,10 +38,10 @@ const NotificationBell = ({classes}) => {
       onMouseLeave={handleClose}
       className={clsx(classes.appBarItemContainer, classes.paddingSides15)}>
       <Badge
-        badgeContent={notificationList.length}
+        badgeContent={notificationUpdateList.length}
         color="red"
         className={clsx(classes.bell)}
-        invisible={!notificationList.length}
+        invisible={!notificationUpdateList.length}
         max={99}
       >
         <img

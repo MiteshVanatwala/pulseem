@@ -6,6 +6,7 @@ import landingPagesReducer from './reducers/landingPagesSlice';
 import mmsReducer from './reducers/mmsSlice';
 import automationsReducer from './reducers/automationsSlice';
 import notificationReducer from './reducers/notificationSlice';
+import notificationUpdateSlice from './reducers/notificationUpdateSlice';
 import smsReducer from './reducers/smsSlice';
 import dashboardReducer from './reducers/dashboardSlice';
 import recipientReportsReducer from './reducers/recipientsReportSlice';
@@ -30,6 +31,7 @@ export default configureStore({
     mms: mmsReducer,
     automations: automationsReducer,
     notification: notificationReducer,
+    notificationUpdate: notificationUpdateSlice,
     sms: smsReducer,
     dashboard: dashboardReducer,
     recipientReports: recipientReportsReducer,
