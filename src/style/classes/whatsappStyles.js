@@ -1530,11 +1530,19 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					'&:nth-child(3)': {
 						'& p': {
 							color: '#26BE35',
+							'&.value-cell': {
+								textDecoration: 'underline',
+								textDecorationColor: '#26BE35',
+							},
 						},
 					},
 					'&:nth-child(4)': {
 						'& p': {
 							color: '#3498DB',
+							'&.value-cell': {
+								textDecoration: 'underline',
+								textDecorationColor: '#3498DB',
+							},
 						},
 					},
 					'&:nth-child(5)': {
@@ -1545,6 +1553,19 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					'&:nth-child(6)': {
 						'& p': {
 							color: '#E74C3C',
+							'&.value-cell': {
+								textDecoration: 'underline',
+								textDecorationColor: '#E74C3C',
+							},
+						},
+					},
+					'&:nth-child(7)': {
+						'& p': {
+							color: '#333',
+							'&.value-cell': {
+								textDecoration: 'underline',
+								textDecorationColor: '#333',
+							},
 						},
 					},
 					'&.underline': {
@@ -1936,7 +1957,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__msg': {
 			padding: '6px 7px 8px 9px',
-			marginBottom: '12px',
+			margin: '0px 0px 12px 0px',
 			fontSize: '0.85rem',
 			color: '#000000',
 			width: 'fit-content',
@@ -2917,4 +2938,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			cursor: 'pointer',
 		},
 	},
+	whatsappChatSendTemplateButton: {
+		padding: '10px 10px'
+	}
 });

@@ -1300,8 +1300,9 @@ const ClientSearchResult = ({ props, classes }) => {
             </Button>
           </Grid>
         }
+        {console.log("searchData?.PageType::", searchData?.PageType )}
 
-        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue &&
+        {(searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue || searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
@@ -1310,7 +1311,7 @@ const ClientSearchResult = ({ props, classes }) => {
             </Box>
           </Grid>
         }
-        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue &&
+        {(searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) &&
           <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
             {revenueSummary && <SummaryRow
               data={revenueSummary}

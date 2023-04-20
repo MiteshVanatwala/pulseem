@@ -229,7 +229,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						CampaignID: campaignId,
 						PageType: pageTypeRequest[cellName],
 						ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowWhatsapp,
-						ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
+						ResultTitle: `${cellName} - ${translator(
+							'whatsappReport.WhatsAppCampaign'
+						)} ID ${campaignId}`,
 						PageProperty: GetPageNyName('reports/WhatsappReports'),
 					},
 				});
@@ -267,7 +269,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							? onTableCellClick(cellName, row.WACampaignID)
 							: {}
 					}
-					className={classes.middleText}>
+					className={clsx(
+						classes.middleText,
+						`${cellValue >= 1 && 'value-cell'}`
+					)}>
 					{cellName !== reportCellNames.REVENUE
 						? cellValue || '0'
 						: `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
@@ -281,7 +286,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 								? onTableCellClick(cellName, row.WACampaignID)
 								: {}
 						}
-						className={classes.middleText}>
+						className={clsx(
+							classes.middleText,
+							`${cellValue >= 1 && 'value-cell'}`
+						)}>
 						{title}
 					</Typography>
 				)}
