@@ -336,11 +336,18 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.CAMPAIGN_ALREADY_SENT);
                 break;
             }
+            case 410: {
+                setToastMessage(ToastMessages.FUTURE_DATE_PASSED);
+                break;
+            }
             case 500:
             default: {
-                setToastMessage(ToastMessages.GENERAL_ERROR);
+                //setToastMessage(ToastMessages.GENERAL_ERROR);
             }
         }
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 4000);
     }
     const SEND_PROC = {
         401: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.invaliApiKey'), ShowContactSupport: false } },

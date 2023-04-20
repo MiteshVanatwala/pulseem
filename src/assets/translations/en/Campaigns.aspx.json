@@ -532,7 +532,8 @@
       "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since it’s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
       "BULK_ENDED": "Your bulk has ended!<br/>To purchase a new bulk enter your dashboard<br/>Or contact our costumer support:",
       "MONTHLY_BULK_ENDED": "You monthly bulk has ended!<br/>To purchase a new bulk enter your dashboard",
-      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+      "FUTURE_DATE_PASSED": "The campaign sending date is passed, Please select future sending date."
     },
     "success": "Success",
     "sendSettings": {

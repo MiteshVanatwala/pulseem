@@ -18,4 +18,4 @@ const RenderToast = ({ toastMessage = null, time = 3000 }) => {
 
 }
 
-export default RenderToast
+export default React.memo(RenderToast)
