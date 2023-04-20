@@ -281,7 +281,7 @@ const ClientSearchResult = ({ props, classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -383,7 +383,7 @@ const ClientSearchResult = ({ props, classes }) => {
           const promiseArray = [];
           let orderList = [];
           orderList = data.Clients.map((ol) => { return FlatObject(ol) });
-          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue || (searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) {
             promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
           }
           if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
@@ -686,12 +686,12 @@ const ClientSearchResult = ({ props, classes }) => {
     },
     // Whatsapp Read Date
     '19': {
-      title: t("common.OpenTime"),
+      title: t("common.ReadTime"),
       sortKey: 'Date',
       component: {
         mobile: ({ OpenTime = null, ...rest }) => (<>
           <Typography className={classes.bold}>
-            {t("common.OpenTime")}
+            {t("common.ReadTime")}
           </Typography>
           <Typography>
             {OpenTime ? moment(OpenTime).format('DD/MM/YYYY HH:mm') : ''}
@@ -1301,7 +1301,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Grid>
         }
 
-        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
@@ -1310,7 +1310,7 @@ const ClientSearchResult = ({ props, classes }) => {
             </Box>
           </Grid>
         }
-        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue &&
           <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
             {revenueSummary && <SummaryRow
               data={revenueSummary}

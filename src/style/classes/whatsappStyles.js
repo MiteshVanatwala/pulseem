@@ -1941,6 +1941,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			color: '#000000',
 			width: 'fit-content',
 			maxWidth: '95%',
+			minHeight: '22px',
 			lineHeight: '20px',
 			borderRadius: '5px',
 			position: 'relative',
