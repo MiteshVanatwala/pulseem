@@ -21,6 +21,7 @@ import {
   ChartIcon
 } from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
+import NotificationBell from '../NotificationBell/NotificationBell';
 
 const AppBarItem = ({
   item,
@@ -250,6 +251,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         </Typography>
       </> : null}
       <Box className={classes.appBarAfterTollbarContainer}>
+        <NotificationBell classes={classes} />
         <AppBarItem
           classes={classes}
           item={settings}

@@ -673,6 +673,33 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             color: '#0371ad',
             textAlign: 'center'
         }
+    },
+    notificationBell: {
+        cursor: 'pointer'
+    },
+    notificationUpdateContainer: {
+        direction: isRTL ? 'rtl' : 'ltr',
+        background: '#fff',
+        marginTop: '12px',
+        width: '300px',
+        // height: '300px',
+        boxShadow: '0px 0px 6px #ababab',
+        borderBottom: 'solid 5px #0371ad',
+        color: 'initial',
+        borderBottomLeftRadius: '10px',
+        borderBottomRightRadius: '10px',
+    },
+    notificationItem: {
+        borderBottom: '0.5px solid #ababab',
+        paddingLeft: isRTL ? '0px' : 'initial',
+        paddingRight: isRTL ? 'initial' : '0px',
+        '&:last-child': {
+            borderBottom: 'none',
+        }
+    },
+    bell: {
+        '& .MuiBadge-badge': {
+            background: 'red'
+        }
     }
-
 })
