@@ -2938,4 +2938,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			cursor: 'pointer',
 		},
 	},
+	whatsappChatSendTemplateButton: {
+		padding: '10px 10px'
+	}
 });
