@@ -196,7 +196,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			fieldName: 'whatsapp.country',
 			type: 'select',
 			placeholder: 'Select Your Country Code',
-			value: '+972 Israel',
+			value: '+972',
 		},
 		{
 			fieldName: 'whatsapp.phoneNumber',
@@ -701,7 +701,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			templateData.templateText?.length > buttonTextLimits.callToAction
 		) {
 			validationErrors.push(
-				`${translator('whatsapp.alertModal.templateLengthError')} ${buttonTextLimits.callToAction
+				`${translator('whatsapp.alertModal.templateLengthError')} ${
+					buttonTextLimits.callToAction
 				}`
 			);
 			isValidated = false;
@@ -785,7 +786,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const onButtonClick = (button: actionButtonProps) => {
 		if (button.buttonTitle?.includes(buttonTypes.CALL_TO_ACTION)) {
 			setIsCallToActionOpen(true);
-		} else if (button.buttonTitle?.includes(buttonTypes.QUICK_REPLY)) {
+		} else if (button.buttonTitle?.includes('quickReplay')) {
 			setIsQuickReplyOpen(true);
 		} else if (button.buttonTitle?.includes('dynamicField')) {
 			if (templateData?.templateText?.length < templateTextLimit) {
@@ -804,8 +805,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		} else if (button.buttonTitle?.includes('removalText')) {
 			setTemplateData({
 				...templateData,
-				templateText: `${templateData.templateText} ${isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
-					}`?.substring(0, templateTextLimit),
+				templateText: `${templateData.templateText} ${
+					isRTL ? '\nלהסרה השב “הסר”' : '\nReply “remove” to unsubscribe'
+				}`?.substring(0, templateTextLimit),
 			});
 		}
 	};
@@ -880,8 +882,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
 					setIsSubmitCampaignOpen(false);
 					setToastMessage(ToastMessages.SAVE_SUCCESS);
-					resetFields();
-					navigate('/react/whatsapp/template/create');
+					// resetFields();
+					if (!templateID) {
+						navigate(
+							`/react/whatsapp/template/edit/${submitTemplate.payload.Data.id}`
+						);
+					}
 				} else if (submitTemplate?.payload?.Status === 'Error') {
 					if (submitTemplate?.payload?.Message?.length > 0) {
 						setToastMessage({
@@ -923,9 +929,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			} else {
 				deleteData?.payload?.Error
 					? setToastMessage({
-						...ToastMessages.ERROR,
-						message: deleteData?.payload?.Error,
-					})
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Error,
+					  })
 					: setToastMessage(ToastMessages.ERROR);
 			}
 		} else {

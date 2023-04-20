@@ -138,7 +138,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			fieldName: 'whatsapp.country',
 			type: 'select',
 			placeholder: 'Select Your Country Code',
-			value: '+972 Israel',
+			value: '+972',
 		},
 		{
 			fieldName: 'whatsapp.phoneNumber',
@@ -338,9 +338,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const getDynamicModalValues = async () => {
 		const staticPersonalField: personalFieldDataProps = {
-			Status: translator('common.Status'),
-			SmsStatus: translator('common.smsStatus'),
-			CreationDate: translator('client.subscribedOn'),
 			FirstName: translator('smsReport.firstName'),
 			LastName: translator('smsReport.lastName'),
 			Email: translator('common.Mail'),
@@ -353,6 +350,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			Country: translator('common.country'),
 			Zip: translator('common.zip'),
 			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
 		};
 		const { payload: personalFieldData }: personalFieldAPIProps =
@@ -785,7 +785,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					/>
 				</Grid>
 				<Grid item className={classes.WhatsappCampainNotice}>
-					<>{translator('whatsappCampaign.note')}</>
+					<span style={{ lineHeight: '0' }}>
+						{translator('whatsappCampaign.note')}
+					</span>
 					<br />
 					<span>
 						<>{translator('whatsappCampaign.checkLimit')}</>{' '}

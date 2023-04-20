@@ -726,6 +726,27 @@ const ClientSearchResult = ({ props, classes }) => {
       },
       // filterComponents: [ErrorDropDown]
     },
+    // Whatsapp Revenue
+    '23': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      component: {
+        mobile: ({ Revenue = 0, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.campaignRevenue")}
+          </Typography>
+          <Typography>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </>),
+        web: ({ Revenue = 0, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        )
+      },
+      filterComponents: [Min, Max]
+    },
   }
   const TABLE_HEAD = [
     {

@@ -181,7 +181,6 @@ const SendCampaign = ({
 	const getSpecialDateDropDown = async () => {
 		const { payload: specialDateDropDownData }: specialDateDropDownData =
 			await dispatch<any>(getAccountExtraData());
-		console.log(specialDateDropDownData);
 		if (specialDateDropDownData) {
 			let finalDropDownData: string[] = [];
 			Object.keys(specialDateDropDownData)?.forEach((specialDayKey) => {

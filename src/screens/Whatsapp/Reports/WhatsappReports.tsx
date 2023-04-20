@@ -219,17 +219,31 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			Sent: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount,
 			Removed: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved,
 			Unique: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick,
+			Revenue: CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue,
 		};
-		if (cellName !== translator('whatsappReport.unique')) {
-			navigate(CLIENT_CONSTANTS.BASEURL, {
-				state: {
-					...CLIENT_CONSTANTS.QUERY_PARAMS,
-					CampaignID: campaignId,
-					PageType: pageTypeRequest[cellName],
-					ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
-					PageProperty: GetPageNyName('reports/WhatsappReports'),
-				},
-			});
+		if (cellName !== reportCellNames.UNIQUE) {
+			if (cellName === reportCellNames.REVENUE) {
+				navigate(`${CLIENT_CONSTANTS.BASEURL}/${campaignId}`, {
+					state: {
+						...CLIENT_CONSTANTS.QUERY_PARAMS,
+						CampaignID: campaignId,
+						PageType: pageTypeRequest[cellName],
+						ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowWhatsapp,
+						ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
+						PageProperty: GetPageNyName('reports/WhatsappReports'),
+					},
+				});
+			} else {
+				navigate(CLIENT_CONSTANTS.BASEURL, {
+					state: {
+						...CLIENT_CONSTANTS.QUERY_PARAMS,
+						CampaignID: campaignId,
+						PageType: pageTypeRequest[cellName],
+						ResultTitle: `${cellName} - Campaign ID ${campaignId}`,
+						PageProperty: GetPageNyName('reports/WhatsappReports'),
+					},
+				});
+			}
 		} else {
 			const win: Window = window;
 			win.location = `/Pulseem/WhatsappLinksClicksReport.aspx?CampaignID=${campaignId}&fromreact=true&Culture=${
@@ -254,17 +268,23 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 							: {}
 					}
 					className={classes.middleText}>
-					{cellValue ? cellValue : '0'}
+					{cellName !== translator('common.revenue')
+						? cellValue || '0'
+						: `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
+								'common.NIS'
+						  )}`}
 				</Typography>
-				<Typography
-					onClick={() =>
-						cellValue >= 1 && isClickable
-							? onTableCellClick(cellName, row.WACampaignID)
-							: {}
-					}
-					className={classes.middleText}>
-					{title}
-				</Typography>
+				{cellName !== translator('common.revenue') && (
+					<Typography
+						onClick={() =>
+							cellValue >= 1 && isClickable
+								? onTableCellClick(cellName, row.WACampaignID)
+								: {}
+						}
+						className={classes.middleText}>
+						{title}
+					</Typography>
+				)}
 			</>
 		);
 	};
@@ -716,7 +736,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 														className={clsx(
 															classes.tableCellBody,
 															classes.flex1,
-															classes.tableCellNoBorder
+															classes.tableCellNoBorder,
+															classes.revenueTableCell,
+															`${
+																report && report.Revenue > 0
+																	? classes.revenueTableCellPointer
+																	: ''
+															}`
 														)}>
 														{getTableTypographyCells(
 															translator('common.revenue'),

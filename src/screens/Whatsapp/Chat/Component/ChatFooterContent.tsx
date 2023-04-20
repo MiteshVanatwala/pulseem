@@ -31,7 +31,7 @@ const ChatFooterContent = ({
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
-	const freeFormInputHeight = '40px';
+	const freeFormInputHeight = '17px';
 	useEffect(() => {
 		const textElement = document.getElementById('free-from-input');
 		if (textElement) {
@@ -136,7 +136,7 @@ const ChatFooterContent = ({
 										style={{
 											minHeight: freeFormInputHeight,
 											resize: 'none',
-											overflowY: 'hidden',
+											overflowY: 'auto',
 										}}
 										placeholder='Type a message'
 										value={newMessage}

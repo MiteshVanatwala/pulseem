@@ -338,7 +338,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
+									value: '+972',
 								},
 								{
 									fieldName: 'whatsapp.phoneNumber',
@@ -716,7 +716,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						/>
 					</Grid>
 
-					<Grid item xs={6} lg={2}>
+					<Grid item xs={6} lg={2} className={classes.whatsappManagementbuttonFieldFlexWrapper}>
 						<TextField
 							select
 							type='text'

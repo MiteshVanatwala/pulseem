@@ -27,14 +27,15 @@ const SideHeaderContactDropDown = ({
 			<div className={`${classes.whatsappChat} chat__contact-wrapper`}>
 				&emsp;
 				{phoneNumbersList?.length === 1 ? (
-					<TextField
-						required
-						type='text'
-						disabled
-						className={clsx(classes.buttonField)}
-						onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
-						value={activePhoneNumber}
-					/>
+					// <TextField
+					// 	required
+					// 	type='text'
+					// 	disabled
+					// 	className={clsx(classes.buttonField)}
+					// 	onChange={(e: BaseSyntheticEvent) => onActiveUserChange(e)}
+					// 	value={activePhoneNumber}
+					// />
+					<span>{activePhoneNumber}</span>
 				) : (
 					<Select
 						type='text'
