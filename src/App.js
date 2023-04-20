@@ -61,7 +61,7 @@ import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
-import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
+// import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 import { whatsappRoutes } from './screens/Whatsapp/Constant';
@@ -178,7 +178,8 @@ const renderRoutes = (classes, redirect) => {
         exact
         path="/SendCampaign"
         element={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'id')}
-      // element={<NewsletterSendSettings classes={classes} />}
+        // path="/react/Campaigns/SendSettings/:id"
+        // element={<NewsletterSendSettings classes={classes} />}
       />
       <Route
         exact

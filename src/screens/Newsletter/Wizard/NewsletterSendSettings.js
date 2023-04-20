@@ -11,7 +11,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useNavigate, useParams } from "react-router";
 import { BiSave } from 'react-icons/bi'
-import Title from '../../../components/Wizard/Title'
+import { Title } from "../../../components/managment/Title";
 import { Button, Grid, Box } from "@material-ui/core";
 import {
     getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing
@@ -192,7 +192,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.CampaignID) > -1) : [],
                 exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
             });
-            setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
+            setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting || false);
         } catch (e) {
             // dispatch(sendToTeamChannel({
             //     MethodName: 'onReady',
@@ -804,7 +804,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 })
                 mergedSegmentationDialog === 0 && setDialogType(null);
                 mergedSegmentationDialog === 1 && handleFilterConfirm();
-                
+
                 let segmantIndication = false;
                 if (filterParameters.FromDate || filterParameters.ToDate || filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked) {
                     segmantIndication = true;
@@ -973,8 +973,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             <RenderToast toastMessage={toastMessage} time={4000} />
             <Box>
                 <Title
-                    title={t("campaigns.newsLetterSendSettings.title")}
-                    classes={classes}
+                    Text={t("campaigns.newsLetterSendSettings.title")}
+                    Classes={classes}
                 />
                 <Grid container style={{ marginBottom: "40px" }} spacing={5}>
                     <Grid item md={7} xs={12}>
@@ -1235,7 +1235,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 smsMarketingModel={{ ...smsMarketingModel }}
                 onClose={() => setDialogType(null)}
                 onCancel={() => setDialogType(null)}
-                onConfirm={() => setDialogType(null)}
+                onConfirm={() => {
+                    setDialogType(null);
+                    setSmsMarketingIndication(true);
+                }}
             />}
             {dialogType?.type === 'SummaryDialog' && newsletterSendSummary !== null && <SummaryDialog
                 classes={classes}
