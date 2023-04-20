@@ -13,6 +13,18 @@ export const getNotificationUpdates = createAsyncThunk(
   }
 );
 
+export const markNotificationsAsRead = createAsyncThunk(
+  'NotificationCenter/MarkAsRead', 
+  async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`NotificationCenter/MarkAsRead`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const notificationUpdateSlice = createSlice({
   name: 'notificationUpdate',
   initialState: {
@@ -24,6 +36,8 @@ export const notificationUpdateSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(getNotificationUpdates.fulfilled, (state, { payload }) => {
       state.notificationUpdateList = payload;
+    })
+    builder.addCase(markNotificationsAsRead.fulfilled, (state, { payload }) => {
     })
   }
 })
