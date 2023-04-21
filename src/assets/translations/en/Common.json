@@ -72,6 +72,7 @@
   "Opens": "Opens",
   "Status": "Status",
   "smsStatus": "Sms Status",
+  "whatsappStatus": "WhatsApp Status",
   "emailStatus": "Email Status",
   "ClicksUnique": "Unique Clicks",
   "ErrorEmail": "Error",

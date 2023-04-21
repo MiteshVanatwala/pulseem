@@ -24,6 +24,7 @@ import {
 	WhatsappCampaignSecondProps,
 	ApiGetCampaignSummary,
 	ApiGetCampaignSummaryPayloadData,
+	phoneNumberAPIProps,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
@@ -48,6 +49,7 @@ import {
 	getWhatsappCampaignNameFilter,
 	saveCampaignSettings,
 	sendCampaign,
+	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Loader } from '../../../components/Loader/Loader';
@@ -66,6 +68,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import AlertModal from '../Editor/Popups/AlertModal';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
+import NoSetup from '../NoSetup/NoSetup';
 
 const SendCampaign = ({
 	classes,
@@ -115,6 +118,7 @@ const SendCampaign = ({
 	const [groupSendValidationErrors, setGroupSendValidationErrors] = useState<
 		string[]
 	>([]);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isCreateNewGroup, setIsCreateNewGroup] = useState<boolean>(false);
 
@@ -131,25 +135,39 @@ const SendCampaign = ({
 		useState<ApiGetCampaignSummaryPayloadData>();
 
 	useEffect(() => {
-		/**
-		 * testGroupList is for fetching all test groups across the platform
-		 * Here testGroupList is we are taking from existing code and we don't
-		 * know what is the initial value that is the reason we kept it here in
-		 * if condition
-		 */
-		checkCampaignID();
-		if (!testGroupList || testGroupList?.length === 0) {
-			dispatch(getTestGroups());
-		}
-		/**
-		 * getApiGroupsData is for fetching all groups across the platform
-		 */
 		(async () => {
 			setIsLoader(true);
-			const groupsData = await getApiGroupsData();
-			const campaignsData = await getFilterCampaign();
-			getSpecialDateDropDown();
-			getCampaignSettingData(groupsData, campaignsData);
+			const { payload: phoneNumberData }: phoneNumberAPIProps =
+				await dispatch<any>(userPhoneNumbers());
+			if (
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			) {
+				/**
+				 * testGroupList is for fetching all test groups across the platform
+				 * Here testGroupList is we are taking from existing code and we don't
+				 * know what is the initial value that is the reason we kept it here in
+				 * if condition
+				 */
+				checkCampaignID();
+				if (!testGroupList || testGroupList?.length === 0) {
+					dispatch(getTestGroups());
+				}
+				/**
+				 * getApiGroupsData is for fetching all groups across the platform
+				 */
+				(async () => {
+					setIsLoader(true);
+					const groupsData = await getApiGroupsData();
+					const campaignsData = await getFilterCampaign();
+					getSpecialDateDropDown();
+					getCampaignSettingData(groupsData, campaignsData);
+				})();
+			} else {
+				setIsLoader(false);
+				setIsAccountSetup(false);
+			}
 		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
@@ -664,124 +682,132 @@ const SendCampaign = ({
 			classes={classes}
 			customPadding={true}
 			containerClass={null}>
-			<div>
+			{isAccountSetup ? (
 				<div>
-					<Title
-						title={translator('whatsappCampaign.whatsappCampaign')}
-						classes={classes}
-						stepNumber={2}
-						subTitle={translator('mainReport.sendSetting')}
-					/>
-					<Grid container style={{ marginBottom: '40px' }}>
-						<Grid item md={7} xs={12}>
-							<LeftPane
-								classes={classes}
-								allGroupList={allGroupList}
-								testGroupList={testGroupList}
-								finishedCampaigns={finishedCampaigns}
-								selectedGroups={selectedGroups}
-								setSelected={setSelectedGroups}
-								selectedFilterCampaigns={selectedFilterCampaigns}
-								setFilterCampaigns={setFilterCampaigns}
-								selectedFilterGroups={selectedFilterGroups}
-								setFilterGroups={setFilterGroups}
-								onNewGroupChange={setNewGroupName}
-								newGroupName={newGroupName}
-								onNewGroupSave={onNewGroupSave}
-								activeTab={activeTab}
-								setActiveTab={setActiveTab}
-								onFilter={onFilter}
-								isCreateNewGroup={isCreateNewGroup}
-								setIsCreateNewGroup={setIsCreateNewGroup}
-								onManualUpload={onManualUpload}
-								exceptionalDaysToggle={exceptionalDaysToggle}
-								exceptionalDays={exceptionalDays}
-								setExceptionalDaysToggle={setExceptionalDaysToggle}
-								setExceptionalDays={setExceptionalDays}
-							/>
+					<div>
+						<Title
+							title={translator('whatsappCampaign.whatsappCampaign')}
+							classes={classes}
+							stepNumber={2}
+							subTitle={translator('mainReport.sendSetting')}
+						/>
+						<Grid container style={{ marginBottom: '40px' }}>
+							<Grid item md={7} xs={12}>
+								<LeftPane
+									classes={classes}
+									allGroupList={allGroupList}
+									testGroupList={testGroupList}
+									finishedCampaigns={finishedCampaigns}
+									selectedGroups={selectedGroups}
+									setSelected={setSelectedGroups}
+									selectedFilterCampaigns={selectedFilterCampaigns}
+									setFilterCampaigns={setFilterCampaigns}
+									selectedFilterGroups={selectedFilterGroups}
+									setFilterGroups={setFilterGroups}
+									onNewGroupChange={setNewGroupName}
+									newGroupName={newGroupName}
+									onNewGroupSave={onNewGroupSave}
+									activeTab={activeTab}
+									setActiveTab={setActiveTab}
+									onFilter={onFilter}
+									isCreateNewGroup={isCreateNewGroup}
+									setIsCreateNewGroup={setIsCreateNewGroup}
+									onManualUpload={onManualUpload}
+									exceptionalDaysToggle={exceptionalDaysToggle}
+									exceptionalDays={exceptionalDays}
+									setExceptionalDaysToggle={setExceptionalDaysToggle}
+									setExceptionalDays={setExceptionalDays}
+								/>
+							</Grid>
+							<Grid item md={1} xs={12}></Grid>
+							<Grid item md={4} xs={12}>
+								<RightPane
+									classes={classes}
+									handleDatePicker={handleDatePicker}
+									sendDate={sendDate}
+									sendTime={sendTime}
+									handleRadioTime={handleRadioTime}
+									sendType={sendType}
+									handleSendType={handleSendType}
+									timePickerOpen={timePickerOpen}
+									handleTimePicker={handleTimePicker}
+									daysBeforeAfter={daysBeforeAfter}
+									handleSpecialDayChange={handleSpecialDayChange}
+									spectialDateFieldID={spectialDateFieldID}
+									handleSelectChange={handleSelectChange}
+									isSpecialDateBefore={isSpecialDateBefore}
+									setIsSpecialDateBefore={setIsSpecialDateBefore}
+									specialDatedropDown={specialDatedropDown}
+								/>
+							</Grid>
 						</Grid>
-						<Grid item md={1} xs={12}></Grid>
-						<Grid item md={4} xs={12}>
-							<RightPane
-								classes={classes}
-								handleDatePicker={handleDatePicker}
-								sendDate={sendDate}
-								sendTime={sendTime}
-								handleRadioTime={handleRadioTime}
-								sendType={sendType}
-								handleSendType={handleSendType}
-								timePickerOpen={timePickerOpen}
-								handleTimePicker={handleTimePicker}
-								daysBeforeAfter={daysBeforeAfter}
-								handleSpecialDayChange={handleSpecialDayChange}
-								spectialDateFieldID={spectialDateFieldID}
-								handleSelectChange={handleSelectChange}
-								isSpecialDateBefore={isSpecialDateBefore}
-								setIsSpecialDateBefore={setIsSpecialDateBefore}
-								specialDatedropDown={specialDatedropDown}
-							/>
-						</Grid>
-					</Grid>
-					<Buttons
+						<Buttons
+							classes={classes}
+							onFormButtonClick={onFormButtonClick}
+							displayBackButton={true}
+						/>
+					</div>
+					<SummaryModal
 						classes={classes}
-						onFormButtonClick={onFormButtonClick}
-						displayBackButton={true}
+						isOpen={isSummaryModal}
+						campaignName={''}
+						fromNumber={''}
+						onSummaryModalClose={() => setIsSummaryModal(false)}
+						onConfirmOrYes={onSummarySend}
+						selectedGroups={selectedGroups}
+						selectedFilterGroups={selectedFilterGroups}
+						selectedFilterCampaigns={selectedFilterCampaigns}
+						sendType={sendType}
+						sendDate={sendDate}
+						sendTime={sendTime}
+						isSpecialDateBefore={isSpecialDateBefore}
+						daysBeforeAfter={daysBeforeAfter}
+						specialDatedropDown={specialDatedropDown}
+						spectialDateFieldID={spectialDateFieldID}
+						campaignSummary={campaignSummary}
 					/>
+					<ValidationAlert
+						classes={classes}
+						isOpen={isValidationAlert}
+						onClose={() => setIsValidationAlert(false)}
+						title={translator('whatsappCampaign.sendValidation')}
+						requiredFields={groupSendValidationErrors}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={isDeleteCampaignOpen}
+						onClose={() => setIsDeleteCampaignOpen(false)}
+						title={translator('whatsapp.alertModal.DeleteText')}
+						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+						type='delete'
+						onConfirmOrYes={() => onDeleteCampaign()}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={isExitCampaignOpen}
+						onClose={() => setIsExitCampaignOpen(false)}
+						title={translator('whatsappManagement.LeaveCampaignCreation')}
+						subtitle={translator(
+							'whatsappManagement.LeaveCampaignCreationDesc'
+						)}
+						type='delete'
+						onConfirmOrYes={() => onExitCampaign()}
+					/>
+					<SendCampaignSuccess
+						classes={classes}
+						isOpen={isSendCampaignSuccessOpen}
+						onBackToHome={() => navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)}
+						onBackToCampaigns={() =>
+							navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
+						}
+						onClose={() => setIsSendCampaignSuccessOpen(false)}
+					/>
+					{renderToast()}
 				</div>
-				<SummaryModal
-					classes={classes}
-					isOpen={isSummaryModal}
-					campaignName={''}
-					fromNumber={''}
-					onSummaryModalClose={() => setIsSummaryModal(false)}
-					onConfirmOrYes={onSummarySend}
-					selectedGroups={selectedGroups}
-					selectedFilterGroups={selectedFilterGroups}
-					selectedFilterCampaigns={selectedFilterCampaigns}
-					sendType={sendType}
-					sendDate={sendDate}
-					sendTime={sendTime}
-					isSpecialDateBefore={isSpecialDateBefore}
-					daysBeforeAfter={daysBeforeAfter}
-					specialDatedropDown={specialDatedropDown}
-					spectialDateFieldID={spectialDateFieldID}
-					campaignSummary={campaignSummary}
-				/>
-				<ValidationAlert
-					classes={classes}
-					isOpen={isValidationAlert}
-					onClose={() => setIsValidationAlert(false)}
-					title={translator('whatsappCampaign.sendValidation')}
-					requiredFields={groupSendValidationErrors}
-				/>
-				<AlertModal
-					classes={classes}
-					isOpen={isDeleteCampaignOpen}
-					onClose={() => setIsDeleteCampaignOpen(false)}
-					title={translator('whatsapp.alertModal.DeleteText')}
-					subtitle={translator('whatsapp.alertModal.DeleteTitle')}
-					type='delete'
-					onConfirmOrYes={() => onDeleteCampaign()}
-				/>
-				<AlertModal
-					classes={classes}
-					isOpen={isExitCampaignOpen}
-					onClose={() => setIsExitCampaignOpen(false)}
-					title={translator('whatsappManagement.LeaveCampaignCreation')}
-					subtitle={translator('whatsappManagement.LeaveCampaignCreationDesc')}
-					type='delete'
-					onConfirmOrYes={() => onExitCampaign()}
-				/>
-				<SendCampaignSuccess
-					classes={classes}
-					isOpen={isSendCampaignSuccessOpen}
-					onBackToHome={() => navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)}
-					onBackToCampaigns={() => navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)}
-					onClose={() => setIsSendCampaignSuccessOpen(false)}
-				/>
-				{renderToast()}
-				<Loader isOpen={isLoader} showBackdrop={true} />
-			</div>
+			) : (
+				!isLoader && <NoSetup classes={classes} />
+			)}
+			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
 };

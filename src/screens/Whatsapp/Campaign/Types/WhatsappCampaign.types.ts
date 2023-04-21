@@ -275,7 +275,7 @@ export type personalFieldAPIProps = {
 
 export type phoneNumberAPIDataProps = {
 	Data: string[];
-	status: string;
+	Status: string;
 };
 
 export type phoneNumberAPIProps = {
