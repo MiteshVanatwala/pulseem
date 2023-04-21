@@ -6,11 +6,23 @@ import { useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { markNotificationsAsRead } from '../../redux/reducers/notificationUpdateSlice';
 
-const NotificationBell = ({ classes }) => {
+enum NotifyCenterType {
+  File = 0,
+  Unsubscribe = 1,
+  UploadRecipient = 2
+}
+
+enum NotifyCenterStatus {
+  Unread = 0,
+  Read = 1,
+  Removed = 2  
+}
+
+const NotificationBell = ({ classes }: any) => {
   const [displayNotifications, toggleDisplayNotifications] = useState(false);
   const notificationIconRef = useRef(null)
   const { t } = useTranslation();
-  const { notifyCenterList, unreadMessages } = useSelector(state => state.notificationUpdate)
+  const { notifyCenterList, unreadMessages } = useSelector((state: any) => state.notificationUpdate)
   const dispatch = useDispatch();
 
   const handleClose = () => {
@@ -18,20 +30,22 @@ const NotificationBell = ({ classes }) => {
   }
 
   const notificationItem = () => {
-    const notifyTemplate = (option) => {
+    const notifyTemplate = (option: any) => {
       switch (option.NotifyCenterTypeID) {
-        case 0: { // File
-          return <>your file is ready to donwload
+        case NotifyCenterType.File: {
+          return <>{t('notifications.fileReadyForDownload')}
             <>
-              <Button onClick={() => { window.open(`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`) }}>Download here</Button>
+              <Button onClick={() => { window.open(`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`) }}>{t('notifications.fileReadyForDownload')}</Button>
             </>
           </>
         }
-        case 1: { // Unsubscribe
-          return <>Recipients were successfully removed from <b>"{option.TargetName}"</b></>
+        case NotifyCenterType.Unsubscribe: {
+          return <>
+            {t('notifications.recipientsRemoved').replace('$name', `<b>"${option.TargetName}"</b>`)}
+          </>
         }
-        case 2: { // UploadRecipients
-          return <>Recipients were uploaded successfully to <b>"{option.TargetName}"</b></>
+        case NotifyCenterType.UploadRecipient: {
+          return <>{t('notifications.recipientsUploaded').replace('$name', `<b>"${option.TargetName}"</b>`)}</>
         }
         default: {
           break;
@@ -41,7 +55,7 @@ const NotificationBell = ({ classes }) => {
     return (
       <MenuList>
         {
-          notifyCenterList && notifyCenterList?.map((option, index) => (
+          notifyCenterList && notifyCenterList?.map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}
@@ -61,7 +75,7 @@ const NotificationBell = ({ classes }) => {
       className={clsx(classes.appBarItemContainer, classes.paddingSides15)}>
       <Badge
         badgeContent={unreadMessages}
-        color="red"
+        color="error"
         className={clsx(classes.bell)}
         invisible={unreadMessages === 0}
         max={99}
