@@ -298,7 +298,7 @@ const SummaryDialog = ({ classes,
                             onClick={() => { setsubRecipients(!subRecipientsDetails) }}
                         >
                             <Link onClick={() => { setsubRecipients(!subRecipientsDetails) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
-                                {t("sms.smsSummaryRecipientsFilter")} ({TotalClients?.toLocaleString()})
+                                {t("sms.smsSummaryRecipientsFilter")} ({TotalNotToSend?.toLocaleString()})
                                 {subRecipientsDetails ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
                             </Link>
                         </li>
