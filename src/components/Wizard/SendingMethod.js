@@ -309,11 +309,12 @@ const SendingMethod = ({
                                         value={campaign.SendingMethod === 3 ? campaign?.AutoSendingByUserField?.toString() : "0"}
                                     >
                                         <option value="0">{t("common.select")}</option>
-                                        <option value="1">{t("mainReport.birthday")}</option>
-                                        <option value="2">{t("mainReport.creationDay")}</option>
+                                        <option value="5">{t("mainReport.birthday")}</option>
+                                        <option value="6">{t("common.reminder_date")}</option>                                        
+                                        <option value="7">{t("mainReport.creationDay")}</option>
                                         {extraData && Object.keys(extraData).map((item, i) => {
                                             if (extraData[item]) {
-                                                return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                                                return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 1} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
                                             }
                                             return <></>
                                         })}

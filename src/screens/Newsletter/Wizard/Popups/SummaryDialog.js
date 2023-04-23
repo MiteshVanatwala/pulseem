@@ -93,18 +93,23 @@ const SummaryDialog = ({ classes,
                 const exDates = { ...extraData };
                 let specialField = null;
                 switch (newsletterSendSummary.AutoSendingByUserField) {
-                    case "1":
-                    case 1: {
+                    case "5":
+                    case 5: {
                         specialField = `${t("mainReport.birthday")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
-                    case "2":
-                    case 2: {
+                    case "6":
+                    case 6: {
+                        specialField = `${t("common.reminder_date")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
+                        break;
+                    }
+                    case "7":
+                    case 7: {
                         specialField = `${t("mainReport.creationDay")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
                     default: {
-                        specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField - 2}`];
+                        specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField}`];
                     }
                 }
                 return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")}  <span>&nbsp;${specialField}</span> &nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
