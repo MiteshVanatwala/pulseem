@@ -31,7 +31,10 @@ const SendingMethod = ({
     const handleSendType = (sendingMethod) => {
         setIsBestTime(false);
         setIsBestTimeFuture(false);
-        onUpdateCampaign({ SendingMethod: sendingMethod, IsBestTime: false })
+        setIsAfterDay(false);
+        sendDelayRef.current.value = '';
+        
+        onUpdateCampaign({ SendingMethod: sendingMethod, IsBestTime: false, SendDate: null, AutoSendingByUserField: "0", AutoSendDelay: '' })
     }
 
     const handleDatePicker = (value) => {
