@@ -549,6 +549,7 @@
       "restrictedClients": "לקוחות חסומים",
       "duplicatedClients": "לקוחות כפולים",
       "invalidRecipients": "כתובות דוא\"ל לא תקינים",
+      "specialDateMissing": "שדה מיוחד חסר",
       "filters": "סינון",
       "segmentations": "פילוחים",
       "totalNotToSend":"סה\"כ מסוננים",

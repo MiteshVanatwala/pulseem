@@ -558,6 +558,7 @@
       "restrictedClients": "Restricted clients",
       "duplicatedClients": "Duplicated clients",
       "invalidRecipients": "Invalid email addresses",
+      "specialDateMissing": "Special date missing",
       "filters": "Filters",
       "segmentations": "Segmentations",
       "totalNotToSend":"Total filtered",

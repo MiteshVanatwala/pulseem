@@ -59,7 +59,8 @@ const SummaryDialog = ({ classes,
         IsOpenedClicked,
         IsNotClicked,
         IsNotOpened,
-        IsBestTime
+        IsBestTime,
+        ExceptionalUserFieldClientCount
     } = newsletterSendSummary;
 
     const { t } = useTranslation();
@@ -180,6 +181,7 @@ const SummaryDialog = ({ classes,
         }
         return detailsHide ? <></> : (<Box className={classes.summaryExpandRecipientFilter}>
             {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients?.toLocaleString())}
+            {ExceptionalUserFieldClientCount > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.specialDateMissing"), ExceptionalUserFieldClientCount?.toLocaleString())}
             {InvalidClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.invalidRecipients"), InvalidClients?.toLocaleString())}
             {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients?.toLocaleString())}
             {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients?.toLocaleString())}
