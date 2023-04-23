@@ -206,7 +206,7 @@ const Groups = ({ classes }) => {
     useEffect(() => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
         pageProperty.current = GetPageNyName('groups');
-        let lastSearch = { ...serachData };
+        let lastSearch = { ...serachData, PageSize: rowsPerPage };
         if (queryState && pageProperty.current) {
             let tempSearchData = pageProperty.current?.SearchData;
             lastSearch = { ...serachData, ...tempSearchData };
