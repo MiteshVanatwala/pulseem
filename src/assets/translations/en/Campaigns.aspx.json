@@ -553,7 +553,7 @@
       "summarySegmCritCb5": "Recipients that did not open the Email and did not click on links",
       "filterInputText": "Don't send to recipients that got Newsletter in last previous days",
       "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
-      "emailFilterInput": "Don't send to recipients that recieved an Email in last previous days",
+      "emailFilterInput": "Don't send to recipients that received an Email in last previous days",
       "pendingClients": "Pending clients for approval",
       "restrictedClients": "Restricted clients",
       "duplicatedClients": "Duplicated clients",
