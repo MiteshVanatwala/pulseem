@@ -33,7 +33,7 @@ const SendingMethod = ({
         setIsBestTimeFuture(false);
         setIsAfterDay(false);
         sendDelayRef.current.value = '';
-        
+
         onUpdateCampaign({ SendingMethod: sendingMethod, IsBestTime: false, SendDate: null, AutoSendingByUserField: "0", AutoSendDelay: '' })
     }
 
@@ -84,13 +84,13 @@ const SendingMethod = ({
         }
         if (e.target.value !== "0") {
             Object.keys(extraData).map((item, i) => {
-                if (e.target.value === (i + 3).toString()) {
+                if (e.target.value === i.toString()) {
                     temp.selectedSpecialValue = item;
                 }
-                else if (e.target.value === '1') {
+                else if (e.target.value === '5') {
                     temp.selectedSpecialValue = "Birthday";
                 }
-                else if (e.target.value === '2') {
+                else if (e.target.value === '7') {
                     temp.selectedSpecialValue = "Creation day";
                 }
             })
@@ -310,7 +310,7 @@ const SendingMethod = ({
                                     >
                                         <option value="0">{t("common.select")}</option>
                                         <option value="5">{t("mainReport.birthday")}</option>
-                                        <option value="6">{t("common.reminder_date")}</option>                                        
+                                        <option value="6">{t("common.reminder_date")}</option>
                                         <option value="7">{t("mainReport.creationDay")}</option>
                                         {extraData && Object.keys(extraData).map((item, i) => {
                                             if (extraData[item]) {
