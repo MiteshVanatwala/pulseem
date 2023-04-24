@@ -351,15 +351,15 @@ export const formatUpdatedDynamicVariable = (
 					)}##`,
 				};
 			}
-			if (dynamicVariable?.FieldTypeId === 4) {
-				return {
-					...dynamicVariable,
-					VariableValue: getCampaignLink(
-						landingPages,
-						dynamicVariable?.VariableValue
-					),
-				};
-			}
+			// if (dynamicVariable?.FieldTypeId === 4) {
+			// 	return {
+			// 		...dynamicVariable,
+			// 		VariableValue: getCampaignLink(
+			// 			landingPages,
+			// 			dynamicVariable?.VariableValue
+			// 		),
+			// 	};
+			// }
 			return dynamicVariable;
 		});
 	return formattedDynamicVariable;

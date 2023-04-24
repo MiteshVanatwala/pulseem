@@ -99,6 +99,6 @@
 		"alert": "Alert",
 		"templateTextRequired": "Template text is required",
 		"templateNameRequired": "Template name is required",
-		"templateLengthError": "Template length should be less then or equals to 640"
+		"templateLengthError": "Template length should be less then or equals to"
 	}
 }

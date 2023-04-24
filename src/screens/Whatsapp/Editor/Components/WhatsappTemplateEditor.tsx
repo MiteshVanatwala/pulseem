@@ -173,16 +173,6 @@ const WhatsappTemplateEditor = ({
 				</Box>
 			</div>
 			<Box className={classes.whatsappSmallInfoDiv}>
-				<span className={classes.textInfoWrapper}>
-					{linkCount}
-					<span className={classes.textInfo}>
-						<>
-							{linkCount === 1
-								? translator('mainReport.link')
-								: translator('mainReport.links')}
-						</>
-					</span>
-				</span>
 
 				<span className={classes.textInfoWrapper}>
 					{dynamicFieldCount}

@@ -99,6 +99,6 @@
 		"alert": "עֵרָנִי",
 		"templateTextRequired": "טקסט תבנית - חובה",
 		"templateNameRequired": "שם תבנית - חובה",
-		"templateLengthError": "מגבלת תווים - 640"
+		"templateLengthError": "מגבלת תווים - "
 	}
 }

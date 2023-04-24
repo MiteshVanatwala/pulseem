@@ -90,6 +90,8 @@ import {
 import Toast from '../../../components/Toast/Toast.component';
 import {
 	apiStatus,
+	buttonTextLimits,
+	buttonTypes,
 	buttons,
 	fieldNameIds,
 	resetToastData,
@@ -183,6 +185,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
+	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
+	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
 	const [fileData, setFileData] = useState<{
@@ -259,9 +263,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				phoneNumberData?.Data &&
 				phoneNumberData?.Data?.length > 0
 			) {
-				if (!testGroups || testGroups?.length === 0) {
-					dispatch(getTestGroups());
-				}
+				dispatch(getTestGroups());
 				if (!personalFields || landingPages?.length <= 0) {
 					getDynamicModalValues();
 				}
@@ -283,6 +285,39 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (buttonType === buttonTypes.CALL_TO_ACTION) {
+			setTemplateTextLimit(buttonTextLimits.callToAction);
+		} else {
+			setTemplateTextLimit(buttonTextLimits.quickReply);
+		}
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
+	}, [buttonType]);
+
+	useEffect(() => {
+		let textCount = templateData?.templateText?.length;
+		updatedDynamicVariable?.forEach((dynamicVariable) => {
+			switch (dynamicVariable.FieldTypeId) {
+				// Personal field , Text, Landing Page, Navigation
+				case 1:
+				case 2:
+				case 4:
+				case 5:
+					textCount += dynamicVariable?.VariableValue?.length;
+					break;
+				// Link
+				case 3:
+					textCount += dynamicVariable?.VariableValue?.length;
+					break;
+				default:
+					break;
+			}
+			textCount -= (dynamicVariable?.VariableIndex <= 10 ? 5 : 6) || 0;
+		});
+		setTemplateTextCount(textCount);
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
+	}, [updatedDynamicVariable, templateData]);
 
 	const setUpdatedDynamicVariableWithLinks = (variable: updatedVariable[]) => {
 		const updatedVariableWithSiteLink = variable?.map((variable) => {
@@ -496,7 +531,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			);
 		}
 		if (templateData?.variables) {
-			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
+			setDynamicFieldCount(
+				getDynamicFields(templatePreviewData?.templateData.templateText)?.length
+			);
 		}
 	};
 
@@ -519,6 +556,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const validateSaveCampaign = (validateDynamicVaraiable: boolean = false) => {
 		let validationErrors = [];
 		let isValidated = true;
+		if (templateTextCount > templateTextLimit) {
+			validationErrors.push(
+				`${translator(
+					'whatsapp.alertModal.templateLengthError'
+				)} ${templateTextLimit}`
+			);
+			isValidated = false;
+		}
 		if (campaignName?.length <= 0 || savedTemplate?.length <= 0) {
 			if (campaignName?.length <= 0 && savedTemplate?.length <= 0) {
 				validationErrors.push(translator('whatsappCampaign.setCampaign'));
@@ -645,10 +690,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				if (testSendSelection === 'onecontact') {
 					onTestSend(true, campaignIdForTestSend);
 				} else {
-					if (campaignID) {
+					if (campaignIdForTestSend) {
 						setIsLoader(true);
 						const { payload: campaignSummaryData }: ApiGetCampaignSummary =
-							await dispatch<any>(getWhatsAppCampaignSummary(campaignID));
+							await dispatch<any>(
+								getWhatsAppCampaignSummary(campaignIdForTestSend?.toString())
+							);
 						if (campaignSummaryData.Status === apiStatus.SUCCESS) {
 							if (campaignSummaryData?.Data?.FinalCount > 0) {
 								setCampaignSummary(campaignSummaryData?.Data);
@@ -928,15 +975,26 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 												{!isRTL && <>&nbsp;{dynamicFieldCount}</>}
 											</span>
 
-											<span className={classes.textInfoWrapper}>
+											<span
+												className={clsx(
+													classes.textInfoWrapper,
+													`${
+														templateTextCount > templateTextLimit &&
+														'limit-exceed'
+													}`
+												)}>
 												{isRTL && (
-													<>{templateData.templateText?.length}/1024&nbsp;</>
+													<>
+														{templateTextCount}/{templateTextLimit}&nbsp;
+													</>
 												)}
 												<span className={classes.textInfo}>
 													<>{translator('whatsappCampaign.char')}</>
 												</span>
 												{!isRTL && (
-													<>&nbsp;{templateData.templateText?.length}/1024</>
+													<>
+														&nbsp;{templateTextCount}/{templateTextLimit}
+													</>
 												)}
 											</span>
 										</Box>

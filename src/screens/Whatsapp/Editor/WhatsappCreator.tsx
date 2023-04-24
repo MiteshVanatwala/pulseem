@@ -559,7 +559,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getFriendlyTemplateName = () => {
-		return templateName?.replace(/ /g, '_')?.replace(/[^a-z0-9_]/gi, '');
+		return templateName
+			?.replace(/ /g, '_')
+			?.replace(/([^a-z^0-9_\u0591-\u05F4^\s])/gi, '');
+		// return `whatsapptemplate_${uniqid()}`;
 	};
 
 	const getJSONVariables = () => {

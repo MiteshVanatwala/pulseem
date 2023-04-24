@@ -2983,4 +2983,32 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 	},
+	whatsappNoSetupContactButton: {
+		fontFamily: 'OpenSansHebrew',
+		backgroundColor: '#1c82b2',
+		cursor: 'pointer',
+		margin: '7px 54px',
+		'&:hover': {
+			backgroundColor: '#1c82b2',
+		},
+		'& span': {
+			fontFamily: 'OpenSansHebrew',
+			fontWeight: '600',
+			color: '#ffffff',
+			textDecoration: 'none',
+			cursor: 'pointer',
+			width: '100%',
+			'@media screen and (max-width: 768px)': {
+				fontSize: '20px',
+			},
+			'@media screen and (max-width: 556px)': {
+				fontSize: '20px',
+			},
+			'& a': {
+				fontSize: '18px',
+				color: '#ffffff',
+				textTransform: 'none',
+			},
+		},
+	},
 });
