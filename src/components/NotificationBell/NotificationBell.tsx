@@ -5,6 +5,7 @@ import NotificationIcon from '../../assets/images/notification.svg';
 import { useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { markNotificationsAsRead } from '../../redux/reducers/notificationUpdateSlice';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 enum NotifyCenterType {
   File = 0,
@@ -41,11 +42,11 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.Unsubscribe: {
           return <>
-            {t('notifications.recipientsRemoved').replace('$name', `<b>"${option.TargetName}"</b>`)}
+            {RenderHtml(t('notifications.recipientsRemoved').replace('$name', `${option.TargetName}`))}
           </>
         }
         case NotifyCenterType.UploadRecipient: {
-          return <>{t('notifications.recipientsUploaded').replace('$name', `<b>"${option.TargetName}"</b>`)}</>
+          return <>{RenderHtml(t('notifications.recipientsUploaded').replace('$name', `${option.TargetName}`))}</>
         }
         default: {
           break;
