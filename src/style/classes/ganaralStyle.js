@@ -540,6 +540,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   floatRight: {
     float: "right",
   },
+  floatLeft: {
+    float: "left",
+  },
   wordBreak: {
     wordBreak: "break-all",
   },

@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Box, MenuItem, MenuList, Popper, Badge, Button } from '@material-ui/core'
+import { Box, MenuItem, MenuList, Popper, Badge, Button, Grid } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux';
 import NotificationIcon from '../../assets/images/notification.svg';
 import { useRef, useState } from 'react';
@@ -23,6 +23,7 @@ const NotificationBell = ({ classes }: any) => {
   const [displayNotifications, toggleDisplayNotifications] = useState(false);
   const notificationIconRef = useRef(null)
   const { t } = useTranslation();
+  const { isRTL } = useSelector((state: any) => state.core);
   const { notifyCenterList, unreadMessages } = useSelector((state: any) => state.notificationUpdate)
   const dispatch = useDispatch();
 
@@ -34,11 +35,22 @@ const NotificationBell = ({ classes }: any) => {
     const notifyTemplate = (option: any) => {
       switch (option.NotifyCenterTypeID) {
         case NotifyCenterType.File: {
-          return <>{t('notifications.fileReadyForDownload')}
-            <>
-              <Button onClick={() => { window.open(`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`) }}>{t('notifications.fileReadyForDownload')}</Button>
-            </>
-          </>
+          return (
+            <Grid container justifyContent='center'>
+              <Grid item sm={6}>
+                {t('notifications.fileReadyForDownload')}
+              </Grid>
+              <Grid item sm={6}>
+                <a
+                  className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
+                  href={`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`}
+                  target="_blank"
+                >
+                  {t('notifications.fileReadyForDownload')}
+                </a>
+              </Grid>
+            </Grid>
+          )
         }
         case NotifyCenterType.Unsubscribe: {
           return <>
