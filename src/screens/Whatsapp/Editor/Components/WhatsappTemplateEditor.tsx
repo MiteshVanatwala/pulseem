@@ -216,7 +216,7 @@ const WhatsappTemplateEditor = ({
 					<>
 						<Tooltip
 							disableFocusListener
-							title={<>{translator('mainReport.aligntoRight')}</>}
+							title={<>{translator('mainReport.alignToLeft')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>
@@ -237,7 +237,7 @@ const WhatsappTemplateEditor = ({
 						</Tooltip>
 						<Tooltip
 							disableFocusListener
-							title={<>{translator('mainReport.alignToLeft')}</>}
+							title={<>{translator('mainReport.aligntoRight')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>
