@@ -67,5 +67,7 @@
 	"submitTemplate": "תבנית הוגשה בהצלחה",
 	"saveTemplate": "תבנית נשמרה בהצלחה",
 	"chatMediaErrorMsg": "לא ניתן להציג מדיה זאת בצ'אט - לחץ על הקישור כדי לצפות במדיה",
-	"noRecipient": "לא נבחרו נמענים"
+	"noRecipient": "לא נבחרו נמענים",
+	"setupMessage1": "על מנת להפעיל שליחת WhatsApp בחשבון זה,",
+	"setupMessage2": "אנא צרו קשר עם מחלקת המכירות שלנו"
 }

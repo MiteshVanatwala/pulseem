@@ -2939,6 +2939,76 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 	},
 	whatsappChatSendTemplateButton: {
-		padding: '10px 10px'
-	}
+		padding: '10px 10px',
+	},
+	whatsappNoSetupPage: {
+		height: 'calc(100vh - 97px)',
+		alignItems: 'center',
+		fontFamily: 'OpenSansHebrew',
+		justifyContent: 'center',
+		textAlign: 'center',
+	},
+	whatsappNoSetupMessageWrapper: {
+		'& div': {
+			width: '100%',
+			fontSize: '24px',
+			fontWeight: '600',
+			color: '#1c82b2',
+			'@media screen and (max-width: 768px)': {
+				fontSize: '20px',
+			},
+			'@media screen and (max-width: 556px)': {
+				fontSize: '16px',
+			},
+		},
+	},
+	whatsappNoSetupContactWrapper: {
+		marginTop: '24px',
+		'@media screen and (max-width: 768px)': {
+			marginTop: '12px',
+		},
+		display: 'grid',
+		'& a': {
+			fontSize: '24px',
+			fontWeight: '600',
+			color: '#1c82b2',
+			textDecoration: 'none',
+			cursor: 'pointer',
+			width: '100%',
+			'@media screen and (max-width: 768px)': {
+				fontSize: '20px',
+			},
+			'@media screen and (max-width: 556px)': {
+				fontSize: '20px',
+			},
+		},
+	},
+	whatsappNoSetupContactButton: {
+		fontFamily: 'OpenSansHebrew',
+		backgroundColor: '#1c82b2',
+		cursor: 'pointer',
+		margin: '7px 54px',
+		'&:hover': {
+			backgroundColor: '#1c82b2',
+		},
+		'& span': {
+			fontFamily: 'OpenSansHebrew',
+			fontWeight: '600',
+			color: '#ffffff',
+			textDecoration: 'none',
+			cursor: 'pointer',
+			width: '100%',
+			'@media screen and (max-width: 768px)': {
+				fontSize: '20px',
+			},
+			'@media screen and (max-width: 556px)': {
+				fontSize: '20px',
+			},
+			'& a': {
+				fontSize: '18px',
+				color: '#ffffff',
+				textTransform: 'none',
+			},
+		},
+	},
 });

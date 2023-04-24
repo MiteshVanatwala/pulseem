@@ -173,16 +173,6 @@ const WhatsappTemplateEditor = ({
 				</Box>
 			</div>
 			<Box className={classes.whatsappSmallInfoDiv}>
-				<span className={classes.textInfoWrapper}>
-					{linkCount}
-					<span className={classes.textInfo}>
-						<>
-							{linkCount === 1
-								? translator('mainReport.link')
-								: translator('mainReport.links')}
-						</>
-					</span>
-				</span>
 
 				<span className={classes.textInfoWrapper}>
 					{dynamicFieldCount}
@@ -216,7 +206,7 @@ const WhatsappTemplateEditor = ({
 					<>
 						<Tooltip
 							disableFocusListener
-							title={<>{translator('mainReport.aligntoRight')}</>}
+							title={<>{translator('mainReport.alignToLeft')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>
@@ -237,7 +227,7 @@ const WhatsappTemplateEditor = ({
 						</Tooltip>
 						<Tooltip
 							disableFocusListener
-							title={<>{translator('mainReport.alignToLeft')}</>}
+							title={<>{translator('mainReport.aligntoRight')}</>}
 							classes={{ tooltip: styles.customWidth }}
 							placement='top-start'
 							arrow>

@@ -176,9 +176,7 @@ const DynamicModalFields = ({
 					}
 					onChange={(e: BaseSyntheticEvent) => setLandPage(e.target.value)}>
 					{landingPageData?.map((landingPage: landingPageDataProps) => (
-						<MenuItem
-							key={landingPage.CampaignID}
-							value={landingPage.CampaignName}>
+						<MenuItem key={landingPage.CampaignID} value={landingPage.PageHref}>
 							{landingPage.CampaignName}
 						</MenuItem>
 					))}

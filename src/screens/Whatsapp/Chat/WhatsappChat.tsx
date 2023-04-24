@@ -69,6 +69,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { useNavigate, useParams } from 'react-router-dom';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import Toast from '../../../components/Toast/Toast.component';
+import NoSetup from '../NoSetup/NoSetup';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -81,6 +82,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
 		}) => state.common?.commonSettings?.SubAccountSettings
 	);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
@@ -217,13 +219,25 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		});
 
 	useEffect(() => {
-		if (!personalFields || landingPages?.length <= 0) {
-			getDynamicModalValues();
-		}
-		getSavedTemplateFields();
 		(async () => {
 			setIsLoader(true);
-			await getPhoneNumber();
+			const { payload: phoneNumberData }: phoneNumberAPIProps =
+				await dispatch<any>(userPhoneNumbers());
+			if (
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			) {
+				if (!personalFields || landingPages?.length <= 0) {
+					getDynamicModalValues();
+				}
+				getSavedTemplateFields();
+				setIsLoader(true);
+				await getPhoneNumber();
+			} else {
+				setIsLoader(false);
+				setIsAccountSetup(false);
+			}
 		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
@@ -375,10 +389,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 					changeContactReadStatus(updatedActiveChat, contactData, contactData);
 				}
 			}
-			if (
-				isInitial &&
-				contactData?.length < contactsPaginationSetting.PageSize
-			) {
+			if (contactData?.length < contactsPaginationSetting.PageSize) {
 				setContactsPaginationSetting({
 					...contactsPaginationSetting,
 					hasMore: false,
@@ -788,90 +799,100 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				classes={classes}
 				customPadding={false}
 				containerClass={classes.mb50}>
-				{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
-				<div className={`${classes.whatsappChat} app`}>
-					<div className={`${classes.whatsappChat} app-content`}>
-						<SideBar
-							isMobileSideBar={isMobileSideBar}
+				{isAccountSetup ? (
+					<>
+						{toastMessage?.message?.length > 0 && <>{renderToast()}</>}
+						<div className={`${classes.whatsappChat} app`}>
+							<div className={`${classes.whatsappChat} app-content`}>
+								<SideBar
+									isMobileSideBar={isMobileSideBar}
+									classes={classes}
+									setIsMobileSideBar={() =>
+										setIsMobileSideBar(!isMobileSideBar)
+									}
+									handleChatId={handleChatId}
+									activePhoneNumber={activePhoneNumber}
+									setActiveUser={setActivePhoneNumber}
+									onActiveUserChange={onActiveUserChange}
+									sideChatContacts={sideChatContacts}
+									filteredSideChatContacts={filteredSideChatContacts}
+									setFilteredSideChatContacts={setFilteredSideChatContacts}
+									setContactsPaginationSetting={setContactsPaginationSetting}
+									phoneNumbersList={phoneNumbersList}
+									handleUserStatus={handleUserStatus}
+									getStatusClass={getStatusClass}
+									chatContacts={activeChatContacts}
+									fetchMoreContacts={fetchMoreContacts}
+									contactsPaginationSetting={contactsPaginationSetting}
+									fetchSearchedContacts={fetchMoreContacts}
+									isLoader={isLoader}
+								/>
+								<ChatUi
+									isMobileSideBar={isMobileSideBar}
+									classes={classes}
+									setIsMobileSideBar={() =>
+										setIsMobileSideBar(!isMobileSideBar)
+									}
+									savedTemplateList={savedTemplateList}
+									onChoose={(template, templateText) =>
+										onChoose(template, templateText)
+									}
+									newMessage={newMessage}
+									setNewMessage={updateFreeFormMessage}
+									isTemplateModal={isTemplateModal}
+									setIsTemplateModal={setIsTemplateModal}
+									dynamicVariable={dynamicVariable}
+									updatedDynamicVariable={updatedDynamicVariable}
+									setIsDynamcFieldModal={setIsDynamcFieldModal}
+									setDynamicModalVariable={setDynamicModalVariable}
+									savedTemplate={savedTemplate}
+									chatContacts={activeChatContacts}
+									activePhoneNumber={activePhoneNumber}
+									filteredSideChatContacts={filteredSideChatContacts}
+									whatsappChatSession={whatsappChatSession}
+									handleUserStatus={handleUserStatus}
+									getStatusClass={getStatusClass}
+									onChatSend={onChatSend}
+									allWhatsappChat={allWhatsappChat}
+									setAllWhatsappChat={setAllWhatsappChat}
+									setAPIInboundChatStatus={setAPIInboundChatStatus}
+									setWhatsappChatSession={setWhatsappChatSession}
+									setUpdatedDynamicVariable={setUpdatedDynamicVariableWithLinks}
+									setDynamicVariable={setDynamicVariable}
+									setSavedTemplate={setSavedTemplate}
+									activeChatContacts={activeChatContacts}
+									isContactLoader={isLoader}
+									updateContactList={updateContactList}
+								/>
+							</div>
+						</div>
+						<DynamicModal
 							classes={classes}
-							setIsMobileSideBar={() => setIsMobileSideBar(!isMobileSideBar)}
-							handleChatId={handleChatId}
-							activePhoneNumber={activePhoneNumber}
-							setActiveUser={setActivePhoneNumber}
-							onActiveUserChange={onActiveUserChange}
-							sideChatContacts={sideChatContacts}
-							filteredSideChatContacts={filteredSideChatContacts}
-							setFilteredSideChatContacts={setFilteredSideChatContacts}
-							setContactsPaginationSetting={setContactsPaginationSetting}
-							phoneNumbersList={phoneNumbersList}
-							handleUserStatus={handleUserStatus}
-							getStatusClass={getStatusClass}
-							chatContacts={activeChatContacts}
-							fetchMoreContacts={fetchMoreContacts}
-							contactsPaginationSetting={contactsPaginationSetting}
-							fetchSearchedContacts={fetchMoreContacts}
-							isLoader={isLoader}
-						/>
-						<ChatUi
-							isMobileSideBar={isMobileSideBar}
-							classes={classes}
-							setIsMobileSideBar={() => setIsMobileSideBar(!isMobileSideBar)}
-							savedTemplateList={savedTemplateList}
-							onChoose={(template, templateText) =>
-								onChoose(template, templateText)
+							isDynamcFieldModal={isDynamcFieldModal}
+							onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
+							personalFields={personalFields}
+							landingPageData={landingPages}
+							dynamicModalVariable={dynamicModalVariable}
+							onDynamcFieldModalSave={(updatedDynamicVariable) =>
+								onDynamcFieldModalSave(updatedDynamicVariable)
 							}
-							newMessage={newMessage}
-							setNewMessage={updateFreeFormMessage}
-							isTemplateModal={isTemplateModal}
-							setIsTemplateModal={setIsTemplateModal}
-							dynamicVariable={dynamicVariable}
-							updatedDynamicVariable={updatedDynamicVariable}
-							setIsDynamcFieldModal={setIsDynamcFieldModal}
-							setDynamicModalVariable={setDynamicModalVariable}
+							dynamicVariable={updatedDynamicVariable}
+							isTrackLink={isTrackLink}
+							setIsTrackLink={setIsTrackLink}
 							savedTemplate={savedTemplate}
-							chatContacts={activeChatContacts}
-							activePhoneNumber={activePhoneNumber}
-							filteredSideChatContacts={filteredSideChatContacts}
-							whatsappChatSession={whatsappChatSession}
-							handleUserStatus={handleUserStatus}
-							getStatusClass={getStatusClass}
-							onChatSend={onChatSend}
-							allWhatsappChat={allWhatsappChat}
-							setAllWhatsappChat={setAllWhatsappChat}
-							setAPIInboundChatStatus={setAPIInboundChatStatus}
-							setWhatsappChatSession={setWhatsappChatSession}
-							setUpdatedDynamicVariable={setUpdatedDynamicVariableWithLinks}
-							setDynamicVariable={setDynamicVariable}
-							setSavedTemplate={setSavedTemplate}
-							activeChatContacts={activeChatContacts}
-							isContactLoader={isLoader}
-							updateContactList={updateContactList}
 						/>
-					</div>
-				</div>
-				<DynamicModal
-					classes={classes}
-					isDynamcFieldModal={isDynamcFieldModal}
-					onDynamcFieldModalClose={() => setIsDynamcFieldModal(false)}
-					personalFields={personalFields}
-					landingPageData={landingPages}
-					dynamicModalVariable={dynamicModalVariable}
-					onDynamcFieldModalSave={(updatedDynamicVariable) =>
-						onDynamcFieldModalSave(updatedDynamicVariable)
-					}
-					dynamicVariable={updatedDynamicVariable}
-					isTrackLink={isTrackLink}
-					setIsTrackLink={setIsTrackLink}
-					savedTemplate={savedTemplate}
-				/>
+						<ValidationAlert
+							classes={classes}
+							isOpen={isValidationAlert}
+							onClose={() => setIsValidationAlert(false)}
+							title={translator('whatsappCampaign.sendValidation')}
+							requiredFields={groupSendValidationErrors}
+						/>
+					</>
+				) : (
+					!isLoader && <NoSetup classes={classes} />
+				)}
 				<Loader isOpen={isLoader} showBackdrop={true} />
-				<ValidationAlert
-					classes={classes}
-					isOpen={isValidationAlert}
-					onClose={() => setIsValidationAlert(false)}
-					title={translator('whatsappCampaign.sendValidation')}
-					requiredFields={groupSendValidationErrors}
-				/>
 			</DefaultScreen>
 		</>
 	);

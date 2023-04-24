@@ -265,7 +265,7 @@ const ClientSearchResult = ({ props, classes }) => {
     if (extraData && Object.entries(extraData).length > 0) {
       let updatingObject = {
         "Status": t('common.Status'),
-        "SmsStatus": t('common.smsStatus'),
+        "SmsStatus": location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue ? t('common.Status') : t('common.whatsappStatus'),
         "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
@@ -397,7 +397,7 @@ const ClientSearchResult = ({ props, classes }) => {
               OrderItems: true,
               FormatDate: true,
               ConvertStatusToString: true,
-              Statuses: ClientStatus.Sms,
+              Statuses: location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue ? ClientStatus.Sms : ClientStatus.Whatsapp,
               Order: Object.keys(exportColumnHeader.current),
               DeleteProperties: ["Status"]
             };
@@ -1300,9 +1300,8 @@ const ClientSearchResult = ({ props, classes }) => {
             </Button>
           </Grid>
         }
-        {console.log("searchData?.PageType::", searchData?.PageType )}
 
-        {(searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue || searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) &&
+        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>

@@ -46,6 +46,7 @@ import {
 	getSavedTemplatesById,
 	submitTemplates,
 	uploadMedia,
+	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
@@ -65,6 +66,8 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
+import NoSetup from '../NoSetup/NoSetup';
+import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -78,6 +81,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [savedTemplateList, setSavedTemplateList] = useState<
@@ -95,15 +99,27 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		setSavedTemplateList(savedTemplate.payload.Data.Items);
 	};
 	useEffect(() => {
-		setIsLoader(true);
-		getSavedTemplateFields().then(() => {
-			if (templateID) {
-				setTemplateById(templateID);
+		(async () => {
+			setIsLoader(true);
+			const { payload: phoneNumberData }: phoneNumberAPIProps =
+				await dispatch<any>(userPhoneNumbers());
+			if (
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			) {
+				getSavedTemplateFields().then(() => {
+					if (templateID) {
+						setTemplateById(templateID);
+					} else {
+						setIsLoader(false);
+					}
+				});
 			} else {
 				setIsLoader(false);
+				setIsAccountSetup(false);
 			}
-		});
-
+		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
@@ -487,10 +503,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				setButtonType(updatedButtonType);
 				setTemplateData(updatedTemplateData);
 				setCategory(categoryName[templates?.CategoryId || 1]);
-				if (updatedButtonType === buttonTypes.QUICK_REPLY) {
-					setQuickReplyButtons(updatedTemplateData.templateButtons);
-				} else {
-					setCallToActionFieldRows(updatedTemplateData.templateButtons);
+				if (updatedTemplateData?.templateButtons?.length > 0) {
+					if (updatedButtonType === buttonTypes.QUICK_REPLY) {
+						setQuickReplyButtons(updatedTemplateData.templateButtons);
+					} else {
+						setCallToActionFieldRows(updatedTemplateData.templateButtons);
+					}
 				}
 				if (templateData?.variables) {
 					setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
@@ -541,7 +559,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getFriendlyTemplateName = () => {
-		return templateName?.replace(/ /g, '_')?.replace(/[^a-z0-9_]/gi, '');
+		return templateName
+			?.replace(/ /g, '_')
+			?.replace(/([^a-z^0-9_\u0591-\u05F4^\s])/gi, '');
+		// return `whatsapptemplate_${uniqid()}`;
 	};
 
 	const getJSONVariables = () => {
@@ -983,147 +1004,154 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			classes={classes}
 			containerClass={null}
 			customPadding={true}>
-			{renderToast()}
-			<Title
-				Text={translator('whatsapp.header')}
-				Classes={classes}
-				ContainerStyle={{}}
-				Element={null}
-			/>
-			<br />
-			<form onSubmit={onSubmit}>
-				<Grid container>
-					<TemplateFields
-						classes={classes}
-						templateName={templateName}
-						savedTemplate={savedTemplate}
-						fileData={fileData}
-						onTemplateNameChange={(e) => onTemplateNameChange(e)}
-						onSavedTemplateChange={(templateId) =>
-							onSavedTemplateChange(templateId)
-						}
-						setFileData={(fileData) => uploadFile(fileData)}
-						savedTemplateList={savedTemplateList}
-						category={category}
-						onCategoryChange={setCategory}
-						showValidation={showValidation}
+			{isAccountSetup ? (
+				<>
+					{renderToast()}
+					<Title
+						Text={translator('whatsapp.header')}
+						Classes={classes}
+						ContainerStyle={{}}
+						Element={null}
 					/>
-					<Grid
-						container
-						spacing={windowSize === 'xs' ? 0 : 2}
-						style={{ paddingTop: '14px' }}>
-						<Grid item xs={12} sm={12} md={12} lg={5}>
-							<WhatsappTemplateEditor
+					<br />
+					<form onSubmit={onSubmit}>
+						<Grid container>
+							<TemplateFields
 								classes={classes}
-								onButtonClick={(button: actionButtonProps) =>
-									onButtonClick(button)
+								templateName={templateName}
+								savedTemplate={savedTemplate}
+								fileData={fileData}
+								onTemplateNameChange={(e) => onTemplateNameChange(e)}
+								onSavedTemplateChange={(templateId) =>
+									onSavedTemplateChange(templateId)
 								}
-								buttons={templateData.templateButtons}
-								onButtonDelete={(button) => onActionButtonDelete(button)}
-								buttonType={buttonType}
-								setTemplateText={(text: string) => updateTemplateText(text)}
-								templateText={templateData.templateText}
-								templateTextRef={templateTextRef}
-								OnEditorActionButtonClick={() =>
-									buttonType === buttonTypes.QUICK_REPLY
-										? setIsQuickReplyOpen(true)
-										: setIsCallToActionOpen(true)
-								}
-								dynamicFieldCount={dynamicFieldCount}
-								linkCount={linkCount}
-								templateTextLimit={templateTextLimit}
+								setFileData={(fileData) => uploadFile(fileData)}
+								savedTemplateList={savedTemplateList}
+								category={category}
+								onCategoryChange={setCategory}
+								showValidation={showValidation}
 							/>
-						</Grid>
+							<Grid
+								container
+								spacing={windowSize === 'xs' ? 0 : 2}
+								style={{ paddingTop: '14px' }}>
+								<Grid item xs={12} sm={12} md={12} lg={5}>
+									<WhatsappTemplateEditor
+										classes={classes}
+										onButtonClick={(button: actionButtonProps) =>
+											onButtonClick(button)
+										}
+										buttons={templateData.templateButtons}
+										onButtonDelete={(button) => onActionButtonDelete(button)}
+										buttonType={buttonType}
+										setTemplateText={(text: string) => updateTemplateText(text)}
+										templateText={templateData.templateText}
+										templateTextRef={templateTextRef}
+										OnEditorActionButtonClick={() =>
+											buttonType === buttonTypes.QUICK_REPLY
+												? setIsQuickReplyOpen(true)
+												: setIsCallToActionOpen(true)
+										}
+										dynamicFieldCount={dynamicFieldCount}
+										linkCount={linkCount}
+										templateTextLimit={templateTextLimit}
+									/>
+								</Grid>
 
-						<Grid item xs={12} sm={12} md={12} lg={7}>
-							<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
-								<Grid item xs={12} sm={12} md={12} lg={6}>
-									<WhatsappTips classes={classes} />
+								<Grid item xs={12} sm={12} md={12} lg={7}>
+									<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
+										<Grid item xs={12} sm={12} md={12} lg={6}>
+											<WhatsappTips classes={classes} />
+										</Grid>
+										<Grid item xs={12} sm={12} md={12} lg={6}>
+											<Box>
+												<WhatsappMobilePreview
+													classes={classes}
+													templateData={templateData}
+													buttonType={buttonType}
+													fileData={fileData}
+												/>
+											</Box>
+										</Grid>
+									</Grid>
 								</Grid>
-								<Grid item xs={12} sm={12} md={12} lg={6}>
-									<Box>
-										<WhatsappMobilePreview
-											classes={classes}
-											templateData={templateData}
-											buttonType={buttonType}
-											fileData={fileData}
-										/>
-									</Box>
-								</Grid>
+								<Buttons
+									classes={classes}
+									onFormButtonClick={(buttonName) =>
+										onFormButtonClick(buttonName)
+									}
+									displayBackButton={false}
+								/>
 							</Grid>
 						</Grid>
-						<Buttons
-							classes={classes}
-							onFormButtonClick={(buttonName) => onFormButtonClick(buttonName)}
-							displayBackButton={false}
-						/>
-					</Grid>
-				</Grid>
-			</form>
-			<QuickReply
-				classes={classes}
-				isQuickReplyOpen={isQuickReplyOpen}
-				closeQuickReply={() => setIsQuickReplyOpen(false)}
-				quickReplyButtons={quickReplyButtons}
-				setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
-					setQuickReplyButtons(data)
-				}
-				updateTemplateData={(data: quickReplyButtonProps[]) =>
-					updateTemplateButton(data, buttonTypes.QUICK_REPLY)
-				}
-				templateButtons={templateData.templateButtons}
-				isEditable={true}
-			/>
-			<ActionCallPopOver
-				isCallToActionOpen={isCallToActionOpen}
-				closeCallToAction={(isReset) => closeCallToAction(isReset)}
-				classes={classes}
-				callToActionFieldRows={callToActionFieldRows}
-				setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
-				phoneNumberField={phoneNumberField}
-				websiteField={websiteField}
-				addMore={() => addMore()}
-				updateTemplateData={(data: callToActionProps) =>
-					updateTemplateButton(data, buttonTypes.CALL_TO_ACTION)
-				}
-				isEditable={true}
-				buttonType={buttonType}
-				templateText={templateData.templateText}
-			/>
-			<AlertModal
-				classes={classes}
-				isOpen={isDeleteTemplateOpen}
-				onClose={() => setIsDeleteTemplateOpen(false)}
-				title={translator('whatsapp.alertModal.DeleteText')}
-				subtitle={translator('whatsapp.alertModal.DeleteTitle')}
-				type='delete'
-				onConfirmOrYes={() => onDeleteTemplate()}
-			/>
-			<ValidationAlert
-				classes={classes}
-				isOpen={isValidationAlert}
-				onClose={() => setIsValidationAlert(false)}
-				title={translator('whatsappCampaign.sendValidation')}
-				requiredFields={groupSendValidationErrors}
-			/>
-			<AlertModal
-				classes={classes}
-				isOpen={isSubmitCampaignOpen}
-				onClose={() => setIsSubmitCampaignOpen(false)}
-				title={translator('whatsapp.alertModal.ConfirmText')}
-				subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
-				onConfirmOrYes={() => onSubmitCampaign()}
-				type='submit'>
-				<Box className={classes.alertModalContentMobile}>
-					<WhatsappMobilePreview
+					</form>
+					<QuickReply
 						classes={classes}
-						templateData={templateData}
-						buttonType={buttonType}
-						fileData={fileData}
+						isQuickReplyOpen={isQuickReplyOpen}
+						closeQuickReply={() => setIsQuickReplyOpen(false)}
+						quickReplyButtons={quickReplyButtons}
+						setQuickReplyButtons={(data: quickReplyButtonProps[]) =>
+							setQuickReplyButtons(data)
+						}
+						updateTemplateData={(data: quickReplyButtonProps[]) =>
+							updateTemplateButton(data, buttonTypes.QUICK_REPLY)
+						}
+						templateButtons={templateData.templateButtons}
+						isEditable={true}
 					/>
-				</Box>
-			</AlertModal>
-
+					<ActionCallPopOver
+						isCallToActionOpen={isCallToActionOpen}
+						closeCallToAction={(isReset) => closeCallToAction(isReset)}
+						classes={classes}
+						callToActionFieldRows={callToActionFieldRows}
+						setCallToActionFieldRows={(data) => setCallToActionFieldRows(data)}
+						phoneNumberField={phoneNumberField}
+						websiteField={websiteField}
+						addMore={() => addMore()}
+						updateTemplateData={(data: callToActionProps) =>
+							updateTemplateButton(data, buttonTypes.CALL_TO_ACTION)
+						}
+						isEditable={true}
+						buttonType={buttonType}
+						templateText={templateData.templateText}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={isDeleteTemplateOpen}
+						onClose={() => setIsDeleteTemplateOpen(false)}
+						title={translator('whatsapp.alertModal.DeleteText')}
+						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+						type='delete'
+						onConfirmOrYes={() => onDeleteTemplate()}
+					/>
+					<ValidationAlert
+						classes={classes}
+						isOpen={isValidationAlert}
+						onClose={() => setIsValidationAlert(false)}
+						title={translator('whatsappCampaign.sendValidation')}
+						requiredFields={groupSendValidationErrors}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={isSubmitCampaignOpen}
+						onClose={() => setIsSubmitCampaignOpen(false)}
+						title={translator('whatsapp.alertModal.ConfirmText')}
+						subtitle={translator('whatsapp.alertModal.ConfirmTitle')}
+						onConfirmOrYes={() => onSubmitCampaign()}
+						type='submit'>
+						<Box className={classes.alertModalContentMobile}>
+							<WhatsappMobilePreview
+								classes={classes}
+								templateData={templateData}
+								buttonType={buttonType}
+								fileData={fileData}
+							/>
+						</Box>
+					</AlertModal>
+				</>
+			) : (
+				!isLoader && <NoSetup classes={classes} />
+			)}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);
