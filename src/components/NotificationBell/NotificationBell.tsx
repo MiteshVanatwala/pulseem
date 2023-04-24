@@ -42,11 +42,11 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.Unsubscribe: {
           return <>
-            {RenderHtml(t('notifications.recipientsRemoved').replace('$name', `${option.TargetName}`))}
+            {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
           </>
         }
         case NotifyCenterType.UploadRecipient: {
-          return <>{RenderHtml(t('notifications.recipientsUploaded').replace('$name', `${option.TargetName}`))}</>
+          return <>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</>
         }
         default: {
           break;
@@ -92,7 +92,7 @@ const NotificationBell = ({ classes }: any) => {
           }}
         />
       </Badge>
-      <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom-end'} disablePortal>
+      <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
         <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10)}>
           <div className={clsx(classes.bold)}>
             {t('notifications.notifications')}

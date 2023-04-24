@@ -681,7 +681,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         direction: isRTL ? 'rtl' : 'ltr',
         background: '#fff',
         marginTop: '12px',
-        width: '300px',
+        width: '400px',
         // height: '300px',
         boxShadow: '0px 0px 6px #ababab',
         borderBottom: 'solid 5px #0371ad',
@@ -691,10 +691,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     notificationItem: {
         borderBottom: '0.5px solid #ababab',
-        paddingLeft: isRTL ? '0px' : 'initial',
-        paddingRight: isRTL ? 'initial' : '0px',
+        paddingLeft: isRTL ? '0px' : '10px',
+        paddingRight: isRTL ? '10px' : '0px',
         '&:last-child': {
             borderBottom: 'none',
+        },
+        '& label': {
+            whiteSpace: 'pre-line'
         }
     },
     bell: {

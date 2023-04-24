@@ -156,6 +156,6 @@
   "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers",
   "fileReadyForDownload": "File is ready to download!",
   "downloadHere": "Download Here",
-  "recipientsRemoved": "Recipients were successfully removed from <b>$name</b>",
-  "recipientsUploaded": "Recipients were uploaded successfully to <b>$name</b>"
+  "recipientsRemoved": "Recipients were successfully removed from <b>##Name##</b>",
+  "recipientsUploaded": "Recipients were uploaded successfully to <b>##Name##</b>"
 }
