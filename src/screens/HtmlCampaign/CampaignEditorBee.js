@@ -77,6 +77,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const queryParams = new URLSearchParams(window.location.search)
   const isFromAutomation = queryParams.get("FromAutomation");
   const NodeToEdit = queryParams.get("NodeToEdit");
+  const fromLink = queryParams.get("fromLink");
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
@@ -423,11 +424,14 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
+    const isAutoResponder = fromLink?.toLowerCase() === 'autoresponder';
+    const redirectLink = isAutoResponder ? `/Pulseem/AutoSendPlans.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : '/react/Campaigns';
+
     if (saveBeforeExit) {
-      saveDesign(true, '/react/Campaigns', false);
+      saveDesign(true, redirectLink, false);
     }
     else {
-      window.location.href = '/react/Campaigns';
+      window.location.href = redirectLink;
     }
   }
   const onExit = () => {
@@ -746,11 +750,13 @@ const CampaignEditor = ({ classes, ...props }) => {
         classes={classes}
         onExit={!isFromAutomation && onExit}
         onTestSend={campaign?.IsFirstCampaign === false && handleOpenTestSend}
-        onBack={{
-          callback: () => { onBack() },
-          text: t('campaigns.newsletterSetUp')
-        }}
-        onDelete={onDelete}
+        onBack={
+          fromLink?.toLowerCase() !== 'autoresponder' && {
+            callback: () => { onBack() },
+            text: t('campaigns.newsletterSetUp')
+          }
+        }
+        onDelete={fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}

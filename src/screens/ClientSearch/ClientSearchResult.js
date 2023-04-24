@@ -429,7 +429,7 @@ const ClientSearchResult = ({ props, classes }) => {
           break;
         }
         case 405: {
-          setToastMessage(t("recipient.exportGroups.exportLimitationErrorMessage"));
+          setToastMessage(RenderHtml(t("recipient.exportGroups.exportLimitationErrorMessage")));
           break;
         }
         default: {

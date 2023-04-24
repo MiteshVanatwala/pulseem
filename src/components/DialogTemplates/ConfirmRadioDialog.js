@@ -24,7 +24,7 @@ const ConfirmRadioDialog = ({
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
     const { verifiedEmails } = useSelector(state => state.common);
-    const [value, setValue] = useState(getCookie(cookieName) ?? defaultValue);
+    const [value, setValue] = useState(getCookie(cookieName));
     const [notifyEmail, setNotifyEmail] = useState(null);
     const dispatch = useDispatch();
 
@@ -43,6 +43,11 @@ const ConfirmRadioDialog = ({
         }
         setValue(e.target.value);
     }
+
+    useEffect(() => {
+        if (defaultValue && defaultValue !== '')
+            setValue(defaultValue)
+    }, [defaultValue])
 
     const dialog = {
         title: title,
