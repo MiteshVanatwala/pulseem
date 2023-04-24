@@ -655,7 +655,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           color="primary"
         >{t("common.save")}
         </Button>
-        <Button onClick={saveDesign}
+        {fromLink?.toLowerCase() !== 'autoresponder' && <Button onClick={saveDesign}
           variant='contained'
           size='medium'
           className={clsx(
@@ -666,6 +666,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.continue')}</Button>
+        }
       </>)
     }
     else {
