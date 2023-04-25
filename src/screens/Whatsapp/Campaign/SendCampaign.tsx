@@ -796,7 +796,7 @@ const SendCampaign = ({
 					<SendCampaignSuccess
 						classes={classes}
 						isOpen={isSendCampaignSuccessOpen}
-						onBackToHome={() => navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)}
+						onBackToHome={() => navigate('/react')}
 						onBackToCampaigns={() =>
 							navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT)
 						}

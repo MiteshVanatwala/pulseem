@@ -265,7 +265,7 @@ const ClientSearchResult = ({ props, classes }) => {
     if (extraData && Object.entries(extraData).length > 0) {
       let updatingObject = {
         "Status": t('common.Status'),
-        "SmsStatus": t('common.smsStatus'),
+        "SmsStatus": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ? t('common.smsStatus') : t('common.whatsappStatus'),
         "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
@@ -321,7 +321,7 @@ const ClientSearchResult = ({ props, classes }) => {
           searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved ||
           searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick ||
           searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) {
-            delete updatingObject.SmsStatus
+            delete updatingObject.Status
         }
       }
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
@@ -724,12 +724,12 @@ const ClientSearchResult = ({ props, classes }) => {
           <Typography className={classes.bold}>
             {t("common.ErrorEmail")}
           </Typography>
-          <Typography>
+          <Typography className={classes.whatsappReportErrorCell}>
             {LogSms_ErrorType}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
-          <Typography className={clsx(classes.bold, classes.f16)}>
+          <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
             {LogSms_ErrorType}
           </Typography>
         )
@@ -1554,7 +1554,7 @@ const ClientSearchResult = ({ props, classes }) => {
         </TableCell>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.webweb({
               Revenue: Revenue,
               snt_OpeningDate: snt_OpeningDate,
               LastSendDate: LastSendDate,

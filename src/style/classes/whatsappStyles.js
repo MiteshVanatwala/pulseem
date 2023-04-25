@@ -3011,4 +3011,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			},
 		},
 	},
+	whatsappReportErrorCell: {
+		wordBreak: 'break-word',
+	},
 });
