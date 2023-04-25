@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Box, MenuItem, MenuList, Popper, Badge, Button, Grid } from '@material-ui/core'
+import { Box, MenuItem, MenuList, Popper, Badge, Grid } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux';
 import NotificationIcon from '../../assets/images/notification.svg';
 import { useRef, useState } from 'react';
