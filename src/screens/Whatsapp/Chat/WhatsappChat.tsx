@@ -454,9 +454,6 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 
 	const getDynamicModalValues = async () => {
 		const staticPersonalField: personalFieldDataProps = {
-			Status: translator('common.Status'),
-			SmsStatus: translator('common.smsStatus'),
-			CreationDate: translator('client.subscribedOn'),
 			FirstName: translator('smsReport.firstName'),
 			LastName: translator('smsReport.lastName'),
 			Email: translator('common.Mail'),
@@ -469,6 +466,9 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			Country: translator('common.country'),
 			Zip: translator('common.zip'),
 			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
 			ReminderDate: translator('recipient.reminderDate'),
 		};
 		const { payload: personalFieldData }: personalFieldAPIProps =
