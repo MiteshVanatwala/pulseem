@@ -24,10 +24,10 @@ const BulkStatus = ({ classes }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
+  const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {}, Whatsapp = {} } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
-    switch (product.eBillingType) {
+    switch (product?.eBillingType) {
       case 2: {
         return t('dashboard.perRecipients');
       }
@@ -44,7 +44,7 @@ const BulkStatus = ({ classes }) => {
         return t('dashboard.perValidRecipients')
       }
       default: {
-        return product.Credits && product.Credits > 0 ? product.Credits.toLocaleString() : 0;
+        return product?.Credits && product?.Credits > 0 ? product?.Credits.toLocaleString() : 0;
       }
     }
   }
@@ -253,6 +253,17 @@ const BulkStatus = ({ classes }) => {
               {t('dashboard.freeTrial')}
             </Typography>
           </Grid>}
+          {Whatsapp?.Credits > 0 && <Grid
+            container
+            item xs={9}
+            className={getBillingTypeText(Whatsapp) === 0 ? classes.statusOutline : classes.statusBlue}
+            justifyContent='space-between'>
+            <Typography className={classes.bulkTitle}>{t('appBar.whatsapp.title')}</Typography>
+            <Typography className={classes.bulkTitle}>
+              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Whatsapp)}
+            </Typography>
+          </Grid>
+          }
         </Grid>
       </Paper>
     </>
