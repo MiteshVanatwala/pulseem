@@ -38,15 +38,22 @@ const NotificationBell = ({ classes }: any) => {
           return (
             <Grid container justifyContent='center'>
               <Grid item sm={6}>
-                {t('notifications.fileReadyForDownload')}
+                {RenderHtml(t('notifications.fileReadyForDownload').replace('##FileName##', `${option.TargetName}`))}
               </Grid>
               <Grid item sm={6}>
+                <a
+                  className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
+                  href={`/Pulseem/DownloadFile.aspx?fileFormat=XLS&fileId=${option.SourceID}`}
+                  target="_blank"
+                >
+                  {t("master.download")} XLS
+                </a>
                 <a
                   className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
                   href={`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`}
                   target="_blank"
                 >
-                  {t('notifications.fileReadyForDownload')}
+                  {t("master.download")} CSV
                 </a>
               </Grid>
             </Grid>

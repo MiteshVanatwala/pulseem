@@ -698,6 +698,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         },
         '& label': {
             whiteSpace: 'pre-line'
+        },
+        '& a:last-child': {
+            paddingRight: isRTL ? '' : '10px',
+            paddingLeft: isRTL ? '10px' : ''
         }
     },
     bell: {

@@ -154,8 +154,8 @@
   "activeSubscribers": "נמענים פעילים:",
   "arrived": "הגיעו",
   "arrivedTootltip": "כמות הנוטיפקציות שהגיעו לדפדפני הנמענים שלך",
-  "fileReadyForDownload": "הקובץ שלך מוכן להורדה!",
+  "fileReadyForDownload": "הקובץ <b>\"##FileName##\"</b> מוכן להורדה!",
   "downloadHere": "לחץ להורדה",
-  "recipientsRemoved": "הסרת הנמענים מ-$name בוצעה בהצלחה",
-  "recipientsUploaded": "$name הרשומה הועלתה בהצלחה ל-”לקוחות חדשים"
+  "recipientsRemoved": "הסרת הנמענים מ- <b>\"##Name##</b>\" בוצעה בהצלחה",
+  "recipientsUploaded": "<b>\"##Name##</b>\" הרשומה הועלתה בהצלחה ל-”לקוחות חדשים"
 }
