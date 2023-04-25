@@ -265,7 +265,7 @@ const ClientSearchResult = ({ props, classes }) => {
     if (extraData && Object.entries(extraData).length > 0) {
       let updatingObject = {
         "Status": t('common.Status'),
-        "SmsStatus": location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue ? t('common.Status') : t('common.whatsappStatus'),
+        "SmsStatus": t('common.smsStatus'),
         "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
@@ -313,6 +313,16 @@ const ClientSearchResult = ({ props, classes }) => {
         "ExtraField11": t('common.ExtraField11'),
         "ExtraField12": t('common.ExtraField12'),
         "ExtraField13": t('common.ExtraField13'),
+      }
+      if(searchData?.PageType) {
+        if(searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRead ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) {
+            delete updatingObject.SmsStatus
+        }
       }
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;

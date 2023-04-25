@@ -550,6 +550,7 @@
   "invalid": "Invalid",
   "noSms": "Not registered for Sms",
   "noEmail": "Not registered for Email",
+  "noWhatsapp": "Not registered for Whatsapp",
   "restricted": "Restricted",
   "deleteFromAllGroups": "Remove from groups",
   "removeFromAccount": "Remove from account",
