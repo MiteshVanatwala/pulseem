@@ -1291,7 +1291,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						sendTime={null}
 						isSpecialDateBefore={false}
 						daysBeforeAfter={''}
-						specialDatedropDown={[]}
+						specialDatedropDown={{}}
 						spectialDateFieldID={'0'}
 						campaignSummary={campaignSummary}
 					/>

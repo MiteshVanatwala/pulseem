@@ -183,7 +183,8 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				setApiCampaignData(
 					rowsPerPage
 						? { ...paginationSetting, pageSize: Number(rowsPerPage) }
-						: paginationSetting
+						: paginationSetting,
+					true
 				);
 				if (rowsPerPage) {
 					setPaginationSetting({
@@ -235,7 +236,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			toDate: null,
 		};
 		setPaginationSetting(updatedPagination);
-		setApiCampaignData(updatedPagination);
+		setApiCampaignData(updatedPagination, false);
 	};
 	const renderNameCell = (row: campaignDataProps) => {
 		let date = null;
@@ -729,27 +730,39 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const setApiCampaignData = async (
-		pagination: AllCampaignReq = paginationSetting
+		pagination: AllCampaignReq = paginationSetting,
+		updateDeletedCampaigns: boolean = true
 	) => {
 		setIsLoader(true);
-		const campaignData: campaignListAPIProps = await dispatch<any>(
+		const { payload: campaignData }: campaignListAPIProps = await dispatch<any>(
 			getAllCampaigns(pagination)
 		);
+		const { payload: allCampaignData }: campaignListAPIProps =
+			await dispatch<any>(
+				getAllCampaigns({ ...pagination, isPagination: false })
+			);
 		setIsLoader(false);
-		if (campaignData.payload.Status === apiStatus.SUCCESS) {
-			const filteredCampaignData = campaignData.payload?.Data?.Items?.filter(
+		if (campaignData.Status === apiStatus.SUCCESS) {
+			const filteredCampaignData = campaignData?.Data?.Items?.filter(
 				(campaign) => !campaign?.IsDeleted
 			);
-			const deletedCampaignData = campaignData.payload?.Data?.Items?.filter(
-				(campaign) => campaign?.IsDeleted
-			);
 			setCampaignListData(filteredCampaignData);
-			setDeletedCampaignListData(deletedCampaignData);
-			setTotalRecord(campaignData?.payload?.Data?.TotalRecord);
+			setTotalRecord(campaignData?.Data?.TotalRecord);
 		} else {
 			setCampaignListData([]);
-			setDeletedCampaignListData([]);
 			setTotalRecord(0);
+		}
+
+		if (updateDeletedCampaigns) {
+			// for restore
+			if (allCampaignData.Status === apiStatus.SUCCESS) {
+				const deletedCampaignData = allCampaignData?.Data?.Items?.filter(
+					(campaign) => campaign?.IsDeleted
+				);
+				setDeletedCampaignListData(deletedCampaignData);
+			} else {
+				setDeletedCampaignListData([]);
+			}
 		}
 	};
 
@@ -768,7 +781,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const updatePaginationSetting = (pagination: AllCampaignReq) => {
-		setApiCampaignData(pagination);
+		setApiCampaignData(pagination, false);
 		setPaginationSetting(pagination);
 	};
 

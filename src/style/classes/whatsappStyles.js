@@ -3014,4 +3014,17 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappReportErrorCell: {
 		wordBreak: 'break-word',
 	},
+	whatsappSaveBtn: {
+		marginInlineStart: '5px',
+		color: '#007bff',
+		border: '1px solid #007bff',
+		// padding: "8px",
+		borderRadius: '5px',
+		cursor: 'pointer',
+		padding: '7px 6px',
+	},
+	whatsappSaveGroupWrapper: {
+		display: 'flex',
+		alignItems: 'center',
+	},
 });

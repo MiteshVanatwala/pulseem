@@ -93,6 +93,7 @@
 		"submitButtonText": "Submit",
 		"DeleteText": "Delete Campaign",
 		"DeleteTitle": "Are you sure?",
+		"DeleteTemplateTitle": "Do you want to delete the template?",
 		"ConfirmText": "Submit Campaign",
 		"ConfirmTitle": "Are you sure you want to submit your template?",
 		"fileSizeAlert": "File is larger than 16MB",

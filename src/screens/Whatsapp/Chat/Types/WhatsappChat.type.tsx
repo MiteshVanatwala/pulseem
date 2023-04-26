@@ -31,7 +31,7 @@ export type WhatsappChatUiProps = {
 	savedTemplate: string;
 	activePhoneNumber: string;
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	whatsappChatSession: APIWhatsappChatSessionData;
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
@@ -54,7 +54,7 @@ export type WhatsappChatUiProps = {
 
 export type SideBarContactListProps = {
 	classes: ClassesType['classes'];
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	handleChatId: (
 		e: BaseSyntheticEvent,
 		Contacts: APIWhatsappChatSidebarContactsItemsData
@@ -93,7 +93,7 @@ export type ChatFooterContentProps = {
 	whatsappChatSession: APIWhatsappChatSessionData;
 	onChatSend: () => void;
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
+	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	isContactLoader: boolean;
 };
 
@@ -117,24 +117,24 @@ export type WhatsappChatSideBarProps = {
 	onActiveUserChange: (e: BaseSyntheticEvent) => void;
 	chatContacts: APIWhatsappChatSidebarContactsItemsData;
 	sideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
-	filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[];
-	setFilteredSideChatContacts: (
-		filteredSideChatContacts: APIWhatsappChatSidebarContactsItemsData[]
-	) => void;
-	setContactsPaginationSetting: (
-		contactsPaginationSetting: ContactsPaginationSetting
-	) => void;
 	phoneNumbersList: string[];
 	handleUserStatus: (e: BaseSyntheticEvent, contactPhoneNumber: string) => void;
 	getStatusClass: (status: number) => string | undefined;
 	activePhoneNumber: string;
-	fetchMoreContacts: (searchText: string) => void;
+	fetchMoreContacts: (
+		searchText: string,
+		ChatStatus: number,
+		isPaginationReset?: boolean
+	) => void;
 	contactsPaginationSetting: ContactsPaginationSetting;
 	fetchSearchedContacts: (
 		searchText: string,
+		ChatStatus: number,
 		isPaginationReset: boolean
 	) => void;
 	isLoader: boolean;
+	filterBySelected: number;
+	setFilterBySelected: (filterId: number) => void;
 };
 
 export type chatModalProps = {
@@ -321,6 +321,7 @@ export type APIGetWhatsappChatContactsReq = {
 	pageSize: number;
 	Searchtext?: string;
 	UserNumber?: string;
+	ChatStatus: number;
 };
 
 export type Timer = {
