@@ -77,10 +77,12 @@ import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
+	checkLanguage,
 	checkSiteTrackingLink,
 	formatUpdatedDynamicVariable,
 	getDynamicFields,
 	getTemplatePreviewData,
+	getTextDirection,
 } from '../Common';
 import {
 	getAccountExtraData,
@@ -294,6 +296,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
 	}, [buttonType]);
+
+	useEffect(() => {
+		console.log('checkLanguage::', checkLanguage(templateData.templateText));
+	});
 
 	useEffect(() => {
 		let textCount = templateData?.templateText?.length;
@@ -902,7 +908,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 										lg={12}>
 										<div className={classes.whatsappCampainHighlightContent}>
 											<div
-												className={classes.whatsappCampainHighlightTextWrapper}>
+												className={classes.whatsappCampainHighlightTextWrapper}
+												style={{
+													direction: getTextDirection(
+														templateData.templateText,
+														isRTL
+													),
+												}}>
 												{/* @ts-ignore */}
 												<Highlighter
 													searchWords={dynamicVariable}

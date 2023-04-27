@@ -364,3 +364,38 @@ export const formatUpdatedDynamicVariable = (
 		});
 	return formattedDynamicVariable;
 };
+
+export const checkLanguage = (text: string) => {
+	let isEnglish = false;
+	let isHebrew = false;
+	if (text?.length > 0) {
+		for (var i = 0; i < text?.length; i++) {
+			if (!/[^a-zA-Z\u0590-\u05FF]/.test(text?.charAt(i))) {
+				if (/[\u0590-\u05FF]/.test(text?.charAt(i))) {
+					isHebrew = true;
+				}
+				if (/[a-zA-Z]/.test(text?.charAt(i))) {
+					isEnglish = true;
+				}
+			}
+		}
+	} else {
+		return 'Both';
+	}
+	return isEnglish && isHebrew ? 'Both' : isEnglish ? 'English' : 'Hebrew';
+};
+
+export const getTextDirection = (text: string, isRTL: boolean) => {
+	const language = checkLanguage(text);
+	switch (language) {
+		case 'Both':
+			return isRTL ? 'rtl' : 'ltr';
+		case 'English':
+			return 'ltr';
+		case 'Hebrew':
+			return 'rtl';
+
+		default:
+			return 'ltr';
+	}
+};
