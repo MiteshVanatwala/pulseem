@@ -238,7 +238,7 @@ const SummaryModal = ({
 									<span className={classes.campaignSummaryTextDesc}>
 										<>
 											{translator('sms.smsSummaryDialogTotalRecipients')}:{' '}
-											{campaignSummary?.ClientTotalCount}
+											{campaignSummary?.FinalCount}
 										</>
 									</span>
 									<span className={classes.campaignSummaryTextDetail}>
