@@ -51,6 +51,7 @@ import {
 import Toast from '../../../components/Toast/Toast.component';
 import { JSONProps } from './Types/JSON.types';
 import {
+	checkLanguage,
 	getDynamicFieldIndex,
 	getDynamicFields,
 	getLastDynamicFieldByValue,
@@ -583,7 +584,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getRequestJSON = async (isSave: boolean) => {
-		let generatedTemplatename = `whatsapp_template_${moment().format('DD_MM_YYYY')}_${moment().valueOf()}`;
+		let generatedTemplatename = `whatsapp_template_${moment().format(
+			'DD_MM_YYYY'
+		)}_${moment().valueOf()}`;
 		if (templateID) {
 			const { payload: templateDataById }: getTemplateByIdAPIProps =
 				await dispatch<any>(getSavedTemplatesById(templateID));
@@ -740,6 +743,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			validationErrors.push(
 				`Template length should be less then or equals to ${buttonTextLimits.quickReply}`
 			);
+			isValidated = false;
+		}
+
+		if (checkLanguage(templateData.templateText) === 'Both') {
+			validationErrors.push(translator('whatsapp.alertModal.languageError'));
 			isValidated = false;
 		}
 

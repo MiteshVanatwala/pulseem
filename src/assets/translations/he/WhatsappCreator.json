@@ -101,6 +101,7 @@
 		"alert": "עֵרָנִי",
 		"templateTextRequired": "טקסט תבנית - חובה",
 		"templateNameRequired": "שם תבנית - חובה",
-		"templateLengthError": "מגבלת תווים - "
+		"templateLengthError": "מגבלת תווים - ",
+		"languageError": "לא ניתן להגיש תבנית המכילה יותר משפה אחת"
 	}
 }

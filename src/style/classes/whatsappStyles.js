@@ -1317,6 +1317,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		wordBreak: 'break-word',
 		overflowY: 'auto',
 		maxHeight: '124px',
+		// direction: isRTL ? 'rtl' : 'ltr',
 	},
 	whatsappCampainHighlightText: {
 		backgroundColor: '#169bd5',

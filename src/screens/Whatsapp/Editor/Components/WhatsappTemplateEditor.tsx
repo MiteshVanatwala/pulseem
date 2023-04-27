@@ -16,6 +16,7 @@ import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft';
 import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { ClassesType } from '../../../Classes.types';
+import { checkLanguage } from '../../Common';
 
 const WhatsappTemplateEditor = ({
 	classes,
@@ -47,6 +48,7 @@ const WhatsappTemplateEditor = ({
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [alignment, setAlignment] = useState<string>('right');
 	const [textAreaHeight, setTextAreaHeight] = useState<string>('auto');
+	const [textDirection, setTextDirection] = useState<string>('ltr');
 
 	useEffect(() => {
 		const textAreaElement: HTMLElement | null = document.getElementById(
@@ -69,6 +71,13 @@ const WhatsappTemplateEditor = ({
 	useEffect(() => {
 		setAlignment(isRTL ? 'right' : 'left');
 	}, [isRTL]);
+
+	useEffect(() => {
+		const direction = checkLanguage(templateText);
+		if (direction !== 'Both') {
+			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
+		}
+	}, [templateText]);
 
 	const onEditorChange = (e: BaseSyntheticEvent) => {
 		if (e.target.value?.length <= templateTextLimit) {
@@ -137,7 +146,7 @@ const WhatsappTemplateEditor = ({
 					id='whatsapp-template-text'
 					className={clsx(classes.msgArea, classes.sidebar)}
 					style={{
-						textAlign: alignment === 'right' ? 'right' : 'left',
+						direction: textDirection === 'rtl' ? 'rtl' : 'ltr',
 						height: textAreaHeight,
 					}}
 					onChange={onEditorChange}
@@ -173,7 +182,6 @@ const WhatsappTemplateEditor = ({
 				</Box>
 			</div>
 			<Box className={classes.whatsappSmallInfoDiv}>
-
 				<span className={classes.textInfoWrapper}>
 					{dynamicFieldCount}
 					<span className={classes.textInfo}>
