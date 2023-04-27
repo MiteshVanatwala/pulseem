@@ -149,7 +149,10 @@ const SummaryModal = ({
 		} else if (spectialDateFieldID === '2') {
 			return translator('mainReport.creationDay');
 		} else {
-			return specialDatedropDown[Number(spectialDateFieldID) - 3];
+			return (
+				specialDatedropDown &&
+				Object.entries(specialDatedropDown)[Number(spectialDateFieldID) - 3]
+			);
 		}
 	};
 

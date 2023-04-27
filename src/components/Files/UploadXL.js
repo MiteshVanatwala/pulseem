@@ -356,7 +356,12 @@ const UploadXL = ({
                                     for (let i = 0; i < resultCsv.length; i++) {
                                         b.push(resultCsv[i]);
                                     }
-                                    b.pop();
+                                    /**
+                                     * commented because it is removing the last row if.
+                                     * if row has data then it should not be deleted.
+                                     * Ticket id WA - 106
+                                     */
+                                    // b.pop();
                                     settypedData(b);
 
                                     let ddc = [];

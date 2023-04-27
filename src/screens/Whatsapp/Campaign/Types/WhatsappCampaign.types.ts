@@ -122,7 +122,7 @@ export type RightPaneProps = {
 	handleSelectChange: (e: BaseSyntheticEvent) => void;
 	isSpecialDateBefore: boolean;
 	setIsSpecialDateBefore: (value: boolean) => void;
-	specialDatedropDown: string[];
+	specialDatedropDown: specialDateDropDownPayload | undefined;
 };
 
 export type LeftPaneProps = {
@@ -155,6 +155,8 @@ export type LeftPaneProps = {
 	exceptionalDays: string;
 	setExceptionalDaysToggle: (exceptionalDaysToggle: boolean) => void;
 	setExceptionalDays: (exceptionalDays: string) => void;
+	showTestGroups: boolean;
+	setShowTestGroups: (showTestGroups: boolean) => void;
 };
 export type WhatsappCampaignSecondProps = {
 	classes: ClassesType['classes'];
@@ -175,6 +177,7 @@ export type GroupsProps = {
 	callbackReciFilter: () => void;
 	callbackShowTestGroup: (showTestGroups: boolean) => void;
 	uniqueKey: string;
+	showTestGroups: boolean;
 };
 
 export type CampaignGroupsProps = {
@@ -228,7 +231,7 @@ export type SummaryModalProps = {
 	sendTime: MaterialUiPickersDate | null;
 	isSpecialDateBefore: boolean;
 	daysBeforeAfter: string;
-	specialDatedropDown: string[];
+	specialDatedropDown: specialDateDropDownPayload | undefined;
 	spectialDateFieldID: string;
 	campaignSummary: ApiGetCampaignSummaryPayloadData | undefined;
 };
@@ -628,6 +631,10 @@ export type campaignSettingsPayload = {
 
 export type campaignSettingsData = {
 	payload: campaignSettingsPayload;
+};
+
+export type GetTestGroups = {
+	payload: testGroupDataProps[];
 };
 
 export type whatsappCampaignNameFilterPayloadData = {

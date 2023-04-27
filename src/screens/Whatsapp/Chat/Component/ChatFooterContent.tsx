@@ -26,7 +26,7 @@ const ChatFooterContent = ({
 	whatsappChatSession,
 	onChatSend,
 	activeChatContacts,
-	filteredSideChatContacts,
+	ChatContacts,
 	isContactLoader,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
@@ -144,7 +144,7 @@ const ChatFooterContent = ({
 									/>
 								)}
 							</>
-						) : filteredSideChatContacts?.length === 0 && !isContactLoader ? (
+						) : ChatContacts?.length === 0 && !isContactLoader ? (
 							<div
 								className={classes.noContactDiv}
 								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>

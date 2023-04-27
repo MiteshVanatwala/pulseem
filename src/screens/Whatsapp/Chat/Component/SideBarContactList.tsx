@@ -18,7 +18,7 @@ import AccountUser from '../../../../assets/images/acc-user.jpg';
 
 const SideBarContactList = ({
 	classes,
-	filteredSideChatContacts,
+	ChatContacts,
 	handleChatId,
 	handleUserStatus,
 	getStatusClass,
@@ -49,18 +49,18 @@ const SideBarContactList = ({
 				id='contact-list-div'
 				className={`${classes.whatsappChat} sidebar__contacts`}>
 				<InfiniteScroll
-					dataLength={filteredSideChatContacts?.length}
+					dataLength={ChatContacts?.length}
 					next={fetchMoreContacts}
 					hasMore={contactsPaginationSetting?.hasMore}
 					loader={<LinearProgress />}
 					scrollableTarget='contact-list-div'>
-					{filteredSideChatContacts?.length === 0 && !isLoader ? (
+					{ChatContacts?.length === 0 && !isLoader ? (
 						<div className={classes.noContactDiv}>
 							<>{translator('whatsappChat.noContacts')}</>
 						</div>
 					) : (
 						<>
-							{filteredSideChatContacts.map(
+							{ChatContacts.map(
 								(
 									contact: APIWhatsappChatSidebarContactsItemsData,
 									i: number

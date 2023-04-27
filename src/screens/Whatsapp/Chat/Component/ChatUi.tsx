@@ -48,7 +48,7 @@ const ChatUi = ({
 	setDynamicVariable,
 	setSavedTemplate,
 	activeChatContacts,
-	filteredSideChatContacts,
+	ChatContacts,
 	isContactLoader,
 	updateContactList,
 }: WhatsappChatUiProps) => {
@@ -212,7 +212,7 @@ const ChatUi = ({
 					whatsappChatSession={whatsappChatSession}
 					onChatSend={onChatSend}
 					activeChatContacts={activeChatContacts}
-					filteredSideChatContacts={filteredSideChatContacts}
+					ChatContacts={ChatContacts}
 					isContactLoader={isContactLoader}
 				/>
 			</footer>

@@ -25,6 +25,7 @@ import {
 	ApiGetCampaignSummary,
 	ApiGetCampaignSummaryPayloadData,
 	phoneNumberAPIProps,
+	GetTestGroups,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
@@ -69,6 +70,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import AlertModal from '../Editor/Popups/AlertModal';
 import SendCampaignSuccess from './Popups/SendCampaignSuccess';
 import NoSetup from '../NoSetup/NoSetup';
+import { specialDateDropDownPayload } from './Types/WhatsappCampaign.types';
 
 const SendCampaign = ({
 	classes,
@@ -85,7 +87,7 @@ const SendCampaign = ({
 			state.whatsapp.ToastMessages
 	);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
-
+	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [selectedGroups, setSelectedGroups] = useState<testGroupDataProps[]>(
 		[]
 	);
@@ -127,7 +129,8 @@ const SendCampaign = ({
 		useState<boolean>(false);
 	const [exceptionalDays, setExceptionalDays] = useState<string>('');
 
-	const [specialDatedropDown, setSpecialDatedropDown] = useState<string[]>([]);
+	const [specialDatedropDown, setSpecialDatedropDown] =
+		useState<specialDateDropDownPayload>();
 	const [finishedCampaigns, setFinishedCampaigns] = useState<
 		selectedFilterCampaignsProps[]
 	>([]);
@@ -152,7 +155,7 @@ const SendCampaign = ({
 				 */
 				checkCampaignID();
 				if (!testGroupList || testGroupList?.length === 0) {
-					dispatch(getTestGroups());
+					await dispatch(getTestGroups());
 				}
 				/**
 				 * getApiGroupsData is for fetching all groups across the platform
@@ -199,18 +202,19 @@ const SendCampaign = ({
 	const getSpecialDateDropDown = async () => {
 		const { payload: specialDateDropDownData }: specialDateDropDownData =
 			await dispatch<any>(getAccountExtraData());
-		if (specialDateDropDownData) {
-			let finalDropDownData: string[] = [];
-			Object.keys(specialDateDropDownData)?.forEach((specialDayKey) => {
-				if (
-					specialDayKey?.toLowerCase()?.includes('extradate') &&
-					specialDateDropDownData[specialDayKey]?.length > 0
-				) {
-					finalDropDownData.push(specialDateDropDownData[specialDayKey]);
-				}
-			});
-			setSpecialDatedropDown(finalDropDownData);
-		}
+		setSpecialDatedropDown(specialDateDropDownData);
+		// if (specialDateDropDownData) {
+		// 	let finalDropDownData: string[] = [];
+		// 	Object.keys(specialDateDropDownData)?.forEach((specialDayKey) => {
+		// 		if (
+		// 			specialDayKey?.toLowerCase()?.includes('extradate') &&
+		// 			specialDateDropDownData[specialDayKey]?.length > 0
+		// 		) {
+		// 			finalDropDownData.push(specialDateDropDownData[specialDayKey]);
+		// 		}
+		// 	});
+		// 	setSpecialDatedropDown(finalDropDownData);
+		// }
 	};
 
 	const setSendSetting = (
@@ -254,11 +258,30 @@ const SendCampaign = ({
 				campaignSettings?.Data?.SpecialSettings
 			);
 			if (groupsData) {
-				setSelectedGroups(
-					groupsData?.filter((groupData) =>
-						apiGroups?.includes(Number(groupData?.GroupID))
-					)
+				let testGroups = testGroupList;
+				// Will select from normal group
+				let updateSelectedGroups = groupsData?.filter((groupData) =>
+					apiGroups?.includes(Number(groupData?.GroupID))
 				);
+				// will fetch test group if not available
+				if (!testGroupList || testGroupList?.length === 0) {
+					const { payload: updatedtestGroups }: GetTestGroups =
+						await dispatch<any>(getTestGroups());
+					if (updatedtestGroups?.length > 0) {
+						testGroups = updatedtestGroups;
+					}
+				}
+				// Will select from test group
+				let updateSelectedTestGroups = testGroups?.filter((groupData) => {
+					if (apiGroups?.includes(Number(groupData?.GroupID))) {
+						setShowTestGroups(true);
+					}
+					return apiGroups?.includes(Number(groupData?.GroupID));
+				});
+				setSelectedGroups([
+					...updateSelectedGroups,
+					...updateSelectedTestGroups,
+				]);
 				setFilterGroups(
 					groupsData?.filter((groupData) =>
 						apiFilterGroups?.includes(Number(groupData?.GroupID))
@@ -506,7 +529,7 @@ const SendCampaign = ({
 		} else {
 			setIsLoader(false);
 			setGroupSendValidationErrors([
-				translator('whatsappCampaign.selectGroup'),
+				translator('whatsappCampaign.groupNameRequired'),
 			]);
 			setIsValidationAlert(true);
 		}
@@ -623,14 +646,12 @@ const SendCampaign = ({
 				isValidated = true;
 			}
 			if (sendType === '2') {
-				if (sendDate && isValidated) {
-					isValidated = true;
-				} else {
+				if (!sendDate) {
 					validationErrors.push(translator('whatsappCampaign.timeAndDate'));
 					isValidated = false;
 				}
 			}
-			if (sendType === '3' && isValidated) {
+			if (sendType === '3') {
 				if (
 					!sendTime ||
 					daysBeforeAfter === '' ||
@@ -717,6 +738,8 @@ const SendCampaign = ({
 									exceptionalDays={exceptionalDays}
 									setExceptionalDaysToggle={setExceptionalDaysToggle}
 									setExceptionalDays={setExceptionalDays}
+									showTestGroups={showTestGroups}
+									setShowTestGroups={setShowTestGroups}
 								/>
 							</Grid>
 							<Grid item md={1} xs={12}></Grid>

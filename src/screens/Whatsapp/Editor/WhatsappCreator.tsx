@@ -588,7 +588,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const getRequestJSON = (isSave: boolean) => {
-		const generatedTemplatename = getFriendlyTemplateName();
+		const generatedTemplatename = getFriendlyTemplateName()?.toLowerCase();
 		const variables = getJSONVariables();
 		const requestJSON: JSONProps = {
 			text: {

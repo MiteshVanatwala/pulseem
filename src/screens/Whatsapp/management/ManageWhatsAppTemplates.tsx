@@ -964,7 +964,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						isOpen={isDeleteTemplateOpen}
 						onClose={() => setIsDeleteTemplateOpen(false)}
 						title={translator('whatsappManagement.deleteTemplate')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+						subtitle={translator('whatsapp.alertModal.DeleteTemplateTitle')}
 						type='delete'
 						onConfirmOrYes={() => onDeleteTemplate()}
 					/>

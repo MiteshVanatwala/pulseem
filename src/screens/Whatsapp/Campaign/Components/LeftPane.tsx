@@ -38,10 +38,11 @@ const LeftPane = ({
 	exceptionalDays,
 	setExceptionalDaysToggle,
 	setExceptionalDays,
+	showTestGroups,
+	setShowTestGroups
 }: ClassesType & LeftPaneProps) => {
 	const { t: translator } = useTranslation();
 	const [isAlert, setIsAlert] = useState(false);
-	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 	const [allGroupsSelected, setAllGroupsSelected] = useState<boolean>(false);
 	const [isFilterModal, setIsFilterModal] = useState<boolean>(false);
 
