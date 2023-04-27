@@ -36,6 +36,7 @@
 	"typeText": "הוסף טקסט כאן - עד 1024 תווים",
 	"yourMessage": "ההודעה שלך",
 	"noTemplateAaliable": "אין תבנית זמינה",
+	"templateAlreadyExist": "שם תבנית כבר קיים",
 
 	"callToActionButton": "קריאה לפעולה",
 	"callToActionSaveButton": "שמור",

@@ -36,6 +36,7 @@
 	"typeText": "Insert text here - upto 1024 characters",
 	"yourMessage": "Your Message",
 	"noTemplateAaliable": "No Template avaliable",
+	"templateAlreadyExist": "Template name already exists",
 
 	"callToActionButton": "Call To Action",
 	"callToActionSaveButton": "Save",

@@ -886,6 +886,12 @@ export const whatsappSlice = createSlice({
 				message: 'sms.groupSaved',
 				showAnimtionCheck: true,
 			},
+			TEMPLATE_ALREADY_EXIST: {
+				severity: 'success',
+				color: 'success',
+				message: 'whatsapp.templateNamePlaceholder',
+				showAnimtionCheck: true,
+			},
 		},
 		directWhatsappReport: null,
 		inboundWhatsappReport: null,
