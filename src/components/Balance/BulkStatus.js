@@ -183,7 +183,7 @@ const BulkStatus = ({ classes }) => {
           <Grid 
             container 
             justifyContent='center'
-            style={{ height: '238px', overflow: 'auto' }}
+            style={{ maxHeight: '238px', overflow: 'auto' }}
           >
             {<Grid
               container

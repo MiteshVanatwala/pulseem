@@ -57,6 +57,7 @@ import {
 	getLastDynamicFieldValue,
 } from '../Common';
 import {
+	APIStatuses,
 	apiStatus,
 	buttonTextLimits,
 	buttonTypes,
@@ -68,6 +69,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import NoSetup from '../NoSetup/NoSetup';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
+import moment from 'moment';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -558,13 +560,6 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		});
 	};
 
-	const getFriendlyTemplateName = () => {
-		return templateName
-			?.replace(/ /g, '_')
-			?.replace(/([^a-z^0-9_\u0591-\u05F4^\s])/gi, '');
-		// return `whatsapptemplate_${uniqid()}`;
-	};
-
 	const getJSONVariables = () => {
 		const dynamicFields = getDynamicFields(templateData.templateText);
 		if (dynamicFields?.length > 0) {
@@ -587,8 +582,18 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		return '';
 	};
 
-	const getRequestJSON = (isSave: boolean) => {
-		const generatedTemplatename = getFriendlyTemplateName()?.toLowerCase();
+	const getRequestJSON = async (isSave: boolean) => {
+		let generatedTemplatename = `whatsapp_template_${moment().format('DD_MM_YYYY')}_${moment().valueOf()}`;
+		if (templateID) {
+			const { payload: templateDataById }: getTemplateByIdAPIProps =
+				await dispatch<any>(getSavedTemplatesById(templateID));
+			if (templateDataById?.Status === APIStatuses.SUCCESS) {
+				generatedTemplatename = templateDataById?.Data?.TemplateName;
+			} else {
+				setToastMessage(ToastMessages.ERROR);
+				return;
+			}
+		}
 		const variables = getJSONVariables();
 		const requestJSON: JSONProps = {
 			text: {
@@ -890,7 +895,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const saveTemplate = async () => {
 		if (validateSaveTemplate()) {
-			let requestJSON = getRequestJSON(true);
+			let requestJSON = await getRequestJSON(true);
 			if (requestJSON) {
 				if (templateID) {
 					requestJSON.id = Number(templateID);
@@ -911,10 +916,21 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					}
 				} else if (submitTemplate?.payload?.Status === 'Error') {
 					if (submitTemplate?.payload?.Message?.length > 0) {
-						setToastMessage({
-							...ToastMessages.ERROR,
-							message: submitTemplate?.payload?.Message,
-						});
+						if (
+							submitTemplate?.payload?.Message?.includes(
+								'Template with this name is already exists'
+							)
+						) {
+							setToastMessage({
+								...ToastMessages.ERROR,
+								message: submitTemplate?.payload?.Message,
+							});
+						} else {
+							setToastMessage({
+								...ToastMessages.ERROR,
+								message: submitTemplate?.payload?.Message,
+							});
+						}
 					} else {
 						setToastMessage(ToastMessages.ERROR);
 					}
@@ -962,7 +978,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onSubmitCampaign = async () => {
-		let requestJSON = getRequestJSON(false);
+		let requestJSON = await getRequestJSON(false);
 		if (requestJSON) {
 			setIsSubmitCampaignOpen(false);
 			if (templateID) {
