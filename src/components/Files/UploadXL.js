@@ -357,7 +357,7 @@ const UploadXL = ({
                                         b.push(resultCsv[i]);
                                     }
                                     /**
-                                     * commented because it is removing the last row if data.
+                                     * commented because it is removing the last row if.
                                      * if row has data then it should not be deleted.
                                      * Ticket id WA - 106
                                      */

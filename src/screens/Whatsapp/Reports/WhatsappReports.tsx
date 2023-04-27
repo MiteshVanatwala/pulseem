@@ -307,7 +307,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 	};
 
 	const onExport = async () => {
-		const header: {} = {
+		let header: { [key: number]: string } = {
 			1: 'Campaign Number',
 			2: 'Campaign Name',
 			3: 'From Number',
@@ -320,8 +320,9 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			10: 'Removed',
 			11: 'Failure',
 			12: 'Status',
-			13: 'Created Date',
-			14: 'Update Date',
+			13: 'Revenue',
+			14: 'Created Date',
+			15: 'Update Date',
 		};
 
 		setIsLoader(true);
@@ -333,7 +334,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		);
 		setIsLoader(false);
 		if (campaignData.Status === apiStatus.SUCCESS) {
-			const exportData: exportDataProps[] = campaignData?.Data?.Items?.map(
+			let exportData: exportDataProps[] = campaignData?.Data?.Items?.map(
 				(row: reportDataProps) => {
 					let updatedRow: exportDataProps = {
 						WACampaignID: row.WACampaignID,
@@ -348,6 +349,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						Removed: row?.Removed,
 						Failed: row?.Failed,
 						Status: campaignStatus[row.Status],
+						Revenue: row?.Revenue,
 						CreateDate: row?.CreateDate
 							? moment(row?.CreateDate).format('DD/MM/YYYY')
 							: '',
@@ -358,6 +360,13 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					return updatedRow;
 				}
 			);
+			if (!hasRevenue) {
+				delete header[13];
+				exportData = exportData?.map((data) => {
+					delete data?.Revenue;
+					return data;
+				});
+			}
 			exportAsXLSX(
 				exportData,
 				header,
