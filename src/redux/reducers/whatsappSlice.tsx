@@ -484,7 +484,7 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 			pageNo,
 			pageSize,
 			Searchtext,
-			ChatStatus
+			ChatStatus,
 		}: APIGetWhatsappChatContactsReq,
 		thunkAPI
 	) => {
@@ -497,7 +497,7 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 					pageNo,
 					pageSize,
 					Searchtext,
-					ChatStatus
+					ChatStatus,
 				}
 			);
 
@@ -878,6 +878,12 @@ export const whatsappSlice = createSlice({
 				severity: 'success',
 				color: 'success',
 				message: 'whatsappCampaign.restoreCampaign',
+				showAnimtionCheck: true,
+			},
+			GROUP_CREATED_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'sms.groupSaved',
 				showAnimtionCheck: true,
 			},
 		},

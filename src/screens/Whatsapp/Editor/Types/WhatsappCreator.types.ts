@@ -279,6 +279,7 @@ export type toastProps = {
 	GROUP_ALREADY_EXIST: toastKeyProps;
 	CAMPAIGN_SEND_SUCCESS: toastKeyProps;
 	RESTORE_CAMPAIGN_SUCCESS: toastKeyProps;
+	GROUP_CREATED_SUCCESS: toastKeyProps;
 };
 
 export type toastKeyProps = {

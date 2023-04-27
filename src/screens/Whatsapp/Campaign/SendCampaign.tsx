@@ -514,18 +514,22 @@ const SendCampaign = ({
 				),
 			};
 			setIsLoader(true);
-			const createdGroupData: createCombinedGroupData = await dispatch<any>(
-				createCombinedGroup(combinedGroupPayload)
-			);
-			await getApiGroupsData();
-			setIsLoader(false);
+			const { payload: createdGroupData }: createCombinedGroupData =
+				await dispatch<any>(createCombinedGroup(combinedGroupPayload));
+			if (createdGroupData) {
+				await getApiGroupsData();
 
-			if (createdGroupData?.payload?.GroupID) {
-				setSelectedGroups([createdGroupData?.payload]);
-				setNewGroupName('');
-				setIsCreateNewGroup(false);
+				if (createdGroupData?.GroupID) {
+					setSelectedGroups([createdGroupData]);
+					setNewGroupName('');
+					setIsCreateNewGroup(false);
+				}
+				await onCampaignSave(false, false, false, [createdGroupData]);
+				setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
+			} else {
+				setToastMessage(ToastMessages.ERROR);
 			}
-			await onCampaignSave(false, false, false, [createdGroupData?.payload]);
+			setIsLoader(false);
 		} else {
 			setIsLoader(false);
 			setGroupSendValidationErrors([
