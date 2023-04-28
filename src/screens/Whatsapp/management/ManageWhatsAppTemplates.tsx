@@ -48,7 +48,6 @@ import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
 import {
 	BaseSyntheticEvent,
-	KeyboardEventHandler,
 	useEffect,
 	useState,
 } from 'react';
@@ -62,7 +61,6 @@ import {
 	deleteTemplate,
 	duplicateTemplate,
 	getAllTemplates,
-	getSavedTemplatesPreviewById,
 	submitTemplateDirect,
 	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
@@ -467,12 +465,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setFileData(updatedFileData);
 		setButtonType(updatedButtonType);
 		setTemplateData(updatedTemplateData);
-	};
-
-	const getTemplateIdFromId = (id: string) => {
-		return templateListData?.find(
-			(template: templateListItemsProps) => id === template.Id?.toString()
-		)?.TemplateId;
 	};
 
 	const onPreview = async (id: string) => {

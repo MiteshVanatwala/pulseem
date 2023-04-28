@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Link, Tooltip } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import {
-	ApiGetCampaignSummary,
-	ApiGetCampaignSummaryPayloadData,
 	CampaignDetailByIdData,
 	CampaignDetailById,
 	SummaryModalProps,
@@ -16,7 +14,6 @@ import { Loader } from '../../../../components/Loader/Loader';
 import {
 	getCampaignDetailById,
 	getSavedTemplatesPreviewById,
-	getWhatsAppCampaignSummary,
 } from '../../../../redux/reducers/whatsappSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {
