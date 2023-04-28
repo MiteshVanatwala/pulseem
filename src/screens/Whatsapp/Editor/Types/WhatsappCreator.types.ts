@@ -286,6 +286,8 @@ export type toastProps = {
 	RESTORE_CAMPAIGN_SUCCESS: toastKeyProps;
 	GROUP_CREATED_SUCCESS: toastKeyProps;
 	TEMPLATE_ALREADY_EXIST: toastKeyProps;
+	INVALID_NUMBER: toastKeyProps;
+	QUICK_SEND_ERROR: toastKeyProps;
 };
 
 export type toastKeyProps = {

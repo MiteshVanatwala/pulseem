@@ -77,7 +77,6 @@ import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
-	checkLanguage,
 	checkSiteTrackingLink,
 	formatUpdatedDynamicVariable,
 	getDynamicFields,
@@ -298,15 +297,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	}, [buttonType]);
 
 	useEffect(() => {
-		console.log('checkLanguage::', checkLanguage(templateData.templateText));
-	});
-
-	useEffect(() => {
 		let textCount = templateData?.templateText?.length;
 		updatedDynamicVariable?.forEach((dynamicVariable) => {
 			switch (dynamicVariable.FieldTypeId) {
 				// Personal field , Text, Landing Page, Navigation
-				case 1:
+				// case 1:
 				case 2:
 				case 4:
 				case 5:
@@ -314,7 +309,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					break;
 				// Link
 				case 3:
-					textCount += dynamicVariable?.VariableValue?.length;
+					if (
+						dynamicVariable?.IsStatastic &&
+						checkSiteTrackingLink(
+							SubAccountSettings,
+							dynamicVariable?.VariableValue
+						)
+					) {
+						textCount += 35;
+					} else if (
+						dynamicVariable?.IsStatastic &&
+						dynamicVariable?.VariableValue === '##WHATSAPPUnsubscribelink##'
+					) {
+						textCount += 36;
+					} else {
+						textCount += dynamicVariable?.VariableValue?.length;
+					}
 					break;
 				default:
 					break;
@@ -373,6 +383,14 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setUpdatedDynamicVariableWithLinks(
 						campaignData?.Data?.VariableValues
 					);
+					// chech siteLink
+					if (campaignData?.Data?.VariableValues?.length > 0) {
+						campaignData?.Data?.VariableValues?.forEach((variable) => {
+							if (variable?.IsStatastic === true) {
+								setIsTrackLink(true);
+							}
+						});
+					}
 					setlinkCount(
 						campaignData?.Data?.VariableValues?.filter(
 							(variable) => variable?.FieldTypeId === fieldNameIds?.LINK
@@ -625,6 +643,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onTestSend = async (isSingle: boolean = false, campaignID: number) => {
+		setIsLoader(true);
 		setIsSummaryModal(false);
 		setIsTestGroupModal(false);
 		let payload: TestSendReq = {
@@ -637,7 +656,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 		if (campaignID) {
 			if (validateSaveCampaign(true)) {
-				setIsLoader(true);
 				const { payload: quickSendData }: ApiQuickSend = await dispatch<any>(
 					quickSend(payload)
 				);
@@ -646,18 +664,20 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
 				} else {
-					quickSendData?.Message
-						? setToastMessage({
-								...ToastMessages.ERROR,
-								message: quickSendData?.Message,
-						  })
-						: setToastMessage(ToastMessages.ERROR);
+					if (quickSendData?.Message === 'Invalid phonenumber') {
+						setToastMessage(ToastMessages.INVALID_NUMBER);
+					} else {
+						setToastMessage(ToastMessages.QUICK_SEND_ERROR);
+					}
 				}
 				setIsTestGroupModal(false);
 			} else {
+				setIsLoader(false);
 				setIsTestGroupModal(false);
 				setIsValidationAlert(true);
 			}
+		} else {
+			setIsLoader(false);
 		}
 	};
 

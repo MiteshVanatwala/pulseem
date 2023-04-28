@@ -613,11 +613,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDeleteTemplate = async () => {
+		setIsDeleteTemplateOpen(false);
+		setIsLoader(true);
 		const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 			deleteTemplate(activeRowId)
 		);
+		setIsLoader(false);
 		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-			setIsDeleteTemplateOpen(false);
 			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {
@@ -631,15 +633,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicaTemplate = async () => {
+		setIsDuplicateTemplateOpen(false);
+		setIsLoader(true);
 		const duplicateData: deleteTemplateAPIProps = await dispatch<any>(
 			duplicateTemplate(activeRowId)
 		);
+		setIsLoader(false);
 		if (duplicateData?.payload?.Status === apiStatus.SUCCESS) {
-			setIsDuplicateTemplateOpen(false);
 			setToastMessage(ToastMessages.DELETE_TEMPLATE_SUCCESS);
 			setApiTemplateData();
 		} else {
-			setIsDuplicateTemplateOpen(false);
 			duplicateData?.payload?.Error
 				? setToastMessage({
 						...ToastMessages.ERROR,

@@ -488,11 +488,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const onPreview = async (campaignId: string) => {
 		const previewTemplateId = getTemplateIdFromId(campaignId);
 		if (previewTemplateId) {
+			setIsLoader(true);
 			const templateData: templateListAPIProps = await dispatch<any>(
 				getSavedTemplatesPreviewById({
 					templateId: previewTemplateId,
 				})
 			);
+			setIsLoader(false);
 			if (templateData.payload.Status === apiStatus.SUCCESS) {
 				const templates = templateData.payload?.Data?.Items;
 				if (templates && templates?.length > 0) {
@@ -657,10 +659,12 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicateCampaign = async () => {
+		setIsDuplicateCampaignOpen(false);
+		setIsLoader(true);
 		const deleteData: commonAPIResponseProps = await dispatch<any>(
 			duplicateCampaign(activeRowId)
 		);
-		setIsDuplicateCampaignOpen(false);
+		setIsLoader(false);
 		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages.DUPLICATE_CAMPAIGN_SUCCESS);
 			setApiCampaignData();
@@ -675,10 +679,12 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onDeleteCampaign = async () => {
+		setIsDeleteCampaignOpen(false);
+		setIsLoader(true);
 		const deleteData: commonAPIResponseProps = await dispatch<any>(
 			deleteCampaign(activeRowId)
 		);
-		setIsDeleteCampaignOpen(false);
+		setIsLoader(false);
 		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 			setApiCampaignData();
