@@ -32,12 +32,14 @@ const TemplateFields = ({
 	onCategoryChange,
 	category,
 	showValidation,
+	buttonType,
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { t: translator } = useTranslation();
-	const [isAlert, setIsAlert] = useState(false);
+	const [isFileSizeAlert, setIsFileSizeAlert] = useState<boolean>(false);
+	const [isFileUploadAlert, setIsFileUploadAlert] = useState<boolean>(false);
 
 	const units = ['bytes', 'KB', 'MB'];
 
@@ -58,7 +60,7 @@ const TemplateFields = ({
 				setFileData(e.target.files[0]);
 				setFileSize(niceBytes(e.target.files[0].size));
 			} else {
-				setIsAlert(true);
+				setIsFileSizeAlert(true);
 			}
 		}
 	};
@@ -68,17 +70,22 @@ const TemplateFields = ({
 		setFileData(undefined);
 	};
 
-	const onTemplateChange = (e: BaseSyntheticEvent) => {
-		if (e.target.textContent !== '') {
-			const templateId = getTemplateIdByName(
-				savedTemplateList,
-				e.target.textContent
-			);
+	const onTemplateChange = (value: string | null) => {
+		if (value && value !== '') {
+			const templateId = getTemplateIdByName(savedTemplateList, value);
 			if (templateId) {
 				onSavedTemplateChange(templateId);
 			}
 		} else {
 			onSavedTemplateChange('');
+		}
+	};
+
+	const checkFileUploadAvailability = (e: BaseSyntheticEvent) => {
+		if (buttonType === 'quickReply') {
+			e.preventDefault();
+			e.stopPropagation();
+			setIsFileUploadAlert(true);
 		}
 	};
 
@@ -125,7 +132,7 @@ const TemplateFields = ({
 								getTemplateName(template)
 							)}
 							renderInput={(params) => <TextField {...params} />}
-							onChange={onTemplateChange}
+							onChange={(_event, value) => onTemplateChange(value)}
 							value={getTemplateNameById(savedTemplateList, savedTemplate)}
 						/>
 					</Grid>
@@ -175,6 +182,7 @@ const TemplateFields = ({
 								type='file'
 								className={classes.formFieldInput}
 								accept='image/png, image/jpeg, application/pdf, video/mp4'
+								onClick={(e) => checkFileUploadAvailability(e)}
 								onChange={(e) => onFileUploadChange(e)}
 							/>
 							{fileData?.fileLink?.length > 0 ? (
@@ -221,12 +229,22 @@ const TemplateFields = ({
 
 			<AlertModal
 				classes={classes}
-				isOpen={isAlert}
-				onClose={() => setIsAlert(false)}
+				isOpen={isFileSizeAlert}
+				onClose={() => setIsFileSizeAlert(false)}
 				title={translator('whatsapp.alertModal.alert')}
 				subtitle={translator('whatsapp.alertModal.fileSizeAlert')}
 				type='alert'
-				onConfirmOrYes={() => setIsAlert(false)}
+				onConfirmOrYes={() => setIsFileSizeAlert(false)}
+			/>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isFileUploadAlert}
+				onClose={() => setIsFileUploadAlert(false)}
+				title={translator('whatsapp.alertModal.alert')}
+				subtitle={translator('whatsapp.alertModal.fileUploadAlert')}
+				type='alert'
+				onConfirmOrYes={() => setIsFileUploadAlert(false)}
 			/>
 		</Grid>
 	);

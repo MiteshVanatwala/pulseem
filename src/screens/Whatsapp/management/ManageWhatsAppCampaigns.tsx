@@ -739,7 +739,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		);
 		const { payload: allCampaignData }: campaignListAPIProps =
 			await dispatch<any>(
-				getAllCampaigns({ ...pagination, isPagination: false })
+				getAllCampaigns({
+					...pagination,
+					isPagination: false,
+					campaignName: '',
+					fromDate: null,
+					toDate: null,
+				})
 			);
 		setIsLoader(false);
 		if (campaignData.Status === apiStatus.SUCCESS) {

@@ -98,6 +98,7 @@
 		"ConfirmText": "Submit Campaign",
 		"ConfirmTitle": "Are you sure you want to submit your template?",
 		"fileSizeAlert": "File is larger than 16MB",
+		"fileUploadAlert": "You can not attach media to 'Quick Reply' buttons",
 		"alert": "Alert",
 		"templateTextRequired": "Template text is required",
 		"templateNameRequired": "Template name is required",

@@ -587,6 +587,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		let generatedTemplatename = `whatsapp_template_${moment().format(
 			'DD_MM_YYYY'
 		)}_${moment().valueOf()}`;
+		const templateLanguage =
+			checkLanguage(templateData.templateText) === 'English' ? 'en' : 'he';
 		if (templateID) {
 			const { payload: templateDataById }: getTemplateByIdAPIProps =
 				await dispatch<any>(getSavedTemplatesById(templateID));
@@ -603,7 +605,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				friendlyTemplateName: templateName,
 				templateName: generatedTemplatename,
 				variables: variables,
-				language: isRTL ? 'he' : 'en',
+				language: templateLanguage,
 				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
@@ -616,7 +618,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				friendlyTemplateName: templateName,
 				templateName: generatedTemplatename,
 				variables: variables,
-				language: isRTL ? 'he' : 'en',
+				language: templateLanguage,
 				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
@@ -631,7 +633,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				friendlyTemplateName: templateName,
 				templateName: generatedTemplatename,
 				variables: variables,
-				language: isRTL ? 'he' : 'en',
+				language: templateLanguage,
 				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
@@ -645,7 +647,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				friendlyTemplateName: templateName,
 				templateName: generatedTemplatename,
 				variables: variables,
-				language: isRTL ? 'he' : 'en',
+				language: templateLanguage,
 				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
@@ -659,7 +661,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				friendlyTemplateName: templateName,
 				templateName: generatedTemplatename,
 				variables: variables,
-				language: isRTL ? 'he' : 'en',
+				language: templateLanguage,
 				TemplateCategory: category?.toUpperCase(),
 				isSaveOnly: isSave ? true : false,
 				types: {
@@ -1054,6 +1056,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								category={category}
 								onCategoryChange={setCategory}
 								showValidation={showValidation}
+								buttonType={buttonType}
 							/>
 							<Grid
 								container
@@ -1079,6 +1082,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										dynamicFieldCount={dynamicFieldCount}
 										linkCount={linkCount}
 										templateTextLimit={templateTextLimit}
+										fileData={fileData}
 									/>
 								</Grid>
 

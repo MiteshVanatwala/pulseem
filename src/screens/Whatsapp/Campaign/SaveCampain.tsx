@@ -1100,7 +1100,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 															disabled={testSendSelection !== 'onecontact'}
 															onChange={(e: BaseSyntheticEvent) =>
 																setTestSendOneContact(
-																	e.target.value?.replace(/\D/g, '')
+																	e.target.value
+																		?.replace(/\D/g, '')
+																		?.substr(0, 18)
 																)
 															}
 															value={testSendOneContact}

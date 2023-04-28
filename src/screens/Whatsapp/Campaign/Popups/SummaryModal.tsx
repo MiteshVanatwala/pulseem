@@ -405,7 +405,7 @@ const SummaryModal = ({
 														)}>
 														<span>{translator('sms.invalidRecipients')}: </span>{' '}
 														<span className={classes.recipientsStatisticsData}>
-															{campaignSummary?.EmptyCellphoneCount}
+															{campaignSummary?.Invalid}
 														</span>
 													</Box>
 												)}

@@ -382,7 +382,11 @@ export const checkLanguage = (text: string) => {
 	} else {
 		return 'Both';
 	}
-	return isEnglish && isHebrew ? 'Both' : isEnglish ? 'English' : 'Hebrew';
+	if ((isEnglish && isHebrew) || (!isEnglish && !isHebrew)) {
+		return 'Both';
+	} else {
+		return isEnglish ? 'English' : 'Hebrew';
+	}
 };
 
 export const getTextDirection = (text: string, isRTL: boolean) => {

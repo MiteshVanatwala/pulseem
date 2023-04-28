@@ -31,6 +31,7 @@ const WhatsappTemplateEditor = ({
 	dynamicFieldCount,
 	linkCount,
 	templateTextLimit,
+	fileData,
 }: WhatsappCreatorProps & ClassesType) => {
 	const { t: translator } = useTranslation();
 	const useStyles = makeStyles(() => ({
@@ -46,7 +47,6 @@ const WhatsappTemplateEditor = ({
 	}));
 	const styles = useStyles();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
-	const [alignment, setAlignment] = useState<string>('right');
 	const [textAreaHeight, setTextAreaHeight] = useState<string>('auto');
 	const [textDirection, setTextDirection] = useState<string>('ltr');
 
@@ -67,10 +67,6 @@ const WhatsappTemplateEditor = ({
 			}
 		}
 	}, [templateText, buttons]);
-
-	useEffect(() => {
-		setAlignment(isRTL ? 'right' : 'left');
-	}, [isRTL]);
 
 	useEffect(() => {
 		const direction = checkLanguage(templateText);
@@ -123,7 +119,7 @@ const WhatsappTemplateEditor = ({
 			return true;
 		} else if (
 			buttonTitle?.includes('quickReplay') &&
-			buttonType === 'callToAction'
+			(buttonType === 'callToAction' || fileData?.fileLink?.length > 0)
 		) {
 			return true;
 		} else if (
@@ -146,7 +142,14 @@ const WhatsappTemplateEditor = ({
 					id='whatsapp-template-text'
 					className={clsx(classes.msgArea, classes.sidebar)}
 					style={{
-						direction: textDirection === 'rtl' ? 'rtl' : 'ltr',
+						direction:
+							templateText?.length > 0
+								? textDirection === 'rtl'
+									? 'rtl'
+									: 'ltr'
+								: isRTL
+								? 'rtl'
+								: 'ltr',
 						height: textAreaHeight,
 					}}
 					onChange={onEditorChange}
@@ -206,57 +209,6 @@ const WhatsappTemplateEditor = ({
 			</Box>
 
 			<Box className={classes.whatsappFuncDiv}>
-				<Box
-					className={clsx(
-						isRTL ? classes.emojiHe : classes.emoji,
-						classes.whatsappEmoji
-					)}>
-					<>
-						<Tooltip
-							disableFocusListener
-							title={<>{translator('mainReport.alignToLeft')}</>}
-							classes={{ tooltip: styles.customWidth }}
-							placement='top-start'
-							arrow>
-							{isRTL ? (
-								<FormatAlignRightIcon
-									style={{ marginInlineEnd: '4px' }}
-									onClick={() => {
-										setAlignment('right');
-									}}
-								/>
-							) : (
-								<FormatAlignLeftIcon
-									onClick={() => {
-										setAlignment('left');
-									}}
-								/>
-							)}
-						</Tooltip>
-						<Tooltip
-							disableFocusListener
-							title={<>{translator('mainReport.aligntoRight')}</>}
-							classes={{ tooltip: styles.customWidth }}
-							placement='top-start'
-							arrow>
-							{isRTL ? (
-								<FormatAlignLeftIcon
-									onClick={() => {
-										setAlignment('left');
-									}}
-								/>
-							) : (
-								<FormatAlignRightIcon
-									style={{ marginInlineEnd: '4px' }}
-									onClick={() => {
-										setAlignment('right');
-									}}
-								/>
-							)}
-						</Tooltip>
-					</>
-				</Box>
-
 				<Box className={classes.whatsappBaseButtons}>
 					{actionButtons.map((button) => (
 						<Tooltip

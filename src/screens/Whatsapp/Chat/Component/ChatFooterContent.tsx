@@ -7,11 +7,17 @@ import { ChatFooterContentProps } from '../Types/WhatsappChat.type';
 import { useTranslation } from 'react-i18next';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
+	coreProps,
 	tagDataProps,
 	updatedVariable,
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import clsx from 'clsx';
-import { getVariableValue } from '../../Common';
+import {
+	checkLanguage,
+	getTextDirection,
+	getVariableValue,
+} from '../../Common';
+import { useSelector } from 'react-redux';
 
 const ChatFooterContent = ({
 	classes,
@@ -30,13 +36,21 @@ const ChatFooterContent = ({
 	isContactLoader,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
+	const [textDirection, setTextDirection] = useState<string>('ltr');
 	const freeFormInputHeight = '17px';
 	useEffect(() => {
 		const textElement = document.getElementById('free-from-input');
 		if (textElement) {
 			textElement.style.height = '5px';
 			textElement.style.height = textElement.scrollHeight + 'px';
+		}
+	}, [newMessage]);
+	useEffect(() => {
+		const direction = checkLanguage(newMessage);
+		if (direction !== 'Both') {
+			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
 		}
 	}, [newMessage]);
 	const isUpdatedVaraiable = (variable: string) => {
@@ -119,7 +133,11 @@ const ChatFooterContent = ({
 									/>
 								</button>
 								{savedTemplate?.length !== 0 ? (
-									<Box className={`${classes.whatsappChat} chat__input m`}>
+									<Box
+										className={`${classes.whatsappChat} chat__input m`}
+										style={{
+											direction: getTextDirection(newMessage, isRTL),
+										}}>
 										<Highlighter
 											searchWords={dynamicVariable}
 											autoEscape={true}
@@ -134,6 +152,14 @@ const ChatFooterContent = ({
 										className={`${classes.whatsappChat} chat__input s`}
 										id={'free-from-input'}
 										style={{
+											direction:
+												newMessage?.length > 0
+													? textDirection === 'rtl'
+														? 'rtl'
+														: 'ltr'
+													: isRTL
+													? 'rtl'
+													: 'ltr',
 											minHeight: freeFormInputHeight,
 											resize: 'none',
 											overflowY: 'auto',
@@ -185,7 +211,7 @@ const ChatFooterContent = ({
 												'green'
 											)}
 											size='small'
-											style={{padding: '6px 22px'}}
+											style={{ padding: '6px 22px' }}
 											onClick={() => setIsTemplateModal(true)}>
 											<>{translator('whatsappChat.send')}</>
 										</Button>

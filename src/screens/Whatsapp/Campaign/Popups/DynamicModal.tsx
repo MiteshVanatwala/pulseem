@@ -58,9 +58,7 @@ const DynamicModal = ({
 	}, [dynamicVariable]);
 
 	useEffect(() => {
-		if (savedTemplate?.length === 0) {
-			setUpdatedDynamicVariable([]);
-		}
+		setUpdatedDynamicVariable([]);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [savedTemplate]);
 
