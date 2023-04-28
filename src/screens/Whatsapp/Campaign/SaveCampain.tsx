@@ -297,6 +297,30 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	}, [buttonType]);
 
 	useEffect(() => {
+		// getDynamicModalValues();\
+		const updatedPersonalField = {
+			FirstName: translator('smsReport.firstName'),
+			LastName: translator('smsReport.lastName'),
+			Email: translator('common.Mail'),
+			Telephone: translator('common.telephone'),
+			Cellphone: translator('common.Cellphone'),
+			Address: translator('common.address'),
+			BirthDate: translator('common.birthDate'),
+			City: translator('common.city'),
+			State: translator('common.state'),
+			Country: translator('common.country'),
+			Zip: translator('common.zip'),
+			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
+			ReminderDate: translator('recipient.reminderDate'),
+		};
+		setpersonalFields({ ...personalFields, ...updatedPersonalField });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isRTL]);
+
+	useEffect(() => {
 		let textCount = templateData?.templateText?.length;
 		updatedDynamicVariable?.forEach((dynamicVariable) => {
 			switch (dynamicVariable.FieldTypeId) {
@@ -380,10 +404,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					onSavedTemplateChange(campaignData?.Data?.TemplateID, templateList);
 					setCampaignName(campaignData?.Data?.Name);
 					setFrom(campaignData?.Data?.FromNumber);
-					setUpdatedDynamicVariableWithLinks(
-						campaignData?.Data?.VariableValues
-					);
-					// chech siteLink
+					// chech siteLink and update dynamicvariable
+					const processedDynamicVariable =
+						campaignData?.Data?.VariableValues?.map((variable) => {
+							if (variable.FieldTypeId === 1) {
+								return {
+									...variable,
+									VariableValue: variable.VariableValue?.replaceAll('#', ''),
+								};
+							}
+							return variable;
+						});
+
+					setUpdatedDynamicVariableWithLinks(processedDynamicVariable);
 					if (campaignData?.Data?.VariableValues?.length > 0) {
 						campaignData?.Data?.VariableValues?.forEach((variable) => {
 							if (variable?.IsStatastic === true) {
@@ -480,10 +513,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 
 	const getUpdatedVariableValue = (variable: string) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
-		const variableValue = updatedDynamicVariable?.find(
+		const matchedVariable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
-		)?.VariableValue;
+		);
+
+		const variableValue =
+			matchedVariable?.FieldTypeId === 1
+				? personalFields[matchedVariable?.VariableValue]
+				: matchedVariable?.VariableValue;
 
 		return variableValue ? variableValue : variable;
 	};
@@ -766,11 +804,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		const reqData: saveCampaignDataProps = {
 			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
-			Variables: formatUpdatedDynamicVariable(
-				updatedDynamicVariable,
-				personalFields,
-				landingPages
-			),
+			Variables: formatUpdatedDynamicVariable(updatedDynamicVariable),
 			name: campaignName,
 			fromnumber: from,
 			IsTestCampaign: isTestSend,

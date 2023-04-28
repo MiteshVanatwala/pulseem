@@ -152,6 +152,13 @@ const TemplateFields = ({
 							onChange={(e: BaseSyntheticEvent) =>
 								onCategoryChange(e.target.value)
 							}
+							MenuProps={{
+								PaperProps: {
+									style: {
+										direction: isRTL ? 'rtl' : 'ltr',
+									},
+								},
+							}}
 							placeholder={translator('report.ProductsReport.category')}
 							value={category}>
 							<MenuItem key={'marketing'} value={'marketing'}>

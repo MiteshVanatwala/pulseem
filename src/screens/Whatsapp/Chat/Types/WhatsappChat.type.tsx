@@ -1,6 +1,9 @@
 import { BaseSyntheticEvent } from 'react';
 import { ClassesType } from '../../../Classes.types';
-import { updatedVariable } from '../../Campaign/Types/WhatsappCampaign.types';
+import {
+	personalFieldDataProps,
+	updatedVariable,
+} from '../../Campaign/Types/WhatsappCampaign.types';
 import {
 	savedTemplateListProps,
 	savedTemplateTypesProps,
@@ -50,6 +53,7 @@ export type WhatsappChatUiProps = {
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
 	isContactLoader: boolean;
 	updateContactList: () => void;
+	personalFields: personalFieldDataProps;
 };
 
 export type SideBarContactListProps = {
@@ -95,6 +99,7 @@ export type ChatFooterContentProps = {
 	activeChatContacts: APIWhatsappChatSidebarContactsItemsData;
 	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	isContactLoader: boolean;
+	personalFields: personalFieldDataProps;
 };
 
 export type ChatTemplateProps = {

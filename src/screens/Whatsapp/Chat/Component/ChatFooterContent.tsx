@@ -34,6 +34,7 @@ const ChatFooterContent = ({
 	activeChatContacts,
 	ChatContacts,
 	isContactLoader,
+	personalFields
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -68,10 +69,14 @@ const ChatFooterContent = ({
 	};
 	const getUpdatedVariableValue = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
-		const variableValue = updatedDynamicVariable?.find(
+		const matchedVariable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
-		)?.VariableValue;
+		);
+		const variableValue =
+			matchedVariable?.FieldTypeId === 1
+				? personalFields[matchedVariable?.VariableValue]
+				: matchedVariable?.VariableValue;
 		return variableValue ? variableValue : variable;
 	};
 

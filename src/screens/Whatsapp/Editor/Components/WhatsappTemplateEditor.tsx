@@ -88,31 +88,28 @@ const WhatsappTemplateEditor = ({
 		}
 	};
 
-	const actionButtons = useMemo<actionButtonProps[]>(
-		() => [
-			{
-				tooltipTitle: 'whatsapp.template.callToActionTooltip',
-				buttonTitle: 'whatsapp.template.callToAction',
-			},
-			{
-				tooltipTitle: 'whatsapp.template.quickReplayTooltip',
-				buttonTitle: 'whatsapp.template.quickReplay',
-			},
-			// {
-			// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
-			// 	buttonTitle: 'whatsapp.template.removalLink',
-			// },
-			{
-				tooltipTitle: 'whatsapp.template.removalTextTooltip',
-				buttonTitle: 'whatsapp.template.removalText',
-			},
-			{
-				tooltipTitle: 'whatsapp.template.dynamicFieldTooltip',
-				buttonTitle: 'whatsapp.template.dynamicField',
-			},
-		],
-		[]
-	);
+	const actionButtons: actionButtonProps[] = [
+		{
+			tooltipTitle: 'whatsapp.template.callToActionTooltip',
+			buttonTitle: 'whatsapp.template.callToAction',
+		},
+		{
+			tooltipTitle: 'whatsapp.template.quickReplayTooltip',
+			buttonTitle: 'whatsapp.template.quickReplay',
+		},
+		// {
+		// 	tooltipTitle: 'whatsapp.template.removalLinkTooltip',
+		// 	buttonTitle: 'whatsapp.template.removalLink',
+		// },
+		{
+			tooltipTitle: 'whatsapp.template.removalTextTooltip',
+			buttonTitle: 'whatsapp.template.removalText',
+		},
+		{
+			tooltipTitle: 'whatsapp.template.dynamicFieldTooltip',
+			buttonTitle: 'whatsapp.template.dynamicField',
+		},
+	];
 
 	const isDisableButton = (buttonTitle: string) => {
 		if (buttonTitle?.includes('callToAction') && buttonType === 'quickReply') {

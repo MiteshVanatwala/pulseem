@@ -51,6 +51,7 @@ const ChatUi = ({
 	ChatContacts,
 	isContactLoader,
 	updateContactList,
+	personalFields
 }: WhatsappChatUiProps) => {
 	const { t: translator } = useTranslation();
 	const dispatch = useDispatch();
@@ -214,6 +215,7 @@ const ChatUi = ({
 					activeChatContacts={activeChatContacts}
 					ChatContacts={ChatContacts}
 					isContactLoader={isContactLoader}
+					personalFields={personalFields}
 				/>
 			</footer>
 		);

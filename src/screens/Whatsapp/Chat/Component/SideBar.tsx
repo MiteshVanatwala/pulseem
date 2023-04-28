@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next';
 import SideHeaderContactDropDown from './SideHeaderContactDropDown';
 import SideBarContactList from './SideBarContactList';
 import useDebounce from '../Hook/useDebounce';
+import { useSelector } from 'react-redux';
+import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
 
 const SideBar = ({
 	classes,
@@ -31,6 +33,7 @@ const SideBar = ({
 	setFilterBySelected,
 }: WhatsappChatSideBarProps) => {
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [searchText, setSearchText] = useState<string>('');
 	const debouncedValue = useDebounce<string>(searchText, 500);
 
@@ -86,6 +89,13 @@ const SideBar = ({
 							value={filterBySelected}
 							variant='standard'
 							style={{ fontSize: '12px' }}
+							MenuProps={{
+								PaperProps: {
+									style: {
+										direction: isRTL ? 'rtl' : 'ltr',
+									},
+								},
+							}}
 							onChange={(e) => handleFilter(e)}>
 							<MenuItem value={0}>
 								{translator('whatsappChat.allStatus')}

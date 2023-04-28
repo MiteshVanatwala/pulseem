@@ -44,6 +44,7 @@ import {
 	getTemplatePreviewData,
 } from '../Common';
 import {
+	coreProps,
 	landingPageAPIProps,
 	landingPageDataProps,
 	personalFieldAPIProps,
@@ -82,6 +83,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
 		}) => state.common?.commonSettings?.SubAccountSettings
 	);
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
@@ -257,6 +259,29 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			return () => clearInterval(ChatStatusTimer);
 		}
 	});
+
+	useEffect(() => {
+		const updatedPersonalField = {
+			FirstName: translator('smsReport.firstName'),
+			LastName: translator('smsReport.lastName'),
+			Email: translator('common.Mail'),
+			Telephone: translator('common.telephone'),
+			Cellphone: translator('common.Cellphone'),
+			Address: translator('common.address'),
+			BirthDate: translator('common.birthDate'),
+			City: translator('common.city'),
+			State: translator('common.state'),
+			Country: translator('common.country'),
+			Zip: translator('common.zip'),
+			Company: translator('common.company'),
+			Status: translator('common.Status'),
+			SmsStatus: translator('common.smsStatus'),
+			CreationDate: translator('client.subscribedOn'),
+			ReminderDate: translator('recipient.reminderDate'),
+		};
+		setpersonalFields({ ...personalFields, ...updatedPersonalField });
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isRTL]);
 
 	const setWhatsappChatCoversationStatus = async (
 		StatusId: number,
@@ -631,9 +656,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			if (savedTemplate?.length > 0) {
 				chatReqPayload.TemplateId = savedTemplate;
 				chatReqPayload.Variables = formatUpdatedDynamicVariable(
-					updatedDynamicVariable,
-					personalFields,
-					landingPages
+					updatedDynamicVariable
 				);
 			} else {
 				chatReqPayload.TextMessage = newMessage;
@@ -833,6 +856,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									activeChatContacts={activeChatContacts}
 									isContactLoader={isLoader}
 									updateContactList={updateContactList}
+									personalFields={personalFields}
 								/>
 							</div>
 						</div>

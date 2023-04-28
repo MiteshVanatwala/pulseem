@@ -336,30 +336,16 @@ export const getCampaignLink = (
 };
 
 export const formatUpdatedDynamicVariable = (
-	updatedDynamicVariable: updatedVariable[],
-	personalFields: personalFieldDataProps,
-	landingPages: landingPageDataProps[]
+	updatedDynamicVariable: updatedVariable[]
 ): updatedVariable[] => {
 	const formattedDynamicVariable: updatedVariable[] =
 		updatedDynamicVariable.map((dynamicVariable) => {
 			if (dynamicVariable?.FieldTypeId === 1) {
 				return {
 					...dynamicVariable,
-					VariableValue: `##${getKeyByValue(
-						personalFields,
-						dynamicVariable?.VariableValue
-					)}##`,
+					VariableValue: `##${dynamicVariable?.VariableValue}##`,
 				};
 			}
-			// if (dynamicVariable?.FieldTypeId === 4) {
-			// 	return {
-			// 		...dynamicVariable,
-			// 		VariableValue: getCampaignLink(
-			// 			landingPages,
-			// 			dynamicVariable?.VariableValue
-			// 		),
-			// 	};
-			// }
 			return dynamicVariable;
 		});
 	return formattedDynamicVariable;

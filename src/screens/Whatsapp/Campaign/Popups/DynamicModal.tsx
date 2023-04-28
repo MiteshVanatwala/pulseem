@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
 	Button,
 	Box,
@@ -67,31 +67,28 @@ const DynamicModal = ({
 		onDynamcFieldModalClose();
 	};
 
-	const dynamicButtons = useMemo<dynamicButtonProps[]>(
-		() => [
-			{
-				tooltipTitle: 'whatsappCampaign.pField',
-				buttonTitle: 'whatsappCampaign.pField',
-			},
-			{
-				tooltipTitle: 'whatsappCampaign.text',
-				buttonTitle: 'whatsappCampaign.text',
-			},
-			{
-				tooltipTitle: 'whatsappCampaign.link',
-				buttonTitle: 'whatsappCampaign.link',
-			},
-			{
-				tooltipTitle: 'whatsappCampaign.lPage',
-				buttonTitle: 'whatsappCampaign.lPage',
-			},
-			{
-				tooltipTitle: 'whatsappCampaign.navigation',
-				buttonTitle: 'whatsappCampaign.navigation',
-			},
-		],
-		[]
-	);
+	const dynamicButtons: dynamicButtonProps[] = [
+		{
+			tooltipTitle: 'whatsappCampaign.pField',
+			buttonTitle: 'whatsappCampaign.pField',
+		},
+		{
+			tooltipTitle: 'whatsappCampaign.text',
+			buttonTitle: 'whatsappCampaign.text',
+		},
+		{
+			tooltipTitle: 'whatsappCampaign.link',
+			buttonTitle: 'whatsappCampaign.link',
+		},
+		{
+			tooltipTitle: 'whatsappCampaign.lPage',
+			buttonTitle: 'whatsappCampaign.lPage',
+		},
+		{
+			tooltipTitle: 'whatsappCampaign.navigation',
+			buttonTitle: 'whatsappCampaign.navigation',
+		},
+	];
 
 	const onAddRemovalLink = (isTrackLink: boolean) => {
 		if (
