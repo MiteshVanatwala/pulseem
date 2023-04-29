@@ -22,6 +22,10 @@ export type WhatsappCreatorProps = {
 	dynamicFieldCount: number;
 	linkCount: number;
 	templateTextLimit: number;
+	fileData: {
+		fileLink: string;
+		fileType: string;
+	};
 };
 
 export type TemplateFieldsProps = {
@@ -39,6 +43,7 @@ export type TemplateFieldsProps = {
 	onCategoryChange: (category: string) => void;
 	category: string;
 	showValidation: boolean;
+	buttonType: string;
 };
 
 export type ReduxUserProps = {
@@ -281,6 +286,8 @@ export type toastProps = {
 	RESTORE_CAMPAIGN_SUCCESS: toastKeyProps;
 	GROUP_CREATED_SUCCESS: toastKeyProps;
 	TEMPLATE_ALREADY_EXIST: toastKeyProps;
+	INVALID_NUMBER: toastKeyProps;
+	QUICK_SEND_ERROR: toastKeyProps;
 };
 
 export type toastKeyProps = {

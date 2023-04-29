@@ -1,10 +1,4 @@
-import {
-	Box,
-	TextField,
-	Typography,
-	MenuItem,
-	Grid,
-} from '@material-ui/core';
+import { Box, TextField, Typography, MenuItem, Grid } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
@@ -30,7 +24,7 @@ const CampaignFields = ({
 	phoneNumbersList,
 }: campaignFielsProps) => {
 	const { t: translator } = useTranslation();
-	const { windowSize } = useSelector(
+	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 
@@ -98,6 +92,7 @@ const CampaignFields = ({
 						onChange={(e: BaseSyntheticEvent) =>
 							onFromChange(e.target.value?.replace(/\D/g, ''))
 						}
+						dir={isRTL ? 'rtl' : 'ltr'}
 						value={from}>
 						{phoneNumbersList?.length > 0 ? (
 							phoneNumbersList?.map((phone: string, index: number) => (

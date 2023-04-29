@@ -336,30 +336,16 @@ export const getCampaignLink = (
 };
 
 export const formatUpdatedDynamicVariable = (
-	updatedDynamicVariable: updatedVariable[],
-	personalFields: personalFieldDataProps,
-	landingPages: landingPageDataProps[]
+	updatedDynamicVariable: updatedVariable[]
 ): updatedVariable[] => {
 	const formattedDynamicVariable: updatedVariable[] =
 		updatedDynamicVariable.map((dynamicVariable) => {
 			if (dynamicVariable?.FieldTypeId === 1) {
 				return {
 					...dynamicVariable,
-					VariableValue: `##${getKeyByValue(
-						personalFields,
-						dynamicVariable?.VariableValue
-					)}##`,
+					VariableValue: `##${dynamicVariable?.VariableValue}##`,
 				};
 			}
-			// if (dynamicVariable?.FieldTypeId === 4) {
-			// 	return {
-			// 		...dynamicVariable,
-			// 		VariableValue: getCampaignLink(
-			// 			landingPages,
-			// 			dynamicVariable?.VariableValue
-			// 		),
-			// 	};
-			// }
 			return dynamicVariable;
 		});
 	return formattedDynamicVariable;
@@ -382,7 +368,11 @@ export const checkLanguage = (text: string) => {
 	} else {
 		return 'Both';
 	}
-	return isEnglish && isHebrew ? 'Both' : isEnglish ? 'English' : 'Hebrew';
+	if ((isEnglish && isHebrew) || (!isEnglish && !isHebrew)) {
+		return 'Both';
+	} else {
+		return isEnglish ? 'English' : 'Hebrew';
+	}
 };
 
 export const getTextDirection = (text: string, isRTL: boolean) => {

@@ -15,6 +15,8 @@ import { lastMessage } from './data';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'react-i18next';
 import AccountUser from '../../../../assets/images/acc-user.jpg';
+import { coreProps } from '../../Campaign/Types/WhatsappCampaign.types';
+import { useSelector } from 'react-redux';
 
 const SideBarContactList = ({
 	classes,
@@ -28,7 +30,7 @@ const SideBarContactList = ({
 }: SideBarContactListProps) => {
 	const { t: translator } = useTranslation();
 	const { contactID } = useParams();
-
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const useStyles = makeStyles(() => ({
 		selectSection: {
 			'&:focus': {
@@ -104,6 +106,13 @@ const SideBarContactList = ({
 																classes.whatsappChatStatusSelect,
 																getStatusClass(contact.ConversationStatusId)
 															)}
+															MenuProps={{
+																PaperProps: {
+																	style: {
+																		direction: isRTL ? 'rtl' : 'ltr',
+																	},
+																},
+															}}
 															autoWidth
 															value={contact.ConversationStatusId}
 															variant='standard'

@@ -37,7 +37,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		width: '100%',
 		height: '60px',
 		boxSizing: 'border-box',
-		display: 'grid',
+		display: 'inline-block',
 		gridTemplateColumns: '64px auto',
 		position: 'relative',
 		top: '-4px',
@@ -123,7 +123,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginInlineStart: 1,
 		marginInlineEnd: 1,
 		padding: '3px 6px',
-		fontSize: '12px',
+		fontSize: '14px',
 		'&$disabled': {
 			cursor: 'not-allowed !important',
 		},
@@ -758,7 +758,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '8px',
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
-		height: '100%',
+		height: 'calc(100% - 18px)',
 		'& .title': {
 			fontFamily: 'OpenSansHebrew-Bold',
 		},

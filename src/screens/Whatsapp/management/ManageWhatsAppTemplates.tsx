@@ -48,7 +48,6 @@ import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
 import {
 	BaseSyntheticEvent,
-	KeyboardEventHandler,
 	useEffect,
 	useState,
 } from 'react';
@@ -62,7 +61,6 @@ import {
 	deleteTemplate,
 	duplicateTemplate,
 	getAllTemplates,
-	getSavedTemplatesPreviewById,
 	submitTemplateDirect,
 	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
@@ -469,12 +467,6 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setTemplateData(updatedTemplateData);
 	};
 
-	const getTemplateIdFromId = (id: string) => {
-		return templateListData?.find(
-			(template: templateListItemsProps) => id === template.Id?.toString()
-		)?.TemplateId;
-	};
-
 	const onPreview = async (id: string) => {
 		const templateData = templateListData?.find(
 			(template) => template?.Id === Number(id)
@@ -613,11 +605,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDeleteTemplate = async () => {
+		setIsDeleteTemplateOpen(false);
+		setIsLoader(true);
 		const deleteData: deleteTemplateAPIProps = await dispatch<any>(
 			deleteTemplate(activeRowId)
 		);
+		setIsLoader(false);
 		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-			setIsDeleteTemplateOpen(false);
 			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 			setApiTemplateData();
 		} else {
@@ -631,15 +625,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicaTemplate = async () => {
+		setIsDuplicateTemplateOpen(false);
+		setIsLoader(true);
 		const duplicateData: deleteTemplateAPIProps = await dispatch<any>(
 			duplicateTemplate(activeRowId)
 		);
+		setIsLoader(false);
 		if (duplicateData?.payload?.Status === apiStatus.SUCCESS) {
-			setIsDuplicateTemplateOpen(false);
 			setToastMessage(ToastMessages.DELETE_TEMPLATE_SUCCESS);
 			setApiTemplateData();
 		} else {
-			setIsDuplicateTemplateOpen(false);
 			duplicateData?.payload?.Error
 				? setToastMessage({
 						...ToastMessages.ERROR,
