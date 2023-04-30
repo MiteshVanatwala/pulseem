@@ -153,5 +153,9 @@
   "duplicatedRecipients": "Duplicated Recipients",
   "activeSubscribers": "Active Subscribers:",
   "arrived": "Arrived",
-  "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers"
+  "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers",
+  "fileReadyForDownload": "File <b>\"##FileName##\"</b> is ready to download!",
+  "downloadHere": "Download Here",
+  "recipientsRemoved": "Recipients were successfully removed from <b>\"##Name##\"</b>",
+  "recipientsUploaded": "Recipients were uploaded successfully to <b>\"##Name##\"</b>"
 }

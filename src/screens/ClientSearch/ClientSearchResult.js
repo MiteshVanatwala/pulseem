@@ -1058,9 +1058,11 @@ const ClientSearchResult = ({ props, classes }) => {
     setDialog(null);
     setLoader(true);
     setEmailToNotify(notifyEmail === -1 ? '' : notifyEmail);
-    let groupName = location?.state?.ResultTitle;
 
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail })).then(res => {
+    await dispatch(setUnsubscribedClients({
+      ...searchData,
+      RemovingOption: opt, PageSize: TotalCount, GroupName: searchData.ResultTitle, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail
+    })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,

@@ -21,6 +21,7 @@ import {
 } from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
 import useRedirect from '../../helpers/Routes/Redirect';
+import NotificationBell from '../NotificationBell/NotificationBell.tsx';
 
 const AppBarItem = ({
   item,
@@ -259,6 +260,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         </Typography>
       </> : null}
       <Box className={classes.appBarAfterTollbarContainer}>
+        <NotificationBell classes={classes} />
         <AppBarItem
           classes={classes}
           item={settings}

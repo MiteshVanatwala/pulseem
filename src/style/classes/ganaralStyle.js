@@ -790,9 +790,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 		// height: "100px",
 		marginTop: "20px",
 		// "@media screen and (max-width: 960px)": {
-
 		//   height: "0"
-
 		// },
 	},
 	buttonForm: {

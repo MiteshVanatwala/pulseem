@@ -13,20 +13,10 @@ import {
 } from './helpers/Functions/cookies';
 import { create } from 'jss';
 import rtl from 'jss-rtl';
-import jwt_decode from 'jwt-decode';
-import {
-  StylesProvider,
-  jssPreset,
-  MuiThemeProvider,
-} from '@material-ui/core/styles';
-import i18n from './i18n';
-import {
-  BrowserRouter,
-  useParams,
-  Route,
-  Routes,
-  useNavigate,
-} from 'react-router-dom';
+import jwt_decode from "jwt-decode";
+import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
+import i18n from './i18n'
+import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setWindowSize,
@@ -36,6 +26,7 @@ import {
   setIsClal
 } from './redux/reducers/coreSlice'; //smsOldVersion
 import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
+import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice';
 import { getTheme } from './style/theme';
 import { useClasses } from './style/classes/index';
@@ -531,6 +522,7 @@ const App = ({ screenSize }) => {
 
   useEffect(() => {
     const initFeatures = async () => {
+      dispatch(getNotificationUpdates());
       if (!accountSettings) {
         await dispatch(getCommonFeatures());
       }
