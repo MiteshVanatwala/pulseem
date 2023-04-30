@@ -170,7 +170,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 				}
 			} else {
 				setIsLoader(false);
-				//setIsAccountSetup(false);
+				setIsAccountSetup(false);
 			}
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
