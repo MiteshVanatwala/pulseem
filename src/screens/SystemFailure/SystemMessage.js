@@ -2,7 +2,7 @@ import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
 import { Divider, Typography } from '@material-ui/core'
 import { useTranslation } from 'react-i18next'
-import { renderHtml } from "../../helpers/functions";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 
 
 
@@ -18,7 +18,7 @@ const SystemMessage = ({ classes }) => {
         </Typography>
         <Divider />
         <Typography>
-            {renderHtml(t("common.systemFailureNotice"))}
+            {RenderHtml(t("common.systemFailureNotice"))}
         </Typography>
 
     </DefaultScreen>
