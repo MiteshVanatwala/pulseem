@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
 } from '@material-ui/core'
 import Switch from "react-switch";
 import {
@@ -18,16 +18,17 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { smsReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { smsReportStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { useNavigate, useLocation } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
-import { voidFunction } from '../../../helpers/utils';
+import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
 
 const SmsReport = ({ classes }) => {
   const priorDate = moment().subtract(30, 'days').utcOffset(0);
@@ -35,7 +36,8 @@ const SmsReport = ({ classes }) => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const from = state?.from || "/";
-  const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
+  const { language, windowSize, isRTL } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const rowsOptions = [6, 10, 20, 50]
@@ -117,18 +119,20 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      // href: `/react/ClientSearchResult/${id}`,
       isRevenueCol: true,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-        state:
-        {
-          ...CLIENT_CONSTANTS.QUERY_PARAMS,
-          CampaignID: id,
-          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
-          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
-          PageProperty: GetPageNyName('reports/SMSMainReport')
-        }
-      }),
+      onClick: () => {
+        navigate(`${CLIENT_CONSTANTS.BASEURL}/${id}`, {
+          state:
+          {
+            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+            CampaignID: id,
+            PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
+            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+            PageProperty: GetPageNyName('reports/SMSMainReport')
+          }
+        })
+      },
       textStyle: { fontWeight: 900 }
     }
   })
@@ -193,6 +197,19 @@ const SmsReport = ({ classes }) => {
     }
   }, [accountFeatures])
 
+  useEffect(() => {
+    if (smsQuery.SerachTxt !== '' ||
+      JSON.stringify(smsQuery.From) !== JSON.stringify(priorDate) ||
+      smsQuery.To !== null ||
+      (prevShowTestCampaign !== undefined && prevShowTestCampaign !== smsQuery.ShowTestCampaigns)) {
+      setPage(1);
+      setSearching(true);
+    }
+  }, [dispatch, smsQuery.ShowTestCampaigns, isSearching]);
+
+  useEffect(() => {
+    getData(smsQuery);
+  }, [isSearching, smsQuery.ShowTestCampaigns])
 
   useEffect(() => {
     const getGraph = async () => {
@@ -223,28 +240,10 @@ const SmsReport = ({ classes }) => {
     "StatusName": t('mainReport.statusName'),
   }
 
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>
-          {t('common.SMSReports')}
-        </Typography>
-        <Divider />
-      </>
-    )
-  }
-
   const clearSearch = () => {
-    const resetSmsQuery = {
-      ...smsQuery,
-      From: priorDate,
-      To: null,
-      SerachTxt: '',
-      ShowTestCampaigns: false,
-      SmsCampaignID: null,
-      PageNumber: 1
-    };
+    const resetSmsQuery = { ...smsQuery, From: priorDate, To: null, SerachTxt: '', ShowTestCampaigns: false, SmsCampaignID: null };
     setSmsQuery(resetSmsQuery);
+    getData(resetSmsQuery)
     setSearching(false);
     getData(resetSmsQuery);
     SetPageState({
@@ -253,49 +252,50 @@ const SmsReport = ({ classes }) => {
       "SearchData": resetSmsQuery
     });
   }
-
   const handleDownloadCsv = async (formatType) => {
     setDialogType(null);
     setLoader(true);
-    if (hasRevenue)
-      exportColumnHeader["Revenue"] = t("common.revenue");
+    let orderList = [...smsReport];
 
-    let orderList = preferredOrder(smsReport, Object.keys(exportColumnHeader));
-    orderList = await statusNumberToString(t, orderList, smsReportStatus);
-    orderList = await formatDateTime(orderList, t);
-    orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-    orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
-      data: orderList,
-      fileName: 'smsReport',
-      exportType: formatType,
-      fields: exportColumnHeader
-    });
+    const exportOptions = {
+      OrderItems: true,
+      FormatDate: true,
+      IsBoolean: true,
+      BooleanToNumber: true,
+      Statuses: smsReportStatus,
+      ConvertStatusToString: true,
+      PropertyToReplace: 'IsResponse',
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    };
+
+    try {
+      const result = await HandleExportData(orderList, exportOptions);
+      ExportFile({
+        data: result,
+        fileName: 'smsReport',
+        exportType: 'csv',
+        fields: exportColumnHeader
+      });
+    } catch (error) {
+      console.log(error);
+    }
     setLoader(false);
   }
 
-  const handleSearch = () => {
-    if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
-      return;
-    }
-
-    setSmsQuery(smsQuery);
-    setSearching(true);
-    SetPageState({
-      "PageName": "reports/SMSMainReport",
-      "PageNumber": page,
-      "SearchData": smsQuery
-    });
-    getData(smsQuery);
-  }
-
-  const handleKeyPress = (event) => {
-    if (event.keyCode === 13 || event.code === 'Enter') {
-      handleSearch();
-    }
-  }
-
   const renderSearchSection = () => {
+    const handleSearch = () => {
+      if (smsQuery.SerachTxt === '' && !smsQuery.From && !smsQuery.To) {
+        return;
+      }
+      setSearching(true);
+      getData(smsQuery);
+    }
+    const handleKeyPress = (event) => {
+      if (event.keyCode === 13 || event.code === 'Enter') {
+        handleSearch();
+      }
+    }
     if (windowSize === 'xs') {
       return (
         <SearchField
@@ -312,7 +312,6 @@ const SmsReport = ({ classes }) => {
         />
       )
     }
-
     return (
       <Grid
         container
@@ -459,7 +458,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, UpdateDate, Status } = row
+    const { Name, SendDate, UpdateDate, Status } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
@@ -505,7 +504,7 @@ const SmsReport = ({ classes }) => {
     const isLink = value > 0 && !!onClick;
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
-        onClick={isLink ? onClick : voidFunction}>
+        onClick={isLink ? onClick : VoidFunction}>
         <Typography
           component={'a'}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
@@ -522,14 +521,17 @@ const SmsReport = ({ classes }) => {
     )
   }
   const renderRevenueData = (value, type, data = {}) => {
-    const { href = '', textStyle = null, isRevenueCol = false } = data
+    const { textStyle = null, onClick = null } = data
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
-          href={href !== '' ? href : ''}
+        <Typography component={value > 0 ? 'a' : 'p'}
+          onClick={() => {
+            if (value > 0) {
+              onClick();
+            }
+          }}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
-          style={textStyle}
-          target="_blank">
+          style={{ ...textStyle, textDecoration: value > 0 && 'underline', cursor: value > 0 && 'pointer' }}>
           {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
         </Typography>
       </Box>
@@ -788,10 +790,10 @@ const SmsReport = ({ classes }) => {
   return (
     <DefaultScreen
       classes={classes}
-      containerClass={classes.management}
+      containerClass={clsx(classes.management, classes.mb50)}
       currentPage="reports"
       subPage="SmsReport">
-      {renderHeader()}
+      <Title Text={t('common.SMSReports')} Classes={classes} ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}

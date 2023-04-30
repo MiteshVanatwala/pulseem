@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import {
-    Grid,
     Typography,
     Divider,
     Button,
@@ -11,38 +10,31 @@ import {
     AccordionSummary,
     AccordionDetails,
     makeStyles,
-    Checkbox,
-    Paper,
     FormControl,
-    InputLabel,
     Select,
     MenuItem,
+    Grid
 
 } from "@material-ui/core";
 import { DateField } from '../../../../components/managment/index'
-
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
 import { addRecipient, deleteRecipients } from "../../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../../components/managment/Dialog";
+// import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
-import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
-
-import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
-
-
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
-import { Autocomplete } from "@material-ui/lab";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
-import { Close } from "@material-ui/icons";
 import { IoMdClose } from "react-icons/io";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 
 const useStyles = makeStyles({
@@ -94,9 +86,7 @@ const AddRecipientPopup = ({ classes,
     ToastMessages,
     onAddRecipient = () => null,
     onRecipientAdded = () => null,
-    onAnotherRecipientAdded = () => null,
     handleResponses = (response, actions) => null,
-    setDialog = () => null,
     recipientData = null
 }) => {
     const { t } = useTranslation();
@@ -164,7 +154,7 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...errors, [e.target.name]: t(ADD_RECIPIENT_REQUIRED_ERRORS[e.target.name]) })
         }
         if (e.target.name === "Email") {
-            if (!ValidateEmail(e.target.value)) {
+            if (!IsValidEmail(e.target.value)) {
                 setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
             }
         }
@@ -172,13 +162,11 @@ const AddRecipientPopup = ({ classes,
             if (e.target.value.length > 16 || e.target.value.length < 9) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength) })
             }
-            else if (!ValidateNumber(e.target.value)) {
+            else if (!IsValidPhone(e.target.value)) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
             }
         }
     }
-
-
     const StatusDropdown = ({ data = [], onSelect = () => null, label = '', value = null }) => {
         return (
             <FormControl variant="standard" className={classes.selectInputFormControl}>
@@ -261,7 +249,7 @@ const AddRecipientPopup = ({ classes,
 
         if (!data.ClientsData.Email &&
             !data.ClientsData.Cellphone) {
-            if (!data.ClientsData.Email || !ValidateEmail(data.ClientsData.Email)) {
+            if (!data.ClientsData.Email || !IsValidEmail(data.ClientsData.Email)) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
             if (data.ClientsData.Cellphone.length < 9 || data.ClientsData.Cellphone.length > 16) {
@@ -272,7 +260,7 @@ const AddRecipientPopup = ({ classes,
             setActiveTab(0);
 
             return;
-        } else if (data.ClientsData.Email && !ValidateEmail(data.ClientsData.Email)) {
+        } else if (data.ClientsData.Email && !IsValidEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
             setActiveTab(0);
@@ -363,6 +351,11 @@ const AddRecipientPopup = ({ classes,
         }
         catch (err) {
             console.log('errr:', err)
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleSubmit',
+                ComponentName: 'AddRecipientPopup.js',
+                Text: err
+            }));
         }
         finally {
             setLoader(false)
@@ -443,7 +436,7 @@ const AddRecipientPopup = ({ classes,
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (ValidateNumber(tempVal)) {
+                                else if (!IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -476,7 +469,7 @@ const AddRecipientPopup = ({ classes,
                                 if (!tempVal) {
                                     handleChange(e)
                                 }
-                                else if (ValidateNumber(tempVal)) {
+                                else if (IsValidPhone(tempVal)) {
                                     handleChange(e)
                                 }
                             }}
@@ -605,7 +598,7 @@ const AddRecipientPopup = ({ classes,
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (ValidateNumber(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}
@@ -630,7 +623,7 @@ const AddRecipientPopup = ({ classes,
                             if (!tempVal) {
                                 handleChange(e)
                             }
-                            else if (ValidateNumber(tempVal)) {
+                            else if (IsValidPhone(tempVal)) {
                                 handleChange(e)
                             }
                         }}
@@ -950,7 +943,8 @@ const AddRecipientPopup = ({ classes,
         temp = temp.forEach((t) => {
             tempp[t.key] = t.value
         });
-        let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
+        //let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
+        let extraFields = Object.keys(tempp).filter((key, index) => { return Object.values(tempp)[index] && Object.values(tempp)[index] !== '' });
         const json = windowSize === 'xs' ?
             extraFields.map((ef) => {
                 return {
@@ -1103,7 +1097,7 @@ const AddRecipientPopup = ({ classes,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
                     onAddRecipient(false);
-                    //setDialog('EDIT_RECIPIENT');
+                    setAddRecipientData({ ...addRecipientData, Status: val })
                 }
             },
             S_400: {
@@ -1143,7 +1137,7 @@ const AddRecipientPopup = ({ classes,
                 message: ToastMessages.STATUS_UPDATED,
                 Func: () => {
                     onAddRecipient(false);
-                    //setDialog('EDIT_RECIPIENT');
+                    setAddRecipientData({ ...addRecipientData, SmsStatus: val })
                 }
             },
             S_400: {
@@ -1171,64 +1165,42 @@ const AddRecipientPopup = ({ classes,
     }
 
     const STATUS_FORM = () => (
-        <SimpleGrid
-            spacing={3}
-            gridArr={[
-                {
-                    content: <SimpleGrid
-                        spacing={3}
-                        gridArr={[
-                            {
-
-                                content: <Typography title={t("common.first_name")} className={classes.alignDir}>{t('common.emailStatus')}</Typography>,
-                                gridSize: { xs: 12, sm: 3 }
-
-                            },
-                            {
-
-                                content: StatusDropdown({
-                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
-                                    onSelect: (val) => {
-                                        handleEmailStatus(val)
-                                    },
-                                    value: addRecipientData.Status ?? CLIENT_CONSTANTS.STATUSES.active.status,
-                                    label: t('common.emailStatus')
-                                }),
-                                gridSize: { xs: 12, sm: 9 }
-
-                            }
-                        ]}
-                    />,
-                    gridSize: { xs: 12, sm: 6 }
-                },
-                {
-                    content: <SimpleGrid
-                        spacing={3}
-                        gridArr={[
-                            {
-
-                                content: <Typography title={t("common.first_name")} className={classes.alignDir}>{t('common.smsStatus')}</Typography>,
-                                gridSize: { xs: 12, sm: 3 },
-
-                            },
-                            {
-                                content: StatusDropdown({
-                                    data: Object.values(CLIENT_CONSTANTS.SMS_STATUSES).map((obj) => obj),
-                                    onSelect: (val) => {
-                                        handleSmsStatus(val)
-
-                                    },
-                                    value: addRecipientData.SmsStatus ?? CLIENT_CONSTANTS.SMS_STATUSES.noStatus.status,
-                                    label: t('common.smsStatus'),
-                                }),
-                                gridSize: { xs: 12, sm: 6 }
-                            }
-                        ]}
-                    />,
-                    gridSize: { xs: 12, sm: 6 }
-                },
-            ]}
-        />
+        <Grid container direction='row' spacing={3}>
+            <Grid item xs="12" sm="6">
+                <Grid container direction='row' spacing={3}>
+                    <Grid item xs="12" sm="3">
+                        <Typography title={t("common.emailStatus")} className={classes.alignDir}>{t('common.emailStatus')}</Typography>
+                    </Grid>
+                    <Grid item xs="12" sm="9">
+                        <StatusDropdown
+                            data={Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj)}
+                            onSelect={(val) => {
+                                handleEmailStatus(val)
+                            }}
+                            value={addRecipientData.Status}
+                            label={t('common.emailStatus')}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs="12" sm="6">
+                <Grid container direction='row' spacing={3}>
+                    <Grid item xs="12" sm="3">
+                        <Typography title={t("common.smsStatus")} className={classes.alignDir}>{t('common.smsStatus')}</Typography>
+                    </Grid>
+                    <Grid item xs="12" sm="9">
+                        <StatusDropdown
+                            data={Object.values(CLIENT_CONSTANTS.SMS_STATUSES).map((obj) => obj)}
+                            onSelect={(val) => {
+                                handleSmsStatus(val)
+                            }}
+                            value={addRecipientData.SmsStatus ?? CLIENT_CONSTANTS.SMS_STATUSES.noStatus.status}
+                            label={t('common.smsStatus')}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
     )
 
     const ActiveForm = (label, index) => {
@@ -1273,7 +1245,7 @@ const AddRecipientPopup = ({ classes,
 
 
     return (
-        <Dialog
+        <BaseDialog
             classes={classes}
             open={isOpen}
             title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
@@ -1373,7 +1345,7 @@ const AddRecipientPopup = ({ classes,
                 }
             </Box>
             <Loader isOpen={showLaoder} />
-        </Dialog>
+        </BaseDialog>
     );
 };
 

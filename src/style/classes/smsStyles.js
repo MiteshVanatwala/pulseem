@@ -138,7 +138,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginInlineStart: "5px",
         color: '#007bff',
         border: '1px solid #007bff',
-        padding: "8px",
+        // padding: "8px",
         borderRadius: "5px",
         cursor: "pointer"
     },
@@ -189,7 +189,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         width: summaryWidth[windowSize],
         marginTop: "15px",
         "& $wrapChat": {
-            width: 290,
+            width: 270,
             right: 40
         },
         "@media screen and (max-width: 1366px)": {
@@ -537,8 +537,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         textAlign: "center",
         borderBottom: "1px solid #ddd",
         zIndex: "9",
-        cursor: "pointer",
-        pointerEvents: "none"
+        cursor: "not-allowed",
+        pointerEvents: "none",
+        color: '#c4b3b3'
     },
     manualChild:
     {
@@ -954,6 +955,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         },
     },
     groupsFooter: {
+        marginTop: 12,
         display: "flex",
         justifyContent: "space-between",
         flexDirection: flexDirection[windowSize]
@@ -1080,5 +1082,51 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             textTransform: 'capitalize',
             fontWeight: 400
         }
+    },
+    customWidth: {
+        maxWidth: 200,
+        backgroundColor: "black",
+        fontSize: "14px",
+        textAlign: 'center'
+    },
+    noMaxWidth: {
+        maxWidth: "none",
+    },
+    snackBarSuccess:
+    {
+        backgroundColor: "#AFE1AF",
+        color: "black",
+        minWidth: "200px",
+        height: "30px",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        fontWeight: 700
+    },
+    snackBarSevere: {
+        backgroundColor: "#F6B2B2",
+        color: "black",
+        minWidth: "200px",
+        height: "30px",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: 'center',
+        fontWeight: 700,
+        boxShadow: '1px ​1px 10px 2px black'
+    },
+    expandTextLink: {
+        textDecoration: 'underline',
+        marginTop: "6px",
+        fontSize: "16px",
+        color: "gray",
+        width: "50px",
+        cursor: "pointer"
+    },
+    summaryExpandRecipientFilter: {
+        borderTop: '1px solid #ccc',
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center"
     }
+
 });

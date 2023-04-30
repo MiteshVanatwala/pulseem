@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, Box, Avatar, Button, Grid, Paper, Typography, Link, Tooltip } from '@material-ui/core';
+import { IconButton, Box, Grid, Paper, Typography, Tooltip } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -13,32 +12,35 @@ import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
 import { useNavigate } from 'react-router';
-
+import { Loader } from '../Loader/Loader';
 
 const RecipientChart = ({ classes, }) => {
     const navigate = useNavigate()
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
-    const { windowSize, isRTL } = useSelector(state => state.core);
+    const { windowSize } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
-    const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const { Notifications = {}, Sms = {} } = packagesDetails || {};
 
-    const useStylesBootstrap = makeStyles((theme) => ({
-        arrow: {
-            color: theme.palette.common.black,
-        },
-        tooltip: {
-            backgroundColor: theme.palette.common.black,
-        },
-    }));
+    let slidesCount = 0;
+    recipientsReport?.forEach(report => {
+        if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+            (report.ReportSection === 1 && !Sms.FeatureExist)) {
+            return
+        }
+        else {
+            slidesCount++;
+        }
+    })
 
     const dispatch = useDispatch();
-    const initData = async () => {
-        dispatch(getRecipientsReport());
-    }
-
-    useEffect(initData, [dispatch]);
+    useEffect(() => {
+        const initData = () => {
+            dispatch(getRecipientsReport());
+        }
+        initData();
+    }, [dispatch]);
 
     const titles = [
         {
@@ -57,10 +59,10 @@ const RecipientChart = ({ classes, }) => {
 
     let data = [];
     if (recipientsReport) {
-        recipientsReport.map(report => {
-            if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-                report.ReportSection === 1 && !Sms.FeatureExist) {
-                return;
+        recipientsReport.forEach(report => {
+            if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+                (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                return null;
             }
             else {
                 data.push({
@@ -148,8 +150,8 @@ const RecipientChart = ({ classes, }) => {
                     const tr = document.createElement('tr');
                     tr.style.backgroundColor = 'inherit';
                     tr.style.borderWidth = 0;
-                    tr.style.marginTop = i == 1 ? '-10px' : 0;
-                    tr.style.fontWeight = i == 0 ? '700' : '';
+                    tr.style.marginTop = i === 1 ? '-10px' : 0;
+                    tr.style.fontWeight = i === 0 ? '700' : '';
                     tr.style.fontSize = '12px';
 
                     const td = document.createElement('td');
@@ -157,7 +159,7 @@ const RecipientChart = ({ classes, }) => {
                     td.style.position = 'absolute';
                     td.style.right = '0';
                     td.style.left = '0';
-                    td.style.bottom = i == 0 ? '30px' : '18px';
+                    td.style.bottom = i === 0 ? '30px' : '18px';
 
                     const text = document.createTextNode(body);
 
@@ -176,7 +178,8 @@ const RecipientChart = ({ classes, }) => {
                 tableRoot.appendChild(tableBody);
             }
 
-            const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            // const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            const { offsetLeft: positionX } = chart.canvas;
             tooltipEl.style.opacity = 1;
             tooltipEl.style.left = positionX + tooltip.caretX + 'px';
             tooltipEl.style.top = '50px';
@@ -194,7 +197,9 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(report.ReportSection, activeChart?.index);
+                    setTimeout(() => {
+                        openReports(report.ReportSection, activeChart?.index);
+                    }, 100);
                 }
             },
             plugins: {
@@ -318,7 +323,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.newsletter.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.sms.Pending');
                     break;
@@ -353,7 +358,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.sms.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.email.Pending');
                     break;
@@ -375,16 +380,14 @@ const RecipientChart = ({ classes, }) => {
 
     const renderChartsCarousel = () => {
         if (!recipientsReport) {
-            return;
+            return (<Loader showBackdrop={false} contained containerSize={240} />);
         }
 
         let totalRecipientsReport = 0;
 
-        if (recipientsReport) {
-            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
-                return a + b["Total"];
-            }, 0);
-        }
+        totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+            return a + b["Total"];
+        }, 0);
 
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
@@ -397,9 +400,9 @@ const RecipientChart = ({ classes, }) => {
                         showArrows={false}
                         selectedItem={carouselItem}>
                         {recipientsReport.map((report, index) => {
-                            if (report.ReportSection === 2 && !Notifications.FeatureExist
-                                || report.ReportSection === 1 && !Sms.FeatureExist) {
-                                return;
+                            if ((report.ReportSection === 2 && !Notifications.FeatureExist)
+                                || (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                                return null;
                             }
                             if (report.Total) {
                                 return renderDoughnut(report, index)
@@ -414,7 +417,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        redirect={`/react/groups?NewGroup=true`}
                         buttonClass={classes.createButton} />
                 )}
 
@@ -424,23 +427,21 @@ const RecipientChart = ({ classes, }) => {
 
     const renderCharts = () => {
         if (!recipientsReport) {
-            return;
+            return (<Loader showBackdrop={false} contained containerSize={240} />);
         }
 
         let totalRecipientsReport = 0;
 
-        if (recipientsReport) {
-            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
-                return a + b["Total"];
-            }, 0);
-        }
+        totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+            return a + b["Total"];
+        }, 0);
 
         return (
             <Grid item container justifyContent='space-evenly'>
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
-                    if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-                        report.ReportSection === 1 && !Sms.FeatureExist) {
-                        return;
+                    if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+                        (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                        return null;
                     }
                     if (report.Total) {
                         return renderDoughnut(report, index)
@@ -454,7 +455,7 @@ const RecipientChart = ({ classes, }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        redirect={`/react/Groups?NewGroup=true`}
                         buttonClass={classes.importButtonBlue} />
                 }
             </Grid>
@@ -464,24 +465,38 @@ const RecipientChart = ({ classes, }) => {
     const renderArrows = (value, length, setItem, className) => {
         let selectedItem = value;
         const handleNext = () => {
-            if (value >= length) return;
+            if (selectedItem >= slidesCount) {
+                return;
+            }
             selectedItem++;
             setItem(selectedItem);
         }
         const handlePrevious = () => {
-            if (selectedItem <= 0) return;
+            if (selectedItem <= 0) {
+                return;
+            }
             selectedItem--;
             setItem(selectedItem);
         }
 
         return (
-            <Grid item className={className}>
-                <IconButton onClick={handlePrevious}>
+            <Grid item className={className} style={{ height: '100%' }}>
+                {selectedItem > 0 ? <IconButton onClick={handlePrevious}>
                     <ArrowBackIosIcon />
                 </IconButton>
-                <IconButton onClick={handleNext}>
-                    <ArrowForwardIosIcon />
-                </IconButton>
+                    :
+                    <IconButton>
+                        <></>
+                    </IconButton>
+                }
+                {
+                    selectedItem < (slidesCount - 1) ? <IconButton onClick={handleNext}>
+                        <ArrowForwardIosIcon />
+                    </IconButton> :
+                        <IconButton >
+                            <></>
+                        </IconButton>
+                }
             </Grid>
         );
     }

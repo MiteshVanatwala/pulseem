@@ -1,12 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { eventsInstance, instence } from '../../helpers/api';
-import { verifyGetUrl } from '../../helpers/functions';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { SiteTrackingInstance } from '../../helpers/Api/SiteTrackingAPI';
+import { VerifyGetUrl } from '../../helpers/Utils/Validations';
 import { siteTrackingScriptUrl } from '../../config/index';
+import { RandomID } from '../../helpers/Functions/functions'
 
 export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
-      const response = await eventsInstance.get(`events`, data);
+      const response = await SiteTrackingInstance.get(`events`, data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -16,7 +18,7 @@ export const get = createAsyncThunk(
 export const post = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
-      const response = await eventsInstance.post(`events`, data);
+      const response = await SiteTrackingInstance.post(`events`, data);
       if (data?.actionType === 'TRACK_PURCHASE_EVENT') {
         return { status: response?.status, data: response?.data };
       }
@@ -29,7 +31,7 @@ export const post = createAsyncThunk(
 export const update = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
-      const response = await eventsInstance.patch(`events/${data.id}`, data);
+      const response = await SiteTrackingInstance.patch(`events/${data.id}`, data);
       return { status: response.status, data: response.data };
     } catch (error) {
       return thunkAPI.rejectWithValue({ status: error.statusCode });
@@ -39,7 +41,7 @@ export const update = createAsyncThunk(
 export const deleteSiteTrackingEvent = createAsyncThunk(
   'events', async (eventId, thunkAPI) => {
     try {
-      const response = await eventsInstance.delete(`events/${eventId}`);
+      const response = await SiteTrackingInstance.delete(`events/${eventId}`);
       if (response?.data === '') {
         return { event: "deleteEvent", eventId };
       }
@@ -53,7 +55,7 @@ export const deleteSiteTrackingEvent = createAsyncThunk(
 export const deletePulseemSiteTracking = createAsyncThunk(
   'siteTracking/DeleteDomain', async (_, thunkAPI) => {
     try {
-      const response = await instence.delete(`siteTracking/DeleteDomain`);
+      const response = await PulseemReactInstance.delete(`siteTracking/DeleteDomain`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -64,19 +66,19 @@ export const deletePulseemSiteTracking = createAsyncThunk(
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
-      const isVerified = await verifyGetUrl(`${siteTrackingScriptUrl}?v=${Math.random()}`);
-      const response = {};
+      const payload = { data: '' };
+      const isVerified = await VerifyGetUrl(`${siteTrackingScriptUrl}?v=${Math.random()}`);
       if (isVerified === true) {
-        response["data"] = `<script type="text/javascript">
-      (function(d, t) {
-        var g = d.createElement(t),
-        s = d.getElementsByTagName(t)[0];
-        g.src="${siteTrackingScriptUrl}?v=" + Math.floor(Date.now() / 1000);
-        s.parentNode.insertBefore(g, s);
-        }(document, "script"))
-    </script>`;
+        payload.data = `<script type="text/javascript">
+        (function(d, t) {
+          var g = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+          g.src="${siteTrackingScriptUrl}?v=" + Math.floor(Date.now() / 1000);
+          s.parentNode.insertBefore(g, s);
+          }(document, "script"))
+      </script>`;
       }
-      return response;
+      return payload;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -86,23 +88,13 @@ export const getScript = createAsyncThunk(
 export const setDomain = createAsyncThunk(
   'siteTracking/SetDomain', async (domain, thunkAPI) => {
     try {
-      const response = await instence.post('siteTracking/SetDomain', domain);
+      const response = await PulseemReactInstance.post('siteTracking/SetDomain', domain);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   }
 )
-
-export const makeId = () => {
-  let ID = "";
-  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  for (var i = 0; i < 12; i++) {
-    ID += characters.charAt(Math.floor(Math.random() * 36));
-  }
-  return ID;
-}
-
 
 export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
@@ -124,7 +116,7 @@ export const siteTrackingSlice = createSlice({
         operatorKey: 'CONTAINS',
         operatorValue: '',
         groupIds: [],
-        id: makeId()
+        id: RandomID()
       }]
     }
   },
@@ -136,7 +128,7 @@ export const siteTrackingSlice = createSlice({
           if (state.event.metadata) {
             state.event.metadata.map((mt) => {
               if (!mt.id || mt.id === '') {
-                mt.id = makeId();
+                mt.id = RandomID();
               }
               return mt;
             });
@@ -165,7 +157,7 @@ export const siteTrackingSlice = createSlice({
     },
     addMetaData: (state, action) => {
       const newMetaData = action.payload;
-      newMetaData.id = makeId();
+      newMetaData.id = RandomID();
       state.event.metadata = [...state.event.metadata, newMetaData];
     },
     resetEventModel: (state, action) => {
@@ -183,7 +175,7 @@ export const siteTrackingSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getScript.fulfilled, (state, { payload }) => {
-        state.siteScript = payload.data;
+        state.siteScript = payload?.data ?? payload;
       })
       .addCase(get.fulfilled, (state, { payload }) => {
         try {
@@ -206,7 +198,7 @@ export const siteTrackingSlice = createSlice({
             if (state.event.metadata) {
               state.event.metadata.map((mt) => {
                 if (!mt.id || mt.id === '') {
-                  mt.id = makeId();
+                  mt.id = RandomID();
                 }
                 return mt;
               });

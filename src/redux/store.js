@@ -12,12 +12,15 @@ import recipientReportsReducer from './reducers/recipientsReportSlice';
 import shortcutReducer from './reducers/shortcutSlice';
 import paymentReducer from './reducers/paymentSlice';
 import commonReducer from './reducers/commonSlice';
-import siteTrackingReducer from './reducers/siteTrackingSlice'
+import siteTrackingReducer from './reducers/siteTrackingSlice';
 import clientReducer from './reducers/clientSlice';
 import campaignReducer from './reducers/campaignEditorSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
+import ConnectorsSlice from './reducers/ConnectorsSlice';
 import galleryReducer from './reducers/gallerySlice'
+import whatsappReducer from './reducers/whatsappSlice'
+import AccountSettingsSlice from './reducers/AccountSettingsSlice';
 
 export default configureStore({
   reducer: {
@@ -39,6 +42,9 @@ export default configureStore({
     siteTracking: siteTrackingReducer,
     group: groupSlice,
     report: reportSlice,
-    gallery: galleryReducer
+    gallery: galleryReducer,
+    whatsapp: whatsappReducer,
+    accountSettings: AccountSettingsSlice,
+    connectors: ConnectorsSlice
   },
 });

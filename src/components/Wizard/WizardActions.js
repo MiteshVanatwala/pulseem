@@ -19,16 +19,19 @@ const WizardActions = ({
     onDelete = null,
     onTestSend = null,
     onShowGallery = null,
-    onShowDocuments = null
+    onShowDocuments = null,
+    helperText = null,
+    disabled = false
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
     return (
-        <Grid container style={innerStyle}>
+        <Grid container style={{ ...innerStyle, paddingBottom: 40 }}
+            className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
-                <Box className={clsx(classes.wizardButtonContainer)} style={{ paddingBottom: 40 }}>
+                <Box className={clsx(classes.wizardButtonContainer)}>
                     {onBack &&
-                        <Button onClick={() => { onBack() }}
+                        <Button onClick={() => { onBack?.callback() }}
                             variant='contained'
                             size='medium'
                             className={clsx(
@@ -39,7 +42,7 @@ const WizardActions = ({
                             startIcon={!isRTL ? <MdOutlineKeyboardArrowLeft /> : <MdOutlineKeyboardArrowRight />}
                             style={{ margin: '8px' }}
                             color="primary"
-                        >{t('notifications.back')}</Button>
+                        >{onBack?.text ?? t('notifications.back')}</Button>
                     }
                     <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
                         {onDelete &&
@@ -64,7 +67,7 @@ const WizardActions = ({
                                 style={{ marginInline: 8, paddingInline: 10 }}
                                 className={clsx(classes.actionButton,
                                     classes.actionButtonOutlinedBlue)}>
-                                <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} />
+                                <AiOutlineFileAdd style={{ fontSize: "28", paddingInline: 5 }} />
                                 {t("common.documentGallery")}
                             </Button>
                         }
@@ -142,6 +145,9 @@ const WizardActions = ({
                     </Box>
                 </Box>
             </Grid>
+            {helperText && <Grid item xs={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {helperText}
+            </Grid>}
         </Grid>
     );
 }

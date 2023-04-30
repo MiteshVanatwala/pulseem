@@ -7,22 +7,23 @@ import {
 } from "@material-ui/core";
 
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 
 const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message, summary = null }) => {
 
   const { t } = useTranslation();
 
   return (
-    <Dialog
+    <BaseDialog
       classes={classes}
       open={isOpen}
       title={title}
       icon={<div className={classes.dialogIconContent}>
         {'\uE0D5'}
       </div>}
-      showDivider={true}
+      showDivider={false}
       onClose={onClose}
+      onCancel={onClose}
       onConfirm={onClose}
       confirmText="common.Ok"
       showDefaultButtons={false}
@@ -99,7 +100,7 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
           </Grid>
         </Grid>}
       </Box>
-    </Dialog>
+    </BaseDialog>
   );
 };
 

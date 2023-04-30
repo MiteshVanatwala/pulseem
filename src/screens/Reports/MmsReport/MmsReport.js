@@ -1,36 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import {
-    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
-} from '@material-ui/core'
+import { Typography, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
 import Switch from "react-switch";
-import {
-    SearchIcon, ExportIcon
-} from '../../../assets/images/managment/index'
-import {
-    TablePagination, DateField, SearchField
-} from '../../../components/managment/index'
+import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { TablePagination, DateField, SearchField } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { MMSReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { MMSReportStatus } from '../../../helpers/Constants';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { Title } from '../../../components/managment/Title';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -40,25 +33,21 @@ const DEFAULT_FILTER = {
 
 const MmsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
     const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
     const [filter, setFilter] = useState(false);
     const [page, setPage] = useState(1)
-
     const [filteredResults, setFilteredResults] = useState([])
     const [isDemoSend, setIsDemoSend] = useState(false)
-    const [csvData, setCsvData] = useState('')
-    const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
     const dispatch = useDispatch()
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
-    const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-    const csvLinkRef = useRef(null)
     const [showLoader, setLoader] = useState(true);
     const [dialogType, setDialog] = useState(null);
 
@@ -81,14 +70,7 @@ const MmsReport = ({ classes }) => {
             await dispatch(getMmsGraph());
         }
         getMmsData();
-    }, [isDemoSend]);
-
-    useEffect(() => {
-        handleSearch(filterValues);
-    }, [mmsReport])
-
-
-
+    }, [isDemoSend, dispatch]);
 
     //  HANDLERS  //
     const getHrefs = (id) => ({
@@ -152,24 +134,36 @@ const MmsReport = ({ classes }) => {
     const handleDownloadCsv = async (formatType) => {
         setDialog(null);
         setLoader(true);
-        let orderList = preferredOrder(filteredResults, Object.keys(exportColumnHeader));
-        orderList = await statusNumberToString(t, orderList, MMSReportStatus);
-        orderList = await formatDateTime(orderList, t);
-        orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-        orderList = orderList.reduce(
-            (previousValue, currentValue) => {
-                currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
-                return [...previousValue, currentValue]
-            },
-            []
-        );
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            BooleanToNumber: true,
+            ConvertStatusToString: true,
+            PropertyToReplace: 'IsResponse',
+            IsBoolean: true,
+            Statuses: MMSReportStatus,
+            Order: Object.keys(exportColumnHeader)
+        };
+        try {
+            let result = await HandleExportData(filteredResults, exportOptions)
 
-        exportFile({
-            data: orderList,
-            fileName: 'mmsReport',
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
+            result = result.reduce(
+                (previousValue, currentValue) => {
+                    currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
+                    return [...previousValue, currentValue]
+                },
+                []
+            );
+            ExportFile({
+                data: result,
+                fileName: 'mmsReport',
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        }
+        catch (e) {
+            console.error(e);
+        }
         setLoader(false);
     }
 
@@ -227,7 +221,7 @@ const MmsReport = ({ classes }) => {
                         ...filterValues,
                         campaignName: e.target.value
                     })}
-                    onClick={() => handleSearch()}
+                    onClick={() => handleSearch(filterValues)}
                     placeholder={t('common.CampaignName')}
                 />
             )
@@ -291,7 +285,6 @@ const MmsReport = ({ classes }) => {
                     <Switch
                         checked={isDemoSend}
                         onColor="#0371ad"
-                        //onHandleColor="#e6f6ff"
                         handleDiameter={20}
                         uncheckedIcon={false}
                         checkedIcon={false}
@@ -360,13 +353,6 @@ const MmsReport = ({ classes }) => {
 
                         {t('campaigns.exportFile')}
                     </Button>
-                    <CSVLink
-                        data={csvData}
-                        filename='report.csv'
-                        className='hidden'
-                        ref={csvLinkRef}
-                        target='_blank'
-                    />
                 </Grid>}
                 <Grid item className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
@@ -431,15 +417,6 @@ const MmsReport = ({ classes }) => {
 
             </>
         )
-
-        // return <>
-        //     <Typography fullWidth className={clsx(classes.nameEllipsis, classes.fullWidth)} align={align} variant="body1">
-        //         {name}
-        //     </Typography>
-        //     <Typography className={classes.grayTextCell} align={align} variant="body1">
-        //         {date && (moment(date).format('LLL') ?? '')}
-        //     </Typography>
-        // </>
     }
 
     const renderIntData = (value, type, data = {}, clickable = true) => {
@@ -454,7 +431,7 @@ const MmsReport = ({ classes }) => {
                     //TODO: UnComment OnCLick, Comment Href 
                     className={clsx(classes.middleText, colorTextStyle[type] || '')}
                     target="_blank">
-                    {value && value.toLocaleString() || '0'}
+                    {(value && value.toLocaleString()) || '0'}
                 </Typography>
                 <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
                     {title}
@@ -495,16 +472,12 @@ const MmsReport = ({ classes }) => {
     const renderRow = (row) => {
         const {
             MmsCampaignID,
-            Name,
             Removed,
             Status,
             TotalCredits,
             TotalSent,
-            SendDate,
-            UpdateDate,
             Success,
             FutureSends,
-            TotalSendPlan,
             Failure,
             CreditsPerMms
         } = row
@@ -584,8 +557,6 @@ const MmsReport = ({ classes }) => {
             TotalSent,
             SendDate,
             UpdateDate,
-            FutureSends,
-            TotalSendPlan,
             Failure,
             CreditsPerMms
         } = row
@@ -663,13 +634,10 @@ const MmsReport = ({ classes }) => {
     return (
         <DefaultScreen
             classes={classes}
-            containerClass={classes.management}
+            containerClass={clsx(classes.management, classes.mb50)}
             currentPage="reports"
             subPage="MmsReport">
-            <Typography className={classes.managementTitle}>
-                {t('common.MMSReports')}
-            </Typography>
-            <Divider />
+            <Title Text={t('common.MMSReports')} Classes={classes} ShowDivider={true} />
             {renderFilter()}
             {renderManagmentLine()}
             <DataTable

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -10,45 +10,48 @@ import RecipientChart from '../../components/Charts/RecipientChart';
 import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
-import { getCookie } from '../../helpers/cookies'
-import TFA from '../../components/DialogTemplates/TFA'
+import ChangePassword from '../Settings/AccountSettings/Password/ChangePassword';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import Toast from "../../components/Toast/Toast.component";
+import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
-  const [showTFA, setShowTFA] = useState(false);
-  const [TFAInit, setTFAInit] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [member, setMember] = useState(null);
 
   useEffect(() => {
     const initialize = async () => {
-      if (document.referrer.toLocaleLowerCase().includes('login.aspx') || document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx')) {
-        init2FA();
+      if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
+        const member = accountSettings?.SubAccountSettings?.MembershipDetails;
+        setMember(member);
+        if (member?.PasswordExpired === true) {
+          logout();
+          return false;
+        }
+        else {
+          if (member?.NextRequiredChange <= 14) {
+            setShowChangePassword(true);
+          }
+        }
       }
     }
-    if (accountSettings && !TFAInit) {
+    if (accountSettings) {
       initialize();
-      setTFAInit(true);
     }
   }, [accountSettings])
 
-  const init2FA = async () => {
-    try {
-      if (accountSettings && accountSettings.SubAccountSettings.TwoFactorAuthEnabled !== true) {
-        const userSelection = getCookie("2faPopupv2");
-        if (!userSelection && userSelection !== false) {
-          setShowTFA(true);
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  const renderToast = () => {
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4000);
+    return <Toast data={toastMessage} />;
+  };
 
-  const onConfirm2FA = () => {
-    window.location = '/Pulseem/AccountSettings.aspx?2fa=1'
-  }
-  const onCancel2FA = () => {
-    setShowTFA(false);
+  const renderPasswordText = () => {
+    return RenderHtml(t('dashboard.changePassword').replace('##days##', member?.NextRequiredChange ?? ''))
   }
 
   return (
@@ -56,10 +59,6 @@ const DashboardScreen = ({ classes }) => {
       currentPage='dashboard'
       classes={classes}
       customStyle={classes.dashboard}>
-      <TFA classes={classes}
-        showTFA={showTFA}
-        onConfirm={onConfirm2FA}
-        onCancel={onCancel2FA} />
       <Grid container>
         <Grid item xs={12} sm={9} md={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
@@ -97,6 +96,14 @@ const DashboardScreen = ({ classes }) => {
           />
         </Grid>
       </Grid>
+      {toastMessage && renderToast()}
+      {showChangePassword && <ChangePassword
+        SetToast={setToastMessage}
+        IsOpen={showChangePassword}
+        OnClose={() => setShowChangePassword(false)}
+        Text={renderPasswordText()}
+      />
+      }
     </DefaultScreen>
   )
 }

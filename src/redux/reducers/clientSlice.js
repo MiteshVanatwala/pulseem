@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const deleteFromGroups = createAsyncThunk(
   'client/DeleteFromGroups', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`client/DeleteFromGroups/${id}`);
+      const response = await PulseemReactInstance.delete(`client/DeleteFromGroups/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,8 +14,8 @@ export const deleteFromGroups = createAsyncThunk(
 export const removeEmailClient = createAsyncThunk(
   'client/RemoveEmailClient', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`client/RemoveEmailClient/${id}`);
-      return JSON.parse(response.data)
+      const response = await PulseemReactInstance.put(`client/RemoveEmailClient/${id}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -24,8 +24,8 @@ export const removeEmailClient = createAsyncThunk(
 export const removeSmsClient = createAsyncThunk(
   'client/RemoveSmsClient', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`client/RemoveSmsClient/${id}`);
-      return JSON.parse(response.data)
+      const response = await PulseemReactInstance.put(`client/RemoveSmsClient/${id}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -34,7 +34,7 @@ export const removeSmsClient = createAsyncThunk(
 export const reactivateEmail = createAsyncThunk(
   'client/ReactivateEmail', async (payload, thunkAPI) => {
     try {
-      const response = await instence.put(`client/ReactivateEmail`, payload);
+      const response = await PulseemReactInstance.put(`client/ReactivateEmail`, payload);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -44,7 +44,7 @@ export const reactivateEmail = createAsyncThunk(
 export const reactivateSms = createAsyncThunk(
   'client/ReactivateSms', async (payload, thunkAPI) => {
     try {
-      const response = await instence.put(`client/ReactivateSms`, payload);
+      const response = await PulseemReactInstance.put(`client/ReactivateSms`, payload);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -54,7 +54,7 @@ export const reactivateSms = createAsyncThunk(
 export const makeInvalidClients = createAsyncThunk(
   'client/SetInvalidClients', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/SetInvalidClients`, payload);
+      const response = await PulseemReactInstance.post(`client/SetInvalidClients`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -64,7 +64,7 @@ export const makeInvalidClients = createAsyncThunk(
 export const searchAllClients = createAsyncThunk(
   'client/Get', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/Get`, payload);
+      const response = await PulseemReactInstance.post(`client/Get`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -74,7 +74,7 @@ export const searchAllClients = createAsyncThunk(
 export const searchAdvancedClients = createAsyncThunk(
   'client/Search', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/Search`, payload);
+      const response = await PulseemReactInstance.post(`client/Search`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -84,7 +84,7 @@ export const searchAdvancedClients = createAsyncThunk(
 export const AddClientsToGroup = createAsyncThunk(
   'client/AddClientsToGroup', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/AddClientsToGroup`, payload);
+      const response = await PulseemReactInstance.post(`client/AddClientsToGroup`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -94,8 +94,21 @@ export const AddClientsToGroup = createAsyncThunk(
 export const getExportData = createAsyncThunk(
   'client/GetExportData', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post('client/GetExportData', payload);
-      return JSON.parse(response.data);
+      //const dispatch = useDispatch()
+      const response = await PulseemReactInstance.post(`Client/GetExportData`, payload
+        ,
+        {
+          onDownloadProgress: progressEvent => {
+            const total = parseFloat(progressEvent.srcElement.getResponseHeader('content-length'))
+            const loaded = progressEvent.currentTarget.response.length
+
+            let percent = Math.floor(loaded * 100 / total);
+            thunkAPI.dispatch(setDownloadProgress(percent));
+          },
+        });
+
+      ///return { payload: { StatusCode: response?.data?.StatusCode, Clients: response.data } }
+      return response?.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -104,8 +117,8 @@ export const getExportData = createAsyncThunk(
 export const setUnsubscribedClients = createAsyncThunk(
   'client/SetUnsubscribedClients', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/SetUnsubscribedClients`, { ...payload });
-      return JSON.parse(response.data)
+      const response = await PulseemReactInstance.post(`client/SetUnsubscribedClients`, { ...payload });
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -113,13 +126,30 @@ export const setUnsubscribedClients = createAsyncThunk(
 export const changeClientStatus = createAsyncThunk(
   'client/ChangeClientStatus', async (payload, thunkAPI) => {
     try {
-      const response = await instence.put(`client/ChangeClientStatus`, { ...payload });
+      const response = await PulseemReactInstance.put(`client/ChangeClientStatus`, { ...payload });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-
+export const getClientsById = createAsyncThunk(
+  'client/GetClientsById', async (payload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`client/GetClientsById`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const exportGroupsClients = createAsyncThunk(
+  'client/ExportGroupsClients', async (payload, thunkAPI) => {
+    try {
+      const response = await PulseemReactInstance.post(`client/ExportGroupsClients`, { ...payload });
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const clientSlice = createSlice({
   name: 'client',
@@ -129,6 +159,7 @@ export const clientSlice = createSlice({
     TotalRevenue: 0,
     CampaignClicks: 0,
     error: "",
+    downloadProgress: 0,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'common.Success', showAnimtionCheck: false },
       CLIENT_ZERO_SELECT: { severity: 'error', color: 'error', message: 'client.errors.zeroSelected', showAnimtionCheck: false },
@@ -142,14 +173,21 @@ export const clientSlice = createSlice({
       RECIPIENT_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientDeletedSuccessfuly', showAnimtionCheck: false },
       RECIPIENTS_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientsDeletedSuccessfuly', showAnimtionCheck: false },
       AUTOMATION_CLIENTS_UPDATED: { severity: 'success', color: 'success', message: 'client.automationClientsUpdated', showAnimtionCheck: false },
-      NO_CLIENTS_FOUND: { severity: 'success', color: 'success', message: 'client.noClientsFound', showAnimtionCheck: false },
+      NO_CLIENTS_FOUND: { severity: 'success', color: 'success', message: 'client.errors.noClientsFound', showAnimtionCheck: false },
       UNSUBSCRIBED_SUCCESS: { severity: 'success', color: 'success', message: 'recipient.unsubscribed.succeeded', showAnimtionCheck: false },
+      UNSUBSCRIBED_IN_PROGRESS: { severity: 'success', color: 'success', message: 'recipient.unsubscribed.inProgress', showAnimtionCheck: false },
       SET_INVALID_SUCCESS: { severity: 'success', color: 'success', message: 'client.setInvalidSucceeded', showAnimtionCheck: false },
       STATUS_UPDATED: { severity: 'success', color: 'success', message: 'client.statusUpdated', showAnimtionCheck: false },
       INVALID_CLIENT_ID: { severity: 'error', color: 'error', message: 'client.errors.invalidClientId', showAnimtionCheck: false },
       RECIPIENT_ADDED: { severity: 'success', color: 'success', message: 'recipient.addRecipientSuccess', showAnimtionCheck: false },
       RECIPIENT_UPDATED: { severity: 'success', color: 'success', message: 'recipient.updateRecipientSuccess', showAnimtionCheck: false },
       RECIPIENT_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'recipient.incorrectRecipientInput', showAnimtionCheck: false },
+    }
+  },
+  reducers: {
+    setDownloadProgress: (state, action) => {
+      state.downloadProgress = action.payload;
+
     }
   },
   extraReducers: builder => {
@@ -171,8 +209,12 @@ export const clientSlice = createSlice({
     builder.addCase(searchAdvancedClients.rejected, (state, { error }) => {
       state.error = error.message;
     })
+    builder.addCase(getExportData.fulfilled, (state, { payload }) => {
+      state.downloadProgress = null;
+    })
   }
 })
 
 
+export const { setDownloadProgress } = clientSlice.actions
 export default clientSlice.reducer

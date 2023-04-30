@@ -54,7 +54,7 @@ const IOSSwitch = styled((props) => (
     },
 }));
 
-const PulseemSwitch = ({ classes, id, switchType, props, margin = 1, onChange = () => null, checked = true, isRTL = true }) => {
+const PulseemSwitch = ({ classes, id, switchType, props, margin = 1, onChange, checked = true, isRTL = true }) => {
     switch (switchType) {
         case "ios": {
             return (<IOSSwitch sx={{ m: margin }} checked={checked} onChange={onChange} {...props} />)
@@ -80,7 +80,6 @@ const PulseemSwitch = ({ classes, id, switchType, props, margin = 1, onChange = 
             />)
         }
     }
-    return <></>
 }
 
 export default PulseemSwitch;

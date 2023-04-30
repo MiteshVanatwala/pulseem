@@ -1,18 +1,16 @@
-import React from 'react';
+
 import clsx from 'clsx';
 import {
   Typography, Divider, Grid, Button, Dialog as BaseDialog, Paper, Box
 } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { AlertIcon } from '../icons/index'
 
 export const Dialog = ({
   childrenPadding = true,
   classes,
   open = false,
   title = '',
-  icon = null,
   children,
   showDivider = false,
   onClose = () => null,
@@ -51,10 +49,11 @@ export const Dialog = ({
   const renderExitButton = () => {
     return (
       <>
-        {props.exit ? null : <Box
+        {props.exit ? props.exit : <Box
           onClick={onExit}
           className={clsx(
             classes.dialogExitButton,
+            classes.btnBgExitDialog,
             {
               [classes.dialogExitButtonRTL]: isRTL,
               [classes.dialogExitButtonLTR]: !isRTL
@@ -112,21 +111,6 @@ export const Dialog = ({
     )
   }
 
-  const renderIcon = () => {
-    const alertIcon = <AlertIcon classes={classes} />
-    return (
-      <Box
-        className={clsx(
-          classes.dialogIconContainer,
-          {
-            [classes.dialogIconContainerRTL]: isRTL,
-            [classes.dialogIconContainerLTR]: !isRTL
-          }
-        )}>
-        {icon || alertIcon}
-      </Box>
-    )
-  }
 
   const renderChildren = () => {
     return (
@@ -154,6 +138,7 @@ export const Dialog = ({
       style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
+      onCancel={onClose}
       onClose={(event, reason) => {
         if (reason !== 'backdropClick' || !disableBackdropClick) {
           onClose();
@@ -163,7 +148,6 @@ export const Dialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {renderExitButton()}
         {renderContent()}
-        {icon !== 'NONE' && renderIcon()}
       </Paper>
     </BaseDialog>
   )

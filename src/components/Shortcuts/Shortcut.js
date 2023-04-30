@@ -8,10 +8,11 @@ import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { getShortcuts, setShortcuts, deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 import { DASHBOARD_SHORTCUT } from '../../model/Shortcuts/DashboardShortcuts';
+import useRedirect from '../../helpers/Routes/Redirect';
 
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
-  const { accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common)
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});
@@ -22,6 +23,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const [activeShortcut, setActiveShortcut] = useState(null);
   const dispatch = useDispatch();
   const categories = { ...DASHBOARD_SHORTCUT };
+  const Redirect = useRedirect();
 
   if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf('35') > -1) {
     categories['appBar.notifications.title'] = {
@@ -39,13 +41,14 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const initData = async () => {
-    let r = await dispatch(getShortcuts());
+  const initData = () => {
+    dispatch(getShortcuts());
   }
 
   useEffect(() => {
-    initData();
-  }, [dispatch])
+    if (!shortcuts || shortcuts.length === 0)
+      initData();
+  }, [])
 
   const handlePageChange = useCallback((title, href, update, num, index) => {
     const data = {
@@ -80,15 +83,18 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const renderShortcutMenu = (num, update, index) => {
-    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+    let pageTitle = (selectedPage[num] && selectedPage[num].title) ?? '';
+    let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) ?? '';
     const open = Boolean(anchorEl[num]);
 
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
-        if (pageTitle === '') {
+        if (pageTitle === '' && categoryTitle === selectedShortcut.CategoryName) {
           pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
+        }
+        else {
+          pageTitle = t('common.SelectPage');
         }
         if (categoryTitle === '') {
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
@@ -136,15 +142,18 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
                 <Divider />
                 <List component="div">
                   {Object.keys(categories).map(cat => {
-                    return (
-                      <ListItem
-                        key={`category${Math.round(Math.random() * 999999999)}`}
-                        button
-                        className={clsx(classes.pt0, classes.pb0)}
-                        onClick={() => handleCategoryChange(cat)}>
-                        <ListItemText primary={t(categories[cat].title)} />
-                      </ListItem>
-                    )
+                    if (cat !== categoryTitle) {
+                      return (
+                        <ListItem
+                          key={`category${Math.round(Math.random() * 999999999)}`}
+                          button
+                          className={clsx(classes.pt0, classes.pb0)}
+                          onClick={() => handleCategoryChange(cat)}>
+                          <ListItemText primary={t(categories[cat].title)} />
+                        </ListItem>
+                      )
+                    }
+                    return null;
                   })}
                 </List>
               </Collapse>
@@ -192,15 +201,15 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const handleShortcutMenuOpen = (event, num, update, index) => {
-    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+  const handleShortcutMenuOpen = (event, num) => {
+    let pageTitle = (selectedPage[num] && selectedPage[num].title) || '';
+    let categoryTitle = (selectedCategory[num] && categories[selectedCategory[num]].title) || '';
     let refElement = event.currentTarget || event.current || '';
     if (!refElement) {
       return;
     }
     let data = {};
-    data[num] = num == Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
+    data[num] = num === Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
@@ -250,7 +259,12 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         <Button
           variant='contained'
           color='primary'
+          component="a"
           href={data.ShortcutUrl}
+          onClick={(e) => {
+            e.preventDefault();
+            Redirect({ url: data.ShortcutUrl })
+          }}
           classes={{
             label: classes.shortcutLabel,
             root: classes.shortcutButton
@@ -261,7 +275,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         {windowSize !== 'xs' && windowSize !== 'sm' && <IconButton
           id="editIcon"
           className={classes.shortcutEditIcon}
-          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID, true, index)}>
+          onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index)}>
           {'\uE09C'}
         </IconButton>
         }
@@ -281,7 +295,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             color='primary'
             fullWidth
             className={classes.shortcutDottedButton}
-            onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, index)}>
+            onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, index)}>
             {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}
@@ -291,10 +305,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
     return newShortcutButtons;
   }
-  if (shortcuts.length > 0 && windowSize === 'xs' || windowSize !== 'xs') {
+  if ((shortcuts.length > 0 && windowSize === 'xs') || windowSize !== 'xs') {
     return (
       <Box className={classes.shortcutBox}>
-        <Paper elevation={windowSize == 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
+        <Paper elevation={windowSize === 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
           <Box className={classes.shortcutTitleSection}>
             <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
             <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>

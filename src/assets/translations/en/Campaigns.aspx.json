@@ -512,6 +512,7 @@
       "upload": "The file will appear as an attached file in your mail"
     },
     "errors": {
+      "campaignWasNotSent": "The campaign was not sent!",
       "invaliApiKey": "Invalid or missing API KEY",
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
@@ -520,10 +521,79 @@
       "fromName": "Please fill in name",
       "fromEmail": "Please fill in an email address",
       "campaignSubject": "Please fill in a campaign subject",
-      "invalidCampaignId": "Campaign ID erroneous / not belong to the account",
-      "CampaignNotFound": "Campaign not found or deleted"
+      "invalidCampaignId": "Invalid campaign ID / not belong to the account",
+      "CampaignNotFound": "Campaign not found or deleted",
+      "missingSendingDate": "Campaign was not saved! Missing Sending Date",
+      "campaignAlreadySent": "The current campaign already sent",
+      "LOCK_SENDING": "This User is locked for sending email campaigns<br/>For further support please contact us ",
+      "UNAUTHORIZED_FROM_EMAIL": "This Email address is not authorized for sending email campaigns<br/>For further support please contact us ",
+      "NO_RECIPIENTS": "You did not select any recipients<br/>Please select recipients and try again",
+      "MONTHLY_RESTRICTIONS": "You have passed your monthly sending restriction<br/>For further support please contact us ",
+      "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since it’s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
+      "BULK_ENDED": "Your bulk has ended!<br/>To purchase a new bulk enter your dashboard<br/>Or contact our costumer support:",
+      "MONTHLY_BULK_ENDED": "You monthly bulk has ended!<br/>To purchase a new bulk enter your dashboard",
+      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+      "FUTURE_DATE_PASSED": "The campaign sending date is passed, Please select future sending date."
     },
-    "success": "Campaign successfully saved"
+    "success": "Success",
+    "sendSettings": {
+      "optimalSending": "Optimal Sending",
+      "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
+      "optimalSendCBTooltip": "this process may take up to 24 hours",
+      "segmentation": "Segmentation",
+      "segmCriteria": "Segmentation Criteria",
+      "segmCritCb1": "Send to recipients that opened the Email",
+      "segmCritCb2": "Send to recipients that did not open the Email",
+      "segmCritCb3": "Send to recipients that clicked on links",
+      "segmCritCb4": "Send to recipients that did not click on links",
+      "summarySegmCritCb1": "Recipients that opened the Email",
+      "summarySegmCritCb2": "Recipients that did not open the Email",
+      "summarySegmCritCb3": "Recipients that clicked on links",
+      "summarySegmCritCb4": "Recipients that did not click on links",
+      "summarySegmCritCb5": "Recipients that did not open the Email and did not click on links",
+      "filterInputText": "Don't send to recipients that got Newsletter in last previous days",
+      "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
+      "emailFilterInput": "Don't send to recipients that received an Email in last previous days",
+      "pendingClients": "Pending clients for approval",
+      "restrictedClients": "Restricted clients",
+      "duplicatedClients": "Duplicated clients",
+      "invalidRecipients": "Invalid email addresses",
+      "specialDateMissing": "Special date missing",
+      "filters": "Filters",
+      "segmentations": "Segmentations",
+      "totalNotToSend":"Total filtered",
+      "DidNotClicked": "Did not open or clicked",
+      "smsMarketing": {
+        "title": "SMS Marketing",
+        "sendTo": "Send To",
+        "everyone": "Everyone",
+        "opened": "Opened",
+        "unOpened": "Unopened",
+        "clicked": "Clicked",
+        "invalid": "Invalid",
+        "fromNumber": "From Number",
+        "sendingDate": "Sending Date",
+        "sendingTime": "Sending Time",
+        "smsMarketingSubTitle": "Send SMS to recipients in selected criteria that received email campaign for complete overall marketing.",
+        "addLinkToCampaign": "Add link to this Email campaign",
+        "addLinkToUpdate": "Add link to update contact"
+      },
+      "errors": {
+        "reqFromNumber": "From Number is required",
+        "reqText": "Text is required",
+        "reqDate": "Date is required",
+        "reqTime": "Time is required",
+        "reqSendTo": "Send to is required",
+        "invalidDate": "Invalid date",
+        "invalidTime": "Invalid time",
+        "enterVerifiedNumber": "Please enter the verified phone number",
+        "selectFutureDate": "Supplementary marketing cannot be sent before the campaign send date. Please select a future date."
+      },
+      "deleted": "Campaign deleted successfully",
+      "send": "Send",
+      "doNotSend": "Do not send",
+      "smsComplementary": "Complementary SMS Marketing"
+    }
   },
   "newsLetterMgmt": {
     "emailVerification": {
@@ -576,6 +646,15 @@
         "desc": "From now on you will be able to send with this email without needing verification",
         "btnTxt": "Continue to campaigns"
       }
+    },
+    "payAttention": "Pay attention!",
+    "campMadewithOldEditor": "This campaign was made with the old editor",
+    "chooseNewEditorToCreateCamp": "In order to use the new editor go to “Create Campaign” and choose the new editor",
+    "newsLetterWizard": {
+      "continueEditingInOldEditor": "If you created a campaign in the new editor and you want to continue editing it in the old editor",
+      "recreateInOldEditor": "You will have to recreate the campaign in the old editor",
+      "continueEditingInNewEditor": "If you created a campaign in the old editor and you want to continue editing it in the new editor",
+      "recreateInNewEditor": "You will have to recreate the campaign in the new editor"
     }
   },
   "newsLetterSendSettings": {
@@ -600,5 +679,9 @@
   "totalSize": "Total size",
   "kb": "KB",
   "saveBlock": "Save Block",
-  "savedBlocks": "Saved-blocks"
+  "savedBlocks": "Saved-blocks",
+  "weSent": "We sent!",
+  "campaignIsOnItsWay": "Your campaign is on its way",
+  "newsletterSetUp": "Newsletter Set-Up",
+  "lastSaveAt": "Last save at: "
 }

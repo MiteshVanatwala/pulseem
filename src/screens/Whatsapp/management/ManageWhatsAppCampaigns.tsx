@@ -1,0 +1,1068 @@
+import {
+	Box,
+	Button,
+	Grid,
+	Table,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
+	Typography,
+} from '@material-ui/core';
+import uniqid from 'uniqid';
+import { useTranslation } from 'react-i18next';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+	AutomationIcon,
+	DeleteIcon,
+	DuplicateIcon,
+	EditIcon,
+	SendGreenIcon,
+	SearchIcon,
+	GroupsIcon,
+	PreviewIcon,
+	CalendarIcon,
+} from '../../../assets/images/managment/index';
+import ManagmentIcon from './Component/ManagmentIcon';
+import { Title } from '../../../components/managment/Title';
+import { ClassesType } from '../../Classes.types';
+import DefaultScreen from '../../DefaultScreen';
+import {
+	buttonsDataProps,
+	callToActionProps,
+	campaignListAPIProps,
+	commonAPIResponseProps,
+	coreProps,
+	quickReplyButtonProps,
+	restoreCampaignData,
+	savedTemplateCallToActionProps,
+	savedTemplateCardProps,
+	savedTemplateDataProps,
+	savedTemplateMediaProps,
+	savedTemplateQuickReplyProps,
+	savedTemplateTextProps,
+	templateDataProps,
+	templateListAPIProps,
+	toastProps,
+} from '../Editor/Types/WhatsappCreator.types';
+import ClearIcon from '@material-ui/icons/Clear';
+import clsx from 'clsx';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
+import moment from 'moment';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import {
+	allCampaignInitialPagination,
+	apiStatus,
+	campaignStatus,
+	campaignStatuses,
+	resetToastData,
+} from '../Constant';
+import Pagination from './Component/Pagination';
+import RestoreDeletedModal from './Popups/RestoreDeletedModal';
+import { KeyboardDatePicker } from '@material-ui/pickers';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import { AllCampaignReq, ManagmentIconProps } from './Types/Management.types';
+import AlertModal from '../Editor/Popups/AlertModal';
+import WhatsappMobilePreview from '../Editor/Components/WhatsappMobilePreview';
+import {
+	deleteCampaign,
+	duplicateCampaign,
+	getAllCampaigns,
+	getSavedTemplatesPreviewById,
+	restoreWhatsAppCampaigns,
+} from '../../../redux/reducers/whatsappSlice';
+import InfoModal from './Popups/InfoModal';
+import { useNavigate } from 'react-router-dom';
+import {
+	campaignDataProps,
+	filtersObjectProps,
+	searchArrayProps,
+} from '../Campaign/Types/WhatsappCampaign.types';
+import { Loader } from '../../../components/Loader/Loader';
+import Toast from '../../../components/Toast/Toast.component';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+
+const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const { t: translator } = useTranslation();
+	const { windowSize, rowsPerPage } = useSelector(
+		(state: { core: coreProps }) => state.core
+	);
+	const ToastMessages = useSelector(
+		(state: { whatsapp: { ToastMessages: toastProps } }) =>
+			state.whatsapp.ToastMessages
+	);
+	const [fromDate, handleFromDate] = useState<MaterialUiPickersDate | null>(
+		null
+	);
+	const [activeRowId, setActiveRowId] = useState<string>('');
+	const [toDate, handleToDate] = useState<MaterialUiPickersDate | null>(null);
+	const [campaignNameSearch, setCampaignNameSearch] = useState<string>('');
+	const [isSearching, setSearching] = useState<boolean>(false);
+
+	const [isPreviewCampaignOpen, setIsPreviewCampaignOpen] =
+		useState<boolean>(false);
+	const [templateData, setTemplateData] = useState<templateDataProps>({
+		templateText: '',
+		templateButtons: [],
+	});
+	const [totalRecord, setTotalRecord] = useState<number>(0);
+	const [paginationSetting, setPaginationSetting] = useState<AllCampaignReq>(
+		allCampaignInitialPagination
+	);
+	const [buttonType, setButtonType] = useState<string>('');
+	const [fileData, setFileData] = useState<{
+		fileLink: string;
+		fileType: string;
+	}>({
+		fileLink: '',
+		fileType: '',
+	});
+
+	const [isRestoreDeletedModal, setIsRestoreDeletedModal] =
+		useState<boolean>(false);
+	const [isDuplicateCampaignOpen, setIsDuplicateCampaignOpen] =
+		useState<boolean>(false);
+	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] =
+		useState<boolean>(false);
+	const [isInfoModalOpen, setIsInfoModalOpen] = useState<boolean>(false);
+	const [infoModalData, setInfoModalData] = useState<string[]>([
+		'Group 1',
+		'Group 2',
+	]);
+	const [isFromDatePickerOpen, setIsFromDatePickerOpen] =
+		useState<boolean>(false);
+	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
+	const [restoreIds, setRestoreIds] = useState<string[]>([]);
+	const [isLoader, setIsLoader] = useState<boolean>(false);
+	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
+		[]
+	);
+	const [deletedCampaignListData, setDeletedCampaignListData] = useState<
+		campaignDataProps[]
+	>([]);
+	const [toastMessage, setToastMessage] =
+		useState<toastProps['SUCCESS']>(resetToastData);
+
+	const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
+	const cellStyle = {
+		head: classes.tableCellHead,
+		body: classes.tableCellBody,
+		root: classes.tableCellRoot,
+	};
+	const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
+	let updatedTemplateData: templateDataProps = {
+		templateText: '',
+		templateButtons: [],
+	};
+	let updatedButtonType: string = '';
+	let updatedFileData: {
+		fileLink: string;
+		fileType: string;
+	} = {
+		fileLink: '',
+		fileType: '',
+	};
+
+	useEffect(() => {
+		setApiCampaignData(
+			rowsPerPage
+				? { ...paginationSetting, pageSize: Number(rowsPerPage) }
+				: paginationSetting
+		);
+		if (rowsPerPage) {
+			setPaginationSetting({
+				...paginationSetting,
+				pageSize: Number(rowsPerPage),
+			});
+		}
+		/**
+		 * we disable it because we want to run this code only when component loads
+		 */
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		if (
+			(fromDate && moment(fromDate).format('DD/MM/YYYY')?.length > 0) ||
+			(toDate && moment(toDate).format('DD/MM/YYYY')?.length > 0) ||
+			campaignNameSearch?.length > 0
+		) {
+			setSearching(true);
+		}
+	}, [fromDate, toDate, campaignNameSearch]);
+
+	const handleFromDateChange = (value: MaterialUiPickersDate | null) => {
+		if (toDate && value && value > toDate) {
+			handleToDate(null);
+		}
+		handleFromDate(value);
+	};
+	const handleCampainNameChange = (event: BaseSyntheticEvent) => {
+		setCampaignNameSearch(event.target.value);
+	};
+	const clearSearch = () => {
+		setCampaignNameSearch('');
+		handleFromDate(null);
+		handleToDate(null);
+		setSearching(false);
+
+		const updatedPagination: AllCampaignReq = {
+			...paginationSetting,
+			pageNo: 1,
+			campaignName: '',
+			fromDate: null,
+			toDate: null,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiCampaignData(updatedPagination);
+	};
+	const renderNameCell = (row: campaignDataProps) => {
+		let date = null;
+		let text = '';
+		if (!row?.SendDate) {
+			date = moment(row.UpdateDate, dateFormat);
+			text = translator('common.UpdatedOn');
+		} else {
+			date = moment(row.SendDate, dateFormat);
+			const dateMillis = date.valueOf();
+			const currentDateMillis = moment().valueOf();
+			text =
+				dateMillis > currentDateMillis
+					? translator('common.ScheduledFor')
+					: translator('common.SentOn');
+		}
+
+		return (
+			<>
+				<CustomTooltip
+					isSimpleTooltip={false}
+					interactive={true}
+					classes={{
+						tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+						arrow: classes.fBlack,
+					}}
+					arrow={true}
+					style={{ fontSize: 18, fontWeight: 'bold' }}
+					placement={'top'}
+					title={<Typography noWrap={false}>{row.Name}</Typography>}
+					text={row.Name}
+					children={undefined}
+					icon={undefined}
+				/>
+				<Typography className={classes.grayTextCell}>
+					{`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+				</Typography>
+			</>
+		);
+	};
+	const renderRecipientsCell = (recipients: number) => {
+		return (
+			<>
+				<Typography className={classes.middleText}>
+					{recipients?.toLocaleString()}
+				</Typography>
+				<Typography className={classes.middleText}>
+					<>{translator('campaigns.recipients')}</>
+				</Typography>
+			</>
+		);
+	};
+
+	const renderMessagesCell = (messages: number) => {
+		return (
+			<>
+				<Typography className={classes.middleText}>
+					{messages.toLocaleString()}
+				</Typography>
+				<Typography className={classes.middleText}>
+					<>{translator('sms.CreditsResource1.HeaderText')}</>
+				</Typography>
+			</>
+		);
+	};
+	const renderStatusCell = (status: number) => {
+		return (
+			<>
+				<Typography
+					className={clsx(classes.middleText, classes.whatsappCampaignStatus, {
+						[classes.whatsappCampaignStatusCreated]:
+							status === campaignStatuses.CREATED,
+						[classes.whatsappCampaignStatusSending]:
+							status === campaignStatuses.SENDING,
+						[classes.whatsappCampaignStatusStopped]:
+							status === campaignStatuses.STOPPED,
+						[classes.whatsappCampaignStatusFinished]:
+							status === campaignStatuses.FINISHED,
+						[classes.whatsappCampaignStatusCanceled]:
+							status === campaignStatuses.CANCELED,
+					})}>
+					<>
+						{translator(
+							`whatsappManagement.${campaignStatus[
+								status
+							]?.toLocaleLowerCase()}`
+						)}
+					</>
+				</Typography>
+			</>
+		);
+	};
+
+	const setButtonsData = (buttonType: string, data: buttonsDataProps[]) => {
+		let buttonData: quickReplyButtonProps[] | callToActionProps = [];
+		switch (buttonType) {
+			case 'quickReply':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					return {
+						id: uniqid(),
+						typeOfAction: '',
+						fields: [
+							{
+								fieldName: 'whatsapp.websiteButtonText',
+								type: 'text',
+								placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+								value: button.title,
+							},
+						],
+					};
+				});
+				return buttonData ? buttonData : [];
+			case 'callToAction':
+				buttonData = data?.map((button: buttonsDataProps) => {
+					if (button?.type === 'PHONE_NUMBER') {
+						return {
+							id: uniqid(),
+							typeOfAction: 'phonenumber',
+							fields: [
+								{
+									fieldName: 'whatsapp.phoneButtonText',
+									type: 'text',
+									placeholder: 'whatsapp.phoneButtonTextPlaceholder',
+									value: button.title,
+								},
+								{
+									fieldName: 'whatsapp.country',
+									type: 'select',
+									placeholder: 'Select Your Country Code',
+									value: '+972 Israel',
+								},
+								{
+									fieldName: 'whatsapp.phoneNumber',
+									type: 'tel',
+									placeholder: 'whatsapp.phoneNumberPlaceholder',
+									value: button.phone,
+								},
+							],
+						};
+					} else {
+						return {
+							id: uniqid(),
+							typeOfAction: 'website',
+							fields: [
+								{
+									fieldName: 'whatsapp.websiteButtonText',
+									type: 'text',
+									placeholder: 'whatsapp.websiteButtonTextPlaceholder',
+									value: button.title,
+								},
+								{
+									fieldName: 'whatsapp.websiteURL',
+									type: 'text',
+									placeholder: 'whatsapp.websiteURLPlaceholder',
+									value: button.url,
+								},
+							],
+						};
+					}
+				});
+				return buttonData ? buttonData : [];
+		}
+	};
+
+	const saveQuickreplyTemplate = (templateData: savedTemplateDataProps) => {
+		const quickReplyData: savedTemplateQuickReplyProps =
+			templateData?.types['quick-reply'];
+		updatedButtonType = 'quickReply';
+		const buttonData = setButtonsData('quickReply', quickReplyData?.actions);
+		updatedTemplateData.templateText = quickReplyData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCallToActionTemplate = (templateData: savedTemplateDataProps) => {
+		const callToActionData: savedTemplateCallToActionProps =
+			templateData?.types['call-to-action'];
+		updatedButtonType = 'callToAction';
+		const buttonData = setButtonsData(
+			'callToAction',
+			callToActionData?.actions
+		);
+		updatedTemplateData.templateText = callToActionData?.body;
+		updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+	};
+
+	const saveCardTemplate = (templateData: savedTemplateDataProps) => {
+		const cardData: savedTemplateCardProps = templateData?.types['card'];
+		updatedTemplateData.templateText = cardData?.title;
+		if (cardData?.actions?.length > 0) {
+			if (cardData?.actions[0]?.type !== 'QUICK_REPLY') {
+				updatedButtonType = 'callToAction';
+				const buttonData = setButtonsData('callToAction', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			} else {
+				updatedButtonType = 'quickReply';
+				const buttonData = setButtonsData('quickReply', cardData?.actions);
+				updatedTemplateData.templateButtons = buttonData ? buttonData : [];
+			}
+		}
+		if (cardData?.media?.length > 0) {
+			updatedFileData.fileLink = cardData?.media[0];
+		}
+	};
+
+	const saveMediaTemplate = (templateData: savedTemplateDataProps) => {
+		const mediaData: savedTemplateMediaProps = templateData?.types['media'];
+		updatedTemplateData.templateText = mediaData?.body;
+		if (mediaData?.media?.length > 0) {
+			updatedFileData.fileLink = mediaData?.media[0];
+			updatedFileData.fileType = mediaData?.media_type;
+		}
+	};
+
+	const saveTextTemplate = (templateData: savedTemplateDataProps) => {
+		const textData: savedTemplateTextProps = templateData?.types['text'];
+		updatedTemplateData.templateText = textData?.body;
+	};
+
+	const setUpdatedTemplateData = (templateData: savedTemplateDataProps) => {
+		if ('quick-reply' in templateData?.types) {
+			saveQuickreplyTemplate(templateData);
+		}
+		if ('call-to-action' in templateData?.types) {
+			saveCallToActionTemplate(templateData);
+		} else if ('card' in templateData?.types) {
+			saveCardTemplate(templateData);
+		} else if ('media' in templateData?.types) {
+			saveMediaTemplate(templateData);
+		} else if ('text' in templateData?.types) {
+			saveTextTemplate(templateData);
+		}
+	};
+
+	const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
+		if (templateData) {
+			setUpdatedTemplateData(templateData);
+		}
+		setFileData(updatedFileData);
+		setButtonType(updatedButtonType);
+		setTemplateData(updatedTemplateData);
+	};
+
+	const getTemplateIdFromId = (id: string) => {
+		return campaignListData?.find(
+			(campaign: campaignDataProps) => id === campaign.WACampaignID?.toString()
+		)?.TemplateId;
+	};
+
+	const onPreview = async (campaignId: string) => {
+		const previewTemplateId = getTemplateIdFromId(campaignId);
+		if (previewTemplateId) {
+			const templateData: templateListAPIProps = await dispatch<any>(
+				getSavedTemplatesPreviewById({
+					templateId: previewTemplateId,
+				})
+			);
+			if (templateData.payload.Status === apiStatus.SUCCESS) {
+				const templates = templateData.payload?.Data?.Items;
+				if (templates && templates?.length > 0) {
+					const templateData = templates[0];
+					onSavedTemplateChange(templateData?.Data);
+				}
+				setIsPreviewCampaignOpen(true);
+			} else {
+				templateData?.payload?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: templateData?.payload?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		}
+	};
+
+	const onGroups = (campaignId: string) => {
+		let modalData: string[] = [];
+		setIsInfoModalOpen(true);
+		const campaign = campaignListData?.find(
+			(campaign: campaignDataProps) =>
+				campaignId === campaign.WACampaignID?.toString()
+		);
+		if (campaign && campaign?.Groups) {
+			if (typeof campaign?.Groups === 'string') {
+				modalData.push(campaign.Groups?.toString());
+				setInfoModalData(modalData);
+			} else {
+				modalData = [...campaign.Groups];
+				setInfoModalData(modalData);
+			}
+		}
+	};
+
+	const onRowIconClick = (key: string, campaignId: string) => {
+		setActiveRowId(campaignId);
+		switch (key) {
+			case 'preview':
+				onPreview(campaignId);
+				break;
+			case 'duplicate':
+				setIsDuplicateCampaignOpen(true);
+				break;
+			case 'groups':
+				onGroups(campaignId);
+				break;
+			case 'automation':
+				// setIsDuplicateCampaignOpen(true);
+				break;
+			case 'delete':
+				setIsDeleteCampaignOpen(true);
+				break;
+
+			default:
+				break;
+		}
+	};
+
+	const renderCellIcons = (row: campaignDataProps) => {
+		const { Status, AutomationID, Groups } = row;
+		const iconsMap: ManagmentIconProps[] = [
+			{
+				key: 'send',
+				buttonKey: 'send',
+				icon: SendGreenIcon,
+				lable: translator('campaigns.imgSendResource1.ToolTip'),
+				remove: Status !== 1 || AutomationID !== 0,
+				rootClass: classes.sendIcon,
+				textClass: classes.sendIconText,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+				href: `/react/whatsapp/campaign/edit/page2/${row.WACampaignID}`,
+			},
+			{
+				key: 'preview',
+				buttonKey: 'preview',
+				icon: PreviewIcon,
+				lable: translator('campaigns.Image1Resource1.ToolTip'),
+				remove: windowSize === 'xs',
+				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+			},
+			{
+				key: 'edit',
+				buttonKey: 'edit',
+				icon: EditIcon,
+				disable: Status !== 1 || AutomationID !== 0,
+				lable: translator('campaigns.Image2Resource1.ToolTip'),
+				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+				href: `/react/whatsapp/campaign/edit/page1/${row.WACampaignID}`,
+			},
+			{
+				key: 'duplicate',
+				buttonKey: 'duplicate',
+				icon: DuplicateIcon,
+				lable: translator('campaigns.lnkEditResource1.ToolTip'),
+				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+			},
+			{
+				key: 'groups',
+				buttonKey: 'groups',
+				icon: GroupsIcon,
+				disable: Groups?.length === 0 ? true : false,
+				lable: translator('campaigns.lnkPreviewResource1.ToolTip'),
+				remove: windowSize === 'xs',
+				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+			},
+			{
+				key: 'automation',
+				buttonKey: 'automation',
+				icon: AutomationIcon,
+				disable: AutomationID === 0,
+				remove: windowSize === 'xs',
+				lable: translator('campaigns.automation'),
+				rootClass: classes.paddingIcon,
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+			},
+			{
+				key: 'delete',
+				buttonKey: 'delete',
+				icon: DeleteIcon,
+				disable: AutomationID !== 0,
+				rootClass: classes.paddingIcon,
+				lable: translator('campaigns.DeleteResource1.HeaderText'),
+				onClick: (key: string, id: string) => onRowIconClick(key, id),
+				classes: classes,
+				id: row.WACampaignID.toString(),
+			},
+		];
+		return (
+			<Grid
+				container
+				direction='row'
+				justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}
+				alignItems='center'>
+				{iconsMap.map((icon) => (
+					<Grid
+						className={icon?.disable ? classes.disabledCursor : ''}
+						key={icon.key}
+						item>
+						<ManagmentIcon {...icon} />
+					</Grid>
+				))}
+			</Grid>
+		);
+	};
+
+	const onDuplicateCampaign = async () => {
+		const deleteData: commonAPIResponseProps = await dispatch<any>(
+			duplicateCampaign(activeRowId)
+		);
+		setIsDuplicateCampaignOpen(false);
+		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.DUPLICATE_CAMPAIGN_SUCCESS);
+			setApiCampaignData();
+		} else {
+			deleteData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
+	};
+
+	const onDeleteCampaign = async () => {
+		const deleteData: commonAPIResponseProps = await dispatch<any>(
+			deleteCampaign(activeRowId)
+		);
+		setIsDeleteCampaignOpen(false);
+		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+			setApiCampaignData();
+		} else {
+			deleteData?.payload?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: deleteData?.payload?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
+	};
+
+	const onRestoreDeleted = async () => {
+		setIsRestoreDeletedModal(false);
+		setIsLoader(true);
+		const { payload: restoreCampaignData }: restoreCampaignData =
+			await dispatch<any>(
+				restoreWhatsAppCampaigns(restoreIds?.map((id) => Number(id)))
+			);
+		setIsLoader(false);
+		if (restoreCampaignData?.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages.RESTORE_CAMPAIGN_SUCCESS);
+			setApiCampaignData();
+		} else {
+			restoreCampaignData?.Message
+				? setToastMessage({
+						...ToastMessages.ERROR,
+						message: restoreCampaignData?.Message,
+				  })
+				: setToastMessage(ToastMessages.ERROR);
+		}
+	};
+
+	const onSearch = async () => {
+		const updatedPagination: AllCampaignReq = {
+			...paginationSetting,
+			pageNo: 1,
+			campaignName: campaignNameSearch || '',
+			fromDate: fromDate || null,
+			toDate: toDate || null,
+		};
+		setPaginationSetting(updatedPagination);
+		setApiCampaignData(updatedPagination);
+	};
+
+	const onCreateCamoaign = async () => {
+		navigate('/react/whatsapp/campaign/create/page1');
+	};
+
+	const setApiCampaignData = async (
+		pagination: AllCampaignReq = paginationSetting
+	) => {
+		setIsLoader(true);
+		const campaignData: campaignListAPIProps = await dispatch<any>(
+			getAllCampaigns(pagination)
+		);
+		setIsLoader(false);
+		if (campaignData.payload.Status === apiStatus.SUCCESS) {
+			const filteredCampaignData = campaignData.payload?.Data?.Items?.filter(
+				(campaign) => !campaign?.IsDeleted
+			);
+			const deletedCampaignData = campaignData.payload?.Data?.Items?.filter(
+				(campaign) => campaign?.IsDeleted
+			);
+			setCampaignListData(filteredCampaignData);
+			setDeletedCampaignListData(deletedCampaignData);
+			setTotalRecord(campaignData?.payload?.Data?.TotalRecord);
+		} else {
+			setCampaignListData([]);
+			setDeletedCampaignListData([]);
+			setTotalRecord(0);
+		}
+	};
+
+	const resetToast = () => {
+		setToastMessage(resetToastData);
+	};
+
+	const renderToast = () => {
+		if (toastMessage.message?.length > 0) {
+			setTimeout(() => {
+				resetToast();
+			}, 4000);
+			return <Toast data={toastMessage} />;
+		}
+		return null;
+	};
+
+	const updatePaginationSetting = (pagination: AllCampaignReq) => {
+		setApiCampaignData(pagination);
+		setPaginationSetting(pagination);
+	};
+
+	const onRowsPerPageChange = (rowsNumber: number) => {
+		dispatch(setRowsPerPage(rowsNumber));
+		updatePaginationSetting({
+			...paginationSetting,
+			pageSize: rowsNumber,
+			pageNo: 1,
+		});
+	};
+
+	const onTemplateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		const keyCode = e.keyCode ? e.keyCode : e.which;
+		if (keyCode === 13) {
+			onSearch();
+		}
+	};
+
+	return (
+		<DefaultScreen
+			subPage={'manage'}
+			currentPage='whatsapp'
+			classes={classes}
+			customPadding={false}
+			containerClass={clsx(classes.management, classes.mb50)}>
+			{renderToast()}
+			<Title
+				Text={translator('whatsappManagement.campaignManagement')}
+				Classes={classes}
+				ContainerStyle={{}}
+				Element={null}
+			/>
+
+			<div className={classes.manageWhatsappTemplates}>
+				<Grid container spacing={2} className={classes.lineTopMarging}>
+					<Grid item>
+						<TextField
+							variant='outlined'
+							size='small'
+							value={campaignNameSearch}
+							onChange={handleCampainNameChange}
+							onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+								onTemplateKeyDown(e)
+							}
+							className={clsx(classes.textField, classes.minWidth252)}
+							placeholder={translator(
+								'sms.GridBoundColumnResource2.HeaderText'
+							)}
+						/>
+					</Grid>
+
+					{windowSize !== 'xs' && (
+						<Grid item>
+							<KeyboardDatePicker
+								inputVariant='outlined'
+								className={clsx(classes.textField)}
+								inputProps={{
+									className: classes.datePickerInput,
+								}}
+								variant='inline'
+								keyboardIcon={<CalendarIcon />}
+								format={'DD/MM/YYYY'}
+								placeholder={translator(
+									'whatsappManagement.fromDatePlaceholder'
+								)}
+								initialFocusedDate={moment()}
+								value={fromDate}
+								onChange={handleFromDateChange}
+								onClose={() => setIsFromDatePickerOpen(false)}
+								open={isFromDatePickerOpen}
+								onClick={() => setIsFromDatePickerOpen(true)}
+								autoOk={true}
+							/>
+						</Grid>
+					)}
+
+					{windowSize !== 'xs' && (
+						<Grid item>
+							<KeyboardDatePicker
+								inputVariant='outlined'
+								className={clsx(classes.textField)}
+								inputProps={{
+									className: classes.datePickerInput,
+								}}
+								variant='inline'
+								keyboardIcon={<CalendarIcon />}
+								format={'DD/MM/YYYY'}
+								placeholder={translator('whatsappManagement.toDatePlaceholder')}
+								initialFocusedDate={moment()}
+								minDate={moment(fromDate)}
+								value={toDate}
+								onChange={handleToDate}
+								onClose={() => setIsToDatePickerOpen(false)}
+								open={isToDatePickerOpen}
+								onClick={() => setIsToDatePickerOpen(true)}
+								autoOk={true}
+							/>
+						</Grid>
+					)}
+
+					<Grid item>
+						<Button
+							size='large'
+							variant='contained'
+							onClick={onSearch}
+							className={classes.searchButton}
+							endIcon={<SearchIcon />}>
+							<>{translator('campaigns.btnSearchResource1.Text')}</>
+						</Button>
+					</Grid>
+					{isSearching && (
+						<Grid item>
+							<Button
+								size='large'
+								variant='contained'
+								onClick={clearSearch}
+								className={classes.searchButton}
+								endIcon={<ClearIcon />}>
+								<>{translator('common.clear')}</>
+							</Button>
+						</Grid>
+					)}
+				</Grid>
+
+				<Grid
+					container
+					spacing={2}
+					className={classes.manageTemplatesHeaderButtons}>
+					<div className={classes.manageCampaignCreateAndRestore}>
+						<Button className={'green'} onClick={() => onCreateCamoaign()}>
+							<>{translator('whatsappManagement.createCampaign')}</>
+						</Button>
+						<Button
+							className={'blue'}
+							onClick={() => setIsRestoreDeletedModal(true)}>
+							<>{translator('whatsappManagement.restore')}</>
+						</Button>
+					</div>
+
+					<span className={classes.manageTemplatesCampaignCount}>
+						{totalRecord || 0} <>{translator('whatsappManagement.campaigns')}</>
+					</span>
+				</Grid>
+
+				<Grid
+					container
+					spacing={2}
+					className={classes.manageTemplatesTableWrapper}>
+					<TableContainer>
+						<Table className={classes.tableContainer}>
+							{windowSize !== 'xs' && (
+								<TableHead>
+									<TableRow classes={rowStyle}>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex3}
+											align='center'>
+											<>
+												{translator('sms.GridBoundColumnResource2.HeaderText')}
+											</>
+										</TableCell>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex1}
+											align='center'>
+											<>{translator('campaigns.recipients')}</>
+										</TableCell>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex1}
+											align='center'>
+											<>{translator('sms.CreditsResource1.HeaderText')}</>
+										</TableCell>
+										<TableCell
+											classes={cellStyle}
+											className={classes.flex1}
+											align='center'>
+											<>{translator('sms.StatusResource1.HeaderText')}</>
+										</TableCell>
+										<TableCell
+											classes={{ root: classes.tableCellRoot }}
+											className={classes.flex5}></TableCell>
+									</TableRow>
+								</TableHead>
+							)}
+							{campaignListData?.length === 0 ? (
+								<Box
+									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
+									style={{ height: 50 }}>
+									<Typography>
+										<>{translator('common.NoDataTryFilter')}</>
+									</Typography>
+								</Box>
+							) : (
+								<>
+									{campaignListData?.map((campaign: campaignDataProps) => (
+										<TableRow key={campaign.WACampaignID} classes={rowStyle}>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex3, classes.tableCellBody)}>
+												{renderNameCell(campaign)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderRecipientsCell(campaign.TotalSendPlan)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderMessagesCell(1)}
+											</TableCell>
+											<TableCell
+												classes={cellStyle}
+												align='center'
+												className={clsx(classes.flex1, classes.tableCellBody)}>
+												{renderStatusCell(campaign.Status)}
+											</TableCell>
+											<TableCell
+												component='th'
+												scope='row'
+												className={clsx(classes.flex5, classes.tableCellRoot)}>
+												{renderCellIcons(campaign)}
+											</TableCell>
+										</TableRow>
+									))}
+								</>
+							)}
+						</Table>
+					</TableContainer>
+				</Grid>
+				<Pagination
+					classes={classes}
+					rows={totalRecord}
+					rowsPerPage={paginationSetting?.pageSize}
+					onRowsPerPageChange={onRowsPerPageChange}
+					rowsPerPageOptions={[6, 10, 20, 50]}
+					page={paginationSetting?.pageNo}
+					onPageChange={(pageNumber: number) =>
+						updatePaginationSetting({
+							...paginationSetting,
+							pageNo: pageNumber,
+						})
+					}
+					returnPageOne={false}
+				/>
+			</div>
+
+			<RestoreDeletedModal
+				classes={classes}
+				title={translator('whatsappManagement.restoreDeleted')}
+				isOpen={isRestoreDeletedModal}
+				onClose={() => setIsRestoreDeletedModal(false)}
+				onConfirmOrYes={() => onRestoreDeleted()}
+				restoreIds={restoreIds}
+				setRestoreIds={(ids: string[]) => setRestoreIds(ids)}
+				deletedCampaignListData={deletedCampaignListData}
+			/>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isPreviewCampaignOpen}
+				onClose={() => setIsPreviewCampaignOpen(false)}
+				title={translator('whatsappManagement.preview')}
+				subtitle={''}
+				onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
+				type='alert'>
+				<Box className={classes.alertModalContentMobile}>
+					<WhatsappMobilePreview
+						classes={classes}
+						templateData={templateData}
+						buttonType={buttonType}
+						fileData={fileData}
+					/>
+				</Box>
+			</AlertModal>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isDuplicateCampaignOpen}
+				onClose={() => setIsDuplicateCampaignOpen(false)}
+				title={translator('whatsappManagement.duplicateCampaign')}
+				subtitle={translator('whatsappManagement.duplicateCampaignDesc')}
+				type='delete'
+				onConfirmOrYes={() => onDuplicateCampaign()}
+			/>
+
+			<AlertModal
+				classes={classes}
+				isOpen={isDeleteCampaignOpen}
+				onClose={() => setIsDeleteCampaignOpen(false)}
+				title={translator('whatsappManagement.deleteCampaign')}
+				subtitle={translator('whatsappManagement.deleteCampaignDesc')}
+				type='delete'
+				onConfirmOrYes={() => onDeleteCampaign()}
+			/>
+
+			<InfoModal
+				classes={classes}
+				isOpen={isInfoModalOpen}
+				onClose={() => setIsInfoModalOpen(false)}
+				title={translator('whatsappManagement.campaignGroups')}
+				requiredFields={infoModalData}
+			/>
+
+			<Loader isOpen={isLoader} showBackdrop={true} />
+		</DefaultScreen>
+	);
+};
+
+export default ManageWhatsAppCampaigns;

@@ -380,6 +380,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "#27AE60",
     // marginInlineEnd: '10px',
     "&:hover": {
+      color: "#fff",
       backgroundColor: "#219150",
     },
   },
@@ -407,6 +408,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   actionButtonDarkBlue: {
     backgroundColor: "#5088b5",
     "&:hover": {
+      color: "#fff",
       backgroundColor: "#4477a2",
     },
   },
@@ -851,7 +853,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   formControl: {
     "& .MuiInputLabel-formControl": {
       top: -7,
-    },
+    }
   },
   formControlSelect: {
     "& .MuiSelect-outlined.MuiSelect-outlined": {
@@ -1054,6 +1056,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    padding: 15,
+    paddingBottom: 0
   },
   languageSelect: {
     textTransform: "capitalize",
@@ -1112,6 +1116,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingTop: 20,
   },
   link: {
+    fontSize: 16,
     textDecoration: 'underline',
     margin: '0 5px',
     cursor: 'pointer'
@@ -1730,8 +1735,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   carouselContainer: {
     display: 'flex',
     flexWrap: 'nowrap',
-    overflow: 'hidden',
-    height: 'min-content'
+    overflowX: 'hidden',
+    height: 'min-content',
+    paddingBottom: 10
   },
   carouselItem: {
     minWidth: '100%',
@@ -1765,11 +1771,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
       height: '100%',
       position: "relative",
+      padding: 10,
       '&.firstSlide': {
         '& .contactDataBox': {
           overflowX: 'clip',
           overflowY: 'auto',
-          height: 'calc(100% - 70px)'
+          height: 'calc(100% - 80px)'
         },
         '& .emailBox': {
           '& span': {
@@ -1789,16 +1796,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           }
         }
         ,
-        '& .btnVerifyNewLtr': {
-          position: "absolute",
-          top: 0,
-          right: 10
-        },
-        '& .btnVerifyNewRtl': {
-          position: "absolute",
-          top: 0,
-          left: 10
-        },
+        // '& .btnVerifyNewLtr': {
+        //   position: "absolute",
+        //   top: 0,
+        //   right: 10
+        // },
+        // '& .btnVerifyNewRtl': {
+        //   position: "absolute",
+        //   top: 0,
+        //   left: 10
+        // },
         '& .MuiDivider-root': {
           marginTop: 6,
           height: '1.3px',
@@ -1824,5 +1831,36 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         }
       }
     },
+  },
+  imgFluid: {
+    maxWidth: '100%',
+    height: '100%'
+  },
+  smallIcon: {
+    width: 14
+  },
+  implementButtonFlex: {
+    maxHeight: '45',
+    marginTop: 'auto',
+    marginBottom: 15,
+    marginInlineStart: 'auto',
+    lineHeight: windowSize === 'xs' ? 1 : null
+  },
+  smsReplies: {
+    '& .MuiOutlinedInput-root': {
+      padding: '4px !important'
+    },
+    '& .MuiInputBase-root': {
+      '& .MuiInputBase-input': {
+        maxWidth: '70% !important',
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
+      }
+    },
+    '& .MuiAutocomplete-endAdornment': {
+      right: isRTL ? 'auto !important' : '0 !important',
+      left: isRTL ? '0 !important' : 'auto !important'
+    }
   }
 });

@@ -42,7 +42,7 @@
     "Text": "Reports"
   },
   "RadMenuItemResource2": {
-    "Text": "Account Details"
+    "Text": "Account Settings"
   },
   "RadMenuItemResource20": {
     "Text": "Help"
@@ -378,8 +378,11 @@
   "implementScript": "Implement Script",
   "guides": "Guides",
   "pulseemSystem": "Pulseem System",
-  "smsReplies": "SMS Replies",
   "newEditor": "New Editor",
   "siteTracking": "Site Tracking",
-  "continueToNewEditor": "Save and Continue with new editor"
+  "continueToNewEditor": "Save and Continue with new editor",
+  "whatsapp": "Whatsapp",
+  "responses": "Responses",
+  "download": "Download",
+  "fileDownload": "File Download"
 }

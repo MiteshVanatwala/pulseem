@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link, Button } from '@material-ui/core';
+import { Box, Grid, Paper, Tab, Tabs, Typography, Tooltip, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
@@ -11,7 +11,8 @@ import { HiUserGroup } from 'react-icons/hi';
 import { actionURL } from '../../config/index';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 
-const LatestReports = ({ classes, windowSize, t, isRTL }) => {
+const LatestReports = ({ classes, t, isRTL }) => {
+  const { windowSize } = useSelector(state => state.core);
   const { lastCampaignReport } = useSelector(state => state.dashboard);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
@@ -198,7 +199,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
                   <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
-                    <Grid item lg={12} xs={12}>
+                    <Grid item lg={12} xs={12} style={{ paddingInline: windowSize === 'xs' ? 15 : null }}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
                           <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText, classes.graphCampaignName)}>

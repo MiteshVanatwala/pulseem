@@ -20,14 +20,13 @@ module.exports = {
                 }
             }]
     },
+    resolve: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    },
     optimization: {
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
         minimizer: [new TerserPlugin({
             extractComments: false,
         })],
-    },
-    externals: {
-        'react': 'window.unlayer.React',
-        'react-dom': 'window.unlayer.ReactDOM',
-        'react-dnd': 'window.unlayer.ReactDND'
     }
 };

@@ -10,29 +10,21 @@ import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel, setPurchase } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
-import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { getCookie, setCookie } from '../../helpers/cookies';
+import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
-import { isValidUrl } from '../../helpers/UrlHelper';
+import { IsValidURL } from '../../helpers/Utils/Validations';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
-
-const renderHtml = (html) => {
-    function createMarkup() {
-        return { __html: html };
-    }
-    return (
-        <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-}
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
 const SiteTrackingEditor = ({ classes }) => {
-    // const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
@@ -58,35 +50,34 @@ const SiteTrackingEditor = ({ classes }) => {
 
 
     useEffect(() => {
+        const getData = async () => {
+            await dispatch(getScript());
+            await dispatch(getGroupsBySubAccountId());
+            const response = await dispatch(get(EventRequestModel.PageView));
+            const retModel = response.payload;
+            if (!response.error && retModel.length !== 0) {
+                const eventObject = retModel[0];
+                if (!eventObject.metadata) {
+                    dispatch(updateEventModel({ type: 'new' }));
+                }
+            }
+            else {
+                dispatch(updateEventModel({ type: 'new' }));
+            }
+            setShowLoader(false);
+            const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
+            if (hideScriptIntro !== 'true') {
+                setDialogType({ type: 'scriptImplementation' });
+            }
+        }
         getData();
     }, [dispatch]);
 
     useEffect(() => {
         if (event && (isValidDomain !== null || event.domain !== '')) {
-            setIsValidDomain(isValidUrl(event.domain));
+            setIsValidDomain(IsValidURL(event.domain));
         }
-    }, [event]);
-
-    const getData = async () => {
-        await dispatch(getScript());
-        await dispatch(getGroupsBySubAccountId());
-        const response = await dispatch(get(EventRequestModel.PageView));
-        const retModel = response.payload;
-        if (!response.error && retModel.length !== 0) {
-            const eventObject = retModel[0];
-            if (!eventObject.metadata) {
-                dispatch(updateEventModel({ type: 'new' }));
-            }
-        }
-        else {
-            dispatch(updateEventModel({ type: 'new' }));
-        }
-        setShowLoader(false);
-        const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
-        if (hideScriptIntro !== 'true') {
-            setDialogType({ type: 'scriptImplementation' });
-        }
-    }
+    }, [event, isValidDomain]);
 
     const handleModelChange = async (name, value) => {
         await dispatch(updateEventModel({ prop: name, value: value }))
@@ -98,7 +89,7 @@ const SiteTrackingEditor = ({ classes }) => {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
-        if (event.domain !== '' && !isValidUrl(event.domain)) {
+        if (event.domain !== '' && !IsValidURL(event.domain)) {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
@@ -223,6 +214,11 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         catch (e) {
             console.log(e);
+            dispatch(sendToTeamChannel({
+                MethodName: 'onSaveReponse',
+                ComponentName: 'SiteTrackingEditor.js',
+                Text: e
+            }));
             setDialogType({ type: 'serverNotAble' })
         }
     }
@@ -238,7 +234,7 @@ const SiteTrackingEditor = ({ classes }) => {
             validationError: validationErrorDialog(),
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
-            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
+            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
         }
 
@@ -246,13 +242,14 @@ const SiteTrackingEditor = ({ classes }) => {
 
         if (type) {
             return (
-                dialogType && <Dialog
+                dialogType && <BaseDialog
                     classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
+                    onCancel={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
-                </Dialog>
+                </BaseDialog>
             )
         }
         return <></>
@@ -338,7 +335,7 @@ const SiteTrackingEditor = ({ classes }) => {
         setShowLoader(true);
         setDialogType(null);
         if (event.id && event.id !== '') {
-            const pResponse = await dispatch(deletePulseemSiteTracking())
+            await dispatch(deletePulseemSiteTracking())
             await dispatch(deleteSiteTrackingEvent(event.id))
             handleModelChange('id', null);
         }
@@ -416,7 +413,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     </Typography>
                     <Typography
                         className={clsx(classes.f18, classes.pb10)}>
-                        {renderHtml(t('siteTracking.scriptDescription'))}
+                        {RenderHtml(t('siteTracking.scriptDescription'))}
                     </Typography>
                     <hr />
                     <Typography className={classes.f18}>
@@ -556,7 +553,7 @@ const SiteTrackingEditor = ({ classes }) => {
                         classes={classes}
                         subTitle={t("siteTracking.setUp")}
                         topZero={false}
-                    />
+                        ShowDivider={true} />
                 </Grid>
                 <Grid item xs={5} style={{ alignItems: 'center', display: 'flex', marginTop: -10 }}>
                     <Button
@@ -655,9 +652,9 @@ const SiteTrackingEditor = ({ classes }) => {
                             </FormControl>
                             <TextField
                                 placeholder={t('siteTracking.addDomain')}
-                                inputProps={{
-                                    shrink: false
-                                }}
+                                // inputProps={{
+                                //     shrink: false
+                                // }}
                                 className={clsx(classes.textField,
                                     classes.fullWidth,
                                     isRTL ? classes.startElementNoRadius : classes.endElementNoRadius,
