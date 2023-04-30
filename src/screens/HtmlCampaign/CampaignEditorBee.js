@@ -677,6 +677,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           style={{ marginInlineStart: '8px' }}
           color="primary"
         >{t('common.continue')}</Button>
+        }
       </>)
     }
     else {
