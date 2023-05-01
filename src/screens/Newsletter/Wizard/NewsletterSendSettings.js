@@ -1362,7 +1362,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 }}
             />}
             <Loader isOpen={showLoader} />
-        </DefaultScreen >
+        </DefaultScreen>
     )
 }
 

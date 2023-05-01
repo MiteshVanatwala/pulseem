@@ -1070,7 +1070,8 @@ const NewsLetterInfo = ({ classes }) => {
 
     return (
         <DefaultScreen
-            currentPage="Campaingn Settings"
+            currentPage="newsletter"
+            subPage={"newsletterInfo"}
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >

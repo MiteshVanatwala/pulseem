@@ -113,6 +113,7 @@ export const getRoutes = (
       icon: <img alt="Newsletter" src={NewsletterIcon} />,
       options: [
         {
+          key: "newsletterInfo",
           title: t("master.RadMenuItemResource9b.Text"),
           href: "/react/Campaigns/Create",
           isShow: true,
