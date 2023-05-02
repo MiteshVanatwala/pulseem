@@ -803,8 +803,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							container
 							spacing={2}
 							className={clsx(
-								classes.manageTemplatesTableWrapper,
-								classes.manageTemplatesTableWrapperPadding
+								classes.manageTemplatesTableWrapper
 							)}>
 							<TableContainer>
 								<Table className={classes.tableContainer}>
@@ -819,7 +818,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 												</TableCell>
 												<TableCell
 													classes={cellStyle}
-													className={classes.flex1}
+													className={classes.flex2}
 													align='center'>
 													<>{translator('sms.StatusResource1.HeaderText')}</>
 												</TableCell>
@@ -866,7 +865,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 															classes={cellStyle}
 															align='center'
 															className={clsx(
-																classes.flex1,
+																classes.flex2,
 																classes.tableCellBody
 															)}>
 															{renderStatusCell(
