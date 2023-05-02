@@ -588,7 +588,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			'DD_MM_YYYY'
 		)}_${moment().valueOf()}`;
 		const templateLanguage =
-			checkLanguage(templateData.templateText) === 'English' ? 'en' : 'he';
+			checkLanguage(templateData.templateText, isRTL) === 'English'
+				? 'en'
+				: 'he';
 		if (templateID) {
 			const { payload: templateDataById }: getTemplateByIdAPIProps =
 				await dispatch<any>(getSavedTemplatesById(templateID));
@@ -748,7 +750,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			isValidated = false;
 		}
 
-		if (checkLanguage(templateData.templateText) === 'Both') {
+		if (checkLanguage(templateData.templateText, isRTL) === 'Both') {
 			validationErrors.push(translator('whatsapp.alertModal.languageError'));
 			isValidated = false;
 		}

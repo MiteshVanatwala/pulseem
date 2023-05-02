@@ -34,7 +34,7 @@ const ChatFooterContent = ({
 	activeChatContacts,
 	ChatContacts,
 	isContactLoader,
-	personalFields
+	personalFields,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -49,10 +49,11 @@ const ChatFooterContent = ({
 		}
 	}, [newMessage]);
 	useEffect(() => {
-		const direction = checkLanguage(newMessage);
+		const direction = checkLanguage(newMessage, isRTL);
 		if (direction !== 'Both') {
 			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [newMessage]);
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);

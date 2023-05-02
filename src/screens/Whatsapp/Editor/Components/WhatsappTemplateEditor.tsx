@@ -12,8 +12,6 @@ import {
 } from '../Types/WhatsappCreator.types';
 import clsx from 'clsx';
 import { Box, Button, makeStyles, Tooltip } from '@material-ui/core';
-import FormatAlignLeftIcon from '@material-ui/icons/FormatAlignLeft';
-import FormatAlignRightIcon from '@material-ui/icons/FormatAlignRight';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import { ClassesType } from '../../../Classes.types';
 import { checkLanguage } from '../../Common';
@@ -69,7 +67,7 @@ const WhatsappTemplateEditor = ({
 	}, [templateText, buttons]);
 
 	useEffect(() => {
-		const direction = checkLanguage(templateText);
+		const direction = checkLanguage(templateText, isRTL);
 		if (direction !== 'Both') {
 			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
 		}
