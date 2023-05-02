@@ -77,9 +77,7 @@ import InfoModal from './Popups/InfoModal';
 import { useNavigate } from 'react-router-dom';
 import {
 	campaignDataProps,
-	filtersObjectProps,
 	phoneNumberAPIProps,
-	searchArrayProps,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
@@ -751,6 +749,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					campaignName: '',
 					fromDate: null,
 					toDate: null,
+					isDeleted: true,
 				})
 			);
 		setIsLoader(false);

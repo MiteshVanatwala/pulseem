@@ -84,6 +84,7 @@ export type AllCampaignReq = {
 	isPagination: boolean;
 	pageNo: number;
 	pageSize: number;
+	isDeleted: boolean;
 };
 
 export type AllReportReq = {
