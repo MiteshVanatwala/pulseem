@@ -21,6 +21,7 @@ import { FaBinoculars } from 'react-icons/fa';
 import SettingsLogo from '../../assets/images/settings-white.png';
 import { FaHome } from 'react-icons/fa';
 import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
+import { WhatsappIcon } from '../../assets/images/drawer/index';
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
@@ -201,10 +202,10 @@ export const getRoutes = (
       key: 'whatsapp',
       title: 'Whatsapp',
       pageTitle: t('whatsapp.Title'),
-      iconUnicode: '\ue181',
+      // iconUnicode: '\ue181',
       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
       isShow: true,
-      icon: <img alt='Sms' src={SmsIcon} />,
+      icon: <WhatsappIcon className='header-whatsapp-icon' />,
       options: [
         {
           key: 'create',

@@ -705,7 +705,12 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					if (quickSendData?.Message === 'Invalid phonenumber') {
 						setToastMessage(ToastMessages.INVALID_NUMBER);
 					} else {
-						setToastMessage(ToastMessages.QUICK_SEND_ERROR);
+						setToastMessage({
+							...ToastMessages.QUICK_SEND_ERROR,
+							message:
+								quickSendData?.Message ||
+								ToastMessages.QUICK_SEND_ERROR?.message,
+						});
 					}
 				}
 				setIsTestGroupModal(false);
@@ -1337,10 +1342,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						classes={classes}
 						isOpen={isExitCampaignOpen}
 						onClose={() => setIsExitCampaignOpen(false)}
-						title={translator('whatsappManagement.LeaveCampaignCreation')}
-						subtitle={translator(
-							'whatsappManagement.LeaveCampaignCreationDesc'
-						)}
+						title={translator('mainReport.handleExitTitle')}
+						subtitle={translator('mainReport.leaveCampaign')}
 						type='delete'
 						onConfirmOrYes={() => onExitCampaign()}
 					/>

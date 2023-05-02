@@ -54,6 +54,7 @@ export type WhatsappChatUiProps = {
 	isContactLoader: boolean;
 	updateContactList: () => void;
 	personalFields: personalFieldDataProps;
+	onChatTemplateDelete: () => void;
 };
 
 export type SideBarContactListProps = {
@@ -100,6 +101,7 @@ export type ChatFooterContentProps = {
 	ChatContacts: APIWhatsappChatSidebarContactsItemsData[];
 	isContactLoader: boolean;
 	personalFields: personalFieldDataProps;
+	onChatTemplateDelete: () => void;
 };
 
 export type ChatTemplateProps = {

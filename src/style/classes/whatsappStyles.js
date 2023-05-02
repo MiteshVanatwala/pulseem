@@ -1968,7 +1968,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			borderRadius: '5px',
 			position: 'relative',
 			whiteSpace: 'pre-line',
-			display: 'flex',
+			// display: 'flex',
 			wordBreak: 'break-word',
 			'& .rhap_container': {
 				boxShadow: 'none',
@@ -2107,6 +2107,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.chat__msg:hover .chat__msg-options': {
 			opacity: '1',
 			pointerEvents: 'unset',
+			background: 'transparent',
 		},
 		'&.chat__msg-options-icon': {
 			color: 'rgb(145, 145, 145)',
@@ -2215,6 +2216,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		},
 		'&.chat__send-icon': {
 			color: '#919191',
+			marginLeft: '8px',
+			marginRight: '8px',
+			width: '28px',
+			height: '28px',
+			padding: '3px',
+			borderRadius: '50%',
+			transform: isRTL ? 'rotate(180deg)' : 'rotate(0deg)',
+		},
+		'&.chat__delete-icon': {
+			color: '#f35f5f',
 			marginLeft: '8px',
 			marginRight: '8px',
 			width: '28px',
@@ -2799,11 +2810,13 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	pdfFileName: {
 		wordWrap: 'break-word',
-		whiteSpace: 'pre-wrap',
-		width: 'calc(100% - 66px)',
+		whiteSpace: 'nowrap',
+		textOverflow: 'ellipsis',
+		overflow: 'hidden',
 		'&.inbound': {
 			fontFamily: 'OpenSansHebrew',
 			padding: '0px 2px',
+			paddingRight: '8px',
 		},
 	},
 	summaryModalAccordion: {

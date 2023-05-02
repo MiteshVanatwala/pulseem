@@ -35,6 +35,7 @@ const ChatFooterContent = ({
 	ChatContacts,
 	isContactLoader,
 	personalFields,
+	onChatTemplateDelete,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -225,6 +226,18 @@ const ChatFooterContent = ({
 								</Stack>
 							</div>
 						)}
+						{savedTemplate?.length > 0 && (
+							<>
+								<button
+									aria-label='Delete message'
+									onClick={onChatTemplateDelete}>
+									<Icon
+										id='delete'
+										className={`${classes.whatsappChat} chat__delete-icon`}
+									/>
+								</button>
+							</>
+						)}{' '}
 						{(whatsappChatSession.IsIn24Window ||
 							savedTemplate?.length > 0) && (
 							<button aria-label='Send message' onClick={onChatSend}>
