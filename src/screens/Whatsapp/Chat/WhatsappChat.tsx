@@ -785,6 +785,13 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		}
 	};
 
+	const onChatTemplateDelete = () => {
+		setButtonType('');
+		setUpdatedDynamicVariable([]);
+		setNewMessage('');
+		setSavedTemplate('');
+	};
+
 	return (
 		<>
 			<DefaultScreen
@@ -857,6 +864,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 									isContactLoader={isLoader}
 									updateContactList={updateContactList}
 									personalFields={personalFields}
+									onChatTemplateDelete={onChatTemplateDelete}
 								/>
 							</div>
 						</div>

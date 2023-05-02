@@ -351,12 +351,14 @@ export const formatUpdatedDynamicVariable = (
 	return formattedDynamicVariable;
 };
 
-export const checkLanguage = (text: string) => {
+export const checkLanguage = (text: string, isRTL: boolean) => {
 	let isEnglish = false;
 	let isHebrew = false;
+	let isContainAlphabates = false;
 	if (text?.length > 0) {
 		for (var i = 0; i < text?.length; i++) {
 			if (!/[^a-zA-Z\u0590-\u05FF]/.test(text?.charAt(i))) {
+				isContainAlphabates = true;
 				if (/[\u0590-\u05FF]/.test(text?.charAt(i))) {
 					isHebrew = true;
 				}
@@ -368,15 +370,21 @@ export const checkLanguage = (text: string) => {
 	} else {
 		return 'Both';
 	}
-	if ((isEnglish && isHebrew) || (!isEnglish && !isHebrew)) {
+	if (isEnglish && isHebrew) {
 		return 'Both';
+	} else if (!isEnglish && !isHebrew) {
+		if (isContainAlphabates) {
+			return 'Both';
+		} else {
+			return isRTL ? 'Hebrew' : 'English';
+		}
 	} else {
 		return isEnglish ? 'English' : 'Hebrew';
 	}
 };
 
 export const getTextDirection = (text: string, isRTL: boolean) => {
-	const language = checkLanguage(text);
+	const language = checkLanguage(text, isRTL);
 	switch (language) {
 		case 'Both':
 			return isRTL ? 'rtl' : 'ltr';

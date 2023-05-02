@@ -373,7 +373,9 @@ const ChatTemplate = ({
 						<p
 							key={msgIndex}
 							className={`${classes.whatsappChat} chat__msg chat__msg--sent`}>
-							<span>{message.Message}</span>
+							<span>
+								{message.Message || translator('whatsappChat.messageErrorText')}
+							</span>
 							<span className={`${classes.whatsappChat} chat__msg-filler`}>
 								{' '}
 							</span>

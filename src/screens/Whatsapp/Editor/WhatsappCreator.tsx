@@ -288,7 +288,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const uploadFile = async (file: File | undefined) => {
 		if (file) {
-			setFileData(translator('whatsapp.uploading'));
+			setFileData({
+				fileLink: translator('whatsapp.uploading'),
+				fileType: '',
+			});
 			const myFormData: FormData = new FormData();
 			myFormData.append('file', file);
 			const uploadedFile: fileUploadAPIProps = await dispatch<any>(
@@ -588,7 +591,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			'DD_MM_YYYY'
 		)}_${moment().valueOf()}`;
 		const templateLanguage =
-			checkLanguage(templateData.templateText) === 'English' ? 'en' : 'he';
+			checkLanguage(templateData.templateText, isRTL) === 'English'
+				? 'en'
+				: 'he';
 		if (templateID) {
 			const { payload: templateDataById }: getTemplateByIdAPIProps =
 				await dispatch<any>(getSavedTemplatesById(templateID));
@@ -748,7 +753,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			isValidated = false;
 		}
 
-		if (checkLanguage(templateData.templateText) === 'Both') {
+		if (checkLanguage(templateData.templateText, isRTL) === 'Both') {
 			validationErrors.push(translator('whatsapp.alertModal.languageError'));
 			isValidated = false;
 		}

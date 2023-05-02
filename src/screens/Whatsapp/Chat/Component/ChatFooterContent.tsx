@@ -34,7 +34,8 @@ const ChatFooterContent = ({
 	activeChatContacts,
 	ChatContacts,
 	isContactLoader,
-	personalFields
+	personalFields,
+	onChatTemplateDelete,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
@@ -49,10 +50,11 @@ const ChatFooterContent = ({
 		}
 	}, [newMessage]);
 	useEffect(() => {
-		const direction = checkLanguage(newMessage);
+		const direction = checkLanguage(newMessage, isRTL);
 		if (direction !== 'Both') {
 			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [newMessage]);
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
@@ -224,6 +226,18 @@ const ChatFooterContent = ({
 								</Stack>
 							</div>
 						)}
+						{savedTemplate?.length > 0 && (
+							<>
+								<button
+									aria-label='Delete message'
+									onClick={onChatTemplateDelete}>
+									<Icon
+										id='delete'
+										className={`${classes.whatsappChat} chat__delete-icon`}
+									/>
+								</button>
+							</>
+						)}{' '}
 						{(whatsappChatSession.IsIn24Window ||
 							savedTemplate?.length > 0) && (
 							<button aria-label='Send message' onClick={onChatSend}>

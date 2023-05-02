@@ -23,6 +23,7 @@ import {
 } from '../../Editor/Types/WhatsappCreator.types';
 import { buttonTypes, templateTypes } from '../../Constant';
 import uniqid from 'uniqid';
+import { getTemplateName } from '../../Common';
 
 const ChatTemplateModal = ({
 	classes,
@@ -298,7 +299,7 @@ const ChatTemplateModal = ({
 														fontFamily: 'fontawesome',
 													}}
 												/>
-												{template?.TemplateName}
+												{getTemplateName(template)}
 											</label>
 										</h2>
 										<div className='content'>
