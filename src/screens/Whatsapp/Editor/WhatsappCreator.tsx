@@ -288,7 +288,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 	const uploadFile = async (file: File | undefined) => {
 		if (file) {
-			setFileData(translator('whatsapp.uploading'));
+			setFileData({
+				fileLink: translator('whatsapp.uploading'),
+				fileType: '',
+			});
 			const myFormData: FormData = new FormData();
 			myFormData.append('file', file);
 			const uploadedFile: fileUploadAPIProps = await dispatch<any>(

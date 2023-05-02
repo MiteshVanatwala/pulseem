@@ -441,8 +441,8 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			'&.video-preview-img': {
 				width: '100%',
 				background: 'white',
-				padding: '12px',
-				height: '152px',
+				padding: '12px 0px',
+				height: '139px',
 			},
 			'&.pdf-preview-img': {
 				width: '38px',
