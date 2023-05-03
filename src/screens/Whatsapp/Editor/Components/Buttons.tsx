@@ -43,7 +43,6 @@ const Buttons = ({ classes, onFormButtonClick }: ButtonsProps) => {
 				<>{translator('whatsapp.saveSms')}</>
 			</Button>
 			<Button
-				type='submit'
 				variant='contained'
 				size='medium'
 				className={clsx(

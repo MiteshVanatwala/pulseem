@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { fileTypes } from '../../Constant';
+import { getFileType } from '../../Common';
 
 const WhatsappMobilePreview = ({
 	classes,
@@ -67,20 +68,6 @@ const WhatsappMobilePreview = ({
 				}
 			)?.value || ''
 		);
-	};
-
-	const getFileType = () => {
-		if (
-			fileData?.fileLink?.includes('.png') ||
-			fileData?.fileLink?.includes('.jpeg') ||
-			fileData?.fileLink?.includes('.jpg')
-		) {
-			return fileTypes.IMAGE;
-		} else if (fileData?.fileLink?.includes('.pdf')) {
-			return fileTypes.DOCUMENT;
-		} else if (fileData?.fileLink?.includes('.mp4')) {
-			return fileTypes.VIDEO;
-		}
 	};
 	return (
 		<Box className={classes.phoneDiv}>
@@ -148,14 +135,16 @@ const WhatsappMobilePreview = ({
 																	className={
 																		classes.whatsappMobileMessageTextAndImage
 																	}>
-																	{getFileType() === fileTypes.IMAGE &&
+																	{getFileType(fileData?.fileLink) ===
+																		fileTypes.IMAGE &&
 																		fileData?.fileLink?.length > 0 && (
 																			<img
 																				src={fileData?.fileLink}
 																				alt='uploaded-file-preview'
 																			/>
 																		)}
-																	{getFileType() === fileTypes.VIDEO &&
+																	{getFileType(fileData?.fileLink) ===
+																		fileTypes.VIDEO &&
 																		fileData?.fileLink?.length > 0 && (
 																			<a
 																				href={fileData?.fileLink}
@@ -168,7 +157,8 @@ const WhatsappMobilePreview = ({
 																				/>
 																			</a>
 																		)}
-																	{getFileType() === fileTypes.DOCUMENT &&
+																	{getFileType(fileData?.fileLink) ===
+																		fileTypes.DOCUMENT &&
 																		fileData?.fileLink?.length > 0 && (
 																			<Grid container alignItems='center'>
 																				<img

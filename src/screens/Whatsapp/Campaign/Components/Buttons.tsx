@@ -104,7 +104,6 @@ const Buttons = ({
 				</Button>
 
 				<Button
-					type='submit'
 					variant='contained'
 					size='medium'
 					className={clsx(

@@ -202,11 +202,11 @@ const ChatFooterContent = ({
 									alignItems='center'
 									spacing={2}>
 									<Typography color='textSecondary'>
-										<label style={{ fontSize: '20px' }}>
+										<label style={{ fontSize: '22px', fontWeight: 'bolder' }}>
 											<>{translator('whatsappChat.conversation')}</>
 										</label>
 										<br />
-										<label style={{ fontSize: '15px' }}>
+										<label style={{ fontSize: '17px', fontWeight: 'bolder' }}>
 											<>{translator('whatsappChat.cantSend')}</>
 										</label>
 									</Typography>

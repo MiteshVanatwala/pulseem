@@ -14,12 +14,11 @@ import {
 import uniqid from 'uniqid';
 import {
 	landingPageDataProps,
-	personalFieldDataProps,
 	SubAccountSettings,
 	updatedVariable,
 } from './Campaign/Types/WhatsappCampaign.types';
 import { APIWhatsappChatVariablesData } from './Chat/Types/WhatsappChat.type';
-import { buttonTypes } from './Constant';
+import { buttonTypes, fileTypes } from './Constant';
 
 //This regex will test dynamic field having two digits in side (i.e. {{10}});
 const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -71,6 +70,20 @@ export const getLastDynamicFieldByValue = (value: string) => {
 
 export const getVariableValue = (variable: string) => {
 	return variable?.replace(/[{}]/g, '');
+};
+
+export const getFileType = (fileLink: string) => {
+	if (
+		fileLink?.includes('.png') ||
+		fileLink?.includes('.jpeg') ||
+		fileLink?.includes('.jpg')
+	) {
+		return fileTypes.IMAGE;
+	} else if (fileLink?.includes('.pdf')) {
+		return fileTypes.DOCUMENT;
+	} else if (fileLink?.includes('.mp4')) {
+		return fileTypes.VIDEO;
+	}
 };
 
 export const getTemplateIdByName = (
@@ -244,7 +257,10 @@ export const getTemplatePreviewData = (
 			}
 		}
 		if (cardData?.media?.length > 0) {
+			// getFileType(fileData?.fileLink)
 			templatePreviewData.fileData.fileLink = cardData?.media[0];
+			templatePreviewData.fileData.fileType =
+				getFileType(cardData?.media[0]) || '';
 		}
 	};
 

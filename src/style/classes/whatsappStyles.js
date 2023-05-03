@@ -757,14 +757,18 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		borderRadius: '4px',
 		padding: '8px',
 		fontFamily: 'OpenSansHebrew',
-		fontSize: '12px',
+		fontSize: '14px',
+		color: '#c9302c',
 		height: 'calc(100% - 18px)',
 		'& .title': {
 			fontFamily: 'OpenSansHebrew-Bold',
 		},
 		'& p': {
-			margin: '9px 0px',
+			margin: '12px 0px',
 			lineHeight: '15px',
+			display: 'list-item',
+			marginLeft: isRTL ? '0px' : '17px',
+			marginRight: isRTL ? '17px' : '0px',
 		},
 	},
 
@@ -1020,7 +1024,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	testGroupModalContentSearchField: {
 		boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
 	},
-	alertModalContentText: {},
+	alertModalContentText: {
+		wordBreak: 'break-word',
+	},
 	alertModalContentChildren: {
 		padding: '12px 0px',
 	},
@@ -1109,9 +1115,12 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	},
 	WhatsappCampainNotice: {
 		textAlign: 'center',
+		fontFamily: 'Assistant',
 		color: '#b11515',
-		fontWeight: 'bolder',
 		paddingRight: isRTL ? '126px' : '0px',
+		fontSize: '17px',
+		letterSpacing: '0.5px',
+		lineHeight: '16px',
 		flex: isRTL ? '2 !important' : 'unset',
 		'@media screen and (max-width: 964px)': {
 			paddingRight: '0px',
@@ -2232,7 +2241,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			height: '28px',
 			padding: '3px',
 			borderRadius: '50%',
-			transform: isRTL ? 'rotate(180deg)' : 'rotate(0deg)',
 		},
 		'&.chat__input-icon--highlight': { color: 'teal' },
 		'&.chat__attach': {
@@ -2709,21 +2717,23 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#E74C3C',
 		fontWeight: 400,
 		fontSize: '11px',
+		textDecoration: 'underline',
 	},
 	WhatsappCampainMobilePreviewBox: {
 		maxWidth: '326px',
 		margin: '0 auto',
 	},
 	testSendWrapper: {
-		fontFamily: 'OpenSansHebrew',
+		fontFamily: 'Assistant',
+		fontWeight: '500',
 		'& p': {
-			fontFamily: 'OpenSansHebrew',
+			fontFamily: 'Assistant',
 		},
 	},
 	whatsappDescSwitch: {
 		width: '200px',
-		fontSize: '15px',
-		marginTop: '-4px',
+		fontSize: '16px',
+		marginTop: '-1px',
 		color: '#C2C2C2',
 		fontWeight: '400',
 		'@media screen and (max-width: 768px)': {
