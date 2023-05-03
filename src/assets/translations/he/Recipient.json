@@ -98,7 +98,17 @@
     "noRecipientsInGroup": "לא נמצאו נמענים בקבוצה שנבחרה"
   },
   "unsubscribed": {
-    "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה."
+    "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה.",
+    "inProgress": "שימו לב<br/>ביקשתם להסיר כמות גדולה של נמענים<br/>המערכת מבצעת את ההסרה ברקע<br/>##notifyEmailPlaceHolder##",
+    "inProgressNotifyOnDone": "ברגע שהפעולה תסתיים, מייל ישלח לכתובת ##notifyEmail##.",
+    "notifyEmail": "בסיום ההסרה, שלח מייל עדכון לכתובת"
+  },
+  "exportGroups": {
+    "inProgress": "שימו לב<br/>ביקשתם לייצא כמות גדולה של נמענים<br/>תהליך הכנת הקובץ ייקח מספר דקות<br/>##notifyEmailPlaceHolder##",
+    "inProgressNotifyOnDone": "ברגע שהקובץ יהיה מוכן מייל ישלח לכתובת ##notifyEmail##.",
+    "notifyEmail": "כשהקובץ יהיה מוכן להורדה,<br/> שלח מייל עדכון לכתובת",
+    "exportLimitationErrorMessage": "מצטערים, קובץ אקסל מוגבל עד 1,048,576 רשומות.<br/>ניתן לנסות לייצא על ידי בחירת קבוצות המכילות פחות מכמות הרשומות המוגבלת",
+    "downloadPageRedirect": "ניתן לצפות בסטטוס הקובץ בעמוד <a href='/react/groups/Download'>הורדת קבצים</a>"
   },
   "bulkRecUpldTooltipText": "על מנת להעלות את הנמענים שלכם למערכת, התאימו את הכותרות מטה. שימו לב: חובה להתאים אימייל או סלולרי",
   "reactiveUnsubscriber": "הפעל נמען מוסר",

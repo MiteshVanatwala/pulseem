@@ -1,26 +1,41 @@
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
-import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio } from '@material-ui/core';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux'
+import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput } from '@material-ui/core';
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
+import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
-import { BaseDialog } from './BaseDialog';
+import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const ConfirmRadioDialog = ({
     classes,
     text = '',
     title = '',
     radioTitle = '',
-    options = [],
+    options = null,
     isOpen = false,
     onCancel,
     onConfirm,
     defaultValue = "",
-    cookieName = ""
+    cookieName = "",
+    showEmailToNotify = false
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
-    const [value, setValue] = useState(getCookie(cookieName) ?? defaultValue);
+    const { verifiedEmails } = useSelector(state => state.common);
+    const [value, setValue] = useState(getCookie(cookieName));
+    const [notifyEmail, setNotifyEmail] = useState(null);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const initVerifiedEmails = async () => {
+            await dispatch(getAuthorizedEmails());
+        }
+        if (showEmailToNotify && verifiedEmails?.length === 0) {
+            initVerifiedEmails();
+        }
+    }, [showEmailToNotify]);
 
     const handleValue = (e) => {
         if (cookieName) {
@@ -28,6 +43,11 @@ const ConfirmRadioDialog = ({
         }
         setValue(e.target.value);
     }
+
+    useEffect(() => {
+        if (defaultValue && defaultValue !== '')
+            setValue(defaultValue)
+    }, [defaultValue])
 
     const dialog = {
         title: title,
@@ -42,7 +62,7 @@ const ConfirmRadioDialog = ({
                         </Typography>
                     </Box>
                     <Box className={clsx(classes.mt15, classes.mb10)}>{radioTitle}</Box>
-                    {options.length > 0 && (<FormControl component="fieldset">
+                    {options !== null && (<FormControl component="fieldset">
                         <RadioGroup
                             aria-label="value"
                             name="radioValue"
@@ -72,18 +92,61 @@ const ConfirmRadioDialog = ({
                         </RadioGroup>
                     </FormControl>)
                     }
+                    {showEmailToNotify && <>
+                        <Box style={{ display: 'flex' }}>
+                            <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
+                                <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>
+                                <FormControl style={{ width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                    <Select
+                                        native
+                                        displayEmpty
+                                        value={notifyEmail ?? -1}
+                                        onChange={(event, val) => {
+                                            setNotifyEmail(event.target.value);
+                                        }}
+                                        label={RenderHtml(t("recipient.exportGroups.notifyEmail"))}
+                                        name="FromEmail"
+                                        input={
+                                            <OutlinedInput />
+                                        }
+                                        MenuProps={{
+                                            PaperProps: {
+                                                style: {
+                                                    width: '100%',
+                                                },
+                                            },
+                                        }}
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                    >
+                                        <option disabled value="-1" key="-1">{t("common.select")}</option>
+                                        {verifiedEmails.map((item, index) => {
+                                            if (item.IsOptIn) {
+                                                return <option
+                                                    key={`exd_${index}`}
+                                                    value={item.Number}
+                                                >
+                                                    {t(item.Number)}
+                                                </option>
+                                            }
+                                        }
+                                        )}
+                                    </Select>
+                                </FormControl>
+                            </Box>
+                        </Box>
+                    </>}
                 </Grid>
             </Grid>
         ),
         renderButtons: () => (
             <Grid
                 container
-                spacing={4}
+                spacing={2}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
             >
                 <Grid item>
                     <Button
-                        onClick={() => { onConfirm(value) }}
+                        onClick={() => { onConfirm(value, notifyEmail) }}
                         className={clsx(
                             classes.btn,
                             classes.btnRounded
