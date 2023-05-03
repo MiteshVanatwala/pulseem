@@ -1,4 +1,9 @@
-import React, { BaseSyntheticEvent, useState } from 'react';
+import React, {
+	BaseSyntheticEvent,
+	HtmlHTMLAttributes,
+	useEffect,
+	useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import { coreProps, TemplateFieldsProps } from '../Types/WhatsappCreator.types';
@@ -10,6 +15,7 @@ import {
 	Button,
 	Select,
 	MenuItem,
+	Box,
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import AlertModal from '../Popups/AlertModal';
@@ -40,6 +46,14 @@ const TemplateFields = ({
 	const { t: translator } = useTranslation();
 	const [isFileSizeAlert, setIsFileSizeAlert] = useState<boolean>(false);
 	const [isFileUploadAlert, setIsFileUploadAlert] = useState<boolean>(false);
+	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
+
+	useEffect(() => {
+		const autoCompleteList = savedTemplateList?.map((template) => {
+			return getTemplateName(template);
+		});
+		setAutoCompleteOptions(autoCompleteList);
+	}, [savedTemplateList]);
 
 	const units = ['bytes', 'KB', 'MB'];
 
@@ -89,6 +103,22 @@ const TemplateFields = ({
 		}
 	};
 
+	const renderOptions = (
+		props: HtmlHTMLAttributes<HTMLElement>,
+		option: string
+	) => {
+		return (
+			<Box
+				component='li'
+				{...props}
+				key={option}
+				title={option}
+				style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
+				{option}
+			</Box>
+		);
+	};
+
 	return (
 		<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 			<Grid item xs={12} sm={12} md={12} lg={5}>
@@ -128,9 +158,9 @@ const TemplateFields = ({
 								classes.buttonField,
 								classes.buttonWhatsappAutocomplete
 							)}
-							options={savedTemplateList?.map((template) =>
-								getTemplateName(template)
-							)}
+							options={autoCompleteOptions}
+							renderOption={renderOptions}
+							style={{ direction: isRTL ? 'rtl' : 'ltr' }}
 							renderInput={(params) => <TextField {...params} />}
 							onChange={(_event, value) => onTemplateChange(value)}
 							value={getTemplateNameById(savedTemplateList, savedTemplate)}

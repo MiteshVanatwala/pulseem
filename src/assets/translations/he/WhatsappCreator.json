@@ -13,7 +13,7 @@
 	"PageResource1": {
 		"Title": "ניהול קמפיינים בוואטסאפ"
 	},
-	"submit": "הגש",
+	"submit": "שלח לאישור",
 	"saveSms": "שמור",
 	"saveAndExit": "שמור וצא",
 	"send": "לִשְׁלוֹחַ",
@@ -44,7 +44,7 @@
 	"callToActionAddMoreButton": "הוסף עוד",
 	"callToActionRemoveButton": "הסר",
 	"callToActionTitle": "קריאה לפעולה",
-	"callToActionDialogContentText": "צור עד 2 לחצנים שיאפשרו ללקוחות להגיב להודעות שלך או לנקוט בפעולה.",
+	"callToActionDialogContentText": "צור עד 2 לחצנים שיאפשרו ללקוחות להגיב להודעות שלך או לנקוט בפעולה",
 	"typeOfAction": "סוג פעולה",
 	"phoneButtonText": "טקסט כפתור:",
 	"phoneButtonTextPlaceholder": "צור קשר",
@@ -60,6 +60,8 @@
 	"marketing": "שיווקי",
 	"utility": "תפעולי",
 	"authentication": "אימות",
+
+	"displayError": "הצג שגיאה",
 
 	"template": {
 		"textareaPlaceholder": "הכנס טקסט כאן - עד 1024 תווים מגבלה זו כוללת גם את התוכן שתמלאו במשתנים לפני השליחה",
@@ -91,7 +93,7 @@
 		"confirmButtonText": "אישור",
 		"calcelButtonText": "ביטול",
 		"yesButtonText": "כן",
-		"submitButtonText": "הגש",
+		"submitButtonText": "שלח לאישור",
 		"DeleteText": "מחק מסע פרסום",
 		"DeleteTitle": "האם אתה בטוח?",
 		"DeleteTemplateTitle": "האם ברצונך למחוק את תבנית?",
@@ -103,6 +105,11 @@
 		"templateTextRequired": "טקסט תבנית - חובה",
 		"templateNameRequired": "שם תבנית - חובה",
 		"templateLengthError": "מגבלת תווים - ",
-		"languageError": "לא ניתן להגיש תבנית המכילה יותר משפה אחת"
+		"languageError": "לא ניתן להגיש תבנית המכילה יותר משפה אחת",
+		"buttonTextError": "טקסט כפתור - שדה חובה",
+		"countryCodeError": "קידומת מדינה - שדה חובה",
+		"phoneNumberError": "מספר טלפון - שדה חובהd",
+		"phoneNumberRangeError": "אנא הכנס מספר טלפון תקין",
+		"websiteTextError": "כתובת אתר - שדה חובה"
 	}
 }

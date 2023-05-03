@@ -1,5 +1,11 @@
-import React, { BaseSyntheticEvent, useState } from 'react';
+import React, {
+	BaseSyntheticEvent,
+	HtmlHTMLAttributes,
+	useEffect,
+	useState,
+} from 'react';
 import {
+	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -18,10 +24,15 @@ import {
 	actionProps,
 	callToActionFieldProps,
 	callToActionRowProps,
+	coreProps,
 } from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
 import { buttonTextLimits, countryCodes } from '../../Constant';
 import AlertModal from './AlertModal';
+import clsx from 'clsx';
+import { Autocomplete } from '@mui/material';
+import { useSelector } from 'react-redux';
+import ValidationAlert from '../../Campaign/Popups/ValidationAlert';
 
 const ActionCallPopOver = ({
 	isCallToActionOpen,
@@ -38,7 +49,20 @@ const ActionCallPopOver = ({
 	templateText,
 }: actionProps) => {
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isTextLimitAlert, setIsTextLimitAlert] = useState(false);
+	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
+	const [validationErrors, setValidationErrors] = useState<string[]>([]);
+	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+
+	useEffect(() => {
+		const autoCompleteList = countryCodes?.map((country) => {
+			return '+' + country?.replace(/\D/g, '');
+		});
+		setAutoCompleteOptions(autoCompleteList);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [countryCodes]);
+
 	const onTypeOfActionChange = (
 		e: BaseSyntheticEvent,
 		row: callToActionRowProps
@@ -58,7 +82,7 @@ const ActionCallPopOver = ({
 	};
 
 	const onTypeOfActionFieldChange = (
-		e: BaseSyntheticEvent,
+		value: string,
 		row: callToActionRowProps,
 		field: callToActionFieldProps
 	) => {
@@ -68,8 +92,8 @@ const ActionCallPopOver = ({
 				const updatedFields = r.fields.map((f: callToActionFieldProps) => {
 					if (field.fieldName === f.fieldName) {
 						if (field.fieldName !== 'whatsapp.phoneNumber')
-							return { ...f, value: e.target.value?.replace(/_/g, '') };
-						return { ...f, value: e.target.value?.replace(/\D/g, '') };
+							return { ...f, value: value?.replace(/_/g, '') };
+						return { ...f, value: value?.replace(/\D/g, '') };
 					}
 					return f;
 				});
@@ -86,8 +110,7 @@ const ActionCallPopOver = ({
 		setCallToActionFieldRows([...updatedRows]);
 	};
 
-	const onSubmit = (e: BaseSyntheticEvent) => {
-		e.preventDefault();
+	const onSubmit = () => {
 		if (templateText?.length >= buttonTextLimits.callToAction) {
 			setIsTextLimitAlert(true);
 		} else {
@@ -107,6 +130,91 @@ const ActionCallPopOver = ({
 	const onCancelTextLimit = () => {
 		setIsTextLimitAlert(false);
 		closeCallToAction(true);
+	};
+
+	const renderOptions = (
+		props: HtmlHTMLAttributes<HTMLElement>,
+		option: string,
+		fIndex: number
+	) => {
+		return (
+			<Box
+				component='li'
+				{...props}
+				key={fIndex + '_' + option}
+				title={option}
+				style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
+				{option}
+			</Box>
+		);
+	};
+
+	const validateFields = () => {
+		let isValidated: boolean = true;
+		let erros: string[] = [];
+		callToActionFieldRows.forEach((callToActionRow) => {
+			if (callToActionRow.typeOfAction === 'phonenumber') {
+				callToActionRow?.fields?.forEach((callToActionField) => {
+					if (
+						callToActionField?.fieldName?.includes('phoneButtonText') &&
+						callToActionField?.value?.length === 0
+					) {
+						isValidated = false;
+						erros.push(translator('whatsapp.alertModal.buttonTextError'));
+					}
+					if (
+						callToActionField?.fieldName?.includes('country') &&
+						callToActionField?.value?.length === 0
+					) {
+						isValidated = false;
+						erros.push(translator('whatsapp.alertModal.countryCodeError'));
+					}
+					if (callToActionField?.fieldName?.includes('phoneNumber')) {
+						if (callToActionField?.value?.length === 0) {
+							isValidated = false;
+							erros.push(translator('whatsapp.alertModal.phoneNumberError'));
+						} else if (
+							callToActionField?.value?.length < 9 ||
+							callToActionField?.value?.length > 16
+						) {
+							isValidated = false;
+							erros.push(
+								translator('whatsapp.alertModal.phoneNumberRangeError')
+							);
+						}
+					}
+				});
+			}
+			if (callToActionRow.typeOfAction === 'website') {
+				callToActionRow?.fields?.forEach((callToActionField) => {
+					if (
+						callToActionField?.fieldName?.includes('websiteButtonText') &&
+						callToActionField?.value?.length === 0
+					) {
+						isValidated = false;
+						erros.push(translator('whatsapp.alertModal.buttonTextError'));
+					}
+					if (
+						callToActionField?.fieldName?.includes('websiteURL') &&
+						callToActionField?.value?.length === 0
+					) {
+						isValidated = false;
+						erros.push(translator('whatsapp.alertModal.websiteTextError'));
+					}
+				});
+			}
+		});
+		if (!isValidated) {
+			setValidationErrors(erros);
+			setIsValidationAlert(true);
+		}
+		return isValidated;
+	};
+
+	const onButtonSubmit = () => {
+		if (validateFields()) {
+			onSubmit();
+		}
 	};
 
 	return (
@@ -135,7 +243,7 @@ const ActionCallPopOver = ({
 						className={classes.callToActionDialogHeaderDescription}>
 						<>{translator('whatsapp.callToActionDialogContentText')}</>
 					</DialogContentText>
-					<form onSubmit={onSubmit}>
+					<form>
 						<Grid container className={classes.callToActionFields} spacing={1}>
 							{callToActionFieldRows.map(
 								(row: callToActionRowProps, index: number) => (
@@ -192,7 +300,11 @@ const ActionCallPopOver = ({
 															placeholder={translator(field.placeholder)}
 															variant='outlined'
 															onChange={(e) =>
-																onTypeOfActionFieldChange(e, row, field)
+																onTypeOfActionFieldChange(
+																	e.target.value,
+																	row,
+																	field
+																)
 															}
 															value={field.value}
 															fullWidth
@@ -203,7 +315,26 @@ const ActionCallPopOver = ({
 														<Typography>
 															<>{translator(field?.fieldName)}</>
 														</Typography>
-														<TextField
+														<Autocomplete
+															id='template-list'
+															className={clsx(
+																classes.buttonField,
+																classes.buttonWhatsappAutocomplete
+															)}
+															options={autoCompleteOptions}
+															renderOption={(props, options) =>
+																renderOptions(props, options, fIndex)
+															}
+															style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+															renderInput={(params) => (
+																<TextField {...params} />
+															)}
+															onChange={(_e, value) =>
+																onTypeOfActionFieldChange(value!, row, field)
+															}
+															value={field.value}
+														/>
+														{/* <TextField
 															disabled={!isEditable}
 															select
 															required
@@ -222,7 +353,7 @@ const ActionCallPopOver = ({
 																	{countryCode}
 																</MenuItem>
 															))}
-														</TextField>
+														</TextField> */}
 													</Grid>
 												)
 										)}
@@ -250,7 +381,6 @@ const ActionCallPopOver = ({
 								</Button>
 							)}
 							<Button
-								type='submit'
 								onClick={() => closeCallToAction(true)}
 								variant='contained'
 								color='secondary'>
@@ -258,7 +388,7 @@ const ActionCallPopOver = ({
 							</Button>
 							{isEditable && (
 								<Button
-									type='submit'
+									onClick={onButtonSubmit}
 									disabled={callToActionFieldRows?.length === 0 ? true : false}
 									variant='contained'
 									style={
@@ -282,6 +412,14 @@ const ActionCallPopOver = ({
 				subtitle={translator('whatsapp.template.textLimitAlertDesc')}
 				type='delete'
 				onConfirmOrYes={() => onConfirmTextLimit()}
+			/>
+
+			<ValidationAlert
+				classes={classes}
+				isOpen={isValidationAlert}
+				onClose={() => setIsValidationAlert(false)}
+				title={translator('whatsappCampaign.sendValidation')}
+				requiredFields={validationErrors}
 			/>
 		</>
 	);

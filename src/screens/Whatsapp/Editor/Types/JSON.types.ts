@@ -114,7 +114,7 @@ export type TextMediaAndButtonTypes = {
 
 export type Card = {
 	title: string;
-	subtitle: string;
+	subtitle: string | null;
 	media: string[];
 	actions: callToActionButton[] | quickReplyButton[];
 };

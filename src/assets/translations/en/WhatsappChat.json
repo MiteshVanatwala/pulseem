@@ -3,7 +3,7 @@
 	"type": "typing...",
 	"searchPlaceholder": "Search or start a new chat",
 	"conversation": "Conversation is closed.",
-	"cantSend": "You can not send messages in closed conversation.",
+	"cantSend": "You can only send templates in a closed conversation",
 	"send": "Send Template",
 	"open": "Open",
 	"pending": "Pending",

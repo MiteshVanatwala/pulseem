@@ -44,7 +44,7 @@
 	"callToActionAddMoreButton": "Add More",
 	"callToActionRemoveButton": "Remove",
 	"callToActionTitle": "Call to Action",
-	"callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action.",
+	"callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action",
 	"typeOfAction": "Type of Action",
 	"phoneButtonText": "Button Text",
 	"phoneButtonTextPlaceholder": "Call Us",
@@ -60,6 +60,8 @@
 	"marketing": "Marketing",
 	"utility": "Utility",
 	"authentication": "Authentication",
+
+	"displayError": "Display Error",
 
 	"template": {
 		"textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
@@ -103,6 +105,11 @@
 		"templateTextRequired": "Template text is required",
 		"templateNameRequired": "Template name is required",
 		"templateLengthError": "Template length should be less then or equals to",
-		"languageError": "You can not submit a template containing more than one language"
+		"languageError": "You can not submit a template containing more than one language",
+		"buttonTextError": "Button Text - Required field",
+		"countryCodeError": "Country Code - Required field",
+		"phoneNumberError": "Phone Number - Required field",
+		"phoneNumberRangeError": "Please enter phone number in valid range",
+		"websiteTextError": "Website URL - Required field"
 	}
 }

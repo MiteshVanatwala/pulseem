@@ -25,7 +25,7 @@
 	"created": "Created",
 	"approved": "Approved",
 	"pending": "Pending",
-	"received": "Received",
+	"received": "Under Review",
 	"rejected": "Rejected",
 	"finished": "Sent",
 	"sending": "Sending",

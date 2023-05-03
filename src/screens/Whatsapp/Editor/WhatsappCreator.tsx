@@ -64,6 +64,7 @@ import {
 	buttonTypes,
 	categoryName,
 	resetToastData,
+	whatsappRoutes,
 } from '../Constant';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
@@ -125,6 +126,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
 	const templateTextRef = useRef<HTMLTextAreaElement>(null);
 	//This regex will test dynamic field having two digits in side (i.e. {{10}});
 	const dynamicFieldL6 = new RegExp('^({{)[0-9][0-9](}})$');
@@ -249,6 +251,13 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
 	}, [buttonType]);
+
+	useEffect(() => {
+		if (isCallToActionOpen && callToActionFieldRows?.length === 0) {
+			setCallToActionFieldRows([initialFieldRow]);
+		}
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define, react-hooks/exhaustive-deps
+	}, [isCallToActionOpen]);
 
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
 		setTemplateName(e.target.value.toLowerCase());
@@ -480,10 +489,12 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		// setTemplateName(savedTemplateData?.TemplateName || '');
 		setButtonType(updatedButtonType);
 		setTemplateData(updatedTemplateData);
-		if (updatedButtonType === buttonTypes.QUICK_REPLY) {
-			setQuickReplyButtons(updatedTemplateData.templateButtons);
-		} else {
-			setCallToActionFieldRows(updatedTemplateData.templateButtons);
+		if (updatedTemplateData?.templateButtons?.length > 0) {
+			if (updatedButtonType === buttonTypes.QUICK_REPLY) {
+				setQuickReplyButtons(updatedTemplateData.templateButtons);
+			} else {
+				setCallToActionFieldRows(updatedTemplateData.templateButtons);
+			}
 		}
 		if (templateData?.variables) {
 			setDynamicFieldCount(Object.keys(templateData?.variables)?.length);
@@ -673,8 +684,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 					card: {
 						title: templateData.templateText
 							?.replace(/Reply “remove” to unsubscribe/g, '')
-							.replace(/להסרה השב “הסר”/g, ''),
-						subtitle: getSubtitle(),
+							.replace(/להסרה השב “הסר”/g, '')
+							?.replace(/\n+$/, ''),
+						subtitle: getSubtitle()?.length > 0 ? getSubtitle() : null,
 						media: [fileData?.fileLink],
 						actions:
 							buttonType === buttonTypes.QUICK_REPLY
@@ -708,8 +720,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 		}
 	};
 
-	const onSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
+	const onSubmit = () => {
 		if (validateSaveTemplate()) {
 			setIsSubmitCampaignOpen(true);
 		}
@@ -753,7 +764,10 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			isValidated = false;
 		}
 
-		if (checkLanguage(templateData.templateText, isRTL) === 'Both') {
+		if (
+			templateData.templateText?.length > 0 &&
+			checkLanguage(templateData.templateText, isRTL) === 'Both'
+		) {
 			validationErrors.push(translator('whatsapp.alertModal.languageError'));
 			isValidated = false;
 		}
@@ -963,33 +977,39 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			case 'save':
 				saveTemplate();
 				break;
+			case 'submit':
+				onSubmit();
+				break;
 			default:
 				break;
 		}
 	};
 
 	const onDeleteTemplate = async () => {
-		if (templateID) {
-			const deleteData: deleteTemplateAPIProps = await dispatch<any>(
-				deleteTemplate(templateID)
-			);
-			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-				setIsDeleteTemplateOpen(false);
-				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-				resetFields();
-				navigate('/react/whatsapp/template/create');
-			} else {
-				deleteData?.payload?.Error
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: deleteData?.payload?.Error,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
-			}
-		} else {
-			resetFields();
-			setIsDeleteTemplateOpen(false);
-		}
+		resetFields();
+		navigate(whatsappRoutes.CREATE_TEMPLATE);
+		setIsDeleteTemplateOpen(false);
+		// if (templateID) {
+		// 	const deleteData: deleteTemplateAPIProps = await dispatch<any>(
+		// 		deleteTemplate(templateID)
+		// 	);
+		// 	if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+		// 		setIsDeleteTemplateOpen(false);
+		// 		setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+		// 		resetFields();
+		// 		navigate('/react/whatsapp/template/create');
+		// 	} else {
+		// 		deleteData?.payload?.Error
+		// 			? setToastMessage({
+		// 					...ToastMessages.ERROR,
+		// 					message: deleteData?.payload?.Error,
+		// 			  })
+		// 			: setToastMessage(ToastMessages.ERROR);
+		// 	}
+		// } else {
+		// 	resetFields();
+		// 	setIsDeleteTemplateOpen(false);
+		// }
 	};
 
 	const onSubmitCampaign = async () => {
@@ -1007,7 +1027,9 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 			if (submitTemplate?.payload?.Status === apiStatus.SUCCESS) {
 				setToastMessage(ToastMessages.SUCCESS);
 				resetFields();
-				navigate('/react/whatsapp/template/create');
+				setTimeout(() => {
+					navigate('/react/whatsapp/templatemanagement');
+				}, 2500);
 			} else if (submitTemplate?.payload?.Status === 'Error') {
 				if (submitTemplate?.payload?.Message?.length > 0) {
 					setToastMessage({

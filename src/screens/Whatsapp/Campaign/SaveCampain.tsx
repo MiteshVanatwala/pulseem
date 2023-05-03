@@ -46,7 +46,6 @@ import {
 	callToActionFieldProps,
 	callToActionProps,
 	callToActionRowProps,
-	commonAPIResponseProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	savedTemplateAPIProps,
@@ -66,7 +65,6 @@ import {
 	saveCampaign,
 	getCampaignDetailById,
 	quickSend,
-	deleteCampaign,
 	saveQuickSendGroups,
 	getWhatsAppCampaignSummary,
 } from '../../../redux/reducers/whatsappSlice';
@@ -658,25 +656,27 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onDeleteCampaign = async () => {
-		if (campaignID) {
-			const deleteData: commonAPIResponseProps = await dispatch<any>(
-				deleteCampaign(campaignID)
-			);
-			setIsDeleteCampaignOpen(false);
-			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-				setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-				navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
-			} else {
-				deleteData?.payload?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: deleteData?.payload?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
-			}
-		} else {
-			resetFields();
-		}
+		resetFields();
+		navigate(whatsappRoutes.CREATE_CAMPAIGN_PAGE1);
+		// if (campaignID) {
+		// 	const deleteData: commonAPIResponseProps = await dispatch<any>(
+		// 		deleteCampaign(campaignID)
+		// 	);
+		// 	setIsDeleteCampaignOpen(false);
+		// 	if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+		// 		setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
+		// 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+		// 	} else {
+		// 		deleteData?.payload?.Message
+		// 			? setToastMessage({
+		// 					...ToastMessages.ERROR,
+		// 					message: deleteData?.payload?.Message,
+		// 			  })
+		// 			: setToastMessage(ToastMessages.ERROR);
+		// 	}
+		// } else {
+		// 	resetFields();
+		// }
 		setIsDeleteCampaignOpen(false);
 	};
 
@@ -850,8 +850,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		}
 	};
 
-	const onSubmit = async (e: BaseSyntheticEvent) => {
-		e.preventDefault();
+	const onSubmit = async () => {
 		if (validateSaveCampaign()) {
 			setIsLoader(true);
 			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
@@ -882,7 +881,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			case buttons.EXIT:
 				setIsExitCampaignOpen(true);
 				break;
-
+			case buttons.SEND:
+				onSubmit();
+				break;
 			default:
 				break;
 		}
@@ -930,7 +931,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						</Grid>
 					</Grid>
 					<br />
-					<form onSubmit={(e: BaseSyntheticEvent) => onSubmit(e)}>
+					<form onSubmit={onSubmit}>
 						<Grid container className={classes.WhatsappCampainP1}>
 							<Grid
 								className={classes.WhatsappCampainP1Left}

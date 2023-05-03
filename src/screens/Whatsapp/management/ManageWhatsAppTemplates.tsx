@@ -46,11 +46,7 @@ import {
 } from '../Editor/Types/WhatsappCreator.types';
 import ClearIcon from '@material-ui/icons/Clear';
 import clsx from 'clsx';
-import {
-	BaseSyntheticEvent,
-	useEffect,
-	useState,
-} from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import moment from 'moment';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Pagination from './Component/Pagination';
@@ -100,6 +96,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isDuplicateTemplateOpen, setIsDuplicateTemplateOpen] =
 		useState<boolean>(false);
+	const [isStatusResonModal, setIsStatusResonModal] = useState<boolean>(false);
+	const [failedTemplateReason, setFailedTemplateReason] = useState<string>('');
 	const [templateNameSearch, setTemplateNameSearch] = useState<string>('');
 	const [templateStatusSearch, setTemplateStatusSearch] = useState<string>('');
 	const [isSearching, setSearching] = useState<boolean>(false);
@@ -215,6 +213,12 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		setPaginationSetting(updatedPagination);
 		setApiTemplateData(updatedPagination);
 	};
+
+	const onStatusResonClick = (row: templateListItemsProps) => {
+		setFailedTemplateReason(row?.RejectionReason);
+		setIsStatusResonModal(true);
+	};
+
 	const renderNameCell = (row: templateListItemsProps) => {
 		let date = null;
 		let text = '';
@@ -249,16 +253,18 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 			</>
 		);
 	};
-	const renderStatusCell = (status: string, rejectionReason: string) => {
+
+	const renderStatusCell = (row: templateListItemsProps) => {
+		const { Status, RejectionReason } = row;
 		return (
 			<>
 				<Typography
 					className={clsx(classes.middleText, classes.whatsappTemplatesStatus, {
-						[classes.whatsappTemplateStatusCreated]: status === 'Created',
-						[classes.whatsappTemplateStatusApproved]: status === 'Approved',
-						[classes.whatsappTemplateStatusPending]: status === 'Pending',
-						[classes.whatsappTemplateStatusReceived]: status === 'Received',
-						[classes.whatsappTemplateStatusRejected]: status === 'Rejected',
+						[classes.whatsappTemplateStatusCreated]: Status === 'Created',
+						[classes.whatsappTemplateStatusApproved]: Status === 'Approved',
+						[classes.whatsappTemplateStatusPending]: Status === 'Pending',
+						[classes.whatsappTemplateStatusReceived]: Status === 'Received',
+						[classes.whatsappTemplateStatusRejected]: Status === 'Rejected',
 					})}>
 					<>
 						<CustomTooltip
@@ -270,18 +276,18 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							}}
 							arrow={true}
 							placement={'top'}
-							title={translator(statusesByName[status] || status)}
-							text={translator(statusesByName[status] || status)}
+							title={translator(statusesByName[Status] || Status)}
+							text={translator(statusesByName[Status] || Status)}
 							icon={undefined}
 							style={undefined}>
 							<span>
-								{statusesByName[status]
-									? translator(statusesByName[status])
-									: status}
+								{statusesByName[Status]
+									? translator(statusesByName[Status])
+									: Status}
 							</span>
 						</CustomTooltip>
 					</>
-					{status === 'Rejected' && (
+					{Status === 'Rejected' && (
 						<CustomTooltip
 							isSimpleTooltip={false}
 							interactive={true}
@@ -291,13 +297,15 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							}}
 							arrow={true}
 							placement={'top'}
-							title={rejectionReason}
-							text={rejectionReason}
+							title={RejectionReason}
+							text={RejectionReason}
 							icon={undefined}
 							style={undefined}>
 							<Typography
+								onClick={() => onStatusResonClick(row)}
+								style={{ cursor: 'pointer' }}
 								className={classes.whatsappTemplateStatusRejectedReason}>
-								{rejectionReason?.substring(0, templateStatusResonTextLength)}
+								{translator('whatsapp.displayError')}
 							</Typography>
 						</CustomTooltip>
 					)}
@@ -802,9 +810,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						<Grid
 							container
 							spacing={2}
-							className={clsx(
-								classes.manageTemplatesTableWrapper
-							)}>
+							className={clsx(classes.manageTemplatesTableWrapper)}>
 							<TableContainer>
 								<Table className={classes.tableContainer}>
 									{windowSize !== 'xs' && (
@@ -868,10 +874,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 																classes.flex2,
 																classes.tableCellBody
 															)}>
-															{renderStatusCell(
-																row.Status,
-																row.RejectionReason
-															)}
+															{renderStatusCell(row)}
 														</TableCell>
 														<TableCell
 															classes={cellStyle}
@@ -970,6 +973,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						title={translator('whatsappManagement.duplicate')}
 						subtitle={translator('whatsappManagement.duplicateDesc')}
 						type='delete'
+						onConfirmOrYes={() => onDuplicaTemplate()}
+					/>
+
+					<AlertModal
+						classes={classes}
+						isOpen={isStatusResonModal}
+						onClose={() => setIsStatusResonModal(false)}
+						title={''}
+						subtitle={failedTemplateReason}
+						type='alert'
 						onConfirmOrYes={() => onDuplicaTemplate()}
 					/>
 				</>
