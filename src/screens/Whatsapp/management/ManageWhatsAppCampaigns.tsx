@@ -646,7 +646,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				alignItems='center'>
 				{iconsMap.map((icon) => (
 					<Grid
-						className={icon?.disable ? classes.disabledCursor : ''}
+						className={clsx(
+							icon?.disable ? classes.disabledCursor : '',
+							icon.key === 'send' ? classes.greenTextColor : ''
+						)}
 						key={icon.key}
 						item>
 						<ManagmentIcon {...icon} />

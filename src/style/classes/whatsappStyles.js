@@ -1095,7 +1095,6 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	/* Send Campaign */
 
 	WhatsappCampainHeaderWrapper: {
-		justifyContent: 'space-between',
 		'@media screen and (max-width: 964px)': {
 			display: 'inline',
 		},
@@ -1113,6 +1112,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		marginTop: 20,
 		whiteSpace: windowSize === 'xs' ? 'break-spaces' : null,
 	},
+	WhatsappCampainHeader: {
+		width: '100%',
+	},
 	WhatsappCampainNotice: {
 		textAlign: 'center',
 		fontFamily: 'Assistant',
@@ -1121,6 +1123,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		fontSize: '17px',
 		letterSpacing: '0.5px',
 		lineHeight: '16px',
+		width: '100%',
 		flex: isRTL ? '2 !important' : 'unset',
 		'@media screen and (max-width: 964px)': {
 			paddingRight: '0px',
@@ -2716,7 +2719,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappTemplateStatusRejectedReason: {
 		color: '#E74C3C',
 		fontWeight: 400,
-		fontSize: '11px',
+		fontSize: '14px',
 		textDecoration: 'underline',
 	},
 	WhatsappCampainMobilePreviewBox: {
@@ -3050,5 +3053,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	whatsappSaveGroupWrapper: {
 		display: 'flex',
 		alignItems: 'center',
+	},
+	greenTextColor: {
+		'& p': {
+			color: '#27AE60 !important',
+		},
 	},
 });

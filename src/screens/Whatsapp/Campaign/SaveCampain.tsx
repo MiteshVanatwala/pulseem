@@ -906,7 +906,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						className={classes.WhatsappCampainHeaderWrapper}
 						container
 						alignItems='center'>
-						<Grid item>
+						<Grid item md={12} lg={6} className={classes.WhatsappCampainHeader}>
 							<Title
 								Text={translator('whatsappCampaign.header')}
 								Classes={classes}
@@ -914,7 +914,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 								Element={null}
 							/>
 						</Grid>
-						<Grid item className={classes.WhatsappCampainNotice}>
+						<Grid item md={12} lg={6} className={classes.WhatsappCampainNotice}>
 							<span style={{ lineHeight: '0' }}>
 								{translator('whatsappCampaign.note')}
 							</span>
