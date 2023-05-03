@@ -612,5 +612,8 @@
   "comingSoon": "בקרוב",
   "backToHome": "לדף הבית",
   "backToCampaigns": "לניהול קמפיינים",
-  "savedSuccessfully": "נשמר בהצלחה"
+  "savedSuccessfully": "נשמר בהצלחה",
+  "newsletterMessages": "הודעות דיוור",
+  "fileDownloads": "הורדת קבצים",
+  "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ"
 }

@@ -125,7 +125,7 @@ export const getRoutes = (
         {
           title: t("master.RadMenuItemResource37.Text"),
           href: "/Pulseem/ClientAdvancedSearch.aspx?fromreact=true",
-          isShow: true,
+          isShow: false,
         },
         {
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
@@ -137,6 +137,12 @@ export const getRoutes = (
           href: "/Pulseem/FileUploads.aspx?fromreact=true",
           isShow: true,
         },
+        {
+          key: 'downloadReports',
+          title: t('master.fileDownload'),
+          href: `${sitePrefix}groups/Download`,
+          isShow: true
+        }
       ],
     },
     {

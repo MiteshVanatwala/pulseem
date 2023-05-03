@@ -19,12 +19,12 @@ export const Title = ({
 }: TitleObject) => {
   return (
     <Box
-      style={ContainerStyle}
-      className={clsx(
-        classes.flex,
-        classes.alignItemsCenter,
-        classes.mgmtTitleContainer
+    className={clsx(
+      classes.flex,
+      classes.alignItemsCenter,
+      classes.mgmtTitleContainer
       )}
+      style={ContainerStyle}
     >
       {isIcon && <ListIcon className={classes.mr15} />}
       {Text && (

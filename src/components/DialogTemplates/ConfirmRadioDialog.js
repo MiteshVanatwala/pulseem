@@ -13,7 +13,7 @@ const ConfirmRadioDialog = ({
     text = '',
     title = '',
     radioTitle = '',
-    options = null,
+    options,
     isOpen = false,
     onCancel,
     onConfirm,

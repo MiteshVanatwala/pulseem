@@ -1,3 +1,5 @@
+export const rowsOptions = [6, 10, 20, 50];
+
 export const DomainProtocol = [
     { key: 0, name: "http://" },
     { key: 1, name: "https://" }

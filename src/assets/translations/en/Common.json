@@ -615,5 +615,8 @@
   "comingSoon": "Coming Soon",
   "backToHome": "To Home page",
   "backToCampaigns": "To Campaigns",
-  "savedSuccessfully": "Saved Successfully"
+  "savedSuccessfully": "Saved Successfully",
+  "newsletterMessages": "Newsletter messages",
+  "fileDownloads": "File Downloads",
+  "fileDownloadError": "Oops...Something went wrong while downloading the file"
 }

@@ -47,6 +47,7 @@ import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
+import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 
 const renderRoutes = (classes) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -411,6 +412,11 @@ const renderRoutes = (classes) => {
         exact
         path={`${sitePrefix}reports/Inbound/:type/:id`}
         element={<InboundMessages classes={classes} />}
+      />
+      <Route
+        exact
+        path={`${sitePrefix}Groups/Download`}
+        element={<DownloadFiles classes={classes} />}
       />
       <Route
         path="*" element={<PageNotFound classes={classes} />}
