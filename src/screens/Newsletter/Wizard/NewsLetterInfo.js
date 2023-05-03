@@ -146,15 +146,14 @@ const NewsLetterInfo = ({ classes }) => {
     const isNew = queryParams.get("new")
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
-
-    const { accountSettings, isRTL, windowSize, CoreToastMessages } = useSelector((state) => state.core);
+    const { isRTL, windowSize, CoreToastMessages } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { verifiedEmails } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings, accountFeatures } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -219,7 +218,6 @@ const NewsLetterInfo = ({ classes }) => {
     const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
-    const accountFeatures = getCookie("accountFeatures")
 
     //#region default values
     useEffect(() => {
@@ -241,15 +239,6 @@ const NewsLetterInfo = ({ classes }) => {
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
     }
-
-    useEffect(() => {
-        const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
-        if (htmlTemplate && htmlTemplate !== '') {
-            setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
-            sessionStorage.removeItem("Newlsetter_Html_Template");
-
-        }
-    }, []);
 
     useEffect(() => {
         const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
@@ -474,7 +463,7 @@ const NewsLetterInfo = ({ classes }) => {
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
                 if (isContiue) {
-                    const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
+                    const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
                     let redirectUrl = isBeeEditor ? `${sitePrefix}Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
@@ -810,6 +799,7 @@ const NewsLetterInfo = ({ classes }) => {
                     classes={classes}
                     open={showGallery}
                     onClose={() => { setShowGallery(false) }}
+                    onCancel={() => { setShowGallery(false) }}
                     onConfirm={handleGalleryConfirm}
                     {...dialog}>
                     {dialog.content}
@@ -853,9 +843,9 @@ const NewsLetterInfo = ({ classes }) => {
 
     const renderButtons = () => {
         const wizardButtons = [];
-        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
-        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1
-        if (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
+        const showCautionOldEditor = getCookie('showCautionOldEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+        const showCautionNewEditor = getCookie('showCautionNewEditor') !== "false" && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1
+        if (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) === -1) {
             wizardButtons.push(<>
                 <Button
                     onClick={() =>

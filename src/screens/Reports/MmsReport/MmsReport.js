@@ -23,6 +23,7 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -32,7 +33,8 @@ const DEFAULT_FILTER = {
 
 const MmsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
     const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
@@ -334,7 +336,7 @@ const MmsReport = ({ classes }) => {
         const dataLength = filteredResults.length;
         return (
             <Grid container spacing={2} className={classes.linePadding} >
-                {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+                {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         className={clsx(
                             classes.btn, classes.btnRounded,

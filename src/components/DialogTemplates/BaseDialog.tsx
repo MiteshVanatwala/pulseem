@@ -60,13 +60,14 @@ export const BaseDialog = ({
     exitButton ?? (
       <Stack
         onClick={onExit}
-        className={clsx(classes.dialogExitButton, classes.f20, {
-          [classes.dialogExitButtonRTL]: isRTL,
-          [classes.dialogExitButtonLTR]: !isRTL,
-        })}
+        className={clsx(classes.dialogExitButton, classes.f20, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
         justifyContent="center"
         alignItems="center"
         alignSelf="center"
+        style={{
+          left: isRTL ? 15 : 'auto',
+          right: isRTL ? 'auto' : 15,
+        }}
       >
         <CgClose />
       </Stack>

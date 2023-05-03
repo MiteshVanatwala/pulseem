@@ -17,12 +17,14 @@ const WizardActions = ({
     onTestSend = null,
     onShowGallery = null,
     onShowDocuments = null,
-    helperText = null
+    helperText = null,
+    disabled = false
 }) => {
     const { t } = useTranslation();
     const { isRTL, windowSize } = useSelector(state => state.core);
     return (
-        <Grid container style={{ ...innerStyle, paddingBottom: 40 }} >
+        <Grid container style={{ ...innerStyle, paddingBottom: 40 }}
+            className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
                 <Box className={clsx(classes.wizardButtonContainer, classes.baseButtonsContainer, 'baseButtonsContainer', { [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })} style={{ paddingBottom: 40 }}>
                     {onBack &&

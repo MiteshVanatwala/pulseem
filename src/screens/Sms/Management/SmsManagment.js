@@ -58,8 +58,8 @@ const SmsManagnentScreen = ({ classes }) => {
   moment.locale(language)
   const Redirect = useRedirect();
 
-  const getData = useCallback(() => {
-    dispatch(getSmsData())
+  const getData = useCallback(async () => {
+    await dispatch(getSmsData())
     setLoader(false);
   }, [dispatch])
 
@@ -714,7 +714,7 @@ const SmsManagnentScreen = ({ classes }) => {
     title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
     showDivider: false,
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
       </Typography>
     ),
@@ -730,7 +730,7 @@ const SmsManagnentScreen = ({ classes }) => {
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.dialogDuplicateContent')}
       </Typography>
     ),

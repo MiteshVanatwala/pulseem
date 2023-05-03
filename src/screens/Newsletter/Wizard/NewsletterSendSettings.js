@@ -30,7 +30,7 @@ import FilterRecipientsDialog from "./Popups/FilterRecipientsDialog";
 import ExitDialog from "./Popups/ExitDialog";
 import PulseDialog from "./Popups/PulseDialog";
 import SendingMethod from "../../../components/Wizard/SendingMethod";
-import { getCampaignInfo, getEmailSendSettings, setEmailSendSettings, getSendSummary } from "../../../redux/reducers/newsletterSlice";
+import { getEmailSendSettings, setEmailSendSettings, getSendSummary, deleteCampaign } from "../../../redux/reducers/newsletterSlice";
 import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
@@ -100,10 +100,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const severe = useSnackSevere();
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
-    const { verifiedEmails, commonSettings } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings } = useSelector(state => state.common);
     const { defaultGroupId, subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
-    const { ToastMessages, newsletterSettings, newsletterSendSummary, campaignInfo } = useSelector(state => state.newsletter);
+    const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [newEMailVerification, setNewEmailVerification] = useState(false);
@@ -112,6 +112,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         SendingMethod: 1,
         CampaignID: params?.id
     });
+    const [filterParameters, setFilterParameters] = useState({});
     const [activeTab, setActiveTab] = useState(0);
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
@@ -129,7 +130,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         selectedFilterCampaigns: [],
         displayFilter: false,
         reciFilter: false,
-    })
+    });
+    const [doNotSendFilterValues, setDoNotSendFilterValues] = useState({});
     const [sourcePulses, setSourcePulses] = useState({});
     const [snackbarValues, setSnackbarValues] = useState({
         snackbarTimeBoolean: false,
@@ -155,6 +157,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     });
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
+    const [summaryEmail, setSummaryEmail] = useState(newsletterInfo.FromEmail);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -163,23 +166,23 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
 
         try {
-            const isVerified = verifiedEmails.find((email) => {
-                return email?.Number === campaignInfo.FromEmail;
+            const isVerified = verifiedEmails.filter((email) => {
+                return email?.Number === newsletterInfo.FromEmail;
             });
-            setIsEmailVerified(isVerified);
+            setIsEmailVerified(isVerified?.length > 0);
             setNewEmailVerification(!isVerified || isVerified === false);
             if (newsletterSettings.length === 0)
                 return;
 
             const { GroupList = [], ExeptionalGroups = [], ExeptionalCampaigns = [], ExceptionalDays = null } = newsletterSettings;
-            const Groups = subAccountAllGroups;
+            const Groups = subAccountAllGroups || [];
             let selecteddGroup = [];
 
             setSegmantIndication(ExeptionalGroups?.length > 0 || newsletterSettings.IsOpened || newsletterSettings.IsOpenedClicked || newsletterSettings.IsNotClicked || newsletterSettings.IsNotOpened)
             setPulseIndication(newsletterSettings.PulseAmount > 0 || newsletterSettings.TimeInterval > 0);
             setCampaignValues({ ...newsletterSettings })
 
-            selecteddGroup = Groups?.filter((c) => GroupList?.indexOf(c.GroupID) > -1)
+            selecteddGroup = [...Groups, ...testGroups]?.filter((c) => GroupList?.indexOf(c.GroupID) > -1)
             selecteddGroup.length > 0 && setSelectedGroups(selecteddGroup);
 
             setFilterValues({
@@ -191,11 +194,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
         } catch (e) {
-            dispatch(sendToTeamChannel({
-                MethodName: 'onReady',
-                ComponentName: 'NewsletterSendSettings.js',
-                Message: e
-            }));
+            // dispatch(sendToTeamChannel({
+            //     MethodName: 'onReady',
+            //     ComponentName: 'NewsletterSendSettings.js',
+            //     Message: e
+            // }));
         }
     }
 
@@ -211,8 +214,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             try {
                 await dispatch(getEmailSendSettings(params?.id));
 
-                if (!campaignInfo || campaignInfo?.length === 0)
-                    await dispatch(getCampaignInfo(params.id))
                 if (!verifiedEmails || verifiedEmails?.length === 0)
                     dispatch(getAuthorizedEmails())
                 if (!previousCampaignData || previousCampaignData?.length === 0)
@@ -225,7 +226,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     await dispatch(getAccountExtraData());
                 if (!previousLandingData || previousLandingData?.length === 0)
                     dispatch(getPreviousLandingData());
-                if (!commonSettings || !commonSettings?.Account) {
+                if (!accountSettings || !accountSettings?.Account) {
                     await dispatch(getCommonFeatures());
                 }
                 resolve();
@@ -244,12 +245,44 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }, [dispatch]);
 
     const handlePreviousPage = () => {
-        navigate(`/react/campaigns/editor/${params.id}`)
+        if (newsletterInfo?.IsNewEditor) {
+            navigate(`/react/campaigns/editor/${params.id}`)
+        }
+        else {
+            window.location = `/Pulseem/Editor/CampaignEdit/${params.id}`;
+        }
     }
 
     const onHandleDelete = () => {
         setDialogType({ type: "delete" });
     };
+
+    const handleDeleteCampaign = async () => {
+        let response = null;
+        try {
+            response = await dispatch(deleteCampaign(params.id))
+            setLoader(false)
+        }
+        catch (error) {
+            console.log("ERROR-SAVE-SEND-SETTINGS:", error)
+        }
+        finally {
+            handleDeleteResponse(response.payload);
+        }
+    }
+
+    const handleDeleteResponse = (response) => {
+        switch (response) {
+            case -1: {
+                setToastMessage(ToastMessages.CAMPAIGN_DELETED_SUCCESS);
+                break;
+            }
+            case -2:
+            default: {
+                setToastMessage(ToastMessages.GENERAL_ERROR);
+            }
+        }
+    }
 
     const onSaveSettings = async (showSummary = false, overrideGroupIds = null) => {
         setLoader(true)
@@ -325,6 +358,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         if (response?.StatusCode === 201) {
             setDialogType({ type: 'sendSuccess' });
         }
+        else if (response?.StatusCode === 403) {
+            setSummaryEmail(response.fromEmail);
+            setNewEmailVerification(newsletterInfo.FromEmail)
+        }
         else {
             setDialogType(SEND_PROC[response?.StatusCode]);
         }
@@ -362,9 +399,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 }
             });
         }
-        else{
+        else {
             // Set error - clients were not uploaded
             setToastMessage(ToastMessages.GENERAL_ERROR);
+            setLoader(false);
         }
 
     };
@@ -414,7 +452,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const validationCheck = () => {
-        if (filterValues.filterValues === "") {
+        if (filterValues.toggleReci && (!filterValues?.exceptionalDays || filterValues?.exceptionalDays <= 0)) {
             setFilterValues({ ...filterValues, RecipientsBool: true })
             setSnackbarValues({ ...snackbarValues, recipientsSnackbar: true })
             return false;
@@ -465,9 +503,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }
 
     const createNewGroup = async (groupName) => {
+        setLoader(true);
         const nameExist = subAccountAllGroups?.filter((g) => { return g?.GroupName === groupName });
         if (nameExist.length > 0) {
             setNewGroupDetails({ ...newGroupDetails, groupNameExist: true });
+            setLoader(false);
             return;
         }
 
@@ -484,6 +524,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         await dispatch(combinedGroup(payload));
         setNewGroupDetails({ toggleChecked: false, groupNameExist: false, groupValue: '' });
         setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
+        setLoader(false);
     };
 
     const callbackSelectedGroups = (group) => {
@@ -540,7 +581,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onChange={handleInputNewGroup}
                 value={newGroupDetails.groupValue}
             />
-            <span className={classes.saveBtn}
+            <span className={clsx(classes.saveBtn, !newGroupDetails.groupValue || newGroupDetails.groupValue === '' ? classes.disabled : null)}
                 onClick={() => createNewGroup(newGroupDetails.groupValue)}
             >
                 {t("mainReport.save")}
@@ -604,7 +645,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleAddClientsResponse = (res) => {
         switch (res?.StatusCode) {
             case 201: {
-                setToastMessage(ToastMessages.SUCEESS);
+                setActiveTab(0);
+                setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
                 break;
             }
             case 401: {
@@ -675,8 +717,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const MergedSegmentationDialog = () => {
         let segDialog = SegmentationDialog({
             classes: classes,
-            campaign: campaignValues,
-            handleSetValues: (values) => setCampaignValues({ ...values }),
+            campaign: filterParameters,
+            handleSetValues: (values) => setFilterParameters({ ...values }),
             onClose: () => setDialogType(null),
             onCancel: () => setDialogType(null),
             onConfirm: () => setDialogType(null)
@@ -740,9 +782,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             showDefaultButtons: true,
             confirmText: t("common.Ok"),
             cancelText: t("common.Cancel"),
-            onClose: () => setDialogType(null),
-            onCancel: () => setDialogType(null),
+            onClose: () => {
+                setFilterParameters({});
+                setFilterValues(doNotSendFilterValues);
+                setDialogType(null)
+            },
+            onCancel: () => {
+                setFilterParameters({});
+                setFilterValues(doNotSendFilterValues);
+                setDialogType(null);
+            },
             onConfirm: () => {
+                setCampaignValues({
+                    ...campaignValues,
+                    ...filterParameters
+                })
                 mergedSegmentationDialog === 0 && setDialogType(null)
                 mergedSegmentationDialog === 1 && handleFilterConfirm()
             }
@@ -772,6 +826,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             }),
             delete: DeleteDialog({
                 classes: classes,
+                onConfirm: () => handleDeleteCampaign().then(() => {
+                    setDialogType(null);
+                    setTimeout(() => {
+                        navigate("/react/Campaigns/")
+                    }, 200);
+                }),
+                onCancel: () => setDialogType(null),
                 onClose: () => setDialogType(null),
             }),
             exit: ExitDialog({
@@ -782,8 +843,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         navigate("/react/Campaigns/")
                     })
                 },
-                onClose: () => navigate("/react/Campaigns/"),
-                onCancel: () => setDialogType(null),
+                onClose: () => {
+                    setDialogType(null);
+                    navigate("/react/Campaigns/")
+                },
+                onCancel: () => { setDialogType(null) },
             }),
             sendSuccess: SendSuccessDialog({
                 classes,
@@ -807,6 +871,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     classes={classes}
                     open={dialogType}
                     onClose={() => { setDialogType(null) }}
+                    onCancel={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
                 </BaseDialog>
@@ -842,6 +907,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                         const restData = response?.payload.Data;
                         setSmsMarketingModel({
                             SendDate: sendDate,
+                            MinSendDate: campaignValues.SendingMethod === 2 ? campaignValues.SendDate : sendDate,
                             SendTime: moment(sendTime),
                             IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData
@@ -1094,7 +1160,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
                                                 disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
-                                                onClick={() => setDialogType({ type: 'filterRecipients' })}
+                                                onClick={() => {
+                                                    setFilterParameters(campaignValues);
+                                                    setDoNotSendFilterValues(filterValues);
+                                                    setDialogType({ type: 'filterRecipients' });
+                                                }}
                                             >
                                                 {t('mainReport.recipientFilter')}
                                             </Button>
@@ -1118,15 +1188,19 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     </Grid>
                 </Grid>
             </Box>
-            <WizardActions
-                classes={classes}
-                onBack={{
-                    callback: () => { handlePreviousPage() }
-                }}
-                onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
-                onExit={() => { setDialogType({ type: "exit" }) }}
-                additionalButtons={newsletterSettings?.Status === 1 && renderButtons()}
-            />
+            {
+                <Box className={{ [classes.disabled]: newsletterInfo.IsDeleted }}>
+                    <WizardActions
+                        classes={classes}
+                        onBack={{
+                            callback: () => { handlePreviousPage() }
+                        }}
+                        onDelete={newsletterSettings?.Status === 1 && onHandleDelete}
+                        onExit={() => { setDialogType({ type: "exit" }) }}
+                        additionalButtons={newsletterSettings?.Status === 1 && renderButtons()}
+                    />
+                </Box>
+            }
             {renderDialog()}
             {dialogType?.type === 'smsMarketing' && <SmsMarketingDialog
                 classes={classes}
@@ -1250,7 +1324,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onClose={() => setNewEmailVerification(false)}
                 Option={{
                     Step: 1,
-                    Value: campaignInfo.FromEmail
+                    Value: summaryEmail || newsletterInfo.FromEmail
                 }}
             />}
             <Loader isOpen={showLoader} />

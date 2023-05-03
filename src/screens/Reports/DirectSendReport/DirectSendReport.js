@@ -28,11 +28,13 @@ import { useSearchParams } from 'react-router-dom';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
 import Title from '../../../components/Wizard/Title';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
-  const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+  const { accountFeatures } = useSelector(state => state.common);
+  const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const { directWhatsappReport } = useSelector(state => state.whatsapp);
@@ -420,7 +422,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
               >
                 {t('master.campaignsArchive')}
               </Button>}
-              {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <CustomTooltip
+              {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <CustomTooltip
                 style={{ fontSize: 14 }}
                 text={t('report.ExportLimitation')}
                 icon={<Button

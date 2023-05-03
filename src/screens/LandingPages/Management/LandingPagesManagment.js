@@ -28,12 +28,13 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { Title } from '../../../components/managment/Title';
 import { ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()
-  const { windowSize, rowsPerPage, accountFeatures, isRTL } = useSelector(state => state.core)
-
+  const { windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { landingPagesData, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
   const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
@@ -267,7 +268,7 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
           : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
-        disable: accountFeatures.indexOf('13') > -1,
+        disable: accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) > -1,
         onClick: async () => {
           if (IsPayment) {
             dispatch(downloadReport(row))

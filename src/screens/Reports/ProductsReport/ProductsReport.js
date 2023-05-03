@@ -23,6 +23,7 @@ import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -36,9 +37,9 @@ const DEFAULT_FILTER = {
 
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
-
     const { t } = useTranslation()
     const [searchData, setSearchData] = useState(DEFAULT_FILTER)
     const [isSearching, setIsSearching] = useState(true);
@@ -268,7 +269,7 @@ const ProductsReport = ({ classes }) => {
         const dataLength = productsReportDetails?.TotalProducts ?? 0;
         return (
             <Grid container spacing={2} className={classes.linePadding}>
-                {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+                {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         onClick={() => {

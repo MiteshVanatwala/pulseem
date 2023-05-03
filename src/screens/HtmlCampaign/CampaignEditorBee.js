@@ -59,8 +59,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [mergeData, setPulseemMergeData] = useState({});
   const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language, isRTL, accountSettings } = useSelector(state => state.core)
-  const { tokenAlive } = useSelector(state => state.common)
+  const { language, isRTL } = useSelector(state => state.core)
+  const { tokenAlive, accountSettings } = useSelector(state => state.common)
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -80,6 +80,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const NodeToEdit = queryParams.get("NodeToEdit");
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   //#endregion State
 
@@ -290,9 +291,7 @@ const CampaignEditor = ({ classes, ...props }) => {
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
                 saveDesign(false, null, false);
               }
-              // else {
-              //   getData();
-              // }
+              setButtonDisabled(false);
             });
           }
           break;
@@ -740,6 +739,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         <div id="bee-plugin-container" className={classes.containerFullHeight}></div>
       </Box>
       <WizardActions
+        disabled={buttonDisabled}
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
         classes={classes}

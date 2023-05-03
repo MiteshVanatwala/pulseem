@@ -30,13 +30,15 @@ import { Title } from '../../../components/managment/Title';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { sitePrefix } from '../../../config';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const NewslettersReport = ({ classes }) => {
   const navigate = useNavigate()
   const { state } = useLocation();
   const from = state?.from || "/";
 
-  const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -236,7 +238,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   useEffect(() => {
-    if (accountFeatures && accountFeatures.includes('42')) {
+    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.REVENUE) > -1) {
       setHasRevenue(true);
     }
   }, [accountFeatures])
@@ -489,7 +491,7 @@ const NewslettersReport = ({ classes }) => {
             {t('mainReport.compareCampaigns')}
           </Button>
         </Grid>} */}
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             className={clsx(
               classes.btn,

@@ -27,7 +27,7 @@ export const AdvancedSettings = ({
     removeAttachmentFile,
 }) => {
     const { t } = useTranslation();
-    const { accountFeatures } = useSelector((state) => state.core);
+    const { accountFeatures } = useSelector((state) => state.common);
     return <Box pt={3}>
         <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
         <Grid container spacing={3}>

@@ -29,7 +29,7 @@ const FilterRecipientsDialog = ({ classes, onClose = () => null, onConfirm = () 
                         onClick={() => setFilterValues({ ...filterValues, toggleReci: !filterValues.toggleReci, exceptionalDays: '' })}
                     />
                     <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font14}>
-                        {t("smsReport.filterInputText")}
+                        {t("campaigns.newsLetterEditor.sendSettings.filterInputText")}
                     </span>
                     <div style={{ marginRight: isRTL ? 'auto' : null, marginLeft: !isRTL ? 'auto' : null }}>
                         <input

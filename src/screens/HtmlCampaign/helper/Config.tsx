@@ -27,91 +27,91 @@ export interface ConfigOptions {
 }
 
 export const BeeConfig = (Options: ConfigOptions) => {
-  const {
-    classes,
-    onSaveUserBlock,
-    IsRTL,
-    EditRow,
-    openModal,
-    SetDialog,
-    CampaignId,
-    DeleteBlock,
-    SaveCampaign,
-    AutoSaveCampaign,
-    DesignChange,
-    getRows,
-    handleEditRow,
-    // HandleAutoSave,
-    handleDeleteRow,
-    PulseemEditBlock,
-    t
-  } = Options;
-  return {
-    uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
-    container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
-    language: Options.IsRTL ? 'he-IL' : 'en-US',
-    trackChanges: true,
-    autosave: AUTO_SAVE_SECONDS,
-    loadingSpinnerDisableOnSave: true,
-    sidebarPosition: IsRTL ? 'right' : 'left',
-    loadingSpinnerTheme: 'light',
-    saveRows: true,
-    rowsConfiguration: {
-      emptyRows: true,
-      defaultRows: false,
-    },
-    editorFonts: FONTS(),
-    workspace: {
-      type: 'mixed',
-    },
-    hooks: {
-      getRows: {
-        handler: async (resolve: Function, reject: Function, args: any) => {
-          const rows = await getRows(args?.handle);
-          resolve(rows);
+    const {
+        classes,
+        onSaveUserBlock,
+        IsRTL,
+        EditRow,
+        openModal,
+        SetDialog,
+        CampaignId,
+        DeleteBlock,
+        SaveCampaign,
+        AutoSaveCampaign,
+        DesignChange,
+        getRows,
+        handleEditRow,
+        // HandleAutoSave,
+        handleDeleteRow,
+        PulseemEditBlock,
+        t
+    } = Options;
+    return {
+        uid: 'f7768f7b-06af-4ada-bbd3-18a237524c31', //needed for identify resources of the that user and billing stuff
+        container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
+        language: Options.IsRTL ? 'he-IL' : 'en-US',
+        trackChanges: true,
+        // autosave: AUTO_SAVE_SECONDS,
+        loadingSpinnerDisableOnSave: true,
+        sidebarPosition: IsRTL ? 'right' : 'left',
+        loadingSpinnerTheme: 'light',
+        saveRows: true,
+        rowsConfiguration: {
+            emptyRows: true,
+            defaultRows: false,
         },
-      },
-    },
-    onSaveRow: async (jsonFile: any) => {
-      if (jsonFile) {
-        const json = JSON.parse(jsonFile);
-        //const rowName = json.metadata.name;
-        onSaveUserBlock(jsonFile, json);
-      }
-    },
-    contentDialog: {
-      saveRow: {
-        handler: async (resolve: Function, reject: Function, args: any) => {
-          const results = await openModal(EditRow, args, classes);
-          if (results?.name) {
-            const metadata: any = {
-              name: results?.name,
-              tags: results?.tags ?? t("campaigns.savedBlocks"),
-              uuid: uuidv4(),
-            };
-            resolve(metadata);
-          } else {
-            reject();
-          }
+        editorFonts: FONTS(),
+        workspace: {
+            type: 'mixed',
         },
-      },
-      onDeleteRow: {
-        handler: async (resolve: Function, reject: Function, args: any) => {
-          const row_id = args?.row?.metadata?.uuid;
-          await DeleteBlock(args, row_id);
-          handleDeleteRow(args);
-          resolve(true);
+        hooks: {
+            getRows: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    const rows = await getRows(args?.handle);
+                    resolve(rows);
+                }
+            }
         },
-      },
-      // onEditRow
-      onEditRow: {
-        handler: async (resolve: Function, reject: Function, args: any) => {
-          try {
-            const results = await openModal(EditRow, args, classes);
-            if (results?.name) {
-              args.row.metadata.name = results?.name;
-              args.row.metadata.tags =
-                results?.tags ?? t("campaigns.savedBlocks");
+        onSaveRow: async (jsonFile: any) => {
+            if (jsonFile) {
+                const json = JSON.parse(jsonFile)
+                //const rowName = json.metadata.name;
+                onSaveUserBlock(jsonFile, json);
+            }
+        },
+        contentDialog: {
+            saveRow: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    const results = await openModal(EditRow, args, classes);
+                    if (results?.name) {
+                        const metadata: any = {
+                            name: results?.name,
+                            tags: results?.tags ?? t('campaigns.savedBlocks'),
+                            uuid: uuidv4()
+                        }
+                        resolve(metadata);
+                    }
+                    else {
+                        reject();
+                    }
+                }
+            },
+            onDeleteRow: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    const row_id = args?.row?.metadata?.uuid;
+                    await DeleteBlock(args, row_id);
+                    handleDeleteRow(args);
+                    resolve(true)
+                }
+            },
+            // onEditRow
+            onEditRow: {
+                handler: async (resolve: Function, reject: Function, args: any) => {
+                    try {
+                        const results = await openModal(EditRow, args, classes);
+                        if (results?.name) {
+                            args.row.metadata.name = results?.name;
+                            args.row.metadata.tags = results?.tags ?? t('campaigns.savedBlocks');
 
               const rows = await getRows(args.handle);
               const row = rows.find((r: any) => {

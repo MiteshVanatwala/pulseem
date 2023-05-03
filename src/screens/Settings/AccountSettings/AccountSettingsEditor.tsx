@@ -27,10 +27,8 @@ import {
 const AccountSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isRTL } = useSelector((state: any) => state.core);
-  const { accountSettings, ToastMessages } = useSelector(
-    (state: any) => state?.accountSettings
-  );
+  const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { ToastMessages, account } = useSelector((state: any) => state?.accountSettings);
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
@@ -90,8 +88,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
   }, []);
 
   useEffect(() => {
-    setSettingRequest(accountSettings?.Data);
-  }, [accountSettings]);
+    setSettingRequest(account?.Data);
+  }, [account]);
 
   const handleUpdate = async (
     updatedObject: AccountSettings,
@@ -149,14 +147,14 @@ const AccountSettingsEditor = ({ classes }: any) => {
             setEmailToVerify(updatedObject.Email);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_EMAIL);
-            handleVerification('email');
+            handleVerification('email2fa');
             break;
           }
           case 'AuthCompanyCellphone': {
             setCellphoneToVerify(updatedObject.CellPhone);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_CELLPHONE);
-            handleVerification('cellphone');
+            handleVerification('sms2fa');
             break;
           }
           case 'AuthEmail': {
@@ -229,7 +227,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
           <Box style={{ marginInlineStart: "auto" }}>
             <Button
               className={clsx(
-                // classes.btn,
                 classes.btnNohover,
                 classes.noBorder,
                 classes.link,
@@ -246,7 +243,6 @@ const AccountSettingsEditor = ({ classes }: any) => {
             </Button>
             <Button
               className={clsx(
-                // classes.btn,
                 classes.btnNohover,
                 classes.noBorder,
                 classes.link,

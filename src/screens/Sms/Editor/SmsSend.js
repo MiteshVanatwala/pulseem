@@ -251,7 +251,7 @@ const SmsSend = ({ classes, ...props }) => {
         }
         setFilterCampaigns(selectedCampaigns);
       }
-      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1) {
+      if (campaignSettings.SendExeptional != null && campaignSettings.SendExeptional.ExceptionalDays !== -1 && campaignSettings.SendExeptional.ExceptionalDays !== '') {
         setExceptionalDays(`${campaignSettings.SendExeptional.ExceptionalDays}`)
         settoggleReci(true);
 
@@ -902,9 +902,9 @@ const SmsSend = ({ classes, ...props }) => {
                     onChange={inputGroup}
                     value={groupValue}
                   />
-                  <span className={classes.saveBtn} onClick={handleCombined}>
+                  <Button className={clsx(classes.saveBtn, !groupValue || groupValue === '' ? classes.disabled : null)} onClick={handleCombined}>
                     {t("mainReport.save")}
-                  </span>
+                  </Button>
                   {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", groupValue)}</span> : null}
                 </div>
               ) : null}
@@ -991,7 +991,15 @@ const SmsSend = ({ classes, ...props }) => {
         setbsDot(true);
       }
       else {
+        settoggleReci(false)
         setbsDot(false);
+        setCampaignSettings({
+          ...campaignSettings, SendExeptional: {
+            Groups: campaignSettings?.SendExeptional?.Groups ?? [],
+            Campaigns: campaignSettings?.SendExeptional?.Campaigns ?? [],
+            ExceptionalDays: ''
+          }
+        })
       }
     }
     if (formIsvalid) {
@@ -1752,6 +1760,7 @@ const SmsSend = ({ classes, ...props }) => {
         classes={classes}
         open={sendType2Dialog}
         onClose={() => { setsendType2Dialog(false) }}
+        onCancel={() => { setsendType2Dialog(false) }}
         showDefaultButtons={false}
         icon={
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
@@ -1794,6 +1803,7 @@ const SmsSend = ({ classes, ...props }) => {
         classes={classes}
         open={specialSettingValidation}
         onClose={() => { setspecialSettingValidation(false) }}
+        onCancel={() => { setspecialSettingValidation(false) }}
         showDefaultButtons={false}
         icon={
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
@@ -1919,6 +1929,12 @@ const SmsSend = ({ classes, ...props }) => {
     );
   }
   //#region Filter modal
+  const handleCancelFilter = () => {
+    setDialogType(null);
+    setFilterGroups(campaignSettings?.SendExeptional?.Groups ?? []);
+    setFilterCampaigns(campaignSettings?.SendExeptional?.Campaigns ?? []);
+    setExceptionalDays(campaignSettings?.SendExeptional?.ExceptionalDays === -1 || !toggleReci ? '' : campaignSettings?.SendExeptional?.ExceptionalDays);
+  }
   const filterRecipientsDialog = () => {
     return {
       title: t('mainReport.recipientFilter'),
@@ -2010,7 +2026,8 @@ const SmsSend = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
-      onClose: () => { setDialogType(null) },
+      onCancel: () => { handleCancelFilter() },
+      onClose: () => { handleCancelFilter() },
       onConfirm: () => { handleFilterConfirm() }
     }
   }
@@ -2538,6 +2555,7 @@ const SmsSend = ({ classes, ...props }) => {
           classes={classes}
           open={dialogType}
           onClose={() => { setDialogType(null) }}
+          onCancel={() => { setDialogType(null) }}
           {...currentDialog}>
           {currentDialog.content}
         </BaseDialog>

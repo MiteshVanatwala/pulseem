@@ -24,10 +24,10 @@ const RecipientChart = ({ classes, }) => {
     const { recipientsReport } = useSelector(state => state.recipientReports);
     const { windowSize } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
-    const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const { Notifications = {}, Sms = {} } = packagesDetails || {};
 
     let slidesCount = 0;
-    recipientsReport?.map(report => {
+    recipientsReport?.forEach(report => {
         if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
             (report.ReportSection === 1 && !Sms.FeatureExist)) {
             return
@@ -84,7 +84,7 @@ const RecipientChart = ({ classes, }) => {
 
     let data = [];
     if (recipientsReport) {
-        recipientsReport.map(report => {
+        recipientsReport.forEach(report => {
             if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                 (report.ReportSection === 1 && !Sms.FeatureExist)) {
                 return null;
@@ -219,6 +219,7 @@ const RecipientChart = ({ classes, }) => {
             }
 
             // const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            const { offsetLeft: positionX } = chart.canvas;
             tooltipEl.style.opacity = 1;
             tooltipEl.style.left = tooltip._eventPosition.x - 20 + 'px';
             tooltipEl.style.top = tooltip._eventPosition.y - 80 + 'px';
@@ -236,7 +237,9 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(report.ReportSection, activeChart?.index);
+                    setTimeout(() => {
+                        openReports(report.ReportSection, activeChart?.index);
+                    }, 100);
                 }
             },
             plugins: {
@@ -339,7 +342,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.newsletter.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.sms.Pending');
                     break;
@@ -374,7 +377,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.sms.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.email.Pending');
                     break;
@@ -420,7 +423,7 @@ const RecipientChart = ({ classes, }) => {
                         {recipientsReport.map((report, index) => {
                             if ((report.ReportSection === 2 && !Notifications.FeatureExist)
                                 || (report.ReportSection === 1 && !Sms.FeatureExist)) {
-                                return;
+                                return null;
                             }
                             if (report.Total) {
                                 return renderDoughnut(report, index, COLOR_SCHEME[index])
@@ -461,7 +464,7 @@ const RecipientChart = ({ classes, }) => {
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
                         (report.ReportSection === 1 && !Sms.FeatureExist)) {
-                        return;
+                        return null;
                     }
                     if (report.Total) {
                         return renderDoughnut(report, index, COLOR_SCHEME[index])

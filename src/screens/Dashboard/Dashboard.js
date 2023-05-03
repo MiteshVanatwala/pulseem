@@ -16,7 +16,8 @@ import Toast from "../../components/Toast/Toast.component";
 import { logout } from '../../helpers/Api/PulseemReactAPI';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
+  const { windowSize, isRTL} = useSelector(state => state.core);
+  const { accountSettings } = useSelector(state => state.common);
   const { t } = useTranslation();
   const [toastMessage, setToastMessage] = useState(null);
   const [showChangePassword, setShowChangePassword] = useState(false);

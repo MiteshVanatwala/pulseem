@@ -12,10 +12,11 @@ import useRedirect from '../../helpers/Routes/Redirect';
 import { FlagIcon } from '../../assets/images/dashboard/index'
 import { CgCloseO } from 'react-icons/cg';
 import { sitePrefix } from '../../config';
+import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts } = useSelector(state => state.shortcuts);
-  const { accountFeatures } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common)
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});
@@ -28,7 +29,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const categories = { ...DASHBOARD_SHORTCUT };
   const Redirect = useRedirect();
 
-  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf('35') > -1) {
+  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures?.indexOf(PulseemFeatures.NOTIFICATION) > -1) {
     categories['appBar.notifications.title'] = {
       title: 'appBar.notifications.title',
       pages: [
@@ -94,8 +95,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
-        if (pageTitle === '') {
+        if (pageTitle === '' && categoryTitle === selectedShortcut.CategoryName) {
           pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
+        }
+        else {
+          pageTitle = t('common.SelectPage');
         }
         if (categoryTitle === '') {
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
@@ -143,15 +147,18 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
                 <Divider />
                 <List component="div">
                   {Object.keys(categories).map(cat => {
-                    return (
-                      <ListItem
-                        key={`category${Math.round(Math.random() * 999999999)}`}
-                        button
-                        className={clsx(classes.pt0, classes.pb0)}
-                        onClick={() => handleCategoryChange(cat)}>
-                        <ListItemText primary={t(categories[cat].title)} />
-                      </ListItem>
-                    )
+                    if (cat !== categoryTitle) {
+                      return (
+                        <ListItem
+                          key={`category${Math.round(Math.random() * 999999999)}`}
+                          button
+                          className={clsx(classes.pt0, classes.pb0)}
+                          onClick={() => handleCategoryChange(cat)}>
+                          <ListItemText primary={t(categories[cat].title)} />
+                        </ListItem>
+                      )
+                    }
+                    return null;
                   })}
                 </List>
               </Collapse>

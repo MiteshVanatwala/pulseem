@@ -7,15 +7,16 @@ import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
-import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { BellIcon, WhatsappIcon, SmsIcon, CardIcon, NewsletterIcon } from '../../assets/images/dashboard/index'
 import { TooltipBubble } from '../../assets/images/dashboard/index';
 import { BaseDialog } from '../DialogTemplates/BaseDialog';
+import { PulseemFeatures } from '../../model/PulseemFields/Fields';
 
 const BulkStatus = ({ classes }) => {
-  const { billingTypeId, accountFeatures, accountSettings, isRTL } = useSelector(state => state.core)
+  const { billingTypeId, isRTL } = useSelector(state => state.core)
+  const { accountSettings, accountFeatures } = useSelector(state => state.common);
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const [selectedPackageType, setPackageType] = useState({ type: 1, title: '' });
@@ -130,12 +131,11 @@ const BulkStatus = ({ classes }) => {
     return billingTypeId !== "1" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
   const isAllowNewsletter = () => {
-    return accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
+    return accountFeatures && accountFeatures?.indexOf(PulseemFeatures.PURCHASE_NEWSLETTER_PACKAGES) > -1 && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
 
   const showPackageDialogType = async (packageType) => {
     const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
-    dispatch(setAccountFeatures(settings.payload));
     if (!settings?.payload?.Data?.Account?.IsPaying) {
       packageType = { type: -1, title: '' };
       setPackageType(packageType);

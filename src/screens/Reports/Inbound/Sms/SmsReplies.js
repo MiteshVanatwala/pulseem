@@ -21,6 +21,7 @@ import { Typography, Table, TableBody, TableRow, TableHead, TableCell, TableCont
 import SearchLine from '../SearchLine';
 import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { PulseemFeatures } from '../../../../model/PulseemFields/Fields';
 
 
 const SmsReplies = ({ classes }) => {
@@ -39,7 +40,8 @@ const SmsReplies = ({ classes }) => {
     const { ToastMessages } = useSelector(state => state.client);
     const { smsReplies, extraData, finishedCampaigns } = useSelector(state => state.sms);
     const { subAccountAllGroups } = useSelector((state) => state.group);
-    const { accountFeatures, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
+    const { accountFeatures } = useSelector(state => state.common);
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
@@ -103,7 +105,7 @@ const SmsReplies = ({ classes }) => {
             <>
                 {/* <Divider /> */}
                 <Grid container spacing={2} className={classes.lineTopMarging} >
-                    {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+                    {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
                         <Button
                             className={clsx(
                                 classes.btn, classes.btnRounded,

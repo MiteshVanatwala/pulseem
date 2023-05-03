@@ -536,13 +536,22 @@
       "segmCritCb2": "שלח ללקוחות שלא פתחו דיוור",
       "segmCritCb3": "שלח ללקוחות שהקליקו על קישור",
       "segmCritCb4": "שלח ללקוחות שלא הקליקו על קישורים בדיוור",
+      "summarySegmCritCb1": "לקוחות שפתחו דיוור",
+      "summarySegmCritCb2": "לקוחות שלא פתחו דיוור",
+      "summarySegmCritCb3": "לקוחות שהקליקו על קישור",
+      "summarySegmCritCb4": "לקוחות שלא הקליקו על קישורים בדיוור",
+      "summarySegmCritCb5": "לקוחות שלא פתחו דיוור ולא הקליקו על קישורים",
+      "filterInputText": "לא לשלוח ללקוחות שקיבלו דוור במספר הימים האחרונים",
       "insertCampaginName": "אילו הגדרות שליחה לשכפל מקמפיין ##campaignName##?",
       "emailFilterInput": "לא לשלוח ללקוחות שקיבלו ניוזלטר במספר הימים האחרונים",
       "pendingClients": "לקוחות הממתינים לאישור",
       "restrictedClients": "לקוחות חסומים",
       "duplicatedClients": "לקוחות כפולים",
+      "invalidRecipients": "כתובות דוא\"ל לא תקינים",
       "filters": "סינון",
       "segmentations": "פילוחים",
+      "totalNotToSend":"סה\"כ מסוננים",
+      "DidNotClicked": "לא פתחו או לחצו על קישור",
       "smsMarketing": {
         "title": "SMS שיווק משלים",
         "sendTo": "שלח ל-",
@@ -566,8 +575,10 @@
         "invalidTime": "זמן לא תקין",
         "reqTime": "זמן הוא חובה",
         "reqSendTo": "שלח ל הוא חובה",
-        "enterVerifiedNumber": "נא להזין את מספר הטלפון המאומת"
+        "enterVerifiedNumber": "נא להזין את מספר הטלפון המאומת",
+        "selectFutureDate": "לא ניתן לשלוח שיווק משלים לפני תאריך השליחה של הקמפיין. אנא בחרו תאריך עתידי"
       },
+      "deleted": "מסע הפרסום נמחק בהצלחה",
       "send": "שלח",
       "doNotSend": "לא לשלוח"
     }

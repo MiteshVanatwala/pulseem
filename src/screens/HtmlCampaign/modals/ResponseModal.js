@@ -38,6 +38,7 @@ const ResponseModal = ({
         onClose={onClose}
         onCancel={onClose}
         onConfirm={onClose}
+        onCancel={onClose}
         contentStyle={classes.testSendDialog}
         reduceTitle
         confirmText="common.Ok"

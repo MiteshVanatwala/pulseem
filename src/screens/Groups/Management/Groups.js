@@ -45,12 +45,14 @@ import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageM
 import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/HtmlUtils';
 import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
-    const { language, windowSize, isRTL, rowsPerPage, accountFeatures, CoreToastMessages } = useSelector(state => state.core)
+    const { language, windowSize, isRTL, rowsPerPage, CoreToastMessages } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
     const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
     const rowsOptions = [6, 10, 20, 50];
@@ -339,7 +341,7 @@ const Groups = ({ classes }) => {
                         {t("recipient.deleteRecipient")}
                     </Button>
                 </Grid>
-                {accountFeatures && accountFeatures?.indexOf('15') > -1 && (<Grid item xs={colSize}>
+                {accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1 && (<Grid item xs={colSize}>
                     <Button
                         className={clsx(classes.btn, classes.btnRounded)}
                         endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
@@ -350,7 +352,7 @@ const Groups = ({ classes }) => {
                     </Button>
                 </Grid>)}
                 {
-                    accountFeatures?.indexOf('13') === -1 &&
+                    accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 &&
                     <Grid item xs={colSize}>
                         <Button
                             className={clsx(classes.btn, classes.btnRounded)}
@@ -695,7 +697,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -742,7 +744,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (ActiveEmails || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                         state:
@@ -790,7 +792,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (RemovedEmails || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                         state:
@@ -839,7 +841,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (InvalidEmails || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                         state:
@@ -888,7 +890,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (PendingClients || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -946,7 +948,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                         state:
@@ -994,7 +996,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (ActiveCell || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                         state:
@@ -1042,7 +1044,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (RemovedCell || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                         state:
@@ -1091,7 +1093,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (InvalidCell || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1139,7 +1141,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (PendingSmsClients || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1247,7 +1249,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1291,7 +1293,8 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (ActiveEmails || 0) > 0 ? (e) => {
-                                                    e.preventDefault(); navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                    e?.preventDefault();
+                                                    navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
                                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -1334,7 +1337,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (RemovedEmails || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1379,7 +1382,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (InvalidEmails || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1423,7 +1426,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (PendingSmsClients || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1478,7 +1481,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1522,7 +1525,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (ActiveCell || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1566,7 +1569,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (RemovedCell || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1610,7 +1613,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (InvalidCell || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -1631,7 +1634,7 @@ const Groups = ({ classes }) => {
                                 {
 
                                     component: (
-                                        accountFeatures.includes("6") && <NameValueGridStructure
+                                        accountFeatures?.indexOf(PulseemFeatures.OPTIN) > -1 && <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
@@ -1654,7 +1657,7 @@ const Groups = ({ classes }) => {
                                                     )}`
                                                 },
                                                 onClick: (PendingClients || 0) > 0 ? (e) => {
-                                                    e.preventDefault();
+                                                    e?.preventDefault();
                                                     navigate(CLIENT_CONSTANTS.BASEURL, {
                                                         state:
                                                         {
@@ -2062,7 +2065,7 @@ const Groups = ({ classes }) => {
                     />
                 }
                 case DialogType.SIMPLY_CLUB: {
-                    if (accountFeatures && accountFeatures.includes('15')) {
+                    if (accountFeatures && accountFeatures?.indexOf(PulseemFeatures.SIMPLY_CLUB) > -1) {
                         return <SimplyClubPupup
                             classes={classes}
                             isOpen={dialog === DialogType.SIMPLY_CLUB}

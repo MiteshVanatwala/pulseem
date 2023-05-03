@@ -19,6 +19,7 @@ import {
     getTestGroups,
     getSMSVirtualNumber
 } from "../../redux/reducers/smsSlice";
+import { getCommonFeatures } from "../../redux/reducers/commonSlice";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
@@ -30,6 +31,8 @@ import Switch from "react-switch";
 import clsx from "clsx";
 import { Loader } from "../Loader/Loader";
 import EmojiPicker from "../Emojis/EmojiPicker";
+import debounce from 'lodash.debounce';
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -90,7 +93,7 @@ const Editorbox = ({
     const styles = useStyles();
     const btnStyle = useStyleNew();
     const dispatch = useDispatch();
-    const { windowSize, isRTL, accountFeatures } = useSelector(
+    const { windowSize, isRTL } = useSelector(
         (state) => state.core
     );
     const {
@@ -99,7 +102,7 @@ const Editorbox = ({
         previousLandingData,
         previousCampaignData,
     } = useSelector((state) => state.sms);
-    const { commonSettings } = useSelector(state => state.common);
+    const { accountSettings, accountFeatures } = useSelector(state => state.common);
     const [dialogType, setDialogType] = useState(null)
     const [alignment, setAlignment] = useState('right');
     const [editmenuClick, seteditmenuClick] = useState(false);
@@ -167,7 +170,7 @@ const Editorbox = ({
 
     useEffect(() => {
         if (isPageLoaded && accountFeatures) {
-            if (accountFeatures.includes('38')) {
+            if (accountFeatures?.indexOf(PulseemFeatures.ADD_SMS_REMOVE_TEXT) > -1) {
                 setSmsModel((currentState) => {
                     if (currentState.Text === '') {
                         onAddText(`${t("sms.toUnsubscribe")}${removalNumber}`);
@@ -180,7 +183,7 @@ const Editorbox = ({
                     return currentState;
                 });
             }
-            setShowRemovalLink(!accountFeatures.includes('39'))
+            setShowRemovalLink(accountFeatures?.indexOf(PulseemFeatures.REMOVE_SMS_UNSUBSCRIBE_LINK) === -1)
         }
     }, [isPageLoaded || accountFeatures]);
 
@@ -196,11 +199,11 @@ const Editorbox = ({
     }
 
     useEffect(() => {
-        if (commonSettings.SubAccountSettings) {
+        if (accountSettings.SubAccountSettings) {
             siteTrackingLogic();
         }
         onUpdate(smsModel);
-    }, [commonSettings]);
+    }, [accountSettings]);
 
     // useEffect(() => {
     //     onUpdate(smsModel);
@@ -212,8 +215,14 @@ const Editorbox = ({
     }, [smsModel, isSiteTracking, isLinksStatistics])
 
     useEffect(() => {
-        getcredits(characterCount);
+        debouncedCallback(characterCount)
+        //getcredits(characterCount);
     }, [characterCount])
+
+    useEffect(() => {
+        if (!accountSettings || Object.keys(accountSettings).length === 0)
+            dispatch(getCommonFeatures());
+    }, [])
 
     const handleSmsModelChange = (name, value) => {
         setSmsModel(prevState => ({
@@ -262,20 +271,21 @@ const Editorbox = ({
     }, [dispatch]);
 
     const initFromNumber = async () => {
-        let fromNumber = '';
-        if (commonSettings?.DefaultCellNumber) {
-            fromNumber = commonSettings.DefaultCellNumber;
+        let fromNumber = null;
+        if (accountSettings?.DefaultCellNumber) {
+            fromNumber = accountSettings.DefaultCellNumber;
         }
 
-        setstoredValue(fromNumber);
 
         const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
 
-        if (fromNumber === -1 || fromNumber === '') {
+        if (fromNumber === -1 || fromNumber === '' || fromNumber === null) {
             fromNumber = virtualNumber.payload.Number;
         }
 
+        setstoredValue(fromNumber);
         setcampaignNumber(fromNumber);
+
         setremovalNumber(virtualNumber.payload.RemovalKey);
         if (fromNumber !== virtualNumber.payload.Number) {
             setrestoreBool(false);
@@ -326,6 +336,8 @@ const Editorbox = ({
             setmessageCount(0);
         }
     }
+
+
     const getcredits = (count) => {
         dispatch(getCreditsforSMS(count)).then((res) => {
             let credits = res.payload?.split("#");
@@ -339,6 +351,7 @@ const Editorbox = ({
             }
         });
     }
+    const debouncedCallback = debounce(getcredits, 1000);
     const onAddText = (text) => {
         text = text.trim();
         let afterUpdateCharCount =
@@ -619,8 +632,8 @@ const Editorbox = ({
         );
     }
     const siteTrackingLogic = () => {
-        if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
-            const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+        if (accountSettings.SubAccountSettings.DomainAddress && accountSettings.SubAccountSettings.DomainAddress !== '') {
+            const domainName = accountSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
             if (smsModel.Text.includes(domainName)) {
                 setIsSiteTracking(true);
             }
@@ -948,6 +961,7 @@ const Editorbox = ({
                 classes={classes}
                 open={dialogType}
                 onClose={handleClose}
+                onCancel={handleClose}
                 {...currentDialog}>
                 {currentDialog.content}
             </BaseDialog>

@@ -1,4 +1,4 @@
-import { Box, makeStyles, Typography } from "@material-ui/core";
+import { Box, Grid, makeStyles, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { UploadSettings } from "../../tempConstants";
 import UploadXL from '../../../../components/Files/UploadXL'
@@ -6,6 +6,7 @@ import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
 import { Tooltip } from "@material-ui/core";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
     contentBox: {
@@ -39,7 +40,8 @@ const AddBulkRecipientPopup = ({ classes,
     onAddRecipient = () => null
 }) => {
     const { t } = useTranslation();
-    const localClasses = useStyles()
+    const localClasses = useStyles();
+    const { isRTL } = useSelector(state => state.core);
 
     return (
         <BaseDialog
@@ -48,32 +50,36 @@ const AddBulkRecipientPopup = ({ classes,
             childrenStyle={classes.h50v}
             maxHeight={"45vh"}
             title={
-                <Box className={clsx(classes.flex, classes.justifyBetween)}>
-                    <Box className={classes.flex}>
-                        {t('recipient.bulkImportTitle')}
-                        <Tooltip
-                            arrow
-                            placement={'top'}
-                            disableFocusListener
-                            title={t('recipient.uploadLimitation')}
-                            classes={{ tooltip: localClasses.customWidth, arrow: localClasses.arrow }}
-                            sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
-                        >
-                            <Typography className={classes.bodyInfo} style={{ marginInline: 10 }}>i</Typography>
-                        </Tooltip>
-                    </Box>
-                    <Box>
-                        <label
-                            htmlFor="uploadxl"
-                            style={{
-                                cursor: 'pointer', width: 35, height: 35, display: 'flex', alignItems: 'center'
-                            }}>
-                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
-                        </label>
-                    </Box>
+                <Box className={
+                    clsx(classes.flex, classes.justifyBetween, isRTL ? classes.rtl : '')
+                }>
+                    <Grid container>
+                        <Grid item sm={10}>
+                            <Box className={classes.flex}>
+                                {t('recipient.bulkImportTitle')}
+                                <Tooltip
+                                    arrow
+                                    placement={'top'}
+                                    disableFocusListener
+                                    title={t('recipient.uploadLimitation')}
+                                    classes={{ tooltip: localClasses.customWidth, arrow: localClasses.arrow }}
+                                    sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
+                                >
+                                    <Typography className={classes.bodyInfo} style={{ marginInline: 10 }}>i</Typography>
+                                </Tooltip>
+                            </Box>
+                        </Grid>
+                        <Grid item sm={2}>
+                            <label
+                                htmlFor="uploadxl"
+                                style={{
+                                    cursor: 'pointer', width: 35, height: 35
+                                }}>
+                                <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
+                            </label>
+                        </Grid>
+                    </Grid>
                 </Box>
-
-
             }
             icon={<div className={classes.dialogIconContent}>
                 {'\uE0D5'}

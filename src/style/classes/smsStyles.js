@@ -138,7 +138,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginInlineStart: "5px",
         color: '#007bff',
         border: '1px solid #007bff',
-        padding: "8px",
+        // padding: "8px",
         borderRadius: "5px",
         cursor: "pointer"
     },
@@ -189,7 +189,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         width: summaryWidth[windowSize],
         marginTop: "15px",
         "& $wrapChat": {
-            width: 290,
+            width: 270,
             right: 40
         },
         "@media screen and (max-width: 1366px)": {

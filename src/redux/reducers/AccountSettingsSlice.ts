@@ -81,9 +81,9 @@ export const deleteAuthorizationValue = createAsyncThunk(
     })
 
 export const checkEmailAuthorization = createAsyncThunk(
-    'CheckEmailAuthorization', async (emailAuth: CellphoneAuthorization, thunkAPI) => {
+    'CheckEmailAuthorization', async (emailAuth: AuthorizationValues, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`authorization/CheckEmailAuthorization/${emailAuth.value, emailAuth.isTwoFa}`);
+            const response = await PulseemReactInstance.get(`authorization/CheckEmailAuthorization/${emailAuth.value}/${emailAuth.isTwoFa}`);
             return response.data
         } catch (error: any) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -100,7 +100,7 @@ export const deleteAuthorization2FA = createAsyncThunk(
         }
     })
 export const checkCellphoneAuthorization = createAsyncThunk(
-    'CheckCellphoneAuthorization', async (cellphoneAuth: CellphoneAuthorization, thunkAPI) => {
+    'CheckCellphoneAuthorization', async (cellphoneAuth: AuthorizationValues, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`authorization/CheckCellphoneAuthorization/${cellphoneAuth.value}/${cellphoneAuth.isTwoFa}`);
             return response.data
@@ -109,7 +109,7 @@ export const checkCellphoneAuthorization = createAsyncThunk(
         }
     })
 
-interface CellphoneAuthorization {
+interface AuthorizationValues {
     value: string,
     isTwoFa: boolean
 }
@@ -117,7 +117,7 @@ interface CellphoneAuthorization {
 const AccountSettingsSlice = createSlice({
     name: 'AccountSettings',
     initialState: {
-        accountSettings: {
+        account: {
             StatusCode: 200,
             Message: '',
             Data: {} as AccountSettings,
@@ -158,7 +158,7 @@ const AccountSettingsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(getAccountSettings.fulfilled, (state, action) => {
-            state.accountSettings = action.payload;
+            state.account = action.payload;
         })
         builder.addCase(update2FASettings.fulfilled, (state, action) => {
             state.twoFAUpdated = action.payload;

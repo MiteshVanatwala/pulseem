@@ -42,6 +42,7 @@ const SmsSummary = ({ classes,
         classes={classes}
         open={open}
         onClose={() => { handleSmsSettings() }}
+        onCancel={() => { handleSmsSettings() }}
         showDefaultButtons={false}
         icon={<FaMobileAlt />}
       >

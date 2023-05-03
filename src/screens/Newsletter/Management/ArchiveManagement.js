@@ -26,9 +26,11 @@ import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { sitePrefix } from '../../../config';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
+import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 
 const ArchiveManagementScreen = ({ classes }) => {
-  const { accountFeatures, language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
+  const { accountFeatures } = useSelector(state => state.common);
   const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -280,7 +282,7 @@ const ArchiveManagementScreen = ({ classes }) => {
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding}>
-        {accountFeatures?.indexOf('13') === -1 && windowSize !== 'xs' && <Grid item>
+        {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -593,6 +595,7 @@ const ArchiveManagementScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        onCancel={handleClose}
         {...currentDialog}>
         {currentDialog.content}
       </BaseDialog>

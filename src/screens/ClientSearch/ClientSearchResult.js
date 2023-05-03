@@ -60,6 +60,7 @@ import { ReplaceExtraFieldHeader } from "../../helpers/UI/AccountExtraField";
 import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
 import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
+import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 
 const useStyles = makeStyles({
   groupName: {
@@ -87,12 +88,12 @@ const useStyles = makeStyles({
 });
 const ClientSearchResult = ({ classes }) => {
   const {
-    accountFeatures,
     language,
     windowSize,
     rowsPerPage,
     isRTL
   } = useSelector((state) => state.core);
+  const { accountFeatures } = useSelector(state => state.common);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
@@ -1146,7 +1147,7 @@ const ClientSearchResult = ({ classes }) => {
           </Grid>
         )}
         {
-          accountFeatures?.indexOf('13') === -1 && <Grid item xs={windowSize === "xs" && 12}>
+          accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && <Grid item xs={windowSize === "xs" && 12}>
             <Button
               className={clsx(
                 classes.btn, classes.btnRounded

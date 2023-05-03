@@ -748,6 +748,7 @@ const NotificationEdit = ({ classes }) => {
           classes={classes}
           open={showGallery}
           onClose={handleDialogClose}
+          onCancel={handleDialogClose}
           onConfirm={handleGalleryConfirm}
           {...dialog}>
           {dialog.content}
@@ -783,6 +784,7 @@ const NotificationEdit = ({ classes }) => {
           open={validationErrorList}
           onCancel={handleDialogClose}
           onClose={handleDialogClose}
+          onCancel={handleDialogClose}
           onConfirm={handleDialogClose}
           {...dialog}>
           {dialog.content}

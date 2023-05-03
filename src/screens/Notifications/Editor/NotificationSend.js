@@ -168,6 +168,7 @@ const NotificationSend = ({ classes }) => {
                     open={validationErrorList}
                     onCancel={handleDialogClose}
                     onClose={handleDialogClose}
+                    onCancel={handleDialogClose}
                     onConfirm={handleDialogClose}
                     {...dialog}>
                     {dialog.content}
@@ -416,6 +417,7 @@ const NotificationSend = ({ classes }) => {
                     open={summary}
                     onCancel={() => setSummary(null)}
                     onClose={() => setSummary(null)}
+                    onCancel={() => setSummary(null)}
                     {...dialog}>
                     {dialog.content}
                 </BaseDialog>
@@ -675,6 +677,7 @@ const NotificationSend = ({ classes }) => {
                     classes={classes}
                     open={true}
                     onClose={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
+                    onCancel={() => { Redirect({ url: `${sitePrefix}Notifications` }) }}
                     {...dialog}>
                     {dialog.content}
                 </BaseDialog>

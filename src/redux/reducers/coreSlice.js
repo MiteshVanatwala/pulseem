@@ -16,12 +16,10 @@ export const coreSlice = createSlice({
     companyName: '',
     rowsPerPage: getCookie('rpp') || 6,
     isClal: null,
-    accountFeatures: null,
     cameFromSubAccount: null,
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
-    accountSettings: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     }
@@ -29,22 +27,6 @@ export const coreSlice = createSlice({
   reducers: {
     setIsClal: (state, action) => {
       state.isClal = action.payload;
-    },
-    setAccountFeatures: (state, action) => {
-      const data = action.payload?.Data;
-      state.accountSettings = data;
-      state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
-      setCookie("accountSettings", {
-        Account: data?.Account,
-        AccountFeatures: data?.Account?.AccountFeatures,
-        DefaultLinkChars: data?.DefaultLinkChars,
-        DefaultCellNumber: data?.DefaultCellNumber,
-        DefaultFromMail: data?.DefaultFromMail,
-        DefaultFromName: data?.DefaultFromName,
-        SubAccountSettings: data?.SubAccountSettings,
-        SubAccountName: data?.SubAccountName
-      })
-      setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
     },
     setLanguage: (state, action) => {
       state.language = action.payload
@@ -72,6 +54,6 @@ export const coreSlice = createSlice({
   }
 })
 
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setAccountFeatures } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

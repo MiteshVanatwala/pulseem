@@ -1082,6 +1082,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginInlineStart: 0,
       marginInlineEnd: 5,
     },
+    "@media screen and (max-width: 1705px)": {
+      lineHeight: 1
+    },
     "@media screen and (max-width: 1366px)": {
       fontSize: 11,
     },
@@ -1147,8 +1150,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #ced4da",
     backgroundColor: "#fff",
+    "@media screen and (max-width: 1500px) and (min-width: 1366px)": {
+      minWidth: 80
+    },
     "@media screen and (max-width: 1366px)": {
-      minWidth: 130,
+      minWidth: 80,
     },
     "@media screen and (max-width: 768px)": {
       width: "100%",
@@ -2837,6 +2843,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flex: 1,
     alignContent: "center",
     justifyContent: "center",
+    maxWidth: '100%',
     "@media screen and (max-width: 375px)": {
       "& .MuiGrid-item": {
         padding: "5px !important",
@@ -3019,7 +3026,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ltr: {
     direction: 'ltr'
   },
-
+  rtl: {
+    direction: 'rtl'
+  },
   selectPlaceholderInput: {
     height: '90%',
     opacity: 1,
@@ -3287,5 +3296,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     opacity: ".65",
     pointerEvents: "unset !important",
     cursor: "not-allowed !important",
+  },
+  disableChildButtons: {
+    '& button': {
+      opacity: ".65",
+      pointerEvents: "none !important",
+      cursor: "not-allowed !important",
+    }
   }
 });

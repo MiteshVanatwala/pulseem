@@ -743,7 +743,8 @@ const UploadXL = ({
                     classes={classes}
                     open={dialogType}
                     childrenStyle={classes.mb25}
-                    onClose={() => { setDialogType(null) }}
+                    onClose={() => setDialogType(null)}
+                    onCancel={() => setDialogType(null)}
                     {...currentDialog}>
                     {currentDialog.content}
                 </BaseDialog>

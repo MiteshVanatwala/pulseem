@@ -33,7 +33,7 @@ import { resetTwoFA, update2FASettings } from "../../../redux/reducers/AccountSe
 import { useSearchParams } from 'react-router-dom';
 import ChangePassword from "./Password/ChangePassword";
 import { Title } from "../../../components/managment/Title";
-import { getCookie } from "../../../helpers/Functions/cookies";
+import { PulseemFeatures } from "../../../model/PulseemFields/Fields";
 
 
 const FORM_COMPANY_DETAILS = ({
@@ -46,6 +46,7 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { accountSettings, accountFeatures } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -70,9 +71,6 @@ const FORM_COMPANY_DETAILS = ({
     ZipCode: null,
     TwoFactorAuthTestMethodID: null
   } as AccountSettings);
-
-  const accSettings = getCookie("accountSettings");
-  const accFeatures = accSettings?.AccountFeatures;
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -134,7 +132,7 @@ const FORM_COMPANY_DETAILS = ({
   };
 
   useEffect(() => {
-    const newSettings = { ...Settings, TwoFactorAuthEnabled: accFeatures.indexOf(45) === -1 } as AccountSettings;
+    const newSettings = { ...Settings, TwoFactorAuthEnabled: accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
     if (Settings)
       handleQueryString2FA();
@@ -236,7 +234,9 @@ const FORM_COMPANY_DETAILS = ({
     setCompanyDetails({ ...req } as AccountSettings);
     on2FAUpdate({ ...req } as AccountSettings);
   }
-
+  if (!accountSettings) {
+    return <></>
+  }
   return (
     <>
       <Box
@@ -431,7 +431,7 @@ const FORM_COMPANY_DETAILS = ({
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            {accFeatures.indexOf(45) === -1 && <Grid
+            {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid
               item
               xs={12}
               sm={3}
@@ -490,7 +490,7 @@ const FORM_COMPANY_DETAILS = ({
                 </Select>
               </FormControl>
             </Grid>}
-            {accFeatures.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            {accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',
@@ -520,10 +520,12 @@ const FORM_COMPANY_DETAILS = ({
                 </Button>
                 <Button
                   className={clsx(
-                    classes.mt5,
-                    classes.btn,
-                    classes.btnRounded,
-                    "saveFixedDetails"
+                    // classes.btn,
+                    classes.btnNohover,
+                    classes.noBorder,
+                    classes.link,
+                    classes.textCapitalize,
+                    "link"
                   )}
                   onClick={() => {
                     onShowTwoFactorAuth('emailTFA');

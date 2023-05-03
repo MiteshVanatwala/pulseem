@@ -36,6 +36,7 @@ import {
   wpInbdDefaultFilterType,
   wpInbdRowType,
 } from "../../../../Models/Whatsapp/whatsappInbound";
+import { PulseemFeatures } from "../../../../model/PulseemFields/Fields";
 
 const WhatsappInbound = ({ classes }: any) => {
   const dispatch = useDispatch();
@@ -113,7 +114,7 @@ const WhatsappInbound = ({ classes }: any) => {
       <>
         {/* <Divider /> */}
         <Grid container spacing={2} className={classes.linePadding}>
-          {accountFeatures?.indexOf("13") === -1 && windowSize !== "xs" && (
+          {accountFeatures?.indexOf(PulseemFeatures.LOCK_EXPORT_DATA) === -1 && windowSize !== "xs" && (
             <Grid item>
               <Button
                 variant="contained"

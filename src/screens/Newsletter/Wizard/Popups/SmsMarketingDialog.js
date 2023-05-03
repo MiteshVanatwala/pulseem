@@ -12,6 +12,7 @@ import { setSmsMarketing } from '../../../../redux/reducers/smsSlice'
 import VerificationDialog from '../../../../components/DialogTemplates/VerificationDialog.js';
 import { Loader } from '../../../../components/Loader/Loader';
 import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
+import Toast from '../../../../components/Toast/Toast.component';
 
 const SmsMarketingDialog = ({
     classes,
@@ -28,7 +29,7 @@ const SmsMarketingDialog = ({
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
-    const { verifiedNumbers, commonSettings } = useSelector(state => state.common);
+    const { verifiedNumbers, accountSettings } = useSelector(state => state.common);
 
     const [smsModel, setSmsModel] = useState({ ...smsMarketingModel })
     const [linkToUpdate, setLinkToUpdate] = useState(null);
@@ -40,6 +41,7 @@ const SmsMarketingDialog = ({
     const [numberVerified, setNumberVerified] = useState(true);
     const [errors, setErrors] = useState({});
     const [isLinksStatistics, setIsLinksStatistics] = useState(true);
+    const [toastMessage, setToastMessage] = useState(null);
     const toggleLinkStatistics = () => {
         setIsLinksStatistics(!isLinksStatistics);
     };
@@ -105,7 +107,7 @@ const SmsMarketingDialog = ({
             return;
         }
         setSmsModel({ ...smsModel, FromNumber: value });
-        if (value === commonSettings?.DefaultCellNumber) {
+        if (value === accountSettings?.DefaultCellNumber) {
             setNumberVerified(true);
         }
         else {
@@ -136,7 +138,10 @@ const SmsMarketingDialog = ({
 
         setSmsModel({ ...smsModel, SendDate: finalDate, Text: textRef.current.value });
 
-        if (!textRef.current.value || textRef.current.value === '') {
+        if (finalDate < moment(smsModel.MinSendDate)) {
+            setErrors({ SendDate: t('campaigns.newsLetterEditor.sendSettings.errors.selectFutureDate') })
+        }
+        else if (!textRef.current.value || textRef.current.value === '') {
             setErrors({ Text: t('campaigns.newsLetterEditor.sendSettings.errors.reqText') })
         }
         else {
@@ -160,7 +165,9 @@ const SmsMarketingDialog = ({
                 const r = await dispatch(setSmsMarketing(smsCampaignPayload));
                 handleTotalMarketingResponse(r.payload);
                 setLoader(false);
-                onConfirm();
+                setTimeout(() => {
+                    onConfirm();
+                }, 3000);
             }
         }
 
@@ -169,7 +176,7 @@ const SmsMarketingDialog = ({
     const handleTotalMarketingResponse = (response) => {
         switch (response?.StatusCode) {
             case 201: {
-                alert('success');
+                setToastMessage({ severity: 'success', color: 'success', message: t('common.savedSuccessfully'), showAnimtionCheck: true });
                 break;
             }
             case 401: {
@@ -181,7 +188,7 @@ const SmsMarketingDialog = ({
                 break;
             }
             default: {
-                alert(response?.Message);
+                setToastMessage({ severity: 'success', color: 'success', message: response?.Message, showAnimtionCheck: true });
             }
         }
     }
@@ -199,6 +206,9 @@ const SmsMarketingDialog = ({
         if (!smsModel.SendDate) {
             tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.reqDate');
 
+        }
+        else if (moment(smsModel.SendDate) < moment(smsModel.MinSendDate)) {
+            tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.selectFutureDate');
         }
         else if (Object.prototype.toString.call(smsModel.SendDate) === "[object Date]") {
             tempErrors.SendDate = t('campaigns.newsLetterEditor.sendSettings.errors.invalidDate');
@@ -259,10 +269,10 @@ const SmsMarketingDialog = ({
                         </Box>
                         <Box>
                             <Link
-                                className={clsx(classes.textColorGrey, classes.link, commonSettings?.DefaultCellNumber === smsModel.FromNumber ? classes.disabled : null)}
+                                className={clsx(classes.textColorGrey, classes.link, accountSettings?.DefaultCellNumber === smsModel.FromNumber ? classes.disabled : null)}
                                 style={{ fontSize: '0.9rem' }}
                                 onClick={() => {
-                                    handleFromNumber(commonSettings?.DefaultCellNumber);
+                                    handleFromNumber(accountSettings?.DefaultCellNumber);
                                 }}
                             >
                                 {t("mainReport.restore")}
@@ -298,7 +308,7 @@ const SmsMarketingDialog = ({
                         {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.sendingDate')}
                     </Typography>
                     <DateField
-                        minDate={moment()}
+                        minDate={moment(smsModel.MinSendDate)}
                         classes={classes}
                         value={smsModel.SendDate}
                         onChange={(value) => {
@@ -308,6 +318,7 @@ const SmsMarketingDialog = ({
                         timePickerOpen={true}
                         error={!!errors.SendDate}
                         helperText={!!errors.SendDate && errors.SendDate}
+                        errorMessage={errors.SendDate}
                     />
                 </Grid>
                 <Grid item sm={12} md={6}>
@@ -315,7 +326,6 @@ const SmsMarketingDialog = ({
                         {t('campaigns.newsLetterEditor.sendSettings.smsMarketing.sendingTime')}
                     </Typography>
                     <DateField
-                        minDate={moment()}
                         classes={classes}
                         value={smsModel.SendTime}
                         onTimeChange={(value) => {
@@ -325,7 +335,7 @@ const SmsMarketingDialog = ({
                         isTimePicker={true}
                         ampm={false}
                         error={!!errors.SendTime}
-                        helperText={!!errors.SendTime && errors.SendTime}
+                        errorMessage={!!errors.SendTime && errors.SendTime}
                     />
                 </Grid>
                 <Grid item md={12}>
@@ -431,13 +441,19 @@ const SmsMarketingDialog = ({
         onConfirm: handleConfirm
     }
 
-    return <BaseDialog
-        classes={classes}
-        open={isOpen}
-        onClose={() => { setDialogType(null) }}
-        {...currentDialog}>
-        {currentDialog.content}
-    </BaseDialog>
+    return (
+        <>
+            <BaseDialog
+                classes={classes}
+                open={isOpen}
+                onClose={() => { setDialogType(null) }}
+                onCancel={() => { setDialogType(null) }}
+                {...currentDialog}>
+                {currentDialog.content}
+            </BaseDialog>
+            { toastMessage &&  <Toast data={toastMessage} /> }
+        </>
+    )
 }
 
 export default SmsMarketingDialog

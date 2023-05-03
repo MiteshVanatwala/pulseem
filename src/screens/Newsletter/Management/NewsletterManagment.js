@@ -34,8 +34,10 @@ import { sitePrefix } from '../../../config';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
+  const { accountFeatures } = useSelector(state => state.common);
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core)
   const { newslettersData, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
@@ -55,7 +57,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
-  const accountFeatures = getCookie("accountFeatures")
+  const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
@@ -64,6 +66,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const getData = async () => {
     await dispatch(getNewslatterData())
+    dispatch(getAuthorizedEmails());
     setLoader(false);
   }
 
@@ -349,7 +352,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
         onClick: () => {
-          if (row.IsNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
+          if (row.IsNewEditor && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1) {
             navigate(`${sitePrefix}Campaigns/editor/${CampaignID}?fromreact=true`)
           }
           else {
@@ -366,7 +369,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         onClick: () => {
           setDialogType(
             // !IsNewEditor && getCookie('O2NedtrPopup') && getCookie('O2NedtrPopup') !== "false" ?
-            showCautionNewEditor && accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ?
+            showCautionNewEditor && accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 ?
               {
                 type: 'cautionEditorChange',
                 data: { CampaignID: CampaignID }
@@ -523,7 +526,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     let date = null
     let text = ''
     let separator = windowSize === 'xs' ? ":" : "";
-    if (!row.SendDate) {
+    if (!row.SendDate || row.Status === 1) {
       date = moment(row.UpdatedDate, dateFormat)
       text = t('common.UpdatedOn')
     } else {
@@ -811,7 +814,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} className={clsx(classes.textCenter)}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
       </Typography>
     ),
@@ -828,7 +831,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
     showDivider: false,
     content: (
       <>
-        <Typography align='center' className={classes.mb5}>{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `"${campaignName}"`))}</Typography>
+        <Typography align='center'
+          className={classes.mb5}
+        >{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `<b>"${campaignName}"</b>`))}
+        </Typography>
         <FormControl>
           <FormGroup>
             <FormControlLabel
@@ -889,9 +895,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
           </FormGroup>
         </FormControl>
       </>
-      // <Typography style={{ fontSize: 18 }}>
-      //   {t('campaigns.dialogDuplicateContent')}
-      // </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
@@ -899,6 +902,14 @@ const NewsletterManagnentScreen = ({ classes }) => {
       setPage(1)
       await dispatch(duplicteCampaign({ CampaignID: campaignId, CloneOptions: duplicateOptions }))
       getData()
+    },
+    onCancel: () => {
+      setDuplicateOptions([]);
+      handleClose();
+    },
+    onClose: () => {
+      setDuplicateOptions([]);
+      handleClose();
     }
   })
 
@@ -910,7 +921,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
+      duplicate: getDuplicateDialog(campaign?.CampaignID, campaign?.Name),
       cautionEditorChange: getCautionEditorChangeDialog(data),
     }
 
