@@ -5,6 +5,7 @@ import 'react-h5-audio-player/lib/styles.css';
 import {
 	getTemplatePreviewData,
 	getTemplateTextWithVariable,
+	getTextDirection,
 } from '../../Common';
 import { fileTypes } from '../../Constant';
 import {
@@ -215,7 +216,13 @@ const ChatTemplate = ({
 														</a>
 													</Grid>
 												)}
-											<pre>
+											<pre
+												style={{
+													direction: getTextDirection(
+														templateData.templateText,
+														isRTL
+													),
+												}}>
 												{getTemplateTextWithVariable(
 													templateData?.templateText,
 													variables
@@ -244,47 +251,66 @@ const ChatTemplate = ({
 												{templateData?.templateButtons?.map(
 													(
 														button: quickReplyButtonProps | callToActionRowProps
-													) => (
-														<Grid item key={button.id}>
-															{button.typeOfAction === 'phonenumber' ? (
-																<a
-																	target='_blank'
-																	href={`tel:${getValueByFieldName(
-																		button,
-																		'whatsapp.phoneNumber'
-																	)}`}
-																	rel='noreferrer'>
-																	<i
-																		className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
-																	<span
-																		className={classes.callToActionButtonText}>
-																		{getValueByFieldName(
+													) => {
+														const textDirection = getTextDirection(
+															templateData.templateText,
+															isRTL
+														);
+														const buttonStyles = {
+															paddingLeft:
+																textDirection === 'ltr' ? '8px' : '0px',
+															paddingRight:
+																textDirection === 'ltr' ? '0px' : '8px',
+														};
+														return (
+															<Grid
+																item
+																key={button.id}
+																style={{
+																	direction: textDirection,
+																}}>
+																{button.typeOfAction === 'phonenumber' ? (
+																	<a
+																		target='_blank'
+																		href={`tel:${getValueByFieldName(
 																			button,
-																			'whatsapp.phoneButtonText'
-																		)}
-																	</span>
-																</a>
-															) : (
-																<a
-																	href={getValueByFieldName(
-																		button,
-																		'whatsapp.websiteURL'
-																	)}
-																	target='_blank'
-																	rel='noreferrer'>
-																	<i
-																		className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
-																	<span
-																		className={classes.callToActionButtonText}>
-																		{getValueByFieldName(
+																			'whatsapp.phoneNumber'
+																		)}`}
+																		rel='noreferrer'>
+																		<i
+																			className={`${classes.callToActionButton} zmdi zmdi-phone`}></i>
+																		<span
+																			className={classes.callToActionButtonText}
+																			style={buttonStyles}>
+																			{getValueByFieldName(
+																				button,
+																				'whatsapp.phoneButtonText'
+																			)}
+																		</span>
+																	</a>
+																) : (
+																	<a
+																		href={getValueByFieldName(
 																			button,
-																			'whatsapp.websiteButtonText'
+																			'whatsapp.websiteURL'
 																		)}
-																	</span>
-																</a>
-															)}
-														</Grid>
-													)
+																		target='_blank'
+																		rel='noreferrer'>
+																		<i
+																			className={`${classes.callToActionButton} zmdi zmdi-open-in-new`}></i>
+																		<span
+																			className={classes.callToActionButtonText}
+																			style={buttonStyles}>
+																			{getValueByFieldName(
+																				button,
+																				'whatsapp.websiteButtonText'
+																			)}
+																		</span>
+																	</a>
+																)}
+															</Grid>
+														);
+													}
 												)}
 											</div>
 										)}
@@ -292,10 +318,15 @@ const ChatTemplate = ({
 							</>
 						)}
 						{buttonType === 'quickReply' && (
-							<>
-								<div className={classes.quickReplyButtonWrapper}>
-									{templateData?.templateButtons?.map(
-										(button: quickReplyButtonProps | callToActionRowProps) => (
+							<div className={classes.quickReplyButtonWrapper}>
+								{templateData?.templateButtons?.map(
+									(button: quickReplyButtonProps | callToActionRowProps) => {
+										const buttonName = getValueByFieldName(
+											button,
+											'whatsapp.websiteButtonText'
+										);
+										const textDirection = getTextDirection(buttonName, isRTL);
+										return (
 											<div
 												key={button.id}
 												className={`${classes.whatsappMobileMessage} sent quick-reply-button`}
@@ -304,24 +335,21 @@ const ChatTemplate = ({
 													borderRadius: '5px',
 													padding: '4px 8px',
 													width:
-														getValueByFieldName(
-															button,
-															'whatsapp.websiteButtonText'
-														)?.length <= templateData?.templateText?.length
+														buttonName?.length <=
+														templateData?.templateText?.length
 															? 'auto'
 															: '',
 												}}>
-												<span className={classes.quickReplyButtonText}>
-													{getValueByFieldName(
-														button,
-														'whatsapp.websiteButtonText'
-													)}
-												</span>
+												<div
+													className={classes.quickReplyButtonText}
+													style={{ direction: textDirection }}>
+													{buttonName}
+												</div>
 											</div>
-										)
-									)}
-								</div>
-							</>
+										);
+									}
+								)}
+							</div>
 						)}
 					</div>
 

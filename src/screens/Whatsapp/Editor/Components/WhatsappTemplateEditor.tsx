@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useEffect, useState, useMemo } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -71,6 +71,7 @@ const WhatsappTemplateEditor = ({
 		if (direction !== 'Both') {
 			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [templateText]);
 
 	const onEditorChange = (e: BaseSyntheticEvent) => {

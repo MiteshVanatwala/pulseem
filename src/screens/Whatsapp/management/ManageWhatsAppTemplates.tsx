@@ -288,26 +288,32 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						</CustomTooltip>
 					</>
 					{Status === 'Rejected' && (
-						<CustomTooltip
-							isSimpleTooltip={false}
-							interactive={true}
-							classes={{
-								tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-								arrow: classes.fBlack,
-							}}
-							arrow={true}
-							placement={'top'}
-							title={RejectionReason}
-							text={RejectionReason}
-							icon={undefined}
-							style={undefined}>
-							<Typography
-								onClick={() => onStatusResonClick(row)}
-								style={{ cursor: 'pointer' }}
-								className={classes.whatsappTemplateStatusRejectedReason}>
-								{translator('whatsapp.displayError')}
-							</Typography>
-						</CustomTooltip>
+						// <CustomTooltip
+						// 	isSimpleTooltip={false}
+						// 	interactive={true}
+						// 	classes={{
+						// 		tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+						// 		arrow: classes.fBlack,
+						// 	}}
+						// 	arrow={true}
+						// 	placement={'top'}
+						// 	title={RejectionReason}
+						// 	text={RejectionReason}
+						// 	icon={undefined}
+						// 	style={undefined}>
+						// 	<Typography
+						// 		onClick={() => onStatusResonClick(row)}
+						// 		style={{ cursor: 'pointer', fontSize: '16px' }}
+						// 		className={classes.whatsappTemplateStatusRejectedReason}>
+						// 		{translator('whatsapp.displayError')}
+						// 	</Typography>
+						// </CustomTooltip>
+						<Typography
+							onClick={() => onStatusResonClick(row)}
+							style={{ cursor: 'pointer', fontSize: '16px' }}
+							className={classes.whatsappTemplateStatusRejectedReason}>
+							{translator('whatsapp.displayError')}
+						</Typography>
 					)}
 				</Typography>
 			</>

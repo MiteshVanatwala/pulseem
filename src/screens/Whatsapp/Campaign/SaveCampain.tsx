@@ -528,8 +528,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let updatedVariables = getDynamicFields(tagData?.children);
 		const highlightVariables = (
 			<>
-				{updatedVariables?.map((variable) => (
+				{updatedVariables?.map((variable, index) => (
 					<strong
+						key={index}
 						className={clsx(
 							classes.whatsappCampainHighlightText,
 							`${isUpdatedVaraiable(variable) && 'updated'}`

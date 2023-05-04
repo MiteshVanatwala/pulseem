@@ -248,7 +248,7 @@ const ActionCallPopOver = ({
 							{callToActionFieldRows.map(
 								(row: callToActionRowProps, index: number) => (
 									<Grid container spacing={3} key={'TOC' + index}>
-										<Grid item md={3}>
+										<Grid item xs={12} sm={6} md={3}>
 											<Typography>
 												<>{translator('whatsapp.typeOfAction')}</>
 											</Typography>
@@ -274,7 +274,7 @@ const ActionCallPopOver = ({
 										{row?.fields.map(
 											(field: callToActionFieldProps, fIndex: number) =>
 												field.type !== 'select' ? (
-													<Grid item md={3} key={'TOCF' + fIndex}>
+													<Grid item xs={12} sm={6} md={3} key={'TOCF' + fIndex}>
 														<Typography>
 															<>{translator(field?.fieldName)}</>
 														</Typography>
@@ -311,7 +311,7 @@ const ActionCallPopOver = ({
 														/>
 													</Grid>
 												) : (
-													<Grid item md={2} key={'TOCF' + fIndex}>
+													<Grid item xs={12} sm={6} md={2} key={'TOCF' + fIndex}>
 														<Typography>
 															<>{translator(field?.fieldName)}</>
 														</Typography>
@@ -319,7 +319,8 @@ const ActionCallPopOver = ({
 															id='template-list'
 															className={clsx(
 																classes.buttonField,
-																classes.buttonWhatsappAutocomplete
+																classes.buttonWhatsappAutocomplete,
+																classes.buttonCallToActionAutocomplete
 															)}
 															options={autoCompleteOptions}
 															renderOption={(props, options) =>

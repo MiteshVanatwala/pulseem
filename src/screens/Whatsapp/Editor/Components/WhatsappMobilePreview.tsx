@@ -6,6 +6,7 @@ import { Box, Grid } from '@material-ui/core';
 import {
 	callToActionFieldProps,
 	callToActionRowProps,
+	coreProps,
 	quickReplyButtonProps,
 	quickReplyButtonsFieldProps,
 	ReduxUserProps,
@@ -15,7 +16,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { fileTypes } from '../../Constant';
-import { getFileType } from '../../Common';
+import { checkLanguage, getFileType, getTextDirection } from '../../Common';
 
 const WhatsappMobilePreview = ({
 	classes,
@@ -25,9 +26,11 @@ const WhatsappMobilePreview = ({
 }: whatsappMobilePreviewProps) => {
 	const { templateText, templateButtons } = templateData;
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 
 	let time = new Date().toLocaleTimeString('en-US');
 
+	const [textDirection, setTextDirection] = useState<string>('ltr');
 	const [mobileTime, setMobileTime] = useState<string>(time);
 	const [quickReplyWidth, setQuickReplyWidth] = useState<string>('');
 
@@ -47,6 +50,14 @@ const WhatsappMobilePreview = ({
 	useEffect(() => {
 		setQuickReplyWidth(getQuickReplyWidth());
 	}, [templateText, fileData, templateButtons]);
+
+	useEffect(() => {
+		const direction = checkLanguage(templateText, isRTL);
+		if (direction !== 'Both') {
+			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [templateText]);
 
 	const setUpdateTime = () => {
 		let time = new Date()
@@ -186,7 +197,19 @@ const WhatsappMobilePreview = ({
 																				</a>
 																			</Grid>
 																		)}
-																	<pre>{templateText}</pre>
+																	<pre
+																		style={{
+																			direction:
+																				templateText?.length > 0
+																					? textDirection === 'rtl'
+																						? 'rtl'
+																						: 'ltr'
+																					: isRTL
+																					? 'rtl'
+																					: 'ltr',
+																		}}>
+																		{templateText}
+																	</pre>
 																</div>
 															)}
 															{buttonType === 'callToAction' &&
