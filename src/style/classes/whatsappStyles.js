@@ -483,6 +483,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	quickReplyButtonWrapper: {
 		textAlign: 'center',
 		cursor: 'pointer',
+		display: 'flex',
+		flexDirection: 'column',
+		width: '100%',
 	},
 	quickReplyButtonText: {
 		color: '#1c82b2',
@@ -2916,6 +2919,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			{
 				paddingRight: isRTL ? '0px !important' : '0px',
 			},
+	},
+	buttonCallToActionAutocomplete: {
+		padding: '14px 12px 12px 4px',
 	},
 	calltoActionButtonChatWrapper: {
 		margin: '8px 0px 0px 0px',

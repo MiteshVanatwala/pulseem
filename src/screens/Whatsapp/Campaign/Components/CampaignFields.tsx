@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { campaignFielsProps, coreProps } from '../Types/WhatsappCampaign.types';
 import clsx from 'clsx';
-import { BaseSyntheticEvent } from 'react';
+import { BaseSyntheticEvent, HtmlHTMLAttributes, useEffect, useState } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import {
 	getTemplateIdByName,
@@ -27,6 +27,14 @@ const CampaignFields = ({
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
+	const [autoCompleteOptions, setAutoCompleteOptions] = useState<string[]>([]);
+
+	useEffect(() => {
+		const autoCompleteList = savedTemplateList?.map((template) => {
+			return getTemplateName(template);
+		});
+		setAutoCompleteOptions(autoCompleteList);
+	}, [savedTemplateList]);
 
 	const onTemplateChange = (e: BaseSyntheticEvent) => {
 		if (e.target.textContent !== '') {
@@ -40,6 +48,22 @@ const CampaignFields = ({
 		} else {
 			onSavedTemplateChange('');
 		}
+	};
+
+	const renderOptions = (
+		props: HtmlHTMLAttributes<HTMLElement>,
+		option: string
+	) => {
+		return (
+			<Box
+				component='li'
+				{...props}
+				key={option}
+				title={option}
+				style={{ direction: isRTL ? 'rtl' : 'ltr', maxWidth: '100%' }}>
+				{option}
+			</Box>
+		);
 	};
 
 	return (
@@ -128,9 +152,8 @@ const CampaignFields = ({
 									classes.success
 							  )
 					}
-					options={savedTemplateList.map((template) =>
-						getTemplateName(template)
-					)}
+					options={autoCompleteOptions}
+					renderOption={renderOptions}
 					renderInput={(params) => <TextField {...params} />}
 					onChange={onTemplateChange}
 					value={getTemplateNameById(savedTemplateList, savedTemplate)}
