@@ -41,7 +41,6 @@ import WhatsappTips from './Components/whatsappTips';
 import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
-	deleteTemplate,
 	getSavedTemplates,
 	getSavedTemplatesById,
 	submitTemplates,

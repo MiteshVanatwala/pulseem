@@ -1,0 +1,272 @@
+{
+	"submitTemplates": {
+		"1": "WhatsApp template request has been saved.",
+		"2": "Template updated successfully.",
+		"3": "Sub account not found",
+		"4": "You are not allowed to submit this template",
+		"5": "Invalid react key",
+		"100": "Internal Error",
+		"101": "Template with this name is already exists.",
+		"102": "You are not allowed to edit this template",
+		"103": "Invalid API Key",
+		"104": "Invalid input data",
+		"105": "Template name is required",
+		"106": "Template Name exceeds 50 characters",
+		"107": "Friendly Template Name exceeds 50 characters",
+		"108": "Language is required",
+		"109": "Language exceeds 10 characters",
+		"110": "Template category is required",
+		"111": "Unexpected template category. Permitted: MARKETING, UTILITY, AUTHENTICATION",
+		"112": "Type is required",
+		"113": "Type is required. Permitted types: 'text', 'media', 'quick-reply', 'call-to-action', 'card'",
+		"114": "Multiple content types are not permitted.",
+		"115": "text: Body is required",
+		"116": "text: Body exceeds 1600 characters",
+		"117": "media: media is required",
+		"118": "media: Only one media url is allowed",
+		"119": "media: media_type is required",
+		"120": "media: Unexpected media_type value. permitted: 'image', 'audio', 'document', 'video'",
+		"121": "media: media is required",
+		"122": "media: Body exceeds 1600 characters",
+		"123": "quick-reply: Body is required",
+		"124": "quick-reply: Body exceeds 1024 characters",
+		"125": "quick-reply: Actions is required",
+		"126": "quick-reply: Upto 3 buttons can be use in actions",
+		"127": "quick-reply: id is required in actions",
+		"128": "quick-reply: title is required in actions",
+		"129": "call-to-action: Body is required",
+		"130": "call-to-action: Body exceeds 640 characters",
+		"131": "call-to-action: Actions is required",
+		"132": "call-to-action: Upto 2 buttons can be use in actions",
+		"133": "call-to-action: Type is required in actions",
+		"134": "call-to-action: Unexpected Type value. permitted: 'PHONE_NUMBER', 'URL'",
+		"135": "call-to-action: 1 must be a URL and the other a PHONE_NUMBER for type in actions",
+		"136": "card: Title is required",
+		"137": "card: Title exceeds 1024 characters",
+		"138": "card: Subtitle exceeds 60 characters",
+		"139": "card: Unexpected type value. permitted: 'PHONE_NUMBER', 'URL', 'QUICK_REPLY'",
+		"140": "card: Cannot have both Quick Reply and Call To Action buttons",
+		"141": "card: Up to 2 buttons for PHONE_NUMBER or URL actions",
+		"142": "card: Up to 3 buttons for QUICK_REPLY action",
+		"143": "card: PHONE_NUMBER is not allowed more than one in actions",
+		"144": "card: URL is not allowed more than one in actions"
+	},
+	"deleteTemplate": {
+		"1": "Template deleted successfully!",
+		"2": "Template not found",
+		"3": "Sub account not found",
+		"4": "Template already deleted",
+		"100": "Internal Error"
+	},
+	"uploadMedia": {
+		"1": "{{FilePath}}",
+		"2": "Bad Request",
+		"3": "Sub account not found",
+		"4": "File size is too large. Maximum file size permitted is {{FileSize}} MB",
+		"5": "You are not allowed to upload this file",
+		"100": "Internal Error"
+	},
+	"getTemplate": {
+		"2": "Internal Error",
+		"3": "Sub account not found",
+		"100": "Internal Error"
+	},
+	"getSavedTemplatesById": {
+		"1": "data fetch successfully!",
+		"2": "No data found!",
+		"3": "Sub account not found",
+		"100": "Internal Error"
+	},
+	"duplicateTemplate": {
+		"1": "WhatsApp template cloned successfully.",
+		"2": "Template not found!",
+		"3": "Sub account not found",
+		"4": "Template Name exceeds {TemplateNamelen} characters.",
+		"5": "Template Friendly Name exceeds {TemplateFriendlyNamelen} characters.",
+		"6": "WhatsApp template cloned failed.",
+		"100": "Internal Error"
+	},
+	"submitTemplateDirect": {
+		"1": "WhatsApp template request has been saved",
+		"2": "You are not allowed to submit this template",
+		"3": "Invalid react key",
+		"4": "Template with this name is already exists",
+		"5": "The account is not configured",
+		"100": "Invalid API Key",
+		"101": "Invalid input data",
+		"102": "Template name is required",
+		"103": "TemplateCategory which you pass is not valid!",
+		"104": "Template Name exceeds 50 characters",
+		"105": "Friendly Template Name exceeds 50 characters",
+		"106": "Language is required",
+		"107": "Language exceeds 10 characters",
+		"108": "Type is required",
+		"109": "Type is required. Permitted types: 'text', 'media', 'quick-reply', 'call-to-action', 'card'",
+		"110": "Multiple content types are not permitted.",
+		"111": "text: Body is required",
+		"112": "text: Body exceeds 1600 characters",
+		"113": "media: Body is required",
+		"114": "media: media is required",
+		"115": "media: Only one media url is allowed",
+		"116": "media: media_type is required",
+		"117": "media: Unexpected media_type value. permitted: 'image', 'audio', 'document', 'video'",
+		"118": "media: media is required",
+		"119": "media: Body exceeds 1600 characters",
+		"120": "quick-reply: Body is required",
+		"121": "quick-reply: Body exceeds 1024 characters",
+		"122": "quick-reply: Actions is required",
+		"123": "quick-reply: Upto 3 buttons can be use in actions",
+		"124": "quick-reply: id is required in actions",
+		"125": "quick-reply: title is required in actions",
+		"126": "call-to-action: Body is required",
+		"127": "call-to-action: Body exceeds 640 characters",
+		"128": "call-to-action: Actions is required",
+		"129": "call-to-action: Upto 2 buttons can be use in actions",
+		"130": "call-to-action: Type is required in actions",
+		"131": "call-to-action: Title is required in actions",
+		"132": "call-to-action: Unexpected Type value. permitted: 'PHONE_NUMBER', 'URL'",
+		"133": "call-to-action: 1 must be a URL and the other a PHONE_NUMBER for type in actions",
+		"134": "card: Title is required",
+		"135": "card: Title exceeds 1024 characters",
+		"136": "card: Subtitle exceeds 60 characters",
+		"137": "card: Title is required in actions",
+		"138": "card: Unexpected type value. permitted: PHONE_NUMBER, URL, QUICK_REPLY",
+		"139": "card: Cannot have both Quick Reply and Call To Action buttons",
+		"140": "card: Up to 2 buttons for PHONE_NUMBER or URL actions",
+		"141": "card: Up to 3 buttons for QUICK_REPLY action",
+		"142": "card: PHONE_NUMBER is not allowed more than one in actions",
+		"143": "card: URL is not allowed more than one in actions"
+	},
+	"getAllReports": {
+		"2": "No Data Found",
+		"3": "Sub account not found",
+		"100": "Internal Error"
+	},
+	"sendWhatsAppMessage": {
+		"1": "Message sent successfully",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error",
+		"101": "WhatsAppChatSendModel is empty",
+		"102": "From Number is required",
+		"103": "To Number is required",
+		"104": "Text message is required",
+		"105": "The maximum length for a text message is {WAFreeTextLength} characters.",
+		"106": "Template id is required",
+		"107": "Account not configured",
+		"108": "User is unsubscribed.You can not send message to this user.",
+		"109": "NoInbound",
+		"110": "You do not have sufficient balance in your account",
+		"111": "Template is not approved or does not exists!"
+	},
+	"GetWhatsAppChatContacts": {
+		"2": "No Data Found",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"getInboundWhatsappChatStatus": {
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"manageWhatsappChatCoversationStatus": {
+		"1": "Status has been updated",
+		"2": "Client number is required",
+		"3": "Sub account not found",
+		"4": "Sender number is required.",
+		"5": "Status is required.",
+		"6": "Invalid status",
+		"7": "Sender number is not configured",
+		"100": "Inetrnal Error"
+	},
+	"getWhatsappChat": {
+		"2": "No Data Found",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"saveCampaign": {
+		"2": "Invalid from number",
+		"3": "Sub account not found",
+		"4": "Whatsapp not configured with this account",
+		"5": "Invalid template",
+		"6": "Campaign name is empty",
+		"7": "The campaign name exceeds 100 characters.",
+		"8": "Campaign with this sub account id does not exists",
+		"9": "This Campaign is already deleted.Yo are not allowed to update this campaign",
+		"10": "You are not allow to edit this campaign",
+		"100": "Inetrnal Error"
+	},
+	"saveCampaignSettings": {
+		"1": "Whatsapp campaign setting saved",
+		"2": "Invalid campaign",
+		"3": "Sub account not found",
+		"4": "You are not allow to save campaign settings",
+		"5": "This campaign is already deleted.You are not allow to save campaign settings",
+		"6": "Future date time required.",
+		"7": "Invalid data for special date",
+		"100": "Inetrnal Error"
+	},
+	"getCampaignSettings": {
+		"2": "Campaign Not Found",
+		"4": "Campaign Settings Not Found",
+		"100": "Inetrnal Error"
+	},
+	"getWhatsappCampaignNameFilter": {
+		"2": "No Data Found",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"saveQuickSendGroups": {
+		"1": "Group Saved Successfully",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"sendCampaign": {
+		"1": "Campaign sent successfully",
+		"2": "WhatsApp campaign not found",
+		"3": "Sub account not found",
+		"4": "Campaign is {Status}, You can not proceed further.",
+		"5": "Not enough balance",
+		"6": "Error",
+		"100": "Inetrnal Error"
+	},
+	"getWhatsAppCampaignSummary": {
+		"2": "WhatsApp campaign not found",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"userPhoneNumbers": {
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"getAllCampaigns": {
+		"2": "No Data Found",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"deleteCampaign": {
+		"1": "WhatsApp campaign deleted",
+		"2": "WhatsApp campaign not found",
+		"3": "Sub account not found",
+		"4": "WhatsApp campaign already deleted",
+		"100": "Inetrnal Error"
+	},
+	"duplicateCampaign": {
+		"1": "WhatsApp Campaign cloned",
+		"2": "WhatsApp Campaign not found",
+		"3": "Sub account not found",
+		"4": "WhatsApp Campaign exeeded",
+		"5": "Something went wrong",
+		"100": "Inetrnal Error"
+	},
+	"restoreWhatsAppCampaigns": {
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"getCampaignDetailById": {
+		"2": "No Data Found",
+		"3": "Sub account not found",
+		"100": "Inetrnal Error"
+	},
+	"common": {
+		"error": "Something went wrong"
+	}
+}

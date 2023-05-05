@@ -509,3 +509,11 @@ export type CommonFeaturesAPIPayload = {
 export type CommonFeaturesAPI = {
 	payload: CommonFeaturesAPIPayload;
 };
+
+export type ApiErrorKey = {
+	[key: string]: string;
+};
+
+export type ApiErrorResponse = {
+	[key: string]: ApiErrorKey;
+};
