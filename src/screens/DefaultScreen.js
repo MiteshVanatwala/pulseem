@@ -12,7 +12,7 @@ import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
-  const { isAdmin, isAllowSwitchAccount } = useSelector(state => state.core)
+  const { isAdmin, isAllowSwitchAccount, isRTL } = useSelector(state => state.core)
   const { username } = useSelector(state => state.user)
   let route, title;
 
@@ -73,8 +73,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null, customStyle)}
       >
         <div className={classes.background}>
-          <Illustration_BG_BL className={'leftSvg'} />
-          <Illustration_BG_BR className={'rightSvg'} />
+          <Illustration_BG_BL className={isRTL ? 'rightSvg' : 'leftSvg'} />
+          <Illustration_BG_BR className={isRTL ? 'leftSvg' : 'rightSvg'} />
         </div>
         {children}
       </Container>
