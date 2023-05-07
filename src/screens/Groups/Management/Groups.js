@@ -19,6 +19,7 @@ import {
     deleteGroups,
     getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
+import { exportGroupsClients } from '../../../redux/reducers/clientSlice';
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import AddGroupPopUp from "./Popup/AddGroupPopUp";
@@ -51,6 +52,7 @@ import { DeletePropertyFromArrayObject, FlatObject, HandleExportData } from '../
 import { ClientStatus } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -144,7 +146,8 @@ const Groups = ({ classes }) => {
         SUMMARY: "SUMMARY",
         EXPORT_ALL: "EXPORT_ALL",
         EXPORT_SELECTED: "EXPORT_SELECTED",
-        SIMPLY_CLUB: "SIMPLY_CLUB"
+        SIMPLY_CLUB: "SIMPLY_CLUB",
+        EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
     };
     const TABLE_HEAD = [
         {
@@ -172,7 +175,6 @@ const Groups = ({ classes }) => {
             align: "center",
         },
     ];
-
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -1792,36 +1794,30 @@ const Groups = ({ classes }) => {
         )
     }
     const handleAddRecipientResponse = (res) => {
-        if (res === '') {
-            setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
-            setDialog(DialogType.MESSAGE);
-        }
-        else {
-            switch (res.payload.StatusCode) {
-                case 201: {
-                    setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
-                    setDialog(DialogType.MESSAGE);
-                    break;
-                }
-                case 202: {
-                    setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
-                    setDialog(DialogType.MESSAGE);
-                    break;
-                }
-                case 404: {
-                    setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
-                    setDialog(DialogType.MESSAGE);
-                    break;
-                }
-                case 400: {
-                    setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
-                    setDialog(DialogType.MESSAGE);
-                    break;
-                }
-                default: {
-                    setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
-                    setDialog(DialogType.MESSAGE);
-                }
+        switch (res.payload.StatusCode) {
+            case 201: {
+                setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            case 202: {
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            case 404: {
+                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            case 400: {
+                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            default: {
+                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
+                setDialog(DialogType.MESSAGE);
             }
         }
     }

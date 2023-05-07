@@ -51,7 +51,7 @@ export const BeeConfig = (Options: ConfigOptions) => {
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
-        // autosave: AUTO_SAVE_SECONDS,
+        //autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
@@ -61,9 +61,9 @@ export const BeeConfig = (Options: ConfigOptions) => {
             defaultRows: false,
         },
         editorFonts: FONTS(),
-        workspace: {
-            type: 'mixed',
-        },
+        // workspace: {
+        //     type: 'mixed',
+        // },
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {

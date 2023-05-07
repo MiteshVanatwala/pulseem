@@ -58,6 +58,7 @@ const FORM_COMPANY_DETAILS = ({
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [companyDetails, setCompanyDetails] = useState<AccountSettings | null>({} as AccountSettings);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [accFeatures, setAccountFeatures] = useState<any>(null);
 
   const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
@@ -134,9 +135,10 @@ const FORM_COMPANY_DETAILS = ({
   useEffect(() => {
     const newSettings = { ...Settings, TwoFactorAuthEnabled: accountFeatures?.indexOf(PulseemFeatures.DISABLE_TWO_FACTOR_AUTH) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
+    setAccountFeatures(accountSettings?.Account?.AccountFeatures);
     if (Settings)
       handleQueryString2FA();
-  }, [Settings]);
+  }, [accountSettings, Settings]);
 
   useEffect(() => {
     if (twoFAUpdated !== undefined && twoFAUpdated?.Data !== '') {

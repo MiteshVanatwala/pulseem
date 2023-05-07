@@ -399,16 +399,14 @@ const RecipientChart = ({ classes, }) => {
 
     const renderChartsCarousel = () => {
         if (!recipientsReport) {
-            return;
+            return (<Loader showBackdrop={false} contained containerSize={240} />);
         }
 
         let totalRecipientsReport = 0;
 
-        if (recipientsReport) {
-            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
-                return a + b["Total"];
-            }, 0);
-        }
+        totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+            return a + b["Total"];
+        }, 0);
 
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
@@ -453,11 +451,9 @@ const RecipientChart = ({ classes, }) => {
 
         let totalRecipientsReport = 0;
 
-        if (recipientsReport) {
-            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
-                return a + b["Total"];
-            }, 0);
-        }
+        totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+            return a + b["Total"];
+        }, 0);
 
         return (
             <Grid item container justifyContent='space-evenly'>
