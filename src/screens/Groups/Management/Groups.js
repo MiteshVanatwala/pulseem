@@ -47,12 +47,10 @@ import { RenderHtml, ConvertObjectToQueryString } from '../../../helpers/Utils/H
 import { Title } from '../../../components/managment/Title';
 import queryString from 'query-string';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
-import { exportGroupsClients } from '../../../redux/reducers/clientSlice';
 import { DeletePropertyFromArrayObject, FlatObject, HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { ClientStatus } from '../../../helpers/Constants';
 import { ReplaceExtraFieldHeader } from '../../../helpers/UI/AccountExtraField';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
-import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();

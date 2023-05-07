@@ -61,8 +61,6 @@ import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
 import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
-
-import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 const useStyles = makeStyles({
   groupName: {
