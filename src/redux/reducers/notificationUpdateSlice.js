@@ -40,6 +40,7 @@ export const notificationUpdateSlice = createSlice({
       state.unreadMessages = parseInt(payload?.Message);
     })
     builder.addCase(markNotificationsAsRead.fulfilled, (state, { payload }) => {
+      state.unreadMessages = 0;
     })
   }
 })

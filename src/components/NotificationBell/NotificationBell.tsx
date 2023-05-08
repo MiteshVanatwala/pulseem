@@ -107,7 +107,7 @@ const NotificationBell = ({ classes }: any) => {
           className={clsx(classes.appBarSettingIcon, classes.notificationBell)}
           onClick={() => {
             toggleDisplayNotifications(!displayNotifications);
-            dispatch(markNotificationsAsRead())
+            if (unreadMessages > 0) dispatch(markNotificationsAsRead())
           }}
         />
       </Badge>
