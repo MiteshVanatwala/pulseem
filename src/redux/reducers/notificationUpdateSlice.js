@@ -34,7 +34,9 @@ export const notificationUpdateSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(getNotificationUpdates.fulfilled, (state, { payload }) => {
-      state.notifyCenterList = payload?.Data;
+      state.notifyCenterList = payload?.Data.sort(function(a,b){
+        return new Date(b.CreationDate) - new Date(a.CreationDate);
+      });;
       state.unreadMessages = parseInt(payload?.Message);
     })
     builder.addCase(markNotificationsAsRead.fulfilled, (state, { payload }) => {
