@@ -13,11 +13,12 @@ import Illustration_BG_BR from '../assets/images/Illustration_BG_BR';
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false, showAppBar = true, customStyle = '' }) => {
   const { t } = useTranslation();
   const { isAdmin, isAllowSwitchAccount, isRTL } = useSelector(state => state.core)
+  const { username } = useSelector(state => state.user)
   let route, title;
 
   if (subPage) {
     if (currentPage === 'settings') {
-      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
+      let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')), username)
       const option = settingsRoutes.options.find((sr) => sr.key === subPage) //settingsRoutes && settingsRoutes.options[0].title || '';
       title = (option && option.title) ?? '';
     }

@@ -513,7 +513,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '50vh'
   },
   h10v: {
-    height: '10vh'
+    height: '20vh'
   },
   line1: {
     lineHeight: 1,
@@ -829,6 +829,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "50%",
     color: "white",
     cursor: "pointer",
+  },
+  noBorderOnLastCell: {
+    borderInlineEnd: 'none',
   },
   headNo: {
     backgroundColor: "#1c82b2",
@@ -2708,6 +2711,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingTop: 0,
     minWidth: dialogWidth[windowSize],
     backgroundColor: '#fff',
+    maxWidth: dialogWidth[windowSize],
     '& .title': {
       '& p': {
         color: '#000',

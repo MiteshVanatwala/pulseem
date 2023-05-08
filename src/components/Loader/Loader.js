@@ -3,6 +3,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
+import Stack from '@mui/material/Stack';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles((theme) => ({
@@ -55,6 +56,25 @@ export const Loader = ({
 }) => {
   const classes = useStyles();
 
+  if (props.isDownloadProgress && props.isDownloadProgress === true) {
+    return (<Backdrop className={classes.backdrop} open={isOpen} style={{ zIndex: zIndex }}>
+      <Box className={classes.progressBar}>
+        {message && <Box
+          display="flex"
+          alignItems="center">
+          <Typography className={classes.message}>{message}</Typography>
+        </Box>}
+        <Box display="flex"
+          alignItems="center">
+          <Box width="100%" mr={1} style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+            <Stack sx={{ width: '100%', color: 'grey.500' }} spacing={2}>
+              <LinearProgress />
+            </Stack>
+          </Box>
+        </Box>
+      </Box>
+    </Backdrop>)
+  }
   if (progress) {
     return (
       <Backdrop className={classes.backdrop} open={isOpen} style={{ zIndex: zIndex }}>

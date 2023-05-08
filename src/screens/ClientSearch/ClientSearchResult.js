@@ -61,7 +61,7 @@ import { ConvertClientStatus, SourceType } from "../../helpers/UI/TableText";
 import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
-
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -98,7 +98,7 @@ const ClientSearchResult = ({ classes }) => {
   const { extraData } = useSelector(state => state.sms);
   const navigate = useNavigate()
   const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
-  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages, downloadProgress } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
   const [selectedClients, setSelectedClients] = useState([]);
@@ -119,6 +119,8 @@ const ClientSearchResult = ({ classes }) => {
   //eslint-disable-next-line
   const [clientToEdit, setClientToEdit] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isDownloadProgress, setIsDownloadProgress] = useState(false);
+  const [emailToNotify, setEmailToNotify] = useState('');
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -180,7 +182,9 @@ const ClientSearchResult = ({ classes }) => {
     CONFIRM_REMOVE_PHONE: "CONFIRM_REMOVE_PHONE",
     UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
     CONFIRM_INVALID: "CONFIRM_INVALID",
-    EXPORT_FORMAT: "EXPORT_FORMAT"
+    EXPORT_FORMAT: "EXPORT_FORMAT",
+    UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS",
+    EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
   };
   useEffect(() => {
     const initExtraFields = async () => {
@@ -366,56 +370,72 @@ const ClientSearchResult = ({ classes }) => {
       handleFilter();
     }
   };
-
-
-  const handleDownloadCsv = async (formatType) => {
-    setDialog(null);
+  const handleDownloadCsv = async (formatType, notifyEmail) => {
     setLoader(true);
     setDialog(null);
+    setShowConfirmDialog(false);
+    setIsDownloadProgress(true);
+    setEmailToNotify(notifyEmail);
     const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
     if (response && response.payload) {
       const data = response.payload;
       const promiseArray = [];
-      if (data.StatusCode === 201) {
-        let orderList = [];
-        orderList = data.Clients.map((ol) => { return FlatObject(ol) });
-        if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
-        }
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
-          searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-          promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
-        }
-        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-          orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
-        }
+      switch (data?.StatusCode) {
+        case 201: {
+          let orderList = [];
+          orderList = data.Clients.map((ol) => { return FlatObject(ol) });
+          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
+          }
+          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+            searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
+          }
+          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+            orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
+          }
 
-        Promise.all(promiseArray).then(() => {
-          const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
-          const exportOptions = {
-            OrderItems: true,
-            FormatDate: true,
-            ConvertStatusToString: true,
-            Statuses: ClientStatus.Sms,
-            Order: Object.keys(exportColumnHeader.current),
-            DeleteProperties: ["Status"]
-          };
+          Promise.all(promiseArray).then(() => {
+            const fileName = searchData?.ResultTitle ? searchData?.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+            const exportOptions = {
+              OrderItems: true,
+              FormatDate: true,
+              ConvertStatusToString: true,
+              Statuses: ClientStatus.Sms,
+              Order: Object.keys(exportColumnHeader.current),
+              DeleteProperties: ["Status"]
+            };
 
-          HandleExportData(orderList, exportOptions).then((result) => {
-            ExportFile({
-              data: result,
-              exportType: formatType,
-              fields: exportColumnHeader.current,
-              fileName: fileName
+            HandleExportData(orderList, exportOptions).then((result) => {
+              ExportFile({
+                data: result,
+                exportType: formatType,
+                fields: exportColumnHeader.current,
+                fileName: fileName
+              });
             });
           });
-        });
-      }
-      else {
-        setToastMessage(ToastMessages.GENERIC_ERROR);
+          break;
+        }
+        case 202: {
+          setDialog(DialogType.EXPORT_IN_PROGRESS);
+          break;
+        }
+        case 403: { // Feature not allowed
+          break;
+        }
+        case 405: {
+          setToastMessage(RenderHtml(t("recipient.exportGroups.exportLimitationErrorMessage")));
+          break;
+        }
+        default: {
+          setToastMessage(t('common.errorOccured'));
+          break;
+        }
       }
     }
     setLoader(false);
+    setIsDownloadProgress(false);
   }
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
@@ -699,6 +719,11 @@ const ClientSearchResult = ({ classes }) => {
       message: '',
       Func: () => getData()
     },
+    'S_202': {
+      code: 202,
+      message: '',
+      Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
+    },
     'S_400': {
       code: 400,
       message: '',
@@ -750,6 +775,11 @@ const ClientSearchResult = ({ classes }) => {
         actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
         break;
       }
+      case 202: {
+        actions?.S_202?.Func?.();
+        // actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+        break;
+      }
       case 400: {
         actions?.S_400?.Func?.();
         actions?.S_400?.message && setToastMessage(actions?.S_400?.message);
@@ -790,8 +820,8 @@ const ClientSearchResult = ({ classes }) => {
         actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
-        setLoader(false);
     }
+    setLoader(false);
   }
   const renderToast = () => {
     if (toastMessage) {
@@ -866,6 +896,10 @@ const ClientSearchResult = ({ classes }) => {
             message: ToastMessages.SUCCESS,
             Func: () => null
           },
+          S_202: {
+            code: 202,
+            Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
+          },
           S_400: {
             code: 400,
             message: ToastMessages.SOMETHING_WENT_WRONG,
@@ -905,6 +939,10 @@ const ClientSearchResult = ({ classes }) => {
             code: 201,
             message: ToastMessages.SUCCESS,
             Func: () => null
+          },
+          S_202: {
+            code: 202,
+            Func: () => setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS)
           },
           S_400: {
             code: 400,
@@ -947,10 +985,13 @@ const ClientSearchResult = ({ classes }) => {
     dispatch(getGroupsBySubAccountId());
     getData();
   }
-  const handleUnSubscribe = async (opt) => {
+  const handleUnSubscribe = async (opt, notifyEmail) => {
     setDialog(null);
     setLoader(true);
-    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount })).then(res => {
+    setEmailToNotify(notifyEmail === -1 ? '' : notifyEmail);
+    let groupName = location?.state?.ResultTitle;
+
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt, PageSize: TotalCount, GroupName: groupName, NotifyEmail: notifyEmail === -1 ? '' : notifyEmail })).then(res => {
       handleResponses(res, {
         'S_200': {
           code: 200,
@@ -967,6 +1008,13 @@ const ClientSearchResult = ({ classes }) => {
               window.history.back();
             }, 4000);
             //getData()
+          }
+        },
+        'S_202': {
+          code: 202,
+          // message: ToastMessages.UNSUBSCRIBED_IN_PROGRESS,
+          Func: () => {
+            setDialog(DialogType.UNSUBSCRIBED_IN_PROGRESS);
           }
         },
         'S_401': {
@@ -1743,13 +1791,79 @@ const ClientSearchResult = ({ classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             // selectedGroups={selectedGroups}
-            onSubmit={(opt) => handleUnSubscribe(opt)}
+            onSubmit={(opt, notifyEmail) => handleUnSubscribe(opt, notifyEmail)}
             clientData={{ ...searchData }}
             dialogType={dialog}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}
             showDropBox={false}
+            showEmailToNotify={TotalCount > 10000}
           />;
+        }
+        case DialogType.EXPORT_IN_PROGRESS: {
+          return <BaseDialog
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={dialog === DialogType.EXPORT_IN_PROGRESS}
+            renderButtons={() => (<>
+              <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+              >
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      setDialog(null)
+                    }}
+                    className={clsx(
+                      classes.solidDialogButton,
+                      classes.dialogConfirmButton
+                    )}>
+                    {t('common.confirm')}
+                  </Button>
+                </Grid>
+              </Grid>
+            </>)}
+          >
+            {RenderHtml(t("recipient.exportGroups.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.exportGroups.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
+          </BaseDialog>
+        }
+        case DialogType.UNSUBSCRIBED_IN_PROGRESS: {
+          return <BaseDialog
+            showDefaultButtons={false}
+            classes={classes}
+            contentStyle={classes.maxWidth900}
+            open={dialog === DialogType.UNSUBSCRIBED_IN_PROGRESS}
+            renderButtons={() => (<>
+              <Grid
+                container
+                spacing={2}
+                className={classes.dialogButtonsContainer}
+              >
+                <Grid item>
+                  <Button
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      sessionStorage.removeItem('searchData');
+                      window.history.back();
+                    }}
+                    className={clsx(
+                      classes.solidDialogButton,
+                      classes.dialogConfirmButton
+                    )}>
+                    {t('common.confirm')}
+                  </Button>
+                </Grid>
+              </Grid>
+            </>)}
+          >
+            {RenderHtml(t("recipient.unsubscribed.inProgress").replace("##notifyEmailPlaceHolder##", emailToNotify !== '' ? t('recipient.unsubscribed.inProgressNotifyOnDone').replace("##notifyEmail##", `<b>${emailToNotify}</b>`) : ''))}
+          </BaseDialog>
         }
         case DialogType.CONFIRM_INVALID:
         case DialogType.CONFIRM_DELETE_FROM_GROUPS:
@@ -1765,6 +1879,12 @@ const ClientSearchResult = ({ classes }) => {
     }
     return <></>;
   }
+
+  useEffect(() => {
+    if (downloadProgress) {
+      setIsDownloadProgress(false);
+    }
+  }, [downloadProgress])
   return (
     <DefaultScreen
       currentPage="groups"
@@ -1787,14 +1907,15 @@ const ClientSearchResult = ({ classes }) => {
         classes={classes}
         isOpen={dialog === DialogType.EXPORT_FORMAT}
         title={t('campaigns.exportFile')}
-        radioTitle={t('common.SelectFormat')}
-        onConfirm={(e) => { setShowConfirmDialog(false); handleDownloadCsv(e) }}
+        radioTitle={TotalCount > 100000 ? '' : t('common.SelectFormat')}
+        onConfirm={(e, notifyEmail) => handleDownloadCsv(e, notifyEmail)}
         onCancel={() => setDialog(null)}
         cookieName={'exportFormat'}
-        defaultValue="xls"
-        options={ExportFileTypes}
+        defaultValue={TotalCount > 100000 ? "csv" : "xls"}
+        showEmailToNotify={TotalCount > 100000}
+        options={TotalCount > 100000 ? null : ExportFileTypes}
       />
-      <Loader isOpen={showLoader} />
+      <Loader isOpen={showLoader} progress={downloadProgress} message={t("common.downloadInProgress")} isDownloadProgress={isDownloadProgress} />
     </DefaultScreen>
   );
 };

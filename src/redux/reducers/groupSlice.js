@@ -146,8 +146,6 @@ export const createAndGetGroupIdForManualSend = createAsyncThunk(
         }
     });
 
-
-
 export const groupSlice = createSlice({
     name: 'group',
     initialState: {
