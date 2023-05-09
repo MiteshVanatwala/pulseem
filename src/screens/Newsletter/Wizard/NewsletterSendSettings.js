@@ -44,6 +44,7 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import WizardActions from "../../../components/Wizard/WizardActions";
 import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog.js";
 import SendResponseDialog from './Popups/SendResponseDialog';
+import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -613,7 +614,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             handleCreateGroupResponses(response, async () => {
                 if (response?.payload?.Message) {
                     if (uploadAsFile === true) {
-                        r = await dispatch(addRecipients({ ...res, GroupIds: [response.payload.Message] }));
+                        r = await dispatch(addRecipients(res));
                     }
                     else {
                         r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
@@ -659,6 +660,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             case 201: {
                 setActiveTab(0);
                 setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
+                break;
+            }
+            case 202: {
+                setActiveTab(0);
+                setDialogType({ type: 'uploadInProgress' });
                 break;
             }
             case 401: {
@@ -891,7 +897,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     navigate('/react');
                 }
             }),
-            summary: ConfirmationDialog({ classes: classes, count: data })
+            summary: ConfirmationDialog({ classes: classes, count: data }),
+            uploadInProgress: UploadInProgressDialog({ classes: classes, onClose: () => { setDialogType(null); } })
         }
 
         const currentDialog = dialogContent[type] || {}
