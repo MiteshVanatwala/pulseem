@@ -168,16 +168,13 @@ const BulkStatus = ({ classes }) => {
                 <Typography className='bubbleText'>{t('common.new')}</Typography>
                 <TooltipBubble />
               </Box>
-
             </Box>
           </Grid>
 
-
-
           <Grid
             container
-            item sm={9} md={9} lg={10} xl={9}
-            className={clsx(classes.flex, classes.mt2, classes.mb2)}
+            item sm={12} md={12} lg={12} xl={12}
+            className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
             justifyContent='space-between'
           >
             <Box className={clsx(classes.flex1)}>
@@ -203,8 +200,8 @@ const BulkStatus = ({ classes }) => {
 
           <Grid
             container
-            item sm={9} md={9} lg={10} xl={9}
-            className={clsx(classes.flex, classes.mt2, classes.mb2)}
+            item sm={12} md={12} lg={12} xl={12}
+            className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
             justifyContent='space-between'
           >
             <Box className={clsx(classes.flex1)}>
@@ -230,8 +227,8 @@ const BulkStatus = ({ classes }) => {
 
           {Mms.Credits > 0 && <Grid
             container
-            item sm={9} md={9} lg={10} xl={9}
-            className={clsx(classes.flex, classes.mt2, classes.mb2)}
+            item sm={12} md={12} lg={12} xl={12}
+            className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
             justifyContent='space-between'
           >
             <Box className={clsx(classes.flex1)}>
@@ -257,8 +254,8 @@ const BulkStatus = ({ classes }) => {
 
           {Notifications.FeatureExist && <Grid
             container
-            item sm={9} md={9} lg={10} xl={9}
-            className={clsx(classes.flex, classes.mt2, classes.mb2)}
+            item sm={12} md={12} lg={12} xl={12}
+            className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
             justifyContent='space-between'
           >
             <Box className={clsx(classes.flex1)}>

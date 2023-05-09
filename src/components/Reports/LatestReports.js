@@ -305,6 +305,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
                 onChange={(e, value) => handleTabValue(value)}
                 className={clsx(classes.ml15, classes.tab, classes.tablistRoot)}
                 classes={{ indicator: classes.hideIndicator }}
+                visibleScrollbar={false}
               // scrollableX={true}
               // variant="scrollable"
               // orientation="horizontal"

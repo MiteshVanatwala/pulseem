@@ -833,6 +833,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   noBorderOnLastCell: {
     borderInlineEnd: 'none',
   },
+  shortcutIcon: {
+    position: 'absolute',
+    padding: '10px'
+  },
   headNo: {
     backgroundColor: "#1c82b2",
     color: "#fff",
@@ -1813,13 +1817,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       },
     },
     '& .MuiTabs-scroller': {
-      overflow: 'scroll !important'
+      overflow: 'auto !important'
     }
   },
   btnTab: {
     fontSize: 20,
     textTransform: "capitalize",
-    padding: 2,
+    // padding: 2,
     minWidth: 120,
     minHeight: 40,
     color: '#000',
@@ -1925,7 +1929,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .selectWrapper': {
         height: 'auto',
         '& .MuiSelect-root': {
-          padding: '7px 0 11px 0'
+          padding: '7px 0 11px 11px'
         },
         '& .bottomAlignedSelect': {
           '& .MuiSelect-root': {
@@ -1949,7 +1953,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         },
         '& .MuiTextField-root': {
           paddingBottom: 2,
-          maxWidth: 245,
+          // maxWidth: 245,
           '&.fullWidth': {
             maxWidth: '100%'
           },
@@ -3055,7 +3059,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginInline: 3,
       borderBottom: "1px solid #d6d1e6",
       "&:hover": {
-        borderBottom: "1px solid #000"
+        // borderBottom: "1px solid #000"
       },
       '& label': {
         marginInline: 5
@@ -3078,7 +3082,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         display: 'none'
       },
       '& .outerborder': {
-        border: '1px solid #c4c4c4',
+        // border: '1px solid #c4c4c4',
         borderRadius: 5,
         '& .MuiSelect-select': {
           border: 'none !important'
@@ -3087,7 +3091,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& .MuiSelect-select': {
         minWidth: 200,
         maxWidth: '100%',
-        border: '1px solid #c4c4c4',
+        // border: '1px solid #c4c4c4',
         borderRadius: 4,
         paddingLeft: 10,
         paddingRight: 10,

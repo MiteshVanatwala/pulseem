@@ -123,7 +123,9 @@ const SearchLine = ({
           <TextField
             inputProps={{
               style: {
-                textAlign: isRTL ? 'right' : 'left'
+                textAlign: isRTL ? 'right' : 'left',
+                paddingTop: 13,
+                paddingBottom: 13
               }
             }}
             type="tel"

@@ -262,7 +262,7 @@ const DownloadFiles = ({ classes }: any) => {
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
-            <Box className={'topSection'}>
+            <Box className={'topSection onlyTitleBar'}>
                 <Title Text={t('master.fileDownload')} classes={classes} ContainerStyle={{ border: 'none !important' }} />
             </Box>
             {renderTable()}

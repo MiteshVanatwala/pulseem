@@ -72,6 +72,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       "@media screen and (max-width: 765px)": {
         paddingBottom: 17,
       },
+      '&.onlyTitleBar': {
+        paddingBottom: 0,
+        marginBottom: 31,
+    }
     }
   },
   managmentNarrow: {
@@ -552,7 +556,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 0,
     padding: 0,
   },
-
   underlinedSelOptns: {
     paddingBlock: 5,
     marginInline: 12,

@@ -458,7 +458,7 @@ const NewslettersReport = ({ classes }) => {
         <Grid item>
           <Button
             onClick={handleSearch}
-            className={clsx(classes.btn, classes.btnRounded)}
+            className={clsx(classes.btn, classes.btnRounded, classes.searchButton)}
             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}>
             {t('notifications.buttons.search')}
           </Button>

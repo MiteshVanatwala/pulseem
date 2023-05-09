@@ -516,7 +516,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             "@media screen and (max-width: 765px)": {
                 paddingBottom: 17,
             },
-        }
+            '&.onlyTitleBar': {
+                paddingBottom: 0,
+                marginBottom: 31,
+            }
+        },
     },
     adjustC:
     {

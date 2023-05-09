@@ -258,15 +258,16 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
         onMouseLeave={() => setActiveShortcut(null)}
         key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox}>
-
         <Button
           variant='contained'
           color='primary'
-          component="a"
-          href={data.ShortcutUrl}
+          // component="a"
+          // href={data.ShortcutUrl}
           onClick={(e) => {
             e.preventDefault();
-            Redirect({ url: data.ShortcutUrl })
+            if (e.target.nodeName !== 'svg' && e.target.nodeName !== 'SPAN') {
+              Redirect({ url: data.ShortcutUrl })
+            }
           }}
           classes={{
             label: classes.shortcutLabel,
@@ -276,14 +277,18 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
             <IconButton
               id="editIcon"
               style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
-              className={'shortcutEditIcon'} 
-              onClick={(e) => handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index)}>
+              className={clsx('shortcutEditIcon', classes.p5)}
+              onClick={(e) => {
+                e.preventDefault();
+                handleShortcutMenuOpen(windowSize === 'xs' ? e : innerRef, data.ID, true, index);
+              }}
+            >
               {'\uE09C'}
             </IconButton>
             <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5, classes.flex1,)} onClick={() => {
               Redirect({ url: data.ShortcutUrl })
             }}>{t(data.CategoryName)}</Typography>
-            <Link className={'deleteShortcut'} style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
+            <Link className={clsx('deleteShortcut', classes.p5)} style={{ opacity: activeShortcut === `short_${data.ID}` ? 1 : 0 }}
               onClick={deleteShortcut}
             ><CgCloseO /></Link>
           </Box>
@@ -332,7 +337,6 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
         </Box>
         <Paper className={classes.shortcutPaper} ref={shortcutRef}>
-
           <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
           {shortcuts && shortcuts.map((item, index) => {
             return renderShortcutButton(item, index)
