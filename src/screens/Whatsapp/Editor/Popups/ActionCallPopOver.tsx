@@ -217,6 +217,32 @@ const ActionCallPopOver = ({
 		}
 	};
 
+	const isMenuItemDisabled = (
+		item: string,
+		currentRow: callToActionRowProps
+	) => {
+		let isDisabled: boolean = false;
+		callToActionFieldRows.forEach((row) => {
+			if (currentRow.id !== row.id) {
+				row?.fields?.forEach((field) => {
+					if (
+						item === 'phonenumber' &&
+						field.fieldName === 'whatsapp.phoneButtonText'
+					) {
+						isDisabled = true;
+					}
+					if (
+						item === 'website' &&
+						field.fieldName === 'whatsapp.websiteButtonText'
+					) {
+						isDisabled = true;
+					}
+				});
+			}
+		});
+		return isDisabled;
+	};
+
 	return (
 		<>
 			<Dialog
@@ -262,10 +288,14 @@ const ActionCallPopOver = ({
 												onChange={(e) => onTypeOfActionChange(e, row)}
 												value={row.typeOfAction}
 												fullWidth>
-												<MenuItem value='phonenumber'>
+												<MenuItem
+													value='phonenumber'
+													disabled={isMenuItemDisabled('phonenumber', row)}>
 													<>{translator('whatsapp.phoneNumber')}</>
 												</MenuItem>
-												<MenuItem value='website'>
+												<MenuItem
+													value='website'
+													disabled={isMenuItemDisabled('website', row)}>
 													<>{translator('whatsapp.website')}</>
 												</MenuItem>
 											</TextField>
@@ -274,7 +304,12 @@ const ActionCallPopOver = ({
 										{row?.fields.map(
 											(field: callToActionFieldProps, fIndex: number) =>
 												field.type !== 'select' ? (
-													<Grid item xs={12} sm={6} md={3} key={'TOCF' + fIndex}>
+													<Grid
+														item
+														xs={12}
+														sm={6}
+														md={3}
+														key={'TOCF' + fIndex}>
 														<Typography>
 															<>{translator(field?.fieldName)}</>
 														</Typography>
@@ -311,7 +346,12 @@ const ActionCallPopOver = ({
 														/>
 													</Grid>
 												) : (
-													<Grid item xs={12} sm={6} md={2} key={'TOCF' + fIndex}>
+													<Grid
+														item
+														xs={12}
+														sm={6}
+														md={2}
+														key={'TOCF' + fIndex}>
 														<Typography>
 															<>{translator(field?.fieldName)}</>
 														</Typography>

@@ -733,6 +733,16 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 				translator('whatsapp.alertModal.templateTextRequired')
 			);
 			isValidated = false;
+		} else {
+			if (
+				!templateData?.templateText?.replace(/\s/g, '').length ||
+				!templateData?.templateText?.replace(/\n/g, '').length
+			) {
+				validationErrors.push(
+					translator('whatsapp.alertModal.templateTextRequired')
+				);
+				isValidated = false;
+			}
 		}
 		if (templateName?.length <= 0) {
 			validationErrors.push(
@@ -910,7 +920,25 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const addMore = () => {
-		setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
+		let isPhoneNumberField: boolean = false;
+		let isWebsiteField: boolean = false;
+		callToActionFieldRows.forEach((row) => {
+			if (row.typeOfAction === 'phonenumber') {
+				isPhoneNumberField = true;
+			}
+			if (row.typeOfAction === 'website') {
+				isWebsiteField = true;
+			}
+		});
+
+		if (!isPhoneNumberField) {
+			setCallToActionFieldRows([...callToActionFieldRows, initialFieldRow]);
+		} else if (!isWebsiteField) {
+			setCallToActionFieldRows([
+				...callToActionFieldRows,
+				{ ...initialFieldRow, typeOfAction: 'website', fields: websiteField },
+			]);
+		}
 	};
 
 	const updateTemplateText = (text: string) => {
@@ -1114,11 +1142,11 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 
 								<Grid item xs={12} sm={12} md={12} lg={7}>
 									<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
-										<Grid item xs={12} sm={12} md={12} lg={6}>
+										{/* <Grid item xs={12} sm={12} md={12} lg={6}>
 											<WhatsappTips classes={classes} />
-										</Grid>
-										<Grid item xs={12} sm={12} md={12} lg={6}>
-											<Box>
+										</Grid> */}
+										<Grid item xs={12} sm={12} md={12} lg={12}>
+											<Box className={classes.whatsappMobilePreviewWrapper}>
 												<WhatsappMobilePreview
 													classes={classes}
 													templateData={templateData}

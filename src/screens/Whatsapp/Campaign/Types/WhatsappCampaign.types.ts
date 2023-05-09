@@ -405,6 +405,7 @@ export type reportDataProps = {
 	FromNumber: string;
 	TemplateID: string;
 	Revenue: number;
+	Cost: number;
 };
 
 export type exportDataProps = {
@@ -417,12 +418,13 @@ export type exportDataProps = {
 	Read: number;
 	ClicksCount: number;
 	UniqueClicksCount: number;
-	FeedBack: number;
+	FeedBack?: number;
 	Removed: number;
 	Failed: number;
 	CreateDate: string;
 	FromNumber: string;
 	TemplateID?: string;
+	Cost: number;
 	Revenue?: number;
 	UpdateDate: string;
 };

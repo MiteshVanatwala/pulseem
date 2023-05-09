@@ -122,7 +122,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textTransform: 'none',
 		marginInlineStart: 1,
 		marginInlineEnd: 1,
-		padding: '3px 6px',
+		padding: '5px 14px',
 		fontSize: '14px',
 		'&$disabled': {
 			cursor: 'not-allowed !important',
@@ -269,6 +269,10 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'@media screen and (max-width: 768px)': {
 			alignItems: 'flex-start',
 		},
+	},
+	whatsappMobilePreviewWrapper: {
+		maxWidth: '318px',
+		margin: '0 auto',
 	},
 	whatsappPhoneImg: {
 		width: '100%',
@@ -1563,16 +1567,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					},
 					'&:nth-child(5)': {
 						'& p': {
-							color: '#3498DB',
-						},
-					},
-					'&:nth-child(6)': {
-						'& p': {
 							color: '#E74C3C',
 							'&.value-cell': {
 								textDecoration: 'underline',
 								textDecorationColor: '#E74C3C',
 							},
+						},
+					},
+					'&:nth-child(6)': {
+						'& p': {
+							// color: '#3498DB',
 						},
 					},
 					'&:nth-child(7)': {

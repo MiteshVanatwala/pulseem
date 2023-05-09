@@ -96,6 +96,7 @@ export enum reportCellNames {
 	REMOVED = 'Removed',
 	FAILED = 'Failed',
 	REVENUE = 'Revenue',
+	COST = 'Cost',
 }
 
 export enum APIStatuses {
