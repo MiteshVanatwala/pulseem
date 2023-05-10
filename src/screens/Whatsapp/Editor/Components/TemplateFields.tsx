@@ -12,7 +12,6 @@ import {
 	TextField,
 	Typography,
 	Grid,
-	Button,
 	Select,
 	MenuItem,
 	Box,
@@ -32,13 +31,10 @@ const TemplateFields = ({
 	savedTemplate,
 	onTemplateNameChange,
 	onSavedTemplateChange,
-	fileData,
-	setFileData,
 	savedTemplateList,
 	onCategoryChange,
 	category,
 	showValidation,
-	buttonType,
 }: TemplateFieldsProps & ClassesType) => {
 	const { windowSize, isRTL } = useSelector(
 		(state: { core: coreProps }) => state.core
@@ -55,35 +51,6 @@ const TemplateFields = ({
 		setAutoCompleteOptions(autoCompleteList);
 	}, [savedTemplateList]);
 
-	const units = ['bytes', 'KB', 'MB'];
-
-	function niceBytes(x: string) {
-		let l = 0,
-			n = parseInt(x, 10) || 0;
-
-		while (n >= 1024 && ++l) {
-			n = n / 1024;
-		}
-		return n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l];
-	}
-
-	const [fileSize, setFileSize] = useState<string>('');
-	const onFileUploadChange = (e: BaseSyntheticEvent) => {
-		if (e.target.files?.length > 0) {
-			if (e.target.files[0].size < 16777216) {
-				setFileData(e.target.files[0]);
-				setFileSize(niceBytes(e.target.files[0].size));
-			} else {
-				setIsFileSizeAlert(true);
-			}
-		}
-	};
-
-	const onFileDeselect = (e: BaseSyntheticEvent) => {
-		e.preventDefault();
-		setFileData(undefined);
-	};
-
 	const onTemplateChange = (value: string | null) => {
 		if (value && value !== '') {
 			const templateId = getTemplateIdByName(savedTemplateList, value);
@@ -92,14 +59,6 @@ const TemplateFields = ({
 			}
 		} else {
 			onSavedTemplateChange('');
-		}
-	};
-
-	const checkFileUploadAvailability = (e: BaseSyntheticEvent) => {
-		if (buttonType === 'quickReply') {
-			e.preventDefault();
-			e.stopPropagation();
-			setIsFileUploadAlert(true);
 		}
 	};
 
@@ -203,7 +162,7 @@ const TemplateFields = ({
 						</Select>
 					</Grid>
 
-					<Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
+					{/* <Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
 						<Typography className={classes.buttonHead}>
 							<>{translator('whatsapp.uploadFileTitle')}</>
 						</Typography>
@@ -260,7 +219,7 @@ const TemplateFields = ({
 								<>{translator('whatsapp.fileDescription')}</>
 							)}
 						</Typography>
-					</Grid>
+					</Grid> */}
 				</Grid>
 			</Grid>
 

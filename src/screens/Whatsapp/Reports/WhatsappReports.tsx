@@ -284,7 +284,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					}
 					className={clsx(
 						classes.middleText,
-						`${cellValue >= 1 && 'value-cell'}`
+						`${cellValue >= 1 && isClickable && 'value-cell'}`
 					)}>
 					{amountCell.includes(cellName)
 						? `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
@@ -301,7 +301,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						}
 						className={clsx(
 							classes.middleText,
-							`${cellValue >= 1 && 'value-cell'}`
+							`${cellValue >= 1 && isClickable && 'value-cell'}`
 						)}>
 						{title}
 					</Typography>
@@ -780,7 +780,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 																	classes.tableCellNoBorder,
 																	classes.revenueTableCell,
 																	`${
-																		report && report.Revenue > 0
+																		report && report?.Revenue > 0
 																			? classes.revenueTableCellPointer
 																			: ''
 																	}`

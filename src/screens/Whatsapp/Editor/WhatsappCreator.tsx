@@ -71,6 +71,7 @@ import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import NoSetup from '../NoSetup/NoSetup';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import moment from 'moment';
+import FileUpload from './Components/FileUpload';
 
 const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	const { templateID } = useParams();
@@ -1100,23 +1101,20 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 								classes={classes}
 								templateName={templateName}
 								savedTemplate={savedTemplate}
-								fileData={fileData}
 								onTemplateNameChange={(e) => onTemplateNameChange(e)}
 								onSavedTemplateChange={(templateId) =>
 									onSavedTemplateChange(templateId)
 								}
-								setFileData={(fileData) => uploadFile(fileData)}
 								savedTemplateList={savedTemplateList}
 								category={category}
 								onCategoryChange={setCategory}
 								showValidation={showValidation}
-								buttonType={buttonType}
 							/>
 							<Grid
 								container
 								spacing={windowSize === 'xs' ? 0 : 2}
 								style={{ paddingTop: '14px' }}>
-								<Grid item xs={12} sm={12} md={12} lg={5}>
+								<Grid item className={classes.whatsappTextEditorWrapper}>
 									<WhatsappTemplateEditor
 										classes={classes}
 										onButtonClick={(button: actionButtonProps) =>
@@ -1138,9 +1136,18 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										templateTextLimit={templateTextLimit}
 										fileData={fileData}
 									/>
+
+									<Grid className={classes.whatsappFileUploadWrapper} item>
+										<FileUpload
+											classes={classes}
+											buttonType={buttonType}
+											fileData={fileData}
+											setFileData={(fileData) => uploadFile(fileData)}
+										/>
+									</Grid>
 								</Grid>
 
-								<Grid item xs={12} sm={12} md={12} lg={7}>
+								<Grid item className={classes.whatsappPreviewWrapper}>
 									<Grid container spacing={windowSize === 'xs' ? 0 : 2}>
 										{/* <Grid item xs={12} sm={12} md={12} lg={6}>
 											<WhatsappTips classes={classes} />
@@ -1157,6 +1164,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 										</Grid>
 									</Grid>
 								</Grid>
+
 								<Buttons
 									classes={classes}
 									onFormButtonClick={(buttonName) =>

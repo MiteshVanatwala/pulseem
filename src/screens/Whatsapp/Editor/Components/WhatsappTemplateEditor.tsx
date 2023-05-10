@@ -147,6 +147,7 @@ const WhatsappTemplateEditor = ({
 								? 'rtl'
 								: 'ltr',
 						height: textAreaHeight,
+						minHeight: '81px',
 					}}
 					onChange={onEditorChange}
 					value={templateText}></textarea>
