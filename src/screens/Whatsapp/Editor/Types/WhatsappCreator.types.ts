@@ -34,15 +34,19 @@ export type TemplateFieldsProps = {
 	savedTemplate: string;
 	onTemplateNameChange: (e: BaseSyntheticEvent) => void;
 	onSavedTemplateChange: (templateId: string) => void;
+	savedTemplateList: savedTemplateListProps[];
+	onCategoryChange: (category: string) => void;
+	category: string;
+	showValidation: boolean;
+};
+
+export type FileUploadProps = {
+	classes:  ClassesType['classes'];
 	fileData: {
 		fileLink: string;
 		fileType: string;
 	};
 	setFileData: (fileData: File | undefined) => void;
-	savedTemplateList: savedTemplateListProps[];
-	onCategoryChange: (category: string) => void;
-	category: string;
-	showValidation: boolean;
 	buttonType: string;
 };
 
@@ -508,4 +512,12 @@ export type CommonFeaturesAPIPayload = {
 
 export type CommonFeaturesAPI = {
 	payload: CommonFeaturesAPIPayload;
+};
+
+export type ApiErrorKey = {
+	[key: string]: string;
+};
+
+export type ApiErrorResponse = {
+	[key: string]: ApiErrorKey;
 };

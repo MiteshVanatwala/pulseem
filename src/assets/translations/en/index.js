@@ -26,6 +26,7 @@ import whatsappCampaign from './WhatsappCampaign.json';
 import whatsappManagement from './WhatsappManagement.json';
 import whatsappReport from './WhatsappReport.json';
 import whatsappChat from './WhatsappChat.json';
+import WhatsappApiResponse from './WhatsappApiResponse.json'
 
 export const en = {
 	automations,
@@ -56,4 +57,5 @@ export const en = {
 	whatsappManagement,
 	whatsappReport,
 	whatsappChat,
+	WhatsappApiResponse
 };

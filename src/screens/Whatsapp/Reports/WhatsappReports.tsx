@@ -270,6 +270,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 		row: reportDataProps,
 		isClickable: boolean = false
 	) => {
+		const amountCell: string[] = [
+			reportCellNames.REVENUE,
+			reportCellNames.COST,
+		];
 		return (
 			<>
 				<Typography
@@ -280,15 +284,15 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 					}
 					className={clsx(
 						classes.middleText,
-						`${cellValue >= 1 && 'value-cell'}`
+						`${cellValue >= 1 && isClickable && 'value-cell'}`
 					)}>
-					{cellName !== reportCellNames.REVENUE
-						? cellValue || '0'
-						: `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
+					{amountCell.includes(cellName)
+						? `${cellValue ? cellValue.toLocaleString() : '0'} ${translator(
 								'common.NIS'
-						  )}`}
+						  )}`
+						: cellValue || '0'}
 				</Typography>
-				{cellName !== reportCellNames.REVENUE && (
+				{!amountCell.includes(cellName) && (
 					<Typography
 						onClick={() =>
 							cellValue >= 1 && isClickable
@@ -297,7 +301,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						}
 						className={clsx(
 							classes.middleText,
-							`${cellValue >= 1 && 'value-cell'}`
+							`${cellValue >= 1 && isClickable && 'value-cell'}`
 						)}>
 						{title}
 					</Typography>
@@ -316,10 +320,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 			6: 'Total Read',
 			7: 'Clicks Count',
 			8: 'Unique Clicks Count',
-			9: 'Total Feedback',
-			10: 'Removed',
-			11: 'Failure',
-			12: 'Status',
+			9: 'Removed',
+			10: 'Failure',
+			11: 'Status',
+			12: 'Cost',
 			13: 'Revenue',
 			14: 'Created Date',
 			15: 'Update Date',
@@ -345,10 +349,10 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 						Read: row?.Read,
 						ClicksCount: row?.ClicksCount,
 						UniqueClicksCount: row?.UniqueClicksCount,
-						FeedBack: row?.FeedBack,
 						Removed: row?.Removed,
 						Failed: row?.Failed,
 						Status: campaignStatus[row.Status],
+						Cost: row?.Cost,
 						Revenue: row?.Revenue,
 						CreateDate: row?.CreateDate
 							? moment(row?.CreateDate).format('DD/MM/YYYY')
@@ -587,15 +591,15 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 												</TableCell>
 												<TableCell
 													classes={cellStyle}
-													className={classes.flex1}
-													align='center'>
-													<>{translator('whatsappReport.feedback')}</>
-												</TableCell>
-												<TableCell
-													classes={cellStyle}
 													className={classes.flex2}
 													align='center'>
 													<>{}</>
+												</TableCell>
+												<TableCell
+													classes={cellStyle}
+													className={classes.flex1}
+													align='center'>
+													<>{translator('whatsappReport.cost')}</>
 												</TableCell>
 												{hasRevenue && (
 													<TableCell
@@ -719,20 +723,6 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 															align='center'
 															className={clsx(
 																classes.tableCellBody,
-																classes.flex1
-															)}>
-															{getTableTypographyCells(
-																translator('common.Total'),
-																report.FeedBack,
-																reportCellNames.FEEDBACK,
-																report
-															)}
-														</TableCell>
-														<TableCell
-															classes={cellStyle}
-															align='center'
-															className={clsx(
-																classes.tableCellBody,
 																classes.flex2,
 																`${!hasRevenue && classes.tableCellNoBorder}`
 															)}>
@@ -765,6 +755,21 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 																</Grid>
 															</Grid>
 														</TableCell>
+														<TableCell
+															classes={cellStyle}
+															align='center'
+															className={clsx(
+																classes.tableCellBody,
+																classes.flex1,
+																classes.revenueTableCell
+															)}>
+															{getTableTypographyCells(
+																translator('whatsappReport.cost'),
+																report?.Cost,
+																reportCellNames.COST,
+																report
+															)}
+														</TableCell>
 														{hasRevenue && (
 															<TableCell
 																classes={cellStyle}
@@ -775,7 +780,7 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 																	classes.tableCellNoBorder,
 																	classes.revenueTableCell,
 																	`${
-																		report && report.Revenue > 0
+																		report && report?.Revenue > 0
 																			? classes.revenueTableCellPointer
 																			: ''
 																	}`

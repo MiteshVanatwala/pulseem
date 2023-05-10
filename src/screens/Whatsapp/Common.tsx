@@ -1,4 +1,5 @@
 import {
+	ApiErrorResponse,
 	buttonsDataProps,
 	callToActionProps,
 	quickReplyButtonProps,
@@ -12,6 +13,7 @@ import {
 	templatePreviewDataProps,
 } from './Editor/Types/WhatsappCreator.types';
 import uniqid from 'uniqid';
+import WhatsappApiResponse from '../../assets/translations/en/WhatsappApiResponse.json';
 import {
 	landingPageDataProps,
 	SubAccountSettings,
@@ -411,5 +413,17 @@ export const getTextDirection = (text: string, isRTL: boolean) => {
 
 		default:
 			return 'ltr';
+	}
+};
+
+export const getApiErrorResponseMessage = (
+	messageKey: string,
+	responseCode: number
+): string => {
+	const apiErrorResponse: ApiErrorResponse = WhatsappApiResponse;
+	if (apiErrorResponse[messageKey][responseCode]) {
+		return `WhatsappApiResponse.${messageKey}.${responseCode}`;
+	} else {
+		return 'WhatsappApiResponse.common.error';
 	}
 };

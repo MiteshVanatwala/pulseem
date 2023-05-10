@@ -457,17 +457,15 @@ const SummaryModal = ({
 					container
 					className={classes.alertModalAction}
 					style={{ marginTop: '16px' }}>
-					<Tooltip title='Add' placement='top' arrow>
-						<Button
-							className='ok-button'
-							variant='contained'
-							color='primary'
-							autoFocus
-							disabled={campaignSummary && campaignSummary?.FinalCount <= 0}
-							onClick={onConfirmOrYes}>
-							<>{translator('whatsapp.alertModal.okButtonText')}</>
-						</Button>
-					</Tooltip>
+					<Button
+						className='ok-button'
+						variant='contained'
+						color='primary'
+						autoFocus
+						disabled={campaignSummary && campaignSummary?.FinalCount <= 0}
+						onClick={onConfirmOrYes}>
+						<>{translator('whatsapp.alertModal.okButtonText')}</>
+					</Button>
 					<Button
 						className='cancel-button'
 						color='primary'

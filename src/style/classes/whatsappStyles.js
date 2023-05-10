@@ -122,7 +122,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textTransform: 'none',
 		marginInlineStart: 1,
 		marginInlineEnd: 1,
-		padding: '3px 6px',
+		padding: '5px 14px',
 		fontSize: '14px',
 		'&$disabled': {
 			cursor: 'not-allowed !important',
@@ -261,13 +261,24 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 
 	whatsappMobileSection: {
 		width: '100%',
-		height: '340px',
+		height: '425px',
 		overflow: 'hidden',
 		display: 'flex',
 		alignItems: 'flex-start',
 		justifyContent: 'center',
 		'@media screen and (max-width: 768px)': {
 			alignItems: 'flex-start',
+		},
+	},
+	whatsappMobilePreviewWrapper: {
+		maxWidth: '416px',
+		margin: '0 auto',
+		marginTop: '-85px',
+		'@media screen and (max-width: 1279px)': {
+			marginTop: '-63px',
+		},
+		'@media screen and (max-width: 959px)': {
+			marginTop: '0px',
 		},
 	},
 	whatsappPhoneImg: {
@@ -512,12 +523,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		'&.nexus5': {
 			padding: '50px 15px 50px 15px',
 			width: 'calc(100% - 31px)',
-			height: '340px',
+			height: '100%',
 			background: '#1e1e1e',
 			borderRadius: '20px',
 			'@media (max-width: 768px)': {
 				maxWidth: 'none',
-				height: '344px',
 				width: '100%',
 			},
 			'&:before': {
@@ -730,6 +740,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 				},
 			},
 		},
+	},
+	fileUpload: {
+		marginTop: '12px',
 	},
 	customFileUpload: {
 		border: '1px solid #ccc',
@@ -1034,8 +1047,11 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		padding: '12px 0px',
 	},
 	alertModalContentMobile: {
-		width: '300px',
+		width: '358px',
 		margin: '0 auto',
+		'@media screen and (max-width: 500px)': {
+			width: '300px',
+		},
 	},
 	alertModalAction: {
 		justifyContent: 'center',
@@ -1563,16 +1579,16 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 					},
 					'&:nth-child(5)': {
 						'& p': {
-							color: '#3498DB',
-						},
-					},
-					'&:nth-child(6)': {
-						'& p': {
 							color: '#E74C3C',
 							'&.value-cell': {
 								textDecoration: 'underline',
 								textDecorationColor: '#E74C3C',
 							},
+						},
+					},
+					'&:nth-child(6)': {
+						'& p': {
+							// color: '#3498DB',
 						},
 					},
 					'&:nth-child(7)': {
@@ -2726,7 +2742,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		textDecoration: 'underline',
 	},
 	WhatsappCampainMobilePreviewBox: {
-		maxWidth: '326px',
+		maxWidth: '370px',
 		margin: '0 auto',
 	},
 	testSendWrapper: {
@@ -3063,6 +3079,30 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 	greenTextColor: {
 		'& p': {
 			color: '#27AE60 !important',
+		},
+	},
+	whatsappTextEditorWrapper: {
+		width: '62.49%',
+		'@media screen and (max-width: 1279px)': {
+			width: '50%',
+		},
+		'@media screen and (max-width: 959px)': {
+			width: '100%',
+		},
+	},
+	whatsappPreviewWrapper: {
+		width: '37.51%',
+		'@media screen and (max-width: 1279px)': {
+			width: '50%',
+		},
+		'@media screen and (max-width: 959px)': {
+			width: '100%',
+		},
+	},
+	whatsappFileUploadWrapper: {
+		width: '34%',
+		'@media screen and (max-width: 1279px)': {
+			width: '100%',
 		},
 	},
 });
