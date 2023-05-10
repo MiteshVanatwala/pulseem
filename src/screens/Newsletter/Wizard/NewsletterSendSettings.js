@@ -736,7 +736,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         let segDialog = SegmentationDialog({
             classes: classes,
             campaign: filterParameters,
-            handleSetValues: (values) => setFilterParameters({ ...values }),
+            handleSetValues: (values) => {
+                setFilterParameters({ ...values })
+            },
             onClose: () => setDialogType(null),
             onCancel: () => setDialogType(null),
             onConfirm: () => setDialogType(null)

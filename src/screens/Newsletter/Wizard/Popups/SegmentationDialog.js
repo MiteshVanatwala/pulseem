@@ -35,7 +35,7 @@ const SegmentationDialog = ({
                         <DateField
                             classes={classes}
                             value={campaign.FromDate}
-                            onChange={(value) => handleSetValues({ ...campaign, FromDate: value })}
+                            onChange={(value) => handleSetValues({ ...campaign, FromDate: value.format("YYYY-MM-DD HH:mm:ss") })}
                             placeholder={t("common.FromDate")}
                             timePickerOpen={true}
                         />
@@ -44,7 +44,7 @@ const SegmentationDialog = ({
                         <DateField
                             classes={classes}
                             value={campaign.ToDate}
-                            onChange={(value) => handleSetValues({ ...campaign, ToDate: value })}
+                            onChange={(value) => handleSetValues({ ...campaign, ToDate: value.format("YYYY-MM-DD HH:mm:ss") })}
                             placeholder={t("common.ToDate")}
                             timePickerOpen={true}
                         />
