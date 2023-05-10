@@ -463,10 +463,12 @@ const SmsSend = ({ classes, ...props }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    await dispatch(combinedGroup(payload));
+    const combineResponse = await dispatch(combinedGroup(payload));
+    const newGroupCreated = combineResponse?.payload;
     await dispatch(getGroupsBySubAccountId());
     settoggleChecked(false);
     setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
+    setSelected([newGroupCreated]);
   };
   const onHandleDelete = () => {
     setDialogType({ type: "delete" });
