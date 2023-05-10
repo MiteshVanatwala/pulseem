@@ -1416,7 +1416,7 @@ const SmsCreator = ({ classes }) => {
           style={{ margin: '8px' }}
           onClick={() => { setDialogType({ type: 'deleteSms' }) }}
         >
-          <BsTrash style={{ fontSize: "19", marginInlineStart: 0, color: '#000', padding: '3px' }} />
+          <BsTrash style={{ fontSize: "18", marginInlineStart: 0, color: '#000', padding: '3px' }} />
         </Button>
         <Button
           className={clsx(
