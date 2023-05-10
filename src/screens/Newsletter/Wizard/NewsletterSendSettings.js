@@ -380,12 +380,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleConfirmC = async () => {
         setDialogType(null);
         setLoader(true);
-        let groupId = defaultGroupId;
-        if (defaultGroupId <= 0) {
-            const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
-            groupId = responseDefaultGroup.payload
-        }
 
+        const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
+        let groupId = responseDefaultGroup?.payload
+        
         var req = [];
         quickSendClients.split('\n').map((q) => req.push({ Email: q.replace(',', '') }));
         const finalPayload = {
@@ -850,12 +848,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const { type, data } = dialogType || {}
 
         const dialogContent = {
-            quickMnualUpload: QuickManualUploadDialog({
-                classes: classes,
-                onClose: () => setDialogType(null),
-                onCancel: () => setDialogType(null),
-                onConfirm: () => handleConfirmC()
-            }),
             filterRecipients: MergedSegmentationDialog(),
             pulses: PulseDialog({
                 classes: classes,
@@ -1371,6 +1363,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     Step: 1,
                     Value: summaryEmail || newsletterInfo.FromEmail
                 }}
+            />}
+
+            {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog
+                classes={classes}
+                onClose={() => setDialogType(null)}
+                onCancel={() => setDialogType(null)}
+                onConfirm={() => handleConfirmC()}
             />}
             <Loader isOpen={showLoader} />
         </DefaultScreen>

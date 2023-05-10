@@ -1,10 +1,11 @@
 import { Box, Typography } from "@material-ui/core"
 import { useTranslation } from "react-i18next"
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog"
 
 const QuickManualUploadDialog = ({ classes: classes, onCancel = () => null, onClose = () => null, onConfirm = () => null }) => {
 
     const { t } = useTranslation()
-    return {
+    const currentDialog = {
         title: t('common.Notice'),
         showDivider: true,
         icon: (
@@ -23,5 +24,14 @@ const QuickManualUploadDialog = ({ classes: classes, onCancel = () => null, onCl
         onCancel: onCancel || onClose,
         onConfirm: onConfirm
     }
+
+    return <>
+        <BaseDialog
+            classes={classes}
+            open={true}
+            {...currentDialog}>
+            {currentDialog.content}
+        </BaseDialog>
+    </>
 }
 export default QuickManualUploadDialog
