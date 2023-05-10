@@ -524,10 +524,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupName: groupName,
             GroupIds: temp,
         };
-        await dispatch(combinedGroup(payload));
+        const combineResponse = await dispatch(combinedGroup(payload));
+        const newGroupCreated = combineResponse?.payload;
         setNewGroupDetails({ toggleChecked: false, groupNameExist: false, groupValue: '' });
         setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
         setLoader(false);
+        setSelectedGroups([newGroupCreated]);
     };
 
     const callbackSelectedGroups = (group) => {
