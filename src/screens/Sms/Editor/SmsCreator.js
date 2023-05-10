@@ -892,17 +892,15 @@ const SmsCreator = ({ classes }) => {
                     placement="top"
                     arrow
                   >
-
                     <FormControl variant='standard' className={clsx(classes.selectInputFormControl, classes.w100, classes.noBorder)} >
                       <Select
                         inputProps={{ 'aria-label': 'Without label' }}
                         MenuProps={{
                           style: {
                             paddingTop: 9,
-                            paddingBottom: 9
+                            paddingBottom: 9,
                           }
                         }}
-                        className={clsx(classes.selectVal, classes.sidebar)}
                         value={selectValue}
                         onChange={handleSelectChange}
                         endAdornment={
@@ -1418,7 +1416,7 @@ const SmsCreator = ({ classes }) => {
           style={{ margin: '8px' }}
           onClick={() => { setDialogType({ type: 'deleteSms' }) }}
         >
-          <BsTrash style={{ fontSize: "25", marginInlineStart: 0 }} />
+          <BsTrash style={{ fontSize: "18", marginInlineStart: 0, color: '#000', padding: '3px' }} />
         </Button>
         <Button
           className={clsx(
@@ -1974,7 +1972,7 @@ const SmsCreator = ({ classes }) => {
           <Grid container
             spacing={windowSize === "xs" ? 0 : 3}
             className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
-            style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
+          >
             <Grid item xs={12} sm={12} md={12} lg={8}>
               {renderFields()}
               {renderMsg()}

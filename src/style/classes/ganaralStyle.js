@@ -1080,6 +1080,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     "&:hover": {
       backgroundColor: "#ff334",
+      border: 'solid 1px #ff3343',
+      color: '#ff3343'
     },
     "&:first-child": {
       marginInlineStart: 5,
@@ -3089,7 +3091,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         },
       },
       '& .MuiSelect-select': {
-        minWidth: 200,
+        minWidth: 100,
         maxWidth: '100%',
         // border: '1px solid #c4c4c4',
         borderRadius: 4,
