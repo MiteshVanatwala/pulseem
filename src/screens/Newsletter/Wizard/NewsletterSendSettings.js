@@ -159,6 +159,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
     const [summaryEmail, setSummaryEmail] = useState(newsletterInfo.FromEmail);
+    const [totalClientsToSend, setTotalClientsToSend] = useState(0);
+
+    useEffect(() => {
+        const total = selectedGroups?.reduce(function (a, b) {
+            return a + b['Recipients'];
+        }, 0);
+
+        setTotalClientsToSend(total);
+    }, [selectedGroups]);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -708,9 +717,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     color="primary"
                     style={{
                         margin: '8px',
-                        pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
+                        pointerEvents: selectedGroups.length > 0 && totalClientsToSend > 0 ? "auto" : "none",
                         backgroundColor:
-                            selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
+                            selectedGroups.length > 0 && totalClientsToSend > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
                         onSaveSettings(true).then(async () => {
@@ -1134,7 +1143,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             }}
                                             direction="row"
                                         >
-                                            <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
+                                            <span>{t("mainReport.totalReci")}: {selectedGroups.reduce(function (a, b) {
                                                 return a + b['Recipients'];
                                             }, 0).toLocaleString()}</span>
                                             <Tooltip
@@ -1171,7 +1180,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1}
+                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                 onClick={() => {
                                                     handlePulseDialog();
                                                 }}
@@ -1193,7 +1202,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!segmantIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                 onClick={() => {
                                                     setFilterParameters(campaignValues);
                                                     setDoNotSendFilterValues(filterValues);
@@ -1208,7 +1217,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                 onClick={() => {
                                                     handleSmsMarketing();
                                                 }}
