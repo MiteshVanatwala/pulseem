@@ -630,8 +630,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   font13: {
     fontSize: 13,
   },
+  font14: {
+    fontSize: 14,
+  },
   font15: {
     fontSize: 15,
+  },
+  font16: {
+    fontSize: 16,
   },
   font18: {
     fontSize: 18,
@@ -2748,5 +2754,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       pointerEvents: "none !important",
       cursor: "not-allowed !important",
     }
+  },
+  notifyIcon: {
+    marginInline: 10,
+    fontSize: 18,
+    color: '#0371ad'
   }
 });
