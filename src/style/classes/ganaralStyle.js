@@ -2821,10 +2821,5 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       pointerEvents: "none !important",
       cursor: "not-allowed !important",
     }
-  },
-  notifyIcon: {
-    marginInline: 10,
-    fontSize: 18,
-    color: '#0371ad'
   }
 });
