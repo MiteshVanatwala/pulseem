@@ -260,7 +260,6 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
         </Typography>
       </> : null}
       <Box className={classes.appBarAfterTollbarContainer}>
-        <NotificationBell classes={classes} />
         <AppBarItem
           classes={classes}
           item={settings}
@@ -271,6 +270,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
             Redirect({ url: settings.href })
           }}
         />
+        <NotificationBell classes={classes} />
         <LanguageSelector classes={classes} />
         {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
           classes={classes}

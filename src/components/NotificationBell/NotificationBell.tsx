@@ -1,11 +1,14 @@
 import clsx from 'clsx';
-import { Box, MenuItem, MenuList, Popper, Badge, Grid } from '@material-ui/core'
+import { Box, MenuItem, MenuList, Popper, Badge, Grid, Typography, Divider } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux';
 import NotificationIcon from '../../assets/images/notification.svg';
 import { useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { markNotificationsAsRead } from '../../redux/reducers/notificationUpdateSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { AiOutlineCloudDownload } from 'react-icons/ai';
+import { MdOutlineRemoveCircle } from 'react-icons/md';
+import { FaCloudUploadAlt } from 'react-icons/fa';
 
 enum NotifyCenterType {
   File = 0,
@@ -16,7 +19,7 @@ enum NotifyCenterType {
 enum NotifyCenterStatus {
   Unread = 0,
   Read = 1,
-  Removed = 2  
+  Removed = 2
 }
 
 const NotificationBell = ({ classes }: any) => {
@@ -36,11 +39,14 @@ const NotificationBell = ({ classes }: any) => {
       switch (option.NotifyCenterTypeID) {
         case NotifyCenterType.File: {
           return (
-            <Grid container justifyContent='center'>
-              <Grid item sm={6}>
-                {RenderHtml(t('notifications.fileReadyForDownload').replace('##FileName##', `${option.TargetName}`))}
-              </Grid>
-              <Grid item sm={6}>
+            <Box className={clsx(classes.justifyCenterOfCenter, classes.spaceBetween)}>
+              <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                <AiOutlineCloudDownload className={classes.notifyIcon} />
+                <Typography className={classes.font14}>
+                  {RenderHtml(t('notifications.fileReadyForDownload').replace('##FileName##', `${option.TargetName}`))}
+                </Typography>
+              </Box>
+              <Box style={{ paddingInlineStart: 15 }}>
                 <a
                   className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
                   href={`/Pulseem/DownloadFile.aspx?fileFormat=XLS&fileId=${option.SourceID}`}
@@ -55,17 +61,23 @@ const NotificationBell = ({ classes }: any) => {
                 >
                   {t("master.download")} CSV
                 </a>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           )
         }
         case NotifyCenterType.Unsubscribe: {
-          return <>
-            {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
-          </>
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+            <MdOutlineRemoveCircle className={classes.notifyIcon} />
+            <Typography className={classes.font14}>
+              {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
+            </Typography>
+          </Box>
         }
         case NotifyCenterType.UploadRecipient: {
-          return <>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</>
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+            <FaCloudUploadAlt className={classes.notifyIcon} />
+            <Typography className={classes.font14}>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</Typography>
+          </Box>
         }
         default: {
           break;
@@ -112,10 +124,11 @@ const NotificationBell = ({ classes }: any) => {
         />
       </Badge>
       <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
-        <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10)}>
-          <div className={clsx(classes.bold)}>
+        <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10, classes.sidebar)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
+          <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
             {t('notifications.notifications')}
           </div>
+          <Divider style={{ marginTop: 10 }} />
           {notificationItem()}
         </div>
       </Popper>
