@@ -333,7 +333,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     return (
       <Box className={classes.shortcutBox}>
         <Box className={clsx(classes.dashBoxtitleSection, classes.shortcutTitle, classes.flex)}>
-          <FlagIcon className={classes.mlr10} />
+          <FlagIcon className={clsx(classes.mleft5, classes.mr10)} />
           <Typography className={'title'}>{t('dashboard.myShortcuts')}</Typography>
         </Box>
         <Paper className={classes.shortcutPaper} ref={shortcutRef}>

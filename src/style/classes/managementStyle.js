@@ -1411,14 +1411,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: 50,
     minHeight: 50,
     color: "#0371AD",
-    fontSize: 20,
-    padding: '10px 0 0 20px',
+    fontSize: 18,
+    padding: '10px',
+    position: 'relative',
     [theme.breakpoints.down('xs')]: {
       padding: 0,
       height: 'auto',
     },
     '& .title': {
-      fontSize: 20,
+      fontSize: 18,
       color: '#000'
     }
 
@@ -1551,12 +1552,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   bulkStatusContainer: {
     ['@media (max-width:1550px)']: {
       '& div': {
-        zoom: '95%',
+        // zoom: '95%',
       }
     },
     ['@media (max-width:1280px)']: {
       '& div': {
-        zoom: '100%',
+        // zoom: '100%',
       }
     },
     '& .MuiDivider-root': {
@@ -1566,7 +1567,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     '& .bubbleNew': {
       marginTop: '-5px',
-      position: 'relative',
+      position: 'absolute',
+      right: '0',
       '& .bubbleText': {
         color: '#000',
         position: 'absolute',

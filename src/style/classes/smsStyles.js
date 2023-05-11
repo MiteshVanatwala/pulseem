@@ -996,7 +996,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     addOptionsIcon:
     {
-        fontSize: "28px", color: "#ff3343", marginInlineEnd: "5px"
+        fontSize: "18px", color: "#fff", marginInlineEnd: "10px"
     },
     testSendContaier:
     {

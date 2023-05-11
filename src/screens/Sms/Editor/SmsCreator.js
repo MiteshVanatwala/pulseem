@@ -795,96 +795,35 @@ const SmsCreator = ({ classes }) => {
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
             <Box className={clsx(classes.funcDiv, classes.dFlex, classes.flexWrap)}>
-              <Box
-                className={clsx(windowSize === 'xs' ? classes.flex2 : classes.flex1, isRTL ? classes.emojiHe : classes.emoji)}
-              >
-                {isRTL ? (
-                  <>
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.aligntoRight")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
-                    </Tooltip>
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.alignToLeft")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignLeftIcon onClick={() => { setAlignment('left') }} />
-                    </Tooltip>
-                  </>
-                ) : (
-                  <>
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.alignToLeft")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('left') }} />
-                    </Tooltip>
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.aligntoRight")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignRightIcon onClick={() => { setAlignment('right') }} />
-                    </Tooltip>
-                  </>
-                )}
-
-                <EmojiPicker
-                  classes={classes}
-                  OnSelectEmoji={(emoji) => {
-                    onAddText(emoji);
-                  }}
-                  boxStyles={{ alignItems: 'center' }}
-                />
-              </Box>
-              <Box className={clsx(classes.flex2, classes.baseButtons)}>
-                <Tooltip
-                  disableFocusListener
-                  title={t("mainReport.removalMsgTooltip")}
-                  classes={{ tooltip: styles.customWidth }}
-                  placement="top"
-                  arrow
-                >
-                  <Button
-                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
-                    onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
+              <Grid container className={clsx(classes.p5, classes.borderBottom1)}>
+                <Grid item xs={6} md={6} sm={6}>
+                  <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.alignToLeft")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
                   >
-                    <Typography className={classes.editorLink}>+</Typography>
-                    {t("mainReport.removalMsg")}
-                  </Button>
-                </Tooltip>
-                {showRemovalLink && <Tooltip
-                  disableFocusListener
-                  title={t("mainReport.removalLinkTooltip")}
-                  classes={{ tooltip: styles.customWidth }}
-                  placement="top"
-                  arrow
-                >
-                  <Button
-                    className={classes.infoButtons}
-                    onClick={removalLinkDisabled ? null : onRemovalLink}
+                    <FormatAlignLeftIcon onClick={() => { setAlignment('left') }} style={{ marginInlineEnd: "4px" }} />
+                  </Tooltip>
+                  <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.aligntoRight")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
                   >
-                    <Typography className={classes.editorLink}>+</Typography>
-                    {t("mainReport.removalLink")}
-                  </Button>
-                </Tooltip>
-                }
-              </Box>
-              <Box className={clsx(classes.flex2, classes.endButtons)}>
-                <Box className={classes.selectMsg}>
+                    <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
+                  </Tooltip>
+                  <EmojiPicker
+                    classes={classes}
+                    OnSelectEmoji={(emoji) => {
+                      onAddText(emoji);
+                    }}
+                    boxStyles={{ alignItems: 'center' }}
+                  />
+                </Grid>
+                <Grid item xs={6} md={6} sm={6} className={classes.justifyContentEnd}>
                   <Tooltip
                     disableFocusListener
                     title={t("mainReport.selectTooltip")}
@@ -925,20 +864,30 @@ const SmsCreator = ({ classes }) => {
                       </Select>
                     </FormControl>
                   </Tooltip>
-                </Box>
-                <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
-                  <Typography
-                    className={classes.addButtons}
-                    onClick={() => {
-                      seteditmenuClick(!editmenuClick);
-                    }}
+                </Grid>
+              </Grid>
+
+              <Grid container className={clsx(classes.p5)} onBlur={() => { seteditmenuClick(false) }}>
+                <Grid
+                  item xs={12} md={12} sm={12} className={clsx(classes.justifyContentEnd)} style={{paddingTop: '5px'}}
+                >
+                  <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.add")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top"
+                    arrow
                   >
-                    <AiOutlinePlusCircle className={classes.addOptionsIcon} />
-                    {t("mainReport.add")}
-                  </Typography>
+                    <Button
+                      className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null, classes.bgGreen)}
+                      onClick={() => seteditmenuClick(!editmenuClick)}
+                    >
+                      <AiOutlinePlusCircle className={classes.addOptionsIcon} />
+                      {t("mainReport.add")}
+                    </Button>
+                  </Tooltip>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
-
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
@@ -970,8 +919,39 @@ const SmsCreator = ({ classes }) => {
                       </Typography>
                     </Box>
                   ) : null}
-                </Box>
-              </Box>
+                  <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.removalMsgTooltip")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top"
+                    arrow
+                  >
+                    <Button
+                      className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
+                      onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
+                    >
+                      <Typography className={classes.editorLink}>+</Typography>
+                      {t("mainReport.removalMsg")}
+                    </Button>
+                  </Tooltip>
+                  {showRemovalLink && <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.removalLinkTooltip")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top"
+                    arrow
+                  >
+                    <Button
+                      className={classes.infoButtons}
+                      onClick={removalLinkDisabled ? null : onRemovalLink}
+                    >
+                      <Typography className={classes.editorLink}>+</Typography>
+                      {t("mainReport.removalLink")}
+                    </Button>
+                  </Tooltip>
+                  }
+                </Grid>
+              </Grid>
             </Box>
           </Grid>
           <Grid item xs={12} md={4} sm={12}>

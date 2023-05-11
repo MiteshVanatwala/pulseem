@@ -445,6 +445,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mbNeg10: {
     marginBottom: -10,
   },
+  mleft5: {
+    marginLeft: 5,
+  },
+  mr5: {
+    marginLeft: 5,
+  },
   mlr10: {
     marginInline: 10,
   },
@@ -1073,7 +1079,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "5px 15px 5px 15px",
     backgroundColor: "#ff3343",
     cursor: "pointer",
-    borderColor: "#ff3343",
+    border: "solid 1px #ff3343",
     textTransform: "none",
     "&$disabled": {
       cursor: "not-allowed !important",
@@ -1081,7 +1087,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&:hover": {
       backgroundColor: "#ff334",
       border: 'solid 1px #ff3343',
-      color: '#ff3343'
+      color: '#ff3343',
+      "& *": {
+        color: '#ff3343'
+      }
     },
     "&:first-child": {
       marginInlineStart: 5,
@@ -2397,9 +2406,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pickerEmoji: {
     position: "relative",
+    verticalAlign: "sub",
     height: "100%",
     zIndex: "99",
-    display: "flex",
+    display: "inline-block",
     alignItems: "center",
     justifyContent: "center",
     "@media screen and (max-width: 768px)": {
@@ -2865,6 +2875,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   //#endregion
   textCenter: {
     textAlign: "center",
+  },
+  textRight: {
+    textAlign: "right",
   },
   marginBlock10: {
     marginBlock: 10,

@@ -289,7 +289,7 @@ const LatestReports = ({ classes, t, isRTL }) => {
           className={clsx(classes.lastReportTitleSection, classes.dashBoxtitleSection)}>
           <Box className={clsx(classes.spaceBetween, classes.w100, classes.flexWrap)}>
             <Box className={classes.mt2}>
-              <NotesIcon className={classes.mlr10} />
+              <NotesIcon className={clsx(classes.mleft5, classes.mr10)} style={{ verticalAlign: 'middle' }} />
               <Typography
                 className={clsx(classes.dInline, classes.pe10, 'title')}
               >
