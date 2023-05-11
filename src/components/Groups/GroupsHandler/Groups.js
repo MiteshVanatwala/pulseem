@@ -97,9 +97,9 @@ const Groups = ({ classes,
 
                 <ListItemAvatar>
                     <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderPrimary)}>
+                        className={clsx(classes.listIcon, isExist ? classes.redBg : classes.transparentBg, isExist ? classes.white : classes.blue, isExist ? classes.borderRed : classes.borderPrimary)}>
                         {isExist ?
-                            (<FaCheck className={clsx(classes.green)} />)
+                            (<FaCheck className={clsx(classes.white)} />)
                             :
                             (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                         }
@@ -127,9 +127,9 @@ const Groups = ({ classes,
             >
                 <ListItemAvatar>
                     <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderPrimary)}>
+                        className={clsx(classes.listIcon, isExist ? classes.redBg : classes.transparentBg, isExist ? classes.white : classes.blue, isExist ? classes.borderRed : classes.borderPrimary)}>
                         {isExist ?
-                            (<FaCheck className={clsx(classes.green)} />)
+                            (<FaCheck className={clsx(classes.white)} />)
                             :
                             (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                         }
@@ -148,9 +148,9 @@ const Groups = ({ classes,
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
                 <Avatar
-                    className={clsx(classes.listIcon, classes.transparentBg, allSelected ? classes.green : classes.blue, allSelected ? classes.borderGreen : classes.borderPrimary)}>
+                    className={clsx(classes.listIcon, allSelected ? classes.redBg : classes.transparentBg, allSelected ? classes.white : classes.blue, allSelected ? classes.borderRed : classes.borderPrimary)}>
                     {allSelected ?
-                        (<FaCheck className={clsx(classes.green)} />)
+                        (<FaCheck className={clsx(classes.white)} />)
                         :
                         (<HiUserGroup className={clsx(classes.colrPrimary)} />)
                     }

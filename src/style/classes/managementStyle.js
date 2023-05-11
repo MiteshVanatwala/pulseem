@@ -75,7 +75,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       '&.onlyTitleBar': {
         paddingBottom: 0,
         marginBottom: 31,
-    }
+      }
     }
   },
   managmentNarrow: {
@@ -1409,7 +1409,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "none !important",
     background: '#F0F5FF',
     height: 50,
-    minHeight: 50,
+    maxHeight: 50,
     color: "#0371AD",
     fontSize: 18,
     padding: '10px',
@@ -1426,7 +1426,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   icon_Info: {
     color: '#FF0054 !important',
-    fontSize: 10
+    fontSize: 18
   },
   noRecipients: {
     color: "#AAAAAA",
@@ -1442,7 +1442,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: -10,
   },
   tipsTitle: {
-    maxHeight: 39
+    maxHeight: 30
   },
   bulkStatusTitleSection: {
     marginBottom: "1rem",

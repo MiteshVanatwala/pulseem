@@ -770,14 +770,13 @@ const SmsSend = ({ classes, ...props }) => {
             className={
               clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!groupClick })
             }
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setgroupClick(true);
+              setmanualClick(false);
+            }}
           >
-            <span
-              onClick={() => {
-                setgroupClick(true);
-                setmanualClick(false);
-              }}
-              style={{ cursor: "pointer" }}
-            >
+            <span>
               {t("mainReport.groups")}
             </span>
           </Grid>
@@ -785,15 +784,14 @@ const SmsSend = ({ classes, ...props }) => {
             className={
               clsx(classes.btnTab, 'alignCenter', { [classes.currentActiveTab]: !!manualClick })
             }
+            style={{ marginInlineEnd: "7px", cursor: "pointer" }}
+            onClick={() => {
+              setgroupClick(false);
+              settoggleChecked(false)
+              setmanualClick(true);
+            }}
           >
-            <span
-              style={{ marginInlineEnd: "7px", cursor: "pointer" }}
-              onClick={() => {
-                setgroupClick(false);
-                settoggleChecked(false)
-                setmanualClick(true);
-              }}
-            >
+            <span style={{marginInlineEnd: 15}}>
               {t("mainReport.manual")}
             </span>
             <Tooltip

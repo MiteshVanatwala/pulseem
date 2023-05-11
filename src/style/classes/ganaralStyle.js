@@ -901,7 +901,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: '2px solid #F65026',
     '& svg': {
       marginLeft: 5,
-      color: '#FF0054'
+      color: '#000'
     },
     '& .MuiButton-startIcon': {
       marginTop: '-2px',
@@ -1963,7 +1963,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           color: '#979797'
         },
         '& .MuiTextField-root': {
-          paddingBottom: 2,
+          paddingBottom: 8,
+          paddingTop: 8,
           // maxWidth: 245,
           '&.fullWidth': {
             maxWidth: '100%'
@@ -3256,7 +3257,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           color: '#979797'
         },
         '& .MuiTextField-root': {
-          paddingBottom: 2,
+          paddingTop: 8,
+          paddingBottom: 8,
         }
       }
     }

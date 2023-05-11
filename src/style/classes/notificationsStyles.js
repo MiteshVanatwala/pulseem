@@ -517,6 +517,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     transparentBg: {
         backgroundColor: 'transparent'
     },
+    redBg: {
+        background: 'linear-gradient(90deg, #FF0076 1.31%, #FF0054 33.07%, #FF4D2A 134.74%)'
+    },
     blue: {
         color: '#FF0054',
         stroke: '#1c82b2 !important'
@@ -533,6 +536,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     borderGreen: {
         border: '1px solid #48a148',
+    },
+    borderRed: {
+        border: '1px solid #FF0076',
     },
     listIcon: {
         width: 30,

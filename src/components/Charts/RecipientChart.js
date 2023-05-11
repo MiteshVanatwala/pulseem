@@ -543,7 +543,7 @@ const RecipientChart = ({ classes, }) => {
                             }}
                             enterTouchDelay={50}
                             placement={"top"}>
-                            <IconButton style={{ alignSelf: 'flex-end' }} className={classes.icon_Info} aria-label={t('dashboard.chartTooltip')}>
+                            <IconButton className={classes.icon_Info} aria-label={t('dashboard.chartTooltip')}>
                                 <BsInfoCircle />
                             </IconButton>
                         </Tooltip>

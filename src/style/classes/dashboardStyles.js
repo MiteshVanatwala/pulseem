@@ -46,14 +46,10 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         textTransform: 'uppercase',
         color: '#65d638'
     },
-    dashboardChartTitle: {
-        maxHeight: 47
-    },
     shortcutTitle: {
-        maxHeight: 39,
+        maxHeight: 30,
         borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        paddingTop: 0
+        borderTopRightRadius: 20
     },
     shortcutSubtitle: {
         fontSize: windowSize === 'xs' ? 16 : 18,
