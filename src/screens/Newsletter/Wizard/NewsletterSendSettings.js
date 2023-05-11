@@ -392,7 +392,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
         const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
         let groupId = responseDefaultGroup?.payload
-        
+
         var req = [];
         quickSendClients.split('\n').map((q) => req.push({ Email: q.replace(',', '') }));
         const finalPayload = {
@@ -830,8 +830,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 mergedSegmentationDialog === 1 && handleFilterConfirm();
 
                 let segmantIndication = false;
-                if (filterParameters.FromDate || filterParameters.ToDate || filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked) {
+                if (filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked) {
                     segmantIndication = true;
+                }
+                else {
+                    if (mergedSegmentationDialog === 0) {
+                        setFilterParameters({ ...campaignValues, FromDate: null, ToDate: null });
+                        setCampaignValues({ ...campaignValues, FromDate: null, ToDate: null });
+                    }
                 }
 
                 if (!segmantIndication) {
@@ -989,7 +995,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             subPage={"newsletterSendSettings"}
             classes={classes}
             customPadding={true}>
-            <RenderToast toastMessage={toastMessage} time={4000} />
+            <RenderToast toastMessage={toastMessage} time={toastMessage?.showAnimtionCheck ? 2000 : 4000} />
             <Box>
                 <Title
                     Text={t("campaigns.newsLetterSendSettings.title")}
