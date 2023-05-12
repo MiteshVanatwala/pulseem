@@ -41,7 +41,7 @@ export type TemplateFieldsProps = {
 };
 
 export type FileUploadProps = {
-	classes:  ClassesType['classes'];
+	classes: ClassesType['classes'];
 	fileData: {
 		fileLink: string;
 		fileType: string;
@@ -515,7 +515,7 @@ export type CommonFeaturesAPI = {
 };
 
 export type ApiErrorKey = {
-	[key: string]: string;
+	[key: string]: string | { [key: string]: string | number | null };
 };
 
 export type ApiErrorResponse = {

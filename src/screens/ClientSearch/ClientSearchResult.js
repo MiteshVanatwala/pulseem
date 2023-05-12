@@ -60,6 +60,7 @@ import ConfirmRadioDialog from '../../components/DialogTemplates/ConfirmRadioDia
 import { ExportFileTypes } from '../../model/Export/ExportFileTypes'
 import { ConvertClientStatus, SourceType } from '../../helpers/UI/TableText';
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
+import { getErrorMessageFromTwilioLink } from "../Whatsapp/Common";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -725,12 +726,14 @@ const ClientSearchResult = ({ props, classes }) => {
             {t("common.ErrorEmail")}
           </Typography>
           <Typography className={classes.whatsappReportErrorCell}>
-            {LogSms_ErrorType}
+            {/* {LogSms_ErrorType} */}
+            {t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
-            {LogSms_ErrorType}
+            {/* {LogSms_ErrorType} */}
+            {t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
           </Typography>
         )
       },
