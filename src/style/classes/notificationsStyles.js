@@ -712,7 +712,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     notifyIcon: {
         marginInlineEnd: 10,
-        fontSize: 18,
+        fontSize: 22,
         color: '#0371ad'
     }
 })
