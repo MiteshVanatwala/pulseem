@@ -123,20 +123,22 @@ const CampaignFields = ({
 					className={
 						showValidation && savedTemplate?.length === 0
 							? clsx(
-									classes.buttonField,
-									classes.buttonWhatsappAutocomplete,
-									classes.error
-							  )
+								classes.buttonField,
+								classes.buttonWhatsappAutocomplete,
+								classes.error
+							)
 							: clsx(
-									classes.buttonField,
-									classes.buttonWhatsappAutocomplete,
-									classes.success
-							  )
+								classes.buttonField,
+								classes.buttonWhatsappAutocomplete,
+								classes.success
+							)
 					}
 					options={savedTemplateList.map((template) =>
 						getTemplateName(template)
 					)}
-					renderInput={(params) => <TextField {...params} />}
+					renderInput={(params) => <TextField
+					//	{...params}
+					/>}
 					onChange={onTemplateChange}
 					value={getTemplateNameById(savedTemplateList, savedTemplate)}
 				/>

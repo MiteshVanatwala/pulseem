@@ -27,7 +27,7 @@ const BulkStatus = ({ classes }) => {
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
-    switch (product.eBillingType) {
+    switch (product?.eBillingType) {
       case 2: {
         return t('dashboard.perRecipients');
       }
@@ -44,7 +44,7 @@ const BulkStatus = ({ classes }) => {
         return t('dashboard.perValidRecipients')
       }
       default: {
-        return product.Credits && product.Credits > 0 ? product.Credits.toLocaleString() : 0;
+        return product?.Credits && product?.Credits > 0 ? product?.Credits.toLocaleString() : 0;
       }
     }
   }
