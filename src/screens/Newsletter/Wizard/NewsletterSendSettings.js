@@ -357,7 +357,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         setTimeout(() => {
             setToastMessage(null);
-        }, 4000);
+        }, 2000);
     }
     const SEND_PROC = {
         401: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.invaliApiKey'), ShowContactSupport: false } },
@@ -710,6 +710,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     variant='contained'
                     size='medium'
                     className={clsx(
+                        campaignValues.SendingMethod === 2 && !campaignValues.SendDate ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && campaignValues?.AutoSendingByUserField === '0' ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && !campaignValues?.AutoSendDelay ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && !campaignValues.SendDate ? classes.disabled : null,
                         classes.actionButton,
                         classes.actionButtonLightGreen,
                         classes.backButton
