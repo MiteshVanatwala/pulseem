@@ -786,7 +786,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             onClick={() => setMergedSegmentationDialog(i)}
                         >
                             {tab && <><span
-                                style={{ cursor: "pointer" }}
                                 className={clsx(classes.bold, classes.f16)}
                             >
                                 {tab.title || ''}

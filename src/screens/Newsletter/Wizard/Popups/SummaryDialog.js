@@ -36,6 +36,7 @@ const SummaryDialog = ({ classes,
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
+    const [disableSend, setDisableSend] = useState(false);
 
     const {
         FinalClients,
@@ -66,6 +67,7 @@ const SummaryDialog = ({ classes,
     const { t } = useTranslation();
 
     const handleSendCampaign = async () => {
+        setDisableSend(true);
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
         handleSendResponse({
             ...sendResponse.payload,
@@ -314,11 +316,14 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => { handleSendCampaign() }}
+                            disabled={disableSend}
+                            onClick={() => {
+                                handleSendCampaign()
+                            }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
-                                FinalClients <= 0 || fromEmail === '' || fromEmail === null ? classes.disabled : null
+                                FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
                             )}>
                             {t("sms.sendDialog")}
                         </Button>
