@@ -422,8 +422,18 @@ export const getApiErrorResponseMessage = (
 ): string => {
 	const apiErrorResponse: ApiErrorResponse = WhatsappApiResponse;
 	if (apiErrorResponse[messageKey][responseCode]) {
-		return `WhatsappApiResponse.${messageKey}.${responseCode}`;
+		return messageKey === 'twilio'
+			? `WhatsappApiResponse.${messageKey}.${responseCode}.message`
+			: `WhatsappApiResponse.${messageKey}.${responseCode}`;
 	} else {
 		return 'WhatsappApiResponse.common.error';
 	}
+};
+
+export const getErrorMessageFromTwilioLink = (link: string): string => {
+	const errorCode = link?.split('/');
+	return getApiErrorResponseMessage(
+		'twilio',
+		Number(errorCode[errorCode?.length - 1])
+	);
 };
