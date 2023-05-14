@@ -9,6 +9,18 @@ import { Stack } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
 
 
+const useStyles = makeStyles((theme) => ({
+    customWidth: {
+        maxWidth: 200,
+        backgroundColor: "black",
+        fontSize: "14px",
+        textAlign: 'center'
+    },
+    noMaxWidth: {
+        maxWidth: "none",
+    },
+}));
+
 const SendingMethod = ({
     extraButtons = null,
     classes,
@@ -23,6 +35,7 @@ const SendingMethod = ({
     const [isBestTimeFuture, setIsBestTimeFuture] = useState(false);
     const [isAfterDay, setIsAfterDay] = useState(false);
     const sendDelayRef = useRef(null);
+    const styles = useStyles();
 
     const { windowSize, isRTL } = useSelector(
         (state) => state.core
@@ -170,6 +183,7 @@ const SendingMethod = ({
                                     <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
                                     <Tooltip
                                         disableFocusListener
+                                        classes={{ tooltip: styles.customWidth }}
                                         title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
                                         style={{ marginInlineStart: "5px" }}
                                     >
@@ -253,7 +267,7 @@ const SendingMethod = ({
                                     <Tooltip
                                         disableFocusListener
                                         title={t('campaigns.newsLetterEditor.sendSettings.optimalSendCBTooltip')}
-                                        // classes={{ tooltip: styles.customWidth }}
+                                        classes={{ tooltip: styles.customWidth }}
                                         style={{ marginInlineStart: "5px" }}
                                     >
                                         <span className={classes.bodyInfo}>i</span>
