@@ -592,7 +592,8 @@
       "deleted": "Campaign deleted successfully",
       "send": "Send",
       "doNotSend": "Do not send",
-      "smsComplementary": "Complementary SMS Marketing"
+      "smsComplementary": "Complementary SMS Marketing",
+      "optimalPulseConflictMessage": "Choosing \"Optimal Send\" will cancel the Pulse send you already set.<br/>Do you wish to proceed?"
     }
   },
   "newsLetterMgmt": {

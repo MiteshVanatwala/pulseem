@@ -582,7 +582,9 @@
       },
       "deleted": "מסע הפרסום נמחק בהצלחה",
       "send": "שלח",
-      "doNotSend": "לא לשלוח"
+      "doNotSend": "לא לשלוח",
+      "smsComplementary": "שיווק משלים ב-SMS",
+      "optimalPulseConflictMessage": "בחירת \"שליחה אופטימלית\" תבטל את השליחה בפולסים שהגדרתם<br/>האם ברצונכם להמשיך?"
     }
   },
   "newsLetterMgmt": {

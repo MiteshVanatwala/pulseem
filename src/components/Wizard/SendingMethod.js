@@ -7,6 +7,7 @@ import { DateField } from "../managment/index";
 import clsx from "clsx";
 import { Stack } from "@mui/material";
 import { useEffect, useState, useRef } from "react";
+import DynamicConfirmDialog from "../DialogTemplates/DynamicConfirmDialog";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,6 +35,7 @@ const SendingMethod = ({
     const [isBestTime, setIsBestTime] = useState(false);
     const [isBestTimeFuture, setIsBestTimeFuture] = useState(false);
     const [isAfterDay, setIsAfterDay] = useState(false);
+    const [showOptimalPulseConflict, setShowOptimalPulseConflict] = useState(false);
     const sendDelayRef = useRef(null);
     const styles = useStyles();
 
@@ -61,7 +63,7 @@ const SendingMethod = ({
     }, [date]);
     useEffect(() => {
         if (campaign.SendingMethod === 1) {
-            onUpdateCampaign({ IsBestTime: isBestTime });
+            onUpdateCampaign({ ...campaign, IsBestTime: isBestTime, PulseAmount: '', TimeInterval: '' });
         }
     }, [isBestTime])
     useEffect(() => {
@@ -117,7 +119,6 @@ const SendingMethod = ({
             sendDelayRef.current.value = e.target.value;
             onUpdateCampaign({ AutoSendDelay: `${campaign.isAfterDay ? e.target.value : `-${e.target.value}`}` });
         }
-
     }
 
     const handlebef = () => {
@@ -129,6 +130,21 @@ const SendingMethod = ({
         setIsAfterDay(true);
         onUpdateCampaign({ AutoSendDelay: sendDelayRef.current.value })
     };
+
+    const onConfirmOptimalPulseConflict = (value, isFuture = false) => {
+        setShowOptimalPulseConflict(false);
+        if (!isFuture) {
+            setIsBestTime(value);
+        }
+        else {
+            setIsBestTimeFuture(value);
+        }
+    }
+    const onCancelOptimalPulseConflict = () => {
+        setIsBestTime(false);
+        setIsBestTimeFuture(false);
+        setShowOptimalPulseConflict(false);
+    }
 
     return (
         <div className={classes.h100}>
@@ -177,7 +193,12 @@ const SendingMethod = ({
                                         color="primary"
                                         inputProps={{ "aria-label": "secondary checkbox" }}
                                         onClick={() => {
-                                            setIsBestTime(!isBestTime);
+                                            if (campaign.PulseAmount > 0) {
+                                                setShowOptimalPulseConflict(true);
+                                            }
+                                            else {
+                                                onConfirmOptimalPulseConflict(!isBestTime)
+                                            }
                                         }}
                                     />
                                     <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
@@ -260,7 +281,12 @@ const SendingMethod = ({
                                         color="primary"
                                         inputProps={{ "aria-label": "secondary checkbox" }}
                                         onClick={() => {
-                                            setIsBestTimeFuture(!isBestTimeFuture);
+                                            if (campaign.PulseAmount > 0) {
+                                                setShowOptimalPulseConflict(true);
+                                            }
+                                            else {
+                                                onConfirmOptimalPulseConflict(!isBestTimeFuture, true);
+                                            }
                                         }}
                                     />
                                     <Typography className={classes.font14}><b>{t('campaigns.newsLetterEditor.sendSettings.optimalSending')} - </b> {t('campaigns.newsLetterEditor.sendSettings.optimalSendCBDesc')}. </Typography>
@@ -415,7 +441,6 @@ const SendingMethod = ({
             <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
             <Stack className={classes.pulseDiv} spacing={2} direction="row">
                 {extraButtons}
-
             </Stack>
             <div
                 style={{
@@ -435,6 +460,14 @@ const SendingMethod = ({
                     </span>
                 ) : null}
             </div>
+            <DynamicConfirmDialog
+                classes={classes}
+                isOpen={showOptimalPulseConflict}
+                title={t('campaigns.newsLetterMgmt.payAttention')}
+                text={t('campaigns.newsLetterEditor.sendSettings.optimalPulseConflictMessage')}
+                onConfirm={() => onConfirmOptimalPulseConflict(true, false)}
+                onCancel={() => onCancelOptimalPulseConflict()}
+            />
         </div>
     );
 }

@@ -1182,14 +1182,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             campaign={{ ...campaignValues, SendingMethod: (!campaignValues.SendingMethod || campaignValues.SendingMethod === 0) ? 1 : campaignValues.SendingMethod }}
                             onUpdateCampaign={(data) => {
                                 setCampaignValues({ ...campaignValues, ...data })
+                                setPulseIndication(data.PulseAmount != '' && data.PulseAmount > 0)
                             }}
                             extraButtons={
                                 <>
-                                    <Stack direction="row" justifyContent="center" alignItems="center">
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="center"
+                                        alignItems="center">
                                         <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                             <Button
-                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
+                                                className={clsx(
+                                                    classes.actionButton,
+                                                    classes.actionButtonOutlinedBlue,
+                                                    selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
+                                                        ? classes.disabled : null)}
                                                 onClick={() => {
                                                     handlePulseDialog();
                                                 }}
