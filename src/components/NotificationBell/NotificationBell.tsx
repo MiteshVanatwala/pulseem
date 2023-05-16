@@ -6,9 +6,8 @@ import { useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { markNotificationsAsRead } from '../../redux/reducers/notificationUpdateSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
-import { AiOutlineCloudDownload } from 'react-icons/ai';
-import { MdOutlineRemoveCircle } from 'react-icons/md';
-import { FaCloudUploadAlt } from 'react-icons/fa';
+import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
+import { IoMdRemoveCircleOutline } from 'react-icons/io';
 
 enum NotifyCenterType {
   File = 0,
@@ -67,7 +66,7 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.Unsubscribe: {
           return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
-            <MdOutlineRemoveCircle className={classes.notifyIcon} />
+            <IoMdRemoveCircleOutline className={classes.notifyIcon} />
             <Typography className={classes.font14}>
               {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
             </Typography>
@@ -75,7 +74,7 @@ const NotificationBell = ({ classes }: any) => {
         }
         case NotifyCenterType.UploadRecipient: {
           return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
-            <FaCloudUploadAlt className={classes.notifyIcon} />
+            <AiOutlineCloudUpload  className={classes.notifyIcon} />
             <Typography className={classes.font14}>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</Typography>
           </Box>
         }

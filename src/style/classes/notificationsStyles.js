@@ -692,8 +692,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     notificationItem: {
         borderBottom: '0.5px solid #ababab',
-        paddingLeft: isRTL ? '0px' : '10px',
-        paddingRight: isRTL ? '10px' : '0px',
+        paddingInline: 10,
         '&:last-child': {
             borderBottom: 'none',
         },
@@ -709,5 +708,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         '& .MuiBadge-badge': {
             background: 'red'
         }
+    },
+    notifyIcon: {
+        marginInlineEnd: 10,
+        fontSize: 22,
+        color: '#0371ad'
     }
 })
