@@ -12,10 +12,11 @@ import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
 import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import i18n from './i18n'
-import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter, useParams, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
 import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
+import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
@@ -444,6 +445,13 @@ const renderRoutes = (classes, history) => {
 }
 
 const App = ({ isRTL, classes, theme, language }) => {
+  let location = useLocation();
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    dispatch(getNotificationUpdates());
+  }, [location]);
+
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>

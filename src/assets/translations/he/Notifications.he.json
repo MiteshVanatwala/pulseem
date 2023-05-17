@@ -153,5 +153,9 @@
   "duplicatedRecipients": "נמענים כפולים",
   "activeSubscribers": "נמענים פעילים:",
   "arrived": "הגיעו",
-  "arrivedTootltip": "כמות הנוטיפקציות שהגיעו לדפדפני הנמענים שלך"
+  "arrivedTootltip": "כמות הנוטיפקציות שהגיעו לדפדפני הנמענים שלך",
+  "fileReadyForDownload": "הקובץ שלך מוכן להורדה!",
+  "downloadHere": "לחץ להורדה",
+  "recipientsRemoved": "הסרת הנמענים מ-$name בוצעה בהצלחה",
+  "recipientsUploaded": "$name הרשומה הועלתה בהצלחה ל-”לקוחות חדשים"
 }
