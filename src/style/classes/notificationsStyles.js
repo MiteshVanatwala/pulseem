@@ -694,6 +694,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     notificationItem: {
         borderBottom: '0.5px solid #ababab',
+        paddingInline: 10,
         '&:last-child': {
             borderBottom: 'none',
         },
