@@ -21,6 +21,7 @@ import {
   ChartIcon
 } from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
+import NotificationBell from '../NotificationBell/NotificationBell.tsx';
 
 const AppBarItem = ({
   item,
@@ -254,6 +255,7 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
           classes={classes}
           item={settings}
         />
+        <NotificationBell classes={classes} />
         <LanguageSelector classes={classes} />
         {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
           classes={classes}

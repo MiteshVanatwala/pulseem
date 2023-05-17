@@ -201,7 +201,7 @@ export const notificationSlice = createSlice({
     notificationData: [],
     notificationDeletedData: [],
     notificationDataError: '',
-    notificationById: {}
+    notificationById: {},
   },
   reducers: {
     setScriptDialog: (state, action) => {
