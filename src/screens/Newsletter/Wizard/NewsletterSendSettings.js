@@ -964,10 +964,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData
                         });
-                        setSegmantIndication(true)
+                        setSmsMarketingIndication(true)
                     }
                     else {
-                        setSegmantIndication(false)
+                        setSmsMarketingIndication(false)
                     }
                     resolve();
                 } catch (error) {
