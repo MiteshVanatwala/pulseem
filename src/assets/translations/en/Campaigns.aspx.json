@@ -538,6 +538,7 @@
     "success": "Success",
     "sendSettings": {
       "optimalSending": "Optimal Sending",
+      "optimalSendingFrom": "Optimal send will start in",
       "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
       "optimalSendCBTooltip": "this process may take up to 24 hours",
       "segmentation": "Segmentation",

@@ -529,6 +529,7 @@
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
       "optimalSending": "שליחה אופטימלית",
+      "optimalSendingFrom": "שליחה אופטימלית תחל ב",
       "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
       "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
       "segmentation": "פילוחים",

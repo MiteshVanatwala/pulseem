@@ -90,7 +90,7 @@ const SummaryDialog = ({ classes,
                 return `${t("sms.SendNow")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 2: {
-                return `${moment(newsletterSendSummary?.SendDate).format('dddd , MMMM Do YYYY, h:mm a')} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
+                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).format('DD/MM/YYYY HH:mm')}`;
             }
             case 3: {
                 const exDates = { ...extraData };
