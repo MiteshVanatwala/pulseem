@@ -161,65 +161,6 @@ const TemplateFields = ({
 							</MenuItem>
 						</Select>
 					</Grid>
-
-					{/* <Grid item xs={12} md={6} sm={12} className={classes.buttonForm}>
-						<Typography className={classes.buttonHead}>
-							<>{translator('whatsapp.uploadFileTitle')}</>
-						</Typography>
-						<label
-							className={classes.customFileUpload}
-							style={{
-								padding:
-									fileData?.fileLink?.length > 0
-										? '14px 15px 12px 7px'
-										: '17px 15px 15px 7px',
-							}}>
-							<input
-								type='file'
-								className={classes.formFieldInput}
-								accept='image/png, image/jpeg, application/pdf, video/mp4'
-								onClick={(e) => checkFileUploadAvailability(e)}
-								onChange={(e) => onFileUploadChange(e)}
-							/>
-							{fileData?.fileLink?.length > 0 ? (
-								<div style={{ marginRight: 'auto', width: '100%' }}>
-									<Button
-										variant='contained'
-										color='primary'
-										size='small'
-										style={{
-											borderRadius: '22px',
-											padding: '0px 10px 0px 10px',
-											width: '100%',
-										}}
-										onClick={(e) => onFileDeselect(e)}>
-										{fileData?.fileLink
-											?.split('/')
-											[fileData?.fileLink?.split('/')?.length - 1]?.substring(
-												0,
-												25
-											) + '...'}
-										&emsp;
-										<i className='zmdi zmdi-close'></i>
-									</Button>
-								</div>
-							) : (
-								<i className='zmdi zmdi-upload'></i>
-							)}
-						</label>
-
-						<Typography className={classes.buttonContent}>
-							{fileData?.fileLink?.length > 0 ? (
-								<>
-									{isRTL
-										? `${fileSize} ${translator('whatsapp.totalSize')}`
-										: `${translator('whatsapp.totalSize')} ${fileSize}`}
-								</>
-							) : (
-								<>{translator('whatsapp.fileDescription')}</>
-							)}
-						</Typography>
-					</Grid> */}
 				</Grid>
 			</Grid>
 

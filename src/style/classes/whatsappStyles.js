@@ -854,6 +854,7 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		color: '#525252',
 		fontFamily: 'OpenSansHebrew',
 		fontSize: '12px',
+		minWidth: '332px',
 	},
 	testGroupModalContent: {
 		padding: '8px 4px 0px 4px',

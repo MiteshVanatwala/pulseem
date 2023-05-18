@@ -732,7 +732,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		setApiCampaignData(updatedPagination);
 	};
 
-	const onCreateCamoaign = async () => {
+	const onCreateCampaign = async () => {
 		navigate('/react/whatsapp/campaign/create/page1');
 	};
 
@@ -930,7 +930,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 							spacing={2}
 							className={classes.manageTemplatesHeaderButtons}>
 							<div className={classes.manageCampaignCreateAndRestore}>
-								<Button className={'green'} onClick={() => onCreateCamoaign()}>
+								<Button className={'green'} onClick={() => onCreateCampaign()}>
 									<>{translator('whatsappManagement.createCampaign')}</>
 								</Button>
 								<Button

@@ -382,16 +382,16 @@ const SendCampaign = ({
 				},
 			};
 			if (sendType === '2') {
-				saveCampaignSettingsPayload['FutureDateTime'] = `${moment(
-					sendDate
-				).format('YYYY-MM-DD hh:mm:ss a')}`;
+				saveCampaignSettingsPayload['FutureDateTime'] = `${moment(sendDate)
+					.locale('en')
+					.format('YYYY-MM-DD hh:mm:ss a')}`;
 			}
 			if (sendType === '3') {
 				saveCampaignSettingsPayload['specialsettings'] = {
 					datefieldid: Number(spectialDateFieldID),
 					day: Number(daysBeforeAfter),
 					intervaltypeid: isSpecialDateBefore ? -1 : 1,
-					sendhour: moment(sendTime).format('YYYY-MM-DD hh:mm a'),
+					sendhour: moment(sendTime).locale('en').format('YYYY-MM-DD hh:mm a'),
 				};
 			}
 			isLoading && setIsLoader(true);

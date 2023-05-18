@@ -418,7 +418,7 @@ export const getTextDirection = (text: string, isRTL: boolean) => {
 
 export const getApiErrorResponseMessage = (
 	messageKey: string,
-	responseCode: number
+	responseCode: number | string
 ): string => {
 	const apiErrorResponse: ApiErrorResponse = WhatsappApiResponse;
 	if (apiErrorResponse[messageKey][responseCode]) {

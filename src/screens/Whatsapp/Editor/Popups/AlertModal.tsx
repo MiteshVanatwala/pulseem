@@ -14,6 +14,7 @@ const AlertModal = ({
 	title,
 	subtitle,
 	children,
+	direction,
 }: AlertModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -36,7 +37,9 @@ const AlertModal = ({
 					<Box className={classes.alertModalClose}>
 						<Close fontSize={'small'} onClick={onClose} />
 					</Box>
-					<div className={classes.alertModalContent}>
+					<div
+						className={classes.alertModalContent}
+						style={{ direction: direction }}>
 						<div className={classes.alertModalContentText}>{subtitle}</div>
 						<div className={classes.alertModalContentChildren}>{children}</div>
 					</div>
