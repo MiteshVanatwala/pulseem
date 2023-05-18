@@ -269,6 +269,14 @@
 	"common": {
 		"error": "Something went wrong"
 	},
+	"templateError": {
+		"invalidTemplateName": "Facebook is not able to create template with template name",
+		"noTemplateText": "Template text is missing",
+		"noFooter": "Footer is missing",
+		"invalidPhone": "Phone number is not a valid phone number.",
+		"characterExceeded": "Character Limit Exceeded. The Body (or Content) field can't have more than 1,024 characters",
+		"common": "INVALID_FORMAT Please see https://www.twilio.com/docs/content-api/troubleshooting-and-diagnostics#common-rejection-reasons for more information"
+	},
 	"twilio": {
 		"22225": {
 			"code": 22225,

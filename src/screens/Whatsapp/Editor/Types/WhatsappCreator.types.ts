@@ -190,6 +190,7 @@ export type AlertModalProps = {
 	subtitle: string;
 	type: 'confirm' | 'delete' | 'alert' | 'submit';
 	children?: React.ReactNode;
+	direction?: 'ltr' | 'rtl';
 };
 
 export type savedTemplateVariablesProps = {

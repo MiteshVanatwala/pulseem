@@ -11,7 +11,6 @@ import {
 	callToActionProps,
 	callToActionRowProps,
 	coreProps,
-	deleteTemplateAPIProps,
 	fileUploadAPIProps,
 	getTemplateByIdAPIProps,
 	JSONFreetextVariableProps,
@@ -37,7 +36,6 @@ import { actionButtonProps } from './Types/WhatsappCreator.types';
 import QuickReply from './Popups/QuickReply';
 import { useDispatch, useSelector } from 'react-redux';
 import WhatsappMobilePreview from './Components/WhatsappMobilePreview';
-import WhatsappTips from './Components/whatsappTips';
 import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {

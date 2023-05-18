@@ -67,7 +67,6 @@ import {
 	resetToastData,
 	statusesByName,
 	templateStatusIdsByStatusName,
-	templateStatusResonTextLength,
 } from '../Constant';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from '../../../components/Loader/Loader';
@@ -76,6 +75,7 @@ import { getTemplateName } from '../Common';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { phoneNumberAPIProps } from '../Campaign/Types/WhatsappCampaign.types';
 import NoSetup from '../NoSetup/NoSetup';
+import { getApiErrorResponseMessage } from '../Common';
 
 const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -215,7 +215,24 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 	};
 
 	const onStatusResonClick = (row: templateListItemsProps) => {
-		setFailedTemplateReason(row?.RejectionReason);
+		// setFailedTemplateReason(row?.RejectionReason);
+		if (row?.RejectionReason?.includes('BODY is missing expected field')) {
+			setFailedTemplateReason('invalidTemplateName');
+		} else if (
+			row?.RejectionReason?.includes('FOOTER is missing expected field')
+		) {
+			setFailedTemplateReason('noFooter');
+		} else if (row?.RejectionReason?.includes('is not a valid phone number')) {
+			setFailedTemplateReason('invalidPhone');
+		} else if (
+			row?.RejectionReason?.includes(
+				'Character Limit Exceeded. The Body (or Content) field '
+			)
+		) {
+			setFailedTemplateReason('characterExceeded');
+		} else {
+			setFailedTemplateReason('common');
+		}
 		setIsStatusResonModal(true);
 	};
 
@@ -990,9 +1007,12 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						isOpen={isStatusResonModal}
 						onClose={() => setIsStatusResonModal(false)}
 						title={''}
-						subtitle={failedTemplateReason}
+						subtitle={translator(
+							getApiErrorResponseMessage('templateError', failedTemplateReason)
+						)}
 						type='alert'
 						onConfirmOrYes={() => onDuplicaTemplate()}
+						direction='ltr'
 					/>
 				</>
 			) : (
