@@ -10,6 +10,7 @@ import {
 	statusByNameProps,
 	statusProps,
 	TemplatesStatusIdByStatusName,
+	TierSetting,
 } from './management/Types/Management.types';
 
 export const whatsappRoutes = {
@@ -418,7 +419,7 @@ export const allCampaignInitialPagination: AllCampaignReq = {
 	isPagination: true,
 	pageNo: 1,
 	pageSize: 6,
-	isDeleted: false
+	isDeleted: false,
 };
 
 export const allReportInitialPagination: AllReportReq = {
@@ -429,3 +430,26 @@ export const allReportInitialPagination: AllReportReq = {
 	pageNo: 1,
 	pageSize: 6,
 };
+
+export const tierSetting: TierSetting = [
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier1',
+		value: 'T1',
+		messageLimit: 1000,
+	},
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier2',
+		value: 'T2',
+		messageLimit: 10000,
+	},
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier3',
+		value: 'T3',
+		messageLimit: 100000,
+	},
+	{
+		name: 'settings.accountSettings.actDetails.fields.tier4',
+		value: 'T4',
+		messageLimit: 'unlimited',
+	},
+];

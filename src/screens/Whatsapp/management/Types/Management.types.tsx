@@ -97,3 +97,9 @@ export type AllReportReq = {
 };
 
 export type PageTypeRequest = { [key: string]: number };
+
+export type TierSetting = {
+	name: string;
+	value: 'T1' | 'T2' | 'T3' | 'T4';
+	messageLimit: number | string;
+}[];
