@@ -127,7 +127,7 @@ const NotificationBell = ({ classes }: any) => {
         <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
           <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10, classes.sidebar)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
             <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
-              {t('notifications.notifications')}
+              {t('notifications.notifyCenterTitle')}
             </div>
             <Divider style={{ marginTop: 10 }} />
             {notificationItem()}
