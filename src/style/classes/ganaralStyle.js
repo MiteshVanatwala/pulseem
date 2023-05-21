@@ -1687,6 +1687,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
     fontSize: "19px",
     color: "#777777",
+    width: '100%',
+    cursor: 'pointer',
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },

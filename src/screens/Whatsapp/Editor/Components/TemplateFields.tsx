@@ -124,7 +124,9 @@ const TemplateFields = ({
 							options={savedTemplateList?.map((template) =>
 								getTemplateName(template)
 							)}
-							renderInput={(params) => <TextField {...params} />}
+							renderInput={(params) => <TextField
+							//{...params} 
+							/>}
 							onChange={onTemplateChange}
 							value={getTemplateNameById(savedTemplateList, savedTemplate)}
 						/>
@@ -191,10 +193,10 @@ const TemplateFields = ({
 										onClick={(e) => onFileDeselect(e)}>
 										{fileData?.fileLink
 											?.split('/')
-											[fileData?.fileLink?.split('/')?.length - 1]?.substring(
-												0,
-												25
-											) + '...'}
+										[fileData?.fileLink?.split('/')?.length - 1]?.substring(
+											0,
+											25
+										) + '...'}
 										&emsp;
 										<i className='zmdi zmdi-close'></i>
 									</Button>

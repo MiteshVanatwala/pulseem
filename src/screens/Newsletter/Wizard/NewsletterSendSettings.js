@@ -357,7 +357,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         setTimeout(() => {
             setToastMessage(null);
-        }, 4000);
+        }, 2000);
     }
     const SEND_PROC = {
         401: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.invaliApiKey'), ShowContactSupport: false } },
@@ -710,6 +710,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     variant='contained'
                     size='medium'
                     className={clsx(
+                        campaignValues.SendingMethod === 2 && !campaignValues.SendDate ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && campaignValues?.AutoSendingByUserField === '0' ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && !campaignValues?.AutoSendDelay ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && !campaignValues.SendDate ? classes.disabled : null,
                         classes.actionButton,
                         classes.actionButtonLightGreen,
                         classes.backButton
@@ -786,7 +790,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             onClick={() => setMergedSegmentationDialog(i)}
                         >
                             {tab && <><span
-                                style={{ cursor: "pointer" }}
                                 className={clsx(classes.bold, classes.f16)}
                             >
                                 {tab.title || ''}
@@ -961,10 +964,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData
                         });
-                        setSegmantIndication(true)
+                        setSmsMarketingIndication(true)
                     }
                     else {
-                        setSegmantIndication(false)
+                        setSmsMarketingIndication(false)
                     }
                     resolve();
                 } catch (error) {
@@ -1179,14 +1182,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             campaign={{ ...campaignValues, SendingMethod: (!campaignValues.SendingMethod || campaignValues.SendingMethod === 0) ? 1 : campaignValues.SendingMethod }}
                             onUpdateCampaign={(data) => {
                                 setCampaignValues({ ...campaignValues, ...data })
+                                setPulseIndication(data.PulseAmount != '' && data.PulseAmount > 0)
                             }}
                             extraButtons={
                                 <>
-                                    <Stack direction="row" justifyContent="center" alignItems="center">
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="center"
+                                        alignItems="center">
                                         <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                             <Button
-                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
+                                                className={clsx(
+                                                    classes.actionButton,
+                                                    classes.actionButtonOutlinedBlue,
+                                                    selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
+                                                        ? classes.disabled : null)}
                                                 onClick={() => {
                                                     handlePulseDialog();
                                                 }}

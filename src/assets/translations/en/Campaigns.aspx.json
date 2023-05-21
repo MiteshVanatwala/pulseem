@@ -538,6 +538,7 @@
     "success": "Success",
     "sendSettings": {
       "optimalSending": "Optimal Sending",
+      "optimalSendingFrom": "Optimal send will start in",
       "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
       "optimalSendCBTooltip": "this process may take up to 24 hours",
       "segmentation": "Segmentation",
@@ -592,7 +593,8 @@
       "deleted": "Campaign deleted successfully",
       "send": "Send",
       "doNotSend": "Do not send",
-      "smsComplementary": "Complementary SMS Marketing"
+      "smsComplementary": "Complementary SMS Marketing",
+      "optimalPulseConflictMessage": "Choosing \"Optimal Send\" will cancel the Pulse send you already set.<br/>Do you wish to proceed?"
     }
   },
   "newsLetterMgmt": {

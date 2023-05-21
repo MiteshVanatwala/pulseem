@@ -498,7 +498,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (toastMessage) {
       setTimeout(() => {
         setToastMessage(null);
-      }, 4000);
+      }, 2000);
       return (
         <Toast data={toastMessage} />
       );

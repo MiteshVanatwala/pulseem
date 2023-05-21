@@ -529,6 +529,7 @@
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
       "optimalSending": "שליחה אופטימלית",
+      "optimalSendingFrom": "שליחה אופטימלית תחל ב",
       "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
       "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
       "segmentation": "פילוחים",
@@ -582,7 +583,9 @@
       },
       "deleted": "מסע הפרסום נמחק בהצלחה",
       "send": "שלח",
-      "doNotSend": "לא לשלוח"
+      "doNotSend": "לא לשלוח",
+      "smsComplementary": "שיווק משלים ב-SMS",
+      "optimalPulseConflictMessage": "בחירת \"שליחה אופטימלית\" תבטל את השליחה בפולסים שהגדרתם<br/>האם ברצונכם להמשיך?"
     }
   },
   "newsLetterMgmt": {

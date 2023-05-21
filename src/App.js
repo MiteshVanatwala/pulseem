@@ -16,7 +16,7 @@ import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
 import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
 import i18n from './i18n'
-import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter, useParams, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setWindowSize,
@@ -510,11 +510,16 @@ const renderRoutes = (classes, redirect) => {
 }
 
 const App = ({ screenSize }) => {
+  let location = useLocation();
   const userName = useRef();
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
   const { accountSettings } = useSelector(state => state.common)
   setCookie('accountSettings', '');
+
+  React.useEffect(() => {
+    dispatch(getNotificationUpdates());
+  }, [location]);
 
   useEffect(() => {
     screenSize && dispatch(setWindowSize(screenSize));
@@ -522,7 +527,6 @@ const App = ({ screenSize }) => {
 
   useEffect(() => {
     const initFeatures = async () => {
-      dispatch(getNotificationUpdates());
       if (!accountSettings) {
         await dispatch(getCommonFeatures());
       }

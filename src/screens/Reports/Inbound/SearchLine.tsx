@@ -143,8 +143,8 @@ const SearchLine = ({
                                 }
                             }}
                             renderInput={(params) => {
-                                return (<TextField
-                                    {...params}
+                                return (<TextField 
+                                    // {...params}
                                     onChange={(e: any) => {
                                         if (e.target.value !== '') {
                                             const campaigns = finishedCampaigns.map((item: any, idx: number) => {
@@ -344,7 +344,7 @@ const SearchLine = ({
                         }}
                         renderInput={(params) => {
                             return (<TextField
-                                {...params}
+                                // {...params}
                                 onChange={(e: any) => {
                                     if (e.target.value !== '') {
                                         const campaigns = finishedCampaigns.map((item: any, idx: number) => {
