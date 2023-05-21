@@ -3,7 +3,7 @@ import { TYPE_JSX } from "./common";
 export type DialogOptions = {
   childrenPadding?: boolean;
   open: boolean;
-  title: any;
+  title?: any;
   icon?: any;
   children: TYPE_JSX;
   showDivider?: boolean;

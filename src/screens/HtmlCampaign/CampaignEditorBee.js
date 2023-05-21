@@ -11,7 +11,8 @@ import {
   getUserblocks,
   testSend,
   saveUserBlock,
-  deleteUserBlock
+  deleteUserBlock,
+  getTemplateById
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -46,6 +47,7 @@ import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
+import Templates from './modals/Templates.tsx';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -578,6 +580,19 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const config = getConfig();
 
+  const reloadBeeEditor = async (templateId) => {
+    const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
+    const defaultContent = DefaultContent(isRtlLang);
+    const response = await dispatch(getTemplateById(templateId));
+    const beeObject = JSON.parse(beeToken.Message);
+    
+    const beeTest = new BeePlugin(beeObject);
+    const template = response?.payload?.JsonData ? JSON.parse(response?.payload?.JsonData) : defaultContent.defaultTemplate;
+    beeTest.start(config, template).then((instance) => {
+      editorRef.current = instance;
+    });  
+  }
+
   const showGalleryModal = () => {
     if (showGallery) {
       let dialog = {
@@ -726,6 +741,19 @@ const CampaignEditor = ({ classes, ...props }) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
+      {
+        dialog === DialogType.Templates && <Templates
+          classes={classes}
+          onClose={(template) => {
+            setDialog(null);
+            if (template !== undefined) {
+              console.log(template);
+              reloadBeeEditor(template.ID);
+            }
+          }}
+          isOpen={dialog === DialogType.Templates}
+        />
+      }
       <NoCreditsModal
         classes={classes}
         onClose={() => setDialog(null)}
@@ -771,6 +799,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         onDelete={fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
+        onLoadTemplate={() => setDialog(DialogType.Templates)}
+        onSaveTemplate={() => console.log('onLoadTemplate')}
         additionalButtons={renderButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />

@@ -228,7 +228,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     transform: "rotateY(180deg)",
   },
   dBlock: {
-    display: "block",
+    display: "block !important",
   },
   dNone: {
     display: "none",
@@ -332,6 +332,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt2rem: {
     paddingTop: "2rem",
   },
+  pt5: {
+    paddingTop: 10,
+  },
   pt10: {
     paddingTop: 10,
   },
@@ -340,6 +343,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt15: {
     paddingTop: 15
+  },
+  pt50: {
+    paddingTop: 50
   },
   pt2: {
     paddingTop: 1.4,
@@ -484,6 +490,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   justifyEvenly: {
     display: "flex",
     justifyContent: "space-evenly",
+  },
+  tabText: {
+    fontSize: 20,
+    textTransform: "capitalize",
+    padding: '5px 20px',
+    minWidth: 150,
+    minHeight: 40,
   },
   flexColumn2: {
     display: "flex",
@@ -911,6 +924,33 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       height: "110px",
     },
+  },
+  templateModal: {
+    minWidth: "900px",
+  },
+  beeTemplate: {
+    padding: '0px !important',
+    margin: '0px !important',
+    minHeight: 'calc(70vh)',
+    minWidth: 'calc(90vh)',
+    '& .dialogChildren': {
+      paddingLeft: 0,
+      paddingRight: 0,
+    },
+  },
+  templateItem: {
+    border: 'solid 1px #000',
+    padding: 0,
+    textAlign: 'center',
+    borderRadius: 3,
+    height: '200px',
+    minHeight: '200px',
+    maxHeight: '200px',
+    overflow: 'hidden',
+    '& label': {
+      zoom: '25%',
+      pointerEvents: 'none'
+    }
   },
   baseButtons: {
     display: "flex",
@@ -2745,5 +2785,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       pointerEvents: "none !important",
       cursor: "not-allowed !important",
     }
+  },
+  cursorPointer: {
+    cursor: 'pointer'
   }
 });

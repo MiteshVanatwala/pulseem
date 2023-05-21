@@ -26,3 +26,10 @@ export const getQueryParams = async () => {
 }
 
 export const voidFunction = () => null
+
+export const getUniqueValuesOfKey = (array, key) => {
+    return array.reduce(function(carry, item){
+      if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+      return carry;
+    }, []);
+}

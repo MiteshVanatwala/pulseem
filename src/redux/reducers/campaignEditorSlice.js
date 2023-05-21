@@ -106,6 +106,17 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
         }
     });
 
+export const getTemplateById = createAsyncThunk(
+    '/CampaignEditor/GetTemplateById/', async (id, thunkAPI) => {
+        try {
+            const response = await instence.get(`/CampaignEditor/GetTemplateById/${id}`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+);
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
@@ -118,7 +129,8 @@ export const campaignEditorSlice = createSlice({
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
         },
-        campaignInfo: []
+        campaignInfo: [],
+        templateDetails: {}
     },
     extraReducers: builder => {
         builder
@@ -143,6 +155,9 @@ export const campaignEditorSlice = createSlice({
                 state.campaignInfo = payload?.Message;
             })
             .addCase(getBeeToken.fulfilled, (state, { payload }) => {
+                state.beeToken = payload;
+            })
+            .addCase(getTemplateById.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;
             })
 

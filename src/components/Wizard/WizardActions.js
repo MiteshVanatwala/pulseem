@@ -20,6 +20,8 @@ const WizardActions = ({
     onTestSend = null,
     onShowGallery = null,
     onShowDocuments = null,
+    onLoadTemplate = null,
+    onSaveTemplate = null,
     helperText = null,
     disabled = false
 }) => {
@@ -43,6 +45,29 @@ const WizardActions = ({
                             color="primary"
                         >{onBack?.text ?? t('notifications.back')}</Button>
                     }
+                    <Button onClick={onLoadTemplate}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonOutlinedBlue
+                        )}
+                        style={{ margin: '8px' }}
+                    >
+                        {t('common.templates')}
+                    </Button>
+                    <Button onClick={onSaveTemplate}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonOutlinedBlue,
+                        )}
+                        style={{ margin: '8px' }}
+                        startIcon={<BiSave />}
+                    >
+                        {t('common.saveTemplate')}
+                    </Button>
                     <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
                         {onDelete &&
                             <Button

@@ -607,5 +607,10 @@
   "searchByCampaign": "חפש לפי קמפיין",
   "newsletterMessages": "הודעות דיוור",
   "fileDownloads": "הורדת קבצים",
-  "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ"
+  "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ",
+  "templates": "תבניות",
+  "pulseemTemplates": "תבניות פולסים",
+  "myTemplates": "התבניות שלי",
+  "all": "הכל",
+  "noTemplate": "No Template available"
 }
