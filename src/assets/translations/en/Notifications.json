@@ -158,5 +158,6 @@
   "downloadHere": "Download Here",
   "recipientsRemoved": "Recipients were successfully removed from <b>\"##Name##\"</b>",
   "recipientsUploaded": "Recipients were successfully uploaded to <b>\"##Name##\"</b>",
-  "notifyCenterTitle": "Notifications"
+  "notifyCenterTitle": "Notifications",
+  "noNewNotify": "There are no new notifications"
 }

@@ -681,7 +681,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         direction: isRTL ? 'rtl' : 'ltr',
         background: '#fff',
         marginTop: '12px',
-        // width: '400px',
+        minWidth: '400px',
         maxHeight: '300px',
         overflow: 'auto',
         boxShadow: '0px 0px 6px #ababab',

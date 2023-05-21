@@ -87,14 +87,19 @@ const NotificationBell = ({ classes }: any) => {
     return (
       <MenuList>
         {
-          notifyCenterList && notifyCenterList?.map((option: any) => (
+          notifyCenterList && notifyCenterList?.length > 0  ? notifyCenterList?.map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}
             >
               {notifyTemplate(option)}
             </MenuItem>
-          ))
+          )) :
+            <MenuItem
+              key={0}
+              className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}>
+              <Typography className={classes.font14}>{t('notifications.noNewNotify')}</Typography>
+            </MenuItem>
         }
       </MenuList>
     )
