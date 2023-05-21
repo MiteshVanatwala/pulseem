@@ -8,6 +8,7 @@ import { markNotificationsAsRead } from '../../redux/reducers/notificationUpdate
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
 import { IoMdRemoveCircleOutline } from 'react-icons/io';
+import { ClickAwayListener } from "@material-ui/core";
 
 enum NotifyCenterType {
   File = 0,
@@ -86,52 +87,59 @@ const NotificationBell = ({ classes }: any) => {
     return (
       <MenuList>
         {
-          notifyCenterList && notifyCenterList?.map((option: any) => (
+          notifyCenterList && notifyCenterList?.length > 0  ? notifyCenterList?.map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}
             >
               {notifyTemplate(option)}
             </MenuItem>
-          ))
+          )) :
+            <MenuItem
+              key={0}
+              className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}>
+              <Typography className={classes.font14}>{t('notifications.noNewNotify')}</Typography>
+            </MenuItem>
         }
       </MenuList>
     )
   }
 
   return (
-    <Box
-      zIndex='tooltip'
-      onMouseLeave={handleClose}
-      className={clsx(classes.appBarItemContainer, classes.paddingSides15)}>
-      <Badge
-        badgeContent={unreadMessages}
-        color="error"
-        className={clsx(classes.bell)}
-        invisible={unreadMessages === 0}
-        max={99}
-      >
-        <img
-          ref={notificationIconRef}
-          alt='settings'
-          src={NotificationIcon}
-          className={clsx(classes.appBarSettingIcon, classes.notificationBell)}
-          onClick={() => {
-            toggleDisplayNotifications(!displayNotifications);
-            if (unreadMessages > 0) dispatch(markNotificationsAsRead())
-          }}
-        />
-      </Badge>
-      <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
-        <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10, classes.sidebar)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
-          <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
-            {t('notifications.notifications')}
+    <ClickAwayListener onClickAway={handleClose}>
+      <Box
+        zIndex='tooltip'
+        //onMouseLeave={handleClose}
+        className={clsx(classes.appBarItemContainer, classes.paddingSides15)}>
+        <Badge
+          badgeContent={unreadMessages}
+          color="error"
+          className={clsx(classes.bell)}
+          invisible={unreadMessages === 0}
+          max={99}
+        >
+          <img
+            ref={notificationIconRef}
+            alt='settings'
+            src={NotificationIcon}
+            className={clsx(classes.appBarSettingIcon, classes.notificationBell)}
+            onClick={() => {
+              toggleDisplayNotifications(!displayNotifications);
+              if (unreadMessages > 0) dispatch(markNotificationsAsRead())
+            }}
+          />
+        </Badge>
+        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
+          <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10, classes.sidebar)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
+            <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
+              {t('notifications.notifyCenterTitle')}
+            </div>
+            <Divider style={{ marginTop: 10 }} />
+            {notificationItem()}
           </div>
-          <Divider style={{ marginTop: 10 }} />
-          {notificationItem()}
-        </div>
-      </Popper>
-    </Box>
+        </Popper>
+      </Box>
+    </ClickAwayListener>
   )
 }
 

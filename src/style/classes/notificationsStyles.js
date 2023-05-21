@@ -683,7 +683,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         direction: isRTL ? 'rtl' : 'ltr',
         background: '#fff',
         marginTop: '12px',
-        // width: '400px',
+        minWidth: '400px',
         maxHeight: '300px',
         overflow: 'auto',
         boxShadow: '0px 0px 6px #ababab',
@@ -694,6 +694,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     notificationItem: {
         borderBottom: '0.5px solid #ababab',
+        paddingInline: 10,
         '&:last-child': {
             borderBottom: 'none',
         },
@@ -712,7 +713,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     notifyIcon: {
         marginInlineEnd: 10,
-        fontSize: 18,
+        fontSize: 22,
         color: '#0371ad'
     }
 })

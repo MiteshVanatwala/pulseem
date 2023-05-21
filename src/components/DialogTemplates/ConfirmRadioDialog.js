@@ -96,7 +96,7 @@ const ConfirmRadioDialog = ({
                         <Box style={{ display: 'flex' }}>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>
-                                <FormControl style={{ width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
                                     <Select
                                         native
                                         displayEmpty

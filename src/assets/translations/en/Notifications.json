@@ -157,5 +157,7 @@
   "fileReadyForDownload": "File <b>\"##FileName##\"</b> is ready for download!",
   "downloadHere": "Download Here",
   "recipientsRemoved": "Recipients were successfully removed from <b>\"##Name##\"</b>",
-  "recipientsUploaded": "Recipients were successfully uploaded to <b>\"##Name##\"</b>"
+  "recipientsUploaded": "Recipients were successfully uploaded to <b>\"##Name##\"</b>",
+  "notifyCenterTitle": "Notifications",
+  "noNewNotify": "There are no new notifications"
 }
