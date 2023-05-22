@@ -32,7 +32,9 @@ const TemplatePreview = ({
     onClose={onClose}
     reduceTitle
     showDefaultButtons={true}
-    title={t('common.Preview')}>
+    title={t('common.Preview')}
+    confirmText={t('common.loadTemplate')}
+  >
     <Box className={clsx(classes.templateModal)}>
       {renderHtml(templateDetails.Html)}      
     </Box>

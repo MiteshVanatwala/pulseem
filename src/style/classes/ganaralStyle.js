@@ -2368,7 +2368,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "OpenSansHebrew",
     color: "#fff",
     textTransform: "capitalize",
-    width: 120,
+    width: 'auto',
     fontSize: 18,
     borderRadius: 8,
     boxShadow: 'none !important',

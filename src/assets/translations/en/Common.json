@@ -615,5 +615,9 @@
   "pulseemTemplates": "Pulseem Templates",
   "myTemplates": "My Templates",
   "all": "All",
-  "noTemplate": "No Template available"
+  "noTemplate": "In order to add your own templates, create a design in the editor and click on \"Save Template\" button",
+  "loadTemplate": "Load Template",
+  "notice": "Notice!",
+  "overwriteTemplate": "Loading the template will overrun the current design in the editor",
+  "doYouWantToProceed": "Do you want to proceed?"
 }

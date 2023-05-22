@@ -48,6 +48,8 @@ import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import Templates from './modals/Templates.tsx';
+import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
+import { instence } from '../../helpers/api';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -86,7 +88,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-
+  const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
+  const [newTemplate, setNewTemplate] = useState('');
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -583,14 +586,20 @@ const CampaignEditor = ({ classes, ...props }) => {
   const reloadBeeEditor = async (templateId) => {
     const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
     const defaultContent = DefaultContent(isRtlLang);
-    const response = await dispatch(getTemplateById(templateId));
-    const beeObject = JSON.parse(beeToken.Message);
-    
-    const beeTest = new BeePlugin(beeObject);
-    const template = response?.payload?.JsonData ? JSON.parse(response?.payload?.JsonData) : defaultContent.defaultTemplate;
-    beeTest.start(config, template).then((instance) => {
-      editorRef.current = instance;
-    });  
+    const response = await instence.get(`/CampaignEditor/GetTemplateById/${templateId}`);
+    if (response.data.StatusCode === 200) {
+      setOverwriteTemplateDialog(true);
+      setNewTemplate(response.data.Data)
+      const beeObject = JSON.parse(beeToken.Message);
+      
+      const beeTest = new BeePlugin(beeObject);
+      const template = response?.payload?.JsonData ? JSON.parse(response?.payload?.JsonData) : defaultContent.defaultTemplate;
+      beeTest.start(config, template).then((instance) => {
+        editorRef.current = instance;
+      });  
+    } else {
+      setToastMessage({ severity: 'error', color: 'error', message: response.data.Message, showAnimtionCheck: false });
+    }
   }
 
   const showGalleryModal = () => {
@@ -747,7 +756,9 @@ const CampaignEditor = ({ classes, ...props }) => {
           onClose={(template) => {
             setDialog(null);
             if (template !== undefined) {
-              console.log(template);
+              // console.log(template);
+              // console.log(editorRef.current);
+              // setOverwriteTemplateDialog(true);
               reloadBeeEditor(template.ID);
             }
           }}
@@ -803,6 +814,15 @@ const CampaignEditor = ({ classes, ...props }) => {
         onSaveTemplate={() => console.log('onLoadTemplate')}
         additionalButtons={renderButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
+      />
+      <OverwriteTemplatePopUp
+        classes={classes}
+        onClose={(resp) => {
+          if (resp) {
+            setOverwriteTemplateDialog(false);
+          }
+        }}
+        isOpen={overwriteTemplateDialog}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
