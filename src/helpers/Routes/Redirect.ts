@@ -15,7 +15,8 @@ const useRedirect = () => {
         } else {
             // This was a twick for something. if anything goes wrong, return this line and check here why 
             //const options = { replace: true, preventScrollReset: false, relative: "route" } as NavigateOptions;
-            navigate(url);
+            if (window.location.pathname === url) window.location.href = url
+            else navigate(url);
         }
     };
 
