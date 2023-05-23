@@ -325,5 +325,6 @@ export const DialogType = {
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits",
     Templates: "templates",
-    SET_USER_BLOCK: "campaigns.saveBlock"
+    SET_USER_BLOCK: "campaigns.saveBlock",
+    SAVE_TEMPLATE: "campaigns.saveTemplate"
 };

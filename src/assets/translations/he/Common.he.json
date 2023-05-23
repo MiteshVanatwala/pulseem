@@ -616,5 +616,7 @@
   "loadTemplate": "טען תבנית",
   "notice": "שימו לב!",
   "overwriteTemplate": "טעינת התבנית תדרוס את העיצוב הנוכחי בעורך",
-  "doYouWantToProceed": "האם ברצונכם להמשיך?"
+  "doYouWantToProceed": "האם ברצונכם להמשיך?",
+  "templateSaved": "תבנית נשמרה בהצלחה!",
+  "templateNameIsRequired": "אנא בחרו שם לתבנית"
 }

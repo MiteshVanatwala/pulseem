@@ -572,7 +572,7 @@
   "back": "Back",
   "clientSubscriptionResultTitle": "Subscribers of Landing page ",
   "SelectFormat": "Select format",
-  "saveTemplate": "Save template",
+  "saveTemplate": "Save Template",
   "exit": "Exit",
   "phone": "Phone",
   "companyName": "Company Name",
@@ -619,5 +619,7 @@
   "loadTemplate": "Load Template",
   "notice": "Notice!",
   "overwriteTemplate": "Loading the template will overrun the current design in the editor",
-  "doYouWantToProceed": "Do you want to proceed?"
+  "doYouWantToProceed": "Do you want to proceed?",
+  "templateSaved": "Template successfully saved!",
+  "templateNameIsRequired": "Template name is required"
 }

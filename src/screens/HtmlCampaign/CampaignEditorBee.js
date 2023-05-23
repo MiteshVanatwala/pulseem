@@ -11,8 +11,7 @@ import {
   getUserblocks,
   testSend,
   saveUserBlock,
-  deleteUserBlock,
-  getTemplateById
+  deleteUserBlock
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -50,6 +49,7 @@ import moment from 'moment';
 import Templates from './modals/Templates.tsx';
 import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
 import { instence } from '../../helpers/api';
+import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -383,11 +383,20 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         else if (saveRef.current?.showAnimation) {
-          setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED: ToastMessages.CAMPAIGN_SAVED);
         }
       }
-      else {
-        console.log(response);
+
+      if (saveRef.current?.saveTemplate) {
+        const templateResponse = await instence.post(`/CampaignEditor/SaveAsTemplate`, {
+          Name: saveRef.current?.templateName,
+          JsonData: finalJson,
+          HTML: finalHtml,
+          Category: saveRef.current?.templateCategory
+        });
+        if (templateResponse.data.StatusCode === 200) {
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.data.Message, showAnimtionCheck: false });
+        }
       }
     } catch (e) {
       console.error(e);
@@ -587,19 +596,23 @@ const CampaignEditor = ({ classes, ...props }) => {
     const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
     const defaultContent = DefaultContent(isRtlLang);
     const response = await instence.get(`/CampaignEditor/GetTemplateById/${templateId}`);
-    if (response.data.StatusCode === 200) {
-      setOverwriteTemplateDialog(true);
+    if (response.data.StatusCode === 201) {
       setNewTemplate(response.data.Data)
       const beeObject = JSON.parse(beeToken.Message);
       
       const beeTest = new BeePlugin(beeObject);
-      const template = response?.payload?.JsonData ? JSON.parse(response?.payload?.JsonData) : defaultContent.defaultTemplate;
+      const template = response?.data?.Data?.JsonData ? JSON.parse(response?.data?.Data?.JsonData) : defaultContent.defaultTemplate;
       beeTest.start(config, template).then((instance) => {
         editorRef.current = instance;
       });  
     } else {
       setToastMessage({ severity: 'error', color: 'error', message: response.data.Message, showAnimtionCheck: false });
     }
+  }
+
+  const saveTemplate = async (name, category) => {
+    saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
+    await editorRef.current.save();
   }
 
   const showGalleryModal = () => {
@@ -756,10 +769,8 @@ const CampaignEditor = ({ classes, ...props }) => {
           onClose={(template) => {
             setDialog(null);
             if (template !== undefined) {
-              // console.log(template);
-              // console.log(editorRef.current);
-              // setOverwriteTemplateDialog(true);
-              reloadBeeEditor(template.ID);
+              setOverwriteTemplateDialog(true);
+              setNewTemplate(template);
             }
           }}
           isOpen={dialog === DialogType.Templates}
@@ -811,7 +822,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         onLoadTemplate={() => setDialog(DialogType.Templates)}
-        onSaveTemplate={() => console.log('onLoadTemplate')}
+        onSaveTemplate={() => setDialog(DialogType.SaveTemplate)}
         additionalButtons={renderButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
@@ -820,9 +831,18 @@ const CampaignEditor = ({ classes, ...props }) => {
         onClose={(resp) => {
           if (resp) {
             setOverwriteTemplateDialog(false);
+            reloadBeeEditor(newTemplate.ID);
           }
         }}
         isOpen={overwriteTemplateDialog}
+      />
+      <SaveTemplate
+        classes={classes}
+        onClose={(resp) => {
+          setDialog(null);
+          if (resp !== undefined) saveTemplate(resp.name, resp.category);
+        }}
+        isOpen={dialog === DialogType.SaveTemplate}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
