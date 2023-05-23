@@ -29,7 +29,7 @@ const FORM_ACCOUNT_DETAILS = ({
 	Settings,
 	OnUpdate,
 	selectedTier,
-  onTierChange
+	onTierChange,
 }: AccDtlPropTypes) => {
 	const { t } = useTranslation();
 	const { classes } = useCore();
@@ -183,13 +183,13 @@ const FORM_ACCOUNT_DETAILS = ({
 									)}
 								</>
 							</Typography>
-              <Typography>
-								<>
-									{t(
-										'settings.accountSettings.actDetails.fields.checkTier'
-									)}
-								</>
-							</Typography>
+							<a
+								href='https://business.facebook.com/settings/whatsapp-business-accounts/'
+								target='_blank'
+								rel='noreferrer'
+								className={classes.accountSettingCheckYourTier}>
+								<>{t('settings.accountSettings.actDetails.fields.checkTier')}</>
+							</a>
 						</Grid>
 						<Grid item xs={12} sm={6} md={8} className={'textBoxWrapper'}>
 							<Select

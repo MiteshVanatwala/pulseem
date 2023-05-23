@@ -3106,4 +3106,49 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 			width: '100%',
 		},
 	},
+	accountSettingCheckYourTier: {
+		fontFamily: 'Assistant',
+		fontSize: '16px',
+		color: '#0371ad',
+	},
+	campaignSummaryExceedLimitWrapper: {},
+	campaignSummaryExceedLimitText: {
+		color: '#DC3D1B',
+		fontSize: '16px',
+		fontWeight: 'bolder',
+	},
+	campaignSummaryExceedLimitSendRandomlyText: {
+		fontSize: '16px',
+		color: '#0371ad',
+		fontWeight: 'bolder',
+		textDecoration: 'underline',
+		marginTop: '20px',
+	},
+	campaignSummaryExceedLimitSendRandomlyInsert: {
+		display: 'flex',
+		alignItems: 'center',
+		marginTop: '20px',
+	},
+	campaignSummaryExceedLimitSendRandomlyInsertInput: {
+		padding: '0 14px',
+		borderRadius: '0px',
+		width: '40px',
+		color: '#000',
+		border: '1px solid #000',
+	},
+	campaignSummaryExceedLimitSendRandomlyRecipients: {
+		paddingLeft: isRTL ? '0px' : '8px',
+		paddingRight: isRTL ? '8px' : '0px',
+	},
+	campaignSummaryExceedLimitTierInfo: {
+		display: 'flex',
+		alignItems: 'center',
+		fontSize: '17px',
+		fontFamily: 'Assistant',
+		fontWeight: 'bolder',
+		marginBottom: '20px',
+	},
+	tierAlertModalWrapper:{
+		
+	}
 });

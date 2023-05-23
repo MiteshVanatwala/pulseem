@@ -100,6 +100,6 @@ export type PageTypeRequest = { [key: string]: number };
 
 export type TierSetting = {
 	name: string;
-	value: 'T1' | 'T2' | 'T3' | 'T4';
+	value: '1' | '2' | '3' | '4';
 	messageLimit: number | string;
 }[];

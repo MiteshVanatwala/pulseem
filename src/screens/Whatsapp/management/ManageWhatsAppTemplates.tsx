@@ -263,6 +263,7 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 					text={row?.FriendlyTemplateName}
 					children={undefined}
 					icon={undefined}
+					titleStyle={undefined}
 				/>
 				<Typography className={classes.grayTextCell}>
 					{`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
@@ -296,7 +297,8 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 							title={translator(statusesByName[Status] || Status)}
 							text={translator(statusesByName[Status] || Status)}
 							icon={undefined}
-							style={undefined}>
+							style={undefined}
+							titleStyle={undefined}>
 							<span>
 								{statusesByName[Status]
 									? translator(statusesByName[Status])
