@@ -6,8 +6,9 @@ import "moment/locale/he";
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { getUniqueValuesOfKey } from '../../../helpers/utils';
 import TemplatePreview from './TemplatePreview'
-import { instence } from '../../../helpers/api';
 import { Loader } from '../../../components/Loader/Loader';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllTemplatesBySubaccountId, getPublicTemplates } from '../../../redux/reducers/newsletterSlice';
 
 const Templates = ({
   classes,
@@ -15,6 +16,7 @@ const Templates = ({
   isOpen = false
 }: any) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch()
   const [tabValue, setTabValue] = useState(0);
   const handleChange = (event: any, newValue: any) => {
     setTabValue(newValue);
@@ -28,6 +30,9 @@ const Templates = ({
   const [ openPreview, setOpenPreview ] = useState(false);
   const [ selectedTemplate, setSelectedTemplate ] = useState({});
   const [showLoader, setLoader] = useState(false);
+  const { publicTemplates, templatesBySubAccount } = useSelector(
+    (state: { newsletter: any }) => state.newsletter
+  );
 
   const renderHtml = (html: any) => {
     function createMarkup() {
@@ -57,6 +62,10 @@ const Templates = ({
   }, []);
 
   useEffect(() => {
+    setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount)
+  }, [ publicTemplates, templatesBySubAccount ]);
+
+  useEffect(() => {
     setCategoryList(getUniqueValuesOfKey(templateList, 'Category'));
   }, [templateList]);
 
@@ -64,13 +73,7 @@ const Templates = ({
     setCategoryList([]);
     setTemplateList([]);
     setLoader(true);
-    if (type === 0) {
-      const response = await instence.get(`/CampaignEditor/GetPublicTemplates`);
-      setTemplateList(response.data.Data);
-    } else {
-      const response = await instence.get(`/CampaignEditor/GetAllTemplatesBySubaccountId`);
-      setTemplateList(response.data.Data || []);
-    }
+    await dispatch(type === 0 ? getPublicTemplates() : getAllTemplatesBySubaccountId());
     setLoader(false);
   }
 

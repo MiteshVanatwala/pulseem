@@ -23,7 +23,7 @@ import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
-import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
+import { deleteCampaign, saveTemplateToAccount, getTemplateById } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
@@ -48,7 +48,6 @@ import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import Templates from './modals/Templates.tsx';
 import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
-import { instence } from '../../helpers/api';
 import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 
@@ -388,14 +387,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       if (saveRef.current?.saveTemplate) {
-        const templateResponse = await instence.post(`/CampaignEditor/SaveAsTemplate`, {
+        const templateResponse = await dispatch(saveTemplateToAccount({
           Name: saveRef.current?.templateName,
           JsonData: finalJson,
           HTML: finalHtml,
           Category: saveRef.current?.templateCategory
-        });
-        if (templateResponse.data.StatusCode === 200) {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.data.Message, showAnimtionCheck: false });
+        }));
+        if (!templateResponse.payload.Data) {
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
       }
     } catch (e) {
@@ -595,18 +594,19 @@ const CampaignEditor = ({ classes, ...props }) => {
   const reloadBeeEditor = async (templateId) => {
     const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
     const defaultContent = DefaultContent(isRtlLang);
-    const response = await instence.get(`/CampaignEditor/GetTemplateById/${templateId}`);
-    if (response.data.StatusCode === 201) {
-      setNewTemplate(response.data.Data)
+
+    const response = await dispatch(getTemplateById(templateId));
+    if (response.payload.StatusCode === 201) {
+      setNewTemplate(response.payload.Data)
       const beeObject = JSON.parse(beeToken.Message);
       
       const beeTest = new BeePlugin(beeObject);
-      const template = response?.data?.Data?.JsonData ? JSON.parse(response?.data?.Data?.JsonData) : defaultContent.defaultTemplate;
+      const template = response?.payload?.Data?.JsonData ? JSON.parse(response?.payload?.Data?.JsonData) : defaultContent.defaultTemplate;
       beeTest.start(config, template).then((instance) => {
         editorRef.current = instance;
       });  
     } else {
-      setToastMessage({ severity: 'error', color: 'error', message: response.data.Message, showAnimtionCheck: false });
+      setToastMessage({ severity: 'error', color: 'error', message: response.payload.Message, showAnimtionCheck: false });
     }
   }
 

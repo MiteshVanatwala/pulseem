@@ -153,6 +153,42 @@ export const cloneArchiveCampaign = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+export const getPublicTemplates = createAsyncThunk(
+  'CampaignEditor/GetPublicTemplates', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.get(`CampaignEditor/GetPublicTemplates`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getAllTemplatesBySubaccountId = createAsyncThunk(
+  'CampaignEditor/GetAllTemplatesBySubaccountId', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const saveTemplateToAccount = createAsyncThunk(
+  'CampaignEditor/SaveAsTemplate', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`CampaignEditor/SaveAsTemplate`, data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getTemplateById = createAsyncThunk(
+  'CampaignEditor/GetTemplateById', async (templateId, thunkAPI) => {
+    try {
+      const response = await instence.get(`CampaignEditor/GetTemplateById/${templateId}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 export const newsletterSlice = createSlice({
   name: 'newsletter',
@@ -165,6 +201,8 @@ export const newsletterSlice = createSlice({
     directNewsletterReport: {},
     directNewsletterReportError: '',
     newsletterArchiveData: [],
+    publicTemplates: [],
+    templatesBySubAccount: [],
     ToastMessages: {
       SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
       INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
@@ -206,6 +244,12 @@ export const newsletterSlice = createSlice({
     builder.addCase(getArchiveDirectReport.fulfilled, (state, { payload }) => {
       //state.archiveDirectNewsletterReport = payload
       state.directNewsletterReport = payload;
+    })
+    builder.addCase(getPublicTemplates.fulfilled, (state, action) => {
+      state.publicTemplates = action.payload.Data
+    })
+    builder.addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
+      state.templatesBySubAccount = action.payload.Data
     })
     builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
       //state.archiveDirectNewsletterReportError = action.error.message
