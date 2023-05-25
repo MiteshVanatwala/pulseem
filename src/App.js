@@ -91,11 +91,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
 
         path="/react/sms/create/"
-        element={<SmsCreator classes={classes} />}
+        element={<SmsCreator classes={classes} key="create" />}
       />
       <Route
         path="/react/sms/edit/:id"
-        element={<SmsCreator classes={classes} />}
+        element={<SmsCreator classes={classes} key="edit" />}
       />
       <Route
 
@@ -151,11 +151,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path="/react/Campaigns/Create"
-        element={<NewsLetterInfo classes={classes} />}
+        element={<NewsLetterInfo classes={classes} key="create"  />}
       />
       <Route
         path="/react/Campaigns/Create/:id"
-        element={<NewsLetterInfo classes={classes} />}
+        element={<NewsLetterInfo classes={classes} key="edit"  />}
       />
       <Route
         exact
@@ -299,13 +299,6 @@ const renderRoutes = (classes, redirect) => {
         path={whatsappRoutes.CHAT_CONVERSATION}
         element={<WhatsappChat classes={classes} />}
       />
-      {/* Settings */}
-      <Route
-        exact
-        path={`/react/AccountSettings`}
-        element={<AccountSettingsEditor classes={classes} />}
-      />
-
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         element={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -342,7 +335,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={'/react/Reports/SmsReplies/:id'}
-        element={<SmsReplies classes={classes} />}
+        element={<SmsReplies classes={classes} key="byId"  />}
       />
       <Route
         path={`/react/Reports/MmsMainReport`}
@@ -426,17 +419,17 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={"/react/Notification/create"}
-        element={<NotificationEdit classes={classes} />}
+        element={<NotificationEdit classes={classes} key="create" />}
       />
       <Route
         exact
         path={"/react/Notification/edit/:id"}
-        element={<NotificationEdit classes={classes} />}
+        element={<NotificationEdit classes={classes} key="edit"  />}
       />
       <Route
         exact
         path={"/react/Notification/send/:id"}
-        element={<NotificationSend classes={classes} />}
+        element={<NotificationSend classes={classes} key="send" />}
       />
       {/* Settings */}
       <Route
@@ -484,17 +477,17 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route exact
         path={'/react/reports/Inbound'}
-        element={<InboundMessages classes={classes} />}
+        element={<InboundMessages classes={classes} key="all"  />}
       />
       <Route
         exact
         path={'/react/reports/Inbound/:type'}
-        element={<InboundMessages classes={classes} />}
+        element={<InboundMessages classes={classes} key="byType" />}
       />
       <Route
         exact
         path={'/react/reports/Inbound/:type/:id'}
-        element={<InboundMessages classes={classes} />}
+        element={<InboundMessages classes={classes} key="byTypeId"  />}
       />
       <Route
         path="*"
