@@ -312,6 +312,7 @@ export type smsReducerProps = {
 
 export type SubAccountSettings = {
 	DomainAddress: string;
+	WhatsappTierID: null | string;
 };
 
 export type testGroupsProps = {

@@ -122,6 +122,7 @@ export type CommonRedux = {
 	accountSettings: {
 		SubAccountSettings: {
 			DomainAddress: string;
+			WhatsappTierID: null | string;
 		};
 	};
 };

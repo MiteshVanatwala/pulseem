@@ -180,7 +180,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isQuickReplyOpen, setIsQuickReplyOpen] = useState<boolean>(false);
 	const [isCallToActionOpen, setIsCallToActionOpen] = useState<boolean>(false);
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
-	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState(false);
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
@@ -894,10 +893,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 	};
 
-	const onExceedLimitYes = () => {
-		setExceedLimitModal(false);
-	};
-
 	return (
 		<DefaultScreen
 			subPage={'create'}
@@ -1353,19 +1348,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						subtitle={translator('mainReport.leaveCampaign')}
 						type='delete'
 						onConfirmOrYes={() => onExitCampaign()}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={exceedLimitModal}
-						onClose={() => setExceedLimitModal(false)}
-						title={translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
-						)}
-						subtitle={translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)}
-						type='alert'
-						onConfirmOrYes={() => onExceedLimitYes()}
 					/>
 					<SummaryModal
 						classes={classes}

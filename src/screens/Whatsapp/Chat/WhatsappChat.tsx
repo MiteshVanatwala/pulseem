@@ -80,8 +80,8 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	);
 	const SubAccountSettings = useSelector(
 		(state: {
-			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
-		}) => state.common?.commonSettings?.SubAccountSettings
+			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);

@@ -111,6 +111,7 @@ const SendCampaign = ({
 	const [spectialDateFieldID, setDateFieldID] = useState<string>('0');
 	const [isDeleteCampaignOpen, setIsDeleteCampaignOpen] = useState(false);
 	const [isExitCampaignOpen, setIsExitCampaignOpen] = useState<boolean>(false);
+	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isSendCampaignSuccessOpen, setIsSendCampaignSuccessOpen] =
 		useState<boolean>(false);
 	const [newGroupName, setNewGroupName] = useState<string>('');
@@ -700,6 +701,10 @@ const SendCampaign = ({
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
 	};
 
+	const onExceedLimitYes = () => {
+		setExceedLimitModal(false);
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'send2'}
@@ -819,6 +824,19 @@ const SendCampaign = ({
 						)}
 						type='delete'
 						onConfirmOrYes={() => onExitCampaign()}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={exceedLimitModal}
+						onClose={() => setExceedLimitModal(false)}
+						title={translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+						)}
+						subtitle={`${translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+						)} ${moment().add(1, 'd').format('DD.MM.YYYY HH:MM')}`}
+						type='alert'
+						onConfirmOrYes={() => onExceedLimitYes()}
 					/>
 					<SendCampaignSuccess
 						classes={classes}

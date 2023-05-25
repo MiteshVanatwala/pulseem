@@ -23,6 +23,7 @@ import {
 	MdMobileFriendly,
 	MdOutlineMarkEmailRead,
 } from 'react-icons/md';
+import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
 
 const AccountSettingsEditor = () => {
 	const { t } = useTranslation();
@@ -31,6 +32,11 @@ const AccountSettingsEditor = () => {
 	const { isRTL, windowSize } = useSelector((state: any) => state.core);
 	const { accountSettings, ToastMessages } = useSelector(
 		(state: any) => state?.accountSettings
+	);
+	const { WhatsappTierID } = useSelector(
+		(state: {
+			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const { CoreToastMessages } = useSelector((state: any) => state?.core);
 	const [toastMessage, setToastMessage] = useState(null);
@@ -73,7 +79,7 @@ const AccountSettingsEditor = () => {
 		TwoFactorAuthOverrideDateTime: null,
 		ExpiryDate: null,
 	} as AccountSettings);
-	const [selectedTier, setSelectedTier] = useState<string>('T1');
+	const [selectedTier, setSelectedTier] = useState<string>('1');
 
 	const renderToast = () => {
 		setTimeout(() => {
@@ -93,6 +99,12 @@ const AccountSettingsEditor = () => {
 	useEffect(() => {
 		setSettingRequest(accountSettings?.Data);
 	}, [accountSettings]);
+
+	useEffect(() => {
+		if (WhatsappTierID) {
+			setSelectedTier(WhatsappTierID);
+		}
+	}, [WhatsappTierID]);
 
 	const handleUpdate = async (
 		updatedObject: AccountSettings,
