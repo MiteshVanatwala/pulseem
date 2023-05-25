@@ -605,6 +605,7 @@
   "xssError": "המערכת לא מאפשרת הזנת קוד Html/Scripts או כל שרשור לא טקסטואלי!",
   "remove": "הסר",
   "searchByCampaign": "חפש לפי קמפיין",
+  "newsletterMessages": "הודעות דיוור",
   "fileDownloads": "הורדת קבצים",
   "fileDownloadError": "אופס... משהו השתבש בעת הורדת הקובץ"
 }

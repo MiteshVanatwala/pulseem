@@ -142,14 +142,14 @@ const AccountSettingsEditor = () => {
             setEmailToVerify(updatedObject.Email);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_EMAIL);
-            handleVerification('email');
+            handleVerification('email2fa');
             break;
           }
           case 'AuthCompanyCellphone': {
             setCellphoneToVerify(updatedObject.CellPhone);
             setVerificationStep(1);
             setToastMessage(ToastMessages.VERIFY_CELLPHONE);
-            handleVerification('cellphone');
+            handleVerification('sms2fa');
             break;
           }
           case 'AuthEmail': {

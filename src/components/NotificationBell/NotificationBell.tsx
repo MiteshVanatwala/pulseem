@@ -1,11 +1,14 @@
 import clsx from 'clsx';
-import { Box, MenuItem, MenuList, Popper, Badge, Button } from '@material-ui/core'
+import { Box, MenuItem, MenuList, Popper, Badge, Grid, Typography, Divider } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux';
 import NotificationIcon from '../../assets/images/notification.svg';
 import { useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { markNotificationsAsRead } from '../../redux/reducers/notificationUpdateSlice';
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { AiOutlineCloudDownload, AiOutlineCloudUpload } from 'react-icons/ai';
+import { IoMdRemoveCircleOutline } from 'react-icons/io';
+import { ClickAwayListener } from "@material-ui/core";
 
 enum NotifyCenterType {
   File = 0,
@@ -16,13 +19,14 @@ enum NotifyCenterType {
 enum NotifyCenterStatus {
   Unread = 0,
   Read = 1,
-  Removed = 2  
+  Removed = 2
 }
 
 const NotificationBell = ({ classes }: any) => {
   const [displayNotifications, toggleDisplayNotifications] = useState(false);
   const notificationIconRef = useRef(null)
   const { t } = useTranslation();
+  const { isRTL } = useSelector((state: any) => state.core);
   const { notifyCenterList, unreadMessages } = useSelector((state: any) => state.notificationUpdate)
   const dispatch = useDispatch();
 
@@ -34,19 +38,46 @@ const NotificationBell = ({ classes }: any) => {
     const notifyTemplate = (option: any) => {
       switch (option.NotifyCenterTypeID) {
         case NotifyCenterType.File: {
-          return <>{t('notifications.fileReadyForDownload')}
-            <>
-              <Button onClick={() => { window.open(`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`) }}>{t('notifications.fileReadyForDownload')}</Button>
-            </>
-          </>
+          return (
+            <Box className={clsx(classes.justifyCenterOfCenter, classes.spaceBetween)}>
+              <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+                <AiOutlineCloudDownload className={classes.notifyIcon} />
+                <Typography className={classes.font14}>
+                  {RenderHtml(t('notifications.fileReadyForDownload').replace('##FileName##', `${option.TargetName}`))}
+                </Typography>
+              </Box>
+              <Box style={{ paddingInlineStart: 15 }}>
+                <a
+                  className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
+                  href={`/Pulseem/DownloadFile.aspx?fileFormat=XLS&fileId=${option.SourceID}`}
+                  target="_blank"
+                >
+                  {t("master.download")} XLS
+                </a>
+                <a
+                  className={clsx(classes.blueLink, classes.f12, isRTL ? classes.floatLeft : classes.floatRight)}
+                  href={`/Pulseem/DownloadFile.aspx?fileFormat=CSV&fileId=${option.SourceID}`}
+                  target="_blank"
+                >
+                  {t("master.download")} CSV
+                </a>
+              </Box>
+            </Box>
+          )
         }
         case NotifyCenterType.Unsubscribe: {
-          return <>
-            {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
-          </>
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+            <IoMdRemoveCircleOutline className={classes.notifyIcon} />
+            <Typography className={classes.font14}>
+              {RenderHtml(t('notifications.recipientsRemoved').replace('##Name##', `${option.TargetName}`))}
+            </Typography>
+          </Box>
         }
         case NotifyCenterType.UploadRecipient: {
-          return <>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</>
+          return <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
+            <AiOutlineCloudUpload className={classes.notifyIcon} />
+            <Typography className={classes.font14}>{RenderHtml(t('notifications.recipientsUploaded').replace('##Name##', `${option.TargetName}`))}</Typography>
+          </Box>
         }
         default: {
           break;
@@ -56,51 +87,59 @@ const NotificationBell = ({ classes }: any) => {
     return (
       <MenuList>
         {
-          notifyCenterList && notifyCenterList?.map((option: any) => (
+          notifyCenterList && notifyCenterList?.length > 0  ? notifyCenterList?.map((option: any) => (
             <MenuItem
               key={option?.ID}
               className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}
             >
               {notifyTemplate(option)}
             </MenuItem>
-          ))
+          )) :
+            <MenuItem
+              key={0}
+              className={clsx(classes.f12, classes.notificationItem, classes.paddingSides15)}>
+              <Typography className={classes.font14}>{t('notifications.noNewNotify')}</Typography>
+            </MenuItem>
         }
       </MenuList>
     )
   }
 
   return (
-    <Box
-      zIndex='tooltip'
-      onMouseLeave={handleClose}
-      className={clsx(classes.appBarItemContainer, classes.paddingSides15)}>
-      <Badge
-        badgeContent={unreadMessages}
-        color="error"
-        className={clsx(classes.bell)}
-        invisible={unreadMessages === 0}
-        max={99}
-      >
-        <img
-          ref={notificationIconRef}
-          alt='settings'
-          src={NotificationIcon}
-          className={clsx(classes.appBarSettingIcon, classes.notificationBell)}
-          onClick={() => {
-            toggleDisplayNotifications(!displayNotifications);
-            dispatch(markNotificationsAsRead())
-          }}
-        />
-      </Badge>
-      <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
-        <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10)}>
-          <div className={clsx(classes.bold)}>
-            {t('notifications.notifications')}
+    <ClickAwayListener onClickAway={handleClose}>
+      <Box
+        zIndex='tooltip'
+        //onMouseLeave={handleClose}
+        className={clsx(classes.appBarItemContainer, classes.paddingSides15)}>
+        <Badge
+          badgeContent={unreadMessages}
+          color="error"
+          className={clsx(classes.bell)}
+          invisible={unreadMessages === 0}
+          max={99}
+        >
+          <img
+            ref={notificationIconRef}
+            alt='settings'
+            src={NotificationIcon}
+            className={clsx(classes.appBarSettingIcon, classes.notificationBell)}
+            onClick={() => {
+              toggleDisplayNotifications(!displayNotifications);
+              if (unreadMessages > 0) dispatch(markNotificationsAsRead())
+            }}
+          />
+        </Badge>
+        <Popper open={displayNotifications} anchorEl={notificationIconRef.current} role={undefined} transition placement={'bottom'} disablePortal>
+          <div className={clsx(classes.notificationUpdateContainer, classes.p15, classes.pt10, classes.sidebar)} style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: isRTL ? 'right' : 'left' }}>
+            <div className={clsx(classes.bold)} style={{ textAlign: isRTL ? 'right' : 'left' }}>
+              {t('notifications.notifyCenterTitle')}
+            </div>
+            <Divider style={{ marginTop: 10 }} />
+            {notificationItem()}
           </div>
-          {notificationItem()}
-        </div>
-      </Popper>
-    </Box>
+        </Popper>
+      </Box>
+    </ClickAwayListener>
   )
 }
 

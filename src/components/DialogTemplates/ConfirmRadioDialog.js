@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput } from '@material-ui/core';
 import { SolidDialog } from '../managment/index';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { setCookie, getCookie } from '../../helpers/cookies';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
@@ -24,7 +24,7 @@ const ConfirmRadioDialog = ({
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
     const { verifiedEmails } = useSelector(state => state.common);
-    const [value, setValue] = useState(getCookie(cookieName) ?? defaultValue);
+    const [value, setValue] = useState(getCookie(cookieName));
     const [notifyEmail, setNotifyEmail] = useState(null);
     const dispatch = useDispatch();
 
@@ -43,6 +43,11 @@ const ConfirmRadioDialog = ({
         }
         setValue(e.target.value);
     }
+
+    useEffect(() => {
+        if (defaultValue && defaultValue !== '')
+            setValue(defaultValue)
+    }, [defaultValue])
 
     const dialog = {
         title: title,
@@ -91,7 +96,7 @@ const ConfirmRadioDialog = ({
                         <Box style={{ display: 'flex' }}>
                             <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
                                 <Typography>{RenderHtml(t("recipient.exportGroups.notifyEmail"))}</Typography>
-                                <FormControl style={{ width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
                                     <Select
                                         native
                                         displayEmpty

@@ -540,6 +540,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   floatRight: {
     float: "right",
   },
+  floatLeft: {
+    float: "left",
+  },
   wordBreak: {
     wordBreak: "break-all",
   },
@@ -627,8 +630,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   font13: {
     fontSize: 13,
   },
+  font14: {
+    fontSize: 14,
+  },
   font15: {
     fontSize: 15,
+  },
+  font16: {
+    fontSize: 16,
   },
   font18: {
     fontSize: 18,
