@@ -24,7 +24,7 @@ import Title from '../../../components/Wizard/Title'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
-  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
+  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getTestGroups
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
@@ -32,6 +32,7 @@ import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/api'
 import { useParams } from 'react-router-dom';
+import { getGroupsBySubAccountId } from "../../../redux/reducers/groupSlice";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -909,7 +910,7 @@ const SmsSend = ({ classes, ...props }) => {
           {groupClick ? (
             <Groups
               classes={classes}
-              list={groupList}
+              list={groupList?.filter((g) => { return g.Recipients > 0 })}
               selectedList={selectedGroups}
               callbackSelectedGroups={callbackSelectedGroups}
               callbackUpdateGroups={callbackUpdateGroups}
