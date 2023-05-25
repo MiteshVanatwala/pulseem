@@ -13,8 +13,6 @@ const useRedirect = () => {
         if (url.toLowerCase().indexOf("aspx") > -1 || url.toLowerCase().indexOf('/pulseem/') > -1) {
             window.location.href = url;
         } else {
-            // This was a twick for something. if anything goes wrong, return this line and check here why 
-            //const options = { replace: true, preventScrollReset: false, relative: "route" } as NavigateOptions;
             navigate(url);
         }
     };
