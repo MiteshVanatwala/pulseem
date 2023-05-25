@@ -846,7 +846,7 @@ const SmsSend = ({ classes, ...props }) => {
           {groupClick ? (
             <Groups
               classes={classes}
-              list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups]}
+              list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups?.filter((g) => { return g.Recipients > 0 })]}
               selectedList={selectedGroups}
               callbackSelectedGroups={callbackSelectedGroups}
               callbackUpdateGroups={callbackUpdateGroups}
