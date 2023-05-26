@@ -770,6 +770,23 @@ export const saveQuickSendGroups = createAsyncThunk(
 	}
 );
 
+export const updateWhatsappTier = createAsyncThunk(
+	'whatsAppCampaign/WhatsappTierUpdate',
+	async (tier: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/WhatsappTierUpdate`,
+				{ WhatsappTierID: tier }
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {

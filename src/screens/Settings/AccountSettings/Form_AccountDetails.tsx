@@ -208,6 +208,8 @@ const FORM_ACCOUNT_DETAILS = ({
 										padding: 10,
 										maxWidth: 210,
 										paddingInlineStart: 15,
+										paddingRight: isRTL ? '10px' : '22px',
+										paddingLeft: isRTL ? '22px' : '10px',
 									},
 								}}
 								autoWidth

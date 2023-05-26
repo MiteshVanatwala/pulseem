@@ -24,6 +24,10 @@ import {
 	MdOutlineMarkEmailRead,
 } from 'react-icons/md';
 import { SubAccountSettings } from '../../Whatsapp/Campaign/Types/WhatsappCampaign.types';
+import { updateWhatsappTier } from '../../../redux/reducers/whatsappSlice';
+import { UpdateWhatsappTier } from '../../Whatsapp/management/Types/Management.types';
+import { apiStatus } from '../../Whatsapp/Constant';
+import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 
 const AccountSettingsEditor = () => {
 	const { t } = useTranslation();
@@ -228,6 +232,16 @@ const AccountSettingsEditor = () => {
 		}
 	};
 
+	const onTierChange = async (tier: string) => {
+		let { payload }: UpdateWhatsappTier = await dispatch<any>(
+			updateWhatsappTier(tier)
+		);
+		if (payload.Status === apiStatus.SUCCESS) {
+			setSelectedTier(tier);
+			await dispatch<any>(getCommonFeatures());
+		}
+	};
+
 	return (
 		<DefaultScreen
 			currentPage='settings'
@@ -307,7 +321,7 @@ const AccountSettingsEditor = () => {
 							handleUpdate(updatedObject, 'account', true)
 						}
 						selectedTier={selectedTier}
-						onTierChange={setSelectedTier}
+						onTierChange={onTierChange}
 					/>
 				</Box>
 			</Box>

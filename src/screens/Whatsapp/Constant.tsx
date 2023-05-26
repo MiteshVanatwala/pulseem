@@ -431,7 +431,7 @@ export const allReportInitialPagination: AllReportReq = {
 	pageSize: 6,
 };
 
-export const tierSetting: TierSetting = [
+export const tierSetting: TierSetting[] = [
 	{
 		name: 'settings.accountSettings.actDetails.fields.tier1',
 		value: '1',

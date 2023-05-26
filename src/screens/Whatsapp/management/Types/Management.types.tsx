@@ -102,4 +102,15 @@ export type TierSetting = {
 	name: string;
 	value: '1' | '2' | '3' | '4';
 	messageLimit: number | string;
-}[];
+};
+
+export type UpdateWhatsappTierPayload = {
+	Data: null;
+	Message: string;
+	Status: string;
+	StatusCode: number;
+};
+
+export type UpdateWhatsappTier = {
+	payload: UpdateWhatsappTierPayload;
+};

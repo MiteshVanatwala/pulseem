@@ -437,3 +437,8 @@ export const getErrorMessageFromTwilioLink = (link: string): string => {
 		Number(errorCode[errorCode?.length - 1])
 	);
 };
+
+export const getFileNameFromLink = (fileLink: string) => {
+	const fileName = fileLink?.split('_orignal_');
+	return fileName?.length > 0 ? fileName[fileName?.length - 1] : '';
+};
