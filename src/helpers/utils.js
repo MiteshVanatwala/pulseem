@@ -33,3 +33,14 @@ export const getUniqueValuesOfKey = (array, key) => {
       return carry;
     }, []);
 }
+
+export const convertHyphensToword = (input) => {
+    return input.split('-').reduce((accumulator, item) => {
+        if (item.trim()) {
+            const name = item ? item.replace(/-/g, '') : item;
+            accumulator.push(name.charAt(0).toUpperCase() + name.slice(1));
+            return accumulator;
+        }
+        return accumulator;
+    }, []).join(' ')
+}

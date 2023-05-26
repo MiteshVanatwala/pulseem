@@ -4,7 +4,7 @@ import { Box, Tab, Grid, Tabs, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { getUniqueValuesOfKey } from '../../../helpers/utils';
+import { convertHyphensToword, getUniqueValuesOfKey } from '../../../helpers/utils';
 import TemplatePreview from './TemplatePreview'
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector, useDispatch } from 'react-redux';
@@ -84,7 +84,7 @@ const Templates = ({
           <Box className={clsx(classes.templateItem)}>
             {renderHtml(templateDetails.Html)}
           </Box>
-          <div className={clsx(classes.textCenter, classes.pt5, classes.f14)}>{templateDetails.Name}</div>
+          <div className={clsx(classes.textCenter, classes.pt5, classes.f14)}>{convertHyphensToword(templateDetails.Name)}</div>
           <div className={clsx(classes.textCenter, classes.p5)}>
             <Typography
               onClick={() => {
@@ -131,7 +131,7 @@ const Templates = ({
                 className={clsx(classes.dBlock, classes.pb10, classes.f16, selectedCategory === category ? classes.bold : '', classes.cursorPointer)}
                 onClick={() => setSelectedCategory(category)}
               >
-                {category}
+                {convertHyphensToword(category)}
               </Typography>
             })
           }
