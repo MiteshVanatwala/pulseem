@@ -79,8 +79,8 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
     options: [
       { title: t('master.RadMenuItemResource9b.Text'), href: '/react/Campaigns/Create', isShow: true },
       { title: t('master.RadMenuItemResource9.Text'), href: '/react/Campaigns', isShow: true },
-      { title: t('master.linkSendCampaignByResultResource1.Text'), href: '/Pulseem/CampaignsByResults.aspx?fromreact=true', isShow: true },
-      { title: t('master.linkAbTestingsResource1.Text'), href: '/Pulseem/CampaignsAbTestings.aspx?fromreact=true', isShow: true },
+      { title: t('master.linkSendCampaignByResultResource1.Text'), href: '/Pulseem/CampaignsByResults.aspx?fromreact=true', isShow: false },
+      { title: t('master.linkAbTestingsResource1.Text'), href: '/Pulseem/CampaignsAbTestings.aspx?fromreact=true', isShow: false },
       { title: t('master.RadMenuItemResource9a.Text'), href: '/Pulseem/AutoSendPlans.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResource10.Text'), href: '/Pulseem/CampaignTemplates.aspx?fromreact=true', isShow: true },
       { title: t('master.newslatterBasicEditor'), href: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true', isShow: true },
