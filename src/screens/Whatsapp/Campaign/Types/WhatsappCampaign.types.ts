@@ -666,6 +666,9 @@ export type ApiGetCampaignSummaryPayloadData = {
 	Invalid: number;
 	Removed: number;
 	SpecialSettingUniqCount: number;
+	WhatsappSmsLeft: number;
+	NextAvailableTime: string;
+	WhatsappTierID: number;
 };
 
 export type ApiGetCampaignSummaryPayload = {

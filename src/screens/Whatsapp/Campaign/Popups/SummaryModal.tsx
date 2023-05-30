@@ -30,7 +30,7 @@ import WhatsappMobilePreview from '../../Editor/Components/WhatsappMobilePreview
 import downArrow from '../../../../assets/images/down-arrow.svg';
 import upArrow from '../../../../assets/images/up-arrow.svg';
 import moment from 'moment';
-import { getTemplatePreviewData } from '../../Common';
+import { getTemplatePreviewData, isShowTierAlert } from '../../Common';
 import clsx from 'clsx';
 import Toast from '../../../../components/Toast/Toast.component';
 import ValidationAlert from './ValidationAlert';
@@ -65,6 +65,7 @@ const SummaryModal = ({
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [tierAlert, setTierAlert] = useState<boolean>(false);
 	const [validationErrors, setValidationErrors] = useState<string[]>([]);
+	const [isIn24HrWindow, setIsIn24HrWindow] = useState<boolean>(false);
 	const { t: translator } = useTranslation();
 	const ToastMessages = useSelector(
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
@@ -129,6 +130,18 @@ const SummaryModal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen, campaignID]);
 
+	useEffect(() => {
+		if (sendType === '2' && sendDate) {
+			const timeDiff = moment(sendDate).diff(moment(), 'seconds');
+			if (timeDiff <= 86400) {
+				setIsIn24HrWindow(true);
+			} else {
+				setIsIn24HrWindow(false);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sendDate]);
+
 	const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
 		let templatePreviewData: templatePreviewDataProps = {
 			templateData: {
@@ -179,9 +192,29 @@ const SummaryModal = ({
 	const validateSummary = () => {
 		let validationErrors = [];
 		let isValidated = true;
-		if (randomlyCount?.length <= 0) {
-			isValidated = false;
-			validationErrors.push('Recipient - Required field');
+		const showTierAlert = isShowTierAlert(
+			campaignSummary?.WhatsappSmsLeft || 0,
+			campaignSummary?.FinalCount || 0,
+			campaignSummary?.WhatsappTierID || 1,
+			sendType,
+			isIn24HrWindow
+		);
+		if (showTierAlert) {
+			if (randomlyCount?.length <= 0) {
+				isValidated = false;
+				validationErrors.push('Recipient - Required field');
+			} else {
+				if (
+					Number(randomlyCount) === 0 ||
+					(campaignSummary?.WhatsappSmsLeft &&
+						Number(randomlyCount) > campaignSummary?.WhatsappSmsLeft)
+				) {
+					isValidated = false;
+					validationErrors.push(
+						`Please enter valid Recipient - Range 1 - ${campaignSummary?.WhatsappSmsLeft}`
+					);
+				}
+			}
 		}
 		if (!isValidated) {
 			setValidationErrors([...validationErrors]);
@@ -196,7 +229,15 @@ const SummaryModal = ({
 
 	const onConfirmOrYesClick = () => {
 		if (validateSummary()) {
-			onConfirmOrYes();
+			if (campaignSummary?.WhatsappTierID === 4) {
+				onConfirmOrYes();
+			} else {
+				if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
+					onConfirmOrYes();
+				} else {
+					setTierAlert(true);
+				}
+			}
 		}
 	};
 
@@ -220,6 +261,32 @@ const SummaryModal = ({
 			onConfirmOrYes();
 		}
 	};
+
+	const getIndexFromTierId = (tierId: number | undefined) => {
+		if (tierId) {
+			return Number(tierId) - 1;
+		}
+		return 0;
+	};
+
+	// const isShowTierAlert = () => {
+	// 	const messageLeft = campaignSummary?.WhatsappSmsLeft || 0;
+	// 	const messageRequired = campaignSummary?.FinalCount || 0;
+
+	// 	if (campaignSummary?.WhatsappTierID !== 4) {
+	// 		if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
+	// 			if (messageLeft < messageRequired) {
+	// 				return true;
+	// 			} else {
+	// 				return false;
+	// 			}
+	// 		} else {
+	// 			return false;
+	// 		}
+	// 	} else {
+	// 		return false;
+	// 	}
+	// };
 
 	return (
 		<Dialog
@@ -305,100 +372,116 @@ const SummaryModal = ({
 										</Link>
 									</span>
 								</Box>
-								<Box className={classes.campaignSummaryExceedLimitWrapper}>
-									<div className={classes.campaignSummaryExceedLimitTierInfo}>
-										<>
-											{`${translator(
-												'settings.accountSettings.actDetails.fields.sendingTier'
-											)} ${translator(tierSetting[1]?.name)}`}
-											<CustomTooltip
-												isSimpleTooltip={false}
-												arrow={true}
-												style={{
-													fontSize: 14,
-													width: 'auto',
-													paddingLeft: isRTL ? '0px' : '10px',
-													paddingRight: isRTL ? '10px' : '0px',
-												}}
-												classes={classes}
-												interactive={true}
-												placement={'top'}
-												title={getTierInfoTooltip()}
-												titleStyle={{ width: '100%', display: 'inline-block' }}
-												text={<span className={classes.bodyInfo}>i</span>}
-												icon={undefined}>
-												{/* <>
+								{isShowTierAlert(
+									campaignSummary?.WhatsappSmsLeft || 0,
+									campaignSummary?.FinalCount || 0,
+									campaignSummary?.WhatsappTierID || 1,
+									sendType,
+									isIn24HrWindow
+								) && (
+									<Box className={classes.campaignSummaryExceedLimitWrapper}>
+										<div className={classes.campaignSummaryExceedLimitTierInfo}>
+											<>
+												{`${translator(
+													'settings.accountSettings.actDetails.fields.sendingTier'
+												)} ${translator(
+													tierSetting[
+														getIndexFromTierId(campaignSummary?.WhatsappTierID)
+													]?.name
+												)}`}
+												<CustomTooltip
+													isSimpleTooltip={false}
+													arrow={true}
+													style={{
+														fontSize: 14,
+														width: 'auto',
+														paddingLeft: isRTL ? '0px' : '10px',
+														paddingRight: isRTL ? '10px' : '0px',
+													}}
+													classes={classes}
+													interactive={true}
+													placement={'top'}
+													title={getTierInfoTooltip()}
+													titleStyle={{
+														width: '100%',
+														display: 'inline-block',
+													}}
+													text={<span className={classes.bodyInfo}>i</span>}
+													icon={undefined}>
+													{/* <>
 													{tierSetting?.map((tier, index: number) => (
 														<span>{`Tier ${index} - ${translator(
 															tier.name
 														)}`}</span>
 													))}
 												</> */}
-											</CustomTooltip>
-										</>
-									</div>
-									<div className={classes.campaignSummaryExceedLimitText}>
-										<>
-											{translator(
-												'settings.accountSettings.actDetails.fields.exceedLimitMessage'
-											)}
-										</>
-									</div>
-									<div className={classes.campaignSummaryExceedLimitText}>
-										<>
-											{translator(
-												'settings.accountSettings.actDetails.fields.exceedLimitNumberMessage'
-											)}
-										</>
-									</div>
-									<Box
-										className={
-											classes.campaignSummaryExceedLimitSendRandomlyWrapper
-										}>
-										<div
-											className={
-												classes.campaignSummaryExceedLimitSendRandomlyText
-											}>
+												</CustomTooltip>
+											</>
+										</div>
+										<div className={classes.campaignSummaryExceedLimitText}>
 											<>
 												{translator(
-													'settings.accountSettings.actDetails.fields.sendRandomlyTo'
+													'settings.accountSettings.actDetails.fields.exceedLimitMessage'
 												)}
+											</>
+										</div>
+										<div className={classes.campaignSummaryExceedLimitText}>
+											<>
+												{translator(
+													'settings.accountSettings.actDetails.fields.exceedLimitNumberMessage'
+												)}
+												{campaignSummary?.WhatsappSmsLeft}
 											</>
 										</div>
 										<Box
 											className={
-												classes.campaignSummaryExceedLimitSendRandomlyInsert
+												classes.campaignSummaryExceedLimitSendRandomlyWrapper
 											}>
-											<TextField
-												id='templateName'
-												type='text'
-												placeholder={translator(
-													'settings.accountSettings.actDetails.fields.insert'
-												)}
-												className={clsx(
-													classes.buttonField,
-													classes.campaignSummaryExceedLimitSendRandomlyInsertInput
-												)}
-												onChange={(e: BaseSyntheticEvent) =>
-													onRandomlyCountChange(
-														e.target?.value?.replace(/\D/g, '')
-													)
-												}
-												value={randomlyCount}
-											/>
-											<span
+											<div
 												className={
-													classes.campaignSummaryExceedLimitSendRandomlyRecipients
+													classes.campaignSummaryExceedLimitSendRandomlyText
 												}>
 												<>
 													{translator(
-														'settings.accountSettings.actDetails.fields.recipientsOutOfTotal'
+														'settings.accountSettings.actDetails.fields.sendRandomlyTo'
 													)}
 												</>
-											</span>
+											</div>
+											<Box
+												className={
+													classes.campaignSummaryExceedLimitSendRandomlyInsert
+												}>
+												<TextField
+													id='templateName'
+													type='text'
+													placeholder={translator(
+														'settings.accountSettings.actDetails.fields.insert'
+													)}
+													className={clsx(
+														classes.buttonField,
+														classes.campaignSummaryExceedLimitSendRandomlyInsertInput
+													)}
+													onChange={(e: BaseSyntheticEvent) =>
+														onRandomlyCountChange(
+															e.target?.value?.replace(/\D/g, '')
+														)
+													}
+													value={randomlyCount}
+												/>
+												<span
+													className={
+														classes.campaignSummaryExceedLimitSendRandomlyRecipients
+													}>
+													<>
+														{translator(
+															'settings.accountSettings.actDetails.fields.recipientsOutOfTotal'
+														)}
+													</>
+												</span>
+											</Box>
 										</Box>
 									</Box>
-								</Box>
+								)}
 								<div>&emsp;</div>
 							</Grid>
 
@@ -647,7 +730,7 @@ const SummaryModal = ({
 							'settings.accountSettings.actDetails.fields.stopSending'
 						)}
 					</Box>
-					<br/>
+					<br />
 					<Box>
 						{translator(
 							'settings.accountSettings.actDetails.fields.yourResponsibility'

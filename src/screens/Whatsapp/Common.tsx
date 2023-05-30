@@ -442,3 +442,25 @@ export const getFileNameFromLink = (fileLink: string) => {
 	const fileName = fileLink?.split('_orignal_');
 	return fileName?.length > 0 ? fileName[fileName?.length - 1] : '';
 };
+
+export const isShowTierAlert = (
+	messageLeft: number,
+	messageRequired: number,
+	whatsappTierID: number,
+	sendType: string,
+	isIn24HrWindow: boolean
+) => {
+	if (whatsappTierID !== 4) {
+		if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
+			if (messageLeft < messageRequired) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+};

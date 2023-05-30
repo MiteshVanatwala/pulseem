@@ -420,13 +420,34 @@ const SendCampaign = ({
 		if (validateSendSetting() && campaignID) {
 			const saveCampaignData = await onCampaignSave(false, true, true);
 			setIsLoader(true);
-			const { payload: campaignSummaryData }: ApiGetCampaignSummary =
+			let { payload: campaignSummaryData }: ApiGetCampaignSummary =
 				await dispatch<any>(getWhatsAppCampaignSummary(campaignID));
-			if (saveCampaignData) {
+			campaignSummaryData = {
+				...campaignSummaryData,
+				Data: {
+					...campaignSummaryData.Data,
+					WhatsappSmsLeft: 20,
+					NextAvailableTime: '2023-05-31T13:32:59.067',
+					WhatsappTierID: 3,
+				},
+			};
+			if (saveCampaignData === apiStatus.SUCCESS) {
 				if (campaignSummaryData.Status === apiStatus.SUCCESS) {
 					if (campaignSummaryData?.Data?.FinalCount > 0) {
 						setCampaignSummary(campaignSummaryData?.Data);
-						setIsSummaryModal(true);
+						if (
+							campaignSummaryData.Data.WhatsappTierID === 1 ||
+							campaignSummaryData.Data.WhatsappTierID === 2 ||
+							campaignSummaryData.Data.WhatsappTierID === 3
+						) {
+							if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
+								setIsSummaryModal(true);
+							} else {
+								setExceedLimitModal(true);
+							}
+						} else {
+							setIsSummaryModal(true);
+						}
 					} else {
 						setToastMessage({
 							...ToastMessages.ERROR,
@@ -834,7 +855,9 @@ const SendCampaign = ({
 						)}
 						subtitle={`${translator(
 							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${moment().add(1, 'd').format('DD.MM.YYYY HH:MM')}`}
+						)} ${moment(campaignSummary?.NextAvailableTime).format(
+							'DD.MM.YYYY HH:MM'
+						)}`}
 						type='alert'
 						onConfirmOrYes={() => onExceedLimitYes()}
 					/>

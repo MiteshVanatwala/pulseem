@@ -102,6 +102,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import SummaryModal from './Popups/SummaryModal';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import NoSetup from '../NoSetup/NoSetup';
+import moment from 'moment';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -184,6 +185,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
+	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
 	const [testSendSelection, setTestSendSelection] =
@@ -769,7 +771,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						if (campaignSummaryData.Status === apiStatus.SUCCESS) {
 							if (campaignSummaryData?.Data?.FinalCount > 0) {
 								setCampaignSummary(campaignSummaryData?.Data);
-								setIsSummaryModal(true);
+								if (
+									campaignSummaryData.Data.WhatsappTierID === 1 ||
+									campaignSummaryData.Data.WhatsappTierID === 2 ||
+									campaignSummaryData.Data.WhatsappTierID === 3
+								) {
+									if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
+										setIsSummaryModal(true);
+									} else {
+										setExceedLimitModal(true);
+									}
+								} else {
+									setIsSummaryModal(true);
+								}
 							} else {
 								setToastMessage({
 									...ToastMessages.ERROR,
@@ -891,6 +905,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 	const onExitCampaign = () => {
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+	};
+
+	const onExceedLimitYes = () => {
+		setExceedLimitModal(false);
 	};
 
 	return (
@@ -1367,6 +1385,21 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						specialDatedropDown={{}}
 						spectialDateFieldID={'0'}
 						campaignSummary={campaignSummary}
+					/>
+					<AlertModal
+						classes={classes}
+						isOpen={exceedLimitModal}
+						onClose={() => setExceedLimitModal(false)}
+						title={translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+						)}
+						subtitle={`${translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+						)} ${moment(campaignSummary?.NextAvailableTime).format(
+							'DD.MM.YYYY HH:MM'
+						)}`}
+						type='alert'
+						onConfirmOrYes={() => onExceedLimitYes()}
 					/>
 				</>
 			) : (

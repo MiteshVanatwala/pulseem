@@ -258,7 +258,7 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	}, [isCallToActionOpen]);
 
 	const onTemplateNameChange = (e: BaseSyntheticEvent) => {
-		setTemplateName(e.target.value.toLowerCase());
+		setTemplateName(e.target.value);
 	};
 
 	const resetFields = () => {
