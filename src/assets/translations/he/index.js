@@ -21,6 +21,7 @@ import group from './group.json'
 import mmsreport from './MMSReport.he.json'
 import languages from './languages.he.json'
 import settings from './Settings.he.json'
+import integrations from './Integrations.he.json'
 
 export const he = {
   automations,
@@ -45,5 +46,6 @@ export const he = {
   group,
   mmsreport,
   languages,
-  settings
+  settings,
+  integrations
 }

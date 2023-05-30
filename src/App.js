@@ -43,6 +43,7 @@ import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
+import Integrations from './screens/Integrations/Integrations';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -419,6 +420,11 @@ const renderRoutes = (classes, history) => {
         exact
         path={`/SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
+      />
+      <Route
+        exact
+        path={`/Integrations`}
+        element={<Integrations classes={classes} />}
       />
       <Route
         exact

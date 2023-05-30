@@ -1367,7 +1367,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 20,
     textTransform: "capitalize",
     padding: 2,
-    minWidth: 120,
+    minWidth: 170,
     minHeight: 40,
   },
   SMSLastReportGrid: {

@@ -1,0 +1,19 @@
+{
+  "title": "Integrations",
+  "shopify": {
+    "title": "Shopify Settings",
+    "authentication": "Authentication",
+    "apiKey": "API key",
+    "apiAccessToken": "API Access Token",
+    "shopifyURL": "Shopify URL",
+    "siteSignUp": "Site Sign Up",
+    "purchase": "Purchase",
+    "cartAbandonment": "Cart Abandonment",
+    "settingsSaved": "Settings saved",
+    "connectionFail": "Can not connect with Shopify, please verify all the details are correct.",
+    "insertClientToGroup": "Insert client to groups",
+    "insertToken": "Insert the API token you received after creating the application",
+    "insertAPIKey": "Insert the API key you received after creating the application",
+    "insertShopifyURL": "Insert your Shopify URL"
+  }
+}
