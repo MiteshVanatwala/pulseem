@@ -323,5 +323,7 @@ export const DialogType = {
     NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits",
-    SET_USER_BLOCK: "campaigns.saveBlock"
+    Templates: "templates",
+    SET_USER_BLOCK: "campaigns.saveBlock",
+    SAVE_TEMPLATE: "campaigns.saveTemplate"
 };

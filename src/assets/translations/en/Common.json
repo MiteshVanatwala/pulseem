@@ -574,7 +574,7 @@
   "clientSubscriptionResultTitle": "Subscribers of Landing page ",
   "SelectFormat": "Select format",
   "pageNotFound": "<h1>Oooops... 404!</h1><br/><p>Youv'e got lost :(</p><p>don't worry. we left the navigation menu bar on the top for you.</p>",
-  "saveTemplate": "Save template",
+  "saveTemplate": "Save Template",
   "exit": "Exit",
   "phone": "Phone",
   "companyName": "Company Name",
@@ -617,5 +617,16 @@
   "savedSuccessfully": "Saved Successfully",
   "fileDownloads": "File Downloads",
   "fileDownloadError": "Oops...Something went wrong while downloading the file",
-  "newsletterMessages": "Newsletter messages"
+  "newsletterMessages": "Newsletter messages",
+  "templates": "Templates",
+  "pulseemTemplates": "Pulseem Templates",
+  "myTemplates": "My Templates",
+  "all": "All",
+  "noTemplate": "In order to add your own templates, create a design in the editor and click on \"Save Template\" button",
+  "loadTemplate": "Load Template",
+  "notice": "Notice!",
+  "overwriteTemplate": "Loading the template will overrun the current design in the editor",
+  "doYouWantToProceed": "Do you want to proceed?",
+  "templateSaved": "Template successfully saved!",
+  "templateNameIsRequired": "Template name is required"
 }
