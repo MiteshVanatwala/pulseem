@@ -14,6 +14,7 @@
     "insertClientToGroup": "Insert client to groups",
     "insertToken": "Insert the API token you received after creating the application",
     "insertAPIKey": "Insert the API key you received after creating the application",
-    "insertShopifyURL": "Insert your Shopify URL"
+    "insertShopifyURL": "Insert your Shopify URL",
+    "authenticate": "Authenticate"
   }
 }

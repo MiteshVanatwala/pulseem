@@ -7,10 +7,9 @@ import useCore from "../../helpers/hooks/Core";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import Shopify from "./SpotifySetting";
 
-const Integrations = () => {
+const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
-  const { classes } = useCore();
-  const [ tabValue, setTabValue ] = useState('0');
+  const [tabValue, setTabValue] = useState('0');
 
   return (
     <DefaultScreen
@@ -30,7 +29,7 @@ const Integrations = () => {
       </Tabs>
       <TabContext value={`${tabValue}`}>
         <TabPanel value='0' className={clsx(classes.pt0)}>
-          <Shopify />
+          <Shopify classes={classes} />
         </TabPanel>
       </TabContext>
     </DefaultScreen>
