@@ -3,7 +3,6 @@ import { Tabs, Tab } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
-import useCore from "../../helpers/hooks/Core";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import Shopify from "./SpotifySetting";
 

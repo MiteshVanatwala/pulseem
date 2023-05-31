@@ -1,6 +1,6 @@
 {
   "title": "Integrations",
-  "Shopify": {
+  "shopify": {
     "apiKey": "מפתח API",
     "apiAccessToken": "הזן API Token",
     "shopifyURL": "כתובת האתר שלכם בשופיפיי",
