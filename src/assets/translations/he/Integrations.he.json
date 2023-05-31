@@ -19,6 +19,12 @@
     "enterAPIKey": "Enter API Key",
     "enterAccessToken": "Enter Access Token",
     "reset": "Reset",
-    "showCredentials": "Show Credentials"
+    "showCredentials": "Show Credentials",
+    "apiVersion": "גרסת API",
+    "authResponses": {
+      "201": "החנות אומתה בהצלחה",
+      "400": "שם החנות שייך לחשבון אחר The store is related to another account",
+      "403": "מפתח API או מפתח גישה שגוי"
+    }
   }
 }

@@ -20,6 +20,12 @@
     "enterAPIKey": "Enter API Key",
     "enterAccessToken": "Enter Access Token",
     "reset": "Reset",
-    "showCredentials": "Show Credentials"
+    "showCredentials": "Show Credentials",
+    "apiVersion": "API Version",
+    "authResponses": {
+      "201": "Authentication Success",
+      "400": "The store is related to another account",
+      "403": "Invalid API key or access token (unrecognized login or wrong password)"
+    }
   }
 }

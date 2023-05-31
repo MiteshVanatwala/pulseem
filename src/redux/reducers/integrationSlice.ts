@@ -15,8 +15,8 @@ export const authenticate = createAsyncThunk(
     }
 );
 
-export const getSettings = createAsyncThunk(
-    'Integrations/GetSettings',
+export const getIntegration = createAsyncThunk(
+    'Integrations/getIntegration',
     async (integrationSource: LU_Plugin, thunkAPI) => {
         try {
             const response = await instence.get(`Integrations/GetIntegration/${integrationSource}`);
@@ -65,7 +65,7 @@ const IntegrationSlice = createSlice({
         builder.addCase(authenticate.fulfilled, (state, action) => {
             state.authResponse = action.payload as PulseemResponse;
         })
-        builder.addCase(getSettings.fulfilled, (state, action) => {
+        builder.addCase(getIntegration.fulfilled, (state, action) => {
             state.integrationSettings = action.payload as PulseemResponse;
         })
 

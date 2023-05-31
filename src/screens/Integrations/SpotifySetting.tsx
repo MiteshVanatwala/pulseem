@@ -5,22 +5,27 @@ import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
-import { authenticate, getSettings } from "../../redux/reducers/integrationSlice";
+import { authenticate, getIntegration } from "../../redux/reducers/integrationSlice";
 import { ShopifyModel, IntegrationGroups } from '../../Models/Integrations/Shopify/Shopify';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
+import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import { logout } from '../../helpers/api'
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL } = useSelector((state: any) => state.core);
+  const { subAccountAllGroups } = useSelector((state: any) => state.group);
+
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
-  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [isAuthenticated, setAuthenticated] = useState(true);
   const [authenticationErrors, setAuthenticationErrors] = useState({
     api_key: '',
     api_access_token: '',
     store_name: '',
     authentication_message: '',
+    api_version: ''
   });
   // This object should be used as Shopify model
   const [authenticationDetails, setAuthenticationDetails] = useState({
@@ -28,7 +33,7 @@ const Shopify = ({ classes }: any) => {
     api_key: '',
     api_access_token: '',
     store_name: '',
-    api_version: '2023-01'
+    api_version: ''
   } as ShopifyModel);
   const [settings, setSettings] = useState({
     RegisterEventActive: false,
@@ -71,21 +76,25 @@ const Shopify = ({ classes }: any) => {
 
   useEffect(() => {
     const initSettings = async () => {
-      const settingResponse = await dispatch(getSettings(LU_Plugin.Shopify)) as any;
+      const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
       const settings = settingResponse?.payload?.Data as ShopifyModel;
       if (settings.ID) {
         setPreloadIntegrations(settings);
+        setAuthenticated(true);
+      }
+      if (subAccountAllGroups?.length === 0) {
+        dispatch(getGroupsBySubAccountId());
       }
     }
     initSettings();
   }, []);
 
-  const submitForm = async () => {
+  const authenticateStore = async () => {
     // Add validation then this logic
     let authenticationErrorsDump = authenticationErrors;
-    if (authenticationDetails.store_name.trim() === '') authenticationErrorsDump = {...authenticationErrorsDump, store_name: t('integrations.shopify.enterShopifyUrl')};
-    if (authenticationDetails.api_key.trim() === '') authenticationErrorsDump = {...authenticationErrorsDump, api_key: t('integrations.shopify.enterAPIKey')};
-    if (authenticationDetails.api_access_token.trim() === '') authenticationErrorsDump = {...authenticationErrorsDump, api_access_token: t('integrations.shopify.enterAPIKey')};
+    if (authenticationDetails.store_name.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
+    if (authenticationDetails.api_key.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_key: t('integrations.shopify.enterAPIKey') };
+    if (authenticationDetails.api_access_token.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
     await setAuthenticationErrors(authenticationErrorsDump);
 
     if (authenticationDetails.store_name.trim() !== '' && authenticationDetails.api_key.trim() !== '' && authenticationDetails.api_access_token.trim() !== '') {
@@ -100,11 +109,15 @@ const Shopify = ({ classes }: any) => {
         IntegrationSource: LU_Plugin.Shopify,
         JsonData: JSON.stringify(authenticationDetails)
       } as IntegrationRequest;
-  
+
       const authResponse = await dispatch(authenticate(request));
       setShowLoader(false);
       handleAuthResponse(authResponse);
     }
+  }
+
+  const submitForm = async () => {
+    // Call to SetIntegration
   }
 
   const handleAuthResponse = (response: any) => {
@@ -121,9 +134,18 @@ const Shopify = ({ classes }: any) => {
         setAuthenticated(true);
         break;
       }
-      case 400:
-      case 401:
+      case 400: {
+        //TODO mitesh
+        // t(`integrations.shopify.authResponses.400}`)
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
       case 403: {
+        //TODO mitesh
+        // t(`integrations.shopify.authResponses.403}`)
         // No Source has been requested
         setAuthenticationErrors({
           ...authenticationErrors,
@@ -201,60 +223,81 @@ const Shopify = ({ classes }: any) => {
             </Typography>
           )}
         </Box>
-        <Box className={clsx(classes.dblock, classes.pb15)}>
-          <Typography className={clsx(classes.bold)}>
-            {t("integrations.shopify.apiKey")}
-            <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-          </Typography>
-          <Typography className={clsx(classes.mb5)}>
-            {t("integrations.shopify.insertAPIKey")}
-          </Typography>
-          <TextField
-            variant="outlined"
-            size="small"
-            name="DefaultFromName"
-            onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_key: event.target.value })}
-            className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-          />
-          {!!authenticationErrors.api_key && (
-            <Typography className={clsx(classes.errorText, classes.f14)}>
-              {authenticationErrors.api_key}
+        {!isAuthenticated ? (<>
+          <Box className={clsx(classes.dblock, classes.pb15)}>
+            <Typography className={clsx(classes.bold)}>
+              {t("integrations.shopify.apiKey")}
+              <label className={clsx(classes.ml10, classes.textRed)}>*</label>
             </Typography>
-          )}
-        </Box>
+            <Typography className={clsx(classes.mb5)}>
+              {t("integrations.shopify.insertAPIKey")}
+            </Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              name="DefaultFromName"
+              onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_key: event.target.value })}
+              className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+            />
+            {!!authenticationErrors.api_key && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {authenticationErrors.api_key}
+              </Typography>
+            )}
+          </Box>
 
-        <Box className={clsx(classes.dblock, classes.pb15)}>
-          <Typography className={clsx(classes.bold)}>
-            {t("integrations.shopify.apiAccessToken")}
-            <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-          </Typography>
-          <Typography className={clsx(classes.mb5)}>
-            {t("integrations.shopify.insertToken")}
-          </Typography>
-          <TextField
-            variant="outlined"
-            size="small"
-            name="DefaultFromName"
-            onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_access_token: event.target.value })}
-            className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-          />
-          {!!authenticationErrors.api_access_token && (
-            <Typography className={clsx(classes.errorText, classes.f14)}>
-              {authenticationErrors.api_access_token}
+          <Box className={clsx(classes.dblock, classes.pb15)}>
+            <Typography className={clsx(classes.bold)}>
+              {t("integrations.shopify.apiAccessToken")}
+              <label className={clsx(classes.ml10, classes.textRed)}>*</label>
             </Typography>
-          )}
-        </Box>
-        <Box className={clsx(classes.flex, classes.pbt15)}>
-          {!!authenticationErrors.authentication_message && (
-            <Typography className={clsx(classes.errorText, classes.f16)}>
-              {authenticationErrors.authentication_message}
+            <Typography className={clsx(classes.mb5)}>
+              {t("integrations.shopify.insertToken")}
             </Typography>
-          )}
-        </Box>
-        <Box className={clsx(classes.flex, classes.pbt15)}>
-          {
-            !isAuthenticated && <Button
-              onClick={submitForm}
+            <TextField
+              variant="outlined"
+              size="small"
+              name="DefaultFromName"
+              onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_access_token: event.target.value })}
+              className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+            />
+            {!!authenticationErrors.api_access_token && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {authenticationErrors.api_access_token}
+              </Typography>
+            )}
+          </Box>
+          <Box className={clsx(classes.dblock, classes.pb15)}>
+            <Typography className={clsx(classes.bold)}>
+              {t("integrations.shopify.apiVersion")}
+              <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+            </Typography>
+            <Typography className={clsx(classes.mb5)}>
+              {t("integrations.shopify.apiVersion")}
+            </Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              name="apiVersion"
+              onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_version: event.target.value })}
+              className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+            />
+            {!!authenticationErrors.api_version && (
+              <Typography className={clsx(classes.errorText, classes.f14)}>
+                {authenticationErrors.api_version}
+              </Typography>
+            )}
+          </Box>
+          <Box className={clsx(classes.flex, classes.pbt15)}>
+            {!!authenticationErrors.authentication_message && (
+              <Typography className={clsx(classes.errorText, classes.f16)}>
+                {authenticationErrors.authentication_message}
+              </Typography>
+            )}
+          </Box>
+          <Box className={clsx(classes.flex, classes.pbt15)}>
+            <Button
+              onClick={authenticateStore}
               variant='contained'
               size='medium'
               className={clsx(
@@ -266,8 +309,9 @@ const Shopify = ({ classes }: any) => {
             >
               {t("integrations.shopify.authenticate")}
             </Button>
-          }
-          {isAuthenticated && <>
+          </Box>
+        </>) :
+          (<>
             <Button
               onClick={resetStore}
               variant='contained'
@@ -295,10 +339,9 @@ const Shopify = ({ classes }: any) => {
             >
               {t("integrations.shopify.showCredentials")}
             </Button>
-          </>
-          }
-          <Loader isOpen={showLoader} showBackdrop={true} />
-        </Box>
+          </>)
+        }
+        <Loader isOpen={showLoader} showBackdrop={true} />
       </Box>
 
       {
@@ -325,10 +368,13 @@ const Shopify = ({ classes }: any) => {
                   id="multiple-checkbox"
                   input={<OutlinedInput label="Purchase history" />}
                 >
-                  <MenuItem key='0' value='0' style={{ paddingRight: 15 }}>
-                    <Checkbox />
-                    <ListItemText primary={'--- Select ---'} className={clsx(classes.dInlineBlock)} />
-                  </MenuItem>
+                  {subAccountAllGroups?.map((group: any) => {
+                    return (<MenuItem key={`register_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
+                      <Checkbox />
+                      <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
+                    </MenuItem>)
+                  })
+                  }
                 </Select>
               </Grid>
             </Grid>
@@ -351,10 +397,12 @@ const Shopify = ({ classes }: any) => {
                   id="multiple-checkbox"
                   input={<OutlinedInput label="Purchase history" />}
                 >
-                  <MenuItem key='0' value='0' style={{ paddingRight: 15 }}>
-                    <Checkbox />
-                    <ListItemText primary={'--- Select ---'} className={clsx(classes.dInlineBlock)} />
-                  </MenuItem>
+                  {subAccountAllGroups?.map((group: any) => {
+                    return (<MenuItem key={`purchase_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
+                      <Checkbox />
+                      <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
+                    </MenuItem>)
+                  })}
                 </Select>
               </Grid>
             </Grid>
@@ -377,10 +425,12 @@ const Shopify = ({ classes }: any) => {
                   id="multiple-checkbox"
                   input={<OutlinedInput label="Purchase history" />}
                 >
-                  <MenuItem key='0' value='0' style={{ paddingRight: 15 }}>
-                    <Checkbox />
-                    <ListItemText primary={'--- Select ---'} className={clsx(classes.dInlineBlock)} />
-                  </MenuItem>
+                  {subAccountAllGroups?.map((group: any) => {
+                    return (<MenuItem key={`abandoned_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
+                      <Checkbox />
+                      <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
+                    </MenuItem>)
+                  })}
                 </Select>
               </Grid>
             </Grid>
