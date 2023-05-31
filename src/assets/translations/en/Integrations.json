@@ -15,6 +15,11 @@
     "insertToken": "Insert the API token you received after creating the application",
     "insertAPIKey": "Insert the API key you received after creating the application",
     "insertShopifyURL": "Insert your Shopify URL",
-    "authenticate": "Authenticate"
+    "authenticate": "Authenticate",
+    "enterShopifyUrl": "Enter Shopify URL",
+    "enterAPIKey": "Enter API Key",
+    "enterAccessToken": "Enter Access Token",
+    "reset": "Reset",
+    "showCredentials": "Show Credentials"
   }
 }

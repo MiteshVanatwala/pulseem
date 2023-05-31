@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Box, Typography, Button, Grid, TextField, FormControlLabel, Checkbox, Select, MenuItem, ListItemText, OutlinedInput } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
-import useCore from "../../helpers/hooks/Core";
 import { Loader } from "../../components/Loader/Loader";
 import { authenticate, getSettings } from "../../redux/reducers/integrationSlice";
 import { ShopifyModel, IntegrationGroups } from '../../Models/Integrations/Shopify/Shopify';
-import { PulseemResponse } from '../../Models/APIResponse';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
-  const { CoreToastMessages } = useSelector((state: any) => state?.core);
+  const { isRTL } = useSelector((state: any) => state.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
   const [isAuthenticated, setAuthenticated] = useState(false);
+  const [authenticationErrors, setAuthenticationErrors] = useState({
+    api_key: '',
+    api_access_token: '',
+    store_name: '',
+    authentication_message: '',
+  });
   // This object should be used as Shopify model
   const [authenticationDetails, setAuthenticationDetails] = useState({
     IntegrationSource: LU_Plugin.Shopify,
@@ -43,6 +44,23 @@ const Shopify = ({ classes }: any) => {
     cartAbandonmentChecked: false,
     cartAbandonmentSelected: '',
   });
+  const [preloadIntegrations, setPreloadIntegrations] = useState({
+    ID: 0,
+    SubAccountID: 0,
+    store_name: '',
+    api_key: '',
+    api_access_token: '',
+    api_password: '',
+    api_version: '',
+    RegisterEventActive: false,
+    PurchaseEventActive: false,
+    AbandonedEventActive: false,
+    UiApi_ApiKey: '',
+    Groups: {},
+    CreateDate: '',
+    UpdateDate: '',
+    IntegrationSource: 2
+  } as ShopifyModel);
 
   const renderToast = () => {
     setTimeout(() => {
@@ -53,53 +71,107 @@ const Shopify = ({ classes }: any) => {
 
   useEffect(() => {
     const initSettings = async () => {
-      const settingResponse = await dispatch(getSettings(LU_Plugin.Shopify));
-      //setSettings(settingResponse?.payload?.Data as ShopifyModel);
-
+      const settingResponse = await dispatch(getSettings(LU_Plugin.Shopify)) as any;
+      const settings = settingResponse?.payload?.Data as ShopifyModel;
+      if (settings.ID) {
+        setPreloadIntegrations(settings);
+      }
     }
     initSettings();
-
   }, []);
 
   const submitForm = async () => {
-
     // Add validation then this logic
-    const request = {
-      IntegrationSource: LU_Plugin.Shopify,
-      JsonData: JSON.stringify(authenticationDetails)
-    } as IntegrationRequest;
+    let authenticationErrorsDump = authenticationErrors;
+    if (authenticationDetails.store_name.trim() === '') authenticationErrorsDump = {...authenticationErrorsDump, store_name: t('integrations.shopify.enterShopifyUrl')};
+    if (authenticationDetails.api_key.trim() === '') authenticationErrorsDump = {...authenticationErrorsDump, api_key: t('integrations.shopify.enterAPIKey')};
+    if (authenticationDetails.api_access_token.trim() === '') authenticationErrorsDump = {...authenticationErrorsDump, api_access_token: t('integrations.shopify.enterAPIKey')};
+    await setAuthenticationErrors(authenticationErrorsDump);
 
-    const authResponse = await dispatch(authenticate(request));
-    handleAuthResponse(authResponse);
+    if (authenticationDetails.store_name.trim() !== '' && authenticationDetails.api_key.trim() !== '' && authenticationDetails.api_access_token.trim() !== '') {
+      setAuthenticationErrors({
+        ...authenticationErrors,
+        store_name: '',
+        api_key: '',
+        api_access_token: ''
+      })
+      setShowLoader(true);
+      const request = {
+        IntegrationSource: LU_Plugin.Shopify,
+        JsonData: JSON.stringify(authenticationDetails)
+      } as IntegrationRequest;
+  
+      const authResponse = await dispatch(authenticate(request));
+      setShowLoader(false);
+      handleAuthResponse(authResponse);
+    }
   }
 
   const handleAuthResponse = (response: any) => {
-    switch (response?.StatusCode) {
+    switch (response?.payload?.StatusCode) {
       case 201: {
         console.log(response);
         // success
+        setAuthenticationDetails({
+          ...authenticationDetails,
+          store_name: '',
+          api_key: '',
+          api_access_token: ''
+        })
+        setAuthenticated(true);
         break;
       }
-      case 400: {
-        console.log(response);
-        // Cannot set groups - general error
-        break;
-      }
-      case 401: {
-        console.log(response);
-        // Invalid Pulseem API key -> Logout session
-        break;
-      }
+      case 400:
+      case 401:
       case 403: {
-        console.log(response);
         // No Source has been requested
+        setAuthenticationErrors({
+          ...authenticationErrors,
+          authentication_message: response.payload.Message,
+          store_name: '',
+          api_key: '',
+          api_access_token: ''
+        })
         break;
       }
     }
   }
 
-  const resetStore = () => { }
-  const showCredentials = () => { }
+  const resetStore = () => {
+    setAuthenticationDetails({
+      ...authenticationDetails,
+      store_name: '',
+      api_key: '',
+      api_access_token: ''
+    });
+
+    setSettings({
+      ID: 0,
+      SubAccountID: 0,
+      store_name: '',
+      api_key: '',
+      api_access_token: '',
+      api_password: '',
+      api_version: '',
+      RegisterEventActive: false,
+      PurchaseEventActive: false,
+      AbandonedEventActive: false,
+      UiApi_ApiKey: '',
+      Groups: {},
+      CreateDate: '',
+      UpdateDate: '',
+      IntegrationSource: 2
+    });
+  }
+
+  const showCredentials = () => {
+    setAuthenticationDetails({
+      ...authenticationDetails,
+      store_name: settings.store_name,
+      api_key: settings.api_key,
+      api_access_token: settings.api_access_token
+    });
+  }
 
   return (
     <>
@@ -123,6 +195,11 @@ const Shopify = ({ classes }: any) => {
             onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, store_name: event.target.value })}
             className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
           />
+          {!!authenticationErrors.store_name && (
+            <Typography className={clsx(classes.errorText, classes.f14)}>
+              {authenticationErrors.store_name}
+            </Typography>
+          )}
         </Box>
         <Box className={clsx(classes.dblock, classes.pb15)}>
           <Typography className={clsx(classes.bold)}>
@@ -139,6 +216,11 @@ const Shopify = ({ classes }: any) => {
             onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_key: event.target.value })}
             className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
           />
+          {!!authenticationErrors.api_key && (
+            <Typography className={clsx(classes.errorText, classes.f14)}>
+              {authenticationErrors.api_key}
+            </Typography>
+          )}
         </Box>
 
         <Box className={clsx(classes.dblock, classes.pb15)}>
@@ -156,25 +238,64 @@ const Shopify = ({ classes }: any) => {
             onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_access_token: event.target.value })}
             className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
           />
+          {!!authenticationErrors.api_access_token && (
+            <Typography className={clsx(classes.errorText, classes.f14)}>
+              {authenticationErrors.api_access_token}
+            </Typography>
+          )}
         </Box>
         <Box className={clsx(classes.flex, classes.pbt15)}>
-          <Button
-            onClick={submitForm}
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen,
-              classes.backButton
-            )}
-            color="primary"
-          >
-            {t("integrations.shopify.authenticate")}
-          </Button>
-          {isAuthenticated && <Box>
-            <Button onClick={resetStore}>Reset</Button>
-            <Button onClick={showCredentials}>Show Credetianls</Button>
-          </Box>
+          {!!authenticationErrors.authentication_message && (
+            <Typography className={clsx(classes.errorText, classes.f16)}>
+              {authenticationErrors.authentication_message}
+            </Typography>
+          )}
+        </Box>
+        <Box className={clsx(classes.flex, classes.pbt15)}>
+          {
+            !isAuthenticated && <Button
+              onClick={submitForm}
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonLightGreen,
+                classes.backButton
+              )}
+              color="primary"
+            >
+              {t("integrations.shopify.authenticate")}
+            </Button>
+          }
+          {isAuthenticated && <>
+            <Button
+              onClick={resetStore}
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonLightGreen,
+                classes.backButton
+              )}
+              color="primary"
+            >
+              {t("integrations.shopify.reset")}
+            </Button>
+            <Button
+              onClick={showCredentials}
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonLightGreen,
+                classes.backButton,
+                classes.ml10
+              )}
+              color="primary"
+            >
+              {t("integrations.shopify.showCredentials")}
+            </Button>
+          </>
           }
           <Loader isOpen={showLoader} showBackdrop={true} />
         </Box>
@@ -209,20 +330,6 @@ const Shopify = ({ classes }: any) => {
                     <ListItemText primary={'--- Select ---'} className={clsx(classes.dInlineBlock)} />
                   </MenuItem>
                 </Select>
-                {/* <select
-                  placeholder={t("common.select")}
-                  style={{
-                    
-                  }}
-                  className={clsx(classes.dBlock, "selectBox")}
-                  // disabled={sendType === "3" ? false : true}
-                  // onChange={(e) => { handleSelectChange(e) }}
-                  // value={sendType === "3" ? spectialDateFieldID : "0"}
-                >
-                  <option value="0">{t("common.select")}</option>
-                  <option value="1">{t("mainReport.birthday")}</option>
-                  <option value="2">{t("mainReport.creationDay")}</option>
-                </select> */}
               </Grid>
             </Grid>
 

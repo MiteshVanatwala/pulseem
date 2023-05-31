@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { instence } from '../../helpers/api'
 import { PulseemResponse } from '../../Models/APIResponse';
-import { ShopifyModel } from '../../Models/Integrations/Shopify/Shopify';
 import { IntegrationRequest, LU_Plugin } from '../../Models/Integrations/Integration';
 
 export const authenticate = createAsyncThunk(
@@ -20,7 +19,7 @@ export const getSettings = createAsyncThunk(
     'Integrations/GetSettings',
     async (integrationSource: LU_Plugin, thunkAPI) => {
         try {
-            const response = await instence.get(`Integrations/GetSettings/${integrationSource}`);
+            const response = await instence.get(`Integrations/GetIntegration/${integrationSource}`);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);

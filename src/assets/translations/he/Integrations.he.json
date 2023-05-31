@@ -13,6 +13,11 @@
     "insertToken": "הזינו את הטוקן אותו קיבלתם ביצירת האפליקציה",
     "insertAPIKey": "הזינו את המפתח אותו קיבלתם ביצירת האפליקציה",
     "insertShopifyURL": "הזינו את כתובת האתר של החנות שלכם בשופיפיי",
-    "authenticate": "התחבר"
+    "authenticate": "התחבר",
+    "enterShopifyUrl": "Enter Shopify URL",
+    "enterAPIKey": "Enter API Key",
+    "enterAccessToken": "Enter Access Token",
+    "reset": "Reset",
+    "showCredentials": "Show Credentials"
   }
 }
