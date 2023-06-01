@@ -693,6 +693,7 @@ export type ApiSendCampaign = {
 export type ApiQuickSendPayload = {
 	Message: string;
 	Status: string;
+	StatusCode: number;
 };
 
 export type ApiQuickSend = {

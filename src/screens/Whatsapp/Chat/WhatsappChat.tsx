@@ -71,6 +71,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
+import AlertModal from '../Editor/Popups/AlertModal';
+import moment from 'moment';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -87,6 +89,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
+	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
@@ -693,12 +696,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				// To update contact list
 				updateContactList();
 			} else {
-				sendWhatsappChat?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: sendWhatsappChat?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
+				if (sendWhatsappChat.StatusCode === 112) {
+					setExceedLimitModal(true);
+				} else {
+					sendWhatsappChat?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: sendWhatsappChat?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+				}
 			}
 		}
 	};
@@ -790,6 +797,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setUpdatedDynamicVariable([]);
 		setNewMessage('');
 		setSavedTemplate('');
+	};
+
+	const onExceedLimitYes = () => {
+		setExceedLimitModal(false);
 	};
 
 	return (
@@ -889,6 +900,19 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							onClose={() => setIsValidationAlert(false)}
 							title={translator('whatsappCampaign.sendValidation')}
 							requiredFields={groupSendValidationErrors}
+						/>
+						<AlertModal
+							classes={classes}
+							isOpen={exceedLimitModal}
+							onClose={() => setExceedLimitModal(false)}
+							title={translator(
+								'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+							)}
+							subtitle={`${translator(
+								'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+							)} ${moment().format('DD.MM.YYYY HH:MM')}`}
+							type='alert'
+							onConfirmOrYes={() => onExceedLimitYes()}
 						/>
 					</>
 				) : (

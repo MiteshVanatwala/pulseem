@@ -705,15 +705,19 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
 				} else {
-					if (quickSendData?.Message === 'Invalid phonenumber') {
-						setToastMessage(ToastMessages.INVALID_NUMBER);
+					if(quickSendData?.StatusCode === 10) {
+						setExceedLimitModal(true);
 					} else {
-						setToastMessage({
-							...ToastMessages.QUICK_SEND_ERROR,
-							message:
-								quickSendData?.Message ||
-								ToastMessages.QUICK_SEND_ERROR?.message,
-						});
+						if (quickSendData?.Message === 'Invalid phonenumber') {
+							setToastMessage(ToastMessages.INVALID_NUMBER);
+						} else {
+							setToastMessage({
+								...ToastMessages.QUICK_SEND_ERROR,
+								message:
+									quickSendData?.Message ||
+									ToastMessages.QUICK_SEND_ERROR?.message,
+							});
+						}
 					}
 				}
 				setIsTestGroupModal(false);
@@ -1367,6 +1371,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						type='delete'
 						onConfirmOrYes={() => onExitCampaign()}
 					/>
+					<AlertModal
+						classes={classes}
+						isOpen={exceedLimitModal}
+						onClose={() => setExceedLimitModal(false)}
+						title={translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+						)}
+						subtitle={`${translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+						)} ${moment(campaignSummary?.NextAvailableTime).format(
+							'DD.MM.YYYY HH:MM'
+						)}`}
+						type='alert'
+						onConfirmOrYes={() => onExceedLimitYes()}
+					/>
+					
 					<SummaryModal
 						classes={classes}
 						isOpen={isSummaryModal}
@@ -1385,21 +1405,6 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						specialDatedropDown={{}}
 						spectialDateFieldID={'0'}
 						campaignSummary={campaignSummary}
-					/>
-					<AlertModal
-						classes={classes}
-						isOpen={exceedLimitModal}
-						onClose={() => setExceedLimitModal(false)}
-						title={translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
-						)}
-						subtitle={`${translator(
-							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${moment(campaignSummary?.NextAvailableTime).format(
-							'DD.MM.YYYY HH:MM'
-						)}`}
-						type='alert'
-						onConfirmOrYes={() => onExceedLimitYes()}
 					/>
 				</>
 			) : (

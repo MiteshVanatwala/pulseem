@@ -306,6 +306,7 @@ export type APISendWhatsappChatPayload = {
 	Status: string;
 	Message: string;
 	Data: APISendWhatsappChatDataData;
+	StatusCode: number;
 };
 
 export type APISendWhatsappChat = {

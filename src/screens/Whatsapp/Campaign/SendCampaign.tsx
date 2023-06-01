@@ -422,15 +422,6 @@ const SendCampaign = ({
 			setIsLoader(true);
 			let { payload: campaignSummaryData }: ApiGetCampaignSummary =
 				await dispatch<any>(getWhatsAppCampaignSummary(campaignID));
-			campaignSummaryData = {
-				...campaignSummaryData,
-				Data: {
-					...campaignSummaryData.Data,
-					WhatsappSmsLeft: 20,
-					NextAvailableTime: '2023-05-31T13:32:59.067',
-					WhatsappTierID: 3,
-				},
-			};
 			if (saveCampaignData === apiStatus.SUCCESS) {
 				if (campaignSummaryData.Status === apiStatus.SUCCESS) {
 					if (campaignSummaryData?.Data?.FinalCount > 0) {
