@@ -18,6 +18,7 @@
     "authenticate": "Authenticate",
     "enterShopifyUrl": "Enter Shopify URL",
     "enterAPIKey": "Enter API Key",
+    "enterAPIVersion": "Enter API Version",
     "enterAccessToken": "Enter Access Token",
     "reset": "Reset",
     "showCredentials": "Show Credentials",
@@ -26,6 +27,7 @@
       "201": "Authentication Success",
       "400": "The store is related to another account",
       "403": "Invalid API key or access token (unrecognized login or wrong password)"
-    }
+    },
+    "resetConfirmation": "Are you sure you want to reset authentication?"
   }
 }

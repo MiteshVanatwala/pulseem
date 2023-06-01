@@ -27,7 +27,17 @@ export const getIntegration = createAsyncThunk(
     }
 );
 
-
+export const setIntegration = createAsyncThunk(
+    'Integrations/setIntegration',
+    async (integrationRequest: IntegrationRequest, thunkAPI) => {
+        try {
+            const response = await instence.post(`Integrations/SetIntegration`, integrationRequest);
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
 
 
 const IntegrationSlice = createSlice({
@@ -68,7 +78,8 @@ const IntegrationSlice = createSlice({
         builder.addCase(getIntegration.fulfilled, (state, action) => {
             state.integrationSettings = action.payload as PulseemResponse;
         })
-
+        builder.addCase(setIntegration.fulfilled, (state, action) => {
+        })
     },
 })
 

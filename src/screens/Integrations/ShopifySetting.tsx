@@ -5,21 +5,22 @@ import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
-import { authenticate, getIntegration } from "../../redux/reducers/integrationSlice";
+import { authenticate, getIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
 import { ShopifyModel, IntegrationGroups } from '../../Models/Integrations/Shopify/Shopify';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from '../../helpers/api'
+import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { isRTL } = useSelector((state: any) => state.core);
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
-
+  const [ showResetDialog, setShowResetDialog ] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
-  const [isAuthenticated, setAuthenticated] = useState(true);
+  const [isAuthenticated, setAuthenticated] = useState(false);
+  const [isShowCredentials, setIsShowCredentials] = useState(false);
   const [authenticationErrors, setAuthenticationErrors] = useState({
     api_key: '',
     api_access_token: '',
@@ -95,8 +96,9 @@ const Shopify = ({ classes }: any) => {
     if (authenticationDetails.store_name.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
     if (authenticationDetails.api_key.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_key: t('integrations.shopify.enterAPIKey') };
     if (authenticationDetails.api_access_token.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
+    if (authenticationDetails.api_version.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
+    
     await setAuthenticationErrors(authenticationErrorsDump);
-
     if (authenticationDetails.store_name.trim() !== '' && authenticationDetails.api_key.trim() !== '' && authenticationDetails.api_access_token.trim() !== '') {
       setAuthenticationErrors({
         ...authenticationErrors,
@@ -117,13 +119,19 @@ const Shopify = ({ classes }: any) => {
   }
 
   const submitForm = async () => {
-    // Call to SetIntegration
+    setShowLoader(true);
+    const request = {
+      IntegrationSource: LU_Plugin.Shopify,
+      JsonData: JSON.stringify({...preloadIntegrations, ...settings})
+    } as IntegrationRequest;
+    const response = await dispatch(setIntegration(request));
+    console.log(response);
+    setShowLoader(false);
   }
 
   const handleAuthResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        console.log(response);
         // success
         setAuthenticationDetails({
           ...authenticationDetails,
@@ -135,8 +143,13 @@ const Shopify = ({ classes }: any) => {
         break;
       }
       case 400: {
-        //TODO mitesh
-        // t(`integrations.shopify.authResponses.400}`)
+        setAuthenticationErrors({
+          ...authenticationErrors,
+          authentication_message: t(`integrations.shopify.authResponses.400`),
+          store_name: '',
+          api_key: '',
+          api_access_token: ''
+        });
         break;
       }
       case 401: {
@@ -145,11 +158,10 @@ const Shopify = ({ classes }: any) => {
       }
       case 403: {
         //TODO mitesh
-        // t(`integrations.shopify.authResponses.403}`)
         // No Source has been requested
         setAuthenticationErrors({
           ...authenticationErrors,
-          authentication_message: response.payload.Message,
+          authentication_message: t(`integrations.shopify.authResponses.403`),
           store_name: '',
           api_key: '',
           api_access_token: ''
@@ -160,6 +172,7 @@ const Shopify = ({ classes }: any) => {
   }
 
   const resetStore = () => {
+    setShowResetDialog(false);
     setAuthenticationDetails({
       ...authenticationDetails,
       store_name: '',
@@ -184,6 +197,9 @@ const Shopify = ({ classes }: any) => {
       UpdateDate: '',
       IntegrationSource: 2
     });
+
+    setAuthenticated(false);
+    setIsShowCredentials(false);
   }
 
   const showCredentials = () => {
@@ -193,6 +209,54 @@ const Shopify = ({ classes }: any) => {
       api_key: settings.api_key,
       api_access_token: settings.api_access_token
     });
+    setIsShowCredentials(true);
+  }
+
+  const registerChange = (event: any) => {
+    setSettings({
+      ...settings,
+      Groups: {
+        ...settings.Groups,
+        RegisterGroups: event.target.value
+      }
+    })
+  }
+
+  const purchaseChange = (event: any) => {
+    setSettings({
+      ...settings,
+      Groups: {
+        ...settings.Groups,
+        PurchaseGroups: event.target.value
+      }
+    })
+  }
+
+  const cartAbandonedChange = (event: any) => {
+    setSettings({
+      ...settings,
+      Groups: {
+        ...settings.Groups,
+        AbandonedGroups: event.target.value
+      }
+    })
+  }
+
+  const renderResetDialog = () => {
+    return (
+      <BaseDialog
+        open={showResetDialog}
+        onClose={() => setShowResetDialog(false)}
+        onConfirm={() => resetStore()}
+        title=""
+      >
+        <Box className={clsx(classes.bodyTextDialog, classes.pb25)}>
+          <Typography>
+            {t("integrations.shopify.resetConfirmation")}
+          </Typography>
+        </Box>
+      </BaseDialog>
+    )
   }
 
   return (
@@ -223,7 +287,7 @@ const Shopify = ({ classes }: any) => {
             </Typography>
           )}
         </Box>
-        {!isAuthenticated ? (<>
+        {!isAuthenticated || isShowCredentials ? (<>
           <Box className={clsx(classes.dblock, classes.pb15)}>
             <Typography className={clsx(classes.bold)}>
               {t("integrations.shopify.apiKey")}
@@ -238,6 +302,7 @@ const Shopify = ({ classes }: any) => {
               name="DefaultFromName"
               onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_key: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+              disabled={isShowCredentials}
             />
             {!!authenticationErrors.api_key && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -260,6 +325,7 @@ const Shopify = ({ classes }: any) => {
               name="DefaultFromName"
               onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_access_token: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+              disabled={isShowCredentials}
             />
             {!!authenticationErrors.api_access_token && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -281,6 +347,7 @@ const Shopify = ({ classes }: any) => {
               name="apiVersion"
               onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_version: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+              disabled={isShowCredentials}
             />
             {!!authenticationErrors.api_version && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -288,32 +355,35 @@ const Shopify = ({ classes }: any) => {
               </Typography>
             )}
           </Box>
-          <Box className={clsx(classes.flex, classes.pbt15)}>
-            {!!authenticationErrors.authentication_message && (
+          
+          {!!authenticationErrors.authentication_message && (
+            <Box className={clsx(classes.flex, classes.pbt15)}>
               <Typography className={clsx(classes.errorText, classes.f16)}>
                 {authenticationErrors.authentication_message}
               </Typography>
-            )}
-          </Box>
-          <Box className={clsx(classes.flex, classes.pbt15)}>
-            <Button
-              onClick={authenticateStore}
-              variant='contained'
-              size='medium'
-              className={clsx(
-                classes.actionButton,
-                classes.actionButtonLightGreen,
-                classes.backButton
-              )}
-              color="primary"
-            >
-              {t("integrations.shopify.authenticate")}
-            </Button>
-          </Box>
+            </Box>
+          )}
+          {
+            !isShowCredentials && <Box className={clsx(classes.flex, classes.pbt15)}>
+              <Button
+                onClick={authenticateStore}
+                variant='contained'
+                size='medium'
+                className={clsx(
+                  classes.actionButton,
+                  classes.actionButtonLightGreen,
+                  classes.backButton
+                )}
+                color="primary"
+              >
+                {t("integrations.shopify.authenticate")}
+              </Button>
+            </Box>
+          }
         </>) :
           (<>
             <Button
-              onClick={resetStore}
+              onClick={() => setShowResetDialog(true)}
               variant='contained'
               size='medium'
               className={clsx(
@@ -366,11 +436,26 @@ const Shopify = ({ classes }: any) => {
                 <Select
                   labelId="multiple-checkbox-label"
                   id="multiple-checkbox"
-                  input={<OutlinedInput label="Purchase history" />}
+                  input={<OutlinedInput label="Register history" />}
+                  multiple
+                  value={settings.Groups?.RegisterGroups || []}
+                  onChange={registerChange}
+                  disabled={!settings.RegisterEventActive}
+                  renderValue={(selected: any) => {
+                    return subAccountAllGroups.reduce((selectedGroupName: any, group: any) => {
+                      if (selected.indexOf(group.GroupID) > -1) {
+                        selectedGroupName.push(group.GroupName);
+                      }
+                      return selectedGroupName;
+                    }, []).join(', ');
+                  }}
                 >
                   {subAccountAllGroups?.map((group: any) => {
                     return (<MenuItem key={`register_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
-                      <Checkbox />
+                      <Checkbox
+                        checked={(settings.Groups?.RegisterGroups || []).indexOf(group.GroupID) > -1}
+                        color="primary"
+                      />
                       <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
                     </MenuItem>)
                   })
@@ -396,10 +481,25 @@ const Shopify = ({ classes }: any) => {
                   labelId="multiple-checkbox-label"
                   id="multiple-checkbox"
                   input={<OutlinedInput label="Purchase history" />}
+                  disabled={!settings.PurchaseEventActive}
+                  multiple
+                  value={settings.Groups?.PurchaseGroups || []}
+                  onChange={purchaseChange}
+                  renderValue={(selected: any) => {
+                    return subAccountAllGroups.reduce((selectedGroupName: any, group: any) => {
+                      if (selected.indexOf(group.GroupID) > -1) {
+                        selectedGroupName.push(group.GroupName);
+                      }
+                      return selectedGroupName;
+                    }, []).join(', ');
+                  }}
                 >
                   {subAccountAllGroups?.map((group: any) => {
                     return (<MenuItem key={`purchase_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
-                      <Checkbox />
+                      <Checkbox
+                        checked={(settings.Groups?.PurchaseGroups || []).indexOf(group.GroupID) > -1}
+                        color="primary"
+                      />
                       <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
                     </MenuItem>)
                   })}
@@ -423,13 +523,30 @@ const Shopify = ({ classes }: any) => {
                 <Select
                   labelId="multiple-checkbox-label"
                   id="multiple-checkbox"
-                  input={<OutlinedInput label="Purchase history" />}
+                  input={<OutlinedInput label="Cart Abandoned" />}
+                  disabled={!settings.AbandonedEventActive}
+                  multiple
+                  value={settings.Groups?.AbandonedGroups || []}
+                  onChange={cartAbandonedChange}
+                  renderValue={(selected: any) => {
+                    return subAccountAllGroups.reduce((selectedGroupName: any, group: any) => {
+                      if (selected.indexOf(group.GroupID) > -1) {
+                        selectedGroupName.push(group.GroupName);
+                      }
+                      return selectedGroupName;
+                    }, []).join(', ');
+                  }}
                 >
                   {subAccountAllGroups?.map((group: any) => {
-                    return (<MenuItem key={`abandoned_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
-                      <Checkbox />
-                      <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
-                    </MenuItem>)
+                    return (
+                      <MenuItem key={`abandoned_${group.GroupID}`} value={group.GroupID}>
+                        <Checkbox
+                          checked={(settings.Groups?.AbandonedGroups || []).indexOf(group.GroupID) > -1}
+                          color="primary"
+                        />
+                        <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
+                      </MenuItem>
+                    )
                   })}
                 </Select>
               </Grid>
@@ -453,6 +570,7 @@ const Shopify = ({ classes }: any) => {
           </Box>
         )
       }
+      {renderResetDialog()}
     </>
   );
 };

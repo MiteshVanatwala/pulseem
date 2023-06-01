@@ -18,6 +18,7 @@
     "enterShopifyUrl": "Enter Shopify URL",
     "enterAPIKey": "Enter API Key",
     "enterAccessToken": "Enter Access Token",
+    "enterAPIVersion": "Enter API Version",
     "reset": "Reset",
     "showCredentials": "Show Credentials",
     "apiVersion": "גרסת API",
@@ -25,6 +26,7 @@
       "201": "החנות אומתה בהצלחה",
       "400": "שם החנות שייך לחשבון אחר The store is related to another account",
       "403": "מפתח API או מפתח גישה שגוי"
-    }
+    },
+    "resetConfirmation": "Are you sure you want to reset authentication?"
   }
 }

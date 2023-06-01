@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import DefaultScreen from "../DefaultScreen";
 import clsx from "clsx";
 import { TabContext, TabPanel } from "@material-ui/lab";
-import Shopify from "./SpotifySetting";
+import Shopify from "./ShopifySetting";
 
 const Integrations = ({ classes }: any) => {
   const { t } = useTranslation();
