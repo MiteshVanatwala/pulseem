@@ -26,48 +26,20 @@ const Shopify = ({ classes }: any) => {
     api_access_token: '',
     store_name: '',
     authentication_message: '',
+    group_not_selected: '',
     api_version: ''
   });
   // This object should be used as Shopify model
-  const [authenticationDetails, setAuthenticationDetails] = useState({
-    IntegrationSource: LU_Plugin.Shopify,
+  const [settings, setSettings] = useState({
     api_key: '',
     api_access_token: '',
     store_name: '',
-    api_version: ''
-  } as ShopifyModel);
-  const [settings, setSettings] = useState({
+    api_version: '',
     RegisterEventActive: false,
     PurchaseEventActive: false,
     AbandonedEventActive: false,
     Groups: {} as IntegrationGroups
   } as ShopifyModel)
-  const [insertClientDetails, setInsertClientDetails] = useState({
-    siteSigupChecked: false,
-    siteSelected: '',
-    purchaseChecked: false,
-    purchaseSelected: '',
-    cartAbandonmentChecked: false,
-    cartAbandonmentSelected: '',
-  });
-  const [preloadIntegrations, setPreloadIntegrations] = useState({
-    ID: 0,
-    SubAccountID: 0,
-    store_name: '',
-    api_key: '',
-    api_access_token: '',
-    api_password: '',
-    api_version: '',
-    RegisterEventActive: false,
-    PurchaseEventActive: false,
-    AbandonedEventActive: false,
-    UiApi_ApiKey: '',
-    Groups: {},
-    CreateDate: '',
-    UpdateDate: '',
-    IntegrationSource: 2
-  } as ShopifyModel);
-
   const renderToast = () => {
     setTimeout(() => {
       setToastMessage(null);
@@ -76,32 +48,36 @@ const Shopify = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    const initSettings = async () => {
-      const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
-      const settings = settingResponse?.payload?.Data as ShopifyModel;
-      if (settings.ID) {
-        setPreloadIntegrations(settings);
-        setAuthenticated(true);
-      }
-      if (subAccountAllGroups?.length === 0) {
-        dispatch(getGroupsBySubAccountId());
-      }
-    }
     initSettings();
+    document.title = `${t('integrations.shopify.title')} | ${document.title}`;
   }, []);
+  
+  const initSettings = async () => {
+    setShowLoader(true);
+    const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
+    const settings = settingResponse?.payload?.Data as ShopifyModel;
+    setShowLoader(false);
+    if (settings.ID) {
+      setSettings(settings);
+      setAuthenticated(true);
+    }
+    if (subAccountAllGroups?.length === 0) {
+      dispatch(getGroupsBySubAccountId());
+    }
+  }
 
   const authenticateStore = async () => {
     // Add validation then this logic
     let authenticationErrorsDump = authenticationErrors;
-    if (authenticationDetails.store_name.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
-    if (authenticationDetails.api_key.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_key: t('integrations.shopify.enterAPIKey') };
-    if (authenticationDetails.api_access_token.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
-    if (authenticationDetails.api_version.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
+    if (settings.store_name.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
+    if (settings.api_key.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_key: t('integrations.shopify.enterAPIKey') };
+    if (settings.api_access_token.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
+    if (settings.api_version.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
     
     await setAuthenticationErrors(authenticationErrorsDump);
-    if (authenticationDetails.store_name.trim() !== '' && authenticationDetails.api_key.trim() !== '' && authenticationDetails.api_access_token.trim() !== '') {
-      setAuthenticationErrors({
-        ...authenticationErrors,
+    if (settings.store_name.trim() !== '' && settings.api_key.trim() !== '' && settings.api_access_token.trim() !== '') {
+      setSettings({
+        ...settings,
         store_name: '',
         api_key: '',
         api_access_token: ''
@@ -109,7 +85,7 @@ const Shopify = ({ classes }: any) => {
       setShowLoader(true);
       const request = {
         IntegrationSource: LU_Plugin.Shopify,
-        JsonData: JSON.stringify(authenticationDetails)
+        JsonData: JSON.stringify(settings)
       } as IntegrationRequest;
 
       const authResponse = await dispatch(authenticate(request));
@@ -119,36 +95,47 @@ const Shopify = ({ classes }: any) => {
   }
 
   const submitForm = async () => {
-    setShowLoader(true);
-    const request = {
-      IntegrationSource: LU_Plugin.Shopify,
-      JsonData: JSON.stringify({...preloadIntegrations, ...settings})
-    } as IntegrationRequest;
-    const response = await dispatch(setIntegration(request));
-    console.log(response);
-    setShowLoader(false);
+    if (settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive) {
+      setAuthenticationErrors({
+        ...authenticationErrors,
+        group_not_selected: '',
+      })
+      setShowLoader(true);
+      const request = {
+        IntegrationSource: LU_Plugin.Shopify,
+        JsonData: JSON.stringify({...settings})
+      } as IntegrationRequest;
+      const response = await dispatch(setIntegration(request));
+      setShowLoader(false);
+    } else {
+      setAuthenticationErrors({
+        ...authenticationErrors,
+        group_not_selected: t(`integrations.shopify.selectGroup`),
+      })
+    }
   }
 
   const handleAuthResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        // success
-        setAuthenticationDetails({
-          ...authenticationDetails,
-          store_name: '',
-          api_key: '',
-          api_access_token: ''
-        })
+        setAuthenticationErrors({
+          ...authenticationErrors,
+          authentication_message: t(`integrations.shopify.authResponses.201`),
+        });
         setAuthenticated(true);
+        initSettings();
+        setTimeout(() => {
+          setAuthenticationErrors({
+            ...authenticationErrors,
+            authentication_message: '',
+          });
+        }, 2000);
         break;
       }
       case 400: {
         setAuthenticationErrors({
           ...authenticationErrors,
           authentication_message: t(`integrations.shopify.authResponses.400`),
-          store_name: '',
-          api_key: '',
-          api_access_token: ''
         });
         break;
       }
@@ -162,9 +149,6 @@ const Shopify = ({ classes }: any) => {
         setAuthenticationErrors({
           ...authenticationErrors,
           authentication_message: t(`integrations.shopify.authResponses.403`),
-          store_name: '',
-          api_key: '',
-          api_access_token: ''
         })
         break;
       }
@@ -173,13 +157,6 @@ const Shopify = ({ classes }: any) => {
 
   const resetStore = () => {
     setShowResetDialog(false);
-    setAuthenticationDetails({
-      ...authenticationDetails,
-      store_name: '',
-      api_key: '',
-      api_access_token: ''
-    });
-
     setSettings({
       ID: 0,
       SubAccountID: 0,
@@ -203,12 +180,6 @@ const Shopify = ({ classes }: any) => {
   }
 
   const showCredentials = () => {
-    setAuthenticationDetails({
-      ...authenticationDetails,
-      store_name: settings.store_name,
-      api_key: settings.api_key,
-      api_access_token: settings.api_access_token
-    });
     setIsShowCredentials(true);
   }
 
@@ -278,7 +249,8 @@ const Shopify = ({ classes }: any) => {
             variant="outlined"
             size="small"
             name="DefaultFromName"
-            onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, store_name: event.target.value })}
+            value={settings.store_name}
+            onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
             className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
           />
           {!!authenticationErrors.store_name && (
@@ -300,9 +272,9 @@ const Shopify = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="DefaultFromName"
-              onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_key: event.target.value })}
+              value={settings.api_key}
+              onChange={(event) => setSettings({ ...settings, api_key: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-              disabled={isShowCredentials}
             />
             {!!authenticationErrors.api_key && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -323,9 +295,9 @@ const Shopify = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="DefaultFromName"
-              onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_access_token: event.target.value })}
+              value={settings.api_access_token}
+              onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-              disabled={isShowCredentials}
             />
             {!!authenticationErrors.api_access_token && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -345,9 +317,9 @@ const Shopify = ({ classes }: any) => {
               variant="outlined"
               size="small"
               name="apiVersion"
-              onChange={(event) => setAuthenticationDetails({ ...authenticationDetails, api_version: event.target.value })}
+              value={settings.api_version}
+              onChange={(event) => setSettings({ ...settings, api_version: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-              disabled={isShowCredentials}
             />
             {!!authenticationErrors.api_version && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
@@ -364,7 +336,7 @@ const Shopify = ({ classes }: any) => {
             </Box>
           )}
           {
-            !isShowCredentials && <Box className={clsx(classes.flex, classes.pbt15)}>
+            isShowCredentials && <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
                 onClick={authenticateStore}
                 variant='contained'
@@ -425,7 +397,16 @@ const Shopify = ({ classes }: any) => {
                 control={
                   <Checkbox
                     checked={settings.RegisterEventActive}
-                    onChange={(event) => setSettings({ ...settings, RegisterEventActive: event.target.checked })}
+                    onChange={(event) => 
+                      setSettings({
+                        ...settings,
+                        RegisterEventActive: event.target.checked,
+                        Groups: {
+                          ...settings.Groups,
+                          RegisterGroups: event.target.checked ? settings?.Groups?.RegisterGroups : []
+                        }
+                      })
+                    }
                     name="signup"
                     color="primary"
                   />
@@ -469,7 +450,16 @@ const Shopify = ({ classes }: any) => {
                 control={
                   <Checkbox
                     checked={settings.PurchaseEventActive}
-                    onChange={(event) => setSettings({ ...settings, PurchaseEventActive: event.target.checked })}
+                    onChange={(event) => 
+                      setSettings({
+                        ...settings,
+                        PurchaseEventActive: event.target.checked,
+                        Groups: {
+                          ...settings.Groups,
+                          PurchaseGroups: event.target.checked ? settings?.Groups?.PurchaseGroups : []
+                        }
+                      })
+                    }
                     name="signup"
                     color="primary"
                   />
@@ -512,7 +502,16 @@ const Shopify = ({ classes }: any) => {
                 control={
                   <Checkbox
                     checked={settings.AbandonedEventActive}
-                    onChange={(event) => setSettings({ ...settings, AbandonedEventActive: event.target.checked })}
+                    onChange={(event) => 
+                      setSettings({
+                        ...settings,
+                        AbandonedEventActive: event.target.checked,
+                        Groups: {
+                          ...settings.Groups,
+                          AbandonedGroups: event.target.checked ? settings?.Groups?.AbandonedGroups : []
+                        }
+                      })
+                    }
                     name="signup"
                     color="primary"
                   />
@@ -551,6 +550,14 @@ const Shopify = ({ classes }: any) => {
                 </Select>
               </Grid>
             </Grid>
+
+            {!!authenticationErrors.group_not_selected && (
+              <Box className={clsx(classes.flex, classes.pbt15)}>
+                <Typography className={clsx(classes.errorText, classes.f16)}>
+                  {authenticationErrors.group_not_selected}
+                </Typography>
+              </Box>
+            )}
             <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
                 onClick={submitForm}

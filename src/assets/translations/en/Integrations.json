@@ -28,6 +28,7 @@
       "400": "The store is related to another account",
       "403": "Invalid API key or access token (unrecognized login or wrong password)"
     },
-    "resetConfirmation": "Are you sure you want to reset authentication?"
+    "resetConfirmation": "Are you sure you want to reset authentication?",
+    "selectGroup": "Select any group"
   }
 }

@@ -27,6 +27,7 @@
       "400": "שם החנות שייך לחשבון אחר The store is related to another account",
       "403": "מפתח API או מפתח גישה שגוי"
     },
-    "resetConfirmation": "Are you sure you want to reset authentication?"
+    "resetConfirmation": "Are you sure you want to reset authentication?",
+    "selectGroup": "Select any group"
   }
 }
