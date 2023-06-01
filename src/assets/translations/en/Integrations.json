@@ -1,7 +1,7 @@
 {
   "title": "Integrations",
   "shopify": {
-    "title": "Shopify Settings",
+    "title": "Shopify",
     "authentication": "Authentication",
     "apiKey": "API key",
     "apiAccessToken": "API Access Token",
@@ -29,6 +29,9 @@
       "403": "Invalid API key or access token (unrecognized login or wrong password)"
     },
     "resetConfirmation": "Are you sure you want to reset authentication?",
-    "selectGroup": "Select any group"
+    "selectGroup": "Select any group",
+    "formSubmitResponses": {
+      "201": "Group has been saved."
+    }
   }
 }

@@ -21,15 +21,18 @@ const Shopify = ({ classes }: any) => {
   const [showLoader, setShowLoader] = useState(false);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isShowCredentials, setIsShowCredentials] = useState(false);
-  const [authenticationErrors, setAuthenticationErrors] = useState({
+  const [errors, setErrors] = useState({
     api_key: '',
     api_access_token: '',
     store_name: '',
     authentication_message: '',
     group_not_selected: '',
-    api_version: ''
+    api_version: '',
   });
-  // This object should be used as Shopify model
+  const [messages, setMessages] = useState({
+    authentication_message: '',
+    group_saved: ''
+  });
   const [settings, setSettings] = useState({
     api_key: '',
     api_access_token: '',
@@ -68,13 +71,13 @@ const Shopify = ({ classes }: any) => {
 
   const authenticateStore = async () => {
     // Add validation then this logic
-    let authenticationErrorsDump = authenticationErrors;
-    if (settings.store_name.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
-    if (settings.api_key.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_key: t('integrations.shopify.enterAPIKey') };
-    if (settings.api_access_token.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
-    if (settings.api_version.trim() === '') authenticationErrorsDump = { ...authenticationErrorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
+    let errorsDump = errors;
+    if (settings.store_name.trim() === '') errorsDump = { ...errorsDump, store_name: t('integrations.shopify.enterShopifyUrl') };
+    if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.shopify.enterAPIKey') };
+    if (settings.api_access_token.trim() === '') errorsDump = { ...errorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
+    if (settings.api_version.trim() === '') errorsDump = { ...errorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
     
-    await setAuthenticationErrors(authenticationErrorsDump);
+    await setErrors(errorsDump);
     if (settings.store_name.trim() !== '' && settings.api_key.trim() !== '' && settings.api_access_token.trim() !== '') {
       setSettings({
         ...settings,
@@ -96,8 +99,8 @@ const Shopify = ({ classes }: any) => {
 
   const submitForm = async () => {
     if (settings.RegisterEventActive || settings.PurchaseEventActive || settings.AbandonedEventActive) {
-      setAuthenticationErrors({
-        ...authenticationErrors,
+      setErrors({
+        ...errors,
         group_not_selected: '',
       })
       setShowLoader(true);
@@ -106,35 +109,55 @@ const Shopify = ({ classes }: any) => {
         JsonData: JSON.stringify({...settings})
       } as IntegrationRequest;
       const response = await dispatch(setIntegration(request));
+      handleSubmitFormResponse(response);
       setShowLoader(false);
     } else {
-      setAuthenticationErrors({
-        ...authenticationErrors,
+      setErrors({
+        ...errors,
         group_not_selected: t(`integrations.shopify.selectGroup`),
       })
     }
   }
 
+  const handleSubmitFormResponse = (response: any) => {
+    switch (response?.payload?.StatusCode) {
+      case 201: {
+        setMessages({
+          ...messages,
+          group_saved: t(`integrations.shopify.formSubmitResponses.201`),
+        });
+        setTimeout(() => {
+          setMessages({
+            ...errors,
+            group_saved: '',
+          });
+        }, 2000);
+        break;
+      }
+    }
+  }
+  
   const handleAuthResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        setAuthenticationErrors({
-          ...authenticationErrors,
+        setMessages({
+          ...messages,
           authentication_message: t(`integrations.shopify.authResponses.201`),
         });
         setAuthenticated(true);
+        setIsShowCredentials(false);
         initSettings();
         setTimeout(() => {
-          setAuthenticationErrors({
-            ...authenticationErrors,
+          setErrors({
+            ...errors,
             authentication_message: '',
           });
         }, 2000);
         break;
       }
       case 400: {
-        setAuthenticationErrors({
-          ...authenticationErrors,
+        setErrors({
+          ...errors,
           authentication_message: t(`integrations.shopify.authResponses.400`),
         });
         break;
@@ -144,10 +167,8 @@ const Shopify = ({ classes }: any) => {
         break;
       }
       case 403: {
-        //TODO mitesh
-        // No Source has been requested
-        setAuthenticationErrors({
-          ...authenticationErrors,
+        setErrors({
+          ...errors,
           authentication_message: t(`integrations.shopify.authResponses.403`),
         })
         break;
@@ -253,9 +274,9 @@ const Shopify = ({ classes }: any) => {
             onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
             className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
           />
-          {!!authenticationErrors.store_name && (
+          {!!errors.store_name && (
             <Typography className={clsx(classes.errorText, classes.f14)}>
-              {authenticationErrors.store_name}
+              {errors.store_name}
             </Typography>
           )}
         </Box>
@@ -276,9 +297,9 @@ const Shopify = ({ classes }: any) => {
               onChange={(event) => setSettings({ ...settings, api_key: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
             />
-            {!!authenticationErrors.api_key && (
+            {!!errors.api_key && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
-                {authenticationErrors.api_key}
+                {errors.api_key}
               </Typography>
             )}
           </Box>
@@ -299,9 +320,9 @@ const Shopify = ({ classes }: any) => {
               onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
             />
-            {!!authenticationErrors.api_access_token && (
+            {!!errors.api_access_token && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
-                {authenticationErrors.api_access_token}
+                {errors.api_access_token}
               </Typography>
             )}
           </Box>
@@ -321,20 +342,29 @@ const Shopify = ({ classes }: any) => {
               onChange={(event) => setSettings({ ...settings, api_version: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
             />
-            {!!authenticationErrors.api_version && (
+            {!!errors.api_version && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
-                {authenticationErrors.api_version}
+                {errors.api_version}
               </Typography>
             )}
           </Box>
           
-          {!!authenticationErrors.authentication_message && (
+          {!!errors.authentication_message && (
             <Box className={clsx(classes.flex, classes.pbt15)}>
               <Typography className={clsx(classes.errorText, classes.f16)}>
-                {authenticationErrors.authentication_message}
+                {errors.authentication_message}
               </Typography>
             </Box>
           )}
+
+          {!!messages.authentication_message && (
+            <Box className={clsx(classes.flex, classes.pbt15)}>
+              <Typography className={clsx(classes.green, classes.f16)}>
+                {messages.authentication_message}
+              </Typography>
+            </Box>
+          )}
+
           {
             isShowCredentials && <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
@@ -551,13 +581,22 @@ const Shopify = ({ classes }: any) => {
               </Grid>
             </Grid>
 
-            {!!authenticationErrors.group_not_selected && (
+            {!!errors.group_not_selected && (
               <Box className={clsx(classes.flex, classes.pbt15)}>
                 <Typography className={clsx(classes.errorText, classes.f16)}>
-                  {authenticationErrors.group_not_selected}
+                  {errors.group_not_selected}
                 </Typography>
               </Box>
             )}
+            
+            {!!messages.group_saved && (
+              <Box className={clsx(classes.flex, classes.pbt15)}>
+                <Typography className={clsx(classes.green, classes.f16)}>
+                  {messages.group_saved}
+                </Typography>
+              </Box>
+            )}
+
             <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
                 onClick={submitForm}
