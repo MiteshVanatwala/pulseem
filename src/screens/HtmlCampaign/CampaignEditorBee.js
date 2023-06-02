@@ -23,7 +23,7 @@ import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
-import { deleteCampaign, saveTemplateToAccount, getTemplateById } from '../../redux/reducers/newsletterSlice';
+import { deleteCampaign, saveTemplateToAccount, getTemplateById, getPublicTemplates } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
@@ -151,6 +151,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
+    dispatch(getPublicTemplates());
   }, []);
   useEffect(() => {
     if (userBlocks) {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import clsx from "clsx";
-import { Box, Tab, Grid, Tabs, Typography } from "@material-ui/core";
+import { Box, Tab, Grid, Tabs, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
@@ -44,7 +44,7 @@ const Templates = ({
   }
 
   useEffect(() => {
-    loadTemplates(0);
+    // loadTemplates(0);
     setTimeout(() => {
       const height = `${(document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120}px`;
       if (refScriptCode.current !== null) {
@@ -63,18 +63,20 @@ const Templates = ({
 
   useEffect(() => {
     setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount)
-  }, [ publicTemplates, templatesBySubAccount ]);
+  }, [ publicTemplates, templatesBySubAccount, tabValue ]);
 
   useEffect(() => {
     setCategoryList(getUniqueValuesOfKey(templateList, 'Category'));
   }, [templateList]);
 
   const loadTemplates = async (type: number) => {
-    setCategoryList([]);
-    setTemplateList([]);
-    setLoader(true);
-    await dispatch(type === 0 ? getPublicTemplates() : getAllTemplatesBySubaccountId());
-    setLoader(false);
+    if (type === 1) {
+      setCategoryList([]);
+      setTemplateList([]);
+      setLoader(true);
+      await dispatch(getAllTemplatesBySubaccountId());
+      setLoader(false);
+    }
   }
 
   const template = (templateDetails: any) => {
@@ -86,15 +88,43 @@ const Templates = ({
           </Box>
           <div className={clsx(classes.textCenter, classes.pt5, classes.f14)}>{convertHyphensToword(templateDetails.Name)}</div>
           <div className={clsx(classes.textCenter, classes.p5)}>
-            <Typography
+            <Button
+              className={clsx(
+                classes.solidDialogButton,
+                classes.dialogConfirmButton,
+                classes.pt0,
+                classes.pb0
+              )}
               onClick={() => {
                 setSelectedTemplate(templateDetails);
                 setOpenPreview(true);
               }}
-              className={clsx(classes.dBlock, classes.blueLink, classes.pb10, classes.f14)}
             >
-              {t('common.Preview')}
-            </Typography>
+              <Typography    
+                className={clsx(classes.dBlock, classes.f14)}
+              >
+                {t('common.Preview')}
+              </Typography>
+            </Button>
+
+            <Button
+              className={clsx(
+                classes.solidDialogButton,
+                classes.dialogConfirmButton,
+                classes.ml5,
+                classes.pt0,
+                classes.pb0
+              )}
+              onClick={() => {
+                onClose(templateDetails)
+              }}
+            >
+              <Typography    
+                className={clsx(classes.dBlock, classes.f14)}
+              >
+                {t('common.loadTemplate')}
+              </Typography>
+            </Button>
           </div>
         </Grid>
       </>
