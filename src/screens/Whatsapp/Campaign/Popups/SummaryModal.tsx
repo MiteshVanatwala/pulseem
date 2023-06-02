@@ -53,6 +53,9 @@ const SummaryModal = ({
 	specialDatedropDown,
 	spectialDateFieldID,
 	campaignSummary,
+	randomlyCount,
+	setRandomlyCount,
+	resetRandomCount,
 }: SummaryModalProps) => {
 	const theme = useTheme();
 	const dispatch = useDispatch();
@@ -85,7 +88,6 @@ const SummaryModal = ({
 		templateButtons: [],
 	});
 	const [buttonType, setButtonType] = useState<string>('');
-	const [randomlyCount, setRandomlyCount] = useState<string>('');
 	const [fileData, setFileData] = useState<{
 		fileLink: string;
 		fileType: string;
@@ -231,9 +233,11 @@ const SummaryModal = ({
 		if (validateSummary()) {
 			if (campaignSummary?.WhatsappTierID === 4) {
 				onConfirmOrYes();
+				resetRandomCount();
 			} else {
 				if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
 					onConfirmOrYes();
+					resetRandomCount();
 				} else {
 					setTierAlert(true);
 				}
@@ -258,6 +262,7 @@ const SummaryModal = ({
 
 	const onTierAlertConfirm = () => {
 		if (validateSummary()) {
+			resetRandomCount()
 			onConfirmOrYes();
 		}
 	};

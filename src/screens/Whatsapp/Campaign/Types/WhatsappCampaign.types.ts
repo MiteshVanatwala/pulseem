@@ -234,6 +234,14 @@ export type SummaryModalProps = {
 	specialDatedropDown: specialDateDropDownPayload | undefined;
 	spectialDateFieldID: string;
 	campaignSummary: ApiGetCampaignSummaryPayloadData | undefined;
+	randomlyCount: string;
+	setRandomlyCount: (value: string) => void;
+	resetRandomCount: () => void;
+};
+
+export type ApiSendCampaignData = {
+	WACampaignID: number;
+	Random?: number;
 };
 
 export type tagDataProps = {
@@ -691,6 +699,9 @@ export type ApiSendCampaign = {
 };
 
 export type ApiQuickSendPayload = {
+	Data?: {
+		NextAvailableTime?: string;
+	};
 	Message: string;
 	Status: string;
 	StatusCode: number;

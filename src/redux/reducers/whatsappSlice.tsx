@@ -10,6 +10,7 @@ import {
 import {
 	ApiCreateGroupPayload,
 	ApiSaveCampaignSettingsData,
+	ApiSendCampaignData,
 	saveCampaignDataProps,
 	SaveQuickSendGroupReq,
 	TestSendReq,
@@ -42,10 +43,6 @@ type ApiSubmitTemplatesData =
 	| TextMedia
 	| JSONPropsText
 	| undefined;
-
-type ApiSendCampaignData = {
-	WACampaignID: number;
-};
 
 type apiCombineGroup = {
 	GroupIds: number[];

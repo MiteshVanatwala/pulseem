@@ -26,6 +26,7 @@ import {
 	ApiGetCampaignSummaryPayloadData,
 	phoneNumberAPIProps,
 	GetTestGroups,
+	ApiSendCampaignData,
 } from './Types/WhatsappCampaign.types';
 import { useTranslation } from 'react-i18next';
 import RightPane from './Components/RightPane';
@@ -129,6 +130,7 @@ const SendCampaign = ({
 	const [exceptionalDaysToggle, setExceptionalDaysToggle] =
 		useState<boolean>(false);
 	const [exceptionalDays, setExceptionalDays] = useState<string>('');
+	const [randomlyCount, setRandomlyCount] = useState<string>('');
 
 	const [specialDatedropDown, setSpecialDatedropDown] =
 		useState<specialDateDropDownPayload>();
@@ -431,7 +433,12 @@ const SendCampaign = ({
 							campaignSummaryData.Data.WhatsappTierID === 2 ||
 							campaignSummaryData.Data.WhatsappTierID === 3
 						) {
-							if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
+							if (
+								campaignSummaryData?.Data?.WhatsappSmsLeft > 0 ||
+								(sendType === '2' &&
+									moment(sendDate).diff(moment(), 'seconds') > 86400) ||
+								sendType === '3'
+							) {
 								setIsSummaryModal(true);
 							} else {
 								setExceedLimitModal(true);
@@ -692,12 +699,19 @@ const SendCampaign = ({
 	const onSummarySend = async () => {
 		setIsSummaryModal(false);
 		setIsLoader(true);
+		let sendCampaignPayload: ApiSendCampaignData = {
+			WACampaignID: Number(campaignID),
+		};
+		if (Number(randomlyCount) > 0) {
+			sendCampaignPayload.Random = Number(randomlyCount);
+		}
 		if (campaignID) {
 			const { payload: sendCampaignData }: ApiSendCampaign =
 				await dispatch<any>(sendCampaign({ WACampaignID: Number(campaignID) }));
 			setIsLoader(false);
 			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
 				setIsSendCampaignSuccessOpen(true);
+				setRandomlyCount('');
 			} else {
 				sendCampaignData?.Message
 					? setToastMessage({
@@ -809,6 +823,9 @@ const SendCampaign = ({
 						specialDatedropDown={specialDatedropDown}
 						spectialDateFieldID={spectialDateFieldID}
 						campaignSummary={campaignSummary}
+						randomlyCount={randomlyCount}
+						setRandomlyCount={setRandomlyCount}
+						resetRandomCount={() => setRandomlyCount('')}
 					/>
 					<ValidationAlert
 						classes={classes}

@@ -300,6 +300,7 @@ export type APISendWhatsappChatData = {
 
 export type APISendWhatsappChatDataData = {
 	Data: APISendWhatsappChatData;
+	NextAvailableTime?: string;
 };
 
 export type APISendWhatsappChatPayload = {

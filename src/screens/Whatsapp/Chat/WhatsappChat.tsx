@@ -91,6 +91,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
@@ -698,6 +699,14 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 			} else {
 				if (sendWhatsappChat.StatusCode === 112) {
 					setExceedLimitModal(true);
+					// setNextMessageAvailable
+					if (
+						sendWhatsappChat?.Data &&
+						sendWhatsappChat?.Data?.NextAvailableTime &&
+						sendWhatsappChat?.Data?.NextAvailableTime?.length > 0
+					) {
+						setNextMessageAvailable(sendWhatsappChat?.Data?.NextAvailableTime);
+					}
 				} else {
 					sendWhatsappChat?.Message
 						? setToastMessage({
@@ -910,7 +919,7 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							)}
 							subtitle={`${translator(
 								'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-							)} ${moment().format('DD.MM.YYYY HH:MM')}`}
+							)} ${moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')}`}
 							type='alert'
 							onConfirmOrYes={() => onExceedLimitYes()}
 						/>

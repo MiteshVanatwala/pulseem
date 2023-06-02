@@ -186,8 +186,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
 	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
+	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
+	const [randomlyCount, setRandomlyCount] = useState<string>('');
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
 	const [fileData, setFileData] = useState<{
@@ -704,9 +706,17 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				if (quickSendData?.Status === apiStatus.SUCCESS) {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
+					setRandomlyCount('');
 				} else {
-					if(quickSendData?.StatusCode === 10) {
+					if (quickSendData?.StatusCode === 10) {
 						setExceedLimitModal(true);
+						if (
+							quickSendData?.Data &&
+							quickSendData?.Data?.NextAvailableTime &&
+							quickSendData?.Data?.NextAvailableTime?.length > 0
+						) {
+							setNextMessageAvailable(quickSendData?.Data?.NextAvailableTime);
+						}
 					} else {
 						if (quickSendData?.Message === 'Invalid phonenumber') {
 							setToastMessage(ToastMessages.INVALID_NUMBER);
@@ -775,6 +785,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						if (campaignSummaryData.Status === apiStatus.SUCCESS) {
 							if (campaignSummaryData?.Data?.FinalCount > 0) {
 								setCampaignSummary(campaignSummaryData?.Data);
+								setNextMessageAvailable(
+									campaignSummaryData?.Data?.NextAvailableTime
+								);
 								if (
 									campaignSummaryData.Data.WhatsappTierID === 1 ||
 									campaignSummaryData.Data.WhatsappTierID === 2 ||
@@ -1380,13 +1393,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						)}
 						subtitle={`${translator(
 							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${moment(campaignSummary?.NextAvailableTime).format(
-							'DD.MM.YYYY HH:MM'
-						)}`}
+						)} ${moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')}`}
 						type='alert'
 						onConfirmOrYes={() => onExceedLimitYes()}
 					/>
-					
+
 					<SummaryModal
 						classes={classes}
 						isOpen={isSummaryModal}
@@ -1405,6 +1416,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						specialDatedropDown={{}}
 						spectialDateFieldID={'0'}
 						campaignSummary={campaignSummary}
+						randomlyCount={randomlyCount}
+						setRandomlyCount={setRandomlyCount}
+						resetRandomCount={() => setRandomlyCount('')}
 					/>
 				</>
 			) : (
