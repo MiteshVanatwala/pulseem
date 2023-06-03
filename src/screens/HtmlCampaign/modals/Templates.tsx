@@ -7,8 +7,7 @@ import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { convertHyphensToword, getUniqueValuesOfKey } from '../../../helpers/utils';
 import TemplatePreview from './TemplatePreview'
 import { Loader } from '../../../components/Loader/Loader';
-import { useSelector, useDispatch } from 'react-redux';
-import { getAllTemplatesBySubaccountId, getPublicTemplates } from '../../../redux/reducers/newsletterSlice';
+import { useSelector } from 'react-redux';
 
 const Templates = ({
   classes,
@@ -16,11 +15,9 @@ const Templates = ({
   isOpen = false
 }: any) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch()
   const [tabValue, setTabValue] = useState(0);
   const handleChange = (event: any, newValue: any) => {
     setTabValue(newValue);
-    loadTemplates(newValue);
   };
   const [ templateList, setTemplateList ] = useState([]);
   const [ categoryList, setCategoryList ] = useState([]);
@@ -44,7 +41,6 @@ const Templates = ({
   }
 
   useEffect(() => {
-    // loadTemplates(0);
     setTimeout(() => {
       const height = `${(document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120}px`;
       if (refScriptCode.current !== null) {
@@ -69,16 +65,6 @@ const Templates = ({
     setCategoryList(getUniqueValuesOfKey(templateList, 'Category'));
   }, [templateList]);
 
-  const loadTemplates = async (type: number) => {
-    if (type === 1) {
-      setCategoryList([]);
-      setTemplateList([]);
-      setLoader(true);
-      await dispatch(getAllTemplatesBySubaccountId());
-      setLoader(false);
-    }
-  }
-
   const template = (templateDetails: any) => {
     return (
       <>
@@ -91,7 +77,7 @@ const Templates = ({
             <Button
               className={clsx(
                 classes.solidDialogButton,
-                classes.dialogConfirmButton,
+                classes.dialogConfirmBlueButton,
                 classes.pt0,
                 classes.pb0
               )}
@@ -140,7 +126,8 @@ const Templates = ({
     onCancel={onClose}
     onConfirm={onClose}
     reduceTitle
-    showDefaultButtons={false}>
+    showDefaultButtons={false}
+    exitButton={true}>
     <Box className={clsx(classes.templateModal)}>
       <Grid container style={{ width: '100%' }}>
         <Grid item md={2} ref={refCategory}>

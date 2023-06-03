@@ -60,7 +60,7 @@ export const BaseDialog = ({
   };
 
   const RenderExitButton = () =>
-    exitButton ?? (
+    exitButton && (
       <Stack
         onClick={onExit}
         className={clsx(classes.dialogExitButton, classes.f20, {

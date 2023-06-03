@@ -2267,7 +2267,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: 25,
     height: 25,
     textAlign: "center",
-    color: "#fff",
+    color: "red",
     borderRadius: 25,
     fontWeight: "700",
     position: "absolute",

@@ -23,7 +23,7 @@ import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
-import { deleteCampaign, saveTemplateToAccount, getTemplateById, getPublicTemplates } from '../../redux/reducers/newsletterSlice';
+import { deleteCampaign, saveTemplateToAccount, getTemplateById, getPublicTemplates, getAllTemplatesBySubaccountId } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
@@ -89,6 +89,9 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
   const [newTemplate, setNewTemplate] = useState('');
+  const { publicTemplates, templatesBySubAccount } = useSelector(
+    (state) => state.newsletter
+  );
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -151,7 +154,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
-    dispatch(getPublicTemplates());
+    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
     if (userBlocks) {
