@@ -21,7 +21,7 @@ const Buttons = ({
 	);
 	const { campaignID } = useParams();
 	const navigate = useNavigate();
-	const { state: locationState } = useLocation();
+	const { state: locationState }: any = useLocation();
 
 	const handlePreviousPage = () => {
 		if (locationState?.from === 'edit/page1' && campaignID) {
@@ -53,8 +53,8 @@ const Buttons = ({
 							isRTL && windowSize !== 'xs' && windowSize !== 'sm'
 								? classes.marginLeftAuto
 								: windowSize !== 'xs' && windowSize !== 'sm'
-								? classes.marginRightAuto
-								: null
+									? classes.marginRightAuto
+									: null
 						)}
 						color='primary'
 						style={{ margin: '8px' }}

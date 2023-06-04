@@ -120,6 +120,7 @@ const ChatFooterContent = ({
 								</button>
 								{savedTemplate?.length !== 0 ? (
 									<Box className={`${classes.whatsappChat} chat__input m`}>
+										{/* @ts-ignore */}
 										<Highlighter
 											searchWords={dynamicVariable}
 											autoEscape={true}
