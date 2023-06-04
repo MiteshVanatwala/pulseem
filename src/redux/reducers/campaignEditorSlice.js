@@ -106,16 +106,42 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
         }
     });
 
-export const getTemplateById = createAsyncThunk(
-    '/CampaignEditor/GetTemplateById/', async (id, thunkAPI) => {
+export const getPublicTemplates = createAsyncThunk(
+    'CampaignEditor/GetPublicTemplates', async (campaignId, thunkAPI) => {
         try {
-            const response = await instence.get(`/CampaignEditor/GetTemplateById/${id}`);
+            const response = await instence.get(`CampaignEditor/GetPublicTemplates`);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
-    }
-);
+    })
+export const getAllTemplatesBySubaccountId = createAsyncThunk(
+    'CampaignEditor/GetAllTemplatesBySubaccountId', async (campaignId, thunkAPI) => {
+        try {
+            const response = await instence.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const saveTemplateToAccount = createAsyncThunk(
+    'CampaignEditor/SaveAsTemplate', async (data, thunkAPI) => {
+        try {
+            const response = await instence.post(`CampaignEditor/SaveAsTemplate`, data);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const getTemplateById = createAsyncThunk(
+    'CampaignEditor/GetTemplateById', async (templateId, thunkAPI) => {
+        try {
+            const response = await instence.get(`CampaignEditor/GetTemplateById/${templateId}`);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
 
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
@@ -131,7 +157,9 @@ export const campaignEditorSlice = createSlice({
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
         },
         campaignInfo: [],
-        templateDetails: {}
+        templateDetails: {},
+        publicTemplates: [],
+        templatesBySubAccount: []
     },
     extraReducers: builder => {
         builder
@@ -160,6 +188,12 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(getTemplateById.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;
+            })
+            .addCase(getPublicTemplates.fulfilled, (state, action) => {
+                state.publicTemplates = action.payload.Data
+            })
+            .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
+                state.templatesBySubAccount = action.payload.Data
             })
 
     }

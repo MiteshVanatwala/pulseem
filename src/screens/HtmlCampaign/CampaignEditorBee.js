@@ -11,7 +11,11 @@ import {
   getUserblocks,
   testSend,
   saveUserBlock,
-  deleteUserBlock
+  deleteUserBlock,
+  saveTemplateToAccount,
+  getTemplateById,
+  getPublicTemplates,
+  getAllTemplatesBySubaccountId
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -23,7 +27,7 @@ import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
-import { deleteCampaign, saveTemplateToAccount, getTemplateById, getPublicTemplates, getAllTemplatesBySubaccountId } from '../../redux/reducers/newsletterSlice';
+import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
@@ -62,7 +66,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL, accountSettings } = useSelector(state => state.core)
   const { tokenAlive } = useSelector(state => state.common)
@@ -89,9 +93,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
   const [newTemplate, setNewTemplate] = useState('');
-  const { publicTemplates, templatesBySubAccount } = useSelector(
-    (state) => state.newsletter
-  );
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -387,7 +388,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           return false;
         }
         else if (saveRef.current?.showAnimation) {
-          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED: ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
         }
       }
 
@@ -604,12 +605,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (response.payload.StatusCode === 201) {
       setNewTemplate(response.payload.Data)
       const beeObject = JSON.parse(beeToken.Message);
-      
+
       const beeTest = new BeePlugin(beeObject);
       const template = response?.payload?.Data?.JsonData ? JSON.parse(response?.payload?.Data?.JsonData) : defaultContent.defaultTemplate;
       beeTest.start(config, template).then((instance) => {
         editorRef.current = instance;
-      });  
+      });
     } else {
       setToastMessage({ severity: 'error', color: 'error', message: response.payload.Message, showAnimtionCheck: false });
     }
@@ -689,6 +690,32 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  const renderTemplateButtons = () => {
+    return <>
+      <Button onClick={() => setDialog(DialogType.Templates)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonOutlinedBlue
+        )}
+        style={{ margin: '8px' }}
+      >
+        {t('common.templates')}
+      </Button>
+      <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonOutlinedBlue,
+        )}
+        style={{ margin: '8px' }}
+        startIcon={<BiSave />}
+      >
+        {t('common.saveTemplate')}
+      </Button></>
+  }
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
@@ -826,9 +853,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         onDelete={fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
-        onLoadTemplate={() => setDialog(DialogType.Templates)}
-        onSaveTemplate={() => setDialog(DialogType.SaveTemplate)}
         additionalButtons={renderButtons()}
+        additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       <OverwriteTemplatePopUp
@@ -847,7 +873,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           setDialog(null);
           if (resp !== undefined) saveTemplate(resp.name, resp.category);
         }}
-        isOpen={dialog === DialogType.SaveTemplate}
+        isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

@@ -26,9 +26,9 @@ const Templates = ({
   const refCategory = useRef<HTMLDivElement>(null);
   const [ openPreview, setOpenPreview ] = useState(false);
   const [ selectedTemplate, setSelectedTemplate ] = useState({});
-  const [showLoader, setLoader] = useState(false);
+  const [showLoader, setLoader] = useState(true);
   const { publicTemplates, templatesBySubAccount } = useSelector(
-    (state: { newsletter: any }) => state.newsletter
+    (state: { campaignEditor: any }) => state.campaignEditor
   );
 
   const renderHtml = (html: any) => {
@@ -40,25 +40,27 @@ const Templates = ({
     );
   }
 
-  useEffect(() => {
-    setTimeout(() => {
-      const height = `${(document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120}px`;
-      if (refScriptCode.current !== null) {
-        refScriptCode.current.style['maxHeight'] = height;
-        refScriptCode.current.style['height'] = height;
-        refScriptCode.current.style['overflow'] = 'scroll';
-      }
+  // WHY DO WE NEED TO CALCULATE WHEN WE USING RESPONSIVE DESIGN? 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     const height = `${(document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120}px`;
+  //     if (refScriptCode.current !== null) {
+  //       refScriptCode.current.style['maxHeight'] = height;
+  //       refScriptCode.current.style['height'] = height;
+  //       refScriptCode.current.style['overflow'] = 'scroll';
+  //     }
 
-      if (refCategory.current !== null) {
-        refCategory.current.style['maxHeight'] = height;
-        refCategory.current.style['height'] = height;
-        refCategory.current.style['overflow'] = 'scroll';
-      }
-    }, 1000);
-  }, []);
+  //     if (refCategory.current !== null) {
+  //       refCategory.current.style['maxHeight'] = height;
+  //       refCategory.current.style['height'] = height;
+  //       refCategory.current.style['overflow'] = 'scroll';
+  //     }
+  //   }, 1000);
+  // }, []);
 
   useEffect(() => {
     setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount)
+    setLoader(false)
   }, [ publicTemplates, templatesBySubAccount, tabValue ]);
 
   useEffect(() => {
@@ -132,7 +134,7 @@ const Templates = ({
       <Grid container style={{ width: '100%' }}>
         <Grid item md={2} ref={refCategory}>
           {
-             categoryList.length > 0 && (
+             categoryList?.length > 0 && (
               <Typography
                 className={clsx(classes.dBlock, classes.pb10, classes.f16, selectedCategory === '' ? classes.bold : '', classes.cursorPointer)}
                 onClick={() => setSelectedCategory('')}
@@ -142,7 +144,7 @@ const Templates = ({
              )
           }
           {
-            categoryList.map((category): any => {
+            categoryList?.map((category): any => {
               return <Typography
                 key={category}
                 className={clsx(classes.dBlock, classes.pb10, classes.f16, selectedCategory === category ? classes.bold : '', classes.cursorPointer)}
@@ -163,9 +165,9 @@ const Templates = ({
             <Tab label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
             <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
           </Tabs>
-          <Box className={clsx(classes.pt15)}>
+          <Box className={classes.pt15}>
             {
-              templateList.length === 0 && !showLoader && (
+              templateList?.length === 0 && !showLoader && (
                 <div className={clsx(classes.textCenter, classes.f18, classes.pbt10, classes.dBlock)}>
                   {t('common.noTemplate')}
                 </div>
@@ -173,7 +175,7 @@ const Templates = ({
             }
             <Grid container ref={refScriptCode}>
               {
-                templateList.map((templ, i): any => {
+                templateList?.map((templ, i): any => {
                   if (selectedCategory !== '' && selectedCategory === templ['Category']) return template(templ);
                   if (selectedCategory === '') return template(templ);
                 })
