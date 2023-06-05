@@ -693,7 +693,16 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const renderTemplateButtons = () => {
     return <>
-      <Button onClick={() => setDialog(DialogType.Templates)}
+      <Button onClick={() => {
+          setLoader(true);
+          setTimeout(() => {
+            setDialog(DialogType.Templates);
+          }, 1000);
+
+          setTimeout(() => {
+            setLoader(false);
+          }, 2000);
+        }}
         variant='contained'
         size='medium'
         className={clsx(

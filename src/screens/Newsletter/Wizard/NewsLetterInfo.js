@@ -384,7 +384,16 @@ const NewsLetterInfo = ({ classes }) => {
         await dispatch(saveCampaignInfo(campaingnValues))
     }
 
-    const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => setDialogType(DialogType.Templates)}
+    const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
+        setLoader(true);
+        setTimeout(() => {
+            setDialogType(DialogType.Templates);
+        }, 1000);
+
+        setTimeout(() => {
+            setLoader(false);
+        }, 2000);
+    }}
         variant='contained'
         size='medium'
         className={clsx(
