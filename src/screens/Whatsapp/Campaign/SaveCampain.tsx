@@ -746,7 +746,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsTestGroupModal(false);
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const saveCampaign = await onSaveCampaign(false, false);
+			const saveCampaign = await onSaveCampaign('testSend', false, false);
 			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
 			if (testSendSelection !== 'onecontact') {
 				setIsLoader(true);
@@ -837,14 +837,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
-	const saveCampaignCall = async () => {
+	const saveCampaignCall = async (callFrom: string = '') => {
 		const reqData: saveCampaignDataProps = {
 			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
 			Variables: formatUpdatedDynamicVariable(updatedDynamicVariable),
 			name: campaignName,
 			fromnumber: from,
-			IsTestCampaign: isTestSend,
+			IsTestCampaign:
+				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
@@ -853,12 +854,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onSaveCampaign = async (
+		from: string = '',
 		showSuccess: boolean = true,
 		isNavigate: boolean = true
 	) => {
 		if (validateSaveCampaign(true)) {
 			setIsLoader(true);
-			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall(
+				from
+			);
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
@@ -885,7 +889,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onSubmit = async () => {
 		if (validateSaveCampaign()) {
 			setIsLoader(true);
-			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall(
+				'send'
+			);
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
@@ -905,7 +911,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.SAVE:
-				onSaveCampaign();
+				onSaveCampaign('save');
 				break;
 			case buttons.DELETE:
 				onDeleteClick();

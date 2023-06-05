@@ -707,7 +707,7 @@ const SendCampaign = ({
 		}
 		if (campaignID) {
 			const { payload: sendCampaignData }: ApiSendCampaign =
-				await dispatch<any>(sendCampaign({ WACampaignID: Number(campaignID) }));
+				await dispatch<any>(sendCampaign(sendCampaignPayload));
 			setIsLoader(false);
 			if (sendCampaignData?.Status === apiStatus.SUCCESS) {
 				setIsSendCampaignSuccessOpen(true);
