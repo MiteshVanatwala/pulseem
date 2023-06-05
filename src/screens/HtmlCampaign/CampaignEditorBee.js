@@ -12,8 +12,10 @@ import {
   testSend,
   saveUserBlock,
   deleteUserBlock,
+  saveTemplateToAccount,
   getTemplateById,
-  saveAsTemplate
+  getPublicTemplates,
+  getAllTemplatesBySubaccountId
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -60,7 +62,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
@@ -149,6 +151,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
+    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
     if (userBlocks) {
@@ -405,14 +409,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
 
       if (saveRef.current?.saveTemplate) {
-        const templateResponse = await dispatch(saveAsTemplate({
+        const templateResponse = await dispatch(saveTemplateToAccount({
           Name: saveRef.current?.templateName,
           JsonData: finalJson,
           HTML: finalHtml,
           Category: saveRef.current?.templateCategory
         }));
-        if (templateResponse.data.StatusCode === 200) {
-          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.data.Message, showAnimtionCheck: false });
+        if (!templateResponse.payload.Data) {
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
       }
     } catch (e) {
@@ -677,6 +681,32 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
 
+  const renderTemplateButtons = () => {
+    return <>
+      <Button onClick={() => setDialog(DialogType.Templates)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonOutlinedBlue
+        )}
+        style={{ margin: '8px' }}
+      >
+        {t('common.templates')}
+      </Button>
+      <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonOutlinedBlue,
+        )}
+        style={{ margin: '8px' }}
+        startIcon={<BiSave />}
+      >
+        {t('common.saveTemplate')}
+      </Button></>
+  }
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
@@ -814,9 +844,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         onDelete={fromLink?.toLowerCase() !== 'autoresponder' && onDelete}
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
-        onLoadTemplate={() => setDialog(DialogType.Templates)}
-        onSaveTemplate={() => setDialog(DialogType.SaveTemplate)}
         additionalButtons={renderButtons()}
+        additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       <OverwriteTemplatePopUp
@@ -826,6 +855,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             setOverwriteTemplateDialog(false);
             initBeeEditor(newTemplate.ID);
           }
+          setOverwriteTemplateDialog(false);
         }}
         isOpen={overwriteTemplateDialog}
       />
@@ -835,7 +865,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           setDialog(null);
           if (resp !== undefined) saveTemplate(resp.name, resp.category);
         }}
-        isOpen={dialog === DialogType.SaveTemplate}
+        isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

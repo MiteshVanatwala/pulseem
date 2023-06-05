@@ -20,3 +20,14 @@ export const getUniqueValuesOfKey = (array: any, key: string) => {
 		return carry;
 	}, []);
 }
+
+export const convertHyphensToword = (input: any) => {
+	return input.split('-').reduce((accumulator: any, item: any) => {
+		if (item.trim()) {
+			const name = item ? item.replace(/-/g, '') : item;
+			accumulator.push(name.charAt(0).toUpperCase() + name.slice(1));
+			return accumulator;
+		}
+		return accumulator;
+	}, []).join(' ')
+}

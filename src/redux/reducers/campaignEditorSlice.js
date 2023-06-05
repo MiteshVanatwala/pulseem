@@ -92,22 +92,19 @@ export const getTemplateById = createAsyncThunk(
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
-    }
-);
-
-export const saveAsTemplate = createAsyncThunk(
+    })
+export const saveTemplateToAccount = createAsyncThunk(
     '/CampaignEditor/SaveAsTemplate', async (data, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.post(`/CampaignEditor/SaveAsTemplate`, data);
-            return response.data
+            const response = await PulseemReactInstance.post(`CampaignEditor/SaveAsTemplate`, data);
+            return response.data;
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
-    }
-);
+    })
 
 export const getPublicTemplates = createAsyncThunk(
-    'CampaignEditor/GetPublicTemplates', async (_, thunkAPI) => {
+    '/CampaignEditor/GetPublicTemplates', async (_, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates`);
             return response.data
@@ -116,7 +113,7 @@ export const getPublicTemplates = createAsyncThunk(
         }
     })
 export const getAllTemplatesBySubaccountId = createAsyncThunk(
-    'CampaignEditor/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
+    '/CampaignEditor/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
             return response.data
@@ -138,9 +135,9 @@ export const campaignEditorSlice = createSlice({
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
         },
-        campaignInfo: [],
+        templateDetails: {},
         publicTemplates: [],
-        templatesBySubAccount: [],
+        templatesBySubAccount: []
     },
     extraReducers: builder => {
         builder
@@ -161,12 +158,12 @@ export const campaignEditorSlice = createSlice({
             .addCase(getBeeToken.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;
             })
-        builder.addCase(getPublicTemplates.fulfilled, (state, action) => {
-            state.publicTemplates = action.payload.Data
-        })
-        builder.addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
-            state.templatesBySubAccount = action.payload.Data
-        })
+            .addCase(getPublicTemplates.fulfilled, (state, action) => {
+                state.publicTemplates = action.payload.Data
+            })
+            .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
+                state.templatesBySubAccount = action.payload.Data
+            })
 
     }
 })

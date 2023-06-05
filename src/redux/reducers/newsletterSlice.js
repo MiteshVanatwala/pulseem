@@ -223,8 +223,6 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
     }
   });
 
-
-
 export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {

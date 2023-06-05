@@ -959,6 +959,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& label': {
       zoom: '25%',
       pointerEvents: 'none'
+    },
+    "&.selected": {
+      border: "solid 3px red",
     }
   },
   baseButtons: {
@@ -2304,14 +2307,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   dialogExitButton: {
-    fontSize: 30,
-    fontFamily: 'Assistant',
-    textAlign: 'center',
-    color: 'rgba(0, 0, 0, 0.7)',
-    fontWeight: '700',
-    position: 'absolute',
-    top: '0.2rem',
-    cursor: 'pointer',
+    width: 25,
+    height: 25,
+    textAlign: "center",
+    color: "red",
+    borderRadius: 25,
+    fontWeight: "700",
+    position: "absolute",
+    top: "0.5rem",
+    cursor: "pointer",
   },
   btnBgExitDialog: {
     backgroundColor: "#0371ad",
