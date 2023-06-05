@@ -154,7 +154,39 @@ export const cloneArchiveCampaign = createAsyncThunk(
     }
   })
 
-  export const newsletterSlice = createSlice({
+export const saveCampaignInfo = createAsyncThunk(
+  'email/CreateOrUpdate', async (campaign, thunkAPI) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await instence.post(`email/CreateOrUpdate`, campaign);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+  }
+)
+
+export const getCampaignInfo = createAsyncThunk(
+  'email/GetCampaignInfo', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.get(`email/GetCampaignInfo/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const getCreditsByFileTotalBytes = createAsyncThunk(
+  'email/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
+    try {
+      const response = await instence.post(`email/GetCreditsByFileTotalBytes`, campaign);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {
     newslettersData: [],
@@ -173,7 +205,8 @@ export const cloneArchiveCampaign = createAsyncThunk(
       GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
       INVALID_CAMPAIGN_ID: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invalidCampaignId', showAnimtionCheck: false },
       CAMPAIGN_NOT_FOUND: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.CampaignNotFound', showAnimtionCheck: false }
-    }
+    },
+    campaignInfo: [],
     //archiveDirectNewsletterReport: []
   },
   reducers: {},
@@ -210,6 +243,12 @@ export const cloneArchiveCampaign = createAsyncThunk(
     builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
       //state.archiveDirectNewsletterReportError = action.error.message
       state.directNewsletterReportError = action.error.message
+    })
+    builder.addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
+      state.campaignInfo = payload;
+    })
+    builder.addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
+      state.campaignInfo = payload?.Message;
     })
 
 

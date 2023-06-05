@@ -11,7 +11,7 @@ import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import { Dialog } from "../../../components/managment/Dialog";
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice'
+import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
