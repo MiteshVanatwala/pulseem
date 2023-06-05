@@ -26,7 +26,8 @@ const Templates = ({
   const refCategory = useRef<HTMLDivElement>(null);
   const [ openPreview, setOpenPreview ] = useState(false);
   const [ selectedTemplate, setSelectedTemplate ] = useState({});
-  const [showLoader, setLoader] = useState(true);
+  const [ showLoader, setLoader ] = useState(true);
+  const [ selectedTemplateId, setSelectedTemplateId ] = useState(0);
   const { publicTemplates, templatesBySubAccount } = useSelector(
     (state: { campaignEditor: any }) => state.campaignEditor
   );
@@ -40,24 +41,6 @@ const Templates = ({
     );
   }
 
-  // WHY DO WE NEED TO CALCULATE WHEN WE USING RESPONSIVE DESIGN? 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     const height = `${(document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120}px`;
-  //     if (refScriptCode.current !== null) {
-  //       refScriptCode.current.style['maxHeight'] = height;
-  //       refScriptCode.current.style['height'] = height;
-  //       refScriptCode.current.style['overflow'] = 'scroll';
-  //     }
-
-  //     if (refCategory.current !== null) {
-  //       refCategory.current.style['maxHeight'] = height;
-  //       refCategory.current.style['height'] = height;
-  //       refCategory.current.style['overflow'] = 'scroll';
-  //     }
-  //   }, 1000);
-  // }, []);
-
   useEffect(() => {
     setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount)
     setLoader(false)
@@ -70,8 +53,8 @@ const Templates = ({
   const template = (templateDetails: any) => {
     return (
       <>
-        <Grid item xs={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} key={templateDetails.ID}>
-          <Box className={clsx(classes.templateItem)}>
+        <Grid item xs={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} key={templateDetails.ID} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
+          <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
             {renderHtml(templateDetails.Html)}
           </Box>
           <div className={clsx(classes.textCenter, classes.pt5, classes.f14)}>{convertHyphensToword(templateDetails.Name)}</div>

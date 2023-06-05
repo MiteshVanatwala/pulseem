@@ -861,9 +861,9 @@ const CampaignEditor = ({ classes, ...props }) => {
         classes={classes}
         onClose={(resp) => {
           if (resp) {
-            setOverwriteTemplateDialog(false);
             reloadBeeEditor(newTemplate.ID);
           }
+          setOverwriteTemplateDialog(false);
         }}
         isOpen={overwriteTemplateDialog}
       />

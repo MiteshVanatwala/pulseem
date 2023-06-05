@@ -950,6 +950,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& label': {
       zoom: '25%',
       pointerEvents: 'none'
+    },
+    "&.selected": {
+      border: "solid 3px red",
     }
   },
   baseButtons: {
