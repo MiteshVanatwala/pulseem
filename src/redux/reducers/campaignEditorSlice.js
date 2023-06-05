@@ -147,9 +147,7 @@ export const campaignEditorSlice = createSlice({
             .addCase(getBeeToken.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;
             })
-            .addCase(getTemplateById.fulfilled, (state, { payload }) => {
-                state.beeToken = payload;
-            })
+            .addCase(getTemplateById.fulfilled, (state, { payload }) => {})
             .addCase(getPublicTemplates.fulfilled, (state, action) => {
                 state.publicTemplates = action.payload.Data
             })
