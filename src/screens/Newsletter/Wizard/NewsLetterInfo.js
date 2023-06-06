@@ -24,6 +24,9 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { BiSave } from 'react-icons/bi'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { DialogType } from '../../HtmlCampaign/helper/Config';
+import Templates from '../../HtmlCampaign/modals/Templates';
+import { getPublicTemplates, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -140,6 +143,7 @@ const NewsLetterInfo = ({ classes }) => {
     const NodeToEdit = queryParams.get("NodeToEdit")
 
     const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { publicTemplates } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -154,6 +158,8 @@ const NewsLetterInfo = ({ classes }) => {
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
     const [showEmoji, setShowEmoji] = useState(false);
+    const [template, setTemplate] = useState('');
+
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -244,6 +250,7 @@ const NewsLetterInfo = ({ classes }) => {
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
             sessionStorage.removeItem("Newlsetter_Html_Template");
         }
+        if (!publicTemplates.length) dispatch(getPublicTemplates());
     }, []);
 
     const setDefaultEmailAndName = () => {
@@ -374,6 +381,27 @@ const NewsLetterInfo = ({ classes }) => {
         await dispatch(saveCampaignInfo(campaingnValues))
     }
 
+    const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
+        setLoader(true);
+        setTimeout(() => {
+            setDialogType(DialogType.Templates);
+        }, 1000);
+
+        setTimeout(() => {
+            setLoader(false);
+        }, 2000);
+    }}
+        variant='contained'
+        size='medium'
+        className={clsx(
+            classes.actionButton,
+            classes.actionButtonOutlinedBlue
+        )}
+        style={{ margin: '8px' }}
+    >
+        {t('common.templates')}
+    </Button>
+
     useEffect(() => {
         if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
             silenceSave().then(() => {
@@ -448,7 +476,7 @@ const NewsLetterInfo = ({ classes }) => {
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
-            dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then((response) => {
+            await dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then(async (response) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
@@ -459,6 +487,15 @@ const NewsLetterInfo = ({ classes }) => {
 
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
+                if (template?.Html && template?.JsonData) {
+                    await dispatch(saveCampaign({
+                        Name: campaingnValues.Name,
+                        campaignId: saveInfo.CampaignID,
+                        JsonData: template?.JsonData,
+                        HTML: template?.Html
+                    }));
+                }
+                
                 if (isContiue) {
                     const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
                     let redirectUrl = isBeeEditor ? `/react/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
@@ -1117,6 +1154,7 @@ const NewsLetterInfo = ({ classes }) => {
                     }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={renderButtons()}
+                    additionalButtonsOnStart={renderTemplateButtons()}
                 />
             </Box>
             <BaseDialog
@@ -1155,6 +1193,22 @@ const NewsLetterInfo = ({ classes }) => {
                 </Box>
             </BaseDialog>
             {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
+            {
+                dialogType === DialogType.Templates && <Templates
+                isCreateCampaign={true}
+                classes={classes}
+                onClose={async (template) => {
+                    setDialogType(null);
+                    if (template !== undefined) {
+                        const response = await dispatch(getTemplateById(template.ID));
+                        if (response.payload.StatusCode === 201) {
+                            setTemplate(response?.payload?.Data);
+                        }
+                    }
+                }}
+                isOpen={dialogType === DialogType.Templates}    
+                />
+            }
             <Loader isOpen={showLoader} />
         </DefaultScreen >
     )

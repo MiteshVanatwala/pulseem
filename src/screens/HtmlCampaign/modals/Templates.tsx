@@ -14,13 +14,15 @@ import { getAllTemplatesBySubaccountId, getPublicTemplates } from '../../../redu
 const Templates = ({
   classes,
   onClose = () => null,
-  isOpen = false
+  isOpen = false,
+  isCreateCampaign = false
 }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch()
   const [tabValue, setTabValue] = useState(0);
   const handleChange = (event: any, newValue: any) => {
     setTabValue(newValue);
+    setSelectedCategory('')
   };
   const [templateList, setTemplateList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
@@ -45,8 +47,8 @@ const Templates = ({
   }
 
   useEffect(() => {
-    setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount)
-    setLoader(false)
+    setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount);
+    setLoader(false);
   }, [ publicTemplates, templatesBySubAccount, tabValue ]);
 
   useEffect(() => {
@@ -56,6 +58,10 @@ const Templates = ({
   useEffect(() => {
     setCategoryList(getUniqueValuesOfKey(templateList, 'Category'));
   }, [templateList]);
+
+  useEffect(() => {
+    if (!publicTemplates.length) setLoader(true);
+  }, []);
 
   const template = (templateDetails: any) => {
     return (
@@ -70,8 +76,7 @@ const Templates = ({
               className={clsx(
                 classes.solidDialogButton,
                 classes.dialogConfirmBlueButton,
-                classes.pt0,
-                classes.pb0
+                classes.p5
               )}
               onClick={() => {
                 setSelectedTemplate(templateDetails);
@@ -90,8 +95,7 @@ const Templates = ({
                 classes.solidDialogButton,
                 classes.dialogConfirmButton,
                 classes.ml5,
-                classes.pt0,
-                classes.pb0
+                classes.p5
               )}
               onClick={() => {
                 onClose(templateDetails)
@@ -100,7 +104,7 @@ const Templates = ({
               <Typography    
                 className={clsx(classes.dBlock, classes.f14)}
               >
-                {t('common.loadTemplate')}
+                {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
               </Typography>
             </Button>
           </div>
@@ -153,7 +157,9 @@ const Templates = ({
             classes={{ indicator: classes.hideIndicator }}
           >
             <Tab label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-            <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
+            { 
+              !isCreateCampaign && <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
+            }
           </Tabs>
           <Box className={classes.pt15}>
             {

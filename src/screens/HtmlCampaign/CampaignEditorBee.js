@@ -152,7 +152,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       } else getData();
     }
     if (!publicTemplates.length) dispatch(getPublicTemplates());
-    if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
+    dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
     if (userBlocks) {
@@ -411,13 +411,14 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (saveRef.current?.saveTemplate) {
         const templateResponse = await dispatch(saveTemplateToAccount({
           Name: saveRef.current?.templateName,
-          JsonData: finalJson,
+          JsonData: finalJson,  
           HTML: finalHtml,
           Category: saveRef.current?.templateCategory
         }));
         if (!templateResponse.payload.Data) {
           setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
         }
+        dispatch(getAllTemplatesBySubaccountId());
       }
     } catch (e) {
       console.error(e);
@@ -683,7 +684,16 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   const renderTemplateButtons = () => {
     return <>
-      <Button onClick={() => setDialog(DialogType.Templates)}
+      <Button onClick={() => {
+          setLoader(true);
+          setTimeout(() => {
+            setDialog(DialogType.Templates);
+          }, 1000);
+
+          setTimeout(() => {
+            setLoader(false);
+          }, 2000);
+        }}
         variant='contained'
         size='medium'
         className={clsx(
