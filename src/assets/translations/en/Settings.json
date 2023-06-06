@@ -53,7 +53,13 @@
 				"exceedLimitMpdalTimeMessage": "You will be able to send WhatsApp messages again in",
 				"doYouWantToProceed": "Do you want to proceed ?",
 				"stopSending": "In case the campaign will exceed the daily send limit in the selected date, the system will stop the sending according to the sending tier set in “Account Settings”",
-				"yourResponsibility": "It is your responsibility to validate that the tier is updated in the selected date"
+				"yourResponsibility": "It is your responsibility to validate that the tier is updated in the selected date",
+				"recipientsRequired": "The campaign is exceeding the daily rate limit, please enter a number of random recipients within the limits of your daily rate",
+				"messageLeftToday": "messages left for today",
+				"messageLeft": "messages left",
+				"youHave": "you have",
+				"recipientsRangeError": "Please enter a number of random recipients within the limits of your daily rate",
+				"oneMessageLeft": "Only 1 message is left for today"
 			},
 			"btnUpdate": "Update Account Details"
 		},

@@ -103,6 +103,7 @@ const SummaryModal = ({
 				const { payload: campaignData }: CampaignDetailById =
 					await dispatch<any>(getCampaignDetailById(campaignID));
 				if (campaignData?.Status === apiStatus?.SUCCESS) {
+					resetRandomCount();
 					setCampaignDetails(campaignData?.Data);
 					const { payload: templateData }: templateListAPIProps =
 						await dispatch<any>(
@@ -204,7 +205,18 @@ const SummaryModal = ({
 		if (showTierAlert) {
 			if (randomlyCount?.length <= 0) {
 				isValidated = false;
-				validationErrors.push('Recipient - Required field');
+				validationErrors.push(
+					translator(
+						'settings.accountSettings.actDetails.fields.recipientsRequired'
+					)
+				);
+				validationErrors.push(
+					`${translator('settings.accountSettings.actDetails.fields.youHave')}${
+						campaignSummary?.WhatsappSmsLeft || 0
+					} ${translator(
+						'settings.accountSettings.actDetails.fields.messageLeftToday'
+					)}`
+				);
 			} else {
 				if (
 					Number(randomlyCount) === 0 ||
@@ -212,9 +224,29 @@ const SummaryModal = ({
 						Number(randomlyCount) > campaignSummary?.WhatsappSmsLeft)
 				) {
 					isValidated = false;
+					// validationErrors.push(
+					// 	`Please enter valid Recipient - Range 1 - ${campaignSummary?.WhatsappSmsLeft}`
+					// );
 					validationErrors.push(
-						`Please enter valid Recipient - Range 1 - ${campaignSummary?.WhatsappSmsLeft}`
+						translator(
+							'settings.accountSettings.actDetails.fields.recipientsRangeError'
+						)
 					);
+					if (campaignSummary?.WhatsappSmsLeft === 1) {
+						validationErrors.push(
+							translator(
+								'settings.accountSettings.actDetails.fields.oneMessageLeft'
+							)
+						);
+					} else {
+						validationErrors.push(
+							`${translator(
+								'settings.accountSettings.actDetails.fields.youHave'
+							)}${campaignSummary?.WhatsappSmsLeft || 0} ${translator(
+								'settings.accountSettings.actDetails.fields.messageLeft'
+							)}`
+						);
+					}
 				}
 			}
 		}
@@ -262,7 +294,7 @@ const SummaryModal = ({
 
 	const onTierAlertConfirm = () => {
 		if (validateSummary()) {
-			resetRandomCount()
+			resetRandomCount();
 			onConfirmOrYes();
 		}
 	};
@@ -457,7 +489,7 @@ const SummaryModal = ({
 													classes.campaignSummaryExceedLimitSendRandomlyInsert
 												}>
 												<TextField
-													id='templateName'
+													id='randomcount'
 													type='text'
 													placeholder={translator(
 														'settings.accountSettings.actDetails.fields.insert'

@@ -3135,6 +3135,9 @@ export const getWhatsappStyle = (windowSize, isRTL, theme) => ({
 		width: '40px',
 		color: '#000',
 		border: '1px solid #000',
+		'& input':{
+			textAlign: 'center',
+		}
 	},
 	campaignSummaryExceedLimitSendRandomlyRecipients: {
 		paddingLeft: isRTL ? '0px' : '8px',
