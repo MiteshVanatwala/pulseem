@@ -947,12 +947,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minHeight: '200px',
     maxHeight: '200px',
     overflow: 'hidden',
+    transition: 'all 0.5s ease',
     '& label': {
       zoom: '25%',
       pointerEvents: 'none'
     },
     "&.selected": {
-      border: "solid 3px red",
+      border: "solid 5px #168ee3"
     }
   },
   baseButtons: {
