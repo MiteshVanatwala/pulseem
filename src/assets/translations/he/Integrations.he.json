@@ -1,7 +1,8 @@
 {
-  "title": "Integrations",
+  "title": "אינטגרציות",
   "shopify": {
     "title": "Shopify",
+    "authentication": "חיבור",
     "apiKey": "מפתח API",
     "apiAccessToken": "הזן API Token",
     "shopifyURL": "כתובת האתר שלכם בשופיפיי",
@@ -24,13 +25,13 @@
     "apiVersion": "גרסת API",
     "authResponses": {
       "201": "החנות אומתה בהצלחה",
-      "400": "שם החנות שייך לחשבון אחר The store is related to another account",
+      "400": "שם החנות שייך לחשבון אחר",
       "403": "מפתח API או מפתח גישה שגוי"
     },
-    "resetConfirmation": "Are you sure you want to reset authentication?",
-    "selectGroup": "Select any group",
+    "resetConfirmation": "אתם בטוחים שברצונכם לאפס את החיבור?",
+    "selectGroup": "בחר קבוצה",
     "formSubmitResponses": {
-      "201": "Group has been saved."
+      "201": "קבוצה נשמרה"
     }
   }
 }
