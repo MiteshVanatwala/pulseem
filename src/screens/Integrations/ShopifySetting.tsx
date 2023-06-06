@@ -51,18 +51,18 @@ const Shopify = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    initSettings();
+    initSettings(true);
     document.title = `${t('integrations.shopify.title')} | ${document.title}`;
   }, []);
   
-  const initSettings = async () => {
+  const initSettings = async (isLoading: boolean = false) => {
     setShowLoader(true);
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
     const settings = settingResponse?.payload?.Data as ShopifyModel;
     setShowLoader(false);
     if (settings.ID) {
       setSettings(settings);
-      setAuthenticated(true);
+      if (isLoading) setAuthenticated(true);
     }
     if (subAccountAllGroups?.length === 0) {
       dispatch(getGroupsBySubAccountId());
@@ -131,7 +131,7 @@ const Shopify = ({ classes }: any) => {
             ...errors,
             group_saved: '',
           });
-        }, 2000);
+        }, 4000);
         break;
       }
     }
@@ -144,14 +144,14 @@ const Shopify = ({ classes }: any) => {
           ...messages,
           authentication_message: t(`integrations.shopify.authResponses.201`),
         });
-        setAuthenticated(true);
-        setIsShowCredentials(false);
-        initSettings();
         setTimeout(() => {
-          setErrors({
-            ...errors,
+          setMessages({
+            ...messages,
             authentication_message: '',
           });
+          setAuthenticated(true);
+          setIsShowCredentials(false);
+          initSettings();
         }, 2000);
         break;
       }
@@ -366,7 +366,7 @@ const Shopify = ({ classes }: any) => {
           )}
 
           {
-            isShowCredentials && <Box className={clsx(classes.flex, classes.pbt15)}>
+            <Box className={clsx(classes.flex, classes.pbt15)}>
               <Button
                 onClick={authenticateStore}
                 variant='contained'
