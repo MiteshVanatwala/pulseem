@@ -195,7 +195,7 @@ const Groups = ({ classes }) => {
             getSubAccountGroups();
         }
     };
-    useEffect(() => {
+    const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
         pageProperty.current = GetPageNyName('groups');
         let lastSearch = { ...serachData, PageSize: rowsPerPage };
@@ -215,7 +215,16 @@ const Groups = ({ classes }) => {
         if (lastSearch?.SearchTerm) {
             setSearchStr(lastSearch?.SearchTerm ?? "");
         }
+    }
+    useEffect(() => {
+        reSearch();
     }, [dispatch, serachData.PageIndex, rowsPerPage]);
+
+    useEffect(() => {
+        if (serachData.SearchTerm !== '') {
+            reSearch();
+        }
+    }, [dispatch, serachData.SearchTerm, rowsPerPage]);
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
@@ -314,7 +323,7 @@ const Groups = ({ classes }) => {
                                 "PageNumber": 1,
                                 "SearchData": searchObject
                             });
-                            getData(searchObject);
+                            // getData(searchObject);
                         }}
                         className={classes.searchButton}
                         endIcon={<SearchIcon />}

@@ -475,7 +475,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const handlePulseConfirm = (pulseSettings, pulseEnabled) => {
         if (pulseEnabled && (pulseSettings.PulseAmount === "" || pulseSettings.TimeInterval === "")) {
-            setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: true })
+            setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: pulseSettings.PulseAmount === "", snackbarTimeBoolean: pulseSettings.TimeInterval === "" })
             setPulseIndication(false)
         }
         else {
@@ -833,14 +833,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 mergedSegmentationDialog === 1 && handleFilterConfirm();
 
                 let segmantIndication = false;
-                if (filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked) {
+                const isFilterDatesSelected = filterParameters.FromDate && filterParameters.ToDate;
+
+                if ((filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked)
+                    && isFilterDatesSelected) {
                     segmantIndication = true;
                 }
                 else {
-                    if (mergedSegmentationDialog === 0) {
-                        setFilterParameters({ ...campaignValues, FromDate: null, ToDate: null });
-                        setCampaignValues({ ...campaignValues, FromDate: null, ToDate: null });
-                    }
+                    filterParameters.IsOpened = false;
+                    filterParameters.IsNotOpened = false;
+                    filterParameters.IsNotClicked = false;
+                    filterParameters.IsOpenedClicked = false;
+
+                    setFilterParameters({ ...campaignValues, FromDate: null, ToDate: null });
+                    setCampaignValues({ ...campaignValues, FromDate: null, ToDate: null });
+
                 }
 
                 if (!segmantIndication) {
@@ -1294,7 +1301,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setDialogType={setDialogType}
             />}
             {/* //#region snacks */}
-            <Snackbar
+            {/* <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}
                 autoHideDuration={5000}
                 onClose={() => { handleMainWarningPulse() }}
@@ -1307,7 +1314,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 <Alert severity="warning" className={severe.customcolor}>
                     {t("smsReport.NoPulse")}
                 </Alert>
-            </Snackbar>
+            </Snackbar> */}
             <Snackbar
                 open={snackbarValues.snackBarPulseBoolean}
                 autoHideDuration={3000}
@@ -1316,10 +1323,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     vertical: "top",
                     horizontal: "right",
                 }}
-                style={{ zIndex: "9999", marginTop: "60px" }}
+                style={{ zIndex: "9999" }}
             >
                 <Alert severity="error" className={severe.customcolor}>
-                    {t("smsReport.PulseAmount")}
+                    {t("smsReport.pulseAmount")}
                 </Alert>
             </Snackbar>
             <Snackbar
@@ -1330,13 +1337,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     vertical: "top",
                     horizontal: "right",
                 }}
-                style={{ zIndex: "9999", marginTop: "120px" }}
+                style={{ zIndex: "9999", marginTop: snackbarValues.snackBarPulseBoolean && "60px" }}
             >
                 <Alert severity="error" className={severe.customcolor}>
                     {t("smsReport.timeAmount")}
                 </Alert>
             </Snackbar>
-            <Snackbar
+            {/* <Snackbar
                 open={snackbarValues.snackbarMainPulse}
                 autoHideDuration={3000}
                 onClose={() => setSnackbarValues({ ...snackbarValues, snackBarMainBoolean: false })}
@@ -1349,7 +1356,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 <Alert severity="error" className={severe.customcolor}>
                     {t("sms.fillRandomAmount")}
                 </Alert>
-            </Snackbar>
+            </Snackbar> */}
             <Snackbar
                 open={snackbarValues.recipientsSnackbar}
                 autoHideDuration={2000}

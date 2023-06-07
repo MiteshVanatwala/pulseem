@@ -64,6 +64,21 @@ export const BeeConfig = (Options: ConfigOptions) => {
         workspace: {
             type: null,
         },
+        defaultModulesOrder: [
+            'Heading',
+            'Text',
+            'Image',
+            'Button',
+            'Menu',
+            'Divider',
+            'Spacer',
+            'Icons',
+            'Video',
+            'Social',
+            'Stickers',
+            'Carousel',
+            'Gifs'
+        ],
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {

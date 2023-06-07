@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { Link, MenuItem, Select } from "@material-ui/core";
+import { Link, MenuItem, Select, Typography } from "@material-ui/core";
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
@@ -13,6 +13,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
+import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -37,6 +38,7 @@ const SummaryDialog = ({ classes,
     const { verifiedEmails } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [disableSend, setDisableSend] = useState(false);
+    const [verPopupOpen, setVerPopupOpen] = useState(false)
 
     const {
         FinalClients,
@@ -214,10 +216,13 @@ const SummaryDialog = ({ classes,
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
                     <Box className={classes.baseSum}>
                         <Box className={classes.sumLeft}>
-                            <Box className={classes.sumChild}>
+                            <Box>
                                 {/* <span className={clsx(classes.spanSum, classes.bold)}>{t("sms.smsSummaryCampaignFrom")}:</span> */}
                                 <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
                                 <Select
+                                    className={classes.mt1}
+                                    autoWidth={false}
+                                    native
                                     value={fromEmail}
                                     // onChange={handleChange}
                                     displayEmpty
@@ -225,21 +230,23 @@ const SummaryDialog = ({ classes,
                                     inputProps={{
                                         'aria-label': 'Without label',
                                         className: clsx(classes.p10, (fromEmail === '' || fromEmail === null) && classes.error),
-                                        style: { maxWidth: '70%' }
+                                        // style: { maxWidth: '70%' }
                                     }}
                                     variant='outlined'
                                 >
                                     {verifiedEmails.map((obj) => (
-                                        <MenuItem
+                                        <option
                                             key={obj.Number}
                                             value={obj.Number}
                                         >
                                             {obj.Number}
-                                        </MenuItem>
+                                        </option>
                                     ))}
                                 </Select>
                             </Box>
-
+                            <Box className={classes.sumChild}>
+                                <Link className={clsx(classes.link, classes.mt1)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')} {t('campaigns.newsLetterEditor.helpTexts.newAddress')}</Link>
+                            </Box>
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
                                 <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
@@ -341,6 +348,9 @@ const SummaryDialog = ({ classes,
                         </Button>
                     </Grid>
                 </Grid>
+                {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => {
+                    setVerPopupOpen(false);
+                }} />}
             </>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,
