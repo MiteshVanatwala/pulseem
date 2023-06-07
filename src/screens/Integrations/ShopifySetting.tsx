@@ -51,19 +51,15 @@ const Shopify = ({ classes }: any) => {
   };
 
   useEffect(() => {
-    initSettings(true);
+    initSettings();
     document.title = `${t('integrations.shopify.title')} | ${document.title}`;
   }, []);
   
-  const initSettings = async (isLoading: boolean = false) => {
+  const initSettings = async () => {
     setShowLoader(true);
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
-    const settings = settingResponse?.payload?.Data as ShopifyModel;
     setShowLoader(false);
-    if (settingResponse?.payload?.StatusCode === 201) {
-      setSettings(settingResponse?.payload?.Data as ShopifyModel);
-      if (isLoading) setAuthenticated(true);
-    }
+    handleGetIntegrationResponse(settingResponse)
     if (subAccountAllGroups?.length === 0) {
       dispatch(getGroupsBySubAccountId());
     }
@@ -171,6 +167,25 @@ const Shopify = ({ classes }: any) => {
           ...errors,
           authentication_message: t(`integrations.shopify.authResponses.403`),
         })
+        break;
+      }
+    }
+  }
+
+  const handleGetIntegrationResponse = (response: any) => {
+    switch (response?.payload?.StatusCode) {
+      case 201: {
+        setSettings(response?.payload?.Data as ShopifyModel);
+        setAuthenticated(true);
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+      case 200:
+      case 402:
+      case 500: {
         break;
       }
     }
