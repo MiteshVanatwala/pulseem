@@ -169,6 +169,14 @@ const Shopify = ({ classes }: any) => {
         })
         break;
       }
+      case 404: {
+        setErrors({
+          ...errors,
+          authentication_message: t(`integrations.shopify.authResponses.404`),
+        })
+        setToastMessage({ severity: 'error', color: 'error', message: "integrations.shopify.authResponses.404", showAnimtionCheck: false } as any);
+        break;
+      }
     }
   }
 
