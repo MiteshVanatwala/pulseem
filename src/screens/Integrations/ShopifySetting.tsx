@@ -82,6 +82,14 @@ const Shopify = ({ classes }: any) => {
         api_access_token: '',
         api_version: ''
       })
+      setErrors({
+        api_key: '',
+        api_access_token: '',
+        store_name: '',
+        authentication_message: '',
+        group_not_selected: '',
+        api_version: '',
+      })
       setShowLoader(true);
       const request = {
         IntegrationSource: LU_Plugin.Shopify,
@@ -137,27 +145,19 @@ const Shopify = ({ classes }: any) => {
   const handleAuthResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        const shopifyResponse = response?.payload?.Data as ShopifyModel;
-        if (shopifyResponse.api_access_token !== '' && shopifyResponse.store_name !== '' && shopifyResponse.store_name !== '') {
+        setMessages({
+          ...messages,
+          authentication_message: t(`integrations.shopify.authResponses.201`),
+        });
+        setTimeout(() => {
           setMessages({
             ...messages,
-            authentication_message: t(`integrations.shopify.authResponses.201`),
+            authentication_message: '',
           });
-          setTimeout(() => {
-            setMessages({
-              ...messages,
-              authentication_message: '',
-            });
-            setAuthenticated(true);
-            setIsShowCredentials(false);
-            initSettings();
-          }, 2000); 
-        } else {
-          setErrors({
-            ...errors,
-            authentication_message: t(`integrations.shopify.authResponses.403`),
-          })
-        }
+          setAuthenticated(true);
+          setIsShowCredentials(false);
+          initSettings();
+        }, 2000);
         break;
       }
       case 400: {
@@ -194,7 +194,7 @@ const Shopify = ({ classes }: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
         const shopifyResponse = response?.payload?.Data as ShopifyModel;
-        if (shopifyResponse.api_access_token && shopifyResponse.store_name && shopifyResponse.store_name) {
+        if (shopifyResponse.api_access_token && shopifyResponse.api_key && shopifyResponse.store_name) {
           setSettings(response?.payload?.Data as ShopifyModel);
           setAuthenticated(true);
         }
