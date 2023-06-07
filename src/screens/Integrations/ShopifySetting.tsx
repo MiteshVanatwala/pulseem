@@ -79,7 +79,8 @@ const Shopify = ({ classes }: any) => {
         ...settings,
         store_name: '',
         api_key: '',
-        api_access_token: ''
+        api_access_token: '',
+        api_version: ''
       })
       setShowLoader(true);
       const request = {
@@ -136,19 +137,27 @@ const Shopify = ({ classes }: any) => {
   const handleAuthResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        setMessages({
-          ...messages,
-          authentication_message: t(`integrations.shopify.authResponses.201`),
-        });
-        setTimeout(() => {
+        const shopifyResponse = response?.payload?.Data as ShopifyModel;
+        if (shopifyResponse.api_access_token !== '' && shopifyResponse.store_name !== '' && shopifyResponse.store_name !== '') {
           setMessages({
             ...messages,
-            authentication_message: '',
+            authentication_message: t(`integrations.shopify.authResponses.201`),
           });
-          setAuthenticated(true);
-          setIsShowCredentials(false);
-          initSettings();
-        }, 2000);
+          setTimeout(() => {
+            setMessages({
+              ...messages,
+              authentication_message: '',
+            });
+            setAuthenticated(true);
+            setIsShowCredentials(false);
+            initSettings();
+          }, 2000); 
+        } else {
+          setErrors({
+            ...errors,
+            authentication_message: t(`integrations.shopify.authResponses.403`),
+          })
+        }
         break;
       }
       case 400: {
@@ -162,6 +171,7 @@ const Shopify = ({ classes }: any) => {
         logout();
         break;
       }
+      case 200:
       case 403: {
         setErrors({
           ...errors,
@@ -184,7 +194,7 @@ const Shopify = ({ classes }: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
         const shopifyResponse = response?.payload?.Data as ShopifyModel;
-        if (shopifyResponse.api_access_token && shopifyResponse.store_name && shopifyResponse.store_name !== '') {
+        if (shopifyResponse.api_access_token && shopifyResponse.store_name && shopifyResponse.store_name) {
           setSettings(response?.payload?.Data as ShopifyModel);
           setAuthenticated(true);
         }
@@ -367,6 +377,7 @@ const Shopify = ({ classes }: any) => {
               value={settings.api_version}
               onChange={(event) => setSettings({ ...settings, api_version: event.target.value })}
               className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+              placeholder='XXXX-XX'
             />
             {!!errors.api_version && (
               <Typography className={clsx(classes.errorText, classes.f14)}>
