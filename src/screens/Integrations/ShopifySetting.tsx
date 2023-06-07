@@ -60,8 +60,8 @@ const Shopify = ({ classes }: any) => {
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
     const settings = settingResponse?.payload?.Data as ShopifyModel;
     setShowLoader(false);
-    if (settings.api_access_token) {
-      setSettings(settings);
+    if (settingResponse?.payload?.StatusCode === 201) {
+      setSettings(settingResponse?.payload?.Data as ShopifyModel);
       if (isLoading) setAuthenticated(true);
     }
     if (subAccountAllGroups?.length === 0) {
