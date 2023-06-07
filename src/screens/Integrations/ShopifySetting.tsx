@@ -16,7 +16,7 @@ const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { subAccountAllGroups } = useSelector((state: any) => state.group);
-  const [ showResetDialog, setShowResetDialog ] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(false);
   const [isAuthenticated, setAuthenticated] = useState(false);
@@ -54,7 +54,7 @@ const Shopify = ({ classes }: any) => {
     initSettings();
     document.title = `${t('integrations.shopify.title')} | ${document.title}`;
   }, []);
-  
+
   const initSettings = async () => {
     setShowLoader(true);
     const settingResponse = await dispatch(getIntegration(LU_Plugin.Shopify)) as any;
@@ -72,7 +72,7 @@ const Shopify = ({ classes }: any) => {
     if (settings.api_key.trim() === '') errorsDump = { ...errorsDump, api_key: t('integrations.shopify.enterAPIKey') };
     if (settings.api_access_token.trim() === '') errorsDump = { ...errorsDump, api_access_token: t('integrations.shopify.enterAPIKey') };
     if (settings.api_version.trim() === '') errorsDump = { ...errorsDump, api_version: t('integrations.shopify.enterAPIVersion') };
-    
+
     await setErrors(errorsDump);
     if (settings.store_name.trim() !== '' && settings.api_key.trim() !== '' && settings.api_access_token.trim() !== '') {
       setSettings({
@@ -102,7 +102,7 @@ const Shopify = ({ classes }: any) => {
       setShowLoader(true);
       const request = {
         IntegrationSource: LU_Plugin.Shopify,
-        JsonData: JSON.stringify({...settings})
+        JsonData: JSON.stringify({ ...settings })
       } as IntegrationRequest;
       const response = await dispatch(setIntegration(request));
       handleSubmitFormResponse(response);
@@ -132,7 +132,7 @@ const Shopify = ({ classes }: any) => {
       }
     }
   }
-  
+
   const handleAuthResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
@@ -175,8 +175,11 @@ const Shopify = ({ classes }: any) => {
   const handleGetIntegrationResponse = (response: any) => {
     switch (response?.payload?.StatusCode) {
       case 201: {
-        setSettings(response?.payload?.Data as ShopifyModel);
-        setAuthenticated(true);
+        const shopifyResponse = response?.payload?.Data as ShopifyModel;
+        if (shopifyResponse.api_access_token && shopifyResponse.store_name && shopifyResponse.store_name !== '') {
+          setSettings(response?.payload?.Data as ShopifyModel);
+          setAuthenticated(true);
+        }
         break;
       }
       case 401: {
@@ -363,7 +366,7 @@ const Shopify = ({ classes }: any) => {
               </Typography>
             )}
           </Box>
-          
+
           {!!errors.authentication_message && (
             <Box className={clsx(classes.flex, classes.pbt15)}>
               <Typography className={clsx(classes.errorText, classes.f16)}>
@@ -442,7 +445,7 @@ const Shopify = ({ classes }: any) => {
                 control={
                   <Checkbox
                     checked={settings.RegisterEventActive}
-                    onChange={(event) => 
+                    onChange={(event) =>
                       setSettings({
                         ...settings,
                         RegisterEventActive: event.target.checked,
@@ -495,7 +498,7 @@ const Shopify = ({ classes }: any) => {
                 control={
                   <Checkbox
                     checked={settings.PurchaseEventActive}
-                    onChange={(event) => 
+                    onChange={(event) =>
                       setSettings({
                         ...settings,
                         PurchaseEventActive: event.target.checked,
@@ -547,7 +550,7 @@ const Shopify = ({ classes }: any) => {
                 control={
                   <Checkbox
                     checked={settings.AbandonedEventActive}
-                    onChange={(event) => 
+                    onChange={(event) =>
                       setSettings({
                         ...settings,
                         AbandonedEventActive: event.target.checked,
@@ -603,7 +606,7 @@ const Shopify = ({ classes }: any) => {
                 </Typography>
               </Box>
             )}
-            
+
             {!!messages.group_saved && (
               <Box className={clsx(classes.flex, classes.pbt15)}>
                 <Typography className={clsx(classes.green, classes.f16)}>
