@@ -76,6 +76,7 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
+        // style={{ textAlign: 'center', marginTop: 15, color: "#000", direction: isRTL ? 'rtl' : 'ltr' }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -170,7 +171,7 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-              ? "calc(65vh)"
+              ? "calc(70vh)"
               : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
@@ -209,7 +210,7 @@ export const BaseDialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {RenderTopBar()}
         {RenderContent()}
-      </Paper>
-    </Dialog>
+      </Paper >
+    </Dialog >
   );
 };

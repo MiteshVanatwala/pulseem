@@ -9,20 +9,20 @@ import { FiClock } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next';
 
 export const DateField = ({
-  minDate = undefined,
+  minDate,
   classes,
   value,
   onChange,
   onTimeChange,
   placeholder = '',
   isTimePicker = false,
-  buttons = null,
+  buttons,
   ampm = true,
-  maximumDate = undefined,
+  maximumDate,
   timePickerOpen = false,
   rootStyle = null,
-  timeActive = null,
-  dateActive = null,
+  timeActive,
+  dateActive,
   toolbarDisabled = true,
   isRoundedOnMobile = false,
   ...props
@@ -63,8 +63,8 @@ export const DateField = ({
         'aria-label': 'change time',
         className: classes.datePickerButton,
       }}
-      cancellabel={buttons && buttons.cancel}
-      oklabel={buttons && buttons.ok}
+      cancellabel={buttons && buttons?.cancel}
+      oklabel={buttons && buttons?.ok}
       ampm={ampm}
       id="timePicker"
       disabled={timeActive}
@@ -114,8 +114,8 @@ export const DateField = ({
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons && buttons.cancel}
-      oklabel={buttons && buttons.ok}
+      cancellabel={buttons && buttons?.cancel}
+      oklabel={buttons && buttons?.ok}
       id="datePicker"
       maxDate={maximumDate}
       disabled={dateActive}

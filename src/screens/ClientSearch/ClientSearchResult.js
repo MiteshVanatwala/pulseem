@@ -47,9 +47,9 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { ExportFile } from "../../helpers/Export/ExportFile";
-import { FlatObject, HandleExportData, DeletePropertyFromArrayObject } from "../../helpers/Export/ExportHelper";
-import { ClientStatus } from "../../helpers/Constants";
+import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
+import { HandleExportData, FlatObject, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
+import { ClientStatus, SmsStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -118,9 +118,9 @@ const ClientSearchResult = ({ classes }) => {
   const [searchReferrer, setSearchReferrer] = useState(false);
   //eslint-disable-next-line
   const [clientToEdit, setClientToEdit] = useState(null);
-  const [searchParams, setSearchParams] = useSearchParams();
   const [isDownloadProgress, setIsDownloadProgress] = useState(false);
   const [emailToNotify, setEmailToNotify] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
@@ -376,12 +376,15 @@ const ClientSearchResult = ({ classes }) => {
     setShowConfirmDialog(false);
     setIsDownloadProgress(true);
     setEmailToNotify(notifyEmail);
-    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount }));
+    const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+
+    const response = await dispatch(getExportData({ ...searchData, PageSize: TotalCount, ExportFileName: fileName, NotifyEmail: notifyEmail }));
     if (response && response.payload) {
       const data = response.payload;
-      const promiseArray = [];
+
       switch (data?.StatusCode) {
         case 201: {
+          const promiseArray = [];
           let orderList = [];
           orderList = data.Clients.map((ol) => { return FlatObject(ol) });
           if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
@@ -429,7 +432,7 @@ const ClientSearchResult = ({ classes }) => {
           break;
         }
         default: {
-          setToastMessage(t('common.errorOccured'));
+          setToastMessage(ToastMessages.GENERIC_ERROR);
           break;
         }
       }
@@ -655,7 +658,70 @@ const ClientSearchResult = ({ classes }) => {
         )
       },
       // filterComponents: [Min, Max]
-    }
+    },
+    // Whatsapp successfully sent messages number
+    '18': {
+      title: t("common.SendDate"),
+      sortKey: 'Date',
+      component: {
+        mobile: ({ SentDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.SendDate")}
+          </Typography>
+          <Typography>
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ SentDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
+      },
+      filterComponents: [EL_FromDate, EL_ToDate]
+    },
+    // Whatsapp Read Date
+    '19': {
+      title: t("common.OpenTime"),
+      sortKey: 'Date',
+      component: {
+        mobile: ({ OpenTime = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.OpenTime")}
+          </Typography>
+          <Typography>
+            {OpenTime ? moment(OpenTime).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ OpenTime = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {OpenTime ? moment(OpenTime).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
+      },
+      filterComponents: [EL_FromDate, EL_ToDate]
+    },
+    // Whatsapp failed messages with reason
+    '20': {
+      title: t("common.ErrorEmail"),
+      sortKey: '',
+      component: {
+        mobile: ({ LogSms_ErrorType = '', ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.ErrorEmail")}
+          </Typography>
+          <Typography>
+            {LogSms_ErrorType}
+          </Typography>
+        </>),
+        web: ({ LogSms_ErrorType = '', ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {LogSms_ErrorType}
+          </Typography>
+        )
+      },
+      // filterComponents: [ErrorDropDown]
+    },
   }
   const TABLE_HEAD = [
     {
@@ -1324,7 +1390,8 @@ const ClientSearchResult = ({ classes }) => {
       CreationDate,
       LastSendDate,
       snt_OpeningDate,
-      ErrorTypeText
+      ErrorTypeText,
+      OpenTime
     } = row;
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
       return e === true
@@ -1340,11 +1407,11 @@ const ClientSearchResult = ({ classes }) => {
             setLoader(true);
             setSelectedClients([ClientID]);
             const recipientRequest = await dispatch(getClientsById([ClientID]));
-            const clientToEdit = recipientRequest?.payload?.Data[0];
+            const cte = recipientRequest?.payload?.Data?.length > 0 && recipientRequest?.payload?.Data[0];
             //const existsClient = data.find((c) => { return c.ClientID === ClientID });
             //const tempData = data.filter((c) => { return c.ClientID !== ClientID });
             //setData([ ...tempData, clientToEdit ])
-            setClientToEdit(clientToEdit);
+            setClientToEdit(cte);
             setDialog(DialogType.EDIT_RECIPIENT);
             setLoader(false);
           }
@@ -1463,7 +1530,8 @@ const ClientSearchResult = ({ classes }) => {
               LastSendDate: LastSendDate,
               SentDate: SentDate,
               CreationDate: CreationDate,
-              LogSms_ErrorType: ErrorTypeText
+              LogSms_ErrorType: ErrorTypeText,
+              OpenTime: OpenTime,
             })}
           </TableCell>}
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>

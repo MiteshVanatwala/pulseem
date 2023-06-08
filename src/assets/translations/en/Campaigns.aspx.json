@@ -509,7 +509,8 @@
       "clickToVerify": "Click here to verify",
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
-      "upload": "The file will appear as an attached file in your mail"
+      "upload": "The file will appear as an attached file in your mail",
+      "newAddress": "new Email"
     },
     "errors": {
       "campaignWasNotSent": "The campaign was not sent!",
@@ -532,11 +533,13 @@
       "FIRST_CAMPAIGN_RESTRICTIONS": "Congratulations for sending your first campaign!<br/>Since it’s your first campaign, our team will have to approve it first.<br/>After the approval process is done, the campaign will be sent immediately.",
       "BULK_ENDED": "Your bulk has ended!<br/>To purchase a new bulk enter your dashboard<br/>Or contact our costumer support:",
       "MONTHLY_BULK_ENDED": "You monthly bulk has ended!<br/>To purchase a new bulk enter your dashboard",
-      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+      "contactUs": "Phone <a href='tel:03-524-0290'>03-524-0290</a> or Email <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+      "FUTURE_DATE_PASSED": "The campaign sending date is passed, Please select future sending date."
     },
     "success": "Campaign successfully saved",
     "sendSettings": {
       "optimalSending": "Optimal Sending",
+      "optimalSendingFrom": "Optimal send will start in",
       "optimalSendCBDesc": "Send the campaign at the optimal time for each customer",
       "optimalSendCBTooltip": "this process may take up to 24 hours",
       "segmentation": "Segmentation",
@@ -552,11 +555,12 @@
       "summarySegmCritCb5": "Recipients that did not open the Email and did not click on links",
       "filterInputText": "Don't send to recipients that got Newsletter in last previous days",
       "insertCampaginName": "Which send settings would you want to duplicate from ##campaignName##?",
-      "emailFilterInput": "Don't send to recipients that recieved an Email in last previous days",
+      "emailFilterInput": "Don't send to recipients that received an Email in last previous days",
       "pendingClients": "Pending clients for approval",
       "restrictedClients": "Restricted clients",
       "duplicatedClients": "Duplicated clients",
       "invalidRecipients": "Invalid email addresses",
+      "specialDateMissing": "Special date missing",
       "filters": "Filters",
       "segmentations": "Segmentations",
       "totalNotToSend":"Total filtered",
@@ -590,7 +594,8 @@
       "deleted": "Campaign deleted successfully",
       "send": "Send",
       "doNotSend": "Do not send",
-      "smsComplementary": "Complementary SMS Marketing"
+      "smsComplementary": "Complementary SMS Marketing",
+      "optimalPulseConflictMessage": "Choosing \"Optimal Send\" will cancel the Pulse send you already set.<br/>Do you wish to proceed?"
     }
   },
   "newsLetterMgmt": {
@@ -678,8 +683,8 @@
   "kb": "KB",
   "saveBlock": "Save Block",
   "savedBlocks": "Saved-blocks",
-  "newsletterSetUp": "Newsletter Set-Up",
   "weSent": "We sent!",
   "campaignIsOnItsWay": "Your campaign is on its way",
+  "newsletterSetUp": "Newsletter Set-Up",
   "lastSaveAt": "Last save at: "
 }

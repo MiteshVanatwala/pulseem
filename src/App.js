@@ -3,10 +3,14 @@ import NewsletterManagment from './screens/Newsletter/Management/NewsletterManag
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
-import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
+import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
 import MmsManagment from './screens/Mms/Management/MmsManagment';
 import SmsManagment from './screens/Sms/Management/SmsManagment';
-import { getCookie, setCookie, cookieListener } from './helpers/Functions/cookies'
+import {
+  getCookie,
+  setCookie,
+  cookieListener,
+} from './helpers/Functions/cookies';
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
@@ -14,19 +18,25 @@ import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/s
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
-import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
+import {
+  setWindowSize,
+  setCoreData,
+  setLanguage,
+  setRowsPerPage,
+  setIsClal
+} from './redux/reducers/coreSlice'; //smsOldVersion
+import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
-import { setUsername } from './redux/reducers/userSlice'
-import { getTheme } from './style/theme'
-import { useClasses } from './style/classes/index'
+import { setUsername } from './redux/reducers/userSlice';
+import { getTheme } from './style/theme';
+import { useClasses } from './style/classes/index';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import moment from 'moment'
+import moment from 'moment';
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEdit from './screens/Notifications/Editor/NotificationEdit';
-import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
+import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport';
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
 import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
@@ -40,7 +50,9 @@ import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterInfo from './screens/Newsletter/Wizard/NewsLetterInfo';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
+import SystemMessage from './screens/SystemFailure/SystemMessage';
 import NotificationSend from './screens/Notifications/Editor/NotificationSend';
+import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
 import PageNotFound from './screens/404';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import BillingSettingsEditor from './screens/Settings/BillingSettings/BillingSettingsEditor';
@@ -48,21 +60,30 @@ import { sitePrefix } from './config/index'
 // import ResponsesReports from './screens/Reports/ResponsesReports/ResponsesReports';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
 import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
+import { whatsappRoutes } from './screens/Whatsapp/Constant';
+import SaveCampain from './screens/Whatsapp/Campaign/SaveCampain';
+import SendCampaign from './screens/Whatsapp/Campaign/SendCampaign';
+import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAppTemplates';
+import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
+import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
+import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 
-const renderRoutes = (classes) => {
-  const transferUrl = (url = '', param = '') => () => {
-    const { campaignID, automationID, id, notificationID } = useParams()
-    const addParam = {
-      campaign: campaignID,
-      automation: automationID,
-      notification: notificationID,
-      id: id
-    }
+const renderRoutes = (classes, redirect) => {
+  const transferUrl =
+    (url = '', param = '') =>
+      () => {
+        const { campaignID, automationID, id, notificationID } = useParams();
+        const addParam = {
+          campaign: campaignID,
+          automation: automationID,
+          notification: notificationID,
+          id: id,
+        };
 
-    window.location.href = `https://www.pulseem.co.il/${url}${addParam[param] || ''}`
-    return <></>
-  }
+        window.location.href = `https://www.pulseem.co.il/${url}${addParam[param] || ''}`
+        return <></>
+      }
   return (
     <Routes>
       <Route
@@ -223,7 +244,61 @@ const renderRoutes = (classes) => {
         component={transferUrl('/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=', 'id')}
       />
       {/* Landing Pages */}
+      {/* Whatsapp */}
 
+      <Route
+        path={whatsappRoutes.CREATE_TEMPLATE}
+        element={<WhatsappCreator classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
+        element={<SaveCampain classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
+        element={<SendCampaign classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.TEMPLATE_MANAGEMENT}
+        element={<ManageWhatsAppTemplates classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.REPORTS}
+        element={<WhatsappReports classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
+        element={<ManageWhatsAppCampaigns classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.EDIT_TEMPLATE}
+        element={<WhatsappCreator classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
+        element={<SaveCampain classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
+        element={<SendCampaign classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CHAT}
+        element={<WhatsappChat classes={classes} />}
+      />
+      <Route
+        path={whatsappRoutes.CHAT_CONVERSATION}
+        element={<WhatsappChat classes={classes} />}
+      />
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
@@ -278,10 +353,6 @@ const renderRoutes = (classes) => {
         path={`/AccountReport`}
         component={transferUrl('/Pulseem/AccountReport.aspx')}
       />
-      {/* <Route
-        path={`/CampaignComparison`}
-        element={transferUrl('/Pulseem/CampaignComparison.aspx')}
-      /> */}
       <Route
         path={`/ClientReport`}
         component={transferUrl('/Pulseem/ClientReport.aspx')}
@@ -401,6 +472,11 @@ const renderRoutes = (classes) => {
       />
       <Route
         exact
+        path={`/SystemMessage`}
+        element={<SystemMessage classes={classes} />}
+      />
+      <Route
+        exact
         path={`${sitePrefix}reports/Inbound`}
         element={<InboundMessages classes={classes} />}
       />
@@ -455,29 +531,48 @@ const App = ({ screenSize }) => {
     }
 
     const updateToken = () => {
-      const culture = getCookie('Culture')
-      const token = getCookie('jtoken')
-      const rpp = getCookie('rpp') || 6
-      if (!token) return
-      const jwt = jwt_decode(token)
+      const culture = getCookie('Culture');
+      const token = getCookie('jtoken');
+      const rpp = getCookie('rpp') || 6;
+      if (!token) return;
+      const jwt = jwt_decode(token);
       const {
         email = '',
         // unique_name = '',
         nameid: companyName,
         certthumbprint: billingTypeId,
         role: isAdmin,
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality = 'he-IL',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision': cameFromSubAccount = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone':
+        phone = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality':
+        locality = 'he-IL',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince':
+        imageURL = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri':
+        isWhiteLabel = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision':
+        cameFromSubAccount = '',
         // 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename = '',
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount = ''
-      } = jwt
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name':
+        basename = '',
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
+        isAllowSwitchAccount = '',
+      } = jwt;
 
-
-      dispatch(setCoreData({ email, basename, phone, imageURL, isWhiteLabel, companyName, cameFromSubAccount, isAdmin, isAllowSwitchAccount, billingTypeId }))
+      dispatch(
+        setCoreData({
+          email,
+          basename,
+          phone,
+          imageURL,
+          isWhiteLabel,
+          companyName,
+          cameFromSubAccount,
+          isAdmin,
+          isAllowSwitchAccount,
+          billingTypeId,
+        })
+      );
       let lang = culture || locality; //||'he'
       setCookie('Culture', lang.toLowerCase())
       lang = lang.split('-')[0]
@@ -489,8 +584,8 @@ const App = ({ screenSize }) => {
     }
 
     const cookieFunctionObj = {
-      jtoken: updateToken
-    }
+      jtoken: updateToken,
+    };
 
     // window.addEventListener('resize',setWindowWidth)
     cookieListener(({ name }) => {
@@ -524,7 +619,7 @@ const App = ({ screenSize }) => {
 }
 
 function useWidth() {
-  const { language } = useSelector(state => state.core)
+  const { language } = useSelector((state) => state.core);
   const theme = getTheme(language);
   const keys = [...theme.breakpoints.keys].reverse();
   return (
@@ -546,7 +641,7 @@ const AppContainer = () => {
         <App screenSize={width} />
       </BrowserRouter>
     </StylesProvider>
-  )
-}
+  );
+};
 
 export default AppContainer;

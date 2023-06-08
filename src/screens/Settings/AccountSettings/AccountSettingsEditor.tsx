@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Divider, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Title } from "../../../components/managment/Title";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,12 +22,13 @@ import {
   MdMobileFriendly,
   MdOutlineMarkEmailRead,
 } from "react-icons/md";
+import { Title } from "../../../components/managment/Title";
 
 const AccountSettingsEditor = ({ classes }: any) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { ToastMessages, account } = useSelector((state: any) => state?.accountSettings);
+  const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
@@ -88,8 +88,8 @@ const AccountSettingsEditor = ({ classes }: any) => {
   }, []);
 
   useEffect(() => {
-    setSettingRequest(account?.Data);
-  }, [account]);
+    setSettingRequest(accountSettings?.Data);
+  }, [accountSettings]);
 
   const handleUpdate = async (
     updatedObject: AccountSettings,

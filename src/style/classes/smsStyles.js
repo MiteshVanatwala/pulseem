@@ -560,8 +560,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         textAlign: "center",
         borderBottom: "1px solid #ddd",
         zIndex: "9",
-        cursor: "pointer",
-        pointerEvents: "none"
+        cursor: "not-allowed",
+        pointerEvents: "none",
+        color: '#c4b3b3'
     },
     manualChild:
     {

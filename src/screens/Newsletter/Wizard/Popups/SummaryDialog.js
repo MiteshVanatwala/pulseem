@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { Link, MenuItem, Select } from "@material-ui/core";
+import { Link, MenuItem, Select, Typography } from "@material-ui/core";
 import { Box, Grid, Button } from "@material-ui/core";
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
@@ -13,6 +13,7 @@ import { BaseDialog } from '../../../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
 import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 import { saveCampaignInfo, sendCampaign } from "../../../../redux/reducers/newsletterSlice";
+import VerificationDialog from "../../../../components/DialogTemplates/VerificationDialog";
 
 const SummaryDialog = ({ classes,
     isOpen = false,
@@ -36,6 +37,8 @@ const SummaryDialog = ({ classes,
     const { extraData } = useSelector((state) => state.sms);
     const { verifiedEmails } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
+    const [disableSend, setDisableSend] = useState(false);
+    const [verPopupOpen, setVerPopupOpen] = useState(false)
 
     const {
         FinalClients,
@@ -59,12 +62,14 @@ const SummaryDialog = ({ classes,
         IsOpenedClicked,
         IsNotClicked,
         IsNotOpened,
-        IsBestTime
+        IsBestTime,
+        ExceptionalUserFieldClientCount
     } = newsletterSendSummary;
 
     const { t } = useTranslation();
 
     const handleSendCampaign = async () => {
+        setDisableSend(true);
         const sendResponse = await dispatch(sendCampaign(newsletterSendSummary.CampaignID));
         handleSendResponse({
             ...sendResponse.payload,
@@ -87,24 +92,29 @@ const SummaryDialog = ({ classes,
                 return `${t("sms.SendNow")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
             }
             case 2: {
-                return `${moment(newsletterSendSummary?.SendDate).format('dddd , MMMM Do YYYY, h:mm a')} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
+                return `${IsBestTime ? `${t('campaigns.newsLetterEditor.sendSettings.optimalSendingFrom')} - ` : ''} ${moment(newsletterSendSummary?.SendDate).format('DD/MM/YYYY HH:mm')}`;
             }
             case 3: {
                 const exDates = { ...extraData };
                 let specialField = null;
                 switch (newsletterSendSummary.AutoSendingByUserField) {
-                    case "1":
-                    case 1: {
+                    case "5":
+                    case 5: {
                         specialField = `${t("mainReport.birthday")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
-                    case "2":
-                    case 2: {
+                    case "6":
+                    case 6: {
+                        specialField = `${t("common.reminder_date")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
+                        break;
+                    }
+                    case "7":
+                    case 7: {
                         specialField = `${t("mainReport.creationDay")} ${IsBestTime ? `- ${t('campaigns.newsLetterEditor.sendSettings.optimalSending')}` : ''}`;
                         break;
                     }
                     default: {
-                        specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField - 2}`];
+                        specialField = exDates[`ExtraDate${newsletterSendSummary.AutoSendingByUserField}`];
                     }
                 }
                 return RenderHtml(`${newsletterSendSummary.AutoSendDelay.toString().replace('-', '')} ${t("mainReport.days")} ${newsletterSendSummary.AutoSendDelay > 0 ? t("mainReport.after") : t("mainReport.before")}  <span>&nbsp;${specialField}</span> &nbsp;-&nbsp;${moment(newsletterSendSummary.SendDate).format('h:mm a')}`, { display: 'flex' })
@@ -175,6 +185,7 @@ const SummaryDialog = ({ classes,
         }
         return detailsHide ? <></> : (<Box className={classes.summaryExpandRecipientFilter}>
             {RemovedClients > 0 && renderDetailsLine(t("sms.removedRecipients"), RemovedClients?.toLocaleString())}
+            {ExceptionalUserFieldClientCount > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.specialDateMissing"), ExceptionalUserFieldClientCount?.toLocaleString())}
             {InvalidClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.invalidRecipients"), InvalidClients?.toLocaleString())}
             {NoEmailClients > 0 && renderDetailsLine(t("common.noEmail"), NoEmailClients?.toLocaleString())}
             {PendingClients > 0 && renderDetailsLine(t("campaigns.newsLetterEditor.sendSettings.pendingClients"), PendingClients?.toLocaleString())}
@@ -184,7 +195,7 @@ const SummaryDialog = ({ classes,
             {ExceptionalCampaigns !== '' && ExceptionalCampaignsClientsCount > 0 && renderDetailsLine(t('smsReport.campaignInfo'), `${ExceptionalCampaigns.replace(',', ', ')} (${t("common.Total")}: ${ExceptionalCampaignsClientsCount})`)}
             {ExceptionalOpensClicksClientsCount > 0 && renderDetailsLine(exceptionalClientsCountText, ExceptionalOpensClicksClientsCount?.toLocaleString())}
             {ExceptionalGroups !== '' && ExceptionalGroups?.split(',').length > 0 && renderExceptionalGroups(t("smsReport.inputTextFilter"), ExceptionalGroups?.split(','))}
-            {TotalClients >= 0 && renderDetailsLine(`<b>${t('campaigns.newsLetterEditor.sendSettings.totalNotToSend')}</b>`, TotalClients?.toLocaleString())}
+            {TotalNotToSend >= 0 && renderDetailsLine(`<b>${t('campaigns.newsLetterEditor.sendSettings.totalNotToSend')}</b>`, TotalNotToSend?.toLocaleString())}
         </Box>)
     }
     const handleFromEmailChanged = (event) => {
@@ -205,10 +216,13 @@ const SummaryDialog = ({ classes,
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
                     <Box className={classes.baseSum}>
                         <Box className={classes.sumLeft}>
-                            <Box className={classes.sumChild}>
+                            <Box>
                                 {/* <span className={clsx(classes.spanSum, classes.bold)}>{t("sms.smsSummaryCampaignFrom")}:</span> */}
                                 <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
                                 <Select
+                                    className={classes.mt1}
+                                    autoWidth={false}
+                                    native
                                     value={fromEmail}
                                     // onChange={handleChange}
                                     displayEmpty
@@ -216,21 +230,23 @@ const SummaryDialog = ({ classes,
                                     inputProps={{
                                         'aria-label': 'Without label',
                                         className: clsx(classes.p10, (fromEmail === '' || fromEmail === null) && classes.error),
-                                        style: { maxWidth: '70%' }
+                                        // style: { maxWidth: '70%' }
                                     }}
                                     variant='outlined'
                                 >
                                     {verifiedEmails.map((obj) => (
-                                        <MenuItem
+                                        <option
                                             key={obj.Number}
                                             value={obj.Number}
                                         >
                                             {obj.Number}
-                                        </MenuItem>
+                                        </option>
                                     ))}
                                 </Select>
                             </Box>
-
+                            <Box className={classes.sumChild}>
+                                <Link className={clsx(classes.link, classes.mt1)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')} {t('campaigns.newsLetterEditor.helpTexts.newAddress')}</Link>
+                            </Box>
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
                                 <span className={classes.bodySum}>{newsletterSendSummary?.Subject}</span>
@@ -291,7 +307,7 @@ const SummaryDialog = ({ classes,
                             onClick={() => { setsubRecipients(!subRecipientsDetails) }}
                         >
                             <Link onClick={() => { setsubRecipients(!subRecipientsDetails) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
-                                {t("sms.smsSummaryRecipientsFilter")} ({TotalClients?.toLocaleString()})
+                                {t("sms.smsSummaryRecipientsFilter")} ({TotalNotToSend?.toLocaleString()})
                                 {subRecipientsDetails ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
                             </Link>
                         </li>
@@ -307,11 +323,14 @@ const SummaryDialog = ({ classes,
                         <Button
                             variant='contained'
                             size='small'
-                            onClick={() => { handleSendCampaign() }}
+                            disabled={disableSend}
+                            onClick={() => {
+                                handleSendCampaign()
+                            }}
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
-                                FinalClients <= 0 || fromEmail === '' || fromEmail === null ? classes.disabled : null
+                                FinalClients <= 0 || fromEmail === '' || fromEmail === null || disableSend ? classes.disabled : null
                             )}>
                             {t("sms.sendDialog")}
                         </Button>
@@ -329,6 +348,9 @@ const SummaryDialog = ({ classes,
                         </Button>
                     </Grid>
                 </Grid>
+                {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => {
+                    setVerPopupOpen(false);
+                }} />}
             </>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,

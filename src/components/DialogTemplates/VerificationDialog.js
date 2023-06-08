@@ -6,11 +6,8 @@ import 'moment/locale/he'
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { newAuthorizeEmail, verifyEmailCode, getTwoFactorAuthValues } from '../../redux/reducers/commonSlice';
-import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
-import {
-    getAuthorizeNumbers, sendVerificationCode, verifyCode
-} from '../../redux/reducers/smsSlice'
-import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
+import { getAuthorizedEmails, getAuthorizeNumbers } from '../../redux/reducers/commonSlice'
+import { sendVerificationCode, verifyCode } from '../../redux/reducers/smsSlice'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
     addTwoFactorAuthValues,
@@ -20,6 +17,7 @@ import {
     checkCellphoneAuthorization
 } from '../../redux/reducers/AccountSettingsSlice';
 import { Loader } from '../Loader/Loader';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
 const VerificationDialog = ({

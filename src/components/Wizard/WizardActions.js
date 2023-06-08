@@ -10,6 +10,7 @@ const WizardActions = ({
     classes,
     innerStyle,
     additionalButtons = null,
+    additionalButtonsOnStart = null,
     onSave = null,
     onExit = null,
     onBack = null,
@@ -38,7 +39,8 @@ const WizardActions = ({
                             style={{ margin: '8px' }}
                         >{onBack?.text ?? t('notifications.back')}</Button>
                     }
-                    <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }} className={clsx({ [classes.flexJustifyCenter]: windowSize === 'xs', [classes.flexWrap]: windowSize === 'xs' })}>
+                    {additionalButtonsOnStart}
+                    <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
                         {onDelete &&
                             <Button
                                 className={clsx(

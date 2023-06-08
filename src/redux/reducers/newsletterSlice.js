@@ -221,8 +221,6 @@ export const getCreditsByFileTotalBytes = createAsyncThunk(
     }
   });
 
-
-
 export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {
@@ -252,7 +250,8 @@ export const newsletterSlice = createSlice({
       SEND_DATE_MISSING: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.missingSendingDate", showAnimtionCheck: false },
       CAMPAIGN_ALREADY_SENT: { severity: 'error', color: 'error', message: "campaigns.newsLetterEditor.errors.campaignAlreadySent", showAnimtionCheck: false },
       CAMPAIGN_DELETED_SUCCESS: { severity: 'success', color: 'success', message: "campaigns.newsLetterEditor.sendSettings.deleted", showAnimtionCheck: false },
-
+      GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
+      FUTURE_DATE_PASSED: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.FUTURE_DATE_PASSED', showAnimtionCheck: false },
     }
     //archiveDirectNewsletterReport: []
   },

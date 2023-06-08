@@ -1,0 +1,125 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
+import clsx from 'clsx';
+import { Button } from '@material-ui/core';
+import { BsTrash } from 'react-icons/bs';
+import { useTranslation } from 'react-i18next';
+import { ButtonsProps } from '../../Editor/Types/WhatsappCreator.types';
+import { coreProps } from '../Types/WhatsappCampaign.types';
+import { buttons } from '../../Constant';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+
+const Buttons = ({
+	classes,
+	onFormButtonClick,
+	displayBackButton,
+}: ButtonsProps) => {
+	const { t: translator } = useTranslation();
+
+	const { isRTL, windowSize } = useSelector(
+		(state: { core: coreProps }) => state.core
+	);
+	const { campaignID } = useParams();
+	const navigate = useNavigate();
+	const { state: locationState }: any = useLocation();
+
+	const handlePreviousPage = () => {
+		if (locationState?.from === 'edit/page1' && campaignID) {
+			navigate(`/react/whatsapp/campaign/edit/page1/${campaignID}`, {
+				state: { from: 'edit/page1' },
+			});
+		} else {
+			navigate(-1);
+		}
+	};
+
+	return (
+		<div
+			style={
+				isRTL
+					? { marginRight: 'auto' }
+					: { marginLeft: 'auto', paddingBottom: 40 }
+			}
+			className={clsx(classes.baseButtonsContainer, 'baseButtonsContainer')}>
+			<div className={classes.rightMostContainer}>
+				{displayBackButton && (
+					<Button
+						variant='contained'
+						size='medium'
+						className={clsx(
+							classes.actionButton,
+							classes.actionButtonLightBlue,
+							classes.backButton,
+							isRTL && windowSize !== 'xs' && windowSize !== 'sm'
+								? classes.marginLeftAuto
+								: windowSize !== 'xs' && windowSize !== 'sm'
+									? classes.marginRightAuto
+									: null
+						)}
+						color='primary'
+						style={{ margin: '8px' }}
+						onClick={() => {
+							handlePreviousPage();
+						}}>
+						<span style={{ marginInlineEnd: '5px' }}>{'<'}</span>
+						<>{translator('whatsappCampaign.back')}</>
+					</Button>
+				)}
+
+				<Button
+					variant='contained'
+					size='medium'
+					className={clsx(classes.actionButton, classes.actionButtonRed)}
+					style={{ margin: '8px', padding: '13px 0' }}
+					onClick={(e) => onFormButtonClick(buttons.DELETE)}>
+					<BsTrash size={22} />
+				</Button>
+
+				<Button
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.actionButton,
+						classes.actionButtonLightBlue,
+						classes.backButton
+					)}
+					color='primary'
+					style={{ margin: '8px' }}
+					onClick={(e) => onFormButtonClick(buttons.EXIT)}>
+					<>{translator('whatsappCampaign.exit')}</>
+				</Button>
+
+				<Button
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.actionButton,
+						classes.actionButtonLightBlue,
+						classes.backButton
+					)}
+					color='primary'
+					style={{ margin: '8px' }}
+					onClick={(e) => onFormButtonClick(buttons.SAVE)}>
+					<>{translator('whatsappCampaign.save')}</>
+				</Button>
+
+				<Button
+					type='submit'
+					variant='contained'
+					size='medium'
+					className={clsx(
+						classes.actionButton,
+						classes.actionButtonLightGreen,
+						classes.backButton
+					)}
+					color='primary'
+					style={{ margin: '8px' }}
+					onClick={(e) => onFormButtonClick(buttons.SEND)}>
+					<>{translator('whatsappCampaign.send')}</>
+				</Button>
+			</div>
+		</div>
+	);
+};
+
+export default React.memo(Buttons);

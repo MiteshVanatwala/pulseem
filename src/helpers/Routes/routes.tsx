@@ -7,7 +7,7 @@ import {
   NotificationsIcon,
   ReportsIcon,
   SmsIcon,
-} from "../../assets/images/drawer/index";
+} from '../../assets/images/drawer/index';
 import {
   CodeMenuIcon,
   DolarMenuIcon,
@@ -15,16 +15,16 @@ import {
   StarMenuIcon,
   GrafMenuIcon,
   GroupMenuIcon,
-} from "../../assets/images/settings/index";
-import { FaBinoculars } from "react-icons/fa";
+} from '../../assets/images/settings/index';
+import { FaBinoculars } from 'react-icons/fa';
+import { whatsappRoutes } from '../../screens/Whatsapp/Constant';
 import { logout } from "../Api/PulseemReactAPI";
-import Whatsapp from "../../assets/images/dashboard/Whatsapp";
 import { HiArrowRight } from "react-icons/hi";
 import { sitePrefix } from "../../config";
 
 export const getSettingsItem = (
   t: (text: string) => null | VoidFunction = () => null,
-  style: string = "",
+  style: string = '',
   isAllowSwitchAccount: Boolean = false,
   title: string = "Settings"
 ) => ({
@@ -155,6 +155,7 @@ export const getRoutes = (
       icon: <img alt="Newsletter" src={NewsletterIcon} />,
       options: [
         {
+          key: "newsletterInfo",
           title: t("master.RadMenuItemResource9b.Text"),
           href: `${sitePrefix}Campaigns/Create`,
           isShow: true,
@@ -245,33 +246,53 @@ export const getRoutes = (
         },
       ],
     },
-    {
-      key: "whatsapp",
-      title: "Whatsapp",
-      pageTitle: t("whatsapp.PageResource1.Title"),
-      iconUnicode: "\ue181",
-      href: `${sitePrefix}SMSCampaigns`,
-      isShow: true,
-      icon: <Whatsapp />,
-      options: [
-        {
-          key: "create",
-          title: t("Option1"),
-          href: "/",
-          isShow: true,
-        },
-        {
-          title: t("Option2"),
-          href: "/",
-          isShow: true,
-        },
-        {
-          title: t("Option3"),
-          href: "/",
-          isShow: true,
-        },
-      ],
-    },
+    // {
+    //   key: 'whatsapp',
+    //   title: 'Whatsapp',
+    //   pageTitle: t('whatsapp.Title'),
+    //   iconUnicode: '\ue181',
+    //   href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
+    //   isShow: true,
+    //   icon: <img alt='Sms' src={SmsIcon} />,
+    //   options: [
+    //     {
+    //       key: 'create',
+    //       title: t('whatsapp.NewWhatsappCampaign'),
+    //       href: whatsappRoutes.CREATE_TEMPLATE,
+    //       isShow: true,
+    //     },
+    //     {
+    //       key: 'send',
+    //       title: t('whatsapp.SendWhatsappCampaign'),
+    //       href: whatsappRoutes.CREATE_CAMPAIGN_PAGE1,
+    //       isShow: true,
+    //     },
+    //     {
+    //       key: 'templatemanagement',
+    //       title: t('whatsapp.ManageWhatsappTemplate'),
+    //       href: whatsappRoutes.TEMPLATE_MANAGEMENT,
+    //       isShow: true,
+    //     },
+    //     {
+    //       key: 'campaignmanagement',
+    //       title: t('whatsapp.ManageWhatsappCampaign'),
+    //       href: whatsappRoutes.CAMPAIGN_MANAGEMENT,
+    //       isShow: true,
+    //     },
+    //     {
+    //       key: 'reports',
+    //       title: t('whatsapp.ReportsWhatsapp'),
+    //       href: whatsappRoutes.REPORTS,
+    //       isShow: true,
+    //     },
+    //     {
+    //       key: 'chat',
+    //       title: t('whatsapp.ChatWhatsapp'),
+    //       href: whatsappRoutes.CHAT,
+    //       isShow: true,
+    //     },
+    //   ],
+    // },
     {
       key: "mms",
       title: "MMS",

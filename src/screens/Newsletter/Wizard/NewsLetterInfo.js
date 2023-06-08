@@ -27,6 +27,9 @@ import { sitePrefix } from '../../../config';
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { Title } from '../../../components/managment/Title';
+import { DialogType } from '../../HtmlCampaign/helper/Config';
+import Templates from '../../HtmlCampaign/modals/Templates';
+import { getPublicTemplates, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -146,7 +149,9 @@ const NewsLetterInfo = ({ classes }) => {
     const isNew = queryParams.get("new")
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
-    const { isRTL, windowSize, CoreToastMessages } = useSelector((state) => state.core);
+
+    const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { publicTemplates } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -160,6 +165,9 @@ const NewsLetterInfo = ({ classes }) => {
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
+    const [showEmoji, setShowEmoji] = useState(false);
+    const [template, setTemplate] = useState('');
+
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -247,6 +255,7 @@ const NewsLetterInfo = ({ classes }) => {
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
             sessionStorage.removeItem("Newlsetter_Html_Template");
         }
+        if (!publicTemplates.length) dispatch(getPublicTemplates());
     }, []);
 
     const setDefaultEmailAndName = () => {
@@ -377,6 +386,27 @@ const NewsLetterInfo = ({ classes }) => {
         await dispatch(saveCampaignInfo(campaingnValues))
     }
 
+    const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
+        setLoader(true);
+        setTimeout(() => {
+            setDialogType(DialogType.Templates);
+        }, 1000);
+
+        setTimeout(() => {
+            setLoader(false);
+        }, 2000);
+    }}
+        variant='contained'
+        size='medium'
+        className={clsx(
+            classes.actionButton,
+            classes.actionButtonOutlinedBlue
+        )}
+        style={{ margin: '8px' }}
+    >
+        {t('common.templates')}
+    </Button>
+
     useEffect(() => {
         if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
             silenceSave().then(() => {
@@ -451,7 +481,7 @@ const NewsLetterInfo = ({ classes }) => {
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
-            dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then((response) => {
+            await dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then(async (response) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
@@ -461,6 +491,15 @@ const NewsLetterInfo = ({ classes }) => {
                 }
 
                 const saveInfo = JSON.parse(savedCampaign.Message);
+
+                if (template?.Html && template?.JsonData) {
+                    await dispatch(saveCampaign({
+                        Name: campaingnValues.Name,
+                        campaignId: saveInfo.CampaignID,
+                        JsonData: template?.JsonData,
+                        HTML: template?.Html
+                    }));
+                }
 
                 if (isContiue) {
                     const isBeeEditor = (accountFeatures?.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
@@ -881,6 +920,24 @@ const NewsLetterInfo = ({ classes }) => {
                     style={{ margin: '8px', }}
                     endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                 >{t('master.continueToNewEditor')}</Button>)
+
+                {/* 
+                <Button onClick={() => handleSubmit(true, false, true)}
+                        className={clsx( 
+                        classes.actionButton,
+                        classes.actionButtonLightGreen,
+                        classes.backButton,
+                        classes.ribbonContainer
+                    )}
+                    style={{ marginInlineStart: '8px' }}
+                    color="primary"
+                >
+                    {t('master.continueToNewEditor')}
+                    <div className="wrap">
+                        <span className="ribbon">{t('mainReport.newFeature')}</span>
+                    </div>
+                </Button>)
+        */}
             }
             else {
                 wizardButtons.push(<>
@@ -1048,7 +1105,8 @@ const NewsLetterInfo = ({ classes }) => {
 
     return (
         <DefaultScreen
-            currentPage="Campaingn Settings"
+            currentPage="newsletter"
+            subPage={"newsletterInfo"}
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
@@ -1087,7 +1145,7 @@ const NewsLetterInfo = ({ classes }) => {
                         </Grid>
                     </Grid>
 
-                    <Box className={clsx({ [classes.flex]: windowSize !== 'xs' }, classes.ps15)} style={{ justifyContent: 'end', marginTop: 25 }}>
+                    <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
                         <WizardActions
                             classes={classes}
                             onBack={{
@@ -1095,13 +1153,14 @@ const NewsLetterInfo = ({ classes }) => {
                             }}
                             onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                             additionalButtons={renderButtons()}
+                            additionalButtonsOnStart={renderTemplateButtons()}
                         />
                     </Box>
                     <BaseDialog
                         classes={classes}
                         open={confirmExit}
                         title={t("campaigns.GridButtonColumnResource2.confirmExit")}
-                        showDivider={false}
+                        showDivider={true}
                         onClose={() => handleExit(false)}
                         onCancel={() => handleExit(null)}
                         onConfirm={() => handleExit(true)}
@@ -1119,7 +1178,7 @@ const NewsLetterInfo = ({ classes }) => {
                         classes={classes}
                         open={confirmDelete}
                         title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
-                        showDivider={false}
+                        showDivider={true}
                         onClose={() => setConfirmDelete(false)}
                         onCancel={() => setConfirmDelete(false)}
                         onConfirm={() => handleDelete()}
@@ -1133,10 +1192,26 @@ const NewsLetterInfo = ({ classes }) => {
                         </Box>
                     </BaseDialog>
                     {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
+                    {
+                        dialogType === DialogType.Templates && <Templates
+                            isCreateCampaign={true}
+                            classes={classes}
+                            onClose={async (template) => {
+                                setDialogType(null);
+                                if (template !== undefined) {
+                                    const response = await dispatch(getTemplateById(template.ID));
+                                    if (response.payload.StatusCode === 201) {
+                                        setTemplate(response?.payload?.Data);
+                                    }
+                                }
+                            }}
+                            isOpen={dialogType === DialogType.Templates}
+                        />
+                    }
                     <Loader isOpen={showLoader} />
                 </Box>
             </Box>
-        </DefaultScreen >
+        </DefaultScreen>
     )
 }
 

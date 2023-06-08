@@ -20,6 +20,7 @@ export const coreSlice = createSlice({
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
+    accountFeatures: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     }

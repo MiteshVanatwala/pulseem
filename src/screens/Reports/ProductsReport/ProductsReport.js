@@ -17,9 +17,9 @@ import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
-import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Title } from '../../../components/managment/Title';
 import { MdArrowBackIos, MdArrowForwardIos } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
@@ -105,7 +105,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
+                    EventTypeID: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
                 }
             }),
         },
@@ -116,7 +116,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
+                    EventTypeID: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
                 }
             }),
         },
@@ -305,10 +305,8 @@ const ProductsReport = ({ classes }) => {
                     target="_blank">
                     {value?.toLocaleString() ?? '0'}
                 </Typography>
-
             </Box>
         )
-
     }
 
     const renderRow = (row) => {

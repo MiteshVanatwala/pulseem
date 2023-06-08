@@ -19,6 +19,7 @@ import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
+import { GetTextAreaSelection } from "../../helpers/Utils/TextHelper";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -36,10 +37,10 @@ const UploadXL = ({
     classes,
     areaStyle,
     placeHolder = "sms.dragXlOrCsv",
-    onDone = () => null,
+    onDone,
     uploadToGroups = [],
     setToastMessage,
-    settings = null,
+    settings,
     tooltipText = "smsReport.manualTotalTooltip",
     onlyMapping = false,
     extraButtons = <></>,
@@ -75,12 +76,12 @@ const UploadXL = ({
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
-            const exist = settings.Fields.filter((e) => {
+            const exist = settings?.Fields.filter((e) => {
                 return e.value === ed;
             });
 
             if (exist <= 0 && extraData[ed] !== '') {
-                settings.Fields.push({
+                settings?.Fields.push({
                     isdisabled: false,
                     idx: -1,
                     value: ed,
@@ -88,7 +89,7 @@ const UploadXL = ({
                 });
             }
         });
-        let fields = settings.Fields.map((e, idx) => {
+        let fields = settings?.Fields.map((e, idx) => {
             if (e.label && e.label !== '') {
                 return {
                     isdisabled: false,
@@ -147,6 +148,7 @@ const UploadXL = ({
             setdropIndex(-1);
         }
     };
+
     const areaChange = (e) => {
         var clipboardData, pastedData;
         // Stop data actually being pasted into div
@@ -156,7 +158,13 @@ const UploadXL = ({
         clipboardData = e.clipboardData || window.clipboardData;
         if (clipboardData) {
             if (e.target.value !== '') {
-                pastedData = e.target.value + clipboardData.getData('Text');
+                const textToReplace = GetTextAreaSelection('dragAndDropText');
+                if (textToReplace !== '') {
+                    pastedData = e.target.value.replace(textToReplace, clipboardData.getData('Text'));
+                }
+                else {
+                    pastedData = e.target.value + clipboardData.getData('Text');
+                }
             }
             else {
                 pastedData = clipboardData.getData('Text');
@@ -513,6 +521,8 @@ const UploadXL = ({
 
             setFileToUpload(null);
             setTimeout(() => {
+                setgroupNameInput("");
+                settotalRecords(0);
                 setLoader(false);
             }, 1000);
         }
@@ -528,7 +538,7 @@ const UploadXL = ({
         setcolumnValidate(false);
         let groupNameExist = false;
 
-        if (settings.ShowGroupName) {
+        if (settings?.ShowGroupName) {
             groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
             if (groupNameInput === "") {
                 isValid = false;
@@ -569,7 +579,7 @@ const UploadXL = ({
             ),
             content: (
                 <Box className={classes.dialogBox}>
-                    {settings.ShowGroupName && <div className={classes.manualModal}>
+                    {settings?.ShowGroupName && <div className={classes.manualModal}>
                         <Typography className={classes.inputLabel}>
                             {t("common.GroupName")}:
                         </Typography>
@@ -607,7 +617,7 @@ const UploadXL = ({
                             <Typography className={classes.bodyInfo}>i</Typography>
                         </Tooltip>
                     </Box>
-                    <Box style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
+                    <Box style={{ minHeight: "200px", maxWidth: "700px", overflowX: "scroll" }} key="columnAdjustment">
                         <table
                             style={{
                                 borderCollapse: "collapse",
@@ -778,6 +788,7 @@ const UploadXL = ({
         }>
             {renderDialog()}
             <textarea
+                id="dragAndDropText"
                 placeholder={t(placeHolder)}
                 spellCheck="false"
                 autoComplete="off"

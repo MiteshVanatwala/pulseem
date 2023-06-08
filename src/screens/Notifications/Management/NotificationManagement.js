@@ -62,7 +62,8 @@ const NotificationManagement = ({ classes }) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const scriptDialogCookie = getCookie('scriptDialog')
-  const [showScriptDialog, setShowScriptDialog] = useState(scriptDialogCookie)
+  const hideScriptDialog = (scriptDialogCookie === 'true')
+  const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
   const [showLoader, setLoader] = useState(true);
   const [forceShowImplementation, setForceShowImplementation] = useState(false);
   const refScriptCode = useRef(null);
@@ -199,7 +200,6 @@ const NotificationManagement = ({ classes }) => {
         open={showScriptDialog}
         onCancel={() => setShowScriptDialog(false)}
         onClose={() => setShowScriptDialog(false)}
-        onCancel={() => setShowScriptDialog(false)}
         {...dialog}>
         {dialog.content}
       </BaseDialog>

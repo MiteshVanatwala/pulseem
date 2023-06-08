@@ -11,7 +11,6 @@ export const GetProductReports = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-
 export const reportSlice = createSlice({
   name: 'report',
   initialState: {

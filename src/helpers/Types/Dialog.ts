@@ -4,7 +4,7 @@ export type DialogOptions = {
   classes: any;
   childrenPadding?: boolean;
   open: boolean;
-  title: any;
+  title?: any;
   icon?: any;
   children: TYPE_JSX;
   showDivider?: boolean;

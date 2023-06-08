@@ -11,7 +11,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Groups/GroupsHandler/Groups";
 import { useNavigate, useParams } from "react-router";
 import { BiSave } from 'react-icons/bi'
-import Title from '../../../components/Wizard/Title'
+import { Title } from "../../../components/managment/Title";
 import { Button, Grid, Box } from "@material-ui/core";
 import {
     getAccountExtraData, getPreviousCampaignData, getPreviousLandingData, getTestGroups, getSmsMarketing
@@ -44,6 +44,7 @@ import { BaseDialog } from "../../../components/DialogTemplates/BaseDialog";
 import WizardActions from "../../../components/Wizard/WizardActions";
 import VerificationDialog from "../../../components/DialogTemplates/VerificationDialog.js";
 import SendResponseDialog from './Popups/SendResponseDialog';
+import UploadInProgressDialog from "./Popups/UploadInProgressDialog";
 
 function Alert(props) {
     return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -158,6 +159,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
     const [summaryEmail, setSummaryEmail] = useState(newsletterInfo.FromEmail);
+    const [totalClientsToSend, setTotalClientsToSend] = useState(0);
+
+    useEffect(() => {
+        const total = selectedGroups?.reduce(function (a, b) {
+            return a + b['Recipients'];
+        }, 0);
+
+        setTotalClientsToSend(total);
+    }, [selectedGroups]);
 
     const initOnReady = () => {
         if (newsletterSettings?.error) {
@@ -192,7 +202,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 selectedFilterCampaigns: ExeptionalCampaigns ? previousCampaignData?.filter((c) => ExeptionalCampaigns.indexOf(c.CampaignID) > -1) : [],
                 exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
             });
-            setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting ?? false);
+            setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting || false);
         } catch (e) {
             // dispatch(sendToTeamChannel({
             //     MethodName: 'onReady',
@@ -336,11 +346,18 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setToastMessage(ToastMessages.CAMPAIGN_ALREADY_SENT);
                 break;
             }
+            case 410: {
+                setToastMessage(ToastMessages.FUTURE_DATE_PASSED);
+                break;
+            }
             case 500:
             default: {
-                setToastMessage(ToastMessages.GENERAL_ERROR);
+                //setToastMessage(ToastMessages.GENERAL_ERROR);
             }
         }
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 2000);
     }
     const SEND_PROC = {
         401: { type: 'SendResponse', data: { Title: t('campaigns.newsLetterEditor.errors.campaignWasNotSent'), Text: t('campaigns.newsLetterEditor.errors.invaliApiKey'), ShowContactSupport: false } },
@@ -372,11 +389,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handleConfirmC = async () => {
         setDialogType(null);
         setLoader(true);
-        let groupId = defaultGroupId;
-        if (defaultGroupId <= 0) {
-            const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
-            groupId = responseDefaultGroup.payload
-        }
+
+        const responseDefaultGroup = await dispatch(createAndGetGroupIdForManualSend());
+        let groupId = responseDefaultGroup?.payload
 
         var req = [];
         quickSendClients.split('\n').map((q) => req.push({ Email: q.replace(',', '') }));
@@ -414,26 +429,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             formIsvalid = validationCheck();
             if (formIsvalid) {
                 if (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
-                    setSegmantIndication(true)
                     tempData = { ...tempData, displayFilter: true, reciFilter: false }
                     setSnackbarValues({ ...snackbarValues, snackbarRecipients: true })
-
                 }
                 else {
-                    setSegmantIndication(false)
                     tempData = { ...tempData, displayFilter: false, reciFilter: false }
                 }
             }
         }
         else {
-            if (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
+            if (filterValues.selectedFilterGroups.length || filterValues.selectedFilterCampaigns.length) {
                 tempData = { ...tempData, reciFilter: false }
                 setSnackbarValues({ ...snackbarValues, snackbarRecipients: true })
-                setSegmantIndication(true)
             }
             else {
                 tempData = { ...tempData, reciFilter: false }
-                setSegmantIndication(false)
             }
         }
         if (formIsvalid) {
@@ -465,7 +475,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
     const handlePulseConfirm = (pulseSettings, pulseEnabled) => {
         if (pulseEnabled && (pulseSettings.PulseAmount === "" || pulseSettings.TimeInterval === "")) {
-            setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: true })
+            setSnackbarValues({ ...snackbarValues, snackBarPulseBoolean: pulseSettings.PulseAmount === "", snackbarTimeBoolean: pulseSettings.TimeInterval === "" })
             setPulseIndication(false)
         }
         else {
@@ -521,10 +531,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             GroupName: groupName,
             GroupIds: temp,
         };
-        await dispatch(combinedGroup(payload));
+        const combineResponse = await dispatch(combinedGroup(payload));
+        const newGroupCreated = combineResponse?.payload;
         setNewGroupDetails({ toggleChecked: false, groupNameExist: false, groupValue: '' });
         setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
         setLoader(false);
+        setSelectedGroups([newGroupCreated]);
     };
 
     const callbackSelectedGroups = (group) => {
@@ -581,11 +593,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 onChange={handleInputNewGroup}
                 value={newGroupDetails.groupValue}
             />
-            <span className={clsx(classes.saveBtn, !newGroupDetails.groupValue || newGroupDetails.groupValue === '' ? classes.disabled : null)}
+            <Button
+                size='medium'
+                color="primary"
+                variant='contained'
+                key={"extraButton"}
+                className={
+                    clsx(
+                        classes.actionButton, classes.actionButtonOutlinedBlue,
+                        !newGroupDetails.groupValue.trim() ? classes.disabled : ''
+                    )
+                }
                 onClick={() => createNewGroup(newGroupDetails.groupValue)}
             >
                 {t("mainReport.save")}
-            </span>
+            </Button>
             {newGroupDetails.groupNameExist ?
                 <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#",
                     newGroupDetails.groupValue
@@ -601,7 +623,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             handleCreateGroupResponses(response, async () => {
                 if (response?.payload?.Message) {
                     if (uploadAsFile === true) {
-                        r = await dispatch(addRecipients({ ...res, GroupIds: [response.payload.Message] }));
+                        r = await dispatch(addRecipients(res));
                     }
                     else {
                         r = await dispatch(addRecipient({ ...res, GroupIds: [response.payload.Message] }));
@@ -627,6 +649,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }, [newGroupId, subAccountAllGroups])
 
     const handleCreateGroupResponses = (res, successCallback) => {
+        setToastMessage(null);
         switch (res?.payload?.StatusCode) {
             case 200:
                 break;
@@ -643,10 +666,16 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
     const handleAddClientsResponse = (res) => {
+        setToastMessage(null);
         switch (res?.StatusCode) {
             case 201: {
                 setActiveTab(0);
                 setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
+                break;
+            }
+            case 202: {
+                setActiveTab(0);
+                setDialogType({ type: 'uploadInProgress' });
                 break;
             }
             case 401: {
@@ -683,6 +712,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     variant='contained'
                     size='medium'
                     className={clsx(
+                        campaignValues.SendingMethod === 2 && !campaignValues.SendDate ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && campaignValues?.AutoSendingByUserField === '0' ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && !campaignValues?.AutoSendDelay ? classes.disabled : null,
+                        campaignValues.SendingMethod === 3 && !campaignValues.SendDate ? classes.disabled : null,
                         classes.actionButton,
                         classes.actionButtonLightGreen,
                         classes.backButton
@@ -690,9 +723,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     color="primary"
                     style={{
                         margin: '8px',
-                        pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
+                        pointerEvents: selectedGroups.length > 0 && totalClientsToSend > 0 ? "auto" : "none",
                         backgroundColor:
-                            selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
+                            selectedGroups.length > 0 && totalClientsToSend > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
                         onSaveSettings(true).then(async () => {
@@ -718,7 +751,9 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         let segDialog = SegmentationDialog({
             classes: classes,
             campaign: filterParameters,
-            handleSetValues: (values) => setFilterParameters({ ...values }),
+            handleSetValues: (values) => {
+                setFilterParameters({ ...values })
+            },
             onClose: () => setDialogType(null),
             onCancel: () => setDialogType(null),
             onConfirm: () => setDialogType(null)
@@ -757,7 +792,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             onClick={() => setMergedSegmentationDialog(i)}
                         >
                             {tab && <><span
-                                style={{ cursor: "pointer" }}
                                 className={clsx(classes.bold, classes.f16)}
                             >
                                 {tab.title || ''}
@@ -797,8 +831,40 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     ...campaignValues,
                     ...filterParameters
                 })
-                mergedSegmentationDialog === 0 && setDialogType(null)
-                mergedSegmentationDialog === 1 && handleFilterConfirm()
+                mergedSegmentationDialog === 0 && setDialogType(null);
+                mergedSegmentationDialog === 1 && handleFilterConfirm();
+
+                let segmantIndication = false;
+                const isFilterDatesSelected = filterParameters.FromDate && filterParameters.ToDate;
+
+                if ((filterParameters.IsOpened || filterParameters.IsNotOpened || filterParameters.IsOpenedClicked || filterParameters.IsNotClicked)
+                    && isFilterDatesSelected) {
+                    segmantIndication = true;
+                }
+                else {
+                    filterParameters.IsOpened = false;
+                    filterParameters.IsNotOpened = false;
+                    filterParameters.IsNotClicked = false;
+                    filterParameters.IsOpenedClicked = false;
+
+                    setFilterParameters({ ...campaignValues, FromDate: null, ToDate: null });
+                    setCampaignValues({ ...campaignValues, FromDate: null, ToDate: null });
+
+                }
+
+                if (!segmantIndication) {
+                    if (filterValues.toggleReci) {
+                        if (validationCheck() && filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
+                            segmantIndication = true;
+                        }
+                    }
+                    else {
+                        if (filterValues.selectedFilterGroups.length || filterValues.selectedFilterCampaigns.length) {
+                            segmantIndication = true;
+                        }
+                    }
+                }
+                setSegmantIndication(segmantIndication);
             }
         }
 
@@ -809,12 +875,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const { type, data } = dialogType || {}
 
         const dialogContent = {
-            quickMnualUpload: QuickManualUploadDialog({
-                classes: classes,
-                onClose: () => setDialogType(null),
-                onCancel: () => setDialogType(null),
-                onConfirm: () => handleConfirmC()
-            }),
             filterRecipients: MergedSegmentationDialog(),
             pulses: PulseDialog({
                 classes: classes,
@@ -860,12 +920,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     navigate('/react');
                 }
             }),
-            summary: ConfirmationDialog({ classes: classes, count: data })
+            summary: ConfirmationDialog({ classes: classes, count: data }),
+            uploadInProgress: UploadInProgressDialog({ classes: classes, onClose: () => { setDialogType(null); } })
         }
 
         const currentDialog = dialogContent[type] || {}
 
-        if (type) {
+        if (Object.keys(currentDialog).length) {
             return (
                 dialogType && <BaseDialog
                     classes={classes}
@@ -912,10 +973,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             IsLinksStatistics: restData.IsLinksStatistics ?? true,
                             ...restData
                         });
-                        setSegmantIndication(true)
+                        setSmsMarketingIndication(true)
                     }
                     else {
-                        setSegmantIndication(false)
+                        setSmsMarketingIndication(false)
                     }
                     resolve();
                 } catch (error) {
@@ -946,11 +1007,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             subPage={"newsletterSendSettings"}
             classes={classes}
             customPadding={true}>
-            <RenderToast toastMessage={toastMessage} time={4000} />
+            <RenderToast toastMessage={toastMessage} time={toastMessage?.showAnimtionCheck ? 2000 : 4000} />
             <Box>
                 <Title
-                    title={t("campaigns.newsLetterSendSettings.title")}
-                    classes={classes}
+                    Text={t("campaigns.newsLetterSendSettings.title")}
+                    Classes={classes}
                 />
                 <Grid container style={{ marginBottom: "40px" }} spacing={5}>
                     <Grid item md={7} xs={12}>
@@ -1034,6 +1095,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         height: 395
                                     }}
                                     onDone={(groupName, res, uploadedAsFile) => {
+                                        //setToastMessage(null);
                                         handleUploadRecipients(groupName, res, uploadedAsFile);
                                     }}
                                     settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
@@ -1100,7 +1162,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             }}
                                             direction="row"
                                         >
-                                            <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
+                                            <span>{t("mainReport.totalReci")}: {selectedGroups.reduce(function (a, b) {
                                                 return a + b['Recipients'];
                                             }, 0).toLocaleString()}</span>
                                             <Tooltip
@@ -1130,14 +1192,21 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             campaign={{ ...campaignValues, SendingMethod: (!campaignValues.SendingMethod || campaignValues.SendingMethod === 0) ? 1 : campaignValues.SendingMethod }}
                             onUpdateCampaign={(data) => {
                                 setCampaignValues({ ...campaignValues, ...data })
+                                setPulseIndication(data.PulseAmount != '' && data.PulseAmount > 0)
                             }}
                             extraButtons={
                                 <>
-                                    <Stack direction="row" justifyContent="center" alignItems="center">
+                                    <Stack
+                                        direction="row"
+                                        justifyContent="center"
+                                        alignItems="center">
                                         <Badge variant="dot" color="primary" invisible={!pulseIndication}>
                                             <Button
-                                                className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1}
+                                                className={clsx(
+                                                    classes.actionButton,
+                                                    classes.actionButtonOutlinedBlue,
+                                                    selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
+                                                        ? classes.disabled : null)}
                                                 onClick={() => {
                                                     handlePulseDialog();
                                                 }}
@@ -1159,7 +1228,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!segmantIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                 onClick={() => {
                                                     setFilterParameters(campaignValues);
                                                     setDoNotSendFilterValues(filterValues);
@@ -1174,7 +1243,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         <Badge variant="dot" color="primary" invisible={!smsMarketingIndication}>
                                             <Button
                                                 className={clsx(classes.actionButton, classes.actionButtonOutlinedBlue)}
-                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1}
+                                                disabled={!selectedGroups || selectedGroups?.length === 0 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0}
                                                 onClick={() => {
                                                     handleSmsMarketing();
                                                 }}
@@ -1211,7 +1280,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 smsMarketingModel={{ ...smsMarketingModel }}
                 onClose={() => setDialogType(null)}
                 onCancel={() => setDialogType(null)}
-                onConfirm={() => setDialogType(null)}
+                onConfirm={() => {
+                    setDialogType(null);
+                    setSmsMarketingIndication(true);
+                }}
             />}
             {dialogType?.type === 'SummaryDialog' && newsletterSendSummary !== null && <SummaryDialog
                 classes={classes}
@@ -1232,7 +1304,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 setDialogType={setDialogType}
             />}
             {/* //#region snacks */}
-            <Snackbar
+            {/* <Snackbar
                 open={snackbarValues.snackbarTimeBoolean || snackbarValues.snackBarPulseBoolean || snackbarValues.snackbarMainPulse}
                 autoHideDuration={5000}
                 onClose={() => { handleMainWarningPulse() }}
@@ -1245,7 +1317,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 <Alert severity="warning" className={severe.customcolor}>
                     {t("smsReport.NoPulse")}
                 </Alert>
-            </Snackbar>
+            </Snackbar> */}
             <Snackbar
                 open={snackbarValues.snackBarPulseBoolean}
                 autoHideDuration={3000}
@@ -1254,10 +1326,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     vertical: "top",
                     horizontal: "right",
                 }}
-                style={{ zIndex: "9999", marginTop: "60px" }}
+                style={{ zIndex: "9999" }}
             >
                 <Alert severity="error" className={severe.customcolor}>
-                    {t("smsReport.PulseAmount")}
+                    {t("smsReport.pulseAmount")}
                 </Alert>
             </Snackbar>
             <Snackbar
@@ -1268,13 +1340,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     vertical: "top",
                     horizontal: "right",
                 }}
-                style={{ zIndex: "9999", marginTop: "120px" }}
+                style={{ zIndex: "9999", marginTop: snackbarValues.snackBarPulseBoolean && "60px" }}
             >
                 <Alert severity="error" className={severe.customcolor}>
                     {t("smsReport.timeAmount")}
                 </Alert>
             </Snackbar>
-            <Snackbar
+            {/* <Snackbar
                 open={snackbarValues.snackbarMainPulse}
                 autoHideDuration={3000}
                 onClose={() => setSnackbarValues({ ...snackbarValues, snackBarMainBoolean: false })}
@@ -1287,7 +1359,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 <Alert severity="error" className={severe.customcolor}>
                     {t("sms.fillRandomAmount")}
                 </Alert>
-            </Snackbar>
+            </Snackbar> */}
             <Snackbar
                 open={snackbarValues.recipientsSnackbar}
                 autoHideDuration={2000}
@@ -1327,8 +1399,15 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     Value: summaryEmail || newsletterInfo.FromEmail
                 }}
             />}
+
+            {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog
+                classes={classes}
+                onClose={() => setDialogType(null)}
+                onCancel={() => setDialogType(null)}
+                onConfirm={() => handleConfirmC()}
+            />}
             <Loader isOpen={showLoader} />
-        </DefaultScreen >
+        </DefaultScreen>
     )
 }
 

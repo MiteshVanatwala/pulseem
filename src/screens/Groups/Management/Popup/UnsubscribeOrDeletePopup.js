@@ -24,8 +24,7 @@ import { Loader } from "../../../../components/Loader/Loader";
 import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
-import { getAuthorizedEmails, getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice'
-
+import { getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice';
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const UnsubscribeOrDeletePopup = ({

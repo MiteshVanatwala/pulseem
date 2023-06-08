@@ -28,6 +28,13 @@ const SmsSummary = ({ classes,
   const { isRTL } = useSelector(state => state.core)
 
   const { t } = useTranslation();
+  let totalFiletered = groups.reduce(function (a, b) {
+    return parseInt(a) + parseInt(b['Recipients']);
+  }, 0) - summaryPayload.FinalCount;
+
+  if (isNaN(totalFiletered)) {
+    totalFiletered = 0;
+  }
 
   const handleSmsSettings = () => {
     props.handleCallback()
@@ -85,7 +92,7 @@ const SmsSummary = ({ classes,
               </Box>
             </Box>
             <Box className={classes.sumRight}>
-              <MobilePreview classes={classes} fromNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
+              <MobilePreview classes={classes} campaignNumber={fromNumber} text={textMsg} keyItem="summaryPreview" />
             </Box>
           </Box>
 
@@ -121,9 +128,7 @@ const SmsSummary = ({ classes,
               onClick={() => { setsubRecipients(!subRecipientsDetails) }}
             >
               <Link onClick={() => { setsubRecipients(!subRecipientsDetails) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
-                {t("sms.smsSummaryRecipientsFilter")} ({(groups.reduce(function (a, b) {
-                  return a + b['Recipients'];
-                }, 0).toLocaleString() - summaryPayload.FinalCount)})
+                {t("sms.smsSummaryRecipientsFilter")} ({totalFiletered?.toLocaleString()})
                 {subRecipientsDetails ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
               </Link>
             </li>
@@ -150,7 +155,7 @@ const SmsSummary = ({ classes,
               {t("sms.removedRecipients")} :
               <span className={classes.summaryDetailsSpanBold}
               >
-                {summaryPayload.Removed}
+                {summaryPayload.Removed?.toLocaleString()}
               </span>
             </span>}
             {summaryPayload.EmptyCellphoneCount === 0 ? null : <span

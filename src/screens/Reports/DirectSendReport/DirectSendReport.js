@@ -386,6 +386,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
           }
           break;
         }
+      default: {
+        break;
+      }
     }
   }
   const renderTabs = () => {
@@ -542,4 +545,4 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   );
 }
 
-export default DirectSendReport
+export default DirectSendReport;

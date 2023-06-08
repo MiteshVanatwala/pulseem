@@ -40,7 +40,7 @@ import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { IoIosArrowDown } from "react-icons/io";
 
 function Alert(props) {
-  return <MuiAlert elevation={0} variant="filled" {...props} />;
+  return <MuiAlert elevation={0} variant='filled' {...props} />;
 }
 
 const SmsSend = ({ classes, ...props }) => {
@@ -467,10 +467,12 @@ const SmsSend = ({ classes, ...props }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    await dispatch(combinedGroup(payload));
+    const combineResponse = await dispatch(combinedGroup(payload));
+    const newGroupCreated = combineResponse?.payload;
     await dispatch(getGroupsBySubAccountId());
     settoggleChecked(false);
     setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
+    setSelected([newGroupCreated]);
   };
   const onHandleDelete = () => {
     setDialogType({ type: "delete" });
@@ -712,11 +714,13 @@ const SmsSend = ({ classes, ...props }) => {
                 settotalRecords(results.data.length)
 
                 const resultCsv = results.data;
+
                 setDialogType({ type: "manualUpload" });
                 let ddc = [];
-                resultCsv[0].foreach(() => {
+
+                for (let i in resultCsv[0]) {
                   ddc.push(t("sms.adjustTitle"))
-                })
+                }
                 setheaders(ddc);
               },
 
@@ -791,7 +795,7 @@ const SmsSend = ({ classes, ...props }) => {
               setmanualClick(true);
             }}
           >
-            <span style={{marginInlineEnd: 15}}>
+            <span style={{ marginInlineEnd: 15 }}>
               {t("mainReport.manual")}
             </span>
             <Tooltip
@@ -844,7 +848,7 @@ const SmsSend = ({ classes, ...props }) => {
           {groupClick ? (
             <Groups
               classes={classes}
-              list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups]}
+              list={showTestGroups ? [...testGroups, ...subAccountAllGroups] : [...subAccountAllGroups?.filter((g) => { return g.Recipients > 0 })]}
               selectedList={selectedGroups}
               callbackSelectedGroups={callbackSelectedGroups}
               callbackUpdateGroups={callbackUpdateGroups}

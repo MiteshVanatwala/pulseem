@@ -22,8 +22,8 @@ const summaryPadding = {
   xs: 0,
   sm: 0,
   md: 0,
-  lg: 10,
-  xl: 10,
+  lg: 25,
+  xl: 25,
 };
 
 const iconWrapperMargin = {
@@ -130,10 +130,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   solidDialogContainer: {
     zIndex: '1500 !important',
     "& .MuiPaper-root": {
-      borderRadius: 10,
+      borderRadius: 25,
       overflowX: "hidden",
       boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
-      backgroundColor: '#fff'
+      backgroundColor: '#f5f5f5'
     },
     "& .MuiDialog-paperWidthSm": {
       minWidth: minDialogWidth[windowSize],
@@ -144,11 +144,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   dialogContainer: {
+    // zIndex: "1500 !important",
     "& .MuiPaper-root": {
-      borderRadius: 10,
       overflowX: "hidden",
-      // boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
-      backgroundColor: '#fff'
     },
     "& .MuiDialog-scrollPaper": {
       "@media screen and (max-width: 450px)": {
@@ -159,9 +157,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: minDialogWidth[windowSize],
-      maxWidth: maxDialogWidth[windowSize],
-
+      minWidth: `${minDialogWidth[windowSize]} !important`,
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
@@ -287,7 +283,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     transform: "rotateY(180deg)",
   },
   dBlock: {
-    display: "block",
+    display: "block !important",
   },
   dNone: {
     display: "none",
@@ -391,6 +387,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt2rem: {
     paddingTop: "2rem",
   },
+  pt5: {
+    paddingTop: 10,
+  },
   pt10: {
     paddingTop: 10,
   },
@@ -399,6 +398,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt15: {
     paddingTop: 15
+  },
+  pt50: {
+    paddingTop: 50
   },
   pt2: {
     paddingTop: 1.4,
@@ -415,9 +417,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mr10: {
     marginInlineEnd: 10,
   },
-  mb0: {
-    marginBottom: '0px !important',
-  },
   mb5: {
     marginBottom: 5,
   },
@@ -432,9 +431,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb20: {
     marginBottom: 20,
-  },
-  ml20: {
-    marginInlineStart: 20,
   },
   ml25: {
     marginInlineStart: 25,
@@ -474,7 +470,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: 15,
   },
   mt10: {
-    marginTop: '10px !important',
+    marginTop: 10,
   },
   mt15: {
     marginTop: 15,
@@ -558,6 +554,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   justifyEvenly: {
     display: "flex",
     justifyContent: "space-evenly",
+  },
+  tabText: {
+    fontSize: 20,
+    textTransform: "capitalize",
+    padding: '5px 20px',
+    minWidth: 150,
+    minHeight: 40,
   },
   flexColumn2: {
     display: "flex",
@@ -746,9 +749,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font30: {
     fontSize: 30,
-  },
-  w50: {
-    width: '50%'
   },
   w100: {
     width: '100%'
@@ -1063,6 +1063,41 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomLeftRadius: ".25rem",
     borderBottomRightRadius: ".25rem",
   },
+  templateModal: {
+    minWidth: "900px",
+  },
+  beeTemplate: {
+    padding: '0px !important',
+    margin: '0px !important',
+    minHeight: 'calc(70vh)',
+    minWidth: 'calc(90vh)',
+    '& .dialogChildren': {
+      paddingLeft: 0,
+      paddingRight: 0,
+    },
+    "& .MuiDialog-paperWidthSm": {
+      minWidth: maxDialogWidth[windowSize],
+      maxWidth: maxDialogWidth[windowSize],
+    },
+  },
+  templateItem: {
+    border: 'solid 1px #000',
+    padding: 0,
+    textAlign: 'center',
+    borderRadius: 3,
+    height: '200px',
+    minHeight: '200px',
+    maxHeight: '200px',
+    overflow: 'hidden',
+    transition: 'all 0.5s ease',
+    '& label': {
+      zoom: '25%',
+      pointerEvents: 'none'
+    },
+    "&.selected": {
+      border: "solid 5px #168ee3"
+    }
+  },
   baseButtons: {
     display: "flex",
     alignItems: "center",
@@ -1108,9 +1143,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&:nth-child(2)": {
       marginInlineStart: 0,
       marginInlineEnd: 5,
-    },
-    "@media screen and (max-width: 1705px)": {
-      lineHeight: 1
     },
     "@media screen and (max-width: 1366px)": {
       fontSize: 11,
@@ -1177,11 +1209,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #ced4da",
     backgroundColor: "#fff",
-    "@media screen and (max-width: 1500px) and (min-width: 1366px)": {
-      minWidth: 80
-    },
     "@media screen and (max-width: 1366px)": {
-      minWidth: 80,
+      minWidth: 130,
     },
     "@media screen and (max-width: 768px)": {
       width: "100%",
@@ -1800,6 +1829,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&:hover": {
       backgroundColor: "#efefef",
     },
+    '@media screen and (max-width: 414px)': {
+      top: 120,
+      right: 42,
+      width: 260,
+      height: 205,
+    },
+    '@media screen and (max-width: 360px)': {
+      top: 105,
+      right: 38,
+      width: 230,
+      height: 190,
+    },
+    '@media screen and (max-width: 320px)': {
+      top: 90,
+      right: 38,
+      left: 'auto',
+      width: 200,
+      height: 165,
+    },
   },
   conInfo: {
     fontSize: "22px",
@@ -1824,6 +1872,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
     fontSize: "19px",
     color: "#777777",
+    width: '100%',
+    cursor: 'pointer',
     "@media screen and (max-width: 768px)": {
       fontSize: "14px",
     },
@@ -1868,7 +1918,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   activeTab: {
     borderBottom: "4px solid #168ee3",
     color: "#007bff !important",
-    paddingBottom: '6px !important'
   },
 
   comingSoonTab: {
@@ -2274,19 +2323,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #bbb",
   },
   before: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: isRTL ? null : "4px",
-    borderBottomRightRadius: isRTL ? "4px" : null,
-    borderTopLeftRadius: isRTL ? null : "4px",
-    borderTopRightRadius: isRTL ? "4px" : null,
-    border: "1px solid #277BFF",
-    padding: "10px",
-    marginBottom: "8px",
-    color: "#277BFF",
-    cursor: "pointer",
+    display: 'flex',
+    width: '72px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomLeftRadius: isRTL ? null : '4px',
+    borderBottomRightRadius: isRTL ? '4px' : null,
+    borderTopLeftRadius: isRTL ? null : '4px',
+    borderTopRightRadius: isRTL ? '4px' : null,
+    border: '1px solid #277BFF',
+    padding: '10px',
+    marginBottom: '8px',
+    color: '#277BFF',
+    cursor: 'pointer',
   },
   disabledBefore: {
     display: "flex",
@@ -2302,20 +2351,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
   },
   after: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: isRTL ? "4px" : null,
-    borderBottomRightRadius: isRTL ? null : "4px",
-    borderTopLeftRadius: isRTL ? "4px" : null,
-    borderTopRightRadius: isRTL ? null : "4px",
+    display: 'flex',
+    width: '72px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomLeftRadius: isRTL ? '4px' : null,
+    borderBottomRightRadius: isRTL ? null : '4px',
+    borderTopLeftRadius: isRTL ? '4px' : null,
+    borderTopRightRadius: isRTL ? null : '4px',
     // borderLeft: "none",
-    border: "1px solid #277BFF",
-    padding: "10px",
-    marginBottom: "8px",
-    color: "#277BFF",
-    cursor: "pointer",
+    border: '1px solid #277BFF',
+    padding: '10px',
+    marginBottom: '8px',
+    color: '#277BFF',
+    cursor: 'pointer',
   },
   disabledAfter: {
     display: "flex",
@@ -2332,37 +2381,37 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
   },
   beforeActive: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: isRTL ? null : "4px",
-    borderBottomRightRadius: isRTL ? "4px" : null,
-    borderTopLeftRadius: isRTL ? null : "4px",
-    borderTopRightRadius: isRTL ? "4px" : null,
-    border: "1px solid #277BFF",
-    padding: "10px",
-    marginBottom: "8px",
-    backgroundColor: "#277BFF",
-    color: "#ffffff",
-    cursor: "pointer",
+    display: 'flex',
+    width: '72px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomLeftRadius: isRTL ? null : '4px',
+    borderBottomRightRadius: isRTL ? '4px' : null,
+    borderTopLeftRadius: isRTL ? null : '4px',
+    borderTopRightRadius: isRTL ? '4px' : null,
+    border: '1px solid #277BFF',
+    padding: '10px',
+    marginBottom: '8px',
+    backgroundColor: '#277BFF',
+    color: '#ffffff',
+    cursor: 'pointer',
   },
   afterActive: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomRightRadius: isRTL ? null : "4px",
-    borderBottomLeftRadius: isRTL ? "4px" : null,
-    borderTopRightRadius: isRTL ? null : "4px",
-    borderTopLeftRadius: isRTL ? "4px" : null,
-    borderLeft: "none",
-    border: "1px solid #277BFF",
-    padding: "10px",
-    marginBottom: "8px",
-    backgroundColor: "#277BFF",
-    color: "#ffffff",
-    cursor: "pointer",
+    display: 'flex',
+    width: '72px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomRightRadius: isRTL ? null : '4px',
+    borderBottomLeftRadius: isRTL ? '4px' : null,
+    borderTopRightRadius: isRTL ? null : '4px',
+    borderTopLeftRadius: isRTL ? '4px' : null,
+    borderLeft: 'none',
+    border: '1px solid #277BFF',
+    padding: '10px',
+    marginBottom: '8px',
+    backgroundColor: '#277BFF',
+    color: '#ffffff',
+    cursor: 'pointer',
   },
   // smsGrid: {
   //   padding: "40px 80px 15px 80px"
@@ -2464,7 +2513,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   phoneDiv: {
-    position: "relative",
+    position: 'relative',
+    maxHeight: '340px',
+    overflowY: 'clip',
     "@media screen and (max-width: 960px)": {
       marginTop: 0,
     },
@@ -2812,7 +2863,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "OpenSansHebrew",
     color: "#fff",
     textTransform: "capitalize",
-    width: 120,
+    width: 'auto',
     fontSize: 18,
     borderRadius: 8,
     boxShadow: 'none !important',
@@ -2858,11 +2909,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 150,
   },
   dialogBlueButton: {
-    background: "#006996",
+    background: '#006996',
     // backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
-    border: "1px solid #006996",
-    borderTop: "0px solid #006996",
-    boxShadow: "0px 3px 3px #006996",
+    border: '1px solid #006996',
+    borderTop: '0px solid #006996',
+    boxShadow: '0px 3px 3px #006996',
     // maxWidth: 150,
   },
   dialogConfirmBlueButton: {
@@ -2873,7 +2924,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flex: 1,
     alignContent: "center",
     justifyContent: "center",
-    maxWidth: '100%',
     "@media screen and (max-width: 375px)": {
       "& .MuiGrid-item": {
         padding: "5px !important",
@@ -3059,9 +3109,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ltr: {
     direction: 'ltr'
   },
-  rtl: {
-    direction: 'rtl'
-  },
+
   selectPlaceholderInput: {
     height: '90%',
     opacity: 1,
@@ -3122,7 +3170,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         paddingRight: 10,
         minHeight: 25,
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
       },
       '& svg': {
         color: '#ff3343',
@@ -3160,6 +3208,28 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonMinWidth: {
     minWidth: 167
   },
+  noShadowAccordion: {
+    boxShadow: 'none',
+    '&.MuiAccordion-root': {
+      '&:before': {
+        height: 0,
+      },
+    },
+  },
+  filterHeight: {
+    height: '65vh',
+  },
+  root: {
+    '.Mui-expanded': {
+      margin: '0 !important',
+    },
+  },
+  flexColumnCenter: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   textRed: {
     color: '#c9302c'
   },
@@ -3175,7 +3245,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: '0 !important'
   },
   flexCenterOfCenter: {
-    display: 'flex', width: '100%', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', textAlign: 'center'
+    display: 'flex',
+    width: '100%',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center'
   },
   settingsContainer: {
     marginBottom: 68,
@@ -3304,28 +3379,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
-  noShadowAccordion: {
-    boxShadow: "none",
-    "&.MuiAccordion-root": {
-      "&:before": {
-        height: 0
-      }
-    }
-  },
-  filterHeight: {
-    height: '65vh'
-  },
-  root: {
-    '.Mui-expanded': {
-      margin: '0 !important'
-    }
-  },
-  flexColumnCenter: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center"
-  },
   disabledButPointer: {
     opacity: ".65",
     pointerEvents: "unset !important",
@@ -3337,5 +3390,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       pointerEvents: "none !important",
       cursor: "not-allowed !important",
     }
+  },
+  cursorPointer: {
+    cursor: 'pointer'
   }
 });

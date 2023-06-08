@@ -127,5 +127,6 @@
   "ReadyForDownload": "Ready For Download",
   "InProcess": "In Process",
   "Failed": "Failed",
-  "Completed": "completed" 
+  "Completed": "completed" ,
+  "smsReplies": "SMS Incoming report"
 }

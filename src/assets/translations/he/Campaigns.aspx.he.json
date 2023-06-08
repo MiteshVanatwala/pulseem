@@ -500,7 +500,8 @@
       "clickToVerify": "לאימות לחץ כאן",
       "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול להכניס את המייל לתיבת הספאם.",
       "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
-      "upload": "יופיע כקובץ מצורף במייל שתשלחו"
+      "upload": "יופיע כקובץ מצורף במייל שתשלחו",
+      "newAddress": "כתובת מייל חדשה"
     },
     "errors": {
       "campaignWasNotSent": "הקמפיין לא נשלח!",
@@ -523,11 +524,13 @@
       "FIRST_CAMPAIGN_RESTRICTIONS": "ברכות על שליחת הקמפיין הראשון שלכם!<br/>מכיוון שזה הקמפיין הראשון אותו אתם שולחים, הוא יצטרך לעבור אישור על ידי נציג שלנו.<br/>לאחר קבלת האישור הקמפיין ישלח מידית.",
       "BULK_ENDED": "החבילה שלכם נגמרה!<br/>עברו למסך הבית בכדי לרכוש חבילה חדשה",
       "MONTHLY_BULK_ENDED": "החבילה החודשית שלכם נגמרה!<br/>עברו למסך הבית בכדי לרכוש חבילה חדשה<br/>או פנו לשירות הלקוחות שלנו",
-      "contactUs": "בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+      "contactUs": "בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או באימייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+      "FUTURE_DATE_PASSED": "תאריך שליחת הקמפיין עבר. יש לבחור תאריך עתידי."
     },
     "success": "הקמפיין נשמר בהצלחה",
     "sendSettings": {
       "optimalSending": "שליחה אופטימלית",
+      "optimalSendingFrom": "שליחה אופטימלית תחל ב",
       "optimalSendCBDesc": "לפי שעת פתיחה מועדפת על ידי כל לקוח",
       "optimalSendCBTooltip": "השליחה יכולה לקחת עד 24 שעות להשלמה",
       "segmentation": "פילוחים",
@@ -548,6 +551,7 @@
       "restrictedClients": "לקוחות חסומים",
       "duplicatedClients": "לקוחות כפולים",
       "invalidRecipients": "כתובות דוא\"ל לא תקינים",
+      "specialDateMissing": "שדה מיוחד חסר",
       "filters": "סינון",
       "segmentations": "פילוחים",
       "totalNotToSend":"סה\"כ מסוננים",
@@ -580,7 +584,9 @@
       },
       "deleted": "מסע הפרסום נמחק בהצלחה",
       "send": "שלח",
-      "doNotSend": "לא לשלוח"
+      "doNotSend": "לא לשלוח",
+      "smsComplementary": "שיווק משלים ב-SMS",
+      "optimalPulseConflictMessage": "בחירת \"שליחה אופטימלית\" תבטל את השליחה בפולסים שהגדרתם<br/>האם ברצונכם להמשיך?"
     }
   },
   "newsLetterMgmt": {
@@ -669,8 +675,8 @@
   "kb": "KB",
   "saveBlock": "שמור תבנית",
   "savedBlocks": "תבניות-שמורות",
-  "newsletterSetUp": "הגדרות קמפיין",
   "weSent": "שלחנו!",
   "campaignIsOnItsWay": "הקמפיין שלך בדרך ליעד",
+  "newsletterSetUp": "הגדרות קמפיין",
   "lastSaveAt": "שמירה אחרונה ב: "
 }

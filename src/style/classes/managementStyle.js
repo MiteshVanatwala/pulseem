@@ -420,6 +420,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "#27AE60",
     // marginInlineEnd: '10px',
     "&:hover": {
+      color: "#fff",
       backgroundColor: "#219150",
     },
   },
@@ -447,6 +448,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   actionButtonDarkBlue: {
     backgroundColor: "#5088b5",
     "&:hover": {
+      color: "#fff",
       backgroundColor: "#4477a2",
     },
   },
@@ -1244,6 +1246,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    padding: 15,
+    paddingBottom: 0
   },
   languageSelect: {
     textTransform: "capitalize",

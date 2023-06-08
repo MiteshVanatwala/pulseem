@@ -1,5 +1,6 @@
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
 
 
 export const getCampaignById = createAsyncThunk(
@@ -48,7 +49,7 @@ export const getUserblocks = createAsyncThunk(
     '/CampaignEditor/GetUserblocks/', async (thunkAPI) => {
         try {
             const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
-            return JSON.parse(response.data)
+            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
@@ -84,6 +85,44 @@ export const getBeeToken = createAsyncThunk(
         }
     });
 
+export const getTemplateById = createAsyncThunk(
+    '/CampaignEditor/GetTemplateById/', async (id, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const saveTemplateToAccount = createAsyncThunk(
+    '/CampaignEditor/SaveAsTemplate', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`CampaignEditor/SaveAsTemplate`, data);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const getPublicTemplates = createAsyncThunk(
+    '/CampaignEditor/GetPublicTemplates', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const getAllTemplatesBySubaccountId = createAsyncThunk(
+    '/CampaignEditor/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
@@ -92,10 +131,16 @@ export const campaignEditorSlice = createSlice({
         userBlocks: null,
         ToastMessages: {
             CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
+            TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
             RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
-        }
+        },
+        templateDetails: {},
+        publicTemplates: [],
+        publicTemplateCategories: [],
+        templatesBySubAccount: [],
+        templatesBySubAccountCategories: []
     },
     extraReducers: builder => {
         builder
@@ -115,6 +160,14 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(getBeeToken.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;
+            })
+            .addCase(getPublicTemplates.fulfilled, (state, action) => {
+                state.publicTemplates = action.payload.Data
+                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
+            })
+            .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
+                state.templatesBySubAccount = action.payload.Data;
+                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
             })
 
     }

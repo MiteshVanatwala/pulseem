@@ -192,9 +192,10 @@ const Groups = ({ classes }) => {
             await dispatch(getAccountExtraData());
         }
         setLoader(false);
-        getSubAccountGroups();
+        if (subAccountAllGroups.length === 0) {
+            getSubAccountGroups();
+        }
     };
-
     const reSearch = () => {
         const queryState = from?.toLowerCase().indexOf('clientsearchresult') > -1;
         pageProperty.current = GetPageNyName('groups');
@@ -225,7 +226,6 @@ const Groups = ({ classes }) => {
             reSearch();
         }
     }, [dispatch, serachData.SearchTerm, rowsPerPage]);
-
 
     useEffect(() => {
         if (qs?.NewGroup === 'true') {
@@ -2178,7 +2178,7 @@ const Groups = ({ classes }) => {
                         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
                         selectedGroups={selectedGroups}
                         selectGroup={(idArr) => setSelectedGroups(idArr)}
-                        onAddRecipient={handleAddRecipientResponse}
+                        onAddRecipient={(_, result) => handleAddRecipientResponse(result)}
                     />
                 }
                 case DialogType.DELETE_RECIPIENT:

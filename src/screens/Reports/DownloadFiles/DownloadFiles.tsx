@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import moment from 'moment';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Box, Grid
+    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Box, Grid
 } from '@material-ui/core'
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux'

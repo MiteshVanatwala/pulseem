@@ -68,6 +68,7 @@ const NotificationSend = ({ classes }) => {
     const [showConfirmCancel, setShowConfirmCancel] = useState(false);
     const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
     const [showGroupsList, setShowGroupsList] = useState(false);
+    const [isSending, setIsSending] = useState(false);
 
     const toastMessages = {
         SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
@@ -492,10 +493,11 @@ const NotificationSend = ({ classes }) => {
                 >
                     <Grid item>
                         <Button
-                            onClick={insertNotificationForSend}
+                            onClick={(e) => { setIsSending(true); insertNotificationForSend(e); }}
                             className={clsx(
                                 classes.btn,
-                                classes.btnRounded
+                                classes.btnRounded,
+                                isSending ? classes.disabled : null
                             )}
                             endIcon={isRTL ? <MdArrowBackIos /> : <MdArrowForwardIos />}
                         >

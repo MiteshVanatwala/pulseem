@@ -35,7 +35,7 @@ export interface KeyValue {
     id: number;
     value: string;
 }
-const DateOptions: string[] = ['SendDate', 'LastEditDate', 'UpdateDate', 'UpdatedDate', 'CreationDate', 'ReplyDate', 'DATE'];
+const DateOptions: string[] = ['SendDate', 'LastEditDate', 'UpdateDate', 'UpdatedDate', 'CreationDate', 'ReplyDate', 'DATE', "Schedule"];
 
 export const HandleExportData = async (exportData: ExportData, options: ExportOption) => {
     let finalExportData: ExportData = exportData;
