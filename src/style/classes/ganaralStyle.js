@@ -2376,7 +2376,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: "capitalize",
     width: 'auto',
     fontSize: 18,
-    borderRadius: 8,
+    borderRadius: 5,
     boxShadow: 'none !important',
     border: 'none !important'
   },
@@ -2477,6 +2477,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       backgroundColor: 'transparent'
     }
+  },
+  elipsis: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
   },
   p5: {
     padding: 5

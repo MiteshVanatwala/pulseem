@@ -19,6 +19,7 @@ const Templates = ({
   const [tabValue, setTabValue] = useState(0);
   const [ templateList, setTemplateList ] = useState([]);
   const [ categoryList, setCategoryList ] = useState([]);
+  const [ maxTemplatesToShow, setMaxTemplatesToShow ] = useState(8);
   const [ selectedCategory, setSelectedCategory ] = useState<null | string>(null);
   const refScriptCode = useRef<HTMLDivElement>(null);
   const refCategory = useRef<HTMLDivElement>(null);
@@ -46,12 +47,19 @@ const Templates = ({
   }
 
   useEffect(() => {
-    setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount);
+    const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
+    setTemplateList(templates);
     const categories = tabValue === 0 ? publicTemplateCategories : templatesBySubAccountCategories;
     setCategoryList(categories);
     setSelectedCategory(categories.length > 0 ? categories[0] : '');
     setLoader(false);
   }, [ publicTemplates, templatesBySubAccount, tabValue ]);
+
+  useEffect(() => {
+    if (selectedCategory === '') {
+      setTemplateList(publicTemplates.slice(0, maxTemplatesToShow));
+    }
+  }, [ maxTemplatesToShow, selectedCategory ]);
 
   useEffect(() => {
     if (!publicTemplates.length) setLoader(true);
@@ -64,7 +72,7 @@ const Templates = ({
           <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
             {renderHtml(templateDetails.Html)}
           </Box>
-          <div className={clsx(classes.textCenter, classes.pt5, classes.f14)}>{convertHyphensToword(templateDetails.Name)}</div>
+          <div className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
           <div className={clsx(classes.textCenter, classes.p5)}>
             <Button
               className={clsx(
@@ -125,7 +133,10 @@ const Templates = ({
              categoryList?.length > 0 && (
               <Typography
                 className={clsx(classes.dBlock, classes.pb10, classes.f16, selectedCategory === '' ? classes.bold : '', classes.cursorPointer)}
-                onClick={() => setSelectedCategory('')}
+                onClick={() => {
+                  setMaxTemplatesToShow(8);
+                  setSelectedCategory('')
+                }}
               >
                 {t('common.all')}
               </Typography>
@@ -172,6 +183,26 @@ const Templates = ({
               }
             </Grid>
           </Box>
+          {
+            selectedCategory === '' && maxTemplatesToShow < publicTemplates.length && (
+              <Box className={clsx(classes.textCenter, classes.pt2rem)}>
+                <Button
+                  className={clsx(
+                    classes.actionButton,
+                    classes.actionButtonLightBlue,
+                    classes.paddingSides25
+                  )}
+                  onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
+                >
+                  <Typography    
+                    className={clsx(classes.dBlock, classes.f18)}
+                  >
+                    Load More
+                  </Typography>
+                </Button>
+              </Box>
+            )
+          }
         </Grid>
       </Grid>
       <TemplatePreview
