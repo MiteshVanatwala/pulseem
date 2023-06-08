@@ -111,9 +111,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: minDialogWidth[windowSize],
-      maxWidth: maxDialogWidth[windowSize],
-
+      minWidth: `${minDialogWidth[windowSize]} !important`,
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",
@@ -936,6 +934,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& .dialogChildren': {
       paddingLeft: 0,
       paddingRight: 0,
+    },
+    "& .MuiDialog-paperWidthSm": {
+      minWidth: maxDialogWidth[windowSize],
+      maxWidth: maxDialogWidth[windowSize],
     },
   },
   templateItem: {

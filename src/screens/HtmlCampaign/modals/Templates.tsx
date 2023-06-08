@@ -17,22 +17,24 @@ const Templates = ({
 }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState(0);
-  const handleChange = (event: any, newValue: any) => {
-    setTabValue(newValue);
-    setSelectedCategory('')
-  };
   const [ templateList, setTemplateList ] = useState([]);
   const [ categoryList, setCategoryList ] = useState([]);
-  const [ selectedCategory, setSelectedCategory ] = useState('');
+  const [ selectedCategory, setSelectedCategory ] = useState<null | string>(null);
   const refScriptCode = useRef<HTMLDivElement>(null);
   const refCategory = useRef<HTMLDivElement>(null);
   const [ openPreview, setOpenPreview ] = useState(false);
   const [ selectedTemplate, setSelectedTemplate ] = useState({});
   const [ showLoader, setLoader ] = useState(true);
   const [ selectedTemplateId, setSelectedTemplateId ] = useState(0);
-  const { publicTemplates, templatesBySubAccount } = useSelector(
+  const { publicTemplates, templatesBySubAccount, publicTemplateCategories, templatesBySubAccountCategories } = useSelector(
     (state: { campaignEditor: any }) => state.campaignEditor
   );
+
+  const handleChange = (event: any, newValue: any) => {
+    setTabValue(newValue);
+    setTemplateList([]);
+    setSelectedCategory(null);
+  };
 
   const renderHtml = (html: any) => {
     function createMarkup() {
@@ -45,12 +47,11 @@ const Templates = ({
 
   useEffect(() => {
     setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount);
+    const categories = tabValue === 0 ? publicTemplateCategories : templatesBySubAccountCategories;
+    setCategoryList(categories);
+    setSelectedCategory(categories.length > 0 ? categories[0] : '');
     setLoader(false);
   }, [ publicTemplates, templatesBySubAccount, tabValue ]);
-
-  useEffect(() => {
-    setCategoryList(getUniqueValuesOfKey(templateList, 'Category'));
-  }, [templateList]);
 
   useEffect(() => {
     if (!publicTemplates.length) setLoader(true);

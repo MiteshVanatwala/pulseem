@@ -1,5 +1,6 @@
 import { instence } from '../../helpers/api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getUniqueValuesOfKey } from '../../helpers/utils';
 
 
 export const getCampaignById = createAsyncThunk(
@@ -126,7 +127,9 @@ export const campaignEditorSlice = createSlice({
         },
         templateDetails: {},
         publicTemplates: [],
-        templatesBySubAccount: []
+        publicTemplateCategories: [],
+        templatesBySubAccount: [],
+        templatesBySubAccountCategories: []
     },
     extraReducers: builder => {
         builder
@@ -150,9 +153,11 @@ export const campaignEditorSlice = createSlice({
             .addCase(getTemplateById.fulfilled, (state, { payload }) => {})
             .addCase(getPublicTemplates.fulfilled, (state, action) => {
                 state.publicTemplates = action.payload.Data
+                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
             })
             .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
-                state.templatesBySubAccount = action.payload.Data
+                state.templatesBySubAccount = action.payload.Data;
+                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
             })
 
     }
