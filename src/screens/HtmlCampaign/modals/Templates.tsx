@@ -17,10 +17,10 @@ const Templates = ({
 }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState(0);
-  const [ templateList, setTemplateList ] = useState([]);
-  const [ categoryList, setCategoryList ] = useState([]);
-  const [ maxTemplatesToShow, setMaxTemplatesToShow ] = useState(8);
-  const [ selectedCategory, setSelectedCategory ] = useState<null | string>(null);
+  const [templateList, setTemplateList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
+  const [maxTemplatesToShow, setMaxTemplatesToShow] = useState(8);
+  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
   const refScriptCode = useRef<HTMLDivElement>(null);
   const refCategory = useRef<HTMLDivElement>(null);
   const [openPreview, setOpenPreview] = useState(false);
@@ -59,7 +59,7 @@ const Templates = ({
     if (selectedCategory === '') {
       setTemplateList(publicTemplates.slice(0, maxTemplatesToShow));
     }
-  }, [ maxTemplatesToShow, selectedCategory ]);
+  }, [maxTemplatesToShow, selectedCategory]);
 
   useEffect(() => {
     if (!publicTemplates.length) setLoader(true);
@@ -116,6 +116,7 @@ const Templates = ({
   }
 
   return <BaseDialog
+    classes={classes}
     customContainerStyle={classes.beeTemplate}
     contentStyle={classes.beeTemplate}
     open={isOpen}
@@ -194,7 +195,7 @@ const Templates = ({
                   )}
                   onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
                 >
-                  <Typography    
+                  <Typography
                     className={clsx(classes.dBlock, classes.f18)}
                   >
                     Load More
