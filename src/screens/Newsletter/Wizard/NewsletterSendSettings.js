@@ -649,6 +649,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     }, [newGroupId, subAccountAllGroups])
 
     const handleCreateGroupResponses = (res, successCallback) => {
+        setToastMessage(null);
         switch (res?.payload?.StatusCode) {
             case 200:
                 break;
@@ -665,6 +666,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
     const handleAddClientsResponse = (res) => {
+        setToastMessage(null);
         switch (res?.StatusCode) {
             case 201: {
                 setActiveTab(0);
@@ -1093,6 +1095,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                         height: 395
                                     }}
                                     onDone={(groupName, res, uploadedAsFile) => {
+                                        //setToastMessage(null);
                                         handleUploadRecipients(groupName, res, uploadedAsFile);
                                     }}
                                     settings={{ ...UploadSettings.GROUPS, ShowGroupName: true }}
