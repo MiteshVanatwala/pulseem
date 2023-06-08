@@ -6,19 +6,17 @@ import {
   Grid,
   Dialog,
   Paper,
-  Divider,
 } from "@material-ui/core";
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
-import useCore from "../../helpers/hooks/Core";
 import { CgClose } from "react-icons/cg";
 import { IoAlertCircleOutline } from "react-icons/io5";
 
 export const BaseDialog = ({
+  classes,
   childrenPadding = true,
   open = true,
   title = "",
@@ -49,7 +47,6 @@ export const BaseDialog = ({
     false: "ltr",
   };
 
-  const { classes } = useCore();
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(
     (state: { core: any }) => state.core
@@ -63,13 +60,14 @@ export const BaseDialog = ({
     exitButton ?? (
       <Stack
         onClick={onExit}
-        className={clsx(classes.dialogExitButton, classes.f20, {
-          [classes.dialogExitButtonRTL]: isRTL,
-          [classes.dialogExitButtonLTR]: !isRTL,
-        })}
+        className={clsx(classes.dialogExitButton, classes.f20, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
         justifyContent="center"
         alignItems="center"
         alignSelf="center"
+        style={{
+          left: isRTL ? 15 : 'auto',
+          right: isRTL ? 'auto' : 15,
+        }}
       >
         <CgClose />
       </Stack>
@@ -78,7 +76,6 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
-        style={{ textAlign: 'center', marginTop: 15, color: "#000" }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -89,7 +86,7 @@ export const BaseDialog = ({
       >
         {title}
       </Typography>
-      {showDivider && <Divider />}
+      {/* {showDivider && <Divider />} */}
     </>
   );
 
@@ -105,31 +102,29 @@ export const BaseDialog = ({
       >
         <Grid item>
           <Button
-            variant='contained'
-            size='small'
-            disabled={confirmDisabled}
-            onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
+            name="btnConfirm"
             className={clsx(
-              classes.solidDialogButton,
-              classes.dialogConfirmButton
-            )}>
+              classes.btn,
+              classes.btnRounded,
+              "saveFixedDetails"
+            )}
+            onClick={(e: React.MouseEvent<HTMLElement>) => onConfirm()}
+          >
             <>{t(confirmText)}</>
           </Button>
         </Grid>
         <Grid item>
           <Button
-            variant='contained'
-            size='small'
+            variant="contained"
+            size="small"
             onClick={(e: React.MouseEvent<HTMLElement>) => {
               if (onClose) {
                 onClose();
               }
               return false;
             }}
-            className={clsx(
-              classes.solidDialogButton,
-              classes.dialogCancelButton
-            )}>
+            className={clsx(classes.btn, classes.btnRounded)}
+          >
             <>{t(cancelText)}</>
           </Button>
         </Grid>
@@ -143,12 +138,7 @@ export const BaseDialog = ({
     if (icon === false) return <></>;
     const alertIcon = <IoAlertCircleOutline />;
     return (
-      <Stack
-        className={clsx(classes.dialogIconContainer, {
-          [classes.dialogIconContainerRTL]: isRTL,
-          [classes.dialogIconContainerLTR]: !isRTL,
-        })}
-      >
+      <Stack className={classes.dialogIconContainer}>
         {icon || alertIcon}
       </Stack>
     );
@@ -157,14 +147,13 @@ export const BaseDialog = ({
   const RenderTopBar = () => {
     return (
       <Stack
-        style={{ width: '100%' }}
         className={clsx(classes.dialogTopBar)}
         direction="row"
         justifyContent={"space-between"}
       >
-        <Stack direction={"row"} style={{ width: '100%' }}>
-          {/* {RenderIcon()} */}
-          <Stack alignSelf="center" style={{ width: '100%' }}>
+        <Stack direction={isRTL ? "row-reverse" : "row"}>
+          {RenderIcon()}
+          <Stack alignSelf="center">
             {renderTitle ? renderTitle() : RenderTitleDefault()}
           </Stack>
         </Stack>

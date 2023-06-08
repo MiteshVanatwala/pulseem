@@ -1,5 +1,6 @@
+import { sitePrefix } from "../../config"
 const CLIENT_CONSTANTS = {
-    BASEURL: '/ClientSearchResult',
+    BASEURL: `${sitePrefix}ClientSearchResult`,
     PAGE_TYPES: {
         Undefined: 0,
         OpenedCampaignID: 1,

@@ -1,5 +1,4 @@
 import React from 'react';
-import clsx from 'clsx';
 import { Typography, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { BsInfoCircleFill } from 'react-icons/bs';
@@ -31,7 +30,7 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
-const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = null, forceDirection = null }) => {
+const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null, titleStyle = null, forceDirection = null  }) => {
   const { isRTL } = useSelector(state => state.core)
   return (isSimpleTooltip ?
     <BootstrapTooltip

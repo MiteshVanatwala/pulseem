@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getMmsData = createAsyncThunk(
   'mms/getMmsCampaigns', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`mms/getMmsCampaigns`);
+      const response = await PulseemReactInstance.get(`mms/getMmsCampaigns`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -14,7 +14,7 @@ export const getMmsData = createAsyncThunk(
 export const getMMSByID = createAsyncThunk(
   'mms/GetPreview/', async (id, thunkAPI) => {
     try {
-      const response = await instence.get(`mms/GetPreview/${id}`);
+      const response = await PulseemReactInstance.get(`mms/GetPreview/${id}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -24,7 +24,7 @@ export const getMMSByID = createAsyncThunk(
 export const restoreMms = createAsyncThunk(
   'mms/restoreMmsCampaigns', async (deletedMms, thunkAPI) => {
     try {
-      const response = await instence.put(`mms/restoreMmsCampaigns`, deletedMms);
+      const response = await PulseemReactInstance.put(`mms/restoreMmsCampaigns`, deletedMms);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -34,7 +34,7 @@ export const restoreMms = createAsyncThunk(
 export const deleteMms = createAsyncThunk(
   'mms/deleteMmsCampaigns', async (id, thunkAPI) => {
     try {
-      const response = await instence.delete(`mms/deleteMmsCampaigns/${id}`);
+      const response = await PulseemReactInstance.delete(`mms/deleteMmsCampaigns/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -44,7 +44,7 @@ export const deleteMms = createAsyncThunk(
 export const duplicteMms = createAsyncThunk(
   'mms/cloneMmsCampaign', async (id, thunkAPI) => {
     try {
-      const response = await instence.put(`mms/cloneMmsCampaign/${id}`);
+      const response = await PulseemReactInstance.put(`mms/cloneMmsCampaign/${id}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -54,7 +54,7 @@ export const duplicteMms = createAsyncThunk(
 export const getMmsReport = createAsyncThunk(
   'reports/MmsReport', async (query, thunkAPI) => {
     try {
-      const response = await instence.get(`report/MMSReport/?includeTestCampaign=${query}`);
+      const response = await PulseemReactInstance.get(`report/MMSReport/?includeTestCampaign=${query}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -64,7 +64,7 @@ export const getMmsReport = createAsyncThunk(
 export const getMmsGraph = createAsyncThunk(
   'reports/MmsReportGraph', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`reports/MmsReportGraph`);
+      const response = await PulseemReactInstance.get(`reports/MmsReportGraph`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

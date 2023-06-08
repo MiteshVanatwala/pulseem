@@ -1,6 +1,7 @@
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 import { TYPE_JSX } from "./common";
 export type DialogOptions = {
+  classes: any;
   childrenPadding?: boolean;
   open: boolean;
   title: any;
@@ -35,6 +36,7 @@ export type Slide_PropTypes = {
 };
 
 export type Slider_Dialog_PropTypes = {
+  classes: any;
   slides: Slide_PropTypes[];
   isOpen: boolean;
   VARIABLE_SLIDE_HEIGHTS?: null | String[];

@@ -14,11 +14,12 @@ import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { WhatsappStatus } from '../../../helpers/PulseemArrays';
-import { whatsappStatusToString, whatsappStatusColor, renderHtml } from '../../../helpers/functions';
+import { WhatsappStatus } from '../../../helpers/Constants';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ImWhatsapp } from 'react-icons/im';
+import { ConvertColorStatus, ConvertWhatsappStatusText, SourceType } from '../../../helpers/UI/TableText';
 
 const DirectWhatsappReportTab = ({
     classes,
@@ -102,9 +103,9 @@ const DirectWhatsappReportTab = ({
             text = `${text.format('DD/MM/YYYY HH:mm')}`
         }
         if (dataType === 'status') {
-            text = t(whatsappStatusToString(text));
+            text = t(ConvertWhatsappStatusText(text));
             return (
-                <Typography style={{ color: whatsappStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+                <Typography style={{ color: ConvertColorStatus(data, SourceType.WHATSAPP), fontWeight: 600 }}>{text}</Typography>
             )
         }
 
@@ -628,7 +629,7 @@ const DirectWhatsappReportTab = ({
             </>
         ) : <>
             <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-                <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
+                <Typography style={{ fontSize: 30 }}>{RenderHtml(t('common.whatsappCommingSoon'))}</Typography>
                 <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
             </Box>
         </>}

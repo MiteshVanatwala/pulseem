@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import {
   Button,
   Grid,
@@ -17,8 +17,6 @@ import {
 } from "@material-ui/core";
 
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
-import { setCookie } from "../../../helpers/cookies";
-import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -57,11 +55,10 @@ const RecipientsTab = ({ classes }) => {
 
   const styles = useStyles();
 
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector(
+  const { windowSize, rowsPerPage } = useSelector(
     (state) => state.core
   );
 
-  const { t } = useTranslation();
   const [selectintial, setselectintial] = useState("1");
   const rowsOptions = [6, 12, 18];
   const [page, setPage] = useState(1);
@@ -514,7 +511,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={EditIcon}
           lable="Edited"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -522,7 +519,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Delete from Group"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -530,7 +527,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove email"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
         <ManagmentIcon
           classes={classes}
@@ -538,7 +535,7 @@ const RecipientsTab = ({ classes }) => {
           textClass={classes.lineHeight1point2}
           icon={GroupsIcon}
           lable="Remove phone"
-          // href={`/CampaignStatistics/${CampaignID}`}
+        // href={`/CampaignStatistics/${CampaignID}`}
         />
       </Box>
     );

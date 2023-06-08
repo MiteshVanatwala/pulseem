@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Box, TextField } from "@material-ui/core";
-import { Dialog } from "../managment/index";
+import { Typography, Grid, Box, TextField, Button, Tooltip } from "@material-ui/core";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import Papa from 'papaparse';
@@ -9,17 +8,17 @@ import {
     addRecipient,
     addRecipients
 } from "../../redux/reducers/groupSlice";
-import { Tooltip } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
-import { renderHtml } from "../../helpers/utils";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import moment from 'moment';
 import 'moment/locale/he';
-import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
-import { Button } from "@mui/material";
+import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
+import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -35,12 +34,16 @@ const useStyles = makeStyles((theme) => ({
 
 const UploadXL = ({
     classes,
+    areaStyle,
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
     uploadToGroups = [],
     setToastMessage,
     settings = null,
-    tooltipText = "smsReport.manualTotalTooltip"
+    tooltipText = "smsReport.manualTotalTooltip",
+    onlyMapping = false,
+    extraButtons = <></>,
+    onType = null
 }) => {
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
@@ -54,13 +57,12 @@ const UploadXL = ({
     const [areaData, setareaData] = useState("");
     const [dropClick, setdropClick] = useState(false);
     const [typedData, settypedData] = useState([]);
-    // const [initialheadstate, setinitialheadstate] = useState([]);
     const [headers, setheaders] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
     const [highlighted, setHighlighted] = React.useState(false);
     const [contacts, setContacts] = React.useState([]);
     const [groupNameInput, setgroupNameInput] = useState("");
-    // const [toastMessage, setToastMessage] = useState(null);
+    //eslint-disable-next-line
     const [groupList, setGroupList] = useState([]);
     const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
@@ -100,6 +102,7 @@ const UploadXL = ({
         fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
 
         setselectArray(fields);
+
     }, [dialogType]);
 
 
@@ -170,6 +173,7 @@ const UploadXL = ({
         if (records?.length < 100) {
             setareaData(pastedData);
             setdropClick(false);
+            onType && onType(pastedData);
         }
         else {
             handlePasted(pastedData);
@@ -208,10 +212,11 @@ const UploadXL = ({
         }
         setheaders(dummyArr);
         if (b.length > 1000) {
-            jsonToCSV({ array: b }).then((csvOutput) => {
-                const file = createFile(csvOutput, 'csv');
-                setFileToUpload(file);
-                parseFile(csvOutput);
+            JsonToCSV({ array: b }).then((csvOutput) => {
+                CreateFile(csvOutput, 'csv').then((file) => {
+                    setFileToUpload(file);
+                    parseFile(csvOutput);
+                })
             });
         }
         else {
@@ -356,7 +361,8 @@ const UploadXL = ({
                                     settypedData(b);
 
                                     let ddc = [];
-                                    for (let i in resultCsv[0]) {
+                                    //eslint-disable-next-line
+                                    for (let { } in resultCsv[0]) {
                                         ddc.push(t("sms.adjustTitle"))
                                     }
                                     if (ddc !== 0) {
@@ -372,11 +378,21 @@ const UploadXL = ({
                         reader.readAsText(file, "ISO-8859-8");
                     }
                     else {
+                        dispatch(sendToTeamChannel({
+                            MethodName: 'handleFiles',
+                            ComponentName: 'UploadXL.js',
+                            Text: `Client trying to upload non-acceptable file - ${file.name}`
+                        }));
                         setLoader(false);
                         return false;
                     }
                 }
                 catch (error) {
+                    dispatch(sendToTeamChannel({
+                        MethodName: 'handleFiles',
+                        ComponentName: 'UploadXL',
+                        Message: error
+                    }));
                     reject(error);
                 }
             });
@@ -414,6 +430,7 @@ const UploadXL = ({
 
     const handleDataManual = async () => {
         if (manualUploadValidationscheck()) {
+            let uploadAsFile = false;
             setLoader(true);
             let r = null;
             let requestPayload = [];
@@ -464,12 +481,20 @@ const UploadXL = ({
                 return x !== undefined;
             });
 
-            if (fileToUpload !== null && dataToUpload.length >= 5000) {
+            uploadAsFile = fileToUpload !== null && dataToUpload.length >= 5000;
+            if (uploadAsFile) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
                 formData.append("mapping", JSON.stringify(mapping));
-                r = await dispatch(addRecipients(formData))
+
+                if (onlyMapping === true) {
+                    onDone(groupNameInput, formData, uploadAsFile);
+                }
+                else {
+                    r = await dispatch(addRecipients(formData));
+                    onDone(groupNameInput, r);
+                }
             }
             else {
                 const finalPayload = {
@@ -477,11 +502,16 @@ const UploadXL = ({
                     GroupIds: uploadToGroups,
                     Mapping: mapping
                 }
-                r = await dispatch(addRecipient(finalPayload))
+                if (onlyMapping === true) {
+                    onDone(groupNameInput, finalPayload, uploadAsFile);
+                }
+                else {
+                    r = await dispatch(addRecipient(finalPayload));
+                    onDone(groupNameInput, r);
+                }
             }
 
             setFileToUpload(null);
-            onDone(r);
             setTimeout(() => {
                 setLoader(false);
             }, 1000);
@@ -683,7 +713,7 @@ const UploadXL = ({
     const cautionDialog = () => {
         return {
             title: t('sms.columnAdjustment'),
-            content: renderHtml(t('sms.reset_manual_upload_notice')),
+            content: RenderHtml(t('sms.reset_manual_upload_notice')),
             disableBackdropClick: true,
             onClose: () => setDialogType({ type: "manualUpload" }),
             onCancel: () => setDialogType({ type: "manualUpload" }),
@@ -692,6 +722,7 @@ const UploadXL = ({
                 settypedData([]);
                 settotalRecords(0)
                 setDialogType(null);
+                onType && onType('');
             }
         }
     }
@@ -708,14 +739,15 @@ const UploadXL = ({
 
         if (type) {
             return (
-                dialogType && <Dialog
+                dialogType && <BaseDialog
                     classes={classes}
                     open={dialogType}
                     childrenStyle={classes.mb25}
-                    onClose={() => { setDialogType(null) }}
+                    onClose={() => setDialogType(null)}
+                    onCancel={() => setDialogType(null)}
                     {...currentDialog}>
                     {currentDialog.content}
-                </Dialog>
+                </BaseDialog>
             )
         }
         return <></>
@@ -755,6 +787,7 @@ const UploadXL = ({
                     highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
                 )
                 }
+                style={{ ...areaStyle }}
                 value={areaData}
                 onDragEnter={() => {
                     setHighlighted(true);
@@ -782,11 +815,11 @@ const UploadXL = ({
             />
         </Grid>
         <Grid item md={12} xs={12}>
-            <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
+            <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "flex-start" }}>
                 {areaData !== "" ? (
-                    <div>
+                    <>
                         <Button
-                            className={classes.addManualDiv}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 handlePasted(areaData);
                             }}
@@ -794,19 +827,21 @@ const UploadXL = ({
                             {t("sms.editFields")}
                         </Button>
                         <Button
-                            className={classes.clearDiv}
+                            className={clsx(classes.btn, classes.btnRounded, classes.ml5)}
                             onClick={() => {
                                 setareaData("");
                                 setContacts([]);
                                 settypedData([]);
                                 settotalRecords(0)
+                                onType && onType('');
                             }}
                         >
                             {t("sms.clearList")}
                         </Button>
-                    </div>
+                        {extraButtons}
+                    </>
                 ) : null}
-                <span>{t("sms.totalRecords")}:  {totalRecords}</span>
+                <span style={{ marginTop: areaData === "" ? 12 : null }}>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
         </Grid>
         <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />

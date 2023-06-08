@@ -19,8 +19,9 @@ import {
     createGroup,
     getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
-
-import { Dialog } from "../../../../components/managment/Dialog";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+import { getTestGroups } from "../../../../redux/reducers/smsSlice";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
 
 const AddGroupPopUp = ({
     classes,
@@ -83,6 +84,8 @@ const AddGroupPopUp = ({
                             await resolutionFunc(getData());
                             setNewGroupData(DEFAULT_NEW_GROUP);
                             onClose()
+                            if (data.IsTestGroup)
+                                await dispatch(getTestGroups());
                         }).then((res) => {
                             callback?.(response.payload.Message)
                         })
@@ -115,6 +118,11 @@ const AddGroupPopUp = ({
             })
 
         } catch (err) {
+            dispatch(sendToTeamChannel({
+                MethodName: 'init2FA',
+                ComponentName: 'Dashboard.js',
+                Text: err
+            }));
             return false;
         }
         setSaveDisabled(false);
@@ -122,14 +130,13 @@ const AddGroupPopUp = ({
 
     return (
         <>
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={isOpen}
                 title={t("group.createNew")}
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
-                showDivider={true}
                 onClose={onClose}
                 onCancel={onClose}
                 onConfirm={() => {
@@ -150,8 +157,8 @@ const AddGroupPopUp = ({
                                 variant="contained"
                                 size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogCancelButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap
                                 )}
@@ -171,8 +178,8 @@ const AddGroupPopUp = ({
                                 size="medium"
                                 className={clsx(
                                     classes.fullWidth,
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.actionButtonLightGreen,
                                     classes.whiteSpaceNoWrap,
                                     !newGroupData.GroupName || saveDisabled ? classes.disabled : '',
@@ -194,8 +201,8 @@ const AddGroupPopUp = ({
                                 variant="contained"
                                 size="medium"
                                 className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
+                                    classes.btn,
+                                    classes.btnRounded,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap,
                                     classes.textUppercase,
@@ -293,7 +300,7 @@ const AddGroupPopUp = ({
                         </CustomTooltip>
                     </Box>
                 </Box>
-            </Dialog>
+            </BaseDialog>
         </>
     );
 };

@@ -2,12 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next'
 import { Grid, Typography, Divider } from '@material-ui/core';
 import Package from '../../PackageBox/Package';
-import { useSelector } from 'react-redux'
-//import PurchaseLogs from '../PurhcaseLogs/Logs';
 
 const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
     const { t } = useTranslation();
-    const { windowSize } = useSelector(state => state.core);
     if (data !== null) {
         const packageLength = data.length;
         let packPerLine = Math.ceil(12 / packageLength);
@@ -21,11 +18,9 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
         return (
             packageList[packageType].data &&
             <>
-                {/* {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />} */}
                 <Grid item xs={12}>
-                    <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{packageList[packageType].title}</Typography>
+                    <Typography>{packageList[packageType].description}</Typography>
                     <Divider />
-                    <Typography className={classes.mt3}>{packageList[packageType].description}</Typography>
                 </Grid>
                 {
                     packageList[packageType].data.sort((a, b) => a.Quantity - b.Quantity).map((d, index) => {
