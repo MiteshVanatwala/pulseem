@@ -306,25 +306,6 @@ const SummaryModal = ({
 		return 0;
 	};
 
-	// const isShowTierAlert = () => {
-	// 	const messageLeft = campaignSummary?.WhatsappSmsLeft || 0;
-	// 	const messageRequired = campaignSummary?.FinalCount || 0;
-
-	// 	if (campaignSummary?.WhatsappTierID !== 4) {
-	// 		if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
-	// 			if (messageLeft < messageRequired) {
-	// 				return true;
-	// 			} else {
-	// 				return false;
-	// 			}
-	// 		} else {
-	// 			return false;
-	// 		}
-	// 	} else {
-	// 		return false;
-	// 	}
-	// };
-
 	return (
 		<Dialog
 			fullScreen={fullScreen}
