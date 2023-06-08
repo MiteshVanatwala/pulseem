@@ -2775,6 +2775,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '& #multiple-checkbox': {
       width: 330,
     },
+    '& .group-dropdown': {
+      width: 400,
+    },
     '& .MuiSelect-icon': {
       position: 'initial',
       paddingRight: '10px'

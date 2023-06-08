@@ -14,7 +14,7 @@
     "insertClientToGroup": "הכנס לקוחות לקבוצות:",
     "insertToken": "הזינו את הטוקן אותו קיבלתם ביצירת האפליקציה",
     "insertAPIKey": "הזינו את המפתח אותו קיבלתם ביצירת האפליקציה",
-    "insertShopifyURL": "הזינו את כתובת האתר של החנות שלכם בשופיפיי",
+    "insertShopifyURL": "הכניסו את החלוק המודגש בלבד: shopify.com/store/<b>mystore</b>",
     "authenticate": "התחבר",
     "enterShopifyUrl": "הזינו כתובת אתר",
     "enterAPIKey": "API הזינו מפתח",
@@ -22,6 +22,7 @@
     "enterAPIVersion": "API Version הזינו",
     "reset": "אפס",
     "showCredentials": "הצג פרטי התחברות",
+    "hideCredentials": "להתחבא  פרטי התחברות",
     "apiVersion": "גרסת API",
     "authResponses": {
       "201": "החנות אומתה בהצלחה",

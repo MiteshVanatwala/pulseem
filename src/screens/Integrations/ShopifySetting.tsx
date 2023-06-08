@@ -11,6 +11,8 @@ import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integra
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 import { logout } from '../../helpers/api'
 import { BaseDialog } from "../../components/DialogTemplates/BaseDialog";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
+import GroupTags from "../../components/Groups/GroupTags";
 
 const Shopify = ({ classes }: any) => {
   const { t } = useTranslation();
@@ -21,6 +23,7 @@ const Shopify = ({ classes }: any) => {
   const [showLoader, setShowLoader] = useState(false);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isShowCredentials, setIsShowCredentials] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
   const [errors, setErrors] = useState({
     api_key: '',
     api_access_token: '',
@@ -63,6 +66,7 @@ const Shopify = ({ classes }: any) => {
     if (subAccountAllGroups?.length === 0) {
       dispatch(getGroupsBySubAccountId());
     }
+    setIsPageLoading(false);
   }
 
   const authenticateStore = async () => {
@@ -290,168 +294,182 @@ const Shopify = ({ classes }: any) => {
   return (
     <>
       {toastMessage && renderToast()}
-      <Box className={"formContainer"}>
-        <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15)}>
-          {t('integrations.shopify.authentication')}
-        </Typography>
-        <Box className={clsx(classes.dblock, classes.pb15)}>
-          <Typography className={clsx(classes.bold)}>
-            {t("integrations.shopify.shopifyURL")}
-            <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-          </Typography>
-          <Typography className={clsx(classes.mb5)}>
-            {t("integrations.shopify.insertShopifyURL")}
-          </Typography>
-          <TextField
-            variant="outlined"
-            size="small"
-            name="DefaultFromName"
-            value={settings.store_name}
-            onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
-            className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-          />
-          {!!errors.store_name && (
-            <Typography className={clsx(classes.errorText, classes.f14)}>
-              {errors.store_name}
+      {
+        !isPageLoading && (
+          <Box className={"formContainer"}>
+            <Typography className={clsx(classes.managementTitle, classes.f22, classes.pb15)}>
+              {t('integrations.shopify.authentication')}
             </Typography>
-          )}
-        </Box>
-        {!isAuthenticated || isShowCredentials ? (<>
-          <Box className={clsx(classes.dblock, classes.pb15)}>
-            <Typography className={clsx(classes.bold)}>
-              {t("integrations.shopify.apiKey")}
-              <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-            </Typography>
-            <Typography className={clsx(classes.mb5)}>
-              {t("integrations.shopify.insertAPIKey")}
-            </Typography>
-            <TextField
-              variant="outlined"
-              size="small"
-              name="DefaultFromName"
-              value={settings.api_key}
-              onChange={(event) => setSettings({ ...settings, api_key: event.target.value })}
-              className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-            />
-            {!!errors.api_key && (
-              <Typography className={clsx(classes.errorText, classes.f14)}>
-                {errors.api_key}
+            <Box className={clsx(classes.dblock, classes.pb15)}>
+              <Typography className={clsx(classes.bold)}>
+                {t("integrations.shopify.shopifyURL")}
+                <label className={clsx(classes.ml10, classes.textRed)}>*</label>
               </Typography>
-            )}
-          </Box>
-
-          <Box className={clsx(classes.dblock, classes.pb15)}>
-            <Typography className={clsx(classes.bold)}>
-              {t("integrations.shopify.apiAccessToken")}
-              <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-            </Typography>
-            <Typography className={clsx(classes.mb5)}>
-              {t("integrations.shopify.insertToken")}
-            </Typography>
-            <TextField
-              variant="outlined"
-              size="small"
-              name="DefaultFromName"
-              value={settings.api_access_token}
-              onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
-              className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-            />
-            {!!errors.api_access_token && (
-              <Typography className={clsx(classes.errorText, classes.f14)}>
-                {errors.api_access_token}
+              <Typography className={clsx(classes.mb5)}>
+                {RenderHtml(t("integrations.shopify.insertShopifyURL"))}
               </Typography>
-            )}
-          </Box>
-          <Box className={clsx(classes.dblock, classes.pb15)}>
-            <Typography className={clsx(classes.bold)}>
-              {t("integrations.shopify.apiVersion")}
-              <label className={clsx(classes.ml10, classes.textRed)}>*</label>
-            </Typography>
-            <Typography className={clsx(classes.mb5)}>
-              {t("integrations.shopify.apiVersion")}
-            </Typography>
-            <TextField
-              variant="outlined"
-              size="small"
-              name="apiVersion"
-              value={settings.api_version}
-              onChange={(event) => setSettings({ ...settings, api_version: event.target.value })}
-              className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
-              placeholder='XXXX-XX'
-            />
-            {!!errors.api_version && (
-              <Typography className={clsx(classes.errorText, classes.f14)}>
-                {errors.api_version}
-              </Typography>
-            )}
-          </Box>
-
-          {!!errors.authentication_message && (
-            <Box className={clsx(classes.flex, classes.pbt15)}>
-              <Typography className={clsx(classes.errorText, classes.f16)}>
-                {errors.authentication_message}
-              </Typography>
+              <TextField
+                variant="outlined"
+                size="small"
+                name="DefaultFromName"
+                value={settings.store_name}
+                onChange={(event) => setSettings({ ...settings, store_name: event.target.value })}
+                className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+              />
+              {!!errors.store_name && (
+                <Typography className={clsx(classes.errorText, classes.f14)}>
+                  {errors.store_name}
+                </Typography>
+              )}
             </Box>
-          )}
+            {
+              (!isAuthenticated || isShowCredentials) && (
+              <>
+                <Box className={clsx(classes.dblock, classes.pb15)}>
+                  <Typography className={clsx(classes.bold)}>
+                    {t("integrations.shopify.apiKey")}
+                    <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+                  </Typography>
+                  <Typography className={clsx(classes.mb5)}>
+                    {t("integrations.shopify.insertAPIKey")}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    name="DefaultFromName"
+                    value={settings.api_key}
+                    onChange={(event) => setSettings({ ...settings, api_key: event.target.value })}
+                    className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                  />
+                  {!!errors.api_key && (
+                    <Typography className={clsx(classes.errorText, classes.f14)}>
+                      {errors.api_key}
+                    </Typography>
+                  )}
+                </Box>
 
-          {!!messages.authentication_message && (
-            <Box className={clsx(classes.flex, classes.pbt15)}>
-              <Typography className={clsx(classes.green, classes.f16)}>
-                {messages.authentication_message}
-              </Typography>
-            </Box>
-          )}
+                <Box className={clsx(classes.dblock, classes.pb15)}>
+                  <Typography className={clsx(classes.bold)}>
+                    {t("integrations.shopify.apiAccessToken")}
+                    <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+                  </Typography>
+                  <Typography className={clsx(classes.mb5)}>
+                    {t("integrations.shopify.insertToken")}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    name="DefaultFromName"
+                    value={settings.api_access_token}
+                    onChange={(event) => setSettings({ ...settings, api_access_token: event.target.value })}
+                    className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                  />
+                  {!!errors.api_access_token && (
+                    <Typography className={clsx(classes.errorText, classes.f14)}>
+                      {errors.api_access_token}
+                    </Typography>
+                  )}
+                </Box>
+                <Box className={clsx(classes.dblock, classes.pb15)}>
+                  <Typography className={clsx(classes.bold)}>
+                    {t("integrations.shopify.apiVersion")}
+                    <label className={clsx(classes.ml10, classes.textRed)}>*</label>
+                  </Typography>
+                  <Typography className={clsx(classes.mb5)}>
+                    {t("integrations.shopify.apiVersion")}
+                  </Typography>
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    name="apiVersion"
+                    value={settings.api_version}
+                    onChange={(event) => setSettings({ ...settings, api_version: event.target.value })}
+                    className={clsx(classes.textField, classes.dBlock, classes.shopifySettingTextBox)}
+                    placeholder='XXXX-XX'
+                  />
+                  {!!errors.api_version && (
+                    <Typography className={clsx(classes.errorText, classes.f14)}>
+                      {errors.api_version}
+                    </Typography>
+                  )}
+                </Box>
 
-          {
-            <Box className={clsx(classes.flex, classes.pbt15)}>
-              <Button
-                onClick={authenticateStore}
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightGreen,
-                  classes.backButton
+                {!!errors.authentication_message && (
+                  <Box className={clsx(classes.flex, classes.pbt15)}>
+                    <Typography className={clsx(classes.errorText, classes.f16)}>
+                      {errors.authentication_message}
+                    </Typography>
+                  </Box>
                 )}
-                color="primary"
-              >
-                {t("integrations.shopify.authenticate")}
-              </Button>
-            </Box>
-          }
-        </>) :
-          (<>
-            <Button
-              onClick={() => setShowResetDialog(true)}
-              variant='contained'
-              size='medium'
-              className={clsx(
-                classes.actionButton,
-                classes.actionButtonLightGreen,
-                classes.backButton
-              )}
-              color="primary"
-            >
-              {t("integrations.shopify.reset")}
-            </Button>
-            <Button
-              onClick={showCredentials}
-              variant='contained'
-              size='medium'
-              className={clsx(
-                classes.actionButton,
-                classes.actionButtonLightGreen,
-                classes.backButton,
-                classes.ml10
-              )}
-              color="primary"
-            >
-              {t("integrations.shopify.showCredentials")}
-            </Button>
-          </>)
-        }
-        <Loader isOpen={showLoader} showBackdrop={true} />
-      </Box>
+
+                {!!messages.authentication_message && (
+                  <Box className={clsx(classes.flex, classes.pbt15)}>
+                    <Typography className={clsx(classes.green, classes.f16)}>
+                      {messages.authentication_message}
+                    </Typography>
+                  </Box>
+                )}
+
+                {
+                  !isAuthenticated && (
+                    <Box className={clsx(classes.flex, classes.pbt15)}>
+                      <Button
+                        onClick={authenticateStore}
+                        variant='contained'
+                        size='medium'
+                        className={clsx(
+                          classes.actionButton,
+                          classes.actionButtonLightGreen,
+                          classes.backButton
+                        )}
+                        color="primary"
+                      >
+                        {t("integrations.shopify.authenticate")}
+                      </Button>
+                    </Box>
+                  )
+                }
+              </>
+            )}
+
+            {
+              isAuthenticated && (
+                <>
+                  <Button
+                    onClick={() => setShowResetDialog(true)}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                      classes.actionButton,
+                      classes.actionButtonLightGreen,
+                      classes.backButton
+                    )}
+                    color="primary"
+                  >
+                    {t("integrations.shopify.reset")}
+                  </Button>
+
+                  <Button
+                    onClick={() => setIsShowCredentials(!isShowCredentials)}
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                      classes.actionButton,
+                      classes.actionButtonLightBlue,
+                      classes.backButton,
+                      classes.ml10
+                    )}
+                    color="primary"
+                  >
+                    {t(`integrations.shopify.${ isShowCredentials ? 'hideCredentials' : 'showCredentials'}`)}
+                  </Button>
+                </>
+              )
+            }
+            <Loader isOpen={showLoader} showBackdrop={true} />
+          </Box>
+        )
+      }
 
       {
         isAuthenticated && (
@@ -481,34 +499,28 @@ const Shopify = ({ classes }: any) => {
                 label={t('integrations.shopify.siteSignUp')}
               />
               <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                <Select
-                  labelId="multiple-checkbox-label"
-                  id="multiple-checkbox"
-                  input={<OutlinedInput label="Register history" />}
-                  multiple
-                  value={settings.Groups?.RegisterGroups || []}
-                  onChange={registerChange}
-                  disabled={!settings.RegisterEventActive}
-                  renderValue={(selected: any) => {
-                    return subAccountAllGroups.reduce((selectedGroupName: any, group: any) => {
-                      if (selected.indexOf(group.GroupID) > -1) {
-                        selectedGroupName.push(group.GroupName);
-                      }
-                      return selectedGroupName;
-                    }, []).join(', ');
-                  }}
-                >
-                  {subAccountAllGroups?.map((group: any) => {
-                    return (<MenuItem key={`register_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
-                      <Checkbox
-                        checked={(settings.Groups?.RegisterGroups || []).indexOf(group.GroupID) > -1}
-                        color="primary"
-                      />
-                      <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
-                    </MenuItem>)
-                  })
-                  }
-                </Select>
+                <Box className={clsx('group-dropdown', !settings.RegisterEventActive ? classes.disabled : '')}>
+                  <GroupTags
+                    className='group-select'
+                    groupSelected={settings.Groups?.RegisterGroups || []}
+                    classes={classes}
+                    title={'siteTracking.typeGroupName'}
+                    dropdown
+                    dropDownProps={{
+                      onChange: (e: any, val: any) => {
+                        setSettings({
+                          ...settings,
+                          Groups: {
+                            ...settings.Groups,
+                            RegisterGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                          }
+                        })
+                      },
+                      selectedGroups: settings.Groups?.RegisterGroups || [],
+                      groups: []
+                    }}
+                  />
+                </Box>
               </Grid>
             </Grid>
 
@@ -534,33 +546,28 @@ const Shopify = ({ classes }: any) => {
                 label={t('integrations.shopify.purchase')}
               />
               <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                <Select
-                  labelId="multiple-checkbox-label"
-                  id="multiple-checkbox"
-                  input={<OutlinedInput label="Purchase history" />}
-                  disabled={!settings.PurchaseEventActive}
-                  multiple
-                  value={settings.Groups?.PurchaseGroups || []}
-                  onChange={purchaseChange}
-                  renderValue={(selected: any) => {
-                    return subAccountAllGroups.reduce((selectedGroupName: any, group: any) => {
-                      if (selected.indexOf(group.GroupID) > -1) {
-                        selectedGroupName.push(group.GroupName);
-                      }
-                      return selectedGroupName;
-                    }, []).join(', ');
-                  }}
-                >
-                  {subAccountAllGroups?.map((group: any) => {
-                    return (<MenuItem key={`purchase_${group.GroupID}`} value={group.GroupID} style={{ paddingRight: 15 }}>
-                      <Checkbox
-                        checked={(settings.Groups?.PurchaseGroups || []).indexOf(group.GroupID) > -1}
-                        color="primary"
-                      />
-                      <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
-                    </MenuItem>)
-                  })}
-                </Select>
+                <Box className={clsx('group-dropdown', !settings.PurchaseEventActive ? classes.disabled : '')}>
+                  <GroupTags
+                    className='group-select'
+                    groupSelected={settings.Groups?.PurchaseGroups || []}
+                    classes={classes}
+                    title={'siteTracking.typeGroupName'}
+                    dropdown
+                    dropDownProps={{
+                      onChange: (e: any, val: any) => {
+                        setSettings({
+                          ...settings,
+                          Groups: {
+                            ...settings.Groups,
+                            PurchaseGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                          }
+                        })
+                      },
+                      selectedGroups: settings.Groups?.PurchaseGroups || [],
+                      groups: []
+                    }}
+                  />
+                </Box>
               </Grid>
             </Grid>
 
@@ -586,35 +593,28 @@ const Shopify = ({ classes }: any) => {
                 label={t('integrations.shopify.cartAbandonment')}
               />
               <Grid container item xs={12} sm={12} md={12} className={clsx("textBoxWrapper", classes.dblock, classes.shopifySettingMultiSelect)}>
-                <Select
-                  labelId="multiple-checkbox-label"
-                  id="multiple-checkbox"
-                  input={<OutlinedInput label="Cart Abandoned" />}
-                  disabled={!settings.AbandonedEventActive}
-                  multiple
-                  value={settings.Groups?.AbandonedGroups || []}
-                  onChange={cartAbandonedChange}
-                  renderValue={(selected: any) => {
-                    return subAccountAllGroups.reduce((selectedGroupName: any, group: any) => {
-                      if (selected.indexOf(group.GroupID) > -1) {
-                        selectedGroupName.push(group.GroupName);
-                      }
-                      return selectedGroupName;
-                    }, []).join(', ');
-                  }}
-                >
-                  {subAccountAllGroups?.map((group: any) => {
-                    return (
-                      <MenuItem key={`abandoned_${group.GroupID}`} value={group.GroupID}>
-                        <Checkbox
-                          checked={(settings.Groups?.AbandonedGroups || []).indexOf(group.GroupID) > -1}
-                          color="primary"
-                        />
-                        <ListItemText primary={group.GroupName} className={clsx(classes.dInlineBlock)} />
-                      </MenuItem>
-                    )
-                  })}
-                </Select>
+                <Box className={clsx('group-dropdown', !settings.AbandonedEventActive ? classes.disabled : '')}>
+                  <GroupTags
+                    className='group-select'
+                    groupSelected={settings.Groups?.AbandonedGroups || []}
+                    classes={classes}
+                    title={'siteTracking.typeGroupName'}
+                    dropdown
+                    dropDownProps={{
+                        onChange: (e: any, val: any) => {
+                          setSettings({
+                            ...settings,
+                            Groups: {
+                              ...settings.Groups,
+                              AbandonedGroups: val.reduce((prevVal: any, newVal: any) => [...prevVal, newVal.GroupID], [])
+                            }
+                          })
+                        },
+                        selectedGroups: settings.Groups?.AbandonedGroups || [],
+                        groups: []
+                    }}
+                  />
+                </Box>
               </Grid>
             </Grid>
 

@@ -14,7 +14,7 @@
     "insertClientToGroup": "Insert client to groups",
     "insertToken": "Insert the API token you received after creating the application",
     "insertAPIKey": "Insert the API key you received after creating the application",
-    "insertShopifyURL": "Insert your Shopify URL",
+    "insertShopifyURL": "Insert only bold part: shopify.com/store/<b>mystore</b>",
     "authenticate": "Authenticate",
     "enterShopifyUrl": "Enter Shopify URL",
     "enterAPIKey": "Enter API Key",
@@ -22,6 +22,7 @@
     "enterAccessToken": "Enter Access Token",
     "reset": "Reset",
     "showCredentials": "Show Credentials",
+    "hideCredentials": "Hide Credentials",
     "apiVersion": "API Version",
     "authResponses": {
       "201": "Authentication Success",
