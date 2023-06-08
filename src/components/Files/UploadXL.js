@@ -20,6 +20,7 @@ import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { sendToTeamChannel } from "../../redux/reducers/ConnectorsSlice";
+import { GetTextAreaSelection } from "../../helpers/Utils/TextHelper";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -146,6 +147,7 @@ const UploadXL = ({
             setdropIndex(-1);
         }
     };
+
     const areaChange = (e) => {
         var clipboardData, pastedData;
         // Stop data actually being pasted into div
@@ -155,7 +157,13 @@ const UploadXL = ({
         clipboardData = e.clipboardData || window.clipboardData;
         if (clipboardData) {
             if (e.target.value !== '') {
-                pastedData = e.target.value + clipboardData.getData('Text');
+                const textToReplace = GetTextAreaSelection('dragAndDropText');
+                if (textToReplace !== '') {
+                    pastedData = e.target.value.replace(textToReplace, clipboardData.getData('Text'));
+                }
+                else {
+                    pastedData = e.target.value + clipboardData.getData('Text');
+                }
             }
             else {
                 pastedData = clipboardData.getData('Text');
@@ -778,6 +786,7 @@ const UploadXL = ({
         }>
             {renderDialog()}
             <textarea
+                id="dragAndDropText"
                 placeholder={t(placeHolder)}
                 spellCheck="false"
                 autoComplete="off"
