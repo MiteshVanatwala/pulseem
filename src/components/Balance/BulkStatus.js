@@ -225,7 +225,7 @@ const BulkStatus = ({ classes }) => {
 
           <Divider />
 
-          {Mms.Credits > 0 && <Grid
+          {/* {Mms.Credits > 0 && <Grid
             container
             item sm={12} md={12} lg={12} xl={12}
             className={clsx(classes.flex, classes.mt2, classes.mb2, classes.paddingSides15)}
@@ -250,7 +250,7 @@ const BulkStatus = ({ classes }) => {
             </Box>
           </Grid>}
 
-          <Divider />
+          <Divider /> */}
 
           {Notifications.FeatureExist && <Grid
             container
