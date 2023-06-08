@@ -5,11 +5,9 @@ import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import TemplatePreview from './TemplatePreview'
-import { PulseemReactInstance } from '../../../helpers/Api/PulseemReactAPI';
 import { Loader } from '../../../components/Loader/Loader';
-import { getUniqueValuesOfKey, convertHyphensToword } from '../../../helpers/Utils/common';
-import { useSelector, useDispatch } from 'react-redux';
-import { getAllTemplatesBySubaccountId, getPublicTemplates } from '../../../redux/reducers/campaignEditorSlice';
+import { convertHyphensToword } from '../../../helpers/Utils/common';
+import { useSelector } from 'react-redux';
 
 const Templates = ({
   classes,
@@ -18,24 +16,25 @@ const Templates = ({
   isCreateCampaign = false
 }: any) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch()
   const [tabValue, setTabValue] = useState(0);
-  const handleChange = (event: any, newValue: any) => {
-    setTabValue(newValue);
-    setSelectedCategory('')
-  };
   const [templateList, setTemplateList] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
   const refScriptCode = useRef<HTMLDivElement>(null);
   const refCategory = useRef<HTMLDivElement>(null);
-  const [ openPreview, setOpenPreview ] = useState(false);
-  const [ selectedTemplate, setSelectedTemplate ] = useState({});
-  const [ showLoader, setLoader ] = useState(true);
-  const [ selectedTemplateId, setSelectedTemplateId ] = useState(0);
-  const { publicTemplates, templatesBySubAccount } = useSelector(
+  const [openPreview, setOpenPreview] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState({});
+  const [showLoader, setLoader] = useState(true);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(0);
+  const { publicTemplates, templatesBySubAccount, publicTemplateCategories, templatesBySubAccountCategories } = useSelector(
     (state: { campaignEditor: any }) => state.campaignEditor
   );
+
+  const handleChange = (event: any, newValue: any) => {
+    setTabValue(newValue);
+    setTemplateList([]);
+    setSelectedCategory(null);
+  };
 
   const renderHtml = (html: any) => {
     function createMarkup() {
@@ -48,16 +47,11 @@ const Templates = ({
 
   useEffect(() => {
     setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount);
+    const categories = tabValue === 0 ? publicTemplateCategories : templatesBySubAccountCategories;
+    setCategoryList(categories);
+    setSelectedCategory(categories.length > 0 ? categories[0] : '');
     setLoader(false);
-  }, [ publicTemplates, templatesBySubAccount, tabValue ]);
-
-  useEffect(() => {
-    setTemplateList(tabValue === 0 ? publicTemplates : templatesBySubAccount)
-  }, [publicTemplates, templatesBySubAccount]);
-
-  useEffect(() => {
-    setCategoryList(getUniqueValuesOfKey(templateList, 'Category'));
-  }, [templateList]);
+  }, [publicTemplates, templatesBySubAccount, tabValue]);
 
   useEffect(() => {
     if (!publicTemplates.length) setLoader(true);
@@ -83,7 +77,7 @@ const Templates = ({
                 setOpenPreview(true);
               }}
             >
-              <Typography    
+              <Typography
                 className={clsx(classes.dBlock, classes.f14)}
               >
                 {t('common.Preview')}
@@ -101,7 +95,7 @@ const Templates = ({
                 onClose(templateDetails)
               }}
             >
-              <Typography    
+              <Typography
                 className={clsx(classes.dBlock, classes.f14)}
               >
                 {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
@@ -128,7 +122,7 @@ const Templates = ({
       <Grid container style={{ width: '100%' }}>
         <Grid item md={2} ref={refCategory}>
           {
-             categoryList?.length > 0 && (
+            categoryList?.length > 0 && (
               <Typography
                 className={clsx(classes.dBlock, classes.pb10, classes.f16, selectedCategory === '' ? classes.bold : '', classes.cursorPointer)}
                 onClick={() => setSelectedCategory('')}
@@ -157,7 +151,7 @@ const Templates = ({
             classes={{ indicator: classes.hideIndicator }}
           >
             <Tab label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-            { 
+            {
               !isCreateCampaign && <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
             }
           </Tabs>
