@@ -360,6 +360,7 @@ export type groupsListProps = {
 	groupNameSearch: any;
 	selectedList: any;
 	onSelectGroup: (group: testGroupDataProps) => void;
+	from: 'group' | 'campaign';
 };
 
 export type GroupsSelectAllProps = {
@@ -722,6 +723,7 @@ export type TestSendReq = {
 	WACampaignID: number;
 	TestGroupsIds?: number[];
 	PhoneNumber?: string;
+	Random?: number;
 };
 
 export type SaveQuickSendGroupReq = {

@@ -697,6 +697,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		} else {
 			payload.TestGroupsIds = selectedTestGroup?.map((group) => group?.GroupID);
 		}
+		if (Number(randomlyCount) > 0) {
+			payload.Random = Number(randomlyCount);
+		}
 		if (campaignID) {
 			if (validateSaveCampaign(true)) {
 				const { payload: quickSendData }: ApiQuickSend = await dispatch<any>(
@@ -710,6 +713,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				} else {
 					if (quickSendData?.StatusCode === 10) {
 						setExceedLimitModal(true);
+						setRandomlyCount('');
 						if (
 							quickSendData?.Data &&
 							quickSendData?.Data?.NextAvailableTime &&
@@ -718,6 +722,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 							setNextMessageAvailable(quickSendData?.Data?.NextAvailableTime);
 						}
 					} else {
+						setRandomlyCount('');
 						if (quickSendData?.Message === 'Invalid phonenumber') {
 							setToastMessage(ToastMessages.INVALID_NUMBER);
 						} else {
