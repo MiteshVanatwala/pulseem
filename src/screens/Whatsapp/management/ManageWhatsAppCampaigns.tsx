@@ -266,6 +266,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					placement={'top'}
 					title={<Typography noWrap={false}>{row.Name}</Typography>}
 					text={row.Name}
+					titleStyle={undefined}
 					children={undefined}
 					icon={undefined}
 				/>

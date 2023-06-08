@@ -10,6 +10,7 @@ import {
 import {
 	ApiCreateGroupPayload,
 	ApiSaveCampaignSettingsData,
+	ApiSendCampaignData,
 	saveCampaignDataProps,
 	SaveQuickSendGroupReq,
 	TestSendReq,
@@ -42,10 +43,6 @@ type ApiSubmitTemplatesData =
 	| TextMedia
 	| JSONPropsText
 	| undefined;
-
-type ApiSendCampaignData = {
-	WACampaignID: number;
-};
 
 type apiCombineGroup = {
 	GroupIds: number[];
@@ -760,6 +757,23 @@ export const saveQuickSendGroups = createAsyncThunk(
 			const response = await PulseemReactInstance.post(
 				`whatsAppCampaign/SaveQuickSendGroups`,
 				data
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
+export const updateWhatsappTier = createAsyncThunk(
+	'whatsAppCampaign/WhatsappTierUpdate',
+	async (tier: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/WhatsappTierUpdate`,
+				{ WhatsappTierID: tier }
 			);
 
 			return response.data;

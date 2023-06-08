@@ -230,8 +230,8 @@ const RightPane = ({
 										className={
 											sendType === '3'
 												? isSpecialDateBefore
-													? clsx(classes.afterActive)
-													: clsx(classes.after)
+													? clsx(classes.whatsappSpecialDateAfterActive)
+													: clsx(classes.whatsappSpecialDateAfter)
 												: classes.disabledAfter
 										}
 										onClick={() => setIsSpecialDateBefore(true)}>
@@ -241,8 +241,8 @@ const RightPane = ({
 										className={
 											sendType === '3'
 												? !isSpecialDateBefore
-													? classes.beforeActive
-													: classes.before
+													? classes.whatsappSpecialDateBeforeActive
+													: classes.whatsappSpecialDateBefore
 												: classes.disabledBefore
 										}
 										onClick={() => setIsSpecialDateBefore(false)}>

@@ -334,6 +334,7 @@ const Groups = ({
 						groupNameSearch={groupNameSearch}
 						selectedList={selectedList}
 						onSelectGroup={(group) => onSelectGroup(group)}
+						from={'group'}
 					/>
 				</List>
 			</div>

@@ -234,6 +234,14 @@ export type SummaryModalProps = {
 	specialDatedropDown: specialDateDropDownPayload | undefined;
 	spectialDateFieldID: string;
 	campaignSummary: ApiGetCampaignSummaryPayloadData | undefined;
+	randomlyCount: string;
+	setRandomlyCount: (value: string) => void;
+	resetRandomCount: () => void;
+};
+
+export type ApiSendCampaignData = {
+	WACampaignID: number;
+	Random?: number;
 };
 
 export type tagDataProps = {
@@ -312,6 +320,7 @@ export type smsReducerProps = {
 
 export type SubAccountSettings = {
 	DomainAddress: string;
+	WhatsappTierID: null | string;
 };
 
 export type testGroupsProps = {
@@ -351,6 +360,7 @@ export type groupsListProps = {
 	groupNameSearch: any;
 	selectedList: any;
 	onSelectGroup: (group: testGroupDataProps) => void;
+	from: 'group' | 'campaign';
 };
 
 export type GroupsSelectAllProps = {
@@ -665,6 +675,9 @@ export type ApiGetCampaignSummaryPayloadData = {
 	Invalid: number;
 	Removed: number;
 	SpecialSettingUniqCount: number;
+	WhatsappSmsLeft: number;
+	NextAvailableTime: string;
+	WhatsappTierID: number;
 };
 
 export type ApiGetCampaignSummaryPayload = {
@@ -687,8 +700,12 @@ export type ApiSendCampaign = {
 };
 
 export type ApiQuickSendPayload = {
+	Data?: {
+		NextAvailableTime?: string;
+	};
 	Message: string;
 	Status: string;
+	StatusCode: number;
 };
 
 export type ApiQuickSend = {
@@ -706,6 +723,7 @@ export type TestSendReq = {
 	WACampaignID: number;
 	TestGroupsIds?: number[];
 	PhoneNumber?: string;
+	Random?: number;
 };
 
 export type SaveQuickSendGroupReq = {

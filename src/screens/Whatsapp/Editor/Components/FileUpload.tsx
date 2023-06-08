@@ -85,14 +85,20 @@ const FileUpload = ({
 								borderRadius: '22px',
 								padding: '0px 10px 0px 10px',
 								width: '100%',
-							}}
-							onClick={(e) => onFileDeselect(e)}>
+								cursor: 'auto',
+							}}>
 							{fileData?.fileLink
 								?.split('/')
 								[fileData?.fileLink?.split('/')?.length - 1]?.substring(0, 25) +
 								'...'}
 							&emsp;
-							<i className='zmdi zmdi-close'></i>
+							<i
+								style={{
+									padding: '2px 4px',
+									cursor: 'pointer',
+								}}
+								onClick={(e) => onFileDeselect(e)}
+								className='zmdi zmdi-close'></i>
 						</Button>
 					</div>
 				) : (

@@ -71,6 +71,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ValidationAlert from '../Campaign/Popups/ValidationAlert';
 import Toast from '../../../components/Toast/Toast.component';
 import NoSetup from '../NoSetup/NoSetup';
+import AlertModal from '../Editor/Popups/AlertModal';
+import moment from 'moment';
 
 const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	const navigate = useNavigate();
@@ -80,14 +82,16 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 	);
 	const SubAccountSettings = useSelector(
 		(state: {
-			common: { commonSettings: { SubAccountSettings: SubAccountSettings } };
-		}) => state.common?.commonSettings?.SubAccountSettings
+			common: { accountSettings: { SubAccountSettings: SubAccountSettings } };
+		}) => state.common?.accountSettings?.SubAccountSettings
 	);
 	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
+	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
 	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [activeChatContacts, setActiveChatContacts] =
 		useState<APIWhatsappChatSidebarContactsItemsData>({
 			ConversationStatusId: 0,
@@ -693,12 +697,24 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 				// To update contact list
 				updateContactList();
 			} else {
-				sendWhatsappChat?.Message
-					? setToastMessage({
-							...ToastMessages.ERROR,
-							message: sendWhatsappChat?.Message,
-					  })
-					: setToastMessage(ToastMessages.ERROR);
+				if (sendWhatsappChat.StatusCode === 112) {
+					setExceedLimitModal(true);
+					// setNextMessageAvailable
+					if (
+						sendWhatsappChat?.Data &&
+						sendWhatsappChat?.Data?.NextAvailableTime &&
+						sendWhatsappChat?.Data?.NextAvailableTime?.length > 0
+					) {
+						setNextMessageAvailable(sendWhatsappChat?.Data?.NextAvailableTime);
+					}
+				} else {
+					sendWhatsappChat?.Message
+						? setToastMessage({
+								...ToastMessages.ERROR,
+								message: sendWhatsappChat?.Message,
+						  })
+						: setToastMessage(ToastMessages.ERROR);
+				}
 			}
 		}
 	};
@@ -790,6 +806,10 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 		setUpdatedDynamicVariable([]);
 		setNewMessage('');
 		setSavedTemplate('');
+	};
+
+	const onExceedLimitYes = () => {
+		setExceedLimitModal(false);
 	};
 
 	return (
@@ -889,6 +909,19 @@ const WhatsappChat = ({ classes }: WhatsappChatProps) => {
 							onClose={() => setIsValidationAlert(false)}
 							title={translator('whatsappCampaign.sendValidation')}
 							requiredFields={groupSendValidationErrors}
+						/>
+						<AlertModal
+							classes={classes}
+							isOpen={exceedLimitModal}
+							onClose={() => setExceedLimitModal(false)}
+							title={translator(
+								'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+							)}
+							subtitle={`${translator(
+								'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+							)} ${moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')}`}
+							type='alert'
+							onConfirmOrYes={() => onExceedLimitYes()}
 						/>
 					</>
 				) : (

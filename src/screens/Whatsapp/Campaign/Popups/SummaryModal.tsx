@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Tooltip } from '@material-ui/core';
+import { Link, TextField, Tooltip } from '@material-ui/core';
 import { Box, Grid, Button, Dialog, useMediaQuery } from '@material-ui/core';
 import {
 	CampaignDetailByIdData,
 	CampaignDetailById,
 	SummaryModalProps,
+	coreProps,
 } from '../Types/WhatsappCampaign.types';
 import { useTheme } from '@mui/material/styles';
 import { Close, SupervisedUserCircleOutlined } from '@material-ui/icons';
@@ -24,14 +25,17 @@ import {
 	templatePreviewDataProps,
 	toastProps,
 } from '../../Editor/Types/WhatsappCreator.types';
-import { apiStatus, resetToastData } from '../../Constant';
+import { apiStatus, resetToastData, tierSetting } from '../../Constant';
 import WhatsappMobilePreview from '../../Editor/Components/WhatsappMobilePreview';
 import downArrow from '../../../../assets/images/down-arrow.svg';
 import upArrow from '../../../../assets/images/up-arrow.svg';
 import moment from 'moment';
-import { getTemplatePreviewData } from '../../Common';
+import { getTemplatePreviewData, isShowTierAlert } from '../../Common';
 import clsx from 'clsx';
 import Toast from '../../../../components/Toast/Toast.component';
+import ValidationAlert from './ValidationAlert';
+import CustomTooltip from '../../../../components/Tooltip/CustomTooltip';
+import AlertModal from '../../Editor/Popups/AlertModal';
 
 const SummaryModal = ({
 	classes,
@@ -49,6 +53,9 @@ const SummaryModal = ({
 	specialDatedropDown,
 	spectialDateFieldID,
 	campaignSummary,
+	randomlyCount,
+	setRandomlyCount,
+	resetRandomCount,
 }: SummaryModalProps) => {
 	const theme = useTheme();
 	const dispatch = useDispatch();
@@ -58,11 +65,16 @@ const SummaryModal = ({
 	const [isGroup, setIsGroup] = useState<boolean>(false);
 	const [isRecipientFilter, setIsRecipientFilter] = useState<boolean>(false);
 	const [detailsHide, setdetailsHide] = useState<boolean>(true);
+	const [isValidationAlert, setIsValidationAlert] = useState<boolean>(false);
+	const [tierAlert, setTierAlert] = useState<boolean>(false);
+	const [validationErrors, setValidationErrors] = useState<string[]>([]);
+	const [isIn24HrWindow, setIsIn24HrWindow] = useState<boolean>(false);
 	const { t: translator } = useTranslation();
 	const ToastMessages = useSelector(
 		(state: { whatsapp: { ToastMessages: toastProps } }) =>
 			state.whatsapp.ToastMessages
 	);
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [toastMessage, setToastMessage] =
 		useState<toastProps['SUCCESS']>(resetToastData);
 
@@ -91,6 +103,7 @@ const SummaryModal = ({
 				const { payload: campaignData }: CampaignDetailById =
 					await dispatch<any>(getCampaignDetailById(campaignID));
 				if (campaignData?.Status === apiStatus?.SUCCESS) {
+					resetRandomCount();
 					setCampaignDetails(campaignData?.Data);
 					const { payload: templateData }: templateListAPIProps =
 						await dispatch<any>(
@@ -119,6 +132,18 @@ const SummaryModal = ({
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen, campaignID]);
+
+	useEffect(() => {
+		if (sendType === '2' && sendDate) {
+			const timeDiff = moment(sendDate).diff(moment(), 'seconds');
+			if (timeDiff <= 86400) {
+				setIsIn24HrWindow(true);
+			} else {
+				setIsIn24HrWindow(false);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sendDate]);
 
 	const onSavedTemplateChange = (templateData: savedTemplateDataProps) => {
 		let templatePreviewData: templatePreviewDataProps = {
@@ -165,6 +190,120 @@ const SummaryModal = ({
 			return <Toast data={toastMessage} />;
 		}
 		return null;
+	};
+
+	const validateSummary = () => {
+		let validationErrors = [];
+		let isValidated = true;
+		const showTierAlert = isShowTierAlert(
+			campaignSummary?.WhatsappSmsLeft || 0,
+			campaignSummary?.FinalCount || 0,
+			campaignSummary?.WhatsappTierID || 1,
+			sendType,
+			isIn24HrWindow
+		);
+		if (showTierAlert) {
+			if (randomlyCount?.length <= 0) {
+				isValidated = false;
+				validationErrors.push(
+					translator(
+						'settings.accountSettings.actDetails.fields.recipientsRequired'
+					)
+				);
+				validationErrors.push(
+					`${translator('settings.accountSettings.actDetails.fields.youHave')}${
+						campaignSummary?.WhatsappSmsLeft || 0
+					} ${translator(
+						'settings.accountSettings.actDetails.fields.messageLeftToday'
+					)}`
+				);
+			} else {
+				if (
+					Number(randomlyCount) === 0 ||
+					(campaignSummary?.WhatsappSmsLeft &&
+						Number(randomlyCount) > campaignSummary?.WhatsappSmsLeft)
+				) {
+					isValidated = false;
+					// validationErrors.push(
+					// 	`Please enter valid Recipient - Range 1 - ${campaignSummary?.WhatsappSmsLeft}`
+					// );
+					validationErrors.push(
+						translator(
+							'settings.accountSettings.actDetails.fields.recipientsRangeError'
+						)
+					);
+					if (campaignSummary?.WhatsappSmsLeft === 1) {
+						validationErrors.push(
+							translator(
+								'settings.accountSettings.actDetails.fields.oneMessageLeft'
+							)
+						);
+					} else {
+						validationErrors.push(
+							`${translator(
+								'settings.accountSettings.actDetails.fields.youHave'
+							)}${campaignSummary?.WhatsappSmsLeft || 0} ${translator(
+								'settings.accountSettings.actDetails.fields.messageLeft'
+							)}`
+						);
+					}
+				}
+			}
+		}
+		if (!isValidated) {
+			setValidationErrors([...validationErrors]);
+			setIsValidationAlert(true);
+		}
+		return isValidated;
+	};
+
+	const onRandomlyCountChange = (value: string) => {
+		setRandomlyCount(value);
+	};
+
+	const onConfirmOrYesClick = () => {
+		if (validateSummary()) {
+			if (campaignSummary?.WhatsappTierID === 4) {
+				onConfirmOrYes();
+				resetRandomCount();
+			} else {
+				if (sendType === '1' || (sendType === '2' && isIn24HrWindow)) {
+					onConfirmOrYes();
+					resetRandomCount();
+				} else {
+					setTierAlert(true);
+				}
+			}
+		}
+	};
+
+	const getTierInfoTooltip = () => {
+		let toolTip: JSX.Element[] = [];
+		tierSetting?.map((tier, index: number) =>
+			toolTip.push(
+				<>
+					<span>{`${translator(
+						'settings.accountSettings.actDetails.fields.tier'
+					)} ${index + 1} - ${translator(tier.name)}`}</span>
+					<br />
+				</>
+			)
+		);
+		return <>{toolTip}</>;
+	};
+
+	const onTierAlertConfirm = () => {
+		if (validateSummary()) {
+			resetRandomCount();
+			onConfirmOrYes();
+		}
+	};
+
+	const getIndexFromTierId = (tierId: number | undefined) => {
+		if (tierId) {
+			return Number(tierId) - 1;
+		}
+		return 0;
 	};
 
 	return (
@@ -251,6 +390,116 @@ const SummaryModal = ({
 										</Link>
 									</span>
 								</Box>
+								{isShowTierAlert(
+									campaignSummary?.WhatsappSmsLeft || 0,
+									campaignSummary?.FinalCount || 0,
+									campaignSummary?.WhatsappTierID || 1,
+									sendType,
+									isIn24HrWindow
+								) && (
+									<Box className={classes.campaignSummaryExceedLimitWrapper}>
+										<div className={classes.campaignSummaryExceedLimitTierInfo}>
+											<>
+												{`${translator(
+													'settings.accountSettings.actDetails.fields.sendingTier'
+												)} ${translator(
+													tierSetting[
+														getIndexFromTierId(campaignSummary?.WhatsappTierID)
+													]?.name
+												)}`}
+												<CustomTooltip
+													isSimpleTooltip={false}
+													arrow={true}
+													style={{
+														fontSize: 14,
+														width: 'auto',
+														paddingLeft: isRTL ? '0px' : '10px',
+														paddingRight: isRTL ? '10px' : '0px',
+													}}
+													classes={classes}
+													interactive={true}
+													placement={'top'}
+													title={getTierInfoTooltip()}
+													titleStyle={{
+														width: '100%',
+														display: 'inline-block',
+													}}
+													text={<span className={classes.bodyInfo}>i</span>}
+													icon={undefined}>
+													{/* <>
+													{tierSetting?.map((tier, index: number) => (
+														<span>{`Tier ${index} - ${translator(
+															tier.name
+														)}`}</span>
+													))}
+												</> */}
+												</CustomTooltip>
+											</>
+										</div>
+										<div className={classes.campaignSummaryExceedLimitText}>
+											<>
+												{translator(
+													'settings.accountSettings.actDetails.fields.exceedLimitMessage'
+												)}
+											</>
+										</div>
+										<div className={classes.campaignSummaryExceedLimitText}>
+											<>
+												{translator(
+													'settings.accountSettings.actDetails.fields.exceedLimitNumberMessage'
+												)}
+												{campaignSummary?.WhatsappSmsLeft}
+											</>
+										</div>
+										<Box
+											className={
+												classes.campaignSummaryExceedLimitSendRandomlyWrapper
+											}>
+											<div
+												className={
+													classes.campaignSummaryExceedLimitSendRandomlyText
+												}>
+												<>
+													{translator(
+														'settings.accountSettings.actDetails.fields.sendRandomlyTo'
+													)}
+												</>
+											</div>
+											<Box
+												className={
+													classes.campaignSummaryExceedLimitSendRandomlyInsert
+												}>
+												<TextField
+													id='randomcount'
+													type='text'
+													placeholder={translator(
+														'settings.accountSettings.actDetails.fields.insert'
+													)}
+													className={clsx(
+														classes.buttonField,
+														classes.campaignSummaryExceedLimitSendRandomlyInsertInput
+													)}
+													onChange={(e: BaseSyntheticEvent) =>
+														onRandomlyCountChange(
+															e.target?.value?.replace(/\D/g, '')
+														)
+													}
+													value={randomlyCount}
+												/>
+												<span
+													className={
+														classes.campaignSummaryExceedLimitSendRandomlyRecipients
+													}>
+													<>
+														{translator(
+															'settings.accountSettings.actDetails.fields.recipientsOutOfTotal'
+														)}
+													</>
+												</span>
+											</Box>
+										</Box>
+									</Box>
+								)}
 								<div>&emsp;</div>
 							</Grid>
 
@@ -463,7 +712,7 @@ const SummaryModal = ({
 						color='primary'
 						autoFocus
 						disabled={campaignSummary && campaignSummary?.FinalCount <= 0}
-						onClick={onConfirmOrYes}>
+						onClick={onConfirmOrYesClick}>
 						<>{translator('whatsapp.alertModal.okButtonText')}</>
 					</Button>
 					<Button
@@ -476,6 +725,37 @@ const SummaryModal = ({
 				</Grid>
 			</div>
 			<Loader isOpen={isLoader} showBackdrop={true} />
+			<ValidationAlert
+				classes={classes}
+				isOpen={isValidationAlert}
+				onClose={() => setIsValidationAlert(false)}
+				title={translator('whatsappCampaign.sendValidation')}
+				requiredFields={validationErrors}
+			/>
+			<AlertModal
+				classes={classes}
+				isOpen={tierAlert}
+				onClose={() => setTierAlert(false)}
+				title={translator(
+					'settings.accountSettings.actDetails.fields.doYouWantToProceed'
+				)}
+				subtitle={''}
+				type='delete'
+				onConfirmOrYes={() => onTierAlertConfirm()}>
+				<Box className={classes.tierAlertModalWrapper}>
+					<Box>
+						{translator(
+							'settings.accountSettings.actDetails.fields.stopSending'
+						)}
+					</Box>
+					<br />
+					<Box>
+						{translator(
+							'settings.accountSettings.actDetails.fields.yourResponsibility'
+						)}
+					</Box>
+				</Box>
+			</AlertModal>
 		</Dialog>
 	);
 };

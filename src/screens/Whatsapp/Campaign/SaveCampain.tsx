@@ -102,6 +102,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import SummaryModal from './Popups/SummaryModal';
 import { getCommonFeatures } from '../../../redux/reducers/commonSlice';
 import NoSetup from '../NoSetup/NoSetup';
+import moment from 'moment';
 
 const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const { t: translator } = useTranslation();
@@ -184,8 +185,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const [isTestSend, setIsTestSend] = useState<boolean>(false);
 	const [isTrackLink, setIsTrackLink] = useState<boolean>(false);
 	const [isSummaryModal, setIsSummaryModal] = useState<boolean>(false);
+	const [exceedLimitModal, setExceedLimitModal] = useState<boolean>(false);
+	const [nextMessageAvailable, setNextMessageAvailable] = useState<string>('');
 	const [templateTextLimit, setTemplateTextLimit] = useState<number>(1024);
 	const [templateTextCount, setTemplateTextCount] = useState<number>(0);
+	const [randomlyCount, setRandomlyCount] = useState<string>('');
 	const [testSendSelection, setTestSendSelection] =
 		useState<string>('onecontact');
 	const [fileData, setFileData] = useState<{
@@ -693,6 +697,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		} else {
 			payload.TestGroupsIds = selectedTestGroup?.map((group) => group?.GroupID);
 		}
+		if (Number(randomlyCount) > 0) {
+			payload.Random = Number(randomlyCount);
+		}
 		if (campaignID) {
 			if (validateSaveCampaign(true)) {
 				const { payload: quickSendData }: ApiQuickSend = await dispatch<any>(
@@ -702,16 +709,30 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				if (quickSendData?.Status === apiStatus.SUCCESS) {
 					setToastMessage(ToastMessages.CAMPAIGN_SEND_SUCCESS);
 					setSelectedTestGroup([]);
+					setRandomlyCount('');
 				} else {
-					if (quickSendData?.Message === 'Invalid phonenumber') {
-						setToastMessage(ToastMessages.INVALID_NUMBER);
+					if (quickSendData?.StatusCode === 10) {
+						setExceedLimitModal(true);
+						setRandomlyCount('');
+						if (
+							quickSendData?.Data &&
+							quickSendData?.Data?.NextAvailableTime &&
+							quickSendData?.Data?.NextAvailableTime?.length > 0
+						) {
+							setNextMessageAvailable(quickSendData?.Data?.NextAvailableTime);
+						}
 					} else {
-						setToastMessage({
-							...ToastMessages.QUICK_SEND_ERROR,
-							message:
-								quickSendData?.Message ||
-								ToastMessages.QUICK_SEND_ERROR?.message,
-						});
+						setRandomlyCount('');
+						if (quickSendData?.Message === 'Invalid phonenumber') {
+							setToastMessage(ToastMessages.INVALID_NUMBER);
+						} else {
+							setToastMessage({
+								...ToastMessages.QUICK_SEND_ERROR,
+								message:
+									quickSendData?.Message ||
+									ToastMessages.QUICK_SEND_ERROR?.message,
+							});
+						}
 					}
 				}
 				setIsTestGroupModal(false);
@@ -730,7 +751,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsTestGroupModal(false);
 			let campaignIdForTestSend: number = Number(campaignID) || 0;
 			setIsLoader(true);
-			const saveCampaign = await onSaveCampaign(false, false);
+			const saveCampaign = await onSaveCampaign('testSend', false, false);
 			campaignIdForTestSend = saveCampaign?.WACampaignId || 0;
 			if (testSendSelection !== 'onecontact') {
 				setIsLoader(true);
@@ -769,7 +790,22 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						if (campaignSummaryData.Status === apiStatus.SUCCESS) {
 							if (campaignSummaryData?.Data?.FinalCount > 0) {
 								setCampaignSummary(campaignSummaryData?.Data);
-								setIsSummaryModal(true);
+								setNextMessageAvailable(
+									campaignSummaryData?.Data?.NextAvailableTime
+								);
+								if (
+									campaignSummaryData.Data.WhatsappTierID === 1 ||
+									campaignSummaryData.Data.WhatsappTierID === 2 ||
+									campaignSummaryData.Data.WhatsappTierID === 3
+								) {
+									if (campaignSummaryData?.Data?.WhatsappSmsLeft > 0) {
+										setIsSummaryModal(true);
+									} else {
+										setExceedLimitModal(true);
+									}
+								} else {
+									setIsSummaryModal(true);
+								}
 							} else {
 								setToastMessage({
 									...ToastMessages.ERROR,
@@ -806,14 +842,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		setIsDynamcFieldModal(false);
 	};
 
-	const saveCampaignCall = async () => {
+	const saveCampaignCall = async (callFrom: string = '') => {
 		const reqData: saveCampaignDataProps = {
 			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
 			Variables: formatUpdatedDynamicVariable(updatedDynamicVariable),
 			name: campaignName,
 			fromnumber: from,
-			IsTestCampaign: isTestSend,
+			IsTestCampaign:
+				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
@@ -822,12 +859,15 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onSaveCampaign = async (
+		from: string = '',
 		showSuccess: boolean = true,
 		isNavigate: boolean = true
 	) => {
 		if (validateSaveCampaign(true)) {
 			setIsLoader(true);
-			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall(
+				from
+			);
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				if (showSuccess) {
@@ -854,7 +894,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onSubmit = async () => {
 		if (validateSaveCampaign()) {
 			setIsLoader(true);
-			const data: saveCampaignResponsePayloadProps = await saveCampaignCall();
+			const data: saveCampaignResponsePayloadProps = await saveCampaignCall(
+				'send'
+			);
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
@@ -874,7 +916,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	const onFormButtonClick = (buttonName: string) => {
 		switch (buttonName) {
 			case buttons.SAVE:
-				onSaveCampaign();
+				onSaveCampaign('save');
 				break;
 			case buttons.DELETE:
 				onDeleteClick();
@@ -891,6 +933,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 	const onExitCampaign = () => {
 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+	};
+
+	const onExceedLimitYes = () => {
+		setExceedLimitModal(false);
 	};
 
 	return (
@@ -1349,6 +1395,20 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						type='delete'
 						onConfirmOrYes={() => onExitCampaign()}
 					/>
+					<AlertModal
+						classes={classes}
+						isOpen={exceedLimitModal}
+						onClose={() => setExceedLimitModal(false)}
+						title={translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalMessage'
+						)}
+						subtitle={`${translator(
+							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
+						)} ${moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')}`}
+						type='alert'
+						onConfirmOrYes={() => onExceedLimitYes()}
+					/>
+
 					<SummaryModal
 						classes={classes}
 						isOpen={isSummaryModal}
@@ -1367,6 +1427,9 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						specialDatedropDown={{}}
 						spectialDateFieldID={'0'}
 						campaignSummary={campaignSummary}
+						randomlyCount={randomlyCount}
+						setRandomlyCount={setRandomlyCount}
+						resetRandomCount={() => setRandomlyCount('')}
 					/>
 				</>
 			) : (
