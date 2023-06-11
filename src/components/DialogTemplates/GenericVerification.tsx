@@ -7,20 +7,22 @@ import { Verification_Dialog_Popup, POPUP_OBJECT_TYPE } from "../../helpers/Type
 
 const GenericVerification = ({
   isOpen = false,
-  onClose = () => {},
+  onClose = () => { },
   children = {
     step: 1,
     title: "any",
     icon: null,
     content: null,
     renderButtons: null
-  }
+  },
+  classes
 }: Verification_Dialog_Popup) => {
-  if(!isOpen)
+  if (!isOpen)
     return <></>;
 
   return (
     <BaseDialog
+      classes={classes}
       open={isOpen}
       onClose={onClose}
       onCancel={onClose}

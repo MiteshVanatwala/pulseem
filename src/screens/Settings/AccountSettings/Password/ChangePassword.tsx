@@ -207,6 +207,7 @@ const ChangePassword = ({ IsOpen = false, OnClose, SetToast, Text }: PasswordPar
     return (
         <>
             <BaseDialog
+                classes={classes}
                 open={IsOpen}
                 onClose={OnClose}
                 onCancel={OnClose}

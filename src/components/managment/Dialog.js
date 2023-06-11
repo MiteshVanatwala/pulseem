@@ -135,6 +135,7 @@ export const Dialog = ({
 
   return (
     <BaseDialog
+      classes={classes}
       style={style ?? null}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}

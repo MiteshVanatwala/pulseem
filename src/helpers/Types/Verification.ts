@@ -4,6 +4,7 @@ export type Verification_Dialog_Popup = {
     isOpen: boolean;
     onClose: Function;
     children: POPUP_OBJECT_TYPE;
+    classes: any;
   };
   
   export type POPUP_OBJECT_TYPE = {

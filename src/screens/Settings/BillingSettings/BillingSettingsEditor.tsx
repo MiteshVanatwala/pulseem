@@ -435,6 +435,7 @@ const BillingSettingsEditor = () => {
 
   const RenderAddCardDialog = () => (
     <BaseDialog
+      classes={classes}
       title={t("settings.billingSettings.btnAddCard")}
       open={addCardDialog}
       onConfirm={handleSaveCard}

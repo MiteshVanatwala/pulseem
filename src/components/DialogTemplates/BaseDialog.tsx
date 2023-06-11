@@ -41,14 +41,14 @@ export const BaseDialog = ({
   style = undefined,
   maxHeight = "",
   reduceTitle = false,
-  confirmDisabled = false
+  confirmDisabled = false,
+  classes 
 }: DialogOptions) => {
   const direction: { [key: string]: string } = {
     true: "rtl",
     false: "ltr",
   };
 
-  const { classes } = useCore();
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(
     (state: { core: any }) => state.core

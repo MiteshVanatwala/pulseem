@@ -165,6 +165,7 @@ export const Dialog = (options: Options) => {
   };
   return (
     <BaseDialog
+      classes={options.Classes}
       style={options.Style}
       open={!!options.Open}
       className={clsx(

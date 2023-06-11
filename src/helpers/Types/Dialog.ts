@@ -25,6 +25,7 @@ export type DialogOptions = {
   maxHeight?: string | number | undefined;
   reduceTitle?: boolean;
   confirmDisabled?: boolean;
+  classes?: any
 };
 
 export type Slide_PropTypes = {

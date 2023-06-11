@@ -138,6 +138,7 @@ export const SolidDialog = ({
 
   return (
     <BaseDialog
+      classes
       style={style ?? null}
       open={!!open}
       className={clsx(classes.solidDialogContainer, customContainerStyle)}
