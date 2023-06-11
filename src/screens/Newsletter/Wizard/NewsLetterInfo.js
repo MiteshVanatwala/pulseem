@@ -1154,7 +1154,7 @@ const NewsLetterInfo = ({ classes }) => {
                     }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={renderButtons()}
-                    additionalButtonsOnStart={renderTemplateButtons()}
+                    // additionalButtonsOnStart={renderTemplateButtons()}
                 />
             </Box>
             <BaseDialog
