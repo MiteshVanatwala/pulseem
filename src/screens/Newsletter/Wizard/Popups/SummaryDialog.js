@@ -245,7 +245,7 @@ const SummaryDialog = ({ classes,
                                 </Select>
                             </Box>
                             <Box className={classes.sumChild}>
-                                <Link className={clsx(classes.link, classes.mt1)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')} {t('campaigns.newsLetterEditor.helpTexts.newAddress')}</Link>
+                                <Link className={clsx(classes.link, classes.mt1)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</Link>
                             </Box>
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>

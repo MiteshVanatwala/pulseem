@@ -1404,10 +1404,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 isOpen={newEMailVerification}
                 variant='email'
                 onClose={() => setNewEmailVerification(false)}
-                Option={{
-                    Step: 1,
-                    Value: summaryEmail || newsletterInfo.FromEmail
-                }}
+                step={1}
+                value={newsletterInfo.FromEmail}
             />}
 
             {dialogType?.type === 'quickMnualUpload' && <QuickManualUploadDialog

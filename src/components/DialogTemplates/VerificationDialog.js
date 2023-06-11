@@ -26,9 +26,9 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     const { verifiedEmails, verifiedNumbers, twoFactorAuthEmails, twoFactorAuthNumbers } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [showLoader, setShowLoader] = useState(true);
-    const [verificationStep, setVerificationStep] = useState(Option?.Step ?? 0)
+    const [verificationStep, setVerificationStep] = useState(step ?? 0)
     const [verificationError, setVerificationError] = useState(null)
-    const [selectedVerificationContact, setSelectedVerificationContact] = useState(Option?.Value ?? "")
+    const [selectedVerificationContact, setSelectedVerificationContact] = useState(value ?? "")
     const [codeResend, setCodeResend] = useState(false)
     const [verificationCode, setVerificationCode] = useState('')
     const [authorizedTypeDisabled, setAuthorizedTypeDisabled] = useState(false);
