@@ -842,14 +842,24 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     segmantIndication = true;
                 }
                 else {
-                    filterParameters.IsOpened = false;
-                    filterParameters.IsNotOpened = false;
-                    filterParameters.IsNotClicked = false;
-                    filterParameters.IsOpenedClicked = false;
-
-                    setFilterParameters({ ...campaignValues, FromDate: null, ToDate: null });
-                    setCampaignValues({ ...campaignValues, FromDate: null, ToDate: null });
-
+                    setFilterParameters({
+                        ...campaignValues,
+                        FromDate: null,
+                        ToDate: null,
+                        IsOpened: false,
+                        IsNotOpened: false,
+                        IsNotClicked: false,
+                        IsOpenedClicked: false
+                    });
+                    setCampaignValues({
+                        ...campaignValues,
+                        FromDate: null,
+                        ToDate: null,
+                        IsOpened: false,
+                        IsNotOpened: false,
+                        IsNotClicked: false,
+                        IsOpenedClicked: false
+                    });
                 }
 
                 if (!segmantIndication) {

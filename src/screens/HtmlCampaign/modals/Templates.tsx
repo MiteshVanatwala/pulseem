@@ -51,7 +51,7 @@ const Templates = ({
     setTemplateList(templates);
     const categories = tabValue === 0 ? publicTemplateCategories : templatesBySubAccountCategories;
     setCategoryList(categories);
-    setSelectedCategory(categories.length > 0 ? categories[0] : '');
+    setSelectedCategory(categories?.length > 0 ? categories[0] : '');
     setLoader(false);
   }, [publicTemplates, templatesBySubAccount, tabValue]);
 
@@ -162,9 +162,9 @@ const Templates = ({
             className={clsx(classes.mr15, classes.ml15)}
             classes={{ indicator: classes.hideIndicator }}
           >
-            <Tab label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
+            <Tab value={0} label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
             {
-              !isCreateCampaign && <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
+              !isCreateCampaign && <Tab value={1} label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
             }
           </Tabs>
           <Box className={classes.pt15}>
