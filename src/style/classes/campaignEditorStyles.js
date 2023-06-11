@@ -26,6 +26,6 @@ export const getCampaignEditorStyle = (windowSize, isRTL) => ({
     border: '1px solid grey',
     width: 'calc(100% - 60px)',
     height: 350,
-    overflowY: 'scroll'
+    overflowY: 'hidden'
   }
 });

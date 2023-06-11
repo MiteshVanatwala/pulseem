@@ -189,7 +189,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             width: '100%'
         },
         '& .MuiDialog-paperWidthSm': {
-            width: '100%'
+            width: '100%',
+            maxWidth: 960
         },
         '& [role="tabpanel"]': {
             width: mobileNotificationSize[windowSize],
