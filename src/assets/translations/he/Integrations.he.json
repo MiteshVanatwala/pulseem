@@ -22,7 +22,7 @@
     "enterAPIVersion": "API Version הזינו",
     "reset": "אפס",
     "showCredentials": "הצג פרטי התחברות",
-    "hideCredentials": "להתחבא  פרטי התחברות",
+    "hideCredentials": "הסתר פרטי התחברות",
     "apiVersion": "גרסת API",
     "authResponses": {
       "201": "החנות אומתה בהצלחה",
