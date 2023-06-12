@@ -193,28 +193,30 @@ const Templates = ({
                   if (selectedCategory === '') return template(templ, 'all');
                 })
               }
+              {
+                selectedCategory === '' && maxTemplatesToShow < publicTemplates.length && (
+                  <Grid item md={12}>
+                    <Box className={clsx(classes.textCenter, classes.pt15)}>
+                      <Button
+                        className={clsx(
+                          classes.actionButton,
+                          classes.actionButtonLightBlue,
+                          classes.paddingSides25
+                        )}
+                        onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
+                      >
+                        <Typography    
+                          className={clsx(classes.dBlock, classes.f18)}
+                        >
+                          Load More
+                        </Typography>
+                      </Button>
+                    </Box>
+                  </Grid>
+                )
+              }
             </Grid>
           </Box>
-          {
-            selectedCategory === '' && maxTemplatesToShow < publicTemplates.length && (
-              <Box className={clsx(classes.textCenter, classes.pt2rem)}>
-                <Button
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightBlue,
-                    classes.paddingSides25
-                  )}
-                  onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
-                >
-                  <Typography    
-                    className={clsx(classes.dBlock, classes.f18)}
-                  >
-                    Load More
-                  </Typography>
-                </Button>
-              </Box>
-            )
-          }
         </Grid>
       </Grid>
       <TemplatePreview
