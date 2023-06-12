@@ -152,12 +152,12 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(getTemplateById.fulfilled, (state, { payload }) => {})
             .addCase(getPublicTemplates.fulfilled, (state, action) => {
-                state.publicTemplates = action.payload.Data
-                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
+                state.publicTemplates = action.payload.Data || []
+                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
             })
             .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
-                state.templatesBySubAccount = action.payload.Data;
-                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
+                state.templatesBySubAccount = action.payload.Data || [];
+                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data || [], 'Category');
             })
 
     }
