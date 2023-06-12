@@ -1,6 +1,4 @@
-import React from 'react'
 import {Box, Popper} from '@material-ui/core'
-import {Transition} from 'react-transition-group'
 
 export const PopMassage=({
   classes,
@@ -9,12 +7,12 @@ export const PopMassage=({
   label='',
   innerRef=null
 }) => {
-  const transitionStyles={
-    entering: 1,
-    entered: 1,
-    exiting: 0,
-    exited: 0
-  };
+  // const transitionStyles={
+  //   entering: 1,
+  //   entered: 1,
+  //   exiting: 0,
+  //   exited: 0
+  // };
   return (
     <Popper open={show} anchorEl={innerRef}>
       <Box

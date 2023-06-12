@@ -112,10 +112,12 @@
   "filterSearch": "Apply filter",
   "closeFilterSearch": "Close filter",
   "virtualNumber": "Virtual Number",
+  "errorReason": "Error reason",
   "fileName": "File Name",
   "action": "Action",
   "ReadyForDownload": "Ready For Download",
   "InProcess": "In Process",
   "Failed": "Failed",
-  "Completed": "completed" 
+  "Completed": "completed" ,
+  "smsReplies": "SMS Incoming report"
 }

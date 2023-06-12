@@ -1,11 +1,12 @@
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getUniqueValuesOfKey } from '../../helpers/Utils/common';
 
 
 export const getCampaignById = createAsyncThunk(
     '/CampaignEditor/GetCampaignById/', async (id, thunkAPI) => {
         try {
-            const response = await instence.get(`/CampaignEditor/GetCampaignById/${id}`);
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetCampaignById/${id}`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -16,7 +17,7 @@ export const saveCampaign = createAsyncThunk(
     '/CampaignEditor/SaveCampaign/', async (campaign, thunkAPI) => {
         return new Promise(async (resolve, reject) => {
             try {
-                const response = await instence.post(`/CampaignEditor/SaveCampaign/`, campaign);
+                const response = await PulseemReactInstance.post(`/CampaignEditor/SaveCampaign/`, campaign);
                 resolve(JSON.parse(response.data))
             } catch (error) {
                 reject(thunkAPI.rejectWithValue({ error: error.message }));
@@ -27,7 +28,17 @@ export const saveCampaign = createAsyncThunk(
 export const saveUserBlock = createAsyncThunk(
     '/CampaignEditor/SaveUserBlock/', async (block, thunkAPI) => {
         try {
-            const response = await instence.post(`/CampaignEditor/SaveUserBlock/`, block);
+            const response = await PulseemReactInstance.post(`/CampaignEditor/SaveUserBlock/`, block);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+export const updateUserBlock = createAsyncThunk(
+    '/CampaignEditor/UpdateUserBlock/', async (campaign, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.put(`/CampaignEditor/UpdateUserBlock/`, campaign);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -37,7 +48,7 @@ export const saveUserBlock = createAsyncThunk(
 export const getUserblocks = createAsyncThunk(
     '/CampaignEditor/GetUserblocks/', async (thunkAPI) => {
         try {
-            const response = await instence.get(`/CampaignEditor/GetUserblocks`);
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetUserblocks`);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -47,7 +58,7 @@ export const getUserblocks = createAsyncThunk(
 export const deleteUserBlock = createAsyncThunk(
     '/CampaignEditor/DeleteUserBlock/', async (id, thunkAPI) => {
         try {
-            const response = await instence.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
+            const response = await PulseemReactInstance.delete(`/CampaignEditor/DeleteUserBlock/${id}`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -57,31 +68,8 @@ export const deleteUserBlock = createAsyncThunk(
 export const testSend = createAsyncThunk(
     '/CampaignEditor/TestSend/', async (payload, thunkAPI) => {
         try {
-            const response = await instence.post(`/CampaignEditor/TestSend/`, payload);
+            const response = await PulseemReactInstance.post(`/CampaignEditor/TestSend/`, payload);
             return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-
-export const saveCampaignInfo = createAsyncThunk(
-    'CampaignEditor/CreateOrUpdate', async (campaign, thunkAPI) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const response = await instence.post(`CampaignEditor/CreateOrUpdate`, campaign);
-                resolve(JSON.parse(response.data))
-            } catch (error) {
-                reject(thunkAPI.rejectWithValue({ error: error.message }));
-            }
-        })
-    }
-)
-
-export const getCampaignInfo = createAsyncThunk(
-    'CampaignEditor/GetCampaignInfo', async (campaignId, thunkAPI) => {
-        try {
-            const response = await instence.get(`CampaignEditor/GetCampaignInfo/${campaignId}`);
-            return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
@@ -90,21 +78,50 @@ export const getCampaignInfo = createAsyncThunk(
 export const getBeeToken = createAsyncThunk(
     '/CampaignEditor/GetBeeToken/', async (_, thunkAPI) => {
         try {
-            const response = await instence.get(`/CampaignEditor/GetBeeToken`);
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetBeeToken`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
-export const getCreditsByFileTotalBytes = createAsyncThunk(
-    'CampaignEditor/GetCreditsByFileTotalBytes', async (campaign, thunkAPI) => {
+
+export const getTemplateById = createAsyncThunk(
+    '/CampaignEditor/GetTemplateById/', async (id, thunkAPI) => {
         try {
-            const response = await instence.post(`CampaignEditor/GetCreditsByFileTotalBytes`, campaign);
+            const response = await PulseemReactInstance.get(`/CampaignEditor/GetTemplateById/${id}`);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
-    });
+    })
+export const saveTemplateToAccount = createAsyncThunk(
+    '/CampaignEditor/SaveAsTemplate', async (data, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.post(`CampaignEditor/SaveAsTemplate`, data);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+
+export const getPublicTemplates = createAsyncThunk(
+    '/CampaignEditor/GetPublicTemplates', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
+export const getAllTemplatesBySubaccountId = createAsyncThunk(
+    '/CampaignEditor/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
+        try {
+            const response = await PulseemReactInstance.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    })
 
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
@@ -114,11 +131,16 @@ export const campaignEditorSlice = createSlice({
         userBlocks: null,
         ToastMessages: {
             CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
+            TEMPLATE_SAVED: { severity: 'success', color: 'success', message: 'common.templateSaved', showAnimtionCheck: true },
             RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
         },
-        campaignInfo: []
+        templateDetails: {},
+        publicTemplates: [],
+        publicTemplateCategories: [],
+        templatesBySubAccount: [],
+        templatesBySubAccountCategories: []
     },
     extraReducers: builder => {
         builder
@@ -136,14 +158,16 @@ export const campaignEditorSlice = createSlice({
                 });
                 state.userBlocks = blocks
             })
-            .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
-                state.campaignInfo = payload;
-            })
-            .addCase(getCreditsByFileTotalBytes.fulfilled, (state, { payload }) => {
-                state.campaignInfo = payload?.Message;
-            })
             .addCase(getBeeToken.fulfilled, (state, { payload }) => {
                 state.beeToken = payload;
+            })
+            .addCase(getPublicTemplates.fulfilled, (state, action) => {
+                state.publicTemplates = action.payload.Data
+                state.publicTemplateCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
+            })
+            .addCase(getAllTemplatesBySubaccountId.fulfilled, (state, action) => {
+                state.templatesBySubAccount = action.payload.Data;
+                state.templatesBySubAccountCategories = getUniqueValuesOfKey(action.payload.Data, 'Category');
             })
 
     }

@@ -13,6 +13,7 @@ const WizardActions = ({
     classes,
     innerStyle,
     additionalButtons = null,
+    additionalButtonsOnStart = null,
     onSave = null,
     onExit = null,
     onBack = null,
@@ -26,7 +27,8 @@ const WizardActions = ({
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
     return (
-        <Grid container style={{ ...innerStyle, paddingBottom: 40 }} className={disabled ? classes.disableChildButtons : null}>
+        <Grid container style={{ ...innerStyle, paddingBottom: 40 }}
+            className={disabled ? classes.disableChildButtons : null}>
             <Grid item xs={12}>
                 <Box className={clsx(classes.wizardButtonContainer)}>
                     {onBack &&
@@ -43,6 +45,7 @@ const WizardActions = ({
                             color="primary"
                         >{onBack?.text ?? t('notifications.back')}</Button>
                     }
+                    {additionalButtonsOnStart}
                     <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
                         {onDelete &&
                             <Button
@@ -66,7 +69,7 @@ const WizardActions = ({
                                 style={{ marginInline: 8, paddingInline: 10 }}
                                 className={clsx(classes.actionButton,
                                     classes.actionButtonOutlinedBlue)}>
-                                <AiOutlineFileAdd style={{ fontSize: "20", paddingInline: 5 }} />
+                                <AiOutlineFileAdd style={{ fontSize: "28", paddingInline: 5 }} />
                                 {t("common.documentGallery")}
                             </Button>
                         }

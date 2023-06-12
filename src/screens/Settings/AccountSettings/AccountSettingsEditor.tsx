@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Divider, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Title } from "../../../components/managment/Title";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +11,7 @@ import useCore from "../../../helpers/hooks/Core";
 import { getAccountSettings, updateDetails, updateSettings } from "../../../redux/reducers/AccountSettingsSlice";
 import { AccountSettings } from '../../../Models/Account/AccountSettings';
 import { Loader } from "../../../components/Loader/Loader";
-import { logout } from "../../../helpers/api";
+import { logout } from "../../../helpers/Api/PulseemReactAPI";
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import {
   MdArrowBackIos,
@@ -26,7 +25,7 @@ const AccountSettingsEditor = () => {
   const dispatch = useDispatch();
   const { classes } = useCore();
   const { isRTL, windowSize } = useSelector((state: any) => state.core);
-  const { accountSettings, ToastMessages } = useSelector((state: any) => state?.accountSettings);
+  const { account, ToastMessages } = useSelector((state: any) => state?.accountSettings);
   const { CoreToastMessages } = useSelector((state: any) => state?.core);
   const [toastMessage, setToastMessage] = useState(null);
   const [showLoader, setShowLoader] = useState(true);
@@ -86,8 +85,8 @@ const AccountSettingsEditor = () => {
   }, []);
 
   useEffect(() => {
-    setSettingRequest(accountSettings?.Data);
-  }, [accountSettings]);
+    setSettingRequest(account?.Data);
+  }, [account]);
 
   const handleUpdate = async (updatedObject: AccountSettings, saveType: string, sendRequest: boolean) => {
 
@@ -297,8 +296,8 @@ const AccountSettingsEditor = () => {
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         isOpen={tfaEmailVerification}
-        value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && emailToVerify}
         onClose={() => {
           setTfaEmailVerification(false);
           setVerificationStep(0);
@@ -309,8 +308,8 @@ const AccountSettingsEditor = () => {
         classes={classes}
         variant="email"
         isOpen={emailVerificationPopup}
-        value={verificationStep > 0 && emailToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && emailToVerify}
         onClose={() => {
           setEmailVerificationPopup(false);
           setVerificationStep(0);
@@ -320,8 +319,8 @@ const AccountSettingsEditor = () => {
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         isOpen={tfaSmsVerification}
-        value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && cellphoneToVerify}
         onClose={() => {
           setTfaSmsVerification(false);
           setVerificationStep(0);
@@ -331,8 +330,8 @@ const AccountSettingsEditor = () => {
         textButtonOnSuccess={t('common.close')}
         classes={classes}
         variant="sms"
-        value={verificationStep > 0 && cellphoneToVerify}
         step={verificationStep}
+        value={verificationStep > 0 && cellphoneToVerify}
         isOpen={smsVerificationPopup}
         onClose={() => {
           setSmsVerificationPopup(false);

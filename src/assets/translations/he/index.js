@@ -20,30 +20,40 @@ import recipient from './Recipient.json'
 import group from './group.json'
 import mmsreport from './MMSReport.he.json'
 import languages from './languages.he.json'
+import whatsapp from './WhatsappCreator.json';
+import whatsappCampaign from './WhatsappCampaign.json';
+import whatsappManagement from './WhatsappManagement.json';
+import whatsappReport from './WhatsappReport.json';
+import whatsappChat from './WhatsappChat.json';
 import settings from './Settings.he.json'
 
 export const he = {
-  automations,
-  campaigns,
-  common,
-  landingPages,
-  mms,
-  sms,
-  appBar,
-  master,
-  notifications,
-  mainReport,
-  dashboard,
-  smsReport,
-  report,
-  emailStatus,
-  emoji,
-  payment,
-  siteTracking,
-  client,
-  recipient,
-  group,
-  mmsreport,
-  languages,
-  settings
+	automations,
+	campaigns,
+	common,
+	landingPages,
+	mms,
+	sms,
+	appBar,
+	master,
+	notifications,
+	mainReport,
+	dashboard,
+	smsReport,
+	report,
+	emailStatus,
+	emoji,
+	payment,
+	siteTracking,
+	client,
+	recipient,
+	group,
+	mmsreport,
+	languages,
+	settings,
+	whatsapp,
+	whatsappCampaign,
+	whatsappManagement,
+	whatsappReport,
+	whatsappChat
 }

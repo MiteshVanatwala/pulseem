@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import { Typography, Divider, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
+import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
@@ -17,11 +17,11 @@ import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 import { GetProductReports } from '../../../redux/reducers/reportSlice';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa'
 import ConfirmRadioDialog from '../../../components/DialogTemplates/ConfirmRadioDialog';
-import { preferredOrder } from '../../../helpers/exportHelper';
-import { exportFile } from '../../../helpers/exportFromJson';
 import { ExportFileTypes } from '../../../model/Export/ExportFileTypes';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import LazyBackground from '../../../components/Gallery/Lazy/LazyBackground';
-import { renderHtml } from '../../../helpers/functions';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const DEFAULT_FILTER = {
     PageIndex: 1,
@@ -35,9 +35,9 @@ const DEFAULT_FILTER = {
 
 const ProductsReport = ({ classes }) => {
     const navigate = useNavigate()
-    const { accountFeatures, language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+    const { accountFeatures } = useSelector(state => state.common);
+    const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { productsReportDetails, productCategories, exportPRData } = useSelector(state => state.report)
-
     const { t } = useTranslation()
     const [searchData, setSearchData] = useState(DEFAULT_FILTER)
     const [isSearching, setIsSearching] = useState(true);
@@ -104,7 +104,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
+                    EventTypeID: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.PURCHASED
                 }
             }),
         },
@@ -115,7 +115,7 @@ const ProductsReport = ({ classes }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     ProductId: id,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.Product,
-                    EventTypeId: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
+                    EventTypeID: CLIENT_CONSTANTS.PRODUCT_REPORT_TYPE.ABANDONED
                 }
             }),
         },
@@ -136,15 +136,26 @@ const ProductsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async (formatType) => {
-        setDialogType(null);
         setLoader(true);
-        let orderList = preferredOrder(exportPRData, Object.keys(exportColumnHeader));
-        exportFile({
-            data: orderList,
-            fileName: 'productsReport',
-            exportType: formatType,
-            fields: exportColumnHeader
-        });
+
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            Order: Object.keys(exportColumnHeader)
+        };
+
+        try {
+            const result = await HandleExportData(exportPRData, exportOptions);
+            ExportFile({
+                data: result,
+                fileName: 'productsReport',
+                exportType: formatType,
+                fields: exportColumnHeader
+            });
+        } catch (error) {
+            console.log(error);
+        }
+
         setLoader(false);
     }
     //  COMPONENTS  //
@@ -287,10 +298,8 @@ const ProductsReport = ({ classes }) => {
                     target="_blank">
                     {value && value.toLocaleString() || '0'}
                 </Typography>
-
             </Box>
         )
-
     }
 
     const renderRow = (row) => {
@@ -428,7 +437,7 @@ const ProductsReport = ({ classes }) => {
             </Typography>
             <Divider />
             <Grid item xs={12}>
-                <Typography>{renderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
+                <Typography>{RenderHtml(t('report.ProductsReport.registrationGuide'))}</Typography>
             </Grid>
             {renderFilter()}
             {renderManagmentLine()}

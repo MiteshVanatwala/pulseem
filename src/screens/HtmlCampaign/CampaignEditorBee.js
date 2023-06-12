@@ -11,7 +11,11 @@ import {
   getUserblocks,
   testSend,
   saveUserBlock,
-  deleteUserBlock
+  deleteUserBlock,
+  saveTemplateToAccount,
+  getTemplateById,
+  getPublicTemplates,
+  getAllTemplatesBySubaccountId
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
@@ -21,19 +25,14 @@ import ResponseModal from './modals/ResponseModal'
 import NoCreditsModal from './modals/NoCreditsModal'
 import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
-import { GiExitDoor } from 'react-icons/gi'
-import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
-import { AiOutlineExclamationCircle } from "react-icons/ai";
 import WizardActions from '../../components/Wizard/WizardActions';
 import { getBeeToken } from '../../redux/reducers/campaignEditorSlice';
 import { initExtraDataField, initLandingPages } from './helper/MigratePulseemData';
 import { BeeConfig, DialogType, DefaultContent } from './helper/Config';
-import { IoMdImages } from 'react-icons/io';
-import { Dialog } from "../../components/managment/Dialog";
 import Gallery from '../../components/Gallery/Gallery.component';
-import { PulseemFolderType } from "../../model/PulseemFields/Fields";
+import { PulseemFeatures, PulseemFolderType } from "../../model/PulseemFields/Fields";
 import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import { BiSave } from 'react-icons/bi'
 
@@ -45,7 +44,11 @@ import useModals from './hooks/useModals'
 import { DemoModal } from './components/DemoModal'
 import useMockAPI from './hooks/useMockAPI';
 import { useParams } from 'react-router-dom';
+import { BaseDialog } from '../../components/DialogTemplates/BaseDialog';
 import moment from 'moment';
+import Templates from './modals/Templates.tsx';
+import OverwriteTemplatePopUp from '../Groups/Management/Popup/OverwriteTemplatePopUp';
+import SaveTemplate from './modals/SaveTemplate';
 /* END Bee */
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -59,10 +62,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const campaignId = params?.id;
   const [dataReady, setDataReady] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
-  const { campaign, userBlocks, ToastMessages, beeToken } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages, beeToken, publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language, isRTL, accountSettings } = useSelector(state => state.core)
-  const { tokenAlive } = useSelector(state => state.common)
+  const { language, isRTL } = useSelector(state => state.core)
+  const { tokenAlive, accountSettings, accountFeatures } = useSelector(state => state.common)
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
@@ -84,7 +87,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [lastSaveText, setLastSaveText] = useState(null);
   const [silentSave, setSilentSave] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(true);
-
+  const [overwriteTemplateDialog, setOverwriteTemplateDialog] = useState(false);
+  const [newTemplate, setNewTemplate] = useState('');
   //#endregion State
 
   //#region Get Extra fields & Landing pages, after Data Ready
@@ -147,6 +151,8 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
+    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
     if (userBlocks) {
@@ -187,11 +193,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('common.systemNotice'),
       message: t("common.autoLogoutMessage"),
-      icon: (
-        <AiOutlineExclamationCircle
-          style={{ fontSize: 30, color: "#fff" }}
-        />
-      ),
       showDefaultButtons: false,
       renderButtons: () =>
       (<Button
@@ -269,15 +270,31 @@ const CampaignEditor = ({ classes, ...props }) => {
       config.rowsConfiguration.externalContentURLs = tempRows;
     }
   }
-  const initBeeEditor = () => {
-    initSpecialLinks().then((specialLinksFiles) => {
+  const initBeeEditor = (templateId = null) => {
+    initSpecialLinks().then(async (specialLinksFiles) => {
       const isRtlLang = campaign?.LanguageCode === 0 || campaign?.LanguageCode === 8 ? true : false;
-      const defaultContent = DefaultContent(isRtlLang);
+      let forceTemplate = null;
+      let defaultContent = DefaultContent(isRtlLang);
+      if (templateId !== null) {
+        const templateResponse = await dispatch(getTemplateById(templateId));
+
+        if (templateResponse?.payload?.StatusCode === 201) {
+          const responseData = templateResponse?.payload?.Data;
+          setNewTemplate(responseData)
+          forceTemplate = responseData?.JsonData ? JSON.parse(responseData?.JsonData) : defaultContent.defaultTemplate;
+        } else {
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse?.payload.Message, showAnimtionCheck: false });
+        }
+      }
+
       config.uid = accountSettings?.SubAccountSettings?.BeeUniqueID;
       config.mergeTags = mergeData;
       config.specialLinks = specialLinksFiles;
       config.titleDefaultStyles = defaultContent.titleDefaultStyles;
       config.contentDefaults = defaultContent.contentDefaults;
+      if (accountFeatures?.indexOf(PulseemFeatures.BEE_AMP) > -1) {
+        config.workspace.type = 'mixed';
+      }
 
       initTags();
 
@@ -289,7 +306,15 @@ const CampaignEditor = ({ classes, ...props }) => {
           }
           else {
             const beeTest = new BeePlugin(beeObject);
-            const template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+            let template = null;
+
+            if (forceTemplate !== null) {
+              template = forceTemplate;
+            }
+            else{
+              template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
+            }
+
             beeTest.start(config, template).then((instance) => {
               editorRef.current = instance;
               if ((!campaign || !campaign.HtmlData) && (!params?.id || params?.id === 0)) {
@@ -374,15 +399,26 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (response.payload === true) {
         if (saveRef.current?.redirectAfterSave) {
           localStorage.setItem('reloadBeeEditor', 1);
-          window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
+          window.location = saveRef.current?.redirectUrl ?? `/react/Campaigns/SendSettings/${args.campaignId}`;
+          // window.location = saveRef.current?.redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${args.campaignId}&fromreact=true`;
           return false;
         }
         else if (saveRef.current?.showAnimation) {
-          setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+          setToastMessage(saveRef.current?.saveTemplate ? ToastMessages.TEMPLATE_SAVED : ToastMessages.CAMPAIGN_SAVED);
         }
       }
-      else {
-        console.log(response);
+
+      if (saveRef.current?.saveTemplate) {
+        const templateResponse = await dispatch(saveTemplateToAccount({
+          Name: saveRef.current?.templateName,
+          JsonData: finalJson,  
+          HTML: finalHtml,
+          Category: saveRef.current?.templateCategory
+        }));
+        if (!templateResponse.payload.Data) {
+          setToastMessage({ severity: 'error', color: 'error', message: templateResponse.payload.Message, showAnimtionCheck: false });
+        }
+        dispatch(getAllTemplatesBySubaccountId());
       }
     } catch (e) {
       console.error(e);
@@ -399,7 +435,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       setLastSaveText(`${t('campaigns.lastSaveAt')} ${moment(now).format("hh:mm:ss")}`)
       setSilentSave(false)
     }, 2000);
-
   }
 
   const onAutoSaveCampaign = debounce(() => {
@@ -421,7 +456,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
       message: t("mainReport.confirmSure"),
-      icon: <BsTrash />,
       onConfirm: () => deleteNewsletter(),
       onCancel: () => setDialog(null),
       onClose: () => setDialog(null)
@@ -444,7 +478,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     setGenericModalData({
       title: t('mainReport.handleExitTitle'),
       message: t("mainReport.leaveCampaign"),
-      icon: <GiExitDoor />,
       onClose: () => handleExitCampaign(false),
       onConfirm: () => handleExitCampaign(true),
       onCancel: () => setDialog(null)
@@ -505,7 +538,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (toastMessage) {
       setTimeout(() => {
         setToastMessage(null);
-      }, 4000);
+      }, 2000);
       return (
         <Toast data={toastMessage} />
       );
@@ -578,13 +611,16 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const config = getConfig();
 
+
+  const saveTemplate = async (name, category) => {
+    saveRef.current = { templateName: name, templateCategory: category, saveTemplate: true, showAnimation: true };
+    await editorRef.current.save();
+  }
+
   const showGalleryModal = () => {
     if (showGallery) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-        ),
         title: t("common.imageGallery"),
         content: (
           <Gallery
@@ -597,7 +633,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -605,10 +641,11 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showGallery}
           onClose={() => { setShowGallery(false); }}
+          onCancel={() => { setShowGallery(false); }}
           onConfirm={() => { setShowGallery(false); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
@@ -616,9 +653,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (showDocs) {
       let dialog = {
         showDivider: false,
-        icon: (
-          <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-        ),
         title: t("common.documentGallery"),
         content: (
           <Gallery
@@ -631,7 +665,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       };
 
       return (
-        <Dialog
+        <BaseDialog
           maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
@@ -639,14 +673,50 @@ const CampaignEditor = ({ classes, ...props }) => {
           classes={classes}
           open={showDocs}
           onClose={() => { setShowDocuments(false); }}
+          onCancel={() => { setShowDocuments(false); }}
           onConfirm={() => { setShowDocuments(false); initBeeEditor(); }}
           {...dialog}>
           {dialog.content}
-        </Dialog>
+        </BaseDialog>
       );
     }
   }
 
+  const renderTemplateButtons = () => {
+    return <>
+      <Button onClick={() => {
+          setLoader(true);
+          setTimeout(() => {
+            setDialog(DialogType.Templates);
+          }, 1000);
+
+          setTimeout(() => {
+            setLoader(false);
+          }, 2000);
+        }}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonOutlinedBlue
+        )}
+        style={{ margin: '8px' }}
+      >
+        {t('common.templates')}
+      </Button>
+      <Button onClick={() => setDialog(DialogType.SAVE_TEMPLATE)}
+        variant='contained'
+        size='medium'
+        className={clsx(
+          classes.actionButton,
+          classes.actionButtonOutlinedBlue,
+        )}
+        style={{ margin: '8px' }}
+        startIcon={<BiSave />}
+      >
+        {t('common.saveTemplate')}
+      </Button></>
+  }
   const renderButtons = () => {
     const wizardButtons = [];
     if (!isFromAutomation) {
@@ -726,6 +796,19 @@ const CampaignEditor = ({ classes, ...props }) => {
       {renderToast()}
       {showGalleryModal()}
       {showDocumentsModal()}
+      {
+        dialog === DialogType.Templates && <Templates
+          classes={classes}
+          onClose={(template) => {
+            setDialog(null);
+            if (template !== undefined) {
+              setOverwriteTemplateDialog(true);
+              setNewTemplate(template);
+            }
+          }}
+          isOpen={dialog === DialogType.Templates}
+        />
+      }
       <NoCreditsModal
         classes={classes}
         onClose={() => setDialog(null)}
@@ -772,7 +855,27 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
+        // additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
+      />
+      <OverwriteTemplatePopUp
+        classes={classes}
+        onClose={(resp) => {
+          if (resp) {
+            setOverwriteTemplateDialog(false);
+            initBeeEditor(newTemplate.ID);
+          }
+          setOverwriteTemplateDialog(false);
+        }}
+        isOpen={overwriteTemplateDialog}
+      />
+      <SaveTemplate
+        classes={classes}
+        onClose={(resp) => {
+          setDialog(null);
+          if (resp !== undefined) saveTemplate(resp.name, resp.category);
+        }}
+        isOpen={dialog === DialogType.SAVE_TEMPLATE}
       />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

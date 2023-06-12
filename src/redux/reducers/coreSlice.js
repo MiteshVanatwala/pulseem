@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { setCookie, getCookie } from '../../helpers/cookies'
+import { setCookie, getCookie } from '../../helpers/Functions/cookies'
 const rtlLanguages = ['he', 'ar']
 
 export const coreSlice = createSlice({
@@ -15,14 +15,12 @@ export const coreSlice = createSlice({
     isWhiteLabel: false,
     companyName: '',
     rowsPerPage: getCookie('rpp') || 6,
-    isClal: false,
-    accountFeatures: null,
+    isClal: null,
     cameFromSubAccount: null,
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
-    // smsOldVersion: false,
-    accountSettings: null,
+    accountFeatures: null,
     CoreToastMessages: {
       XSS_ERROR: { severity: 'error', color: 'error', message: 'common.xssError', showAnimtionCheck: false }
     }
@@ -30,23 +28,6 @@ export const coreSlice = createSlice({
   reducers: {
     setIsClal: (state, action) => {
       state.isClal = action.payload;
-      setCookie("isClal", action.payload);
-    },
-    setAccountFeatures: (state, action) => {
-      const data = action.payload?.Data;
-      state.accountSettings = data;
-      state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
-      setCookie("accountSettings", {
-        Account: data?.Account,
-        AccountFeatures: data?.Account?.AccountFeatures,
-        DefaultLinkChars: data?.DefaultLinkChars,
-        DefaultCellNumber: data?.DefaultCellNumber,
-        DefaultFromMail: data?.DefaultFromMail,
-        DefaultFromName: data?.DefaultFromName,
-        SubAccountSettings: data?.SubAccountSettings,
-        SubAccountName: data?.SubAccountName
-      })
-      setCookie("accountFeatures", data?.Account?.AccountFeatures?.map(String));
     },
     setLanguage: (state, action) => {
       state.language = action.payload
@@ -70,13 +51,10 @@ export const coreSlice = createSlice({
       state.isAdmin = payload.isAdmin
       state.isAllowSwitchAccount = payload.isAllowSwitchAccount
       state.billingTypeId = payload.billingTypeId
-    },
-    // setSmsOldVersion: (state, action) => {
-    //   state.smsOldVersion = action.payload
-    // }
+    }
   }
 })
 
-export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal, setAccountFeatures } = coreSlice.actions // setSmsOldVersion
+export const { setLanguage, setWindowSize, setCoreData, setRowsPerPage, setIsClal } = coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

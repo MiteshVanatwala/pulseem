@@ -58,6 +58,10 @@ export const DASHBOARD_SHORTCUT = {
         {
           title: 'master.newslatterBasicEditor',
           link: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic'
+        },
+        {
+          title: 'master.campaignsArchive',
+          link: '/react/Campaigns/Archive'
         }
       ]
     },
@@ -156,19 +160,19 @@ export const DASHBOARD_SHORTCUT = {
           link: '/Pulseem/EmailCampaignStatistics.aspx'
         }
 
-      ]
-    },
-    'appBar.automation.title': {
-      title: 'appBar.automation.title',
-      pages: [
-        {
-          title: 'automations.createResource.Text',
-          link: '/Pulseem/CreateAutomations.aspx'
-        },
-        {
-          title: 'dashboard.automationManagement',
-          link: '/react/Automations'
-        }
-      ]
-    }
-  };
+    ]
+  },
+  'appBar.automation.title': {
+    title: 'appBar.automation.title',
+    pages: [
+      {
+        title: 'automations.createResource.Text',
+        link: '/Pulseem/CreateAutomations.aspx'
+      },
+      {
+        title: 'dashboard.automationManagement',
+        link: '/react/Automations'
+      }
+    ]
+  }
+};

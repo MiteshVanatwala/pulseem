@@ -1,30 +1,32 @@
 import { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { IoMdImages } from 'react-icons/io';
 import { Grid, Box, Divider, Typography, TextField, makeStyles, FormControl, Select, OutlinedInput, FormHelperText, Button, Checkbox, FormControlLabel } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
+import { getCampaignInfo, saveCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import { Dialog } from "../../../components/managment/Dialog";
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo, getCreditsByFileTotalBytes } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, PulseemFolderType } from "../../../model/PulseemFields/Fields";
-import { makeId } from '../../../helpers/functions';
+import { RandomID } from '../../../helpers/Functions/functions';
 import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AdditionalText } from './components/AdditionalText';
 import { AdvancedSettings } from './components/AdvancedSettings';
-import { getCookie, setCookie } from '../../../helpers/cookies';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import EmojiPicker from '../../../components/Emojis/EmojiPicker';
 import { BiSave } from 'react-icons/bi'
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { DialogType } from '../../HtmlCampaign/helper/Config';
+import Templates from '../../HtmlCampaign/modals/Templates';
+import { getPublicTemplates, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -140,14 +142,15 @@ const NewsLetterInfo = ({ classes }) => {
     const isFromAutomation = queryParams.get("FromAutomation")
     const NodeToEdit = queryParams.get("NodeToEdit")
 
-    const { accountSettings, isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
+    const { publicTemplates } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { verifiedEmails } = useSelector(state => state.common);
+    const { verifiedEmails, accountSettings, accountFeatures } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -155,6 +158,8 @@ const NewsLetterInfo = ({ classes }) => {
     const [campaignLoaded, setCampaignLoaded] = useState(false);
     const [newEditorDisabled, setNewEditorDisabled] = useState(false);
     const [showEmoji, setShowEmoji] = useState(false);
+    const [template, setTemplate] = useState('');
+
     const navigate = useNavigate();
     const maxCharLimits = {
         Name: 100,
@@ -213,7 +218,6 @@ const NewsLetterInfo = ({ classes }) => {
     const [hideCautionOldMessage, setHideCautionOldMessage] = useState(false)
 
     const defaultValues = { WebViewLocation: 1, PrintLocation: 2, UnsubscribeLocation: 2, UpdateClient: 2 }
-    const accountFeatures = getCookie("accountFeatures")
 
     //#region default values
     useEffect(() => {
@@ -245,8 +249,8 @@ const NewsLetterInfo = ({ classes }) => {
             setNewEditorDisabled(true);
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
             sessionStorage.removeItem("Newlsetter_Html_Template");
-
         }
+        if (!publicTemplates.length) dispatch(getPublicTemplates());
     }, []);
 
     const setDefaultEmailAndName = () => {
@@ -377,6 +381,27 @@ const NewsLetterInfo = ({ classes }) => {
         await dispatch(saveCampaignInfo(campaingnValues))
     }
 
+    const renderTemplateButtons = () => !parseInt(id) && <Button onClick={() => {
+        setLoader(true);
+        setTimeout(() => {
+            setDialogType(DialogType.Templates);
+        }, 1000);
+
+        setTimeout(() => {
+            setLoader(false);
+        }, 2000);
+    }}
+        variant='contained'
+        size='medium'
+        className={clsx(
+            classes.actionButton,
+            classes.actionButtonOutlinedBlue
+        )}
+        style={{ margin: '8px' }}
+    >
+        {t('common.templates')}
+    </Button>
+
     useEffect(() => {
         if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
             silenceSave().then(() => {
@@ -451,7 +476,7 @@ const NewsLetterInfo = ({ classes }) => {
     const handleSubmit = async (isContiue, isExit = false, isNewEditor = false) => {
         if (!handleValidations()) {
             setLoader(true);
-            dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then((response) => {
+            await dispatch(saveCampaignInfo({ ...campaingnValues, IsNewEditor: isNewEditor })).then(async (response) => {
                 setLoader(false);
 
                 const savedCampaign = response.payload;
@@ -462,9 +487,18 @@ const NewsLetterInfo = ({ classes }) => {
 
                 const saveInfo = JSON.parse(savedCampaign.Message);
 
+                if (template?.Html && template?.JsonData) {
+                    await dispatch(saveCampaign({
+                        Name: campaingnValues.Name,
+                        campaignId: saveInfo.CampaignID,
+                        JsonData: template?.JsonData,
+                        HTML: template?.Html
+                    }));
+                }
+                
                 if (isContiue) {
                     const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
-                    let redirectUrl = isBeeEditor ? `/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
+                    let redirectUrl = isBeeEditor ? `/react/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
                     if (isFromAutomation) {
                         if (isNew) {
                             redirectUrl += `?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`;
@@ -485,14 +519,14 @@ const NewsLetterInfo = ({ classes }) => {
                         window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                         return false;
                     }
-                    navigate(`/Campaigns`);
+                    navigate(`/react/Campaigns`);
                 }
                 else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
                     if (isFromAutomation) {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}?new=${isNew}&FromAutomation=${isFromAutomation}&NodeToEdit=${NodeToEdit}`)
                     }
                     else {
-                        navigate(`/Campaigns/Create/${saveInfo.CampaignID}`)
+                        navigate(`/react/Campaigns/Create/${saveInfo.CampaignID}`)
                     }
                     initFilesAndCredits(saveInfo.CampaignID);
                 }
@@ -502,7 +536,7 @@ const NewsLetterInfo = ({ classes }) => {
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
-        navigate('/Campaigns');
+        navigate('/react/Campaigns');
     }
     const renderToast = () => {
         if (toastMessage) {
@@ -774,7 +808,7 @@ const NewsLetterInfo = ({ classes }) => {
                     FileName: fileName,
                     FolderType: PulseemFolderType.DOCUMENT,
                     FileURL: file,
-                    ID: makeId()
+                    ID: RandomID()
                 }
                 existsFiles.push(newFile);
             }
@@ -786,7 +820,6 @@ const NewsLetterInfo = ({ classes }) => {
         setIsSilenceUpdated(true);
         const response = await dispatch(getCreditsByFileTotalBytes({ ...campaingnValues, FilesProperties: [...existsFiles] }));
         handleGetNewsletterResponse(response.payload)
-
     }
     const showGalleryModal = () => {
         if (showGallery) {
@@ -794,7 +827,7 @@ const NewsLetterInfo = ({ classes }) => {
             dialog = renderGalleryDialog();
 
             return (
-                <Dialog
+                <BaseDialog
                     maxHeight="calc(70vh)"
                     disableBackdropClick={true}
                     style={{ minHeight: 400 }}
@@ -802,19 +835,17 @@ const NewsLetterInfo = ({ classes }) => {
                     classes={classes}
                     open={showGallery}
                     onClose={() => { setShowGallery(false) }}
+                    onCancel={() => { setShowGallery(false) }}
                     onConfirm={handleGalleryConfirm}
                     {...dialog}>
                     {dialog.content}
-                </Dialog>
+                </BaseDialog>
             );
         }
     }
     const renderGalleryDialog = () => {
         return {
             showDivider: false,
-            icon: (
-                <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-            ),
             title: t("common.documentGallery"),
             content: (
                 <Gallery
@@ -842,7 +873,7 @@ const NewsLetterInfo = ({ classes }) => {
                 window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${isFromAutomation}&NodeToEdit=${NodeToEdit}&fromreact=true`
                 return false;
             }
-            navigate('/Campaigns');
+            navigate('/react/Campaigns');
         }
     }
 
@@ -889,11 +920,16 @@ const NewsLetterInfo = ({ classes }) => {
                     className={clsx(
                         classes.actionButton,
                         classes.actionButtonLightGreen,
-                        classes.backButton
+                        classes.backButton,
+                        classes.ribbonContainer
                     )}
                     style={{ marginInlineStart: '8px' }}
                     color="primary"
-                >{t('master.continueToNewEditor')}
+                >
+                    {t('master.continueToNewEditor')}
+                    <div className="wrap">
+                        <span className="ribbon">{t('mainReport.newFeature')}</span>
+                    </div>
                 </Button>)
             }
             else {
@@ -1057,7 +1093,7 @@ const NewsLetterInfo = ({ classes }) => {
 
         const currentDialog = dialogContent[type] || {}
         return (
-            dialogType && <Dialog
+            dialogType && <BaseDialog
                 classes={classes}
                 open={dialogType}
                 onCancel={() => setDialogType(null)}
@@ -1065,13 +1101,14 @@ const NewsLetterInfo = ({ classes }) => {
                 renderButtons={currentDialog.renderButtons || null}
                 {...currentDialog}>
                 {currentDialog.content}
-            </Dialog>
+            </BaseDialog>
         )
     }
 
     return (
         <DefaultScreen
-            currentPage="Campaingn Settings"
+            currentPage="newsletter"
+            subPage={"newsletterInfo"}
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
@@ -1117,15 +1154,13 @@ const NewsLetterInfo = ({ classes }) => {
                     }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={renderButtons()}
+                    // additionalButtonsOnStart={renderTemplateButtons()}
                 />
             </Box>
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={confirmExit}
                 title={t("campaigns.GridButtonColumnResource2.confirmExit")}
-                icon={<Box className={classes.dialogAlertIcon}>
-                    !
-                </Box>}
                 showDivider={true}
                 onClose={() => handleExit(false)}
                 onCancel={() => handleExit(null)}
@@ -1139,14 +1174,11 @@ const NewsLetterInfo = ({ classes }) => {
                         {t("campaigns.GridButtonColumnResource2.confirmExitText")}
                     </Typography>
                 </Box>
-            </Dialog>
-            <Dialog
+            </BaseDialog>
+            <BaseDialog
                 classes={classes}
                 open={confirmDelete}
                 title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
-                icon={<Box className={classes.dialogAlertIcon}>
-                    !
-                </Box>}
                 showDivider={true}
                 onClose={() => setConfirmDelete(false)}
                 onCancel={() => setConfirmDelete(false)}
@@ -1159,11 +1191,27 @@ const NewsLetterInfo = ({ classes }) => {
                         {t("campaigns.GridButtonColumnResource2.ConfirmText")}
                     </Typography>
                 </Box>
-            </Dialog>
+            </BaseDialog>
             {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
+            {
+                dialogType === DialogType.Templates && <Templates
+                isCreateCampaign={true}
+                classes={classes}
+                onClose={async (template) => {
+                    setDialogType(null);
+                    if (template !== undefined) {
+                        const response = await dispatch(getTemplateById(template.ID));
+                        if (response.payload.StatusCode === 201) {
+                            setTemplate(response?.payload?.Data);
+                        }
+                    }
+                }}
+                isOpen={dialogType === DialogType.Templates}    
+                />
+            }
             <Loader isOpen={showLoader} />
         </DefaultScreen >
     )
 }
 
-export default NewsLetterInfo
+export default NewsLetterInfo;

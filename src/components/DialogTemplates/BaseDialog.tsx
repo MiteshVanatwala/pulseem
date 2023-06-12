@@ -11,7 +11,6 @@ import {
 import "moment/locale/he";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { AlertIcon } from "../icons/index";
 import { Stack } from "@mui/material";
 import { DialogOptions } from "../../helpers/Types/Dialog";
 import useCore from "../../helpers/hooks/Core";
@@ -42,14 +41,14 @@ export const BaseDialog = ({
   style = undefined,
   maxHeight = "",
   reduceTitle = false,
-  confirmDisabled = false
+  confirmDisabled = false,
+  classes 
 }: DialogOptions) => {
   const direction: { [key: string]: string } = {
     true: "rtl",
     false: "ltr",
   };
 
-  const { classes } = useCore();
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(
     (state: { core: any }) => state.core
@@ -60,16 +59,17 @@ export const BaseDialog = ({
   };
 
   const RenderExitButton = () =>
-    exitButton ?? (
+    exitButton && (
       <Stack
         onClick={onExit}
-        className={clsx(classes.dialogExitButton, classes.f20, {
-          [classes.dialogExitButtonRTL]: isRTL,
-          [classes.dialogExitButtonLTR]: !isRTL,
-        })}
+        className={clsx(classes.dialogExitButton, classes.f20, isRTL ? classes.dialogExitButtonRTL : classes.dialogExitButtonLTR)}
         justifyContent="center"
         alignItems="center"
         alignSelf="center"
+        style={{
+          left: isRTL ? 15 : 'auto',
+          right: isRTL ? 'auto' : 15,
+        }}
       >
         <CgClose />
       </Stack>
@@ -78,7 +78,7 @@ export const BaseDialog = ({
   const RenderTitleDefault = () => (
     <>
       <Typography
-        style={{ textAlign: 'center', marginTop: 15, color: "#000" }}
+        style={{ textAlign: 'center', marginTop: 15, color: "#000", direction: isRTL ? 'rtl' : 'ltr' }}
         className={clsx(
           reduceTitle ? classes?.reducedTitle : "",
           classes?.dialogTitle,
@@ -181,7 +181,7 @@ export const BaseDialog = ({
           maxHeight: maxHeight
             ? maxHeight
             : windowSize !== "sm" && windowSize !== "xs"
-              ? "calc(65vh)"
+              ? "calc(70vh)"
               : "calc(45vh)",
           minWidth:
             windowSize !== "xs" && windowSize !== "sm" ? 330 : undefined,
@@ -220,7 +220,7 @@ export const BaseDialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {RenderTopBar()}
         {RenderContent()}
-      </Paper>
-    </Dialog>
+      </Paper >
+    </Dialog >
   );
 };

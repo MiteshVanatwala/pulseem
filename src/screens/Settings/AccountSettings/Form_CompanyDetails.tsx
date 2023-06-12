@@ -45,7 +45,8 @@ const FORM_COMPANY_DETAILS = ({
 }: CompDtlPropTypes) => {
   const { t } = useTranslation();
   const { classes } = useCore();
-  const { isRTL, windowSize, accountSettings } = useSelector((state: any) => state.core);
+  const { isRTL, windowSize } = useSelector((state: any) => state.core);
+  const { accountSettings, accountFeatures } = useSelector((state: any) => state.common);
   const { twoFAUpdated } = useSelector((state: any) => state?.accountSettings);
   const dispatch = useDispatch();
 
@@ -57,7 +58,6 @@ const FORM_COMPANY_DETAILS = ({
   const [showChangePassword, setShowChangePassword] = useState<boolean>(false);
   const [companyDetails, setCompanyDetails] = useState<AccountSettings | null>({} as AccountSettings);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [accFeatures, setAccountFeatures] = useState<any>(null);
 
   const [errors, setErrors] = useState<AccountSettings>({
     CompanyName: "",
@@ -71,9 +71,6 @@ const FORM_COMPANY_DETAILS = ({
     ZipCode: null,
     TwoFactorAuthTestMethodID: null
   } as AccountSettings);
-
-  // const accSettings = getCookie("accountSettings") ?? accountSettings;
-  // const accFeatures = accSettings?.AccountFeatures;
 
   const isValidPayload = () => {
     let tempErrors = { ...errors };
@@ -137,7 +134,6 @@ const FORM_COMPANY_DETAILS = ({
   useEffect(() => {
     const newSettings = { ...Settings, TwoFactorAuthEnabled: accountSettings?.AccountFeatures?.indexOf(45) === -1 } as AccountSettings;
     setCompanyDetails(newSettings);
-    setAccountFeatures(accountSettings?.Account?.AccountFeatures);
     if (Settings)
       handleQueryString2FA();
   }, [accountSettings, Settings]);
@@ -179,7 +175,7 @@ const FORM_COMPANY_DETAILS = ({
     if (name === "TwoFactorAuth") {
       const req = {
         ...companyDetails,
-        TwoFactorAuthEnabled: !!!companyDetails?.TwoFactorAuthEnabled,
+        TwoFactorAuthEnabled: true,
       };
       on2FAUpdate({ ...req } as AccountSettings);
 
@@ -217,6 +213,7 @@ const FORM_COMPANY_DETAILS = ({
     const currentDialog: any = dialogContent[type] || {};
     return (
       <BaseDialog
+        classes={classes}
         title={data.title}
         open={!!dialogType}
         onClose={() => {
@@ -248,7 +245,7 @@ const FORM_COMPANY_DETAILS = ({
       >
         <Title
           Text={t("settings.accountSettings.fixedComDetails.title")}
-          classes={classes}
+          Classes={classes}
           Element={null}
         />
         <Box className={"formContainer"}>
@@ -411,11 +408,11 @@ const FORM_COMPANY_DETAILS = ({
         </Box>
         <Title
           Text={t("settings.accountSettings.fixedComDetails.securitySettings")}
-          classes={classes}
+          Classes={classes}
         />
         <Box className={"forContainer"} style={{ paddingInlineStart: 15 }}>
           <Grid container className={"form"}>
-            {accFeatures?.indexOf(45) === -1 && <Grid
+            {accountFeatures?.indexOf(45) === -1 && <Grid
               item
               xs={12}
               sm={3}
@@ -474,7 +471,7 @@ const FORM_COMPANY_DETAILS = ({
                 </Select>
               </FormControl>
             </Grid>}
-            {accFeatures?.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
+            {accountFeatures?.indexOf(45) === -1 && <Grid item xs={12} sm={6} md={6} className={classes.mt3} style={{ paddingInlineEnd: 25 }}>
               <Box style={{
                 display: windowSize !== 'xs' ? 'flex' : 'block',
                 justifyContent: 'flex-start',

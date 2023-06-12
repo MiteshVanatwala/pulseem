@@ -4,7 +4,7 @@ import { TopAppBar,/*Drawer*/ } from '../components/core'
 import { Container } from '@material-ui/core'
 // import { Helmet } from 'react-helmet';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { getRoutes, getSettingsItem } from '../helpers/routes';
+import { getRoutes, getSettingsItem } from '../helpers/Routes/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
 
@@ -17,16 +17,16 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
     if (currentPage === 'settings') {
       let settingsRoutes = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
       const option = settingsRoutes.options.find((sr) => sr.key === subPage) //settingsRoutes && settingsRoutes.options[0].title || '';
-      title = option && option.title || '';
+      title = (option && option.title) ?? '';
     }
     else {
       route = getRoutes(t).filter(route => route.key === currentPage);
       route = route[0].options.filter(opt => opt.key === subPage);
-      title = route && route[0].title || '';
+      title = (route && route[0]?.title) ?? '';
     }
   } else {
     route = getRoutes(t).filter(route => route.key === currentPage);
-    title = route && route[0] && route[0].pageTitle || route && route[0] && route[0].title || '';
+    title = (route && route[0] && route[0].pageTitle) || (route && route[0] && route[0].title) || '';
   }
 
   title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
@@ -75,4 +75,4 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   )
 }
 
-export default DefaultScreen
+export default DefaultScreen;

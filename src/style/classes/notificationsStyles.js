@@ -328,8 +328,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     deviceSelectorPanel: {
         maxWidth: '200px',
+        borderRadius: '0 !important',
         backgroundColor: 'transparent',
-        boxShadow: 'none'
+        boxShadow: 'none !important'
     },
     deviceSelector: {
         minWidth: 'unset !important'
@@ -398,12 +399,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     bubblePaper: {
         overflowX: 'unset!important',
         textAlign: isRTL ? 'right' : 'left',
-        borderRadius: 20,
+        borderRadius: '20px !important',
         height: '100%',
         padding: '10px 15px',
         position: 'relative',
         width: bubble.paper.width[windowSize],
-        backgroundColor: '#63bbfa',
+        boxShadow: 'none !important',
+        backgroundColor: '#63bbfa !important',
         '&::after': {
             content: `''`,
             position: 'absolute',

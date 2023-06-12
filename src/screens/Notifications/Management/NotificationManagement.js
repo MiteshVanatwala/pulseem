@@ -2,15 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
+  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip, Divider
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
   GroupsIcon, PreviewIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, SearchField
+  TablePagination, ManagmentIcon, DateField, RestorDialogContent, SearchField
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { useSelector, useDispatch } from 'react-redux';
@@ -21,19 +21,24 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getSubAccountApiKey, updateScriptPath, getSubAccountRegistrations
+  getScriptPath, getSubAccountApiKey, getSubAccountRegistrations, updateScriptPath
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { getCookie, setCookie } from '../../../helpers/cookies';
+import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { MdNotificationsActive } from 'react-icons/md';
+import useRedirect from '../../../helpers/Routes/Redirect';
+import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
+import { Title } from '../../../components/managment/Title';
+import { DialogTypes } from '../../../Models/PushNotifications/DialogTypes';
 
 const NotificationManagement = ({ classes }) => {
+  const Redirect = useRedirect();
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { notificationData } = useSelector(state => state.notification)
+  const { notificationData, subAccountApiKey, hideScriptDialog } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
@@ -42,7 +47,6 @@ const NotificationManagement = ({ classes }) => {
   const [scriptDirectory, setScriptDirectory] = useState(0);
   const [copyStatus, setCopyStatus] = useState(false);
   const [scriptPath, setScriptPath] = useState(0);
-  const [apiKey, setApiKey] = useState(0);
   const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
@@ -58,39 +62,40 @@ const NotificationManagement = ({ classes }) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const scriptDialogCookie = getCookie('scriptDialog')
-  const hideScriptDialog = (scriptDialogCookie === 'true')
   const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
   const [showLoader, setLoader] = useState(true);
   const [forceShowImplementation, setForceShowImplementation] = useState(false);
   const refScriptCode = useRef(null);
   moment.locale(language)
 
-  const getData = async () => {
-    await dispatch(getNotificationData());
-    setLoader(false);
-  }
-
   useEffect(() => {
+    const handleScriptPath = async () => {
+      if (!scriptPath || scriptPath === '') {
+        await dispatch(getScriptPath())
+      }
+      if (scriptPath !== '') {
+        setScriptDirectory(1);
+      }
+    }
+    const handleApiKey = async () => {
+      if (!subAccountApiKey || subAccountApiKey === "") {
+        await dispatch(getSubAccountApiKey());
+      }
+    }
+    const getData = async () => {
+      await dispatch(getNotificationData());
+      setLoader(false);
+    }
+
     setLoader(true);
     handleScriptPath();
     handleApiKey();
     getData();
-  }, [dispatch]);
+  }, [dispatch, scriptPath, subAccountApiKey]);
 
-  const handleScriptPath = async () => {
-    const scriptPath = await dispatch(getScriptPath());
-    const path = (scriptPath && scriptPath.payload) || '';
-    setScriptPath(path);
-    if (path !== '') {
-      setScriptDirectory(1);
-    }
-  }
 
-  const handleApiKey = async () => {
-    const response = await dispatch(getSubAccountApiKey());
-    const apiKey = (response && response.payload) || '';
-    setApiKey(apiKey);
-  }
+
+
 
   const handleScriptDirectory = async (event) => {
     const value = parseInt(event.target.value);
@@ -189,38 +194,15 @@ const NotificationManagement = ({ classes }) => {
 
     const dialog = renderImplement();
     return (
-      <Dialog
+      <BaseDialog
         classes={classes}
         open={showScriptDialog}
-        onClose={() => handleImplementScript(false)}
+        onCancel={() => setShowScriptDialog(false)}
+        onClose={() => setShowScriptDialog(false)}
         {...dialog}>
         {dialog.content}
-      </Dialog>
+      </BaseDialog>
     );
-  }
-
-  const renderHeader = () => {
-    return (
-      <>
-        <Box className={classes.dFlex} style={{ alignItems: 'center' }}>
-          <Typography className={classes.managementTitle}>
-            {t('notifications.notificationManagement')}
-          </Typography>
-          <Button
-            style={{ marginInlineStart: 'auto', height: 45, marginTop: 15 }}
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
-            onClick={() => { setForceShowImplementation(true); setShowScriptDialog(true) }}>
-            {t('master.implementScript')}
-          </Button>
-        </Box>
-        <Divider />
-      </>
-    )
   }
 
   const clearSearch = () => {
@@ -256,8 +238,8 @@ const NotificationManagement = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) ?? null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) ?? null
 
           if (!values)
             return true
@@ -279,14 +261,12 @@ const NotificationManagement = ({ classes }) => {
       setSearching(true);
       setPage(1);
     }
-
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
       }
       handleFromDate(value);
     }
-
     const handleNotificationNameChange = event => {
       setNotificationNameSearch(event.target.value)
     }
@@ -375,7 +355,12 @@ const NotificationManagement = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
+            component="a"
             href='/react/Notification/create'
+            onClick={(e) => {
+              e.preventDefault()
+              Redirect({ url: '/react/Notification/create' })
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -775,7 +760,7 @@ const NotificationManagement = ({ classes }) => {
         <Box className={classes.dialogBox}>
           <Preview classes={classes}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText !== ''}
             showID={true}
             showTitle={false}
             showOSScreen={false}
@@ -1084,7 +1069,7 @@ const NotificationManagement = ({ classes }) => {
 &lt;/script&gt;`;
 
     return scriptCode
-      .replace("#key#", '"' + encodeURI(apiKey) + '"')
+      .replace("#key#", '"' + encodeURI(subAccountApiKey) + '"')
       .replace("&lt;", "<")
       .replace("&gt;", ">")
       .replace("&lt;", "<")
@@ -1099,6 +1084,10 @@ const NotificationManagement = ({ classes }) => {
       .replace(/(^[ \t]*\n)/gm, "");
   }
 
+  const handleDontShowAgain = (value) => {
+    setCookie('scriptDialog', !value, { maxAge: 2147483647 });
+    handleScriptDialogCheck(value)
+  }
   const renderImplement = () => {
     return {
       title: null,
@@ -1207,7 +1196,7 @@ const NotificationManagement = ({ classes }) => {
               control={
                 <Checkbox
                   checked={scriptDialog}
-                  onChange={() => handleScriptDialogCheck(!scriptDialog)}
+                  onChange={() => handleDontShowAgain(!scriptDialog)}
                   color="primary"
                 />
               }
@@ -1216,7 +1205,7 @@ const NotificationManagement = ({ classes }) => {
           <Button
             variant='contained'
             size='small'
-            onClick={() => handleImplementScript(true)}
+            onClick={() => setShowScriptDialog(false)}
             className={clsx(
               classes.gruopsDialogButton,
               classes.dialogConfirmButton,
@@ -1237,52 +1226,56 @@ const NotificationManagement = ({ classes }) => {
     let dialog = null;
 
     switch (type) {
-      case 'preview': {
+      case DialogTypes.PREVIEW: {
         dialog = renderPreview(data)
         break;
       }
-      case 'duplicate': {
+      case DialogTypes.DUPLICATE: {
         dialog = renderDuplicate(data)
         break;
       }
-      case 'groupsById': {
+      case DialogTypes.GROUP_BY_ID: {
         dialog = renderGroupsById(data)
         break;
       }
-      case 'groups': {
+      case DialogTypes.GROUPS: {
         dialog = renderGroups(data)
         break;
       }
-      case 'delete': {
+      case DialogTypes.DELETE: {
         dialog = renderDelete(data)
         break;
       }
-      case 'restore': {
+      case DialogTypes.RESTORE: {
         dialog = renderRestore(data)
         break;
       }
-      case 'implement': {
+      case DialogTypes.IMPLEMENT: {
         dialog = renderImplement(data)
         break;
       }
-      case 'createGroup': {
+      case DialogTypes.CREATE_GROUP: {
         dialog = renderCreateGroup(data)
         break;
       }
-      case 'subscribers': {
+      case DialogTypes.SUBSCRIBERS: {
         dialog = renderSubscribers(data)
         break;
+      }
+      default: {
+        return false;
       }
     }
 
     if (dialog) {
-      return (<Dialog
+      return (<BaseDialog
         classes={classes}
         open={dialogType}
         onClose={handleDialogClose}
+        onCancel={handleDialogClose}
         {...dialog}>
         {dialog.content}
-      </Dialog>);
+      </BaseDialog>);
     }
     return (
       <></>
@@ -1293,9 +1286,22 @@ const NotificationManagement = ({ classes }) => {
     <DefaultScreen
       currentPage='notifications'
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb50)}
-    >
-      {renderHeader()}
+      containerClass={clsx(classes.management, classes.mb50)}>
+      <Title
+        Text={t('notifications.notificationManagement')} Classes={classes}
+        ContainerStyle={{ display: 'flex', justifyContent: 'space-between' }}
+        Element={
+          <Button onClick={() => {
+            setCookie('scriptDialog', true);
+            setShowScriptDialog(true);
+          }
+          }
+            variant='contained'
+            className={clsx(
+              classes.actionButton,
+              classes.implementButtonFlex,
+              classes.actionButtonDarkBlue)}>{t('master.implementScript')}</Button>
+        } ShowDivider={true} />
       {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}
@@ -1303,7 +1309,7 @@ const NotificationManagement = ({ classes }) => {
       {renderDialog()}
       {renderImplementDialog()}
       <Loader isOpen={showLoader} />
-    </DefaultScreen>
+    </DefaultScreen >
   )
 }
 

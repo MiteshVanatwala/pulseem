@@ -51,9 +51,8 @@ export const BeeConfig = (Options: ConfigOptions) => {
         container: 'bee-plugin-container', //Identifies the id of div element that contains BEE Plugin
         language: Options.IsRTL ? 'he-IL' : 'en-US',
         trackChanges: true,
-        //autosave: AUTO_SAVE_SECONDS,
+        // autosave: AUTO_SAVE_SECONDS,
         loadingSpinnerDisableOnSave: true,
-        // translations: IsRTL ? TRANSLATE_HEBREW : TRANSLATE_ENGLISH,
         sidebarPosition: IsRTL ? 'right' : 'left',
         loadingSpinnerTheme: 'light',
         saveRows: true,
@@ -62,9 +61,24 @@ export const BeeConfig = (Options: ConfigOptions) => {
             defaultRows: false,
         },
         editorFonts: FONTS(),
-        // workspace: {
-        //     type: 'mixed',
-        // },
+        workspace: {
+            type: 'default', // 'mixed'|'amp_only'|'html_only'
+        },
+        defaultModulesOrder: [
+            'Heading',
+            'Text',
+            'Image',
+            'Button',
+            'Menu',
+            'Divider',
+            'Spacer',
+            'Icons',
+            'Video',
+            'Social',
+            'Stickers',
+            'Carousel',
+            'Gifs'
+        ],
         hooks: {
             getRows: {
                 handler: async (resolve: Function, reject: Function, args: any) => {
@@ -324,5 +338,7 @@ export const DialogType = {
     NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
     GENERIC: "generic",
     NO_CREDITS_LEFT: "sms.noCredits",
-    SET_USER_BLOCK: "campaigns.saveBlock"
+    Templates: "templates",
+    SET_USER_BLOCK: "campaigns.saveBlock",
+    SAVE_TEMPLATE: "campaigns.saveTemplate"
 };

@@ -1,17 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { v4 as uuidv4 } from 'uuid';
 
 export const GetProductReports = createAsyncThunk(
   'ProductReport/Get', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`ProductReport/Get`, data);
+      const response = await PulseemReactInstance.post(`ProductReport/Get`, data);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-
 export const reportSlice = createSlice({
   name: 'report',
   initialState: {
