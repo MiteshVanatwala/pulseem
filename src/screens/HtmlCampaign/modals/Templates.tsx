@@ -56,62 +56,76 @@ const Templates = ({
   }, [publicTemplates, templatesBySubAccount, tabValue]);
 
   useEffect(() => {
-    if (selectedCategory === '') {
+    if (tabValue === 0 && selectedCategory === '') {
       setTemplateList(publicTemplates.slice(0, maxTemplatesToShow));
+    } else {
+      const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
+      setTemplateList(templates);
     }
   }, [maxTemplatesToShow, selectedCategory]);
 
-  useEffect(() => {
-    if (!publicTemplates.length) setLoader(true);
-  }, []);
+  // useEffect(() => {
+  //   if (!publicTemplates.length) setLoader(true);
+  //   setTimeout(() => {
+  //     const height = (document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120;
+  //     if (refScriptCode.current !== null) {
+  //       refScriptCode.current.style['maxHeight'] = `${height}px`;
+  //       refScriptCode.current.style['height'] = `${height}px`;
+  //       refScriptCode.current.style['overflow'] = 'scroll';
+  //     }
+  //     if (refCategory.current !== null) {
+  //       refCategory.current.style['maxHeight'] = `${height + 60}px`;
+  //       refCategory.current.style['height'] = `${height + 60}px`;
+  //       refCategory.current.style['overflow'] = 'scroll';
+  //     }
+  //   }, 1000);
+  // }, []);
 
-  const template = (templateDetails: any) => {
+  const template = (templateDetails: any, selectedCategory: string) => {
     return (
-      <>
-        <Grid item xs={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} key={templateDetails.ID} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
-          <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
-            {renderHtml(templateDetails.Html)}
-          </Box>
-          <div className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
-          <div className={clsx(classes.textCenter, classes.p5)}>
-            <Button
-              className={clsx(
-                classes.solidDialogButton,
-                classes.dialogConfirmBlueButton,
-                classes.p5
-              )}
-              onClick={() => {
-                setSelectedTemplate(templateDetails);
-                setOpenPreview(true);
-              }}
+      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
+        <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
+          {renderHtml(templateDetails.Html)}
+        </Box>
+        <div className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
+        <div className={clsx(classes.textCenter, classes.p5)}>
+          <Button
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogConfirmBlueButton,
+              classes.p5
+            )}
+            onClick={() => {
+              setSelectedTemplate(templateDetails);
+              setOpenPreview(true);
+            }}
+          >
+            <Typography    
+              className={clsx(classes.dBlock, classes.f14)}
             >
-              <Typography
-                className={clsx(classes.dBlock, classes.f14)}
-              >
-                {t('common.Preview')}
-              </Typography>
-            </Button>
+              {t('common.Preview')}
+            </Typography>
+          </Button>
 
-            <Button
-              className={clsx(
-                classes.solidDialogButton,
-                classes.dialogConfirmButton,
-                classes.ml5,
-                classes.p5
-              )}
-              onClick={() => {
-                onClose(templateDetails)
-              }}
+          <Button
+            className={clsx(
+              classes.solidDialogButton,
+              classes.dialogConfirmButton,
+              classes.ml5,
+              classes.p5
+            )}
+            onClick={() => {
+              onClose(templateDetails)
+            }}
+          >
+            <Typography    
+              className={clsx(classes.dBlock, classes.f14)}
             >
-              <Typography
-                className={clsx(classes.dBlock, classes.f14)}
-              >
-                {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
-              </Typography>
-            </Button>
-          </div>
-        </Grid>
-      </>
+              {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
+            </Typography>
+          </Button>
+        </div>
+      </Grid>
     )
   }
 
@@ -162,10 +176,8 @@ const Templates = ({
             className={clsx(classes.mr15, classes.ml15)}
             classes={{ indicator: classes.hideIndicator }}
           >
-            <Tab value={0} label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-            {
-              !isCreateCampaign && <Tab value={1} label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
-            }
+            <Tab label={t('common.pulseemTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
+            <Tab label={t('common.myTemplates')} classes={{ root: classes.tabText, selected: classes.activeTab }} />
           </Tabs>
           <Box className={classes.pt15}>
             {
@@ -178,32 +190,34 @@ const Templates = ({
             <Grid container ref={refScriptCode}>
               {
                 templateList?.map((templ, i): any => {
-                  if (selectedCategory !== '' && selectedCategory === templ['Category']) return template(templ);
-                  if (selectedCategory === '') return template(templ);
+                  if (selectedCategory !== '' && selectedCategory === templ['Category']) return template(templ, 'category');
+                  if (selectedCategory === '') return template(templ, 'all');
                 })
+              }
+              {
+                selectedCategory === '' && tabValue === 0 && maxTemplatesToShow < publicTemplates.length && (
+                  <Grid item md={12}>
+                    <Box className={clsx(classes.textCenter, classes.pt15)}>
+                      <Button
+                        className={clsx(
+                          classes.actionButton,
+                          classes.actionButtonLightBlue,
+                          classes.paddingSides25
+                        )}
+                        onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
+                      >
+                        <Typography    
+                          className={clsx(classes.dBlock, classes.f18)}
+                        >
+                          {t('common.loadMore')}
+                        </Typography>
+                      </Button>
+                    </Box>
+                  </Grid>
+                )
               }
             </Grid>
           </Box>
-          {
-            selectedCategory === '' && maxTemplatesToShow < publicTemplates.length && (
-              <Box className={clsx(classes.textCenter, classes.pt2rem)}>
-                <Button
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightBlue,
-                    classes.paddingSides25
-                  )}
-                  onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
-                >
-                  <Typography
-                    className={clsx(classes.dBlock, classes.f18)}
-                  >
-                    Load More
-                  </Typography>
-                </Button>
-              </Box>
-            )
-          }
         </Grid>
       </Grid>
       <TemplatePreview

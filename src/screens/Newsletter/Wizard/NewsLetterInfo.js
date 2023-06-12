@@ -26,7 +26,7 @@ import { BiSave } from 'react-icons/bi'
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
 import { DialogType } from '../../HtmlCampaign/helper/Config';
 import Templates from '../../HtmlCampaign/modals/Templates';
-import { getPublicTemplates, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
+import { getPublicTemplates, getAllTemplatesBySubaccountId, getTemplateById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -143,7 +143,7 @@ const NewsLetterInfo = ({ classes }) => {
     const NodeToEdit = queryParams.get("NodeToEdit")
 
     const { isRTL, CoreToastMessages } = useSelector((state) => state.core);
-    const { publicTemplates } = useSelector(state => state.campaignEditor);
+    const { publicTemplates, templatesBySubAccount } = useSelector(state => state.campaignEditor);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -251,6 +251,7 @@ const NewsLetterInfo = ({ classes }) => {
             sessionStorage.removeItem("Newlsetter_Html_Template");
         }
         if (!publicTemplates.length) dispatch(getPublicTemplates());
+        if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
     }, []);
 
     const setDefaultEmailAndName = () => {
