@@ -405,7 +405,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         const EMAIL_SLIDE_2 = () => (
             <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (verificationStep * 100) : -(verificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide secondSlide' >
-                    <Box className='titleDescBox' style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
+                    <Box className='titleDescBox' >
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
                         <Box className='desc'>
                             <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>

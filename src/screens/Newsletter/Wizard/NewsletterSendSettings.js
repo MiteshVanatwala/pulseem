@@ -158,8 +158,8 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     });
     const [newGroupId, setNewGroupId] = useState(0);
     const [quickSendClients, setQuickSendClients] = useState(null);
-    const [summaryEmail, setSummaryEmail] = useState(newsletterInfo.FromEmail);
     const [totalClientsToSend, setTotalClientsToSend] = useState(0);
+    const [reCheckAuth, setRecheckAuth] = useState(false);
 
     useEffect(() => {
         const total = selectedGroups?.reduce(function (a, b) {
@@ -169,18 +169,38 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setTotalClientsToSend(total);
     }, [selectedGroups]);
 
+    //#region Email Authentication
+
+    const checkEmailAuth = () => {
+        const isVerified = verifiedEmails.filter((email) => {
+            return email?.Number === newsletterInfo.FromEmail;
+        });
+        setIsEmailVerified(isVerified?.length > 0);
+        setNewEmailVerification(isVerified?.length <= 0);
+    }
+    const handleOnVerificationClose = async () => {
+        await dispatch(getAuthorizedEmails());
+        setRecheckAuth(true);
+    }
+
+
+    useEffect(() => {
+        if (reCheckAuth === true) {
+            checkEmailAuth();
+        }
+
+    }, [reCheckAuth]);
+
+    //#endregion Email Authentication
+
     const initOnReady = () => {
         if (newsletterSettings?.error) {
             logout();
         }
 
-
         try {
-            const isVerified = verifiedEmails.filter((email) => {
-                return email?.Number === newsletterInfo.FromEmail;
-            });
-            setIsEmailVerified(isVerified?.length > 0);
-            setNewEmailVerification(!isVerified || isVerified === false);
+            checkEmailAuth();
+
             if (newsletterSettings.length === 0)
                 return;
 
@@ -203,6 +223,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 exceptionalDays: ExceptionalDays > 0 ? ExceptionalDays : ''
             });
             setSmsMarketingIndication(newsletterSettings?.HasSmsMarekting || false);
+
         } catch (e) {
             // dispatch(sendToTeamChannel({
             //     MethodName: 'onReady',
@@ -376,7 +397,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setDialogType({ type: 'sendSuccess' });
         }
         else if (response?.StatusCode === 403) {
-            setSummaryEmail(response.fromEmail);
             setNewEmailVerification(newsletterInfo.FromEmail)
         }
         else {
@@ -506,10 +526,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const handlePulseDialog = () => {
         setSourcePulses({ ...sourcePulses, SendingMethod: campaignValues.SendingMethod ?? 1, PulseAmount: campaignValues.PulseAmount, TimeInterval: campaignValues.TimeInterval });
         setDialogType({ type: "pulses" });
-    }
-
-    const handleMainWarningPulse = () => {
-
     }
 
     const createNewGroup = async (groupName) => {
@@ -1400,10 +1416,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             </Snackbar>
             {/* //#endregion  */}
             {newEMailVerification && <VerificationDialog
+                textButtonOnSuccess={t('common.close')}
                 classes={classes}
                 isOpen={newEMailVerification}
                 variant='email'
-                onClose={() => setNewEmailVerification(false)}
+                onClose={() => {
+                    setNewEmailVerification(false);
+                    handleOnVerificationClose();
+                }}
                 step={1}
                 value={newsletterInfo.FromEmail}
             />}
