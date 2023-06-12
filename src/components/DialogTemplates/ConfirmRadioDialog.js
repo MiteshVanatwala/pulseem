@@ -5,7 +5,7 @@ import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControl
 import { SolidDialog } from '../managment/index';
 import { useEffect, useState } from 'react';
 import { setCookie, getCookie } from '../../helpers/cookies';
-import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
+import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const ConfirmRadioDialog = ({
@@ -23,16 +23,16 @@ const ConfirmRadioDialog = ({
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
-    const { verifiedEmails } = useSelector(state => state.common);
+    const { twoFactorAuthEmails  } = useSelector(state => state.common);
     const [value, setValue] = useState(getCookie(cookieName));
     const [notifyEmail, setNotifyEmail] = useState(null);
     const dispatch = useDispatch();
 
     useEffect(() => {
         const initVerifiedEmails = async () => {
-            await dispatch(getAuthorizedEmails());
+            await dispatch(getTwoFactorAuthValues(1));
         }
-        if (showEmailToNotify && verifiedEmails?.length === 0) {
+        if (showEmailToNotify && twoFactorAuthEmails?.length === 0) {
             initVerifiedEmails();
         }
     }, [showEmailToNotify]);
@@ -119,13 +119,13 @@ const ConfirmRadioDialog = ({
                                         inputProps={{ 'aria-label': 'Without label' }}
                                     >
                                         <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                        {verifiedEmails.map((item, index) => {
-                                            if (item.IsOptIn) {
+                                        {twoFactorAuthEmails.map((item, index) => {
+                                            if (!item.IsDeleted) {
                                                 return <option
                                                     key={`exd_${index}`}
-                                                    value={item.Number}
+                                                    value={item.AuthValue}
                                                 >
-                                                    {t(item.Number)}
+                                                    {t(item.AuthValue)}
                                                 </option>
                                             }
                                         }
