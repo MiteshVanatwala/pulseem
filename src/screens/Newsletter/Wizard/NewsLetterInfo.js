@@ -495,7 +495,7 @@ const NewsLetterInfo = ({ classes }) => {
                         HTML: template?.Html
                     }));
                 }
-                
+
                 if (isContiue) {
                     const isBeeEditor = (accountFeatures.indexOf(PulseemFeatures.BEE_EDITOR) > -1 && isNewEditor);
                     let redirectUrl = isBeeEditor ? `/react/Campaigns/editor/${saveInfo.CampaignID}` : `/Pulseem/Editor/CampaignEdit/${saveInfo.CampaignID}`;
@@ -1154,7 +1154,7 @@ const NewsLetterInfo = ({ classes }) => {
                     }}
                     onDelete={id > 0 && !isFromAutomation && getDeleteStatus}
                     additionalButtons={renderButtons()}
-                    // additionalButtonsOnStart={renderTemplateButtons()}
+                    additionalButtonsOnStart={renderTemplateButtons()}
                 />
             </Box>
             <BaseDialog
@@ -1195,18 +1195,18 @@ const NewsLetterInfo = ({ classes }) => {
             {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => setVerPopupOpen(false)} />}
             {
                 dialogType === DialogType.Templates && <Templates
-                isCreateCampaign={true}
-                classes={classes}
-                onClose={async (template) => {
-                    setDialogType(null);
-                    if (template !== undefined) {
-                        const response = await dispatch(getTemplateById(template.ID));
-                        if (response.payload.StatusCode === 201) {
-                            setTemplate(response?.payload?.Data);
+                    isCreateCampaign={true}
+                    classes={classes}
+                    onClose={async (template) => {
+                        setDialogType(null);
+                        if (template !== undefined) {
+                            const response = await dispatch(getTemplateById(template.ID));
+                            if (response.payload.StatusCode === 201) {
+                                setTemplate(response?.payload?.Data);
+                            }
                         }
-                    }
-                }}
-                isOpen={dialogType === DialogType.Templates}    
+                    }}
+                    isOpen={dialogType === DialogType.Templates}
                 />
             }
             <Loader isOpen={showLoader} />
