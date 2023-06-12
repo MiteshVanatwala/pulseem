@@ -622,5 +622,6 @@
   "overwriteTemplate": "Loading the template will overrun the current design in the editor",
   "doYouWantToProceed": "Do you want to proceed?",
   "templateSaved": "Template successfully saved!",
-  "templateNameIsRequired": "Template name is required"
+  "templateNameIsRequired": "Template name is required",
+  "loadMore": "Load More"
 }

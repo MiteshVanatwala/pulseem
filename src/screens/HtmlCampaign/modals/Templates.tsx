@@ -47,19 +47,19 @@ const Templates = ({
   }
 
   useEffect(() => {
-    const templates = tabValue === 1 && templatesBySubAccount.length > 0 ? templatesBySubAccount : publicTemplates;
+    const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
     setTemplateList(templates);
-    const categories = tabValue === 1 && templatesBySubAccountCategories.length > 0 ? templatesBySubAccountCategories : publicTemplateCategories;
+    const categories = tabValue === 0 ? publicTemplateCategories : templatesBySubAccountCategories;
     setCategoryList(categories);
     setSelectedCategory(categories?.length > 0 ? categories[0] : '');
     setLoader(false);
   }, [ publicTemplates, templatesBySubAccount, tabValue ]);
 
   useEffect(() => {
-    if (selectedCategory === '') {
+    if (tabValue === 0 && selectedCategory === '') {
       setTemplateList(publicTemplates.slice(0, maxTemplatesToShow));
     } else {
-      const templates = tabValue === 1 && templatesBySubAccount.length > 0 ? templatesBySubAccount : publicTemplates;
+      const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
       setTemplateList(templates);
     }
   }, [ maxTemplatesToShow, selectedCategory ]);
@@ -194,7 +194,7 @@ const Templates = ({
                 })
               }
               {
-                selectedCategory === '' && maxTemplatesToShow < publicTemplates.length && (
+                selectedCategory === '' && tabValue === 0 && maxTemplatesToShow < publicTemplates.length && (
                   <Grid item md={12}>
                     <Box className={clsx(classes.textCenter, classes.pt15)}>
                       <Button
@@ -208,7 +208,7 @@ const Templates = ({
                         <Typography    
                           className={clsx(classes.dBlock, classes.f18)}
                         >
-                          Load More
+                          {t('common.loadMore')}
                         </Typography>
                       </Button>
                     </Box>
