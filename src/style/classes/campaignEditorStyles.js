@@ -21,11 +21,12 @@ export const getCampaignEditorStyle = (windowSize, isRTL) => ({
     fontSize: 16
   },
   previewIframe: {
-    borderRadius: 5,
-    padding: 5,
-    border: '1px solid grey',
+    borderRadius: 0,
+    boxSizing: 'border-box',
+    border: '1px solid rgba(0, 0, 0, 0.12)',
     width: 'calc(100% - 60px)',
-    height: 350,
+    minHeight: 300,
+    maxHeight: 400,
     overflowY: 'hidden'
   }
 });
