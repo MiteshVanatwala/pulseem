@@ -64,22 +64,22 @@ const Templates = ({
     }
   }, [maxTemplatesToShow, selectedCategory]);
 
-  // useEffect(() => {
-  //   if (!publicTemplates.length) setLoader(true);
-  //   setTimeout(() => {
-  //     const height = (document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120;
-  //     if (refScriptCode.current !== null) {
-  //       refScriptCode.current.style['maxHeight'] = `${height}px`;
-  //       refScriptCode.current.style['height'] = `${height}px`;
-  //       refScriptCode.current.style['overflow'] = 'scroll';
-  //     }
-  //     if (refCategory.current !== null) {
-  //       refCategory.current.style['maxHeight'] = `${height + 60}px`;
-  //       refCategory.current.style['height'] = `${height + 60}px`;
-  //       refCategory.current.style['overflow'] = 'scroll';
-  //     }
-  //   }, 1000);
-  // }, []);
+  useEffect(() => {
+    if (!publicTemplates.length) setLoader(true);
+    setTimeout(() => {
+      const height = (document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120;
+      if (refScriptCode.current !== null) {
+        refScriptCode.current.style['maxHeight'] = `${height}px`;
+        refScriptCode.current.style['height'] = `${height}px`;
+        refScriptCode.current.style['overflow'] = 'scroll';
+      }
+      if (refCategory.current !== null) {
+        refCategory.current.style['maxHeight'] = `${height + 60}px`;
+        refCategory.current.style['height'] = `${height + 60}px`;
+        refCategory.current.style['overflow'] = 'scroll';
+      }
+    }, 1000);
+  }, []);
 
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
