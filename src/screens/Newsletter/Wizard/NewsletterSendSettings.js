@@ -592,14 +592,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
 
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
     const NewGroupForm = () => newGroupDetails.toggleChecked ? (
         <Stack direction="row">
             <input
@@ -786,8 +778,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setFilterValues: setFilterValues,
             groupList: subAccountAllGroups,
             callbackUpdateGroupFilterd: (group) => callbackUpdateGroupFilterd(group),
-            callbackFilteredGroups: (group) => callbackFilteredGroups(group),
-            renderHtml: renderHtml,
+            callbackFilteredGroups: (group) => callbackFilteredGroups(group)
         })
 
         let TabBody = (tabs = []) => (
@@ -1188,9 +1179,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                             }}
                                             direction="row"
                                         >
-                                            <span>{t("mainReport.totalReci")}: {selectedGroups.reduce(function (a, b) {
-                                                return a + b['Recipients'];
-                                            }, 0).toLocaleString()}</span>
+                                            <span>{t("mainReport.totalReci")}: {totalClientsToSend.toLocaleString()}</span>
                                             <Tooltip
                                                 placement={'bottom'}
                                                 disableFocusListener
@@ -1232,6 +1221,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                                                     classes.actionButton,
                                                     classes.actionButtonOutlinedBlue,
                                                     selectedGroups?.length < 1 || campaignValues.SendingMethod === 3 || newsletterSettings?.Status !== 1 || totalClientsToSend === 0 || campaignValues.IsBestTime
+                                                        || totalClientsToSend < 100
                                                         ? classes.disabled : null)}
                                                 onClick={() => {
                                                     handlePulseDialog();

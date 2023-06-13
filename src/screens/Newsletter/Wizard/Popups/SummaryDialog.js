@@ -280,7 +280,7 @@ const SummaryDialog = ({ classes,
                         {PreviewURL && <Box className={classes.sumRight}>
                             <Stack direction='column' alignItems='center' spacing={2}>
                                 <Stack className={classes.previewIframe}>
-                                    {RenderHtml(`<iframe src=${PreviewURL} style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
+                                    {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
                                 </Stack>
                             </Stack>
                         </Box>}

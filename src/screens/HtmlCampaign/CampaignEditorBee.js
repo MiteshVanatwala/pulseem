@@ -311,7 +311,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             if (forceTemplate !== null) {
               template = forceTemplate;
             }
-            else{
+            else {
               template = campaign?.JsonData ? JSON.parse(campaign?.JsonData) : defaultContent.defaultTemplate;
             }
 
@@ -411,7 +411,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       if (saveRef.current?.saveTemplate) {
         const templateResponse = await dispatch(saveTemplateToAccount({
           Name: saveRef.current?.templateName,
-          JsonData: finalJson,  
+          JsonData: finalJson,
           HTML: finalHtml,
           Category: saveRef.current?.templateCategory
         }));
@@ -685,15 +685,15 @@ const CampaignEditor = ({ classes, ...props }) => {
   const renderTemplateButtons = () => {
     return <>
       <Button onClick={() => {
-          setLoader(true);
-          setTimeout(() => {
-            setDialog(DialogType.Templates);
-          }, 1000);
+        setLoader(true);
+        setTimeout(() => {
+          setDialog(DialogType.Templates);
+        }, 1000);
 
-          setTimeout(() => {
-            setLoader(false);
-          }, 2000);
-        }}
+        setTimeout(() => {
+          setLoader(false);
+        }, 2000);
+      }}
         variant='contained'
         size='medium'
         className={clsx(
@@ -855,7 +855,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         // onShowGallery={() => { setShowGallery(true) }}
         onShowDocuments={() => { setShowDocuments(true) }}
         additionalButtons={renderButtons()}
-        // additionalButtonsOnStart={renderTemplateButtons()}
+        additionalButtonsOnStart={renderTemplateButtons()}
         helperText={<label style={{ fontSize: 14 }}>{lastSaveText}</label>}
       />
       <OverwriteTemplatePopUp
