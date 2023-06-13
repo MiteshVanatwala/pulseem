@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 import { PulseemResponse } from '../../Models/APIResponse';
 import { IntegrationRequest, LU_Plugin } from '../../Models/Integrations/Integration';
 
@@ -7,7 +7,7 @@ export const authenticate = createAsyncThunk(
     'Integrations/authenticate',
     async (request: IntegrationRequest, thunkAPI) => {
         try {
-            const response = await instence.post(`Integrations/authenticate`, request);
+            const response = await PulseemReactInstance.post(`Integrations/authenticate`, request);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);
@@ -19,7 +19,7 @@ export const getIntegration = createAsyncThunk(
     'Integrations/getIntegration',
     async (integrationSource: LU_Plugin, thunkAPI) => {
         try {
-            const response = await instence.get(`Integrations/GetIntegration/${integrationSource}`);
+            const response = await PulseemReactInstance.get(`Integrations/GetIntegration/${integrationSource}`);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);
@@ -31,7 +31,7 @@ export const setIntegration = createAsyncThunk(
     'Integrations/setIntegration',
     async (integrationRequest: IntegrationRequest, thunkAPI) => {
         try {
-            const response = await instence.post(`Integrations/SetIntegration`, integrationRequest);
+            const response = await PulseemReactInstance.post(`Integrations/SetIntegration`, integrationRequest);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);
