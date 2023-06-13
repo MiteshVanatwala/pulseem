@@ -5,7 +5,7 @@ import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControl
 import { BaseDialog } from "../DialogTemplates/BaseDialog";
 import { useState, useEffect } from 'react';
 import { setCookie, getCookie } from '../../helpers/Functions/cookies';
-import { getTwoFactorAuthValues  } from '../../redux/reducers/commonSlice'
+import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const ConfirmRadioDialog = ({
@@ -23,7 +23,7 @@ const ConfirmRadioDialog = ({
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
-    const { twoFactorAuthEmails  } = useSelector(state => state.common);
+    const { twoFactorAuthEmails } = useSelector(state => state.common);
     const [value, setValue] = useState(getCookie(cookieName));
     const [notifyEmail, setNotifyEmail] = useState(null);
     const dispatch = useDispatch();
@@ -120,12 +120,12 @@ const ConfirmRadioDialog = ({
                                     >
                                         <option disabled value="-1" key="-1">{t("common.select")}</option>
                                         {twoFactorAuthEmails.map((item, index) => {
-                                            if (item.IsOptIn) {
+                                            if (!item.IsDeleted) {
                                                 return <option
                                                     key={`exd_${index}`}
-                                                    value={item.Number}
+                                                    value={item.AuthValue}
                                                 >
-                                                    {t(item.Number)}
+                                                    {t(item.AuthValue)}
                                                 </option>
                                             }
                                         }
