@@ -499,9 +499,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
             setPulseIndication(false)
         }
         else {
-            setCampaignValues({ ...campaignValues, ...pulseSettings })
-            setPulseIndication(pulseEnabled);
             setDialogType(null);
+            setPulseIndication(pulseEnabled);
+            if (pulseEnabled) {
+                setCampaignValues({ ...campaignValues, ...pulseSettings });
+            }
+            else {
+                setCampaignValues({ ...campaignValues, ...pulseSettings, PulseAmount: null, TimeInterval: null });
+            }
         }
     }
 
