@@ -100,7 +100,7 @@ const Templates = ({
               setOpenPreview(true);
             }}
           >
-            <Typography    
+            <Typography
               className={clsx(classes.dBlock, classes.f14)}
             >
               {t('common.Preview')}
@@ -118,7 +118,7 @@ const Templates = ({
               onClose(templateDetails)
             }}
           >
-            <Typography    
+            <Typography
               className={clsx(classes.dBlock, classes.f14)}
             >
               {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
@@ -206,7 +206,7 @@ const Templates = ({
                         )}
                         onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
                       >
-                        <Typography    
+                        <Typography
                           className={clsx(classes.dBlock, classes.f18)}
                         >
                           {t('common.loadMore')}

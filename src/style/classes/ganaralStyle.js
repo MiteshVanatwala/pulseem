@@ -23,9 +23,10 @@ const maxTemplateDialogWidth = {
   xs: 330,
   sm: 500,
   md: 960,
-  lg: 1060,
   xl: 1060,
+  lg: 1060,
 };
+
 
 const summaryPadding = {
   xs: 0,
