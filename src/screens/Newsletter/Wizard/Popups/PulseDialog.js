@@ -10,7 +10,6 @@ const PulseDialog = ({
     campaign = {},
     selectedGroups = [],
     onClose = () => null,
-    onCancel = () => null,
     onConfirm = () => null
 }) => {
     const [pulseEnabled, setPulseEnabled] = useState(false);
@@ -72,6 +71,15 @@ const PulseDialog = ({
     const handleConfirm = () => {
         onConfirm(pulseSettigns, pulseEnabled);
     };
+
+    const handleClose = () => {
+        if (campaign?.PulseAmount >= 100 && campaign?.TimeInterval >= 1) {
+            onClose(true);
+        }
+        else {
+            onClose(pulseEnabled);
+        }
+    }
 
     return {
         title: t('smsReport.pulseSending'),
@@ -166,8 +174,8 @@ const PulseDialog = ({
             </Box>
         ),
         showDefaultButtons: true,
-        onClose: onClose,
-        onCancel: onCancel,
+        onClose: handleClose,
+        onCancel: handleClose,
         onConfirm: handleConfirm
     }
 }

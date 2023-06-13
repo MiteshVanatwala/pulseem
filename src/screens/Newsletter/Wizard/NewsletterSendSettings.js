@@ -510,7 +510,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
     }
 
-    const handlePulseClose = () => {
+    const handlePulseClose = (isPulseEnabled) => {
         let tempData = {
             ...campaignValues,
             PulseAmount: sourcePulses.PulseAmount || "", TimeInterval: sourcePulses.TimeInterval || ""
@@ -518,12 +518,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         if (sourcePulses.PulseAmount === "" || sourcePulses.TimeInterval === "") {
             tempData = { ...tempData, togglePulse: false }
         }
-        if (sourcePulses.PulseAmount === '' && sourcePulses.TimeInterval === '') {
-            setPulseIndication(false);
-        }
-        else {
-            setPulseIndication(true);
-        }
+        setPulseIndication(isPulseEnabled);
         setCampaignValues({ ...campaignValues, ...tempData });
         setDialogType(null);
     };
@@ -903,7 +898,6 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                 campaign: campaignValues,
                 selectedGroups: selectedGroups,
                 onClose: handlePulseClose,
-                onCancel: handlePulseClose,
                 onConfirm: handlePulseConfirm,
             }),
             delete: DeleteDialog({

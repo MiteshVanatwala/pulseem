@@ -10,7 +10,7 @@ const minDialogWidth = {
   sm: 330,
   md: 500,
   lg: 500,
-  xl: 960,
+  xl: 620,
 };
 
 const maxDialogWidth = {
