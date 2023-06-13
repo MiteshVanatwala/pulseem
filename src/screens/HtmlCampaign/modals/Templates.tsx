@@ -83,7 +83,7 @@ const Templates = ({
 
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
-      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
+      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={6} md={3} sm={6} className={clsx(classes.ps15, classes.pe15, classes.pb10)} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
           {renderHtml(templateDetails.Html)}
         </Box>
@@ -140,10 +140,11 @@ const Templates = ({
     onConfirm={onClose}
     reduceTitle
     showDefaultButtons={false}
-    exitButton={true}>
+    exitButton={true}
+    maxHeight='70vh'>
     <Box className={clsx(classes.templateModal)}>
       <Grid container style={{ width: '100%' }}>
-        <Grid item md={2} ref={refCategory}>
+        <Grid item md={2} sm={4} xs={4} ref={refCategory} className='category-container'>
           {
             categoryList?.length > 0 && (
               <Typography
@@ -169,7 +170,7 @@ const Templates = ({
             })
           }
         </Grid>
-        <Grid item md={10}>
+        <Grid item md={10} sm={8}>
           <Tabs
             value={tabValue}
             onChange={handleChange}

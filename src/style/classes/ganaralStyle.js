@@ -100,7 +100,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: '#f5f5f5'
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: minDialogWidth[windowSize],
+      minWidth: maxDialogWidth[windowSize],
       maxWidth: maxDialogWidth[windowSize],
     },
     "& .MuiDialog-paperScrollPaper": {
@@ -944,7 +944,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   templateModal: {
-    minWidth: "900px",
+    // minWidth: "900px",
+    minWidth: "auto",
+    '& .category-container': {
+      paddingLeft: 10,
+    }
   },
   beeTemplate: {
     padding: '0px !important',
