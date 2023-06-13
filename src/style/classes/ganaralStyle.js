@@ -13,10 +13,19 @@ const minDialogWidth = {
 };
 
 const maxDialogWidth = {
-  md: 1070,
-  lg: 1070,
-  xl: 1070,
+  md: 960,
+  lg: 960,
+  xl: 960,
 };
+
+const maxTemplateDialogWidth = {
+  xs: 330,
+  sm: 500,
+  md: 960,
+  xl: 1060,
+  lg: 1060,
+};
+
 
 const summaryPadding = {
   xs: 0,
@@ -936,8 +945,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingRight: 0,
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: maxDialogWidth[windowSize],
-      maxWidth: maxDialogWidth[windowSize],
+      minWidth: `${minDialogWidth[windowSize]}px !important`,
+      maxWidth: `${maxTemplateDialogWidth[windowSize]}px !important`,
     },
   },
   templateItem: {

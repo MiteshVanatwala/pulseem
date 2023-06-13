@@ -4,7 +4,7 @@ import { Box, Tab, Grid, Tabs, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
 import { BaseDialog } from '../../../components/DialogTemplates/BaseDialog';
-import { convertHyphensToword, getUniqueValuesOfKey } from '../../../helpers/utils';
+import { convertHyphensToword } from '../../../helpers/utils';
 import TemplatePreview from './TemplatePreview'
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
@@ -17,16 +17,16 @@ const Templates = ({
 }: any) => {
   const { t } = useTranslation();
   const [tabValue, setTabValue] = useState(0);
-  const [ templateList, setTemplateList ] = useState([]);
-  const [ categoryList, setCategoryList ] = useState([]);
-  const [ maxTemplatesToShow, setMaxTemplatesToShow ] = useState(8);
-  const [ selectedCategory, setSelectedCategory ] = useState<null | string>(null);
+  const [templateList, setTemplateList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
+  const [maxTemplatesToShow, setMaxTemplatesToShow] = useState(8);
+  const [selectedCategory, setSelectedCategory] = useState<null | string>(null);
   const refScriptCode = useRef<HTMLDivElement>(null);
   const refCategory = useRef<HTMLDivElement>(null);
-  const [ openPreview, setOpenPreview ] = useState(false);
-  const [ selectedTemplate, setSelectedTemplate ] = useState({});
-  const [ showLoader, setLoader ] = useState(true);
-  const [ selectedTemplateId, setSelectedTemplateId ] = useState(0);
+  const [openPreview, setOpenPreview] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState({});
+  const [showLoader, setLoader] = useState(true);
+  const [selectedTemplateId, setSelectedTemplateId] = useState(0);
   const { publicTemplates, templatesBySubAccount, publicTemplateCategories, templatesBySubAccountCategories } = useSelector(
     (state: { campaignEditor: any }) => state.campaignEditor
   );
@@ -53,7 +53,7 @@ const Templates = ({
     setCategoryList(categories);
     setSelectedCategory(categories?.length > 0 ? categories[0] : '');
     setLoader(false);
-  }, [ publicTemplates, templatesBySubAccount, tabValue ]);
+  }, [publicTemplates, templatesBySubAccount, tabValue]);
 
   useEffect(() => {
     if (tabValue === 0 && selectedCategory === '') {
@@ -62,7 +62,7 @@ const Templates = ({
       const templates = tabValue === 0 ? publicTemplates : templatesBySubAccount;
       setTemplateList(templates);
     }
-  }, [ maxTemplatesToShow, selectedCategory ]);
+  }, [maxTemplatesToShow, selectedCategory]);
 
   useEffect(() => {
     if (!publicTemplates.length) setLoader(true);
@@ -100,7 +100,7 @@ const Templates = ({
               setOpenPreview(true);
             }}
           >
-            <Typography    
+            <Typography
               className={clsx(classes.dBlock, classes.f14)}
             >
               {t('common.Preview')}
@@ -118,7 +118,7 @@ const Templates = ({
               onClose(templateDetails)
             }}
           >
-            <Typography    
+            <Typography
               className={clsx(classes.dBlock, classes.f14)}
             >
               {t(`common.${isCreateCampaign ? 'selectTemplate' : 'loadTemplate'}`)}
@@ -144,7 +144,7 @@ const Templates = ({
       <Grid container style={{ width: '100%' }}>
         <Grid item md={2} ref={refCategory}>
           {
-             categoryList?.length > 0 && (
+            categoryList?.length > 0 && (
               <Typography
                 className={clsx(classes.dBlock, classes.pb10, classes.f16, selectedCategory === '' ? classes.bold : '', classes.cursorPointer)}
                 onClick={() => {
@@ -154,7 +154,7 @@ const Templates = ({
               >
                 {t('common.all')}
               </Typography>
-             )
+            )
           }
           {
             categoryList?.map((category): any => {
@@ -205,7 +205,7 @@ const Templates = ({
                         )}
                         onClick={() => setMaxTemplatesToShow(maxTemplatesToShow + 8)}
                       >
-                        <Typography    
+                        <Typography
                           className={clsx(classes.dBlock, classes.f18)}
                         >
                           {t('common.loadMore')}
