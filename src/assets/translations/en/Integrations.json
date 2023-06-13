@@ -1,0 +1,39 @@
+{
+  "title": "Integrations",
+  "shopify": {
+    "title": "Shopify",
+    "authentication": "Authentication",
+    "apiKey": "API key",
+    "apiAccessToken": "API Access Token",
+    "shopifyURL": "Shopify URL",
+    "siteSignUp": "Site Sign Up",
+    "purchase": "Purchase",
+    "cartAbandonment": "Cart Abandonment",
+    "settingsSaved": "Settings saved",
+    "connectionFail": "Can not connect with Shopify, please verify all the details are correct.",
+    "insertClientToGroup": "Insert client to groups",
+    "insertToken": "Insert the API token you received after creating the application",
+    "insertAPIKey": "Insert the API key you received after creating the application",
+    "insertShopifyURL": "Insert only bold part: shopify.com/store/<b>mystore</b>",
+    "authenticate": "Authenticate",
+    "enterShopifyUrl": "Enter Shopify URL",
+    "enterAPIKey": "Enter API Key",
+    "enterAPIVersion": "Enter API Version",
+    "enterAccessToken": "Enter Access Token",
+    "reset": "Reset",
+    "showCredentials": "Show Credentials",
+    "hideCredentials": "Hide Credentials",
+    "apiVersion": "API Version",
+    "authResponses": {
+      "201": "Authentication Success",
+      "400": "The store is related to another account",
+      "403": "Invalid API key or access token (unrecognized login or wrong password)",
+      "404": "Authentication Failed!"
+    },
+    "resetConfirmation": "Are you sure you want to reset authentication?",
+    "selectGroup": "Select any group",
+    "formSubmitResponses": {
+      "201": "Group has been saved."
+    }
+  }
+}

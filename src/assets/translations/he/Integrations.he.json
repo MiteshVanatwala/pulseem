@@ -1,0 +1,39 @@
+{
+  "title": "אינטגרציות",
+  "shopify": {
+    "title": "Shopify",
+    "authentication": "חיבור",
+    "apiKey": "מפתח API",
+    "apiAccessToken": "הזן API Token",
+    "shopifyURL": "כתובת האתר שלכם בשופיפיי",
+    "siteSignUp": "הרשמה",
+    "purchase": "רכישה",
+    "cartAbandonment": "נטישת עגלה",
+    "settingsSaved": "הגדרות נשמרו בהצלחה",
+    "connectionFail": "לא ניתן להתחבר לאפליקציה, אנא וודאו שהפרטים שהזנתם נכונים",
+    "insertClientToGroup": "הכנס לקוחות לקבוצות:",
+    "insertToken": "הזינו את הטוקן אותו קיבלתם ביצירת האפליקציה",
+    "insertAPIKey": "הזינו את המפתח אותו קיבלתם ביצירת האפליקציה",
+    "insertShopifyURL": "הכניסו את החלוק המודגש בלבד: shopify.com/store/<b>mystore</b>",
+    "authenticate": "התחבר",
+    "enterShopifyUrl": "הזינו כתובת אתר",
+    "enterAPIKey": "API הזינו מפתח",
+    "enterAccessToken": "API Token הזינו",
+    "enterAPIVersion": "API Version הזינו",
+    "reset": "אפס",
+    "showCredentials": "הצג פרטי התחברות",
+    "hideCredentials": "הסתר פרטי התחברות",
+    "apiVersion": "גרסת API",
+    "authResponses": {
+      "201": "החנות אומתה בהצלחה",
+      "400": "שם החנות שייך לחשבון אחר",
+      "403": "מפתח API או מפתח גישה שגוי",
+      "404": "החיבור נכשל!"
+    },
+    "resetConfirmation": "אתם בטוחים שברצונכם לאפס את החיבור?",
+    "selectGroup": "בחר קבוצה",
+    "formSubmitResponses": {
+      "201": "קבוצה נשמרה"
+    }
+  }
+}

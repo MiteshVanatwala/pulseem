@@ -2879,5 +2879,33 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   cursorPointer: {
     cursor: 'pointer'
+  },
+  shopifySettingTextBox: {
+    '& input': {
+      minWidth: '400px'
+    },
+    '& .selectBox': {
+      marginLeft: 30,
+      border: "1px solid #818181",
+      backgroundColor: "white",
+      padding: "10px",
+      borderRadius: "4px",
+      width: 400,
+      outline: "none",
+      display: 'block'
+    },
+  },
+  shopifySettingMultiSelect: {
+    paddingLeft: '30px',
+    '& #multiple-checkbox': {
+      width: 330,
+    },
+    '& .group-dropdown': {
+      width: 400,
+    },
+    '& .MuiSelect-icon': {
+      position: 'initial',
+      paddingRight: '10px'
+    }
   }
 });

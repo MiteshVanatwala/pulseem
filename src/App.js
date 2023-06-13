@@ -65,6 +65,7 @@ import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAp
 import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
+import Integrations from './screens/Integrations/Integrations';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl =
@@ -151,11 +152,11 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path="/react/Campaigns/Create"
-        element={<NewsLetterInfo classes={classes} key="create"  />}
+        element={<NewsLetterInfo classes={classes} key="create" />}
       />
       <Route
         path="/react/Campaigns/Create/:id"
-        element={<NewsLetterInfo classes={classes} key="edit"  />}
+        element={<NewsLetterInfo classes={classes} key="edit" />}
       />
       <Route
         exact
@@ -335,7 +336,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={'/react/Reports/SmsReplies/:id'}
-        element={<SmsReplies classes={classes} key="byId"  />}
+        element={<SmsReplies classes={classes} key="byId" />}
       />
       <Route
         path={`/react/Reports/MmsMainReport`}
@@ -424,7 +425,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={"/react/Notification/edit/:id"}
-        element={<NotificationEdit classes={classes} key="edit"  />}
+        element={<NotificationEdit classes={classes} key="edit" />}
       />
       <Route
         exact
@@ -472,12 +473,17 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         exact
-        path={`/SystemMessage`}
+        path={`/react/SystemMessage`}
         element={<SystemMessage classes={classes} />}
       />
       <Route exact
+        path={`/react/Integrations`}
+        element={<Integrations classes={classes} />}
+      />
+      <Route
+        exact
         path={'/react/reports/Inbound'}
-        element={<InboundMessages classes={classes} key="all"  />}
+        element={<InboundMessages classes={classes} />}
       />
       <Route
         exact
@@ -487,7 +493,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={'/react/reports/Inbound/:type/:id'}
-        element={<InboundMessages classes={classes} key="byTypeId"  />}
+        element={<InboundMessages classes={classes} key="byTypeId" />}
       />
       <Route
         path="*"
