@@ -23,9 +23,10 @@ const maxTemplateDialogWidth = {
   xs: 330,
   sm: 500,
   md: 960,
-  lg: 1060,
   xl: 1060,
+  lg: 1060,
 };
+
 
 const summaryPadding = {
   xs: 0,
@@ -943,7 +944,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   templateModal: {
-    minWidth: "900px",
+    // minWidth: "900px",
+    minWidth: "auto",
+    '& .category-container': {
+      paddingLeft: 10,
+    }
   },
   beeTemplate: {
     padding: '0px !important',
