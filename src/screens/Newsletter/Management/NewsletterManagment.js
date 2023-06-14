@@ -32,6 +32,7 @@ import { getCookie, setCookie } from '../../../helpers/cookies'
 import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 import { useNavigate } from 'react-router-dom';
 import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
+import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
@@ -58,6 +59,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
+  const { publicTemplates } = useSelector(state => state.campaignEditor);
 
   moment.locale(language)
 
@@ -70,7 +72,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    dispatch(getAllTemplatesBySubaccountId());
+  }, [])
 
   const renderHeader = () => {
     return (

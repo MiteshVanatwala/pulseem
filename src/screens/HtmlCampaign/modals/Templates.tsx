@@ -53,6 +53,8 @@ const Templates = ({
     setCategoryList(categories);
     setSelectedCategory(categories?.length > 0 ? categories[0] : '');
     setLoader(false);
+
+    resizeWindow();
   }, [publicTemplates, templatesBySubAccount, tabValue]);
 
   useEffect(() => {
@@ -67,19 +69,23 @@ const Templates = ({
   useEffect(() => {
     if (!publicTemplates.length) setLoader(true);
     setTimeout(() => {
-      const height = (document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120;
-      if (refScriptCode.current !== null) {
-        refScriptCode.current.style['maxHeight'] = `${height}px`;
-        refScriptCode.current.style['height'] = `${height}px`;
-        refScriptCode.current.style['overflow'] = 'scroll';
-      }
-      if (refCategory.current !== null) {
-        refCategory.current.style['maxHeight'] = `${height + 60}px`;
-        refCategory.current.style['height'] = `${height + 60}px`;
-        refCategory.current.style['overflow'] = 'scroll';
-      }
+      resizeWindow();
     }, 1000);
   }, []);
+
+  const resizeWindow = () => {
+    const height = (document.querySelector('.bee-templates') as HTMLElement)?.offsetHeight - 120;
+    if (refScriptCode.current !== null) {
+      refScriptCode.current.style['maxHeight'] = `${height}px`;
+      refScriptCode.current.style['height'] = `${height}px`;
+      refScriptCode.current.style['overflow'] = 'scroll';
+    }
+    if (refCategory.current !== null) {
+      refCategory.current.style['maxHeight'] = `${height + 60}px`;
+      refCategory.current.style['height'] = `${height + 60}px`;
+      refCategory.current.style['overflow'] = 'scroll';
+    }
+  }
 
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
@@ -140,7 +146,8 @@ const Templates = ({
     reduceTitle
     showDefaultButtons={false}
     exitButton={true}
-    maxHeight='70vh'>
+    maxHeight='70vh'
+    className='bee-templates'>
     <Box className={clsx(classes.templateModal)}>
       <Grid container style={{ width: '100%' }}>
         <Grid item xs={12} sm={4} md={2} ref={refCategory} className='category-container'>
