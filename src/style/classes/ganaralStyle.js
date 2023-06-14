@@ -951,14 +951,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         fontSize: '13px'
       }
     },
-    '& .category-container': {
-      "@media screen and (min-width: 759px) and (max-width: 1200px)": {
+    "@media screen and (min-width: 759px) and (max-width: 1200px)": {
+      '& .category-container': {
         maxWidth: '25%',
         flexBasis: '25%'
       },
-    },
-    '& .template-container': {
-      "@media screen and (min-width: 759px) and (max-width: 1200px)": {
+      '& .template-container': {
         maxWidth: '75%',
         flexBasis: '75%'
       },
