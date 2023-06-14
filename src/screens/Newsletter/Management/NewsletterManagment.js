@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip, Checkbox, FormControl, FormGroup, FormControlLabel
+  Typography, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box, Checkbox, FormControl, FormGroup, FormControlLabel
 } from '@material-ui/core'
 import {
   AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -34,6 +34,7 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures } = useSelector(state => state.common);
@@ -56,10 +57,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
-  const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
+  const { publicTemplates } = useSelector(state => state.campaignEditor);
 
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
@@ -73,7 +74,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    dispatch(getAllTemplatesBySubaccountId());
+  }, [])
 
   const clearSearch = () => {
     setCampaineNameSearch('');
