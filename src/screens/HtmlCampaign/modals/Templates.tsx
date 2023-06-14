@@ -89,7 +89,7 @@ const Templates = ({
 
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
-      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
+      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10, 'template-item')} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
           {renderHtml(templateDetails.Html)}
         </Box>
@@ -176,7 +176,7 @@ const Templates = ({
             })
           }
         </Grid>
-        <Grid item xs={12} sm={8} md={10}>
+        <Grid item xs={12} sm={8} md={10} className='template-container'>
           <Tabs
             value={tabValue}
             onChange={handleChange}
