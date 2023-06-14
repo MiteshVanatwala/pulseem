@@ -121,7 +121,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: `${minDialogWidth[windowSize]}px !important`,
+      minWidth: `${minDialogWidth[windowSize]}px`,
       maxWidth: `${maxDialogWidth[windowSize]}px !important`,
     },
     "& .MuiDialog-paperScrollPaper": {
