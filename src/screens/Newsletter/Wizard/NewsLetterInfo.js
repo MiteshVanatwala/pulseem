@@ -253,6 +253,10 @@ const NewsLetterInfo = ({ classes }) => {
         if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
         if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
     }, []);
+    
+    useEffect(() => {
+        dispatch(getPublicTemplates(isRTL));
+    }, [isRTL])
 
     useEffect(() => {
         dispatch(getPublicTemplates(isRTL));
