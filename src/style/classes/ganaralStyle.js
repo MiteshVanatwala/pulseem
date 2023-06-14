@@ -962,6 +962,34 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         fontSize: '13px'
       }
     },
+    "@media screen and (min-width: 759px) and (max-width: 1200px)": {
+      '& .category-container': {
+        maxWidth: '25%',
+        flexBasis: '25%'
+      },
+      '& .template-container': {
+        maxWidth: '75%',
+        flexBasis: '75%'
+      },
+    },
+    '& .template-item': {
+      "@media screen and (max-width: 768px)": {
+        maxWidth: '100%',
+        flexBasis: '100%'
+      },
+      "@media screen and (min-width: 768px) and (max-width: 1024px)": {
+        maxWidth: '50%',
+        flexBasis: '50%'
+      },
+      "@media screen and (min-width: 1024px) and (max-width: 1200px)": {
+        maxWidth: '33.33%',
+        flexBasis: '33.33%'
+      },
+      "@media screen and (min-width: 1200px)": {
+        maxWidth: '25%',
+        flexBasis: '25%'
+      },
+    },
   },
   beeTemplate: {
     padding: '0px !important',
