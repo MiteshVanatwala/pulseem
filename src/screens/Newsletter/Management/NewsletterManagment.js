@@ -34,6 +34,7 @@ import { PulseemFeatures } from '../../../model/PulseemFields/Fields';
 import { CloneOptions } from '../../../Models/Campaigns/CloneOptions';
 import { getCookie, setCookie } from '../../../helpers/Functions/cookies';
 import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
+import { getPublicTemplates, getAllTemplatesBySubaccountId } from '../../../redux/reducers/campaignEditorSlice';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { accountFeatures } = useSelector(state => state.common);
@@ -60,6 +61,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [hideDuplicateCautionMessage, setHideDuplicateCautionMessage] = useState(false)
   const navigate = useNavigate();
   const [duplicateOptions, setDuplicateOptions] = useState([])
+  const { publicTemplates } = useSelector(state => state.campaignEditor);
 
   moment.locale(language)
   const [verificationDialog, setVerificationDialog] = useState(false)
@@ -73,7 +75,12 @@ const NewsletterManagnentScreen = ({ classes }) => {
   useEffect(() => {
     setLoader(true);
     getData();
-  }, [dispatch])
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    dispatch(getAllTemplatesBySubaccountId());
+  }, [])
 
   const clearSearch = () => {
     setCampaineNameSearch('');

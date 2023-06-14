@@ -53,6 +53,8 @@ const Templates = ({
     setCategoryList(categories);
     setSelectedCategory(categories?.length > 0 ? categories[0] : '');
     setLoader(false);
+
+    resizeWindow();
   }, [publicTemplates, templatesBySubAccount, tabValue]);
 
   useEffect(() => {
@@ -67,28 +69,32 @@ const Templates = ({
   useEffect(() => {
     if (!publicTemplates.length) setLoader(true);
     setTimeout(() => {
-      const height = (document.querySelector('.MuiPaper-rounded') as HTMLElement)?.offsetHeight - 120;
-      if (refScriptCode.current !== null) {
-        refScriptCode.current.style['maxHeight'] = `${height}px`;
-        refScriptCode.current.style['height'] = `${height}px`;
-        refScriptCode.current.style['overflow'] = 'scroll';
-      }
-      if (refCategory.current !== null) {
-        refCategory.current.style['maxHeight'] = `${height + 60}px`;
-        refCategory.current.style['height'] = `${height + 60}px`;
-        refCategory.current.style['overflow'] = 'scroll';
-      }
+      resizeWindow();
     }, 1000);
   }, []);
 
+  const resizeWindow = () => {
+    const height = (document.querySelector('.bee-templates') as HTMLElement)?.offsetHeight - 120;
+    if (refScriptCode.current !== null) {
+      refScriptCode.current.style['maxHeight'] = `${height}px`;
+      refScriptCode.current.style['height'] = `${height}px`;
+      refScriptCode.current.style['overflow'] = 'scroll';
+    }
+    if (refCategory.current !== null) {
+      refCategory.current.style['maxHeight'] = `${height + 60}px`;
+      refCategory.current.style['height'] = `${height + 60}px`;
+      refCategory.current.style['overflow'] = 'scroll';
+    }
+  }
+
   const template = (templateDetails: any, selectedCategory: string) => {
     return (
-      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={6} md={3} sm={6} className={clsx(classes.ps15, classes.pe15, classes.pb10)} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
+      <Grid key={selectedCategory + '_' + templateDetails.ID} item xs={12} sm={6} md={3} className={clsx(classes.ps15, classes.pe15, classes.pb10)} onClick={() => setSelectedTemplateId(templateDetails.ID)}>
         <Box className={clsx(classes.templateItem, selectedTemplateId === templateDetails.ID ? 'selected' : '')}>
           {renderHtml(templateDetails.Html)}
         </Box>
-        <div className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
-        <div className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
+        <div id='name' className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
+        <div id='buttons' className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
           <Button
             className={clsx(
               classes.solidDialogButton,
@@ -141,10 +147,11 @@ const Templates = ({
     reduceTitle
     showDefaultButtons={false}
     exitButton={true}
-    maxHeight='70vh'>
+    maxHeight='70vh'
+    className='bee-templates'>
     <Box className={clsx(classes.templateModal)}>
       <Grid container style={{ width: '100%' }}>
-        <Grid item md={2} sm={4} xs={4} ref={refCategory} className='category-container'>
+        <Grid item xs={12} sm={4} md={2} ref={refCategory} className='category-container'>
           {
             categoryList?.length > 0 && (
               <Typography
@@ -170,7 +177,7 @@ const Templates = ({
             })
           }
         </Grid>
-        <Grid item md={10} sm={8}>
+        <Grid item xs={12} sm={8} md={10}>
           <Tabs
             value={tabValue}
             onChange={handleChange}
