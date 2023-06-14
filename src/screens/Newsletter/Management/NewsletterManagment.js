@@ -77,9 +77,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     dispatch(getAllTemplatesBySubaccountId());
   }, [])
+
+  useEffect(() => {
+    dispatch(getPublicTemplates(isRTL));
+  }, [isRTL])
 
   const clearSearch = () => {
     setCampaineNameSearch('');
@@ -960,7 +964,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         onClose={handleClose}
         renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
-          {currentDialog.content}
+        {currentDialog.content}
       </BaseDialog>
     )
   }

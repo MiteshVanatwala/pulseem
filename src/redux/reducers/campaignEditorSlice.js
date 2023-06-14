@@ -105,9 +105,9 @@ export const saveTemplateToAccount = createAsyncThunk(
     })
 
 export const getPublicTemplates = createAsyncThunk(
-    '/CampaignEditor/GetPublicTemplates', async (_, thunkAPI) => {
+    '/CampaignEditor/GetPublicTemplates', async (isRTL, thunkAPI) => {
         try {
-            const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates`);
+            const response = await PulseemReactInstance.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
