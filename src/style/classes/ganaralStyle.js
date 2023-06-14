@@ -945,7 +945,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   templateModal: {
     // minWidth: "900px",
-    minWidth: "auto",
+    minWidth: '60vw',
     '& .category-container': {
       paddingLeft: 10,
     }
@@ -960,8 +960,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       paddingRight: 0,
     },
     "& .MuiDialog-paperWidthSm": {
-      minWidth: `${minDialogWidth[windowSize]}px !important`,
-      maxWidth: `${maxTemplateDialogWidth[windowSize]}px !important`,
+      minWidth: `70vw !important`,
+      maxWidth: `70vw !important`,
     },
   },
   templateItem: {
