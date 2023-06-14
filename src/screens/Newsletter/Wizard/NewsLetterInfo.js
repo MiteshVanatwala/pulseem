@@ -250,9 +250,13 @@ const NewsLetterInfo = ({ classes }) => {
             setCampaingnValues({ ...campaingnValues, HtmlToEdit: htmlTemplate, HtmlToSend: htmlTemplate });
             sessionStorage.removeItem("Newlsetter_Html_Template");
         }
-        if (!publicTemplates.length) dispatch(getPublicTemplates());
+        if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
         if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
     }, []);
+
+    useEffect(() => {
+        dispatch(getPublicTemplates(isRTL));
+    }, [isRTL])
 
     const setDefaultEmailAndName = () => {
         if (accountSettings) {
