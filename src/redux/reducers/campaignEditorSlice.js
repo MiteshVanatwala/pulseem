@@ -76,16 +76,16 @@ export const getBeeToken = createAsyncThunk(
     });
 
 export const getPublicTemplates = createAsyncThunk(
-    'CampaignEditor/GetPublicTemplates', async (campaignId, thunkAPI) => {
+    'CampaignEditor/GetPublicTemplates', async (isRTL, thunkAPI) => {
         try {
-            const response = await instence.get(`CampaignEditor/GetPublicTemplates`);
+            const response = await instence.get(`CampaignEditor/GetPublicTemplates/${isRTL ? 'he' : 'en'}`);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     })
 export const getAllTemplatesBySubaccountId = createAsyncThunk(
-    'CampaignEditor/GetAllTemplatesBySubaccountId', async (campaignId, thunkAPI) => {
+    'CampaignEditor/GetAllTemplatesBySubaccountId', async (_, thunkAPI) => {
         try {
             const response = await instence.get(`CampaignEditor/GetAllTemplatesBySubaccountId`);
             return response.data

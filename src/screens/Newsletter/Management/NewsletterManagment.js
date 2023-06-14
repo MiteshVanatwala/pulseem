@@ -75,9 +75,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     dispatch(getAllTemplatesBySubaccountId());
   }, [])
+
+  useEffect(() => {
+    dispatch(getPublicTemplates(isRTL));
+  }, [isRTL])
 
   const renderHeader = () => {
     return (

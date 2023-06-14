@@ -155,7 +155,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         window.location.reload(true);
       } else getData();
     }
-    if (!publicTemplates.length) dispatch(getPublicTemplates());
+    if (!publicTemplates.length) dispatch(getPublicTemplates(isRTL));
     dispatch(getAllTemplatesBySubaccountId());
   }, []);
   useEffect(() => {
