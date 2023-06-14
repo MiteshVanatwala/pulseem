@@ -722,27 +722,6 @@ const UnsubscribeOrDeletePopup = ({
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
                         {DialogObject[dialogType].title}
-                        <CustomTooltip
-                            isSimpleTooltip={false}
-                            interactive={true}
-                            classes={{
-                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.fBlack,
-                            }}
-                            arrow={true}
-                            style={{ fontSize: 18, fontWeight: "bold", color: '#000', marginInline: 10 }}
-                            placement={"top"}
-                            title={
-                                <Typography noWrap={false}>
-                                    {t("recipient.maximumRecordLimitation")}
-                                </Typography>
-                            }
-                            text={t("recipient.maximumRecordLimitation")}
-                        >
-                            <span>
-                                <BsInfoCircleFill />
-                            </span>
-                        </CustomTooltip>
                     </Box>
                     {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
@@ -758,7 +737,6 @@ const UnsubscribeOrDeletePopup = ({
             onClose={onClose}
             onCancel={onClose}
             onConfirm={DialogObject[dialogType].onConfirm}
-        // customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
                 {showDropBox && DropBox(classes)}
