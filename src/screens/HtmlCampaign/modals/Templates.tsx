@@ -88,7 +88,7 @@ const Templates = ({
           {renderHtml(templateDetails.Html)}
         </Box>
         <div className={clsx(classes.textCenter, classes.pt5, classes.f14, classes.elipsis, classes.mb5)}>{convertHyphensToword(templateDetails.Name)}</div>
-        <div className={clsx(classes.textCenter, classes.p5)}>
+        <div className={clsx(classes.textCenter, classes.p5, classes.pb25)}>
           <Button
             className={clsx(
               classes.solidDialogButton,
