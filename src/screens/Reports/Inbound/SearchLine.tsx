@@ -119,57 +119,6 @@ const SearchLine = ({
     const renderDateFields = () => {
         return (
             <>
-                {showAutoCompleteForm && <Grid item>
-                    <FormControl variant="outlined" className={clsx(classes.formControl, classes.smsReplies)} style={{ width: '100%' }}>
-                        <Autocomplete
-                            disableListWrap
-                            key={autoCompleteKey}
-                            id='searchByCampaign'
-                            getOptionLabel={(option: Partial<any>) => option.Name ?? ''}
-                            noOptionsText={translator("campaigns.newsLetterEditor.errors.CampaignNotFound")}
-                            clearOnBlur={false}
-                            options={autoCompleteOptions}
-                            renderOption={renderOptions}
-                            onChange={(option: any, selected: any) => {
-                                setSearchRequest({
-                                    ...searchRequest, PageIndex: 1,
-                                    CampaignID: selected?.CampaignID
-                                });
-                            }}
-                            disableClearable={false}
-                            onInputChange={(e: any, searchTerm: any) => {
-                                if (searchTerm === '') {
-                                    setAutoCompleteOptions(finishedCampaigns.slice(0, 200));
-                                }
-                            }}
-                            renderInput={(params) => {
-                                return (<TextField 
-                                    // {...params}
-                                    onChange={(e: any) => {
-                                        if (e.target.value !== '') {
-                                            const campaigns = finishedCampaigns.map((item: any, idx: number) => {
-                                                return { Name: item.Name, CampaignID: item.SMSCampaignID, key: idx }
-                                            });
-                                            const filtered = campaigns.filter((cmp: any) => { return cmp.Name.indexOf(e.target.value) > -1 })
-                                            setAutoCompleteOptions(filtered);
-                                        }
-                                        else {
-                                            setAutoCompleteOptions(finishedCampaigns.slice(0, 200));
-                                        }
-                                    }}
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        placeholder: translator('common.searchByCampaign'),
-
-                                    }}
-                                    style={{
-                                        width: 240,
-                                    }}
-                                    variant="outlined" />)
-                            }}
-                        />
-                    </FormControl>
-                </Grid>}
                 {dateFields()}
                 {windowSize !== 'xs' && <Grid item>
                     <TextField
@@ -343,8 +292,9 @@ const SearchLine = ({
                             }
                         }}
                         renderInput={(params) => {
+                            //@ts-ignore
                             return (<TextField
-                                // {...params}
+                                {...params}
                                 onChange={(e: any) => {
                                     if (e.target.value !== '') {
                                         const campaigns = finishedCampaigns.map((item: any, idx: number) => {

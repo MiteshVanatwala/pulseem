@@ -496,7 +496,7 @@ const NewslettersReport = ({ classes }) => {
             className={clsx(
               classes.actionButton,
               classes.actionButtonGreen,
-              newslettersReports.length > 0 && toFileArray?.length > 0 ? null : classes.disabled
+              newslettersReports.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialog('exportFormat')}
             startIcon={<ExportIcon />}>
