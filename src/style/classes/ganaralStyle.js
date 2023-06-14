@@ -937,7 +937,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     minWidth: '60vw',
     '& .category-container': {
       paddingLeft: 10,
-    }
+      "@media screen and (max-width: 900px)": {
+        '& p': {
+          fontSize: '15px !important'
+        }
+      },
+    },
+    "@media screen and (max-width: 1278px)": {
+      padding: '0px 10px',
+    },
+    "@media screen and (max-width: 900px)": {
+      '& #name, #buttons': {
+        fontSize: '13px'
+      }
+    },
   },
   beeTemplate: {
     padding: '0px !important',
