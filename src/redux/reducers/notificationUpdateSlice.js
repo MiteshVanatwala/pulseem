@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
 
 export const getNotificationUpdates = createAsyncThunk(
   'NotifyCenter/GetUpdates',
   async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`NotifyCenter/GetUpdates`);
+      const response = await PulseemReactInstance.get(`NotifyCenter/GetUpdates`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -17,7 +17,7 @@ export const markNotificationsAsRead = createAsyncThunk(
   'NotifyCenter/MarkAsRead',
   async (_, thunkAPI) => {
     try {
-      const response = await instence.put(`NotifyCenter/MarkAsRead`);
+      const response = await PulseemReactInstance.put(`NotifyCenter/MarkAsRead`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

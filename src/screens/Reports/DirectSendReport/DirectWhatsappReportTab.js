@@ -14,8 +14,9 @@ import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import { getDirectReport } from '../../../redux/reducers/whatsappSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { WhatsappStatus } from '../../../helpers/PulseemArrays';
-import { whatsappStatusToString, whatsappStatusColor, renderHtml } from '../../../helpers/functions';
+import { WhatsappStatus } from '../../../helpers/Constants';
+import { whatsappStatusToString, whatsappStatusColor } from '../../../helpers/Functions/functions';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { ImWhatsapp } from 'react-icons/im';
@@ -628,7 +629,7 @@ const DirectWhatsappReportTab = ({
             </>
         ) : <>
             <Box className={classes.flexCenterOfCenter} style={{ marginTop: 25 }}>
-                <Typography style={{ fontSize: 30 }}>{renderHtml(t('common.whatsappCommingSoon'))}</Typography>
+                <Typography style={{ fontSize: 30 }}>{RenderHtml(t('common.whatsappCommingSoon'))}</Typography>
                 <ImWhatsapp style={{ color: '#25D366', fontSize: 40, marginTop: 15 }} />
             </Box>
         </>}

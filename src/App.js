@@ -3,30 +3,40 @@ import NewsletterManagment from './screens/Newsletter/Management/NewsletterManag
 import CampaignEditorBee from './screens/HtmlCampaign/CampaignEditorBee';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
-import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
+import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment';
 import MmsManagment from './screens/Mms/Management/MmsManagment';
 import SmsManagment from './screens/Sms/Management/SmsManagment';
-import { getCookie, setCookie, cookieListener } from './helpers/cookies'
+import {
+  getCookie,
+  setCookie,
+  cookieListener,
+} from './helpers/Functions/cookies';
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
-import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material-ui/core/styles';
+import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
-import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
+import {
+  setWindowSize,
+  setCoreData,
+  setLanguage,
+  setRowsPerPage,
+  setIsClal
+} from './redux/reducers/coreSlice'; //smsOldVersion
+import { getCommonFeatures, isClalAccount } from './redux/reducers/commonSlice';
 import { getNotificationUpdates } from './redux/reducers/notificationUpdateSlice';
-import { setUsername } from './redux/reducers/userSlice'
-import { getTheme } from './style/theme'
-import { useClasses } from './style/classes/index'
+import { setUsername } from './redux/reducers/userSlice';
+import { getTheme } from './style/theme';
+import { useClasses } from './style/classes/index';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import moment from 'moment'
+import moment from 'moment';
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
-import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
-import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
+import NotificationEdit from './screens/Notifications/Editor/NotificationEdit';
+import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport';
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
 import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
@@ -39,52 +49,66 @@ import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterInfo from './screens/Newsletter/Wizard/NewsLetterInfo';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
+import SystemMessage from './screens/SystemFailure/SystemMessage';
+import NotificationSend from './screens/Notifications/Editor/NotificationSend';
+import WhatsappCreator from './screens/Whatsapp/Editor/WhatsappCreator';
+import PageNotFound from './screens/404';
+import NewsletterSendSettings from './screens/Newsletter/Wizard/NewsletterSendSettings';
 import ProductsReport from './screens/Reports/ProductsReport/ProductsReport';
 import InboundMessages from './screens/Reports/Inbound/InboundMessages';
+import { whatsappRoutes } from './screens/Whatsapp/Constant';
+import SaveCampain from './screens/Whatsapp/Campaign/SaveCampain';
+import SendCampaign from './screens/Whatsapp/Campaign/SendCampaign';
+import ManageWhatsAppTemplates from './screens/Whatsapp/management/ManageWhatsAppTemplates';
+import WhatsappReports from './screens/Whatsapp/Reports/WhatsappReports';
+import ManageWhatsAppCampaigns from './screens/Whatsapp/management/ManageWhatsAppCampaigns';
+import WhatsappChat from './screens/Whatsapp/Chat/WhatsappChat';
 import AccountSettingsEditor from './screens/Settings/AccountSettings/AccountSettingsEditor';
 import DownloadFiles from './screens/Reports/DownloadFiles/DownloadFiles.tsx';
 
-const renderRoutes = (classes, history) => {
-  const transferUrl = (url = '', param = '') => () => {
-    const { campaignID, automationID, id, notificationID } = useParams()
-    const addParam = {
-      campaign: campaignID,
-      automation: automationID,
-      notification: notificationID,
-      id: id
-    }
+const renderRoutes = (classes, redirect) => {
+  const transferUrl =
+    (url = '', param = '') =>
+      () => {
+        const { campaignID, automationID, id, notificationID } = useParams();
+        const addParam = {
+          campaign: campaignID,
+          automation: automationID,
+          notification: notificationID,
+          id: id,
+        };
 
-    window.location.href = `https://www.pulseem.co.il/${url}${addParam[param] || ''}`
-    return <></>
-  }
+        window.location.href = `https://www.pulseem.co.il/${url}${addParam[param] || ''}`
+        return <></>
+      }
   return (
     <Routes>
       <Route
         exact
-        path="/"
+        path="/react"
         element={<DashboardScreen classes={classes} />}
       />
       <Route
 
-        path="/sms/create/"
-        element={<SmsCreator classes={classes} />}
+        path="/react/sms/create/"
+        element={<SmsCreator classes={classes} key="create" />}
       />
       <Route
-        path="/sms/edit/:id"
-        element={<SmsCreator classes={classes} />}
+        path="/react/sms/edit/:id"
+        element={<SmsCreator classes={classes} key="edit" />}
       />
       <Route
 
-        path="/sms/send/:id"
+        path="/react/sms/send/:id"
         element={<SmsSend classes={classes} />}
       />
       <Route
-        path={`/notifications/edit/:notificationID`}
-        element={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
+        path={`/react/notifications/edit/:notificationID`}
+        component={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
       />
       <Route
-        path={`/SendCampaign/:campaignID`}
-        element={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
+        path={`/react/SendCampaign/:campaignID`}
+        component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/PreviewCampaign/:campaignID`}
@@ -99,26 +123,17 @@ const renderRoutes = (classes, history) => {
         element={transferUrl('/Pulseem/DuplicateCampign/', 'campaign')}
       />
       <Route
-        path={`/CampaignStatistics/:campaignID`}
-        // element={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
+        path={`/react/CampaignStatistics/:campaignID`}
         element={<GraphicReport classes={classes} />}
       />
       <Route
-        path={`/homepage`}
-        element={transferUrl('/Pulseem/homepage.aspx')}
-      />
-      <Route
-        path={'/Groups'}
+        path={'/react/Groups'}
         element={<Groups classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}
         element={transferUrl('/Pulseem/ClientSearch.aspx')}
       />
-      {/* <Route
-        path={`/ClientAdvancedSearch`}
-        element={transferUrl('/Pulseem/ClientAdvancedSearch.aspx')}
-      /> */}
       <Route
         path={`/DynamicGroups`}
         element={transferUrl('/Pulseem/DynamicGroups.aspx')}
@@ -130,35 +145,36 @@ const renderRoutes = (classes, history) => {
       {/* Newsletter */}
       <Route
         exact
-        path="/Campaigns"
+        path="/react/Campaigns"
         element={<NewsletterManagment classes={classes} />}
       />
       <Route
         exact
-        path="/Campaigns/Create"
-        element={<NewsLetterInfo classes={classes} />}
+        path="/react/Campaigns/Create"
+        element={<NewsLetterInfo classes={classes} key="create"  />}
       />
       <Route
-        path="/Campaigns/Create/:id"
-        element={<NewsLetterInfo classes={classes} />}
-      />
-      <Route
-        exact
-        path="/Campaigns/editor"
-        element={<CampaignEditorBee classes={classes} />}
-      />
-      <Route
-        path="/Campaigns/editor/:id"
-        element={<CampaignEditorBee classes={classes} />}
+        path="/react/Campaigns/Create/:id"
+        element={<NewsLetterInfo classes={classes} key="edit"  />}
       />
       <Route
         exact
-        path="/Campaigns/Archive"
+        path="/react/Campaigns/editor"
+        element={<CampaignEditorBee classes={classes} />}
+      />
+      <Route
+        path="/react/Campaigns/editor/:id"
+        element={<CampaignEditorBee classes={classes} />}
+      />
+      <Route
+        exact
+        path="/react/Campaigns/SendSettings/:id"
+        element={<NewsletterSendSettings classes={classes} />}
+      />
+      <Route
+        exact
+        path="/react/Campaigns/Archive"
         element={<ArchiveManagement classes={classes} />}
-      />
-      {/* <Route
-        path={`/Editor/CampaignInfo`}
-        element={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
       />
       <Route
         path={`/CampaignsByResults`}
@@ -182,7 +198,7 @@ const renderRoutes = (classes, history) => {
       />
       {/* SMS */}
       <Route
-        path={`/SMSCampaigns`}
+        path={`/react/SMSCampaigns`}
         element={<SmsManagment classes={classes} />}
       />
       <Route
@@ -208,7 +224,7 @@ const renderRoutes = (classes, history) => {
 
       {/* MMS */}
       <Route
-        path="/MmsCampaigns"
+        path="/react/MmsCampaigns"
         element={<MmsManagment classes={classes} />}
       />
       <Route
@@ -228,32 +244,71 @@ const renderRoutes = (classes, history) => {
         element={transferUrl('/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=', 'id')}
       />
       {/* Landing Pages */}
+      {/* Whatsapp */}
 
+      <Route
+        path={whatsappRoutes.CREATE_TEMPLATE}
+        element={<WhatsappCreator classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE1}
+        element={<SaveCampain classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CREATE_CAMPAIGN_PAGE2}
+        element={<SendCampaign classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.TEMPLATE_MANAGEMENT}
+        element={<ManageWhatsAppTemplates classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.REPORTS}
+        element={<WhatsappReports classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CAMPAIGN_MANAGEMENT}
+        element={<ManageWhatsAppCampaigns classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.EDIT_TEMPLATE}
+        element={<WhatsappCreator classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE1}
+        element={<SaveCampain classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.EDIT_CAMPAIGN_PAGE2}
+        element={<SendCampaign classes={classes} />}
+      />
+
+      <Route
+        path={whatsappRoutes.CHAT}
+        element={<WhatsappChat classes={classes} />}
+      />
+      <Route
+        path={whatsappRoutes.CHAT_CONVERSATION}
+        element={<WhatsappChat classes={classes} />}
+      />
       <Route
         path='/NewWebForm/NewFormEdit/:id'
         element={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
-
-      {/* <Route
-        path="/ClientSearchResult/:id"
-        element={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
-      /> */}
-      {/* <Route
-        path="/ClientSearchResult"
-        element={<ClientSearchResult classes={classes} />}
-      /> */}
-      <Route path="/ClientSearchResult/">
-        <Route
-          path=""
-          element={<ClientSearchResult classes={classes} />}
-        />
-        <Route
-          path=":id"
-          element={<ClientSearchResult classes={classes} />}
-        />
+      <Route path='/react/ClientSearchResult/'>
+        <Route path='' element={<ClientSearchResult classes={classes} />} />
+        <Route path=':id' element={<ClientSearchResult classes={classes} />} />
       </Route>
       <Route
-        path="/EditRegistrationPage"
+        path='/react/EditRegistrationPage'
         element={<LandingPagesesManagment classes={classes} />}
       />
       <Route
@@ -266,8 +321,7 @@ const renderRoutes = (classes, history) => {
       />
       {/* Reports */}
       <Route
-        path={`/Reports/NewsletterReports`}
-        //component={transferUrl('/Pulseem/MainReport.aspx')}
+        path={`/react/Reports/NewsletterReports`}
         element={<NewslettersReport classes={classes} />}
       />
       <Route
@@ -275,21 +329,21 @@ const renderRoutes = (classes, history) => {
         element={transferUrl('/Pulseem/ClalReport.aspx')}
       />
       <Route
-        path={`/Reports/SMSMainReport`}
+        path={`/react/Reports/SMSMainReport`}
         element={<SmsReport classes={classes} />}
       />
       <Route
         exact
-        path={"/Reports/SmsReplies/:id"}
-        element={<SmsReplies classes={classes} />}
+        path={'/react/Reports/SmsReplies/:id'}
+        element={<SmsReplies classes={classes} key="byId"  />}
       />
       <Route
-        path={`/Reports/MmsMainReport`}
+        path={`/react/Reports/MmsMainReport`}
         element={<MmsReport classes={classes} />}
       />
       <Route
         exact
-        path={`/Reports/ProductReport`}
+        path={`/react/reports/ProductsReport`}
         element={<ProductsReport classes={classes} />}
       />
       <Route
@@ -301,13 +355,9 @@ const renderRoutes = (classes, history) => {
         element={transferUrl('/Pulseem/AccountReport.aspx')}
       />
       <Route
-        path={`/Reports/ProductsReport`}
+        path={`/react/Reports/ProductsReport`}
         element={<ProductsReport classes={classes} />}
       />
-      {/* <Route
-        path={`/CampaignComparison`}
-        element={transferUrl('/Pulseem/CampaignComparison.aspx')}
-      /> */}
       <Route
         path={`/ClientReport`}
         element={transferUrl('/Pulseem/ClientReport.aspx')}
@@ -326,12 +376,12 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={`/Reports/DirectSendReport`}
+        path={`/react/Reports/DirectSendReport`}
         element={<DirectSendReport classes={classes} isArchive={false} />}
       />
       <Route
         exact
-        path={`/Reports/DirectSendReport/Archive`}
+        path={`/react/Reports/DirectSendReport/Archive`}
         element={<DirectSendReport classes={classes} isArchive={true} />}
       />
       <Route
@@ -340,7 +390,7 @@ const renderRoutes = (classes, history) => {
       />
       {/* Automations */}
       <Route
-        path="/Automations"
+        path='/react/Automations'
         element={<AutomationManagment classes={classes} />}
       />
       <Route
@@ -363,28 +413,28 @@ const renderRoutes = (classes, history) => {
       {/* Notifications */}
       <Route
         exact
-        path={`/Notifications`}
+        path={`/react/Notifications`}
         element={<NotificationManagement classes={classes} />}
       />
       <Route
         exact
-        path={"/Notification/create"}
-        element={<NotificationEditor classes={classes} />}
+        path={"/react/Notification/create"}
+        element={<NotificationEdit classes={classes} key="create" />}
       />
       <Route
         exact
-        path={"/Notification/edit/:id"}
-        element={<NotificationEditor classes={classes} />}
+        path={"/react/Notification/edit/:id"}
+        element={<NotificationEdit classes={classes} key="edit"  />}
       />
       <Route
         exact
-        path={"/Notification/send/:id"}
-        element={<NotificationEditor classes={classes} />}
+        path={"/react/Notification/send/:id"}
+        element={<NotificationSend classes={classes} key="send" />}
       />
       {/* Settings */}
       <Route
         exact
-        path={`/AccountSettings`}
+        path={`/react/AccountSettings`}
         element={<AccountSettingsEditor classes={classes} />}
       />
       <Route
@@ -417,46 +467,147 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={`/SiteTracking`}
+        path={`/react/SiteTracking`}
         element={<SiteTrackingEditor classes={classes} />}
       />
       <Route
         exact
-        path={'/reports/Inbound'}
-        element={<InboundMessages classes={classes} />}
+        path={`/SystemMessage`}
+        element={<SystemMessage classes={classes} />}
+      />
+      <Route exact
+        path={'/react/reports/Inbound'}
+        element={<InboundMessages classes={classes} key="all"  />}
       />
       <Route
         exact
-        path={'/reports/Inbound/:type'}
-        element={<InboundMessages classes={classes} />}
+        path={'/react/reports/Inbound/:type'}
+        element={<InboundMessages classes={classes} key="byType" />}
       />
       <Route
         exact
-        path={'/reports/Inbound/:type/:id'}
-        element={<InboundMessages classes={classes} />}
+        path={'/react/reports/Inbound/:type/:id'}
+        element={<InboundMessages classes={classes} key="byTypeId"  />}
+      />
+      <Route
+        path="*"
+        element={<PageNotFound classes={classes} />}
       />
       <Route
         exact
-        path={'/Groups/Download'}
+        path={'/react/Groups/Download'}
         element={<DownloadFiles classes={classes} />}
       />
     </Routes>
   )
 }
 
-const App = ({ isRTL, classes, theme, language }) => {
+const App = ({ screenSize }) => {
   let location = useLocation();
-  const dispatch = useDispatch();
+  const userName = useRef();
+  const dispatch = useDispatch()
+  const { language, isRTL, windowSize, isClal } = useSelector(state => state.core)
+  const { accountSettings } = useSelector(state => state.common)
+  setCookie('accountSettings', '');
 
   React.useEffect(() => {
     dispatch(getNotificationUpdates());
   }, [location]);
 
-  return (
+  useEffect(() => {
+    screenSize && dispatch(setWindowSize(screenSize));
+  }, [screenSize]);
+
+  useEffect(() => {
+    const initFeatures = async () => {
+      if (!accountSettings) {
+        await dispatch(getCommonFeatures());
+      }
+      if (isClal === null) {
+        const response = await dispatch(isClalAccount());
+        dispatch(setIsClal(response.payload));
+      }
+    }
+
+    const updateToken = () => {
+      const culture = getCookie('Culture');
+      const token = getCookie('jtoken');
+      const rpp = getCookie('rpp') || 6;
+      if (!token) return;
+      const jwt = jwt_decode(token);
+      const {
+        email = '',
+        // unique_name = '',
+        nameid: companyName,
+        certthumbprint: billingTypeId,
+        role: isAdmin,
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone':
+        phone = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality':
+        locality = 'he-IL',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince':
+        imageURL = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri':
+        isWhiteLabel = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision':
+        cameFromSubAccount = '',
+        // 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name':
+        basename = '',
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata':
+        isAllowSwitchAccount = '',
+      } = jwt;
+
+      dispatch(
+        setCoreData({
+          email,
+          basename,
+          phone,
+          imageURL,
+          isWhiteLabel,
+          companyName,
+          cameFromSubAccount,
+          isAdmin,
+          isAllowSwitchAccount,
+          billingTypeId,
+        })
+      );
+      let lang = culture || locality; //||'he'
+      setCookie('Culture', lang.toLowerCase());
+      lang = lang.split('-')[0];
+      i18n.changeLanguage(lang.toLowerCase());
+      dispatch(setRowsPerPage(rpp || 6));
+      dispatch(setLanguage(lang.toLowerCase()));
+      dispatch(setUsername(companyName));
+      userName.current = companyName;
+    };
+
+    const cookieFunctionObj = {
+      jtoken: updateToken,
+    };
+
+    // window.addEventListener('resize',setWindowWidth)
+    cookieListener(({ name }) => {
+      const cookieFunction = cookieFunctionObj[name] || null;
+      if (!!cookieFunction) cookieFunction();
+    });
+    updateToken();
+    initFeatures();
+  }, [dispatch]);
+
+  const classes = useClasses(windowSize, isRTL)();
+  const theme = getTheme(language);
+  const redirect = useNavigate();
+  document.body.classList.add(classes.sidebar);
+
+  if (isRTL) document.body.classList.add('rtl');
+  else document.body.classList.remove('rtl');
+
+  return accountSettings && (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'}>
-          {renderRoutes(classes)}
+          {renderRoutes(classes, redirect)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>
@@ -465,7 +616,7 @@ const App = ({ isRTL, classes, theme, language }) => {
 }
 
 function useWidth() {
-  const { language } = useSelector(state => state.core)
+  const { language } = useSelector((state) => state.core);
   const theme = getTheme(language);
   const keys = [...theme.breakpoints.keys].reverse();
   return (
@@ -478,94 +629,16 @@ function useWidth() {
 }
 
 const AppContainer = () => {
-  const dispatch = useDispatch()
-  const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
-  const classes = useClasses(windowSize, isRTL)()
-  const theme = getTheme(language)
-  // const navigate = useNavigate()
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
   const width = useWidth();
-  dispatch(setWindowSize(width))
-  const userName = useRef();
-
-  const initFeatures = async () => {
-    if (!accountSettings) {
-      //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
-      const settings = await dispatch(getCommonFeatures({ companyName: userName.current }));
-      dispatch(setAccountFeatures(settings.payload));
-    }
-    const response = await dispatch(isClalAccount());
-    dispatch(setIsClal(response.payload));
-    setCookie('OldVersion', false);
-  }
-
-  useEffect(() => {
-    const updateToken = () => {
-      const culture = getCookie('Culture')
-      const token = getCookie('jtoken')
-      const rpp = getCookie('rpp') || 6
-      if (!token) return
-      const jwt = jwt_decode(token)
-      const {
-        email = '',
-        unique_name = '',
-        nameid: companyName,
-        certthumbprint: billingTypeId,
-        role: isAdmin,
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality = 'he-IL',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision': cameFromSubAccount = '',
-        // 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin = '',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename = '',
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount = ''
-      } = jwt
-
-
-      dispatch(setCoreData({ email, basename, phone, imageURL, isWhiteLabel, companyName, cameFromSubAccount, isAdmin, isAllowSwitchAccount, billingTypeId }))
-      let lang = culture || locality; //||'he'
-      setCookie('Culture', lang.toLowerCase())
-      lang = lang.split('-')[0]
-      i18n.changeLanguage(lang.toLowerCase())
-      dispatch(setRowsPerPage(rpp || 6))
-      dispatch(setLanguage(lang.toLowerCase()))
-      dispatch(setUsername(companyName))
-      userName.current = companyName;
-    }
-
-    const cookieFunctionObj = {
-      jtoken: updateToken
-    }
-
-    // window.addEventListener('resize',setWindowWidth)
-    cookieListener(({ name }) => {
-      const cookieFunction = cookieFunctionObj[name] || null
-      if (!!cookieFunction)
-        cookieFunction()
-    })
-    updateToken();
-    initFeatures();
-  }, [dispatch])
-
-
-  document.body.classList.add(classes.sidebar);
-
-  if (isRTL) document.body.classList.add('rtl');
-  else document.body.classList.remove('rtl');
 
   return (
     <StylesProvider jss={jss}>
-      <BrowserRouter basename='/react'>
-        <App isRTL={isRTL}
-          classes={classes}
-          // navigate={navigate}
-          theme={theme}
-          language={language}
-          screenSize={width} />
+      <BrowserRouter basename='/'>
+        <App screenSize={width} />
       </BrowserRouter>
     </StylesProvider>
-  )
-}
+  );
+};
 
 export default AppContainer;

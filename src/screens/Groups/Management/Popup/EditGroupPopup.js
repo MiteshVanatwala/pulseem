@@ -17,7 +17,10 @@ import "moment/locale/he";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { editGroup, } from "../../../../redux/reducers/groupSlice";
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { Dialog } from "../../../../components/managment/Dialog";
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+
 
 const EditGroupPopup = ({ classes,
     isOpen = false,
@@ -42,13 +45,13 @@ const EditGroupPopup = ({ classes,
         setLoader(true);
 
         const initData = async () => {
-            const currentGroup = { ...groupData.Groups.find((g) => { return g.GroupID == selectedGroup }) };
+            const currentGroup = { ...groupData.Groups.find((g) => { return g.GroupID === selectedGroup }) };
             setEditableFroupData(currentGroup);
             setLoader(false);
         }
 
         initData();
-    }, [])
+    }, [groupData.Groups])
 
     const handleEditGroup = async (data) => {
         if (!editableFroupData.GroupName) {
@@ -64,7 +67,7 @@ const EditGroupPopup = ({ classes,
                 'S_201': {
                     code: 201,
                     message: ToastMessages.GROUP_UPDATED,
-                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
+                    Func: () => new Promise(async (resolutionFunc, rejectionFunc) => {
                         await resolutionFunc(getData());
                     }),
                 },
@@ -95,6 +98,12 @@ const EditGroupPopup = ({ classes,
             })
             return response
         } catch (err) {
+            console.error(err);
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleEditGroup',
+                ComponentName: 'EditGroupPopup.js',
+                Text: err
+            }));
             return false;
         }
     };
@@ -102,7 +111,7 @@ const EditGroupPopup = ({ classes,
 
     return (
         <>
-            {editableFroupData && <Dialog
+            {editableFroupData && <BaseDialog
                 classes={classes}
                 open={isOpen}
                 title={t("group.edit")}
@@ -250,7 +259,7 @@ const EditGroupPopup = ({ classes,
                     <Typography>{t("common.CreatedOn")}: {moment(editableFroupData.CreationDate).format("DD/MM/YYYY HH:mm")}</Typography>
                     <Typography>{t("common.UpdatedOn")}: {moment(editableFroupData.UpdateDate).format("DD/MM/YYYY HH:mm")}</Typography>
                 </Box>
-            </Dialog>
+            </BaseDialog>
             }
         </>
     );

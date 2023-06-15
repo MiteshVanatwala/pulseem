@@ -10,7 +10,6 @@ import DefaultScreen from "../../DefaultScreen";
 import SmsReplies from "./Sms/SmsReplies";
 import Title from '../../../components/Wizard/Title';
 import WhatsappInbound from './Whatsapp/WhatsappInbound';
-import { renderHtml } from '../../../helpers/functions';
 
 const useStyles = makeStyles({
     flexItems: {
@@ -51,6 +50,7 @@ const InboundMessages = ({ classes }: ClassesType) => {
                         >
                             {
                                 InboundTypes.map((it, idx) => {
+                                    const label = translator(it.name);
                                     return !it.disabled && <Tab
                                         key={it.key}
                                         value={it.value}
@@ -79,6 +79,7 @@ const InboundMessages = ({ classes }: ClassesType) => {
     }
 
     return <DefaultScreen
+        key="inboundMessages"
         subPage={'inboundMessages'}
         currentPage='reports'
         classes={classes}

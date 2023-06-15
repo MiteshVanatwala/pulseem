@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import { Typography, Grid, TextField, IconButton, FormControl, Select, InputLabel } from '@material-ui/core'
+import { useState } from 'react';
+import { Typography, Grid, TextField, IconButton } from '@material-ui/core'
 import { PageArrowIcon } from '../../assets/images/managment/index'
 
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux';
-
 
 export const TablePagination = ({
   classes,
@@ -22,7 +20,6 @@ export const TablePagination = ({
   const pages = Math.ceil(rows / rowsPerPage)
   const [innerPage, setPage] = useState('');
   const [isTyping, setTyping] = useState(false);
-  const { isRTL } = useSelector(state => state.core)
 
   const handleKeyPress = event => {
     var isNumber = /^[0-9]*$/;

@@ -23,6 +23,7 @@ const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message
       </div>}
       showDivider={false}
       onClose={onClose}
+      onCancel={onClose}
       onConfirm={onClose}
       confirmText="common.Ok"
       showDefaultButtons={false}

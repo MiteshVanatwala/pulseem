@@ -2,9 +2,9 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import { Box, Button, Grid, Typography, FormControl, FormHelperText, FormControlLabel, RadioGroup, Radio, Select, OutlinedInput } from '@material-ui/core';
-import { SolidDialog } from '../managment/index';
-import { useEffect, useState } from 'react';
-import { setCookie, getCookie } from '../../helpers/cookies';
+import { BaseDialog } from "../DialogTemplates/BaseDialog";
+import { useState, useEffect } from 'react';
+import { setCookie, getCookie } from '../../helpers/Functions/cookies';
 import { getTwoFactorAuthValues } from '../../redux/reducers/commonSlice'
 import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
@@ -23,7 +23,7 @@ const ConfirmRadioDialog = ({
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state?.core);
-    const { twoFactorAuthEmails  } = useSelector(state => state.common);
+    const { twoFactorAuthEmails } = useSelector(state => state.common);
     const [value, setValue] = useState(getCookie(cookieName));
     const [notifyEmail, setNotifyEmail] = useState(null);
     const dispatch = useDispatch();
@@ -177,13 +177,14 @@ const ConfirmRadioDialog = ({
         )
     };
 
-    return (<SolidDialog
+    return (<BaseDialog
         classes={classes}
         open={isOpen ?? false}
         onClose={() => onCancel()}
+        onCancel={() => onCancel()}
         {...dialog}>
         {dialog.content}
-    </SolidDialog>);
+    </BaseDialog>);
 }
 
 export default ConfirmRadioDialog;

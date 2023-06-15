@@ -1,25 +1,29 @@
-import { instence } from '../../helpers/api'
-import { getCookie, setCookie } from '../../helpers/cookies'
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReactAPI';
+import { getCookie, setCookie } from '../../helpers/Functions/cookies';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const isClalAccount = createAsyncThunk(
-  '/IsClalAccount', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`/IsClalAccount`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
+	'/IsClalAccount',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(`/IsClalAccount`);
+			return JSON.parse(response.data);
+		} catch (error) {
+			return thunkAPI.rejectWithValue({ error: error.message });
+		}
+	}
+);
 export const getAccountFeatures = createAsyncThunk(
-  '/GetAccountFeatures', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`/GetAccountFeatures`);
-      return response.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
+	'/GetAccountFeatures',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(`/GetAccountFeatures`);
+			return response.data;
+		} catch (error) {
+			return thunkAPI.rejectWithValue({ error: error.message });
+		}
+	}
+);
 export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (req = null, thunkAPI) => {
     try {
@@ -28,68 +32,77 @@ export const getCommonFeatures = createAsyncThunk(
         document.referrer.toLocaleLowerCase().indexOf('accountsmanage.aspx') > -1 ||
         document.referrer.toLocaleLowerCase().indexOf('login') > -1 ||
         req?.companyName !== settings?.SubAccountName) {
-        const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
+        const response = await PulseemReactInstance.get(`GetSubAccountWithFeatureAndSettings`);
         return response.data
       }
       else {
         return { Data: settings }
       }
-
     } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  })
-
-export const isAlive = createAsyncThunk(
-  'IsAlive', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`IsAlive`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  })
+			return thunkAPI.rejectWithValue({ error: error.message });
+		}
+	}
+);
+export const isAlive = createAsyncThunk('IsAlive', async (_, thunkAPI) => {
+	try {
+		const response = await PulseemReactInstance.get(`IsAlive`);
+		return JSON.parse(response.data);
+	} catch (error) {
+		return thunkAPI.rejectWithValue({ error: error.message });
+	}
+});
 
 export const getAuthorizedEmails = createAsyncThunk(
-  'authorization/GetAuthorizedEmails', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`authorization/GetAuthorizedEmails`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
+	'authorization/GetAuthorizedEmails',
+	async (_, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.get(
+				`authorization/GetAuthorizedEmails`
+			);
+			return JSON.parse(response.data);
+		} catch (error) {
+			return thunkAPI.rejectWithValue({ error: error.message });
+		}
+	}
+);
 export const newAuthorizeEmail = createAsyncThunk(
-  'authorization/NewAuthorizeEmail', async (data, thunkAPI) => {
-    const { email = '' } = data || {};
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await instence.put(`authorization/NewAuthorizeEmail/${email}`);
-        resolve(JSON.parse(response.data))
-      } catch (error) {
-        reject(thunkAPI.rejectWithValue({ error: error.message }));
-      }
-    })
-  })
+	'authorization/NewAuthorizeEmail',
+	async (data, thunkAPI) => {
+		const { email = '' } = data || {};
+		return new Promise(async (resolve, reject) => {
+			try {
+				const response = await PulseemReactInstance.put(
+					`authorization/NewAuthorizeEmail/${email}`
+				);
+				resolve(JSON.parse(response.data));
+			} catch (error) {
+				reject(thunkAPI.rejectWithValue({ error: error.message }));
+			}
+		});
+	}
+);
 
 export const verifyEmailCode = createAsyncThunk(
-  'authorization/VerifyEmailCode', async (data, thunkAPI) => {
-    const { email = '', optinCode = 0 } = data || {};
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await instence.put(`authorization/VerifyEmailCode/${email}/${optinCode}`);
-        resolve(JSON.parse(response.data))
-      } catch (error) {
-        reject(thunkAPI.rejectWithValue({ error: error.message }));
-      }
-    })
-  })
+	'authorization/VerifyEmailCode',
+	async (data, thunkAPI) => {
+		const { email = '', optinCode = 0 } = data || {};
+		return new Promise(async (resolve, reject) => {
+			try {
+				const response = await PulseemReactInstance.put(
+					`authorization/VerifyEmailCode/${email}/${optinCode}`
+				);
+				resolve(JSON.parse(response.data));
+			} catch (error) {
+				reject(thunkAPI.rejectWithValue({ error: error.message }));
+			}
+		});
+	}
+);
 
 export const getAuthorizeNumbers = createAsyncThunk(
   'GetRelatedSubAccountNumber', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
+      const response = await PulseemReactInstance.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -99,7 +112,7 @@ export const getAuthorizeNumbers = createAsyncThunk(
 export const getTwoFactorAuthValues = createAsyncThunk(
   'getTwoFactorAuthValues', async (authType, thunkAPI) => {
     try {
-      const response = await instence.get(`authorization/GetTwoFactorAuthValues/${authType}`);
+      const response = await PulseemReactInstance.get(`authorization/GetTwoFactorAuthValues/${authType}`);
       response.data.TwoFactorAuthTypeID = authType;
       return response.data
     } catch (error) {
@@ -115,9 +128,10 @@ export const commonSlice = createSlice({
     verifiedEmails: [],
     verifiedNumbers: [],
     tokenAlive: true,
-    commonSettings: {},
     twoFactorAuthEmails: [],
-    twoFactorAuthNumbers: []
+    twoFactorAuthNumbers: [],
+    accountSettings: null,
+    accountFeatures: null
   },
   extraReducers: builder => {
     builder
@@ -131,17 +145,19 @@ export const commonSlice = createSlice({
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
         const data = payload?.Data;
-        state.commonSettings = data;
-        setCookie("accountSettings", {
-          Account: data.Account,
-          AccountFeatures: data?.Account?.AccountFeatures,
-          DefaultLinkChars: data?.DefaultLinkChars,
-          DefaultCellNumber: data?.DefaultCellNumber,
+        state.accountSettings = {
+          Account: {
+            IsPaying: data?.Account?.IsPaying,
+            IsBillingAccount: data?.Account?.IsBillingAccount
+          },
+          SubAccountName: data?.SubAccountName,
           DefaultFromMail: data?.DefaultFromMail,
           DefaultFromName: data?.DefaultFromName,
-          SubAccountSettings: data?.SubAccountSettings,
-          SubAccountName: data?.SubAccountName
-        });
+          DefaultLinkChars: data?.DefaultLinkChars,
+          DefaultCellNumber: data?.DefaultCellNumber,
+          SubAccountSettings: data?.SubAccountSettings
+        };
+        state.accountFeatures = data?.Account?.AccountFeatures?.map(String);
       })
     builder.addCase(isAlive.fulfilled, (state, { payload }) => {
       state.tokenAlive = payload;
@@ -157,5 +173,4 @@ export const commonSlice = createSlice({
   }
 })
 
-
-export default commonSlice.reducer
+export default commonSlice.reducer;

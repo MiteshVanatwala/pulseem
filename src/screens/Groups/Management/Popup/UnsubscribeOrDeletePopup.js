@@ -12,7 +12,6 @@ import {
     Select
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
@@ -22,10 +21,12 @@ import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
-import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
+import { IsValidPhone, IsValidEmail } from "../../../../helpers/Utils/Validations";
 import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
-import { getAuthorizedEmails, getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice'
-
+import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
+import { getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice';
+import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 
 const UnsubscribeOrDeletePopup = ({
     classes,
@@ -48,13 +49,12 @@ const UnsubscribeOrDeletePopup = ({
     const [areaData, setareaData] = useState("");
     const [finalData, setFinalData] = useState(null);
     const [updatedRows, setUpdatedRows] = useState(-1);
-    const [advanceOpt, setAdvanceOpt] = useState(false)
     const [activeTab, setActiveTab] = useState(showDropBox ? '0' : 0)
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [limitationWarning, setLimitationWarning] = useState(false);
-    const [allData, setAllData] = useState(null);
+    // const [allData, setAllData] = useState(null);
     const [enteredValue, setEnteredValues] = useState(null);
     const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -78,48 +78,45 @@ const UnsubscribeOrDeletePopup = ({
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
                         <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
                     </Box>
-                    <Box style={{ display: 'flex' }}>
-                        {showEmailToNotify && <>
-                            <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
-                                <Typography>{t("recipient.unsubscribed.notifyEmail")}</Typography>
-                                <FormControl style={{ width: '50%', maxWidth: 250 }} variant="filled" size="small">
-                                    <Select
-                                        native
-                                        displayEmpty
-                                        value={notifyEmail}
-                                        onChange={(event, val) => {
-                                            setNotifyEmail(event.target.value);
-                                        }}
-                                        label={t("recipient.unsubscribed.notifyEmail")}
-                                        name="FromEmail"
-                                        input={
-                                            <OutlinedInput />
-                                        }
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    width: '100%',
-                                                },
+                    {showEmailToNotify && <Box style={{ display: 'flex' }}>
+                        <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
+                            <Typography>{RenderHtml(t("recipient.unsubscribed.notifyEmail"))}</Typography>
+                            <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                <Select
+                                    native
+                                    displayEmpty
+                                    value={notifyEmail}
+                                    onChange={(event, val) => {
+                                        setNotifyEmail(event.target.value);
+                                    }}
+                                    label={t("recipient.unsubscribed.notifyEmail")}
+                                    name="FromEmail"
+                                    input={
+                                        <OutlinedInput />
+                                    }
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                width: '100%',
                                             },
-                                        }}
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                    >
-                                        <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                        {twoFactorAuthEmails.map((item, index) => {
-                                            return <option
-                                                key={`exd_${index}`}
-                                                value={item.AuthValue}
-                                            >
-                                                {t(item.AuthValue)}
-                                            </option>
-                                        }
-                                        )}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-
-                        </>}
-                    </Box>
+                                        },
+                                    }}
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                >
+                                    <option disabled value="-1" key="-1">{t("common.select")}</option>
+                                    {twoFactorAuthEmails.map((item, index) => {
+                                        return <option
+                                            key={`exd_${index}`}
+                                            value={item.AuthValue}
+                                        >
+                                            {t(item.AuthValue)}
+                                        </option>
+                                    }
+                                    )}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Box>}
                 </>) : (
                     <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
                         <FormControl>
@@ -337,6 +334,11 @@ const UnsubscribeOrDeletePopup = ({
             }
             catch (error) {
                 setLoader(false);
+                dispatch(sendToTeamChannel({
+                    MethodName: 'handleFiles',
+                    ComponentName: 'UnsubscribeOrDeletePopup.js',
+                    Text: error
+                }));
                 reject(error);
             }
         });
@@ -358,12 +360,12 @@ const UnsubscribeOrDeletePopup = ({
                 return null;
             }
 
-            if (ValidateNumber(m)) {
+            if (IsValidPhone(m)) {
                 if (m.length >= 9 && m.length <= 13) {
                     return m.trim();
                 }
             }
-            if (ValidateEmail(m)) {
+            if (IsValidEmail(m)) {
                 return m.trim();
             }
 
@@ -487,6 +489,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleDeleteSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            }));
             setLoader(false);
         }
     }
@@ -558,7 +565,11 @@ const UnsubscribeOrDeletePopup = ({
             })
         }
         catch (e) {
-            //TODO: Something went wrong
+            dispatch(sendToTeamChannel({
+                MethodName: 'handleUnsubSubmit',
+                ComponentName: 'UnsubscribeOrDeletePopup.js',
+                Text: e
+            }));
             setLoader(false);
         }
     }
@@ -603,7 +614,7 @@ const UnsubscribeOrDeletePopup = ({
 
     const RenderSummaryDialog = () => {
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={confirm || isSubmitted}
                 title={t("common.systemNotice")}
@@ -620,13 +631,13 @@ const UnsubscribeOrDeletePopup = ({
                     {updatedRows <= 0 && <Box>{t("recipient.noRecordsFound")}</Box>}
                     {updatedRows > 0 && <Box>{updatedRows === 1 ? null : updatedRows} {updatedRows === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>}
                 </Box>}
-            </Dialog>
+            </BaseDialog>
         )
     }
 
     const RenderMaximumLimitationRequest = () => {
         return (
-            <Dialog
+            <BaseDialog
                 classes={classes}
                 open={limitationWarning}
                 title={t("common.systemNotice")}
@@ -651,7 +662,7 @@ const UnsubscribeOrDeletePopup = ({
                 }}
             >
                 <Typography>{t('recipient.maximumRecordLimitation')}</Typography>
-            </Dialog>
+            </BaseDialog>
         )
     }
 
@@ -699,7 +710,7 @@ const UnsubscribeOrDeletePopup = ({
 
 
     return (
-        <Dialog
+        <BaseDialog
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
@@ -708,27 +719,6 @@ const UnsubscribeOrDeletePopup = ({
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
                         {DialogObject[dialogType].title}
-                        <CustomTooltip
-                            isSimpleTooltip={false}
-                            interactive={true}
-                            classes={{
-                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.fBlack,
-                            }}
-                            arrow={true}
-                            style={{ fontSize: 18, fontWeight: "bold", color: '#000', marginInline: 10 }}
-                            placement={"top"}
-                            title={
-                                <Typography noWrap={false}>
-                                    {t("recipient.maximumRecordLimitation")}
-                                </Typography>
-                            }
-                            text={t("recipient.maximumRecordLimitation")}
-                        >
-                            <span>
-                                <BsInfoCircleFill />
-                            </span>
-                        </CustomTooltip>
                     </Box>
                     {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
@@ -744,14 +734,13 @@ const UnsubscribeOrDeletePopup = ({
             onClose={onClose}
             onCancel={onClose}
             onConfirm={DialogObject[dialogType].onConfirm}
-        // customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
                 {showDropBox && DropBox(classes)}
                 {/* {!showDropBox && } */}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
-        </Dialog >
+        </BaseDialog >
     )
 }
 

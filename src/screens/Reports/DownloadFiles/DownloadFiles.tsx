@@ -12,7 +12,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import Toast from '../../../components/Toast/Toast.component';
-import { instence } from '../../../helpers/api';
+import { PulseemReactInstance } from '../../../helpers/Api/PulseemReactAPI';
 import { get, includes } from 'lodash';
 import { rowsOptions } from '../../../helpers/Constants';
 import { ERROR_TYPE } from '../../../helpers/Types/common';
@@ -126,7 +126,7 @@ const DownloadFiles = ({ classes }: any) => {
   }
 
   const getDownloadFileList = async () => {
-    const response = await instence.get(`/LargeFiles/GetAllFiles`);
+    const response = await PulseemReactInstance.get(`/LargeFiles/GetAllFiles`);
     setFileDownloadList(response.data.Data)
   }
 

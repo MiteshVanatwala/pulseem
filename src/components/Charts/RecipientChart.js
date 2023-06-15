@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, Box, Avatar, Button, Grid, Paper, Typography, Link, Tooltip } from '@material-ui/core';
+import { IconButton, Box, Grid, Paper, Typography, Tooltip } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -20,14 +19,14 @@ const RecipientChart = ({ classes, }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
-    const { windowSize, isRTL } = useSelector(state => state.core);
+    const { windowSize } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
-    const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const { Notifications = {}, Sms = {} } = packagesDetails || {};
 
     let slidesCount = 0;
     recipientsReport?.forEach(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-            report.ReportSection === 1 && !Sms.FeatureExist) {
+        if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+            (report.ReportSection === 1 && !Sms.FeatureExist)) {
             return
         }
         else {
@@ -36,11 +35,12 @@ const RecipientChart = ({ classes, }) => {
     })
 
     const dispatch = useDispatch();
-    const initData = async () => {
-        dispatch(getRecipientsReport());
-    }
-
-    useEffect(initData, [dispatch]);
+    useEffect(() => {
+        const initData = () => {
+            dispatch(getRecipientsReport());
+        }
+        initData();
+    }, [dispatch]);
 
     const titles = [
         {
@@ -59,10 +59,10 @@ const RecipientChart = ({ classes, }) => {
 
     let data = [];
     if (recipientsReport) {
-        recipientsReport.map(report => {
-            if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-                report.ReportSection === 1 && !Sms.FeatureExist) {
-                return;
+        recipientsReport.forEach(report => {
+            if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+                (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                return null;
             }
             else {
                 data.push({
@@ -150,8 +150,8 @@ const RecipientChart = ({ classes, }) => {
                     const tr = document.createElement('tr');
                     tr.style.backgroundColor = 'inherit';
                     tr.style.borderWidth = 0;
-                    tr.style.marginTop = i == 1 ? '-10px' : 0;
-                    tr.style.fontWeight = i == 0 ? '700' : '';
+                    tr.style.marginTop = i === 1 ? '-10px' : 0;
+                    tr.style.fontWeight = i === 0 ? '700' : '';
                     tr.style.fontSize = '12px';
 
                     const td = document.createElement('td');
@@ -159,7 +159,7 @@ const RecipientChart = ({ classes, }) => {
                     td.style.position = 'absolute';
                     td.style.right = '0';
                     td.style.left = '0';
-                    td.style.bottom = i == 0 ? '30px' : '18px';
+                    td.style.bottom = i === 0 ? '30px' : '18px';
 
                     const text = document.createTextNode(body);
 
@@ -178,7 +178,8 @@ const RecipientChart = ({ classes, }) => {
                 tableRoot.appendChild(tableBody);
             }
 
-            const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            // const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+            const { offsetLeft: positionX } = chart.canvas;
             tooltipEl.style.opacity = 1;
             tooltipEl.style.left = positionX + tooltip.caretX + 'px';
             tooltipEl.style.top = '50px';
@@ -196,7 +197,9 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(report.ReportSection, activeChart?.index);
+                    setTimeout(() => {
+                        openReports(report.ReportSection, activeChart?.index);
+                    }, 100);
                 }
             },
             plugins: {
@@ -320,7 +323,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.newsletter.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.sms.Pending');
                     break;
@@ -355,7 +358,7 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.sms.removed');
                     break;
                 }
-                case 5: {
+                case 3: {
                     qReportType = 5;
                     resultTitle = t('client.clientStatus.email.Pending');
                     break;
@@ -397,9 +400,9 @@ const RecipientChart = ({ classes, }) => {
                         showArrows={false}
                         selectedItem={carouselItem}>
                         {recipientsReport.map((report, index) => {
-                            if (report.ReportSection === 2 && !Notifications.FeatureExist
-                                || report.ReportSection === 1 && !Sms.FeatureExist) {
-                                return;
+                            if ((report.ReportSection === 2 && !Notifications.FeatureExist)
+                                || (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                                return null;
                             }
                             if (report.Total) {
                                 return renderDoughnut(report, index)
@@ -436,9 +439,9 @@ const RecipientChart = ({ classes, }) => {
         return (
             <Grid item container justifyContent='space-evenly'>
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
-                    if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-                        report.ReportSection === 1 && !Sms.FeatureExist) {
-                        return;
+                    if ((report.ReportSection === 2 && !Notifications.FeatureExist) ||
+                        (report.ReportSection === 1 && !Sms.FeatureExist)) {
+                        return null;
                     }
                     if (report.Total) {
                         return renderDoughnut(report, index)

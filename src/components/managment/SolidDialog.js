@@ -138,9 +138,11 @@ export const SolidDialog = ({
 
   return (
     <BaseDialog
+      classes
       style={style ?? null}
       open={!!open}
       className={clsx(classes.solidDialogContainer, customContainerStyle)}
+      onCancel={onClose}
       onClose={(event, reason) => {
         if (reason !== 'backdropClick' || !disableBackdropClick) {
           onClose();
