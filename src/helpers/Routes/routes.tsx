@@ -88,7 +88,7 @@ export const getRoutes = (
         {
           title: t("master.RadMenuItemResource37.Text"),
           href: "/Pulseem/ClientAdvancedSearch.aspx?fromreact=true",
-          isShow: true,
+          isShow: false,
         },
         {
           title: t("master.RadMenuItemResourceDynamicGroups.Text"),
@@ -126,12 +126,12 @@ export const getRoutes = (
         {
           title: t("master.linkSendCampaignByResultResource1.Text"),
           href: "/Pulseem/CampaignsByResults.aspx?fromreact=true",
-          isShow: true,
+          isShow: false,
         },
         {
           title: t("master.linkAbTestingsResource1.Text"),
           href: "/Pulseem/CampaignsAbTestings.aspx?fromreact=true",
-          isShow: true,
+          isShow: false,
         },
         {
           title: t("master.RadMenuItemResource9a.Text"),

@@ -770,7 +770,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     if (!data || !Array.isArray(data)) return null
     return {
       title: t('campaigns.restoreCampaignTitle'),
-      showDivider: false,
+      showDivider: true,
       icon: (
         <div className={classes.dialogIconContent}>
           {'\uE185'}
