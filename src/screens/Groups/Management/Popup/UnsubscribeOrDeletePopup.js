@@ -26,6 +26,7 @@ import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BaseDialog } from "../../../../components/DialogTemplates/BaseDialog";
 import { getTwoFactorAuthValues } from '../../../../redux/reducers/commonSlice';
 import { sendToTeamChannel } from "../../../../redux/reducers/ConnectorsSlice";
+import { RenderHtml } from "../../../../helpers/Utils/HtmlUtils";
 
 const UnsubscribeOrDeletePopup = ({
     classes,
@@ -77,48 +78,45 @@ const UnsubscribeOrDeletePopup = ({
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
                         <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
                     </Box>
-                    <Box style={{ display: 'flex' }}>
-                        {showEmailToNotify && <>
-                            <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
-                                <Typography>{t("recipient.unsubscribed.notifyEmail")}</Typography>
-                                <FormControl style={{ width: '50%', maxWidth: 250 }} variant="filled" size="small">
-                                    <Select
-                                        native
-                                        displayEmpty
-                                        value={notifyEmail}
-                                        onChange={(event, val) => {
-                                            setNotifyEmail(event.target.value);
-                                        }}
-                                        label={t("recipient.unsubscribed.notifyEmail")}
-                                        name="FromEmail"
-                                        input={
-                                            <OutlinedInput />
-                                        }
-                                        MenuProps={{
-                                            PaperProps: {
-                                                style: {
-                                                    width: '100%',
-                                                },
+                    {showEmailToNotify && <Box style={{ display: 'flex' }}>
+                        <Box className={clsx(classes.spaceBetween, classes.justifyCenterOfCenter)}>
+                            <Typography>{RenderHtml(t("recipient.unsubscribed.notifyEmail"))}</Typography>
+                            <FormControl style={{ paddingInlineStart: 25, width: '50%', maxWidth: 250 }} variant="filled" size="small">
+                                <Select
+                                    native
+                                    displayEmpty
+                                    value={notifyEmail}
+                                    onChange={(event, val) => {
+                                        setNotifyEmail(event.target.value);
+                                    }}
+                                    label={t("recipient.unsubscribed.notifyEmail")}
+                                    name="FromEmail"
+                                    input={
+                                        <OutlinedInput />
+                                    }
+                                    MenuProps={{
+                                        PaperProps: {
+                                            style: {
+                                                width: '100%',
                                             },
-                                        }}
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                    >
-                                        <option disabled value="-1" key="-1">{t("common.select")}</option>
-                                        {twoFactorAuthEmails.map((item, index) => {
-                                            return <option
-                                                key={`exd_${index}`}
-                                                value={item.AuthValue}
-                                            >
-                                                {t(item.AuthValue)}
-                                            </option>
-                                        }
-                                        )}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-
-                        </>}
-                    </Box>
+                                        },
+                                    }}
+                                    inputProps={{ 'aria-label': 'Without label' }}
+                                >
+                                    <option disabled value="-1" key="-1">{t("common.select")}</option>
+                                    {twoFactorAuthEmails.map((item, index) => {
+                                        return <option
+                                            key={`exd_${index}`}
+                                            value={item.AuthValue}
+                                        >
+                                            {t(item.AuthValue)}
+                                        </option>
+                                    }
+                                    )}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Box>}
                 </>) : (
                     <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
                         <FormControl>
