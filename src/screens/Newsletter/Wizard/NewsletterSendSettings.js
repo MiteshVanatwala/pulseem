@@ -34,7 +34,7 @@ import { getEmailSendSettings, setEmailSendSettings, getSendSummary, deleteCampa
 import SummaryDialog from "./Popups/SummaryDialog";
 import SegmentationDialog from "./Popups/SegmentationDialog";
 import SmsMarketingDialog from "./Popups/SmsMarketingDialog";
-import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
+// import { sendToTeamChannel } from "../../../redux/reducers/ConnectorsSlice";
 import UploadXL from '../../../components/Files/UploadXL'
 import { UploadSettings } from "../../../helpers/Constants";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -102,7 +102,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
     const recipientSuccess = useSnackRecipients();
     const { isRTL } = useSelector((state) => state.core);
     const { verifiedEmails, accountSettings } = useSelector(state => state.common);
-    const { defaultGroupId, subAccountAllGroups } = useSelector((state) => state.group);
+    const { subAccountAllGroups } = useSelector((state) => state.group);
     const { previousCampaignData, extraData, testGroups, previousLandingData } = useSelector((state) => state.sms);
     const { ToastMessages, newsletterSettings, newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [showLoader, setLoader] = useState(true);
@@ -871,7 +871,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
 
                 if (!segmantIndication) {
                     if (filterValues.toggleReci) {
-                        if (validationCheck() && filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0) {
+                        if (validationCheck() && (filterValues.selectedFilterGroups.length !== 0 || filterValues.filterValues !== "" || filterValues.selectedFilterCampaigns.length !== 0)) {
                             segmantIndication = true;
                         }
                     }

@@ -239,9 +239,9 @@ const NewsLetterInfo = ({ classes }) => {
             UnsubscribeLocation: campaingnValues.UnsubscribeLocation && campaingnValues.UnsubscribeLocation !== 0,
         });
     }
-    const handleClickOutsideEmoji = () => {
-        setShowEmoji(false);
-    }
+    // const handleClickOutsideEmoji = () => {
+    //     setShowEmoji(false);
+    // }
 
     useEffect(() => {
         const htmlTemplate = sessionStorage.getItem("Newlsetter_Html_Template");
@@ -254,10 +254,6 @@ const NewsLetterInfo = ({ classes }) => {
         if (!templatesBySubAccount.length) dispatch(getAllTemplatesBySubaccountId());
     }, []);
     
-    useEffect(() => {
-        dispatch(getPublicTemplates(isRTL));
-    }, [isRTL])
-
     useEffect(() => {
         dispatch(getPublicTemplates(isRTL));
     }, [isRTL])
