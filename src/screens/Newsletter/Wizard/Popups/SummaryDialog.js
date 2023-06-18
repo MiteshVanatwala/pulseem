@@ -38,7 +38,10 @@ const SummaryDialog = ({ classes,
     const { verifiedEmails } = useSelector(state => state.common);
     const { newsletterSendSummary, newsletterInfo } = useSelector(state => state.newsletter);
     const [disableSend, setDisableSend] = useState(false);
-    const [verPopupOpen, setVerPopupOpen] = useState(false)
+    const [verPopupOpen, setVerPopupOpen] = useState(false);
+    const [fromEmailVerified, setFromEmailVerified] = useState(true);
+    const [verifyStep, setVerifyStep] = useState(0);
+    const [verifyValue, setVerifyValue] = useState('');
 
     const {
         FinalClients,
@@ -82,8 +85,11 @@ const SummaryDialog = ({ classes,
 
     useEffect(() => {
         const verifiedEmail = verifiedEmails.filter((vm) => { return vm.Number === newsletterSendSummary?.FromEmail && vm.IsOptIn === true });
-        if (verifiedEmail?.length > 0)
-            setFromEmail(newsletterSendSummary?.FromEmail);
+        setFromEmail(newsletterSendSummary?.FromEmail);
+        if (!verifiedEmail || verifiedEmail?.length <= 0) {
+            setDisableSend(true);
+            setFromEmailVerified(false);
+        }
     }, [newsletterSendSummary])
 
     const renderWhenToSend = () => {
@@ -229,12 +235,12 @@ const SummaryDialog = ({ classes,
                                     onChange={handleFromEmailChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
-                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null) && classes.error),
+                                        className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
                                         // style: { maxWidth: '70%' }
                                     }}
                                     variant='outlined'
                                 >
-                                    {verifiedEmails.map((obj) => (
+                                    {[{ Number: newsletterSendSummary?.FromEmail }, ...verifiedEmails].map((obj) => (
                                         <option
                                             key={obj.Number}
                                             value={obj.Number}
@@ -245,7 +251,16 @@ const SummaryDialog = ({ classes,
                                 </Select>
                             </Box>
                             <Box className={classes.sumChild}>
-                                <Link className={clsx(classes.link, classes.mt1)} onClick={() => setVerPopupOpen(true)}>{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</Link>
+                                <Link className={clsx(classes.link, classes.mt1)}
+                                    onClick={() => {
+                                        if (!fromEmailVerified) {
+                                            setVerifyStep(1);
+                                            setVerifyValue(newsletterSendSummary?.FromEmail);
+                                        }
+                                        setVerPopupOpen(true)
+                                    }
+                                    }
+                                >{t('campaigns.newsLetterEditor.helpTexts.clickToVerify')}</Link>
                             </Box>
                             <Box className={classes.sumChild}>
                                 <span className={classes.spanSum}>{t("report.Subject")}:</span>
@@ -348,9 +363,22 @@ const SummaryDialog = ({ classes,
                         </Button>
                     </Grid>
                 </Grid>
-                {verPopupOpen && <VerificationDialog classes={classes} isOpen={verPopupOpen} onClose={() => {
-                    setVerPopupOpen(false);
-                }} />}
+                {verPopupOpen && <VerificationDialog
+                    classes={classes}
+                    isOpen={verPopupOpen}
+                    step={verifyStep ?? 0}
+                    value={verifyValue ?? ''}
+                    onClose={async (verifiedEmail) => {
+                        if (verifiedEmail && verifiedEmail !== fromEmail && verifiedEmail !== '') {
+                            const updateInfo = { ...newsletterInfo };
+                            updateInfo.FromEmail = verifiedEmail;
+                            await dispatch(saveCampaignInfo(updateInfo));
+                            setFromEmail(verifiedEmail);
+                            setDisableSend(false);
+                        }
+                        setVerPopupOpen(false);
+                    }}
+                />}
             </>
         ),
         icon: <FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />,

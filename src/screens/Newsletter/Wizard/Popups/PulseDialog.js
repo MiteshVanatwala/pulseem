@@ -75,9 +75,11 @@ const PulseDialog = ({
     const handleClose = () => {
         if (campaign?.PulseAmount >= 100 && campaign?.TimeInterval >= 1) {
             onClose(true);
+            setPulseEnabled(true);
         }
         else {
-            onClose(pulseEnabled);
+            onClose(false);
+            setPulseEnabled(false);
         }
     }
 

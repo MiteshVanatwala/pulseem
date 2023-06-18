@@ -1765,7 +1765,7 @@ const Groups = ({ classes }) => {
                     tableHead={{
                         tableHeadCells: TABLE_HEAD,
                         classes: rowStyle,
-                        className: windowSize === "xs" && classes.dNone,
+                        className: windowSize === "xs" ? classes.dNone : null,
                     }}
                 >
                     <TableBody>
