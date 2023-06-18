@@ -1160,6 +1160,8 @@ const ClientSearchResult = ({ props, classes }) => {
           onClick={() => {
             handleSearch({
               ...searchData,
+              IsAdvanced: false,
+              IsSearchByFilter: false,
               PageIndex: 1,
               PageSize: rowsPerPage,
               SearchTerm: searchStr
