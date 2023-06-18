@@ -186,6 +186,17 @@ const ClientSearchResult = ({ props, classes }) => {
     UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS",
     EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
   };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', () => null);
+
+    return () => {
+      window.removeEventListener('beforeunload', () => null);
+      sessionStorage.removeItem('searchData')
+    };
+  }, []);
+
+
   useEffect(() => {
     const initExtraFields = async () => {
       dispatch(getAccountExtraData());
