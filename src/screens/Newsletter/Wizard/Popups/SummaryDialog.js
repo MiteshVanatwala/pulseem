@@ -240,7 +240,10 @@ const SummaryDialog = ({ classes,
                                     }}
                                     variant='outlined'
                                 >
-                                    {[{ Number: newsletterSendSummary?.FromEmail }, ...verifiedEmails].map((obj) => (
+                                    {[{
+                                        Number: newsletterSendSummary?.FromEmail
+                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
+                                    ].map((obj) => (
                                         <option
                                             key={obj.Number}
                                             value={obj.Number}
