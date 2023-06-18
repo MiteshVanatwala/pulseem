@@ -99,7 +99,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
 export async function OrderItems(data: ExportData | any, order: any, options: ExportOption) {
     const finalOrder: any = [];
 
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data?.length; i++) {
         let newObject: any = {};
         // eslint-disable-next-line no-loop-func
         order.forEach((o: string | number) => {
