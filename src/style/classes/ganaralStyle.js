@@ -14,9 +14,9 @@ const minDialogWidth = {
 };
 
 const maxDialogWidth = {
-  md: 960,
-  lg: 960,
-  xl: 960,
+  md: 1080,
+  lg: 1080,
+  xl: 1080,
 };
 
 // const maxTemplateDialogWidth = {
