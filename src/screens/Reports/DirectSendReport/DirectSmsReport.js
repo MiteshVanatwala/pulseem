@@ -108,7 +108,7 @@ const DirectSMSReportTab = ({
       text = `${text.format('DD/MM/YYYY HH:mm')}`
     }
     if (dataType === 'status') {
-      text = t(ConvertSmsStatusText(text));
+      text = t(ConvertSmsStatusText(`${text}`));
       return (
         <Typography style={{ color: ConvertColorStatus(data, SourceType.SMS), fontWeight: 600 }}>{text}</Typography>
       )
@@ -564,7 +564,7 @@ const DirectSMSReportTab = ({
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
               <Typography style={{ color: ConvertColorStatus(STATUS, SourceType.SMS) }}>
-                {t(ConvertSmsStatusText(STATUS))}
+                {t(ConvertSmsStatusText(`${STATUS}`))}
               </Typography>
             </Box>
           </Box>
