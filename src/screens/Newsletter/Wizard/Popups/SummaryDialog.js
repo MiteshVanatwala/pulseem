@@ -372,12 +372,13 @@ const SummaryDialog = ({ classes,
                     step={verifyStep ?? 0}
                     value={verifyValue ?? ''}
                     onClose={async (verifiedEmail) => {
-                        if (verifiedEmail && verifiedEmail !== fromEmail && verifiedEmail !== '') {
+                        if (verifiedEmail) {
                             const updateInfo = { ...newsletterInfo };
                             updateInfo.FromEmail = verifiedEmail;
                             await dispatch(saveCampaignInfo(updateInfo));
                             setFromEmail(verifiedEmail);
                             setDisableSend(false);
+                            setFromEmailVerified(true);
                         }
                         setVerPopupOpen(false);
                     }}

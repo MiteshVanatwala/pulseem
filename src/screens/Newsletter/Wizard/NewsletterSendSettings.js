@@ -243,10 +243,10 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setLoader(true);
         return new Promise(async (resolve, reject) => {
             try {
-                dispatch(getAuthorizedEmails())
                 dispatch(getPreviousCampaignData());
                 dispatch(getAccountExtraData());
                 dispatch(getPreviousLandingData());
+                await dispatch(getAuthorizedEmails())
                 await dispatch(getEmailSendSettings(params?.id));
                 await dispatch(getGroupsBySubAccountId());
                 await dispatch(getTestGroups());
