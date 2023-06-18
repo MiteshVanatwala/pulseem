@@ -1200,7 +1200,9 @@ const ClientSearchResult = ({ props, classes }) => {
                 ToDate: date.ToDate,
                 SearchTerm: searchStr,
                 MyActivities: null,
-                MyConditions: null
+                MyConditions: null,
+                IsAdvanced: false,
+                IsSearchByFilter: false,
               });
               setPage(1);
               handleFilter();
