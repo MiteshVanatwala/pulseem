@@ -39,6 +39,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
     const [addToFromNumberToSend, setAddToFromNumberToSend] = useState(false);
     const [showConfirmDelete, setShowConfirmDelete] = useState(false);
     const [deleteValue, setDeleteValue] = useState(null);
+    const [verificationSuccess, setVerificationSuccess] = useState(false);
     let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
     const SLIDE_HEIGHTS = [25, 20, 20, 20, 20];
 
@@ -117,7 +118,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
         }
 
         callback?.()
-        onClose?.()
+        onClose?.(verificationSuccess && selectedVerificationContact)
         verificationStep && setVerificationStep(0)
         verificationError && setVerificationError(null)
         selectedVerificationContact && setSelectedVerificationContact('');
@@ -178,6 +179,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                         setUserCodeConfirmed(false);
                         switch (response?.payload.toLowerCase()) {
                             case "ok": {
+                                setVerificationSuccess(true);
                                 if (variant === 'emailTFA') {
                                     addTwoFactorValue();
                                 }
@@ -221,6 +223,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose, variant = 'email
                 setUserCodeConfirmed(false);
                 switch (result.payload.toLowerCase()) {
                     case 'ok': {
+                        setVerificationSuccess(true);
                         if (variant === 'smsTFA') {
                             addTwoFactorValue(false, 2);
                         }

@@ -199,7 +199,7 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
 
         try {
-            checkEmailAuth();
+            //checkEmailAuth();
 
             if (newsletterSettings.length === 0)
                 return;
@@ -737,15 +737,19 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                     }}
                     onClick={() => {
                         onSaveSettings(true).then(async () => {
-                            if (isEmailVerified) {
-                                setLoader(true);
-                                await dispatch(getSendSummary(params?.id));
-                                setDialogType({ type: 'SummaryDialog' });
-                                setLoader(false);
-                            }
-                            else {
-                                setNewEmailVerification(true);
-                            }
+                            setLoader(true);
+                            await dispatch(getSendSummary(params?.id));
+                            setDialogType({ type: 'SummaryDialog' });
+                            setLoader(false);
+                            // if (isEmailVerified) {
+                            //     setLoader(true);
+                            //     await dispatch(getSendSummary(params?.id));
+                            //     setDialogType({ type: 'SummaryDialog' });
+                            //     setLoader(false);
+                            // }
+                            // else {
+                            //     setNewEmailVerification(true);
+                            // }
                         })
                     }}
                 >
