@@ -99,7 +99,7 @@ export const HandleExportData = async (exportData: ExportData, options: ExportOp
 export async function OrderItems(data: ExportData | any, order: any, options: ExportOption) {
     const finalOrder: any = [];
 
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data?.length; i++) {
         let newObject: any = {};
         // eslint-disable-next-line no-loop-func
         order.forEach((o: string | number) => {
@@ -288,3 +288,27 @@ export const FlatObject = (obj: any = {}) => Object.keys(obj || {}).reduce((acc:
     } else { acc[cur] = obj[cur] }
     return acc
 }, {})
+export async function SwitchStatusByCondition(data: ExportData | any, statuses: KeyValue[], isEmail: boolean) {
+    const retValData: any = [];
+    data.forEach((o: Status) => {
+        const tempData = { ...o } as Status;
+
+        if (isEmail === true && o.Status) {
+            let status = statuses.find((s) => { return s.id === o.Status });
+            if (status && status.value !== '') {
+                tempData.StatusName = i18n.t(status.value);
+            }
+        }
+        if (!isEmail && (o.SmsStatus || o.SmsStatus === 0)) {
+            const status = statuses.find((x) => { return x.id === o.SmsStatus });
+            if (status) {
+                tempData.SmsStatus = i18n.t(status.value);
+            }
+        }
+        if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
+            tempData.Attachments = i18n.t('emailStatus.noAttachments');
+        }
+        retValData.push(tempData);
+    });
+    return retValData as ExportData;
+}

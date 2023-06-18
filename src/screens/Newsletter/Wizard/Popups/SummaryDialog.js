@@ -210,6 +210,8 @@ const SummaryDialog = ({ classes,
             const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = event.target.value;
             dispatch(saveCampaignInfo(updateInfo));
+            const isVerified = verifiedEmails.filter((ve) => { return ve.Number === updateInfo.FromEmail && ve.IsOptIn === true });
+            setDisableSend(isVerified?.length === 0);
         }
     }
     const currentDialog = {
@@ -240,7 +242,10 @@ const SummaryDialog = ({ classes,
                                     }}
                                     variant='outlined'
                                 >
-                                    {[{ Number: newsletterSendSummary?.FromEmail }, ...verifiedEmails].map((obj) => (
+                                    {[{
+                                        Number: newsletterSendSummary?.FromEmail
+                                    }, ...verifiedEmails.filter((ve) => { return ve.IsOptIn === true })
+                                    ].map((obj) => (
                                         <option
                                             key={obj.Number}
                                             value={obj.Number}
@@ -369,12 +374,13 @@ const SummaryDialog = ({ classes,
                     step={verifyStep ?? 0}
                     value={verifyValue ?? ''}
                     onClose={async (verifiedEmail) => {
-                        if (verifiedEmail && verifiedEmail !== fromEmail && verifiedEmail !== '') {
+                        if (verifiedEmail) {
                             const updateInfo = { ...newsletterInfo };
                             updateInfo.FromEmail = verifiedEmail;
                             await dispatch(saveCampaignInfo(updateInfo));
                             setFromEmail(verifiedEmail);
                             setDisableSend(false);
+                            setFromEmailVerified(true);
                         }
                         setVerPopupOpen(false);
                     }}

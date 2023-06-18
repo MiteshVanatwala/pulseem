@@ -483,7 +483,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={'/react/reports/Inbound'}
-        element={<InboundMessages classes={classes} />}
+        element={<InboundMessages classes={classes} key="all" />}
       />
       <Route
         exact

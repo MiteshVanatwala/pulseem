@@ -50,7 +50,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, FlatObject, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus } from '../../helpers/Export/ExportHelper';
+import { HandleExportData, FlatObject, ReplaceExtraFieldHeader, DeletePropertyFromArrayObject, OrderItems, SwitchStatus, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
 import { ClientStatus, SmsStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -186,6 +186,17 @@ const ClientSearchResult = ({ props, classes }) => {
     UNSUBSCRIBED_IN_PROGRESS: "UNSUBSCRIBED_IN_PROGRESS",
     EXPORT_IN_PROGRESS: "EXPORT_IN_PROGRESS"
   };
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', () => null);
+
+    return () => {
+      window.removeEventListener('beforeunload', () => null);
+      sessionStorage.removeItem('searchData')
+    };
+  }, []);
+
+
   useEffect(() => {
     const initExtraFields = async () => {
       dispatch(getAccountExtraData());
@@ -341,6 +352,7 @@ const ClientSearchResult = ({ props, classes }) => {
         ...searchData,
         PageIndex: 1,
         PageSize: rowsPerPage,
+        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
         FromDate: date.FromDate,
         ToDate: date.ToDate,
         SearchTerm: searchStr,
@@ -396,27 +408,22 @@ const ClientSearchResult = ({ props, classes }) => {
             const exportOptions = {
               OrderItems: true,
               FormatDate: true,
-              ConvertStatusToString: true,
-              Statuses: ClientStatus.Sms,
-              Order: Object.keys(exportColumnHeader.current),
-              DeleteProperties: ["Status"]
+              ConvertStatusToString: false,
+              Order: Object.keys(exportColumnHeader.current)
             };
 
-            HandleExportData(orderList, exportOptions).then((result) => {
+            HandleExportData(orderList, exportOptions).then(async (result) => {
               // Pay attention -> We set XLSX for better header's order.
               // CSV not supporting numeric extra fields order.
-              if (formatType === 'csv') {
-                ExportFile({
-                  data: result,
-                  exportType: formatType,
-                  fields: exportColumnHeader.current,
-                  fileName: fileName
-                });
-              }
-              else {
-                exportAsXLSX(result, exportColumnHeader.current, `${fileName}.XLSX`);
-              }
+              result = await SwitchStatusByCondition(result, ClientStatus.Email, true);
+              result = await SwitchStatusByCondition(result, ClientStatus.Sms, false);
 
+              ExportFile({
+                data: result,
+                exportType: formatType,
+                fields: exportColumnHeader.current,
+                fileName: fileName
+              });
             });
           });
           break;
@@ -1154,6 +1161,8 @@ const ClientSearchResult = ({ props, classes }) => {
           onClick={() => {
             handleSearch({
               ...searchData,
+              IsAdvanced: false,
+              IsSearchByFilter: false,
               PageIndex: 1,
               PageSize: rowsPerPage,
               SearchTerm: searchStr
@@ -1190,9 +1199,12 @@ const ClientSearchResult = ({ props, classes }) => {
                 PageSize: rowsPerPage,
                 FromDate: date.FromDate,
                 ToDate: date.ToDate,
+                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                 SearchTerm: searchStr,
                 MyActivities: null,
-                MyConditions: null
+                MyConditions: null,
+                IsAdvanced: false,
+                IsSearchByFilter: false,
               });
               setPage(1);
               handleFilter();
