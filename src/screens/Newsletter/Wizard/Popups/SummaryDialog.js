@@ -210,6 +210,8 @@ const SummaryDialog = ({ classes,
             const updateInfo = { ...newsletterInfo };
             updateInfo.FromEmail = event.target.value;
             dispatch(saveCampaignInfo(updateInfo));
+            const isVerified = verifiedEmails.filter((ve) => { return ve.Number === updateInfo.FromEmail && ve.IsOptIn === true });
+            setDisableSend(isVerified?.length === 0);
         }
     }
     const currentDialog = {
