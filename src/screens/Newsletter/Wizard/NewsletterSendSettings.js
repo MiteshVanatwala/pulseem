@@ -243,13 +243,13 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         setLoader(true);
         return new Promise(async (resolve, reject) => {
             try {
-                await dispatch(getEmailSendSettings(params?.id));
                 dispatch(getAuthorizedEmails())
                 dispatch(getPreviousCampaignData());
+                dispatch(getAccountExtraData());
+                dispatch(getPreviousLandingData());
+                await dispatch(getEmailSendSettings(params?.id));
                 await dispatch(getGroupsBySubAccountId());
                 await dispatch(getTestGroups());
-                await dispatch(getAccountExtraData());
-                dispatch(getPreviousLandingData());
                 await dispatch(getCommonFeatures());
                 resolve();
             } catch (error) {
