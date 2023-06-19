@@ -394,7 +394,7 @@ const ClientSearchResult = ({ props, classes }) => {
         case 201: {
           const promiseArray = [];
           let orderList = [];
-          orderList = data.Clients.map((ol) => { return FlatObject(ol) });
+          orderList = data.Clients.map((ol) => ol);
           if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
             promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
           }

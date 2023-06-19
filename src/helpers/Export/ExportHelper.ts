@@ -123,7 +123,8 @@ export async function OrderItems(data: ExportData | any, order: any, options: Ex
                 value = data[i][o] === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
             }
             if (options.FormatDate === true && DateOptions.filter(e => { return e.toLowerCase() === o.toString().toLowerCase() })?.length > 0) {
-                value = FormatDate(value);
+                const preventText = o.toString().toLowerCase() !== 'senddate' && o.toString().toLowerCase() !== 'date';
+                value = FormatDate(value, preventText);
             }
             newObject[o] = value;
         });
@@ -198,9 +199,12 @@ export async function BooleanToNumber(obj: ExportData | any, property: string, i
     });
     return obj as ExportData;
 }
-export const FormatDate = (date: string) => {
+export const FormatDate = (date: string, preventText: boolean = false) => {
     if (date === '' || !date) {
-        return date = i18n.t('common.notSent');
+        if (!preventText) {
+            return date = i18n.t('common.notSent');
+        }
+        return '';
     }
     return moment(date).format("DD/MM/YYYY HH:mm");
 }
