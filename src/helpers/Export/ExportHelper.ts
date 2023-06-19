@@ -182,9 +182,20 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
 }
 export async function ReplaceNull(obj: ExportData | any, property: string, val: string = '') {
     obj.forEach((o: { [x: string]: string; }) => {
-        if (o[property] === null || o[property] === '') {
-            o[property] = val;
+        if (!property || property === '') {
+            Object.keys(o).forEach((key: any) => {
+                const currentValue = o[key];
+                if (currentValue === null || currentValue === undefined) {
+                    o[key] = '';
+                }
+            });
         }
+        else {
+            if (o[property] === null || o[property] === '') {
+                o[property] = val;
+            }
+        }
+
     });
     return obj as ExportData;
 }
