@@ -226,19 +226,18 @@ const SummaryDialog = ({ classes,
                         <Box className={classes.sumLeft}>
                             <Box>
                                 {/* <span className={clsx(classes.spanSum, classes.bold)}>{t("sms.smsSummaryCampaignFrom")}:</span> */}
-                                <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
+                                <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
                                 <Select
                                     className={classes.mt1}
                                     autoWidth={false}
                                     native
                                     value={fromEmail}
-                                    // onChange={handleChange}
                                     displayEmpty
                                     onChange={handleFromEmailChanged}
                                     inputProps={{
                                         'aria-label': 'Without label',
                                         className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
-                                        // style: { maxWidth: '70%' }
+                                        style: { minWidth: 200 }
                                     }}
                                     variant='outlined'
                                 >
@@ -257,6 +256,7 @@ const SummaryDialog = ({ classes,
                             </Box>
                             <Box className={classes.sumChild}>
                                 <Link className={clsx(classes.link, classes.mt1)}
+                                    style={{ margin: 0 }}
                                     onClick={() => {
                                         if (!fromEmailVerified) {
                                             setVerifyStep(1);
