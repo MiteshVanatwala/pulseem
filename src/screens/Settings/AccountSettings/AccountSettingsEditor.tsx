@@ -233,14 +233,17 @@ const AccountSettingsEditor = () => {
 	};
 
 	const onTierChange = async (tier: string) => {
-		setShowLoader(true);
+		const prevSelectedTier = selectedTier;
+		setSelectedTier(tier);
 		let { payload }: UpdateWhatsappTier = await dispatch<any>(
 			updateWhatsappTier(tier)
 		);
-		setShowLoader(false);
 		if (payload.Status === apiStatus.SUCCESS) {
+			setToastMessage(ToastMessages?.WHATSAPP_TIER_SAVED)
 			await dispatch<any>(getCommonFeatures());
-			setSelectedTier(tier);
+		} else{
+			setSelectedTier(prevSelectedTier)
+			setToastMessage(ToastMessages?.WHATSAPP_TIER_NOT_SAVED)
 		}
 	};
 

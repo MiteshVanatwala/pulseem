@@ -18,7 +18,7 @@ export const whatsappRoutes = {
 	CREATE_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/create/page1',
 	CREATE_CAMPAIGN_PAGE2: '/react/whatsapp/campaign/create/page2',
 	TEMPLATE_MANAGEMENT: '/react/whatsapp/templatemanagement',
-	REPORTS: '/react/whatsapp/reports',
+	REPORTS: '/react/reports/whatsappreports',
 	CAMPAIGN_MANAGEMENT: '/react/whatsapp/campaignmanagement',
 	EDIT_TEMPLATE: '/react/whatsapp/template/edit/:templateID',
 	EDIT_CAMPAIGN_PAGE1: '/react/whatsapp/campaign/edit/page1/:campaignID',
