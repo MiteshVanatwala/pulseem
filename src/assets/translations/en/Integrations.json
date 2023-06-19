@@ -12,9 +12,9 @@
     "settingsSaved": "Settings saved",
     "connectionFail": "Can not connect with Shopify, please verify all the details are correct.",
     "insertClientToGroup": "Insert client to groups",
-    "insertToken": "Insert the API token you received after creating the application",
+    "insertToken": "Insert the one-time API token you received when creating the application",
     "insertAPIKey": "Insert the API key you received after creating the application",
-    "insertShopifyURL": "Insert only bold part: shopify.com/store/<b>mystore</b>",
+    "insertShopifyURL": "Insert only bold part: https://<b>mystore</b>.myshopify.com/",
     "authenticate": "Authenticate",
     "enterShopifyUrl": "Enter Shopify URL",
     "enterAPIKey": "Enter API Key",
@@ -24,6 +24,7 @@
     "showCredentials": "Show Credentials",
     "hideCredentials": "Hide Credentials",
     "apiVersion": "API Version",
+    "apiVersionDesc": "Check your API version in \"Configuration\" tab",
     "authResponses": {
       "201": "Authentication Success",
       "400": "The store is related to another account",
@@ -34,6 +35,8 @@
     "selectGroup": "Select any group",
     "formSubmitResponses": {
       "201": "Group has been saved."
-    }
+    },
+    "connectStore": "Connect Store",
+    "disconnectStore": "Disconnect Store"
   }
 }

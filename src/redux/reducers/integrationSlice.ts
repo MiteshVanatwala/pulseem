@@ -39,6 +39,18 @@ export const setIntegration = createAsyncThunk(
     }
 );
 
+export const resetIntegration = createAsyncThunk(
+    'Integrations/Reset',
+    async (integrationSource: LU_Plugin, thunkAPI) => {
+        try {
+            const response = await instence.put(`Integrations/Reset/${integrationSource}`);
+            return response.data as PulseemResponse;
+        } catch (error) {
+            return console.log(error);
+        }
+    }
+);
+
 
 const IntegrationSlice = createSlice({
     name: 'Integration',
@@ -79,6 +91,8 @@ const IntegrationSlice = createSlice({
             state.integrationSettings = action.payload as PulseemResponse;
         })
         builder.addCase(setIntegration.fulfilled, (state, action) => {
+        })
+        builder.addCase(resetIntegration.fulfilled, (state, action) => {
         })
     },
 })
