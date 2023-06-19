@@ -358,7 +358,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         }
       case 2: // Whatsapp
         {
-          const requestPayload = { ...defaultRequests.WHATSAPP };
+          const requestPayload = searchData.whatsapp;
           requestPayload.IsExport = true;
           response = await dispatch(getDirectReport(requestPayload));
 
