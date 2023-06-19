@@ -380,7 +380,7 @@ const RecipientChart = ({ classes, }) => {
 
     const renderChartsCarousel = () => {
         if (!recipientsReport) {
-            return (<Loader showBackdrop={false} contained containerSize={240} />);
+            return (<Loader showBackdrop={false} contained containerSize={240} zIndex={1} />);
         }
 
         let totalRecipientsReport = 0;
@@ -427,7 +427,7 @@ const RecipientChart = ({ classes, }) => {
 
     const renderCharts = () => {
         if (!recipientsReport) {
-            return (<Loader showBackdrop={false} contained containerSize={240} />);
+            return (<Loader showBackdrop={false} contained containerSize={240} zIndex={1} />);
         }
 
         let totalRecipientsReport = 0;

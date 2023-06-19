@@ -35,7 +35,22 @@ export interface KeyValue {
     id: number;
     value: string;
 }
-const DateOptions: string[] = ['SendDate', 'LastEditDate', 'UpdateDate', 'UpdatedDate', 'CreationDate', 'ReplyDate', 'DATE', "Schedule"];
+const DateOptions: string[] = [
+    'SendDate',
+    'LastEditDate',
+    'UpdateDate',
+    'UpdatedDate',
+    'CreationDate',
+    'ReplyDate',
+    'DATE',
+    "Schedule",
+    "BirthDate",
+    "ExtraDate1",
+    "ExtraDate2",
+    "ExtraDate3",
+    "ExtraDate4",
+    "ReminderDate"
+];
 
 export const HandleExportData = async (exportData: ExportData, options: ExportOption) => {
     let finalExportData: ExportData = exportData;
@@ -107,8 +122,9 @@ export async function OrderItems(data: ExportData | any, order: any, options: Ex
             if (options.ReplaceClientStatus === true && o?.toString()?.toLowerCase() === 'clientstatus') {
                 value = data[i][o] === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
             }
-            if (options.FormatDate === true && DateOptions.filter(e => { return e === o })?.length > 0) {
-                value = FormatDate(value);
+            if (options.FormatDate === true && DateOptions.filter(e => { return e.toLowerCase() === o.toString().toLowerCase() })?.length > 0) {
+                const preventText = o.toString().toLowerCase() !== 'senddate' && o.toString().toLowerCase() !== 'date';
+                value = FormatDate(value, preventText);
             }
             newObject[o] = value;
         });
@@ -145,6 +161,7 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
             if (o.Status) {
                 let status = statuses.find((s) => { return s.id === o.Status });
                 if (status && status.value !== '') {
+                    tempData.Status = i18n.t(status.value);
                     tempData.StatusName = i18n.t(status.value);
                 }
             }
@@ -165,9 +182,20 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
 }
 export async function ReplaceNull(obj: ExportData | any, property: string, val: string = '') {
     obj.forEach((o: { [x: string]: string; }) => {
-        if (o[property] === null || o[property] === '') {
-            o[property] = val;
+        if (!property || property === '') {
+            Object.keys(o).forEach((key: any) => {
+                const currentValue = o[key];
+                if (currentValue === null || currentValue === undefined) {
+                    o[key] = '';
+                }
+            });
         }
+        else {
+            if (o[property] === null || o[property] === '') {
+                o[property] = val;
+            }
+        }
+
     });
     return obj as ExportData;
 }
@@ -182,9 +210,12 @@ export async function BooleanToNumber(obj: ExportData | any, property: string, i
     });
     return obj as ExportData;
 }
-export const FormatDate = (date: string) => {
+export const FormatDate = (date: string, preventText: boolean = false) => {
     if (date === '' || !date) {
-        return date = i18n.t('common.notSent');
+        if (!preventText) {
+            return date = i18n.t('common.notSent');
+        }
+        return '';
     }
     return moment(date).format("DD/MM/YYYY HH:mm");
 }
@@ -296,6 +327,7 @@ export async function SwitchStatusByCondition(data: ExportData | any, statuses: 
         if (isEmail === true && o.Status) {
             let status = statuses.find((s) => { return s.id === o.Status });
             if (status && status.value !== '') {
+                tempData.Status = i18n.t(status.value);
                 tempData.StatusName = i18n.t(status.value);
             }
         }

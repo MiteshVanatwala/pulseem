@@ -48,7 +48,7 @@ import { VoidFunction } from '../../../helpers/Types/common';
 import { SetPageState, GetPageNyName } from '../../../helpers/UI/SessionStorageManager';
 import queryString from 'query-string';
 import { ClientStatus } from "../../../helpers/Constants";
-import { DeletePropertyFromArrayObject, HandleExportData, ReplaceExtraFieldHeader } from '../../../helpers/Export/ExportHelper';
+import { DeletePropertyFromArrayObject, HandleExportData, ReplaceExtraFieldHeader, SwitchStatusByCondition } from '../../../helpers/Export/ExportHelper';
 import { ExportFile, exportAsXLSX } from '../../../helpers/Export/ExportFile';
 
 const Groups = ({ classes }) => {
@@ -1842,32 +1842,22 @@ const Groups = ({ classes }) => {
             client.SmsStatus = t(tempSmsStatus.value);
             return client;
         }, []);
-        const promiseArray = [];
-        promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
-        promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
 
-        Promise.all(promiseArray).then(() => {
-            const exportOptions = {
-                OrderItems: true,
-                FormatDate: true,
-                ConvertStatusToString: false,
-                Statuses: ClientStatus.Sms,
-                Order: Object.keys(exportColumnHeader.current),
-                DeleteProperties: ["Status"]
-            };
+        const exportOptions = {
+            OrderItems: true,
+            FormatDate: true,
+            ConvertStatusToString: false,
+            Order: Object.keys(exportColumnHeader.current),
+            DeleteProperties: ["Revenue", "SendDate"],
+            ReplaceNull: true
+        };
 
-            HandleExportData(orderList, exportOptions).then((result) => {
-                if (formatType === 'csv') {
-                    ExportFile({
-                        data: result,
-                        exportType: formatType,
-                        fields: exportColumnHeader.current,
-                        fileName: 'PulseemClientsExport'
-                    });
-                }
-                else {
-                    exportAsXLSX(result, exportColumnHeader.current, `PulseemClientsExport.XLSX`);
-                }
+        HandleExportData(orderList, exportOptions).then(async (result) => {
+            ExportFile({
+                data: result,
+                exportType: formatType,
+                fields: exportColumnHeader.current,
+                fileName: 'PulseemClientsExport'
             });
         });
     }

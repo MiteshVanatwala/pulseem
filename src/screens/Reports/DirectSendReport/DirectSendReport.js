@@ -290,7 +290,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       case 0: // sms
         {
           searchData.sms.ShowContent = showContent;
-          response = dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
+          response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
 
           const exportOption = {
             OrderItems: true,
@@ -323,7 +323,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         }
       case 1: // Email
         {
-          response = dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+          response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
           const exportOptions = {
             OrderItems: true,
             FormatDate: true,
@@ -397,6 +397,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
           }
           break;
         }
+      default: {
+        break;
+      }
     }
   }
   const renderTabs = () => {

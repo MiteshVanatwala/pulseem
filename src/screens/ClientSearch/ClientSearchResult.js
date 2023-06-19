@@ -394,13 +394,14 @@ const ClientSearchResult = ({ props, classes }) => {
         case 201: {
           const promiseArray = [];
           let orderList = [];
-          orderList = data.Clients.map((ol) => { return FlatObject(ol) });
+          const deletedProperties = [];
+          orderList = data.Clients.map((ol) => ol);
           if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
+            deletedProperties.push("Revenue");
           }
           if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
             searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
+            deletedProperties.push("SendDate");
           }
 
           Promise.all(promiseArray).then(() => {
@@ -409,7 +410,9 @@ const ClientSearchResult = ({ props, classes }) => {
               OrderItems: true,
               FormatDate: true,
               ConvertStatusToString: false,
-              Order: Object.keys(exportColumnHeader.current)
+              DeleteProperties: deletedProperties.length > 0 ? deletedProperties : null,
+              Order: Object.keys(exportColumnHeader.current),
+              ReplaceNull: true
             };
 
             HandleExportData(orderList, exportOptions).then(async (result) => {
