@@ -35,7 +35,22 @@ export interface KeyValue {
     id: number;
     value: string;
 }
-const DateOptions: string[] = ['SendDate', 'LastEditDate', 'UpdateDate', 'UpdatedDate', 'CreationDate', 'ReplyDate', 'DATE', "Schedule"];
+const DateOptions: string[] = [
+    'SendDate',
+    'LastEditDate',
+    'UpdateDate',
+    'UpdatedDate',
+    'CreationDate',
+    'ReplyDate',
+    'DATE',
+    "Schedule",
+    "BirthDate",
+    "ExtraDate1",
+    "ExtraDate2",
+    "ExtraDate3",
+    "ExtraDate4",
+    "ReminderDate"
+];
 
 export const HandleExportData = async (exportData: ExportData, options: ExportOption) => {
     let finalExportData: ExportData = exportData;
@@ -107,7 +122,7 @@ export async function OrderItems(data: ExportData | any, order: any, options: Ex
             if (options.ReplaceClientStatus === true && o?.toString()?.toLowerCase() === 'clientstatus') {
                 value = data[i][o] === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
             }
-            if (options.FormatDate === true && DateOptions.filter(e => { return e === o })?.length > 0) {
+            if (options.FormatDate === true && DateOptions.filter(e => { return e.toLowerCase() === o.toString().toLowerCase() })?.length > 0) {
                 value = FormatDate(value);
             }
             newObject[o] = value;
@@ -145,6 +160,7 @@ export async function SwitchStatus(data: ExportData | any, statuses: KeyValue[],
             if (o.Status) {
                 let status = statuses.find((s) => { return s.id === o.Status });
                 if (status && status.value !== '') {
+                    tempData.Status = i18n.t(status.value);
                     tempData.StatusName = i18n.t(status.value);
                 }
             }
@@ -296,6 +312,7 @@ export async function SwitchStatusByCondition(data: ExportData | any, statuses: 
         if (isEmail === true && o.Status) {
             let status = statuses.find((s) => { return s.id === o.Status });
             if (status && status.value !== '') {
+                tempData.Status = i18n.t(status.value);
                 tempData.StatusName = i18n.t(status.value);
             }
         }
