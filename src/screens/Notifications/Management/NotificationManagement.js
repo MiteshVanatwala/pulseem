@@ -1293,6 +1293,7 @@ const NotificationManagement = ({ classes }) => {
         Element={
           <Button onClick={() => {
             setCookie('scriptDialog', true);
+            setForceShowImplementation(true);
             setShowScriptDialog(true);
           }
           }
