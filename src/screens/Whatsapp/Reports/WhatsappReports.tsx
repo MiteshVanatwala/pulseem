@@ -421,8 +421,8 @@ const WhatsappReports = ({ classes }: ClassesType) => {
 
 	return (
 		<DefaultScreen
-			subPage={'manage'}
-			currentPage='whatsapp'
+			subPage={'WhatsappReports'}
+			currentPage='reports'
 			classes={classes}
 			customPadding={false}
 			containerClass={clsx(classes.management, classes.mb50)}>

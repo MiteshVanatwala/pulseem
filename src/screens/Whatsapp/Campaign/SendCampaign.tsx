@@ -598,6 +598,7 @@ const SendCampaign = ({
 						GroupIds: [Number(createGroupData?.Message)],
 					})
 				);
+				setIsLoader(false);
 			} else {
 				// If data is less than 5000 rows we will upload data in format of JSON
 				// To upload data method will be **addRecipient**
@@ -607,6 +608,7 @@ const SendCampaign = ({
 						GroupIds: [Number(createGroupData?.Message)],
 					})
 				);
+				setIsLoader(false);
 			}
 			handleAddClientsResponse(
 				uploadClientData?.payload,
@@ -863,9 +865,13 @@ const SendCampaign = ({
 						)}
 						subtitle={`${translator(
 							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${moment(campaignSummary?.NextAvailableTime).format(
-							'DD.MM.YYYY HH:MM'
-						)}`}
+						)} ${
+							campaignSummary?.NextAvailableTime
+								? moment(campaignSummary?.NextAvailableTime).format(
+										'DD.MM.YYYY HH:MM'
+								  )
+								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+						}`}
 						type='alert'
 						onConfirmOrYes={() => onExceedLimitYes()}
 					/>

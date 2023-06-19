@@ -96,6 +96,10 @@
 					"title": "מעתה תוכלו להתחבר למערכת באימות דו שלבי דרך מספר הנייד שאושר"
 				}
 			}
+		},
+		"whatsAppTier": {
+			"tierUpdatedSuccessfully": "מדרגת שליחה נשמרה בהצלחה",
+			"tierUpdatedFailed": "מדרגת שמירה לא נשמרה, אנא פנו לתמיכה"
 		}
 	},
 	"billingSettings": {

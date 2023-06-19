@@ -1404,7 +1404,11 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						)}
 						subtitle={`${translator(
 							'settings.accountSettings.actDetails.fields.exceedLimitMpdalTimeMessage'
-						)} ${moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')}`}
+						)} ${
+							nextMessageAvailable
+								? moment(nextMessageAvailable).format('DD.MM.YYYY HH:MM')
+								: moment().add(1, 'd').format('DD.MM.YYYY HH:MM')
+						}`}
 						type='alert'
 						onConfirmOrYes={() => onExceedLimitYes()}
 					/>

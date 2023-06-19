@@ -211,9 +211,9 @@ const SummaryModal = ({
 					)
 				);
 				validationErrors.push(
-					`${translator('settings.accountSettings.actDetails.fields.youHave')}${
-						campaignSummary?.WhatsappSmsLeft || 0
-					} ${translator(
+					`${translator(
+						'settings.accountSettings.actDetails.fields.youHave'
+					)} ${campaignSummary?.WhatsappSmsLeft || 0} ${translator(
 						'settings.accountSettings.actDetails.fields.messageLeftToday'
 					)}`
 				);
@@ -242,7 +242,7 @@ const SummaryModal = ({
 						validationErrors.push(
 							`${translator(
 								'settings.accountSettings.actDetails.fields.youHave'
-							)}${campaignSummary?.WhatsappSmsLeft || 0} ${translator(
+							)} ${campaignSummary?.WhatsappSmsLeft || 0} ${translator(
 								'settings.accountSettings.actDetails.fields.messageLeft'
 							)}`
 						);
