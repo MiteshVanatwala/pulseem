@@ -222,12 +222,14 @@ const SummaryDialog = ({ classes,
         content: (
             <>
                 <Box style={{ fontSize: "22px", marginTop: "5px" }}>
-                    <Box className={classes.baseSum}>
-                        <Box className={classes.sumLeft}>
+                    <Box className={classes.baseSum} style={{ display: 'flex', width: '100%' }}>
+                        <Box className={classes.sumLeft} style={{ width: '50%' }}>
                             <Box>
-                                {/* <span className={clsx(classes.spanSum, classes.bold)}>{t("sms.smsSummaryCampaignFrom")}:</span> */}
                                 <span className={classes.spanSum} style={{ marginInlineEnd: 15 }}>{t("sms.smsSummaryCampaignFrom")}:</span>
+                            </Box>
+                            <Box style={{ width: '100%' }}>
                                 <Select
+                                    style={{ width: '100%' }}
                                     className={classes.mt1}
                                     autoWidth={false}
                                     native
@@ -237,7 +239,7 @@ const SummaryDialog = ({ classes,
                                     inputProps={{
                                         'aria-label': 'Without label',
                                         className: clsx(classes.p10, (fromEmail === '' || fromEmail === null || !fromEmailVerified) && classes.error),
-                                        style: { minWidth: 200 }
+                                        style: { width: '100%' }
                                     }}
                                     variant='outlined'
                                 >
@@ -255,7 +257,7 @@ const SummaryDialog = ({ classes,
                                 </Select>
                             </Box>
                             <Box className={classes.sumChild}>
-                                <Link className={clsx(classes.link, classes.mt1)}
+                                <Link className={clsx(classes.link)}
                                     style={{ margin: 0 }}
                                     onClick={() => {
                                         if (!fromEmailVerified) {
@@ -297,7 +299,7 @@ const SummaryDialog = ({ classes,
                                 }
                             </Box>
                         </Box>
-                        {PreviewURL && <Box className={classes.sumRight}>
+                        {PreviewURL && <Box className={classes.sumRight} style={{ width: '50%' }}>
                             <Stack direction='column' alignItems='center' spacing={2}>
                                 <Stack className={classes.previewIframe}>
                                     {RenderHtml(`<iframe src="${PreviewURL}&fromReact=1" style="height: inherit; border: 0; background: none; width: 100%; height: 400px;" />`)}
