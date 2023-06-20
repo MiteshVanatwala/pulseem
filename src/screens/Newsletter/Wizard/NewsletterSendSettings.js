@@ -413,8 +413,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const r = await dispatch(addRecipient(finalPayload));
 
         if (r.payload.StatusCode === 201) {
+            const isVerified = verifiedEmails.filter((email) => {
+                return email?.Number === newsletterInfo.FromEmail;
+            });
             onSaveSettings(true, groupId.toString()).then(async () => {
-                if (isEmailVerified) {
+                if (isEmailVerified || isVerified?.length > 0) {
                     setLoader(true);
                     await dispatch(getSendSummary(params?.id));
                     setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
