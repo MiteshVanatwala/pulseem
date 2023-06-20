@@ -27,6 +27,7 @@ export const getCampaignEditorStyle = (windowSize, isRTL) => ({
     width: 'calc(100% - 60px)',
     minHeight: 300,
     maxHeight: 400,
-    overflowY: 'hidden'
+    overflowY: 'hidden',
+    alignSelf: 'flex-end'
   }
 });

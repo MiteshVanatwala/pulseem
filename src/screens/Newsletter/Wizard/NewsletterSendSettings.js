@@ -330,13 +330,14 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         }
         try {
             response = await dispatch(setEmailSendSettings(payload))
-            setLoader(false)
         }
         catch (error) {
             console.log("ERROR-SAVE-SEND-SETTINGS:", error)
         }
         finally {
             handleSaveResponse(response.payload, showSummary);
+            setLoader(false);
+            return response.payload;
         }
     }
     const handleSaveResponse = (response, silenceSave = false) => {
@@ -413,8 +414,11 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
         const r = await dispatch(addRecipient(finalPayload));
 
         if (r.payload.StatusCode === 201) {
+            const isVerified = verifiedEmails.filter((email) => {
+                return email?.Number === newsletterInfo.FromEmail;
+            });
             onSaveSettings(true, groupId.toString()).then(async () => {
-                if (isEmailVerified) {
+                if (isEmailVerified || isVerified?.length > 0) {
                     setLoader(true);
                     await dispatch(getSendSummary(params?.id));
                     setDialogType({ type: 'SummaryDialog', IsQuickSend: true });
@@ -727,10 +731,12 @@ const NewsletterSendSettings = ({ classes, ...props }) => {
                             selectedGroups.length > 0 && totalClientsToSend > 0 ? "#5cb85c" : "#91C78D"
                     }}
                     onClick={() => {
-                        onSaveSettings(true).then(async () => {
+                        onSaveSettings(true).then(async (results) => {
                             setLoader(true);
-                            await dispatch(getSendSummary(params?.id));
-                            setDialogType({ type: 'SummaryDialog' });
+                            if (results?.StatusCode === 201) {
+                                await dispatch(getSendSummary(params?.id));
+                                setDialogType({ type: 'SummaryDialog' });
+                            }
                             setLoader(false);
                             // if (isEmailVerified) {
                             //     setLoader(true);

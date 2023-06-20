@@ -28,11 +28,11 @@ const TranzilaIframe = ({
                     }
                 }
                 catch (e) {
-                    dispatch(sendToTeamChannel({
-                        MethodName: 'UseEffect',
-                        ComponentName: 'TranzilaIframe',
-                        Message: e
-                    }));
+                    // dispatch(sendToTeamChannel({
+                    //     MethodName: 'UseEffect',
+                    //     ComponentName: 'TranzilaIframe',
+                    //     Message: e
+                    // }));
                     return false;
                 }
             }
