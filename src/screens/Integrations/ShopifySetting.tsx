@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
 import Toast from "../../components/Toast/Toast.component";
 import { Loader } from "../../components/Loader/Loader";
-import { authenticate, getIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
+import { authenticate, getIntegration, resetIntegration, setIntegration } from "../../redux/reducers/integrationSlice";
 import { ShopifyModel, IntegrationGroups } from '../../Models/Integrations/Shopify/Shopify';
 import { LU_Plugin, IntegrationRequest } from '../../Models/Integrations/Integration';
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
@@ -216,28 +216,51 @@ const Shopify = ({ classes }: any) => {
     }
   }
 
-  const resetStore = () => {
-    setShowResetDialog(false);
-    setSettings({
-      ID: 0,
-      SubAccountID: 0,
-      store_name: '',
-      api_key: '',
-      api_access_token: '',
-      api_password: '',
-      api_version: '',
-      RegisterEventActive: false,
-      PurchaseEventActive: false,
-      AbandonedEventActive: false,
-      UiApi_ApiKey: '',
-      Groups: {},
-      CreateDate: '',
-      UpdateDate: '',
-      IntegrationSource: 2
-    });
+  const handleResetIntegrationResponse = (response: any) => {
+    switch (response?.payload?.StatusCode) {
+      case 201: {
+        setSettings({
+          ID: 0,
+          SubAccountID: 0,
+          store_name: '',
+          api_key: '',
+          api_access_token: '',
+          api_password: '',
+          api_version: '',
+          RegisterEventActive: false,
+          PurchaseEventActive: false,
+          AbandonedEventActive: false,
+          UiApi_ApiKey: '',
+          Groups: {},
+          CreateDate: '',
+          UpdateDate: '',
+          IntegrationSource: 2
+        });
+    
+        setAuthenticated(false);
+        setIsShowCredentials(false);
+        break;
+      }
+      case 401: {
+        logout();
+        break;
+      }
+      case 200:
+      case 402:
+      case 403:
+      case 500: {
+        break;
+      }
+    }
+  }
 
-    setAuthenticated(false);
-    setIsShowCredentials(false);
+  const resetStore = async () => {
+    setShowLoader(true);
+    const resetResponse = await dispatch(resetIntegration(LU_Plugin.Shopify)) as any;
+    console.log(resetResponse)
+    handleResetIntegrationResponse(resetResponse);
+    setShowLoader(false);
+    setShowResetDialog(false);
   }
 
   const showCredentials = () => {
@@ -279,6 +302,7 @@ const Shopify = ({ classes }: any) => {
       <BaseDialog
         classes={classes}
         open={showResetDialog}
+        classes={classes}
         onClose={() => setShowResetDialog(false)}
         onConfirm={() => resetStore()}
         title=""
@@ -442,12 +466,12 @@ const Shopify = ({ classes }: any) => {
                     size='medium'
                     className={clsx(
                       classes.actionButton,
-                      classes.actionButtonLightGreen,
+                      classes.actionButtonRed,
                       classes.backButton
                     )}
                     color="primary"
                   >
-                    {t("integrations.shopify.reset")}
+                    {t("integrations.shopify.disconnectStore")}
                   </Button>
 
                   <Button
@@ -647,7 +671,7 @@ const Shopify = ({ classes }: any) => {
                 )}
                 color="primary"
               >
-                {t("common.save")}
+                {t("integrations.shopify.connectStore")}
               </Button>
               <Loader isOpen={showLoader} showBackdrop={true} />
             </Box>
