@@ -43,7 +43,7 @@ export const resetIntegration = createAsyncThunk(
     'Integrations/Reset',
     async (integrationSource: LU_Plugin, thunkAPI) => {
         try {
-            const response = await instence.put(`Integrations/Reset/${integrationSource}`);
+            const response = await PulseemReactInstance.put(`Integrations/Reset/${integrationSource}`);
             return response.data as PulseemResponse;
         } catch (error) {
             return console.log(error);
