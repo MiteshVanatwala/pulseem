@@ -302,7 +302,6 @@ const Shopify = ({ classes }: any) => {
       <BaseDialog
         classes={classes}
         open={showResetDialog}
-        classes={classes}
         onClose={() => setShowResetDialog(false)}
         onConfirm={() => resetStore()}
         title=""
