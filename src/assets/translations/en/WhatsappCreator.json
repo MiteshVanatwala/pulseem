@@ -67,8 +67,8 @@
 		"textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
 		"callToActionTooltip": "Call To Action",
 		"callToAction": "Call To Action",
-		"quickReplayTooltip": "Quick Replay",
-		"quickReplay": "Quick Replay",
+		"quickReplayTooltip": "Quick Reply",
+		"quickReplay": "Quick Reply",
 		"removalLinkTooltip": "Removal Link",
 		"removalLink": "Removal Link",
 		"removalTextTooltip": "Removal Text",
@@ -110,6 +110,7 @@
 		"countryCodeError": "Country Code - Required field",
 		"phoneNumberError": "Phone Number - Required field",
 		"phoneNumberRangeError": "Please enter phone number in valid range",
-		"websiteTextError": "Website URL - Required field"
+		"websiteTextError": "Website URL - Required field",
+		"templateId": "Template ID"
 	}
 }

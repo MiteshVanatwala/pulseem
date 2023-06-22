@@ -734,6 +734,13 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 		}
 	};
 
+	const getTemplateId = () => {
+		return (
+			templateListData?.find((template) => Number(activeRowId) === template?.Id)
+				?.TemplateId || ''
+		);
+	};
+
 	return (
 		<DefaultScreen
 			subPage={'manage'}
@@ -970,8 +977,16 @@ const ManageWhatsAppTemplates = ({ classes }: ClassesType) => {
 						classes={classes}
 						isOpen={isPreviewTemplateOpen}
 						onClose={() => setIsPreviewTemplateOpen(false)}
-						title={translator('whatsappManagement.preview')}
+						// title={translator('whatsappManagement.preview')}
+						title={
+							getTemplateId()?.length > 0
+								? `${translator(
+										'whatsapp.alertModal.templateId'
+								  )}: ${getTemplateId()}`
+								: translator('whatsappManagement.preview')
+						}
 						subtitle={''}
+						titleFontSize={getTemplateId()?.length > 0 ? '18px' : undefined}
 						onConfirmOrYes={() => setIsPreviewTemplateOpen(false)}
 						type='alert'>
 						<Box className={classes.alertModalContentMobile}>

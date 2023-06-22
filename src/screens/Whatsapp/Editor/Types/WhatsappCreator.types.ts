@@ -192,6 +192,7 @@ export type AlertModalProps = {
 	type: 'confirm' | 'delete' | 'alert' | 'submit';
 	children?: React.ReactNode;
 	direction?: 'ltr' | 'rtl';
+	titleFontSize?: string;
 };
 
 export type savedTemplateVariablesProps = {

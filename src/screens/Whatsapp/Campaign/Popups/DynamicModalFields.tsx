@@ -68,6 +68,33 @@ const DynamicModalFields = ({
 		onAddRemovalLink(true);
 	};
 
+	const updateNavAddress = (navAddress: string) => {
+		setNavAddress(
+			`${
+				navApp === 'Waze' ? 'https://waze.to/?q=' : 'http://maps.google.com/?q='
+			}${encodeURI(navAddress)}`
+		);
+	};
+
+	const updateNavApp = (navApp: string) => {
+		setNavApp(navApp);
+		if (navApp === 'Waze') {
+			setNavAddress(
+				navAddress?.replaceAll(
+					'http://maps.google.com/?q=',
+					'https://waze.to/?q='
+				)
+			);
+		} else {
+			setNavAddress(
+				navAddress?.replaceAll(
+					'https://waze.to/?q=',
+					'http://maps.google.com/?q='
+				)
+			);
+		}
+	};
+
 	return (
 		<>
 			{activeDynamicButton?.includes('pField') && (
@@ -228,7 +255,9 @@ const DynamicModalFields = ({
 									},
 								},
 							}}
-							onChange={(e: BaseSyntheticEvent) => setNavApp(e.target.value)}>
+							onChange={(e: BaseSyntheticEvent) =>
+								updateNavApp(e.target.value)
+							}>
 							<MenuItem value='Waze'>Waze</MenuItem>
 							<MenuItem value='Google Maps'>Google Maps</MenuItem>
 						</Select>
@@ -240,17 +269,11 @@ const DynamicModalFields = ({
 							placeholder={translator('whatsappCampaign.navigationPlaceholder')}
 							className={classes.whatsappCampaignDynamicFieldNavigationText}
 							onChange={(e: BaseSyntheticEvent) =>
-								setNavAddress(
-									`${
-										navApp === 'Waze'
-											? 'https://waze.to/?q='
-											: 'http://maps.google.com/?q='
-									}${e.target.value}`
-								)
+								updateNavAddress(e.target.value)
 							}
-							value={
+							value={decodeURI(
 								navAddress?.split('?q=')[navAddress?.split('?q=')?.length - 1]
-							}
+							)}
 						/>
 					</Grid>
 				</Grid>

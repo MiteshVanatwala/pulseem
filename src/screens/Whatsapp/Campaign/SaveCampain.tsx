@@ -75,6 +75,7 @@ import QuickReply from '../Editor/Popups/QuickReply';
 import ActionCallPopOver from '../Editor/Popups/ActionCallPopOver';
 import { useNavigate } from 'react-router-dom';
 import {
+	adjustTemplateVariablesForLink,
 	checkSiteTrackingLink,
 	formatUpdatedDynamicVariable,
 	getDynamicFields,
@@ -843,6 +844,10 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const saveCampaignCall = async (callFrom: string = '') => {
+		const savedTemplateData: savedTemplateListProps | undefined =
+			savedTemplateList?.find(
+				(template) => template.TemplateId === savedTemplate
+			);
 		const reqData: saveCampaignDataProps = {
 			WACampaignID: Number(campaignID) || 0,
 			TemplateId: savedTemplate,
@@ -852,6 +857,13 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			IsTestCampaign:
 				callFrom === 'send' || callFrom === 'save' ? false : isTestSend,
 		};
+		if (savedTemplateData && savedTemplateData?.Data?.types) {
+			reqData.Variables = adjustTemplateVariablesForLink(
+				savedTemplateData?.Data?.types,
+				formatUpdatedDynamicVariable(updatedDynamicVariable)
+			);
+		}
+
 		const { payload }: saveCampaignResponseProps = await dispatch<any>(
 			saveCampaign(reqData)
 		);

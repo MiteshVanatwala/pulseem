@@ -1091,7 +1091,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 						classes={classes}
 						isOpen={isPreviewCampaignOpen}
 						onClose={() => setIsPreviewCampaignOpen(false)}
-						title={translator('whatsappManagement.preview')}
+						// title={translator('whatsappManagement.preview')}
+						title={`${translator('whatsapp.alertModal.templateId')}: ${
+							campaignListData?.find(
+								(campaign) => Number(activeRowId) === campaign?.WACampaignID
+							)?.TemplateId || ''
+						}`}
+						titleFontSize={'18px'}
 						subtitle={''}
 						onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
 						type='alert'>
