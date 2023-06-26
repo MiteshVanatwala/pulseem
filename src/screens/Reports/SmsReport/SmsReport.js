@@ -238,6 +238,7 @@ const SmsReport = ({ classes }) => {
     "replies": t('common.Comments'),
     "futureSends": t('campaigns.FutureSend'),
     "StatusName": t('mainReport.statusName'),
+    "Revenue": t('common.revenue')
   }
 
   const clearSearch = () => {
