@@ -274,7 +274,7 @@ const SmsReport = ({ classes }) => {
       ExportFile({
         data: result,
         fileName: 'smsReport',
-        exportType: 'csv',
+        exportType: formatType,
         fields: exportColumnHeader
       });
     } catch (error) {

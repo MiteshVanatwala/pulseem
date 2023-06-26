@@ -499,6 +499,7 @@ const NewslettersReport = ({ classes }) => {
               newslettersReports.length > 0 ? null : classes.disabled
             )}
             onClick={() => setDialog('exportFormat')}
+            disabled={isSearching && !searchResults?.length}
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
@@ -966,16 +967,20 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-
     let rowData = searchResults || newslettersReports;
-    let rpp = parseInt(rowsPerPage)
-    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-    return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
-    )
+    if (rowData.length > 0) {
+      let rpp = parseInt(rowsPerPage)
+      rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+      return (
+        <TableBody>
+          {rowData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      )
+    }
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{t("common.NoDataTryFilter")}</Typography>
+    </Box>
   }
 
   const renderTable = () => {
