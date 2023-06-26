@@ -70,5 +70,6 @@
 	"noRecipient": "no recipients selected",
 	"setupMessage1": "To set up WhatsApp for this account,",
 	"setupMessage2": "please contact our sales team:",
-	"groupNameRequired": "Group name - Required field"
+	"groupNameRequired": "Group name - Required field",
+	"validLink": "Please enter valid link"
 }

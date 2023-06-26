@@ -110,6 +110,7 @@
 		"countryCodeError": "קידומת מדינה - שדה חובה",
 		"phoneNumberError": "מספר טלפון - שדה חובהd",
 		"phoneNumberRangeError": "אנא הכנס מספר טלפון תקין",
-		"websiteTextError": "כתובת אתר - שדה חובה"
+		"websiteTextError": "כתובת אתר - שדה חובה",
+		"templateId": "מזהה תבנית"
 	}
 }

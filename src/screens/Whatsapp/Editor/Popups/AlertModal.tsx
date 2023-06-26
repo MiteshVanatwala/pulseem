@@ -15,6 +15,7 @@ const AlertModal = ({
 	subtitle,
 	children,
 	direction,
+	titleFontSize,
 }: AlertModalProps) => {
 	const theme = useTheme();
 	const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -30,7 +31,8 @@ const AlertModal = ({
 					{title?.length > 0 && (
 						<div
 							id='responsive-dialog-title'
-							className={classes.alertModalTitle}>
+							className={classes.alertModalTitle}
+							style={{ fontSize: titleFontSize ? titleFontSize : '' }}>
 							{title}
 						</div>
 					)}

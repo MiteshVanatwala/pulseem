@@ -270,7 +270,7 @@
 		"error": "Something went wrong"
 	},
 	"templateError": {
-		"invalidTemplateName": "Facebook is not able to create template with template name",
+		"invalidTemplateName": "Template name is invalid",
 		"noTemplateText": "Template text is missing",
 		"noFooter": "Footer is missing",
 		"invalidPhone": "Phone number is not a valid phone number.",
