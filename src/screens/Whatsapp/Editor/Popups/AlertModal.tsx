@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import { Close } from '@material-ui/icons';
 import { AlertModalProps } from '../Types/WhatsappCreator.types';
 import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
 
 const AlertModal = ({
 	classes,
@@ -42,7 +43,7 @@ const AlertModal = ({
 					<div
 						className={classes.alertModalContent}
 						style={{ direction: direction }}>
-						<div className={classes.alertModalContentText}>{subtitle}</div>
+						<div className={clsx(classes.alertModalContentText, classes.f15)}>{subtitle}</div>
 						<div className={classes.alertModalContentChildren}>{children}</div>
 					</div>
 					<Grid container className={classes.alertModalAction}>
