@@ -1206,8 +1206,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						classes={classes}
 						isOpen={isDeleteTemplateOpen}
 						onClose={() => setIsDeleteTemplateOpen(false)}
-						title={translator('whatsapp.alertModal.DeleteText')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+						title={translator('common.DeleteTemplate')}
+						subtitle={translator('common.DeleteTemplateConfirm')}
 						type='delete'
 						onConfirmOrYes={() => onDeleteTemplate()}
 					/>
