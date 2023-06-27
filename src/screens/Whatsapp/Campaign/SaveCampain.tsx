@@ -67,6 +67,7 @@ import {
 	quickSend,
 	saveQuickSendGroups,
 	getWhatsAppCampaignSummary,
+	deleteCampaign,
 } from '../../../redux/reducers/whatsappSlice';
 import ValidationAlert from './Popups/ValidationAlert';
 import TestGroupModal from './Popups/TestGroupModal';
@@ -662,27 +663,32 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	};
 
 	const onDeleteCampaign = async () => {
-		resetFields();
-		navigate(whatsappRoutes.CREATE_CAMPAIGN_PAGE1);
-		// if (campaignID) {
-		// 	const deleteData: commonAPIResponseProps = await dispatch<any>(
-		// 		deleteCampaign(campaignID)
-		// 	);
-		// 	setIsDeleteCampaignOpen(false);
-		// 	if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-		// 		setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-		// 		navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
-		// 	} else {
-		// 		deleteData?.payload?.Message
-		// 			? setToastMessage({
-		// 					...ToastMessages.ERROR,
-		// 					message: deleteData?.payload?.Message,
-		// 			  })
-		// 			: setToastMessage(ToastMessages.ERROR);
-		// 	}
-		// } else {
-		// 	resetFields();
-		// }
+		// resetFields();
+		// navigate(whatsappRoutes.CREATE_CAMPAIGN_PAGE1);
+		if (campaignID) {
+			const deleteData = await dispatch<any>(
+				deleteCampaign(campaignID)
+			);
+			setIsDeleteCampaignOpen(false);
+			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+				setToastMessage({
+					...ToastMessages.SUCCESS,
+					message: deleteData?.payload?.Message,
+				})
+				setTimeout(() => {
+					navigate(whatsappRoutes.CAMPAIGN_MANAGEMENT);
+				}, 1000);
+			} else {
+				deleteData?.payload?.Message
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Message,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		} else {
+			resetFields();
+		}
 		setIsDeleteCampaignOpen(false);
 	};
 
@@ -1393,8 +1399,8 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 						classes={classes}
 						isOpen={isDeleteCampaignOpen}
 						onClose={() => setIsDeleteCampaignOpen(false)}
-						title={translator('whatsapp.alertModal.DeleteText')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+						title={translator('whatsappManagement.deleteCampaign')}
+						subtitle={translator('whatsappManagement.deleteCampaignDesc')}
 						type='delete'
 						onConfirmOrYes={() => onDeleteCampaign()}
 					/>
