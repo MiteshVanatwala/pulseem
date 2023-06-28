@@ -411,7 +411,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 					// chech siteLink and update dynamicvariable
 					const processedDynamicVariable =
 						campaignData?.Data?.VariableValues?.map((variable) => {
-							if (variable.FieldTypeId === 1) {
+							if (variable?.FieldTypeId === 1) {
 								return {
 									...variable,
 									VariableValue: variable.VariableValue?.replaceAll('#', ''),
@@ -642,10 +642,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			}
 			isValidated = false;
 		}
-		if (
-			validateDynamicVaraiable &&
-			savedTemplate?.length > 0 &&
-			getDynamicFields(templateData?.templateText)?.length !==
+		if (getDynamicFields(templateData?.templateText)?.length !==
 				updatedDynamicVariable?.length
 		) {
 			validationErrors.push(translator('whatsappChat.pleaseUpdate'));
