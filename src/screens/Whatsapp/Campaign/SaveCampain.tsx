@@ -327,7 +327,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 	useEffect(() => {
 		let textCount = templateData?.templateText?.length;
 		updatedDynamicVariable?.forEach((dynamicVariable) => {
-			switch (dynamicVariable.FieldTypeId) {
+			switch (dynamicVariable?.FieldTypeId) {
 				// Personal field , Text, Landing Page, Navigation
 				// case 1:
 				case 2:
@@ -383,7 +383,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 				return variable;
 			} else {
 				if (
-					variable.VariableValue.includes('ref') &&
+					variable?.VariableValue.includes('ref') &&
 					!checkSiteTrackingLink(SubAccountSettings, variable?.VariableValue)
 				) {
 					return {
@@ -510,7 +510,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
 		const isAvaliable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
+				dynamicVariable?.VariableIndex === Number(updatedVariable)
 		);
 		return !!isAvaliable;
 	};
@@ -519,7 +519,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 		let updatedVariable = variable?.replace(/[{}]/g, '');
 		const matchedVariable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
-				dynamicVariable.VariableIndex === Number(updatedVariable)
+				dynamicVariable?.VariableIndex === Number(updatedVariable)
 		);
 
 		const variableValue =
@@ -915,7 +915,7 @@ const SaveCampain = ({ classes }: WhatsappCampaignProps) => {
 			setIsLoader(false);
 			if (data.Status === apiStatus.SUCCESS) {
 				navigate(
-					`/react/whatsapp/campaign/edit/page2/${data.Data.WACampaignId}`,
+					`/react/whatsapp/campaign/edit/page2/${campaignID}`,
 					{ state: { from: 'edit/page1' } }
 				);
 			} else {
