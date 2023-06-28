@@ -304,14 +304,7 @@ const WhatsappMobilePreview = ({
 																		style={{
 																			margin: '2px 0px 0px 0px',
 																			borderRadius: '5px',
-																			padding: '4px 8px',
-																			width:
-																				getValueByFieldName(
-																					button,
-																					'whatsapp.websiteButtonText'
-																				)?.length <= templateText?.length
-																					? quickReplyWidth
-																					: '',
+																			padding: '4px 8px'
 																		}}>
 																		<span
 																			className={classes.quickReplyButtonText}>

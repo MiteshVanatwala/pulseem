@@ -39,6 +39,7 @@ import WhatsappMobilePreview from './Components/WhatsappMobilePreview';
 import AlertModal from './Popups/AlertModal';
 import { getValueByFieldName } from '../../../helpers/Utils/common';
 import {
+	deleteTemplate,
 	getSavedTemplates,
 	getSavedTemplatesById,
 	submitTemplates,
@@ -1012,30 +1013,28 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 	};
 
 	const onDeleteTemplate = async () => {
-		resetFields();
-		navigate(whatsappRoutes.CREATE_TEMPLATE);
 		setIsDeleteTemplateOpen(false);
-		// if (templateID) {
-		// 	const deleteData: deleteTemplateAPIProps = await dispatch<any>(
-		// 		deleteTemplate(templateID)
-		// 	);
-		// 	if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
-		// 		setIsDeleteTemplateOpen(false);
-		// 		setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
-		// 		resetFields();
-		// 		navigate('/react/whatsapp/template/create');
-		// 	} else {
-		// 		deleteData?.payload?.Error
-		// 			? setToastMessage({
-		// 					...ToastMessages.ERROR,
-		// 					message: deleteData?.payload?.Error,
-		// 			  })
-		// 			: setToastMessage(ToastMessages.ERROR);
-		// 	}
-		// } else {
-		// 	resetFields();
-		// 	setIsDeleteTemplateOpen(false);
-		// }
+		if (templateID) {
+			const deleteData = await dispatch<any>(deleteTemplate(templateID));
+			if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
+				setIsDeleteTemplateOpen(false);
+				await setToastMessage({
+					...ToastMessages.DELETE_TEMPLATE_SUCCESS,
+					message: deleteData?.payload?.Message,
+				})
+				resetFields();
+				setTimeout(() => {
+					navigate(whatsappRoutes.CREATE_TEMPLATE);
+				}, 1000);
+			} else {
+				deleteData?.payload?.Error
+					? setToastMessage({
+							...ToastMessages.ERROR,
+							message: deleteData?.payload?.Error,
+					  })
+					: setToastMessage(ToastMessages.ERROR);
+			}
+		}
 	};
 
 	const onSubmitCampaign = async () => {
@@ -1207,8 +1206,8 @@ const WhatsappCreator = ({ classes }: WhatsappCreatorProps & ClassesType) => {
 						classes={classes}
 						isOpen={isDeleteTemplateOpen}
 						onClose={() => setIsDeleteTemplateOpen(false)}
-						title={translator('whatsapp.alertModal.DeleteText')}
-						subtitle={translator('whatsapp.alertModal.DeleteTitle')}
+						title={translator('common.DeleteTemplate')}
+						subtitle={translator('common.DeleteTemplateConfirm')}
 						type='delete'
 						onConfirmOrYes={() => onDeleteTemplate()}
 					/>
