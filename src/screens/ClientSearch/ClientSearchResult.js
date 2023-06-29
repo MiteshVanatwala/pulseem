@@ -352,7 +352,7 @@ const ClientSearchResult = ({ props, classes }) => {
         ...searchData,
         PageIndex: 1,
         PageSize: rowsPerPage,
-        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+        // PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
         FromDate: date.FromDate,
         ToDate: date.ToDate,
         SearchTerm: searchStr,
