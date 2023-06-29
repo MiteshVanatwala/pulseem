@@ -69,7 +69,7 @@ const QuickReply = ({
 						...button,
 						fields: button.fields.map((field: quickReplyButtonsFieldProps) =>
 							field.fieldName === changedField.fieldName
-								? { ...field, value: e.target.value }
+								? { ...field, value: e.target.value?.replace(/_/g, '') }
 								: field
 						),
 				  }

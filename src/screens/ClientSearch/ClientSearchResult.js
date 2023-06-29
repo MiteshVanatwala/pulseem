@@ -48,7 +48,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportAsXLSX, ExportFile } from '../../helpers/Export/ExportFile';
-import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition } from '../../helpers/Export/ExportHelper';
+import { HandleExportData, DeletePropertyFromArrayObject, SwitchStatusByCondition, FlatObject } from '../../helpers/Export/ExportHelper';
 import { ClientStatus } from "../../helpers/Constants";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
@@ -62,6 +62,7 @@ import { Title } from "../../components/managment/Title";
 import { MdArrowBackIos, MdArrowForwardIos } from "react-icons/md";
 import { PulseemFeatures } from "../../model/PulseemFields/Fields";
 import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
+import { getErrorMessageFromTwilioLink } from "../Whatsapp/Common";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -277,7 +278,7 @@ const ClientSearchResult = ({ classes }) => {
     if (extraData && Object.entries(extraData).length > 0) {
       let updatingObject = {
         "Status": t('common.Status'),
-        "SmsStatus": t('common.smsStatus'),
+        "SmsStatus": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ? t('common.smsStatus') : t('common.whatsappStatus'),
         "CreationDate": (location?.state?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
@@ -293,7 +294,7 @@ const ClientSearchResult = ({ classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-      if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue || location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Product) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
       if ((searchData?.PageType ?? searchData?.PageType) === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
@@ -325,6 +326,16 @@ const ClientSearchResult = ({ classes }) => {
         "ExtraField11": t('common.ExtraField11'),
         "ExtraField12": t('common.ExtraField12'),
         "ExtraField13": t('common.ExtraField13'),
+      }
+      if(searchData?.PageType) {
+        if(searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappSentCount ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRead ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappFailed ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRemoved ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappUniqueClick ||
+          searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) {
+            delete updatingObject.Status
+        }
       }
       updatingObject = ReplaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
@@ -398,17 +409,15 @@ const ClientSearchResult = ({ classes }) => {
         case 201: {
           const promiseArray = [];
           let orderList = [];
-          const deletedProperties = [];
-          orderList = data.Clients.map((ol) => ol);
-          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
-            deletedProperties.push("Revenue");
+          orderList = data.Clients.map((ol) => { return FlatObject(ol) });
+          if ((searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue
+           && (searchData.PageType ?? searchData?.PageType) !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue
+           && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
+            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["Revenue"]));
           }
           if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
             searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-            deletedProperties.push("SendDate");
-          }
-          if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Product) {
-            orderList = DeletePropertyFromArrayObject(orderList, "Revenue");
+            promiseArray.push(DeletePropertyFromArrayObject(orderList, ["SendDate"]));
           }
 
           Promise.all(promiseArray).then(() => {
@@ -416,8 +425,8 @@ const ClientSearchResult = ({ classes }) => {
             const exportOptions = {
               OrderItems: true,
               FormatDate: true,
-              ConvertStatusToString: false,
-              DeleteProperties: deletedProperties.length > 0 ? deletedProperties : null,
+              ConvertStatusToString: true,
+              Statuses: location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue ? ClientStatus.Sms : ClientStatus.Whatsapp,
               Order: Object.keys(exportColumnHeader.current),
               ReplaceNull: true
             };
@@ -702,12 +711,12 @@ const ClientSearchResult = ({ classes }) => {
     },
     // Whatsapp Read Date
     '19': {
-      title: t("common.OpenTime"),
+      title: t("common.ReadTime"),
       sortKey: 'Date',
       component: {
         mobile: ({ OpenTime = null, ...rest }) => (<>
           <Typography className={classes.bold}>
-            {t("common.OpenTime")}
+            {t("common.ReadTime")}
           </Typography>
           <Typography>
             {OpenTime ? moment(OpenTime).format('DD/MM/YYYY HH:mm') : ''}
@@ -730,17 +739,40 @@ const ClientSearchResult = ({ classes }) => {
           <Typography className={classes.bold}>
             {t("common.ErrorEmail")}
           </Typography>
-          <Typography>
-            {LogSms_ErrorType}
+          <Typography className={classes.whatsappReportErrorCell}>
+            {/* {LogSms_ErrorType} */}
+            {t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
           </Typography>
         </>),
         web: ({ LogSms_ErrorType = '', ...rest }) => (
-          <Typography className={clsx(classes.bold, classes.f16)}>
-            {LogSms_ErrorType}
+          <Typography className={clsx(classes.bold, classes.f16, classes.whatsappReportErrorCell)}>
+            {/* {LogSms_ErrorType} */}
+            {t(getErrorMessageFromTwilioLink(LogSms_ErrorType))}
           </Typography>
         )
       },
       // filterComponents: [ErrorDropDown]
+    },
+    // Whatsapp Revenue
+    '23': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      component: {
+        mobile: ({ Revenue = 0, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.campaignRevenue")}
+          </Typography>
+          <Typography>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </>),
+        web: ({ Revenue = 0, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        )
+      },
+      filterComponents: [Min, Max]
     },
   }
   const TABLE_HEAD = [
@@ -1299,7 +1331,7 @@ const ClientSearchResult = ({ classes }) => {
           </Grid>
         }
 
-        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+        {searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue && searchData?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
@@ -1308,7 +1340,7 @@ const ClientSearchResult = ({ classes }) => {
             </Box>
           </Grid>
         }
-        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+        {(searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue || searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.WhatsappRevenue) &&
           <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
             {revenueSummary && <SummaryRow
               data={revenueSummary} />

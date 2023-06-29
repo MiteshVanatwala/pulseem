@@ -10,6 +10,7 @@ import {
 import {
 	ApiCreateGroupPayload,
 	ApiSaveCampaignSettingsData,
+	ApiSendCampaignData,
 	saveCampaignDataProps,
 	SaveQuickSendGroupReq,
 	TestSendReq,
@@ -42,10 +43,6 @@ type ApiSubmitTemplatesData =
 	| TextMedia
 	| JSONPropsText
 	| undefined;
-
-type ApiSendCampaignData = {
-	WACampaignID: number;
-};
 
 type apiCombineGroup = {
 	GroupIds: number[];
@@ -484,6 +481,7 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 			pageNo,
 			pageSize,
 			Searchtext,
+			ChatStatus,
 		}: APIGetWhatsappChatContactsReq,
 		thunkAPI
 	) => {
@@ -496,6 +494,7 @@ export const getWhatsappChatContactsByPhoneNumber = createAsyncThunk(
 					pageNo,
 					pageSize,
 					Searchtext,
+					ChatStatus,
 				}
 			);
 
@@ -768,6 +767,23 @@ export const saveQuickSendGroups = createAsyncThunk(
 	}
 );
 
+export const updateWhatsappTier = createAsyncThunk(
+	'whatsAppCampaign/WhatsappTierUpdate',
+	async (tier: string, thunkAPI) => {
+		try {
+			const response = await PulseemReactInstance.post(
+				`whatsAppCampaign/WhatsappTierUpdate`,
+				{ WhatsappTierID: tier }
+			);
+
+			return response.data;
+		} catch (error) {
+			const err = error as ApiError;
+			return thunkAPI.rejectWithValue({ error: err.message });
+		}
+	}
+);
+
 export const whatsappSlice = createSlice({
 	name: 'whatsapp',
 	initialState: {
@@ -877,6 +893,30 @@ export const whatsappSlice = createSlice({
 				color: 'success',
 				message: 'whatsappCampaign.restoreCampaign',
 				showAnimtionCheck: true,
+			},
+			GROUP_CREATED_SUCCESS: {
+				severity: 'success',
+				color: 'success',
+				message: 'sms.groupSaved',
+				showAnimtionCheck: true,
+			},
+			TEMPLATE_ALREADY_EXIST: {
+				severity: 'error',
+				color: 'error',
+				message: 'whatsapp.templateNamePlaceholder',
+				showAnimtionCheck: true,
+			},
+			INVALID_NUMBER: {
+				severity: 'error',
+				color: 'error',
+				message: 'sms.invalidNumber',
+				showAnimtionCheck: false,
+			},
+			QUICK_SEND_ERROR: {
+				severity: 'error',
+				color: 'error',
+				message: 'sms.errorQuickSend',
+				showAnimtionCheck: false,
 			},
 		},
 		directWhatsappReport: null,

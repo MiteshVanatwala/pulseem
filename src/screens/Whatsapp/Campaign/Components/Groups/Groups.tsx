@@ -46,17 +46,16 @@ const Groups = ({
 	callbackReciFilter,
 	callbackShowTestGroup,
 	uniqueKey,
+	showTestGroups
 }: GroupsProps) => {
 	const { windowSize } = useSelector(
 		(state: { core: coreProps }) => state.core
 	);
 	const { t: translator } = useTranslation();
 	const [groupNameSearch, setGroupNameSearch] = useState<string>('');
-	const [showTestGroups, setShowTestGroups] = useState<boolean>(false);
 
 	const handleShowTestGroup = () => {
 		callbackShowTestGroup(showTestGroups);
-		setShowTestGroups(!showTestGroups);
 	};
 	const handleSearch = (event: BaseSyntheticEvent) => {
 		setGroupNameSearch(event.target.value);
@@ -335,6 +334,7 @@ const Groups = ({
 						groupNameSearch={groupNameSearch}
 						selectedList={selectedList}
 						onSelectGroup={(group) => onSelectGroup(group)}
+						from={'group'}
 					/>
 				</List>
 			</div>

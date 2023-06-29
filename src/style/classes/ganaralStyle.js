@@ -730,9 +730,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   m5: {
     margin: ".5rem",
   },
-  mr5: {
-    marginRight: 5
-  },
   font13: {
     fontSize: 13,
   },
@@ -1975,7 +1972,496 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "4px solid #168ee3",
     color: "#007bff !important",
   },
-
+  "@media screen and (max-width: 768px)": {
+    width: "100%",
+    marginInlineStart: "0px",
+    // marginBottom:"30px"
+  },
+  phoneDiv: {
+    position: 'relative',
+    maxHeight: '100%',
+    overflowY: 'clip',
+    "@media screen and (max-width: 960px)": {
+      marginTop: 0,
+    },
+    "@media screen and (max-width: 768px)": {
+      marginTop: 0,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    "@media screen and (max-width: 566px)": {
+      marginTop: 25,
+    },
+  },
+  groupsMan: {
+    width: "700px",
+    border: "1px solid #efefef",
+    padding: "4px",
+    "@media screen and (max-width: 768px)": {
+      width: "315px",
+    },
+    "@media screen and (device-width: 411px)": {
+      width: "355px",
+    },
+  },
+  groupsMan1: {
+    width: "700px",
+    display: "flex",
+    "@media screen and (max-width: 768px)": {
+      width: "315px",
+      flexWrap: "wrap",
+    },
+    "@media screen and (device-width: 411px)": {
+      width: "355px",
+      flexWrap: "wrap",
+    },
+  },
+  reciFilter: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#007bff",
+    border: "1px solid #007bff",
+    padding: "8px",
+    borderRadius: "4px",
+    "&:hover": {
+      backgroundColor: "#007bff",
+      color: "#ffffff",
+    },
+    "@media screen and (max-width: 768px)": {
+      width: "30%",
+      fontSize: "14px",
+    },
+  },
+  selectSort: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#007bff",
+    border: "1px solid #007bff",
+    padding: "7px",
+    borderRadius: "4px",
+    // width:"150px",
+    outline: "none",
+    height: "40px",
+    fontSize: "17px",
+    "&:hover": {
+      backgroundColor: "#007bff",
+      color: "#ffffff",
+    },
+    "@media screen and (max-width: 768px)": {
+      width: "100%",
+      fontSize: "14px",
+    },
+  },
+  arrowSort: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#007bff",
+    border: "1px solid #007bff",
+    padding: "7px",
+    borderRadius: "4px",
+    height: "25px",
+    fontSize: "17px",
+    "&:hover": {
+      backgroundColor: "#007bff",
+      color: "#ffffff",
+    },
+  },
+  selectedContact: {
+    width: "700px",
+    maxWidth: "700px",
+    height: "50px",
+    backgroundColor: "#efefef",
+    maxHeight: "50px",
+    display: "flex",
+    flexWrap: "wrap",
+    overflowY: "auto",
+    "@media screen and (max-width: 768px)": {
+      width: "315px",
+      fontSize: "14px",
+    },
+    "@media screen and (device-width: 411px)": {
+      width: "355px",
+      fontSize: "14px",
+    },
+  },
+  bubble: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#007bff",
+    height: "24px",
+    color: "#ffffff",
+    width: "70px",
+    borderRadius: "20px",
+    fontSize: "16px",
+    margin: "6px",
+  },
+  row: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "20px",
+    padding: "12px",
+    "&:hover": {
+      backgroundColor: "#efefef",
+    },
+  },
+  graphCampaignName: {
+    fontWeight: "bold",
+    maxWidth: graphTextWidth[windowSize],
+  },
+  mt24: {
+    marginTop: 24,
+  },
+  mb25: {
+    marginBottom: 25,
+  },
+  mt25: {
+    marginTop: 25,
+  },
+  fullSize: {
+    height: "100%",
+    width: "100%",
+  },
+  baseButtonsContainer: {
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingTop: "15px",
+    width: "100%",
+    display: "flex",
+    marginTop: "auto",
+    "@media screen and (max-width: 768px)": {
+      flexDirection: "column-reverse",
+      justifyContent: "center",
+      paddingBottom: "45px",
+      marginTop: "auto",
+      marginBottom: "40px",
+      width: "100% !important",
+    },
+  },
+  flexColCenter: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+  },
+  marginLeftAuto: {
+    marginLeft: "auto !important",
+  },
+  marginRightAuto: {
+    marginRight: "auto !important",
+  },
+  deleteIcon: {
+    color: "#fff",
+    backgroundColor: "transparent",
+    cursor: "pointer",
+    fontSize: 28,
+  },
+  fullWidth: {
+    maxWidth: '100% !important',
+    width: "100% !important",
+  },
+  width90P: {
+    width: "90%",
+  },
+  errorLabel: {
+    marginTop: 8,
+    color: "red",
+    fontSize: 12,
+  },
+  columnError: {
+    borderBottom: "2px solid red",
+    // padding: "4px"
+  },
+  modalInputForm: {
+    "@media screen and (max-width: 375px)": {
+      maxWidth: "calc(100% - 20px)",
+    },
+  },
+  //#region Dialog
+  dialogIconContainer: {
+    paddingTop: 60,
+    paddingBottom: 15,
+    textAlign: "center",
+    color: "#fff",
+    borderRadius: 200,
+    backgroundColor: "#0371ad",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    top: -50,
+  },
+  dialogIconContainerRTL: {
+    right: -50,
+    paddingInlineEnd: 60,
+    paddingInlineStart: 15,
+  },
+  dialogIconContainerLTR: {
+    left: -50,
+    paddingInlineEnd: 15,
+    paddingInlineStart: 60,
+  },
+  solidDialogExitButton: {
+    fontSize: 30,
+    fontFamily: 'Assistant',
+    textAlign: "center",
+    color: "#000",
+    fontWeight: "700",
+    position: "absolute",
+    top: "0.5rem",
+    cursor: "pointer"
+  },
+  dialogExitButton: {
+    fontSize: 30,
+    fontFamily: 'Assistant',
+    textAlign: 'center',
+    color: 'rgba(0, 0, 0, 0.7)',
+    fontWeight: '700',
+    position: 'absolute',
+    top: '0.2rem',
+    cursor: 'pointer',
+  },
+  btnBgExitDialog: {
+    backgroundColor: "#0371ad",
+  },
+  btnNoBgExitDialog: {
+    background: "none",
+    color: "#000"
+  },
+  dialogExitButtonRTL: {
+    left: '1.2rem',
+  },
+  dialogExitButtonLTR: {
+    right: '1rem',
+  },
+  solidDialog: {
+    display: "flex",
+    flexDirection: "column",
+    margin: "1rem",
+    padding: "1rem",
+    paddingTop: 0,
+    minWidth: dialogWidth[windowSize],
+    maxWidth: dialogWidth[windowSize],
+    backgroundColor: '#f5f5f5',
+    '& .title': {
+      '& p': {
+        color: '#000',
+        textAlign: 'center',
+        fontSize: 28,
+        fontWeight: 700
+      }
+    }
+  },
+  dialogContent: {
+    display: "flex",
+    flexDirection: "column",
+    border: "3px solid #0371ad",
+    borderRadius: 5,
+    margin: "1rem",
+    padding: "1rem",
+    minWidth: dialogWidth[windowSize],
+    "& $notification": {
+      "& $iconWrapper": {
+        margin: iconWrapperMargin[windowSize],
+        minWidth: iconWrapperMinWidth[windowSize],
+      },
+      "& b, & textarea": {
+        fontSize: notificationTitleFontSize[windowSize],
+      },
+    },
+    "& $dialogChildren": {
+      maxHeight:
+        windowSize === "xs" || windowSize === "sm" ? "100vh" : "calc(65vh)",
+      "& $phoneNumber": {
+        "@media screen and (max-width: 560px)": {
+          top: "70px !important",
+          fontSize: 14,
+        },
+        "@media screen and (max-width: 414px)": {
+          top: "65px !important",
+          fontSize: 12,
+        },
+        "@media screen and (max-width: 375px)": {
+          "& $phoneNumber": {
+            top: 58,
+            fontSize: 12,
+          },
+        },
+      },
+      "& $wrapChat": {
+        "@media screen and (max-width: 560px)": {
+          top: 110,
+        },
+        "@media screen and (max-width: 414px)": {
+          top: "90px !important",
+          right: 30,
+          width: 190,
+          height: 135,
+        },
+        "@media screen and (max-width: 375px)": {
+          top: 75,
+          right: 26,
+          width: 180,
+          height: 135,
+        },
+      },
+    },
+    "& $mobileBG": {
+      "& $iconWrapper": {
+        minWidth: windowSize === "xs" ? 0 : 100,
+      },
+    },
+  },
+  solidDialogButton: {
+    fontFamily: "OpenSansHebrew",
+    color: "#fff",
+    textTransform: "capitalize",
+    width: 120,
+    fontSize: 18,
+    borderRadius: 8,
+    boxShadow: 'none !important',
+    border: 'none !important'
+  },
+  dialogButton: {
+    fontFamily: "OpenSansHebrew",
+    color: "#fff",
+    textTransform: "capitalize",
+    width: 120,
+    fontSize: 18,
+    borderRadius: 50,
+  },
+  dialogButtonResponive: {
+    marginInline: 10,
+    "@media screen and (max-width: 768px)": {
+      fontSize: 14,
+      marginTop: 5,
+      marginBottom: 5,
+      width: 100
+    },
+  },
+  dialogButtonCenter: {
+    margin: "0 auto",
+    height: 40,
+    fontSize: 18,
+    fontWeight: 400,
+  },
+  dialogConfirmButton: {
+    backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
+    backgroundRepeat: "repeat-x",
+    border: "1px solid #345233",
+    borderTop: "0px solid #345233",
+    boxShadow: "0px 3px 3px #345233",
+    maxWidth: 250,
+  },
+  dialogCancelButton: {
+    background: "#c9302c",
+    backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+    border: "1px solid darkred",
+    borderTop: "0px solid darkred",
+    boxShadow: "0px 3px 3px darkred",
+    maxWidth: 150,
+  },
+  dialogBlueButton: {
+    background: '#006996',
+    // backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+    border: '1px solid #006996',
+    borderTop: '0px solid #006996',
+    boxShadow: '0px 3px 3px #006996',
+    // maxWidth: 150,
+  },
+  dialogConfirmBlueButton: {
+    backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
+    maxWidth: 150,
+  },
+  dialogButtonsContainer: {
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+    "@media screen and (max-width: 375px)": {
+      "& .MuiGrid-item": {
+        padding: "5px !important",
+        marginTop: 15,
+        marginBottom: 15,
+      },
+    },
+  },
+  //#endregion
+  textCenter: {
+    textAlign: "center",
+  },
+  marginBlock10: {
+    marginBlock: 10,
+  },
+  marginBlock20: {
+    marginBlock: 20,
+  },
+  MuiChipRoot: {
+    backgroundColor: "#1c82b2 !important",
+    "& span": {
+      color: "#fff",
+    },
+    "& .MuiChip-deleteIcon": {
+      color: "#fff",
+      fill: "currentColor",
+    },
+  },
+  roundedBorder: {
+    borderRadius: 50,
+  },
+  tooltipText: {
+    ontWeight: 400,
+    fontSize: 16,
+    direction: isRTL ? 'rtl' : 'ltr',
+    color: '#fff'
+  },
+  autoCompleteTag: {
+    '& .MuiAutocomplete-tag': {
+      backgroundColor: '#0371ad',
+      color: '#fff',
+      '& .MuiChip-deleteIcon': {
+        fill: '#fff'
+      }
+    }
+  },
+  noHoverBg: {
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  },
+  p5: {
+    padding: 5
+  },
+  p15: {
+    padding: 10
+  },
+  maxContent: {
+    width: 'max-Content'
+  },
+  alignDir: {
+    textAlign: isRTL ? "right" : "left"
+  },
+  '.MuiAccordion-root': {
+    '&::before': {
+      top: '-1px',
+      left: 0,
+      right: 0,
+      height: 1,
+      content: "",
+      opacity: 1,
+      position: 'absolute',
+      transition: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+      backgroundColor: 'rgba(0, 0, 0, 0.12)'
+    }
+  },
+  customScroll: {
+    '&::-webkit-scrollbar': {
+      width: '6px',
+    },
+  },
   comingSoonTab: {
     marginInlineStart: 10,
     padding: '2px 10px',
@@ -2548,7 +3034,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "100%",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column-reverse",
-      borderInlineStart: "1px solid black",
+      // borderInlineStart: "1px solid black",
       borderInlineStart: 'none'
     }
   },
@@ -2568,229 +3054,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       // marginBottom:"30px"
     },
   },
-  phoneDiv: {
-    position: 'relative',
-    maxHeight: '340px',
-    overflowY: 'clip',
-    "@media screen and (max-width: 960px)": {
-      marginTop: 0,
-    },
-    "@media screen and (max-width: 768px)": {
-      marginTop: 0,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    "@media screen and (max-width: 566px)": {
-      marginTop: 25,
-    },
-  },
-  groupsMan: {
-    width: "700px",
-    border: "1px solid #efefef",
-    padding: "4px",
-    "@media screen and (max-width: 768px)": {
-      width: "315px",
-    },
-    "@media screen and (device-width: 411px)": {
-      width: "355px",
-    },
-  },
-  groupsMan1: {
-    width: "700px",
-    display: "flex",
-    "@media screen and (max-width: 768px)": {
-      width: "315px",
-      flexWrap: "wrap",
-    },
-    "@media screen and (device-width: 411px)": {
-      width: "355px",
-      flexWrap: "wrap",
-    },
-  },
-  reciFilter: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#007bff",
-    border: "1px solid #007bff",
-    padding: "8px",
-    borderRadius: "4px",
-    "&:hover": {
-      backgroundColor: "#007bff",
-      color: "#ffffff",
-    },
-    "@media screen and (max-width: 768px)": {
-      width: "30%",
-      fontSize: "14px",
-    },
-  },
-  selectSort: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#007bff",
-    border: "1px solid #007bff",
-    padding: "7px",
-    borderRadius: "4px",
-    // width:"150px",
-    outline: "none",
-    height: "40px",
-    fontSize: "17px",
-    "&:hover": {
-      backgroundColor: "#007bff",
-      color: "#ffffff",
-    },
-    "@media screen and (max-width: 768px)": {
-      width: "100%",
-      fontSize: "14px",
-    },
-  },
-  arrowSort: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#007bff",
-    border: "1px solid #007bff",
-    padding: "7px",
-    borderRadius: "4px",
-    height: "25px",
-    fontSize: "17px",
-    "&:hover": {
-      backgroundColor: "#007bff",
-      color: "#ffffff",
-    },
-  },
-  selectedContact: {
-    width: "700px",
-    maxWidth: "700px",
-    height: "50px",
-    backgroundColor: "#efefef",
-    maxHeight: "50px",
-    display: "flex",
-    flexWrap: "wrap",
-    overflowY: "auto",
-    "@media screen and (max-width: 768px)": {
-      width: "315px",
-      fontSize: "14px",
-    },
-    "@media screen and (device-width: 411px)": {
-      width: "355px",
-      fontSize: "14px",
-    },
-  },
-  bubble: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#007bff",
-    height: "24px",
-    color: "#ffffff",
-    width: "70px",
-    borderRadius: "20px",
-    fontSize: "16px",
-    margin: "6px",
-  },
-  row: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: "20px",
-    padding: "12px",
-    "&:hover": {
-      backgroundColor: "#efefef",
-    },
-  },
-  graphCampaignName: {
-    color: '#000',
-    maxWidth: graphTextWidth[windowSize],
-  },
-  mt24: {
-    marginTop: 24,
-  },
-  mb25: {
-    marginBottom: 25,
-  },
-  mt25: {
-    marginTop: 25,
-  },
-  fullSize: {
-    height: "100%",
-    width: "100%",
-  },
-  baseButtonsContainer: {
-    justifyContent: "flex-end",
-    alignItems: "center",
-    paddingTop: "15px",
-    width: "100%",
-    display: "flex",
-    marginTop: "auto",
-    "@media screen and (max-width: 768px)": {
-      flexDirection: "column-reverse",
-      justifyContent: "center",
-      paddingBottom: "45px",
-      marginTop: "auto",
-      marginBottom: "40px",
-      width: "100% !important",
-    },
-  },
-  flexColCenter: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    textAlign: "center",
-  },
-  marginLeftAuto: {
-    marginLeft: "auto !important",
-  },
-  marginRightAuto: {
-    marginRight: "auto !important",
-  },
-  deleteIcon: {
-    color: "#fff",
-    backgroundColor: "transparent",
-    cursor: "pointer",
-    fontSize: 28,
-  },
-  fullWidth: {
-    maxWidth: '100% !important',
-    width: "100% !important",
-  },
-  width90P: {
-    width: "90%",
-  },
-  errorLabel: {
-    marginTop: 8,
-    color: "red",
-    fontSize: 12,
-  },
-  columnError: {
-    borderBottom: "2px solid red",
-    // padding: "4px"
-  },
-  modalInputForm: {
-    "@media screen and (max-width: 375px)": {
-      maxWidth: "calc(100% - 20px)",
-    },
-  },
-  //#region Dialog
-  dialogIconContainer: {
-    paddingInlineStart: isRTL ? 0 : 15,
-    paddingInlineEnd: isRTL ? 15 : 0,
-    fontSize: 25,
-    textAlign: "center",
-    color: "#fff",
-  },
-  solidDialogExitButton: {
-    fontSize: 30,
-    fontFamily: 'Assistant',
-    textAlign: "center",
-    color: "#000",
-    fontWeight: "700",
-    position: "absolute",
-    top: "0.5rem",
-    cursor: "pointer"
-  },
   dialogTopBar: {
     height: 50,
     width: '100%',
@@ -2798,7 +3061,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: isRTL ? 'row-reverse !important' : 'row',
-    alignItems: 'center',
     color: "#fff",
     fontWeight: 600,
     textTransform: "capitalize",
@@ -2811,277 +3073,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
 
   },
-  dialogExitButton: {
-    paddingInlineStart: isRTL ? 15 : 0,
-    paddingInlineEnd: isRTL ? 0 : 15,
-    marginInlineStart: isRTL ? null : 'auto',
-    marginInlineEnd: isRTL ? 'auto' : null,
-    color: "#fff",
-    fontWeight: "700",
-    cursor: "pointer",
-    fontSize: 18
-  },
-  btnBgExitDialog: {
-    backgroundColor: "#0371ad",
-  },
-  btnNoBgExitDialog: {
-    background: "none",
-    color: "#000"
-  },
-  // dialogExitButtonRTL: {
-  //   right: 15,
-  //   top: 15
-  // },
-  // dialogExitButtonLTR: {
-  //   left: 15,
-  //   top: 15
-  // },
-  solidDialog: {
-    display: "flex",
-    flexDirection: "column",
-    margin: "1rem",
-    padding: "1rem",
-    paddingTop: 0,
-    minWidth: dialogWidth[windowSize],
-    backgroundColor: '#fff',
-    maxWidth: dialogWidth[windowSize],
-    '& .title': {
-      '& p': {
-        color: '#000',
-        textAlign: 'center',
-        fontSize: 28,
-        fontWeight: 700
-      }
-    }
-  },
-  dialogContent: {
-    display: "flex",
-    flexDirection: "column",
-    borderRadius: 5,
-    margin: "1rem",
-    padding: "1rem",
-    paddingTop: 0,
-    paddingBottom: 0,
-    minWidth: dialogWidth[windowSize],
-    "& $notification": {
-      "& $iconWrapper": {
-        margin: iconWrapperMargin[windowSize],
-        minWidth: iconWrapperMinWidth[windowSize],
-      },
-      "& b, & textarea": {
-        fontSize: notificationTitleFontSize[windowSize],
-      },
-    },
-    "& $dialogChildren": {
-      maxHeight:
-        windowSize === "xs" || windowSize === "sm" ? "100vh" : "calc(65vh)",
-      "& $phoneNumber": {
-        "@media screen and (max-width: 560px)": {
-          top: "70px !important",
-          fontSize: 14,
-        },
-        "@media screen and (max-width: 414px)": {
-          top: "65px !important",
-          fontSize: 12,
-        },
-        "@media screen and (max-width: 375px)": {
-          "& $phoneNumber": {
-            top: 58,
-            fontSize: 12,
-          },
-        },
-      },
-      "& $wrapChat": {
-        "@media screen and (max-width: 560px)": {
-          top: 110,
-        },
-        "@media screen and (max-width: 414px)": {
-          top: "90px !important",
-          right: 30,
-          width: 190,
-          height: 135,
-        },
-        "@media screen and (max-width: 375px)": {
-          top: 75,
-          right: 26,
-          width: 180,
-          height: 135,
-        },
-      },
-    },
-    "& $mobileBG": {
-      "& $iconWrapper": {
-        minWidth: windowSize === "xs" ? 0 : 100,
-      },
-    },
-  },
-  solidDialogButton: {
-    fontFamily: "OpenSansHebrew",
-    color: "#fff",
-    textTransform: "capitalize",
-    width: 'auto',
-    fontSize: 18,
-    borderRadius: 5,
-    boxShadow: 'none !important',
-    border: 'none !important'
-  },
-  dialogButton: {
-    fontFamily: "OpenSansHebrew",
-    color: "#fff",
-    textTransform: "capitalize",
-    width: 120,
-    fontSize: 18,
-    borderRadius: 50,
-  },
-  dialogButtonResponive: {
-    marginInline: 10,
-    "@media screen and (max-width: 768px)": {
-      fontSize: 14,
-      marginTop: 5,
-      marginBottom: 5,
-      width: 100
-    },
-  },
-  dialogButtonCenter: {
-    margin: "0 auto",
-    height: 40,
-    fontSize: 18,
-    fontWeight: 400,
-  },
-  dialogConfirmButton: {
-    backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
-    backgroundRepeat: "repeat-x",
-    border: "1px solid #345233",
-    borderTop: "0px solid #345233",
-    boxShadow: "0px 3px 3px #345233",
-    maxWidth: 250,
-  },
-  dialogCancelButton: {
-    background: "#c9302c",
-    backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
-    border: "1px solid darkred",
-    borderTop: "0px solid darkred",
-    boxShadow: "0px 3px 3px darkred",
-    maxWidth: 150,
-  },
-  dialogBlueButton: {
-    background: '#006996',
-    // backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
-    border: '1px solid #006996',
-    borderTop: '0px solid #006996',
-    boxShadow: '0px 3px 3px #006996',
-    // maxWidth: 150,
-  },
-  dialogConfirmBlueButton: {
-    backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
-    maxWidth: 150,
-  },
-  dialogButtonsContainer: {
-    flex: 1,
-    alignContent: "center",
-    justifyContent: "center",
-    "@media screen and (max-width: 375px)": {
-      "& .MuiGrid-item": {
-        padding: "5px !important",
-        marginTop: 15,
-        marginBottom: 15,
-      },
-    },
-  },
-  //#endregion
-  textCenter: {
-    textAlign: "center",
-  },
   textRight: {
     textAlign: "right",
   },
-  marginBlock10: {
-    marginBlock: 10,
-  },
-  marginBlock20: {
-    marginBlock: 20,
-  },
-  MuiChipRoot: {
-    backgroundColor: "#1c82b2 !important",
-    "& span": {
-      color: "#fff",
-    },
-    "& .MuiChip-deleteIcon": {
-      color: "#fff",
-      fill: "currentColor",
-    },
-  },
-  roundedBorder: {
-    borderRadius: 50,
-  },
-  tooltipText: {
-    ontWeight: 400,
-    fontSize: 16,
-    direction: isRTL ? 'rtl' : 'ltr',
-    color: '#fff'
-  },
-  autoCompleteTag: {
-    '& .MuiAutocomplete-tag': {
-      backgroundColor: '#ff3343',
-      color: '#fff',
-      '& .MuiChip-deleteIcon': {
-        fill: '#fff'
-      }
-    }
-  },
-  noHoverBg: {
-    '&:hover': {
-      backgroundColor: 'transparent'
-    }
-  },
+
   elipsis: {
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-  },
-  p5: {
-    padding: 5
-  },
-  p15: {
-    padding: 10
-  },
-  maxContent: {
-    width: 'max-Content'
-  },
-  alignDir: {
-    textAlign: isRTL ? "right" : "left"
-  },
-  '.MuiAccordion-root': {
-    '&::before': {
-      top: '-1px',
-      left: 0,
-      right: 0,
-      height: 1,
-      content: "",
-      opacity: 1,
-      position: 'absolute',
-      transition: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-      backgroundColor: 'rgba(0, 0, 0, 0.12)'
-    }
-  },
-  customScroll: {
-    '&::-webkit-scrollbar': {
-      width: '6px',
-
-    },
-    '&::-webkit-scrollbar-track': {
-      'boxShadow': 'inset 0 0 5px #e9e9e9',
-      'borderRadius': '10px',
-    },
-
-    '&::-webkit-scrollbar-thumb': {
-      background: '#cccccc',
-      borderRadius: '10px'
-    },
-
-    '&::-webkit-scrollbar-thumb:hover': {
-      background: '#979595'
-    }
   },
   scrollY: {
     overflowX: 'hidden',
@@ -3312,101 +3311,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center'
-  },
-  settingsContainer: {
-    marginBottom: 68,
-    background: '#fff',
-    marginTop: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    '& .head': {
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      '& .mgmtTitle': {
-        fontSize: 20
-      }
-    },
-    '& .containerBody': {
-      position: 'relative',
-      paddingBottom: 48,
-      '& .settingsWrapper': {
-        paddingLeft: 31,
-        '& .mgmtTitle': {
-          fontSize: 18
-        },
-        '& .formContainer': {
-          position: 'relative',
-          paddingLeft: 15,
-          '& .form': {
-            background: '#fff',
-            zIndex: 100,
-            position: 'relative',
-          },
-          '& .svg_data_analysis': {
-            position: 'absolute',
-            right: 86.44,
-            left: 'auto',
-            top: 49.17,
-            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
-          },
-          '& .svg_app_settings': {
-            position: 'absolute',
-            top: 121.3,
-            right: 93.14,
-            left: 'auto',
-            transform: isRTL ? 'scaleX(1)' : 'scaleX(-1)'
-          },
-          '& .subHeading': {
-            marginTop: 39,
-            color: '#000 !important',
-            fontWeight: 900
-          },
-          '& .MuiFormControl-root': {
-            '& .MuiSelect-root': {
-              padding: 0,
-              paddingInlineStart: 15,
-              '&:focus': {
-                background: 'none'
-              },
-              '& input': {
-                padding: 0
-              }
-            },
-            '& .subform': {
-              marginTop: 22,
-              '& .selectWrapper': {
-                height: 'auto',
-                '& .MuiTypography-body1': {
-                  marginLeft: isRTL ? 12 : 0
-                }
-              },
-
-            }
-          },
-          '& .MuiTypography-body1': {
-            color: '#000'
-          },
-          '& .link': {
-            fontSize: 15,
-            color: '#FF0054',
-            padding: '2px 0',
-            // marginTop: 28,
-            marginLeft: 0
-          }
-        }
-      },
-      '& .textBoxWrapper': {
-        paddingTop: 30,
-        paddingInlineEnd: 30,
-        '& .MuiTypography-body1': {
-          color: '#979797'
-        },
-        '& .MuiTextField-root': {
-          paddingTop: 8,
-          paddingBottom: 8,
-        }
-      }
-    }
   },
   passwordDialog: {
     maxWidth: windowSize !== 'xs' ? '25vw' : null

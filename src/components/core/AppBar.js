@@ -327,9 +327,9 @@ export const TopAppBar = ({ classes, currentPage = '', showAppBar = true }) => {
                                 Redirect({ url: route.href })
                               }}
                               style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
-                              {route.iconUnicode ? (<Typography
+                              {route?.iconUnicode || route?.icon ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
-                                {route.iconUnicode}
+                                {route?.iconUnicode || route?.icon}
                               </Typography>)
                                 : route.key === 'directSendReport' ? (<img
                                   style={{ paddingBottom: 5 }}

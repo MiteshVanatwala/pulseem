@@ -4,7 +4,7 @@
 	"SendWhatsappCampaign": "Send WhatsApp Campaign",
 	"ManageWhatsappTemplate": "WhatsApp Template Managment",
 	"ManageWhatsappCampaign": "WhatsApp Campaign Management",
-	"ReportsWhatsapp": "WhatsApp Reports",
+	"ReportsWhatsapp": "WhatsApp",
 	"ChatWhatsapp": "WhatsApp Chat",
 	"header": "Create WhatsApp Template",
 	"WAMenuItemResource": {
@@ -36,6 +36,7 @@
 	"typeText": "Insert text here - upto 1024 characters",
 	"yourMessage": "Your Message",
 	"noTemplateAaliable": "No Template avaliable",
+	"templateAlreadyExist": "Template name already exists",
 
 	"callToActionButton": "Call To Action",
 	"callToActionSaveButton": "Save",
@@ -43,7 +44,7 @@
 	"callToActionAddMoreButton": "Add More",
 	"callToActionRemoveButton": "Remove",
 	"callToActionTitle": "Call to Action",
-	"callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action.",
+	"callToActionDialogContentText": "Create up to 2 buttons that let customers respond to your messages or take action",
 	"typeOfAction": "Type of Action",
 	"phoneButtonText": "Button Text",
 	"phoneButtonTextPlaceholder": "Call Us",
@@ -59,6 +60,8 @@
 	"marketing": "Marketing",
 	"utility": "Utility",
 	"authentication": "Authentication",
+
+	"displayError": "Display Error",
 
 	"template": {
 		"textareaPlaceholder": "Insert text here - up to 1024 characters This limit includes the text you fill in the dynamic fields before sending.",
@@ -93,12 +96,20 @@
 		"submitButtonText": "Submit",
 		"DeleteText": "Delete Campaign",
 		"DeleteTitle": "Are you sure?",
+		"DeleteTemplateTitle": "Do you want to delete the template?",
 		"ConfirmText": "Submit Campaign",
 		"ConfirmTitle": "Are you sure you want to submit your template?",
 		"fileSizeAlert": "File is larger than 16MB",
+		"fileUploadAlert": "You can not attach media to 'Quick Reply' buttons",
 		"alert": "Alert",
 		"templateTextRequired": "Template text is required",
 		"templateNameRequired": "Template name is required",
-		"templateLengthError": "Template length should be less then or equals to 640"
+		"templateLengthError": "Template length should be less then or equals to",
+		"languageError": "You can not submit a template containing more than one language",
+		"buttonTextError": "Button Text - Required field",
+		"countryCodeError": "Country Code - Required field",
+		"phoneNumberError": "Phone Number - Required field",
+		"phoneNumberRangeError": "Please enter phone number in valid range",
+		"websiteTextError": "Website URL - Required field"
 	}
 }

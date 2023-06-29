@@ -71,17 +71,18 @@ import {
 	getAllCampaigns,
 	getSavedTemplatesPreviewById,
 	restoreWhatsAppCampaigns,
+	userPhoneNumbers,
 } from '../../../redux/reducers/whatsappSlice';
 import InfoModal from './Popups/InfoModal';
 import { useNavigate } from 'react-router-dom';
 import {
 	campaignDataProps,
-	filtersObjectProps,
-	searchArrayProps,
+	phoneNumberAPIProps,
 } from '../Campaign/Types/WhatsappCampaign.types';
 import { Loader } from '../../../components/Loader/Loader';
 import Toast from '../../../components/Toast/Toast.component';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import NoSetup from '../NoSetup/NoSetup';
 
 const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const dispatch = useDispatch();
@@ -136,6 +137,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		useState<boolean>(false);
 	const [isToDatePickerOpen, setIsToDatePickerOpen] = useState<boolean>(false);
 	const [restoreIds, setRestoreIds] = useState<string[]>([]);
+	const [isAccountSetup, setIsAccountSetup] = useState<boolean>(true);
 	const [isLoader, setIsLoader] = useState<boolean>(false);
 	const [campaignListData, setCampaignListData] = useState<campaignDataProps[]>(
 		[]
@@ -167,17 +169,32 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	useEffect(() => {
-		setApiCampaignData(
-			rowsPerPage
-				? { ...paginationSetting, pageSize: Number(rowsPerPage) }
-				: paginationSetting
-		);
-		if (rowsPerPage) {
-			setPaginationSetting({
-				...paginationSetting,
-				pageSize: Number(rowsPerPage),
-			});
-		}
+		(async () => {
+			setIsLoader(true);
+			const { payload: phoneNumberData }: phoneNumberAPIProps =
+				await dispatch<any>(userPhoneNumbers());
+			if (
+				phoneNumberData?.Status === apiStatus.SUCCESS &&
+				phoneNumberData?.Data &&
+				phoneNumberData?.Data?.length > 0
+			) {
+				setApiCampaignData(
+					rowsPerPage
+						? { ...paginationSetting, pageSize: Number(rowsPerPage) }
+						: paginationSetting,
+					true
+				);
+				if (rowsPerPage) {
+					setPaginationSetting({
+						...paginationSetting,
+						pageSize: Number(rowsPerPage),
+					});
+				}
+			} else {
+				setIsLoader(false);
+				setIsAccountSetup(false);
+			}
+		})();
 		/**
 		 * we disable it because we want to run this code only when component loads
 		 */
@@ -217,7 +234,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			toDate: null,
 		};
 		setPaginationSetting(updatedPagination);
-		setApiCampaignData(updatedPagination);
+		setApiCampaignData(updatedPagination, false);
 	};
 	const renderNameCell = (row: campaignDataProps) => {
 		let date = null;
@@ -249,6 +266,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 					placement={'top'}
 					title={<Typography noWrap={false}>{row.Name}</Typography>}
 					text={row.Name}
+					titleStyle={undefined}
 					children={undefined}
 					icon={undefined}
 				/>
@@ -347,7 +365,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 									fieldName: 'whatsapp.country',
 									type: 'select',
 									placeholder: 'Select Your Country Code',
-									value: '+972 Israel',
+									value: '+972',
 								},
 								{
 									fieldName: 'whatsapp.phoneNumber',
@@ -469,11 +487,13 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	const onPreview = async (campaignId: string) => {
 		const previewTemplateId = getTemplateIdFromId(campaignId);
 		if (previewTemplateId) {
+			setIsLoader(true);
 			const templateData: templateListAPIProps = await dispatch<any>(
 				getSavedTemplatesPreviewById({
 					templateId: previewTemplateId,
 				})
 			);
+			setIsLoader(false);
 			if (templateData.payload.Status === apiStatus.SUCCESS) {
 				const templates = templateData.payload?.Data?.Items;
 				if (templates && templates?.length > 0) {
@@ -627,7 +647,10 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 				alignItems='center'>
 				{iconsMap.map((icon) => (
 					<Grid
-						className={icon?.disable ? classes.disabledCursor : ''}
+						className={clsx(
+							icon?.disable ? classes.disabledCursor : '',
+							icon.key === 'send' ? classes.greenTextColor : ''
+						)}
 						key={icon.key}
 						item>
 						<ManagmentIcon {...icon} />
@@ -638,10 +661,12 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onDuplicateCampaign = async () => {
+		setIsDuplicateCampaignOpen(false);
+		setIsLoader(true);
 		const deleteData: commonAPIResponseProps = await dispatch<any>(
 			duplicateCampaign(activeRowId)
 		);
-		setIsDuplicateCampaignOpen(false);
+		setIsLoader(false);
 		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages.DUPLICATE_CAMPAIGN_SUCCESS);
 			setApiCampaignData();
@@ -656,10 +681,12 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const onDeleteCampaign = async () => {
+		setIsDeleteCampaignOpen(false);
+		setIsLoader(true);
 		const deleteData: commonAPIResponseProps = await dispatch<any>(
 			deleteCampaign(activeRowId)
 		);
-		setIsDeleteCampaignOpen(false);
+		setIsLoader(false);
 		if (deleteData?.payload?.Status === apiStatus.SUCCESS) {
 			setToastMessage(ToastMessages.DELETE_CAMPAIGN_SUCCESS);
 			setApiCampaignData();
@@ -706,32 +733,51 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 		setApiCampaignData(updatedPagination);
 	};
 
-	const onCreateCamoaign = async () => {
+	const onCreateCampaign = async () => {
 		navigate('/react/whatsapp/campaign/create/page1');
 	};
 
 	const setApiCampaignData = async (
-		pagination: AllCampaignReq = paginationSetting
+		pagination: AllCampaignReq = paginationSetting,
+		updateDeletedCampaigns: boolean = true
 	) => {
 		setIsLoader(true);
-		const campaignData: campaignListAPIProps = await dispatch<any>(
+		const { payload: campaignData }: campaignListAPIProps = await dispatch<any>(
 			getAllCampaigns(pagination)
 		);
+		const { payload: allCampaignData }: campaignListAPIProps =
+			await dispatch<any>(
+				getAllCampaigns({
+					...pagination,
+					isPagination: false,
+					campaignName: '',
+					fromDate: null,
+					toDate: null,
+					isDeleted: true,
+				})
+			);
 		setIsLoader(false);
-		if (campaignData.payload.Status === apiStatus.SUCCESS) {
-			const filteredCampaignData = campaignData.payload?.Data?.Items?.filter(
+		if (campaignData.Status === apiStatus.SUCCESS) {
+			const filteredCampaignData = campaignData?.Data?.Items?.filter(
 				(campaign) => !campaign?.IsDeleted
 			);
-			const deletedCampaignData = campaignData.payload?.Data?.Items?.filter(
-				(campaign) => campaign?.IsDeleted
-			);
 			setCampaignListData(filteredCampaignData);
-			setDeletedCampaignListData(deletedCampaignData);
-			setTotalRecord(campaignData?.payload?.Data?.TotalRecord);
+			setTotalRecord(campaignData?.Data?.TotalRecord);
 		} else {
 			setCampaignListData([]);
-			setDeletedCampaignListData([]);
 			setTotalRecord(0);
+		}
+
+		if (updateDeletedCampaigns) {
+			// for restore
+			if (allCampaignData.Status === apiStatus.SUCCESS) {
+				const deletedCampaignData = allCampaignData?.Data?.Items?.filter(
+					(campaign) => campaign?.IsDeleted
+				);
+				setDeletedCampaignListData(deletedCampaignData);
+			} else {
+				setDeletedCampaignListData([]);
+			}
 		}
 	};
 
@@ -750,7 +796,7 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 	};
 
 	const updatePaginationSetting = (pagination: AllCampaignReq) => {
-		setApiCampaignData(pagination);
+		setApiCampaignData(pagination, false);
 		setPaginationSetting(pagination);
 	};
 
@@ -777,289 +823,319 @@ const ManageWhatsAppCampaigns = ({ classes }: ClassesType) => {
 			classes={classes}
 			customPadding={false}
 			containerClass={clsx(classes.management, classes.mb50)}>
-			{renderToast()}
-			<Title
-				Text={translator('whatsappManagement.campaignManagement')}
-				Classes={classes}
-				ContainerStyle={{}}
-				Element={null}
-			/>
+			{isAccountSetup ? (
+				<>
+					{renderToast()}
+					<Title
+						Text={translator('whatsappManagement.campaignManagement')}
+						Classes={classes}
+						ContainerStyle={{}}
+						Element={null}
+					/>
 
-			<div className={classes.manageWhatsappTemplates}>
-				<Grid container spacing={2} className={classes.lineTopMarging}>
-					<Grid item>
-						<TextField
-							variant='outlined'
-							size='small'
-							value={campaignNameSearch}
-							onChange={handleCampainNameChange}
-							onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-								onTemplateKeyDown(e)
-							}
-							className={clsx(classes.textField, classes.minWidth252)}
-							placeholder={translator(
-								'sms.GridBoundColumnResource2.HeaderText'
+					<div className={classes.manageWhatsappTemplates}>
+						<Grid container spacing={2} className={classes.lineTopMarging}>
+							<Grid item>
+								<TextField
+									variant='outlined'
+									size='small'
+									value={campaignNameSearch}
+									onChange={handleCampainNameChange}
+									onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+										onTemplateKeyDown(e)
+									}
+									className={clsx(classes.textField, classes.minWidth252)}
+									placeholder={translator(
+										'sms.GridBoundColumnResource2.HeaderText'
+									)}
+								/>
+							</Grid>
+
+							{windowSize !== 'xs' && (
+								<Grid item>
+									<KeyboardDatePicker
+										inputVariant='outlined'
+										className={clsx(classes.textField)}
+										inputProps={{
+											className: classes.datePickerInput,
+										}}
+										variant='inline'
+										keyboardIcon={<CalendarIcon />}
+										format={'DD/MM/YYYY'}
+										placeholder={translator(
+											'whatsappManagement.fromDatePlaceholder'
+										)}
+										initialFocusedDate={moment()}
+										value={fromDate}
+										onChange={handleFromDateChange}
+										onClose={() => setIsFromDatePickerOpen(false)}
+										open={isFromDatePickerOpen}
+										onClick={() => setIsFromDatePickerOpen(true)}
+										autoOk={true}
+									/>
+								</Grid>
 							)}
+
+							{windowSize !== 'xs' && (
+								<Grid item>
+									<KeyboardDatePicker
+										inputVariant='outlined'
+										className={clsx(classes.textField)}
+										inputProps={{
+											className: classes.datePickerInput,
+										}}
+										variant='inline'
+										keyboardIcon={<CalendarIcon />}
+										format={'DD/MM/YYYY'}
+										placeholder={translator(
+											'whatsappManagement.toDatePlaceholder'
+										)}
+										initialFocusedDate={moment()}
+										minDate={moment(fromDate)}
+										value={toDate}
+										onChange={handleToDate}
+										onClose={() => setIsToDatePickerOpen(false)}
+										open={isToDatePickerOpen}
+										onClick={() => setIsToDatePickerOpen(true)}
+										autoOk={true}
+									/>
+								</Grid>
+							)}
+
+							<Grid item>
+								<Button
+									size='large'
+									variant='contained'
+									onClick={onSearch}
+									className={classes.searchButton}
+									endIcon={<SearchIcon />}>
+									<>{translator('campaigns.btnSearchResource1.Text')}</>
+								</Button>
+							</Grid>
+							{isSearching && (
+								<Grid item>
+									<Button
+										size='large'
+										variant='contained'
+										onClick={clearSearch}
+										className={classes.searchButton}
+										endIcon={<ClearIcon />}>
+										<>{translator('common.clear')}</>
+									</Button>
+								</Grid>
+							)}
+						</Grid>
+
+						<Grid
+							container
+							spacing={2}
+							className={classes.manageTemplatesHeaderButtons}>
+							<div className={classes.manageCampaignCreateAndRestore}>
+								<Button className={'green'} onClick={() => onCreateCampaign()}>
+									<>{translator('whatsappManagement.createCampaign')}</>
+								</Button>
+								<Button
+									className={'blue'}
+									onClick={() => setIsRestoreDeletedModal(true)}>
+									<>{translator('whatsappManagement.restore')}</>
+								</Button>
+							</div>
+
+							<span className={classes.manageTemplatesCampaignCount}>
+								{totalRecord || 0}{' '}
+								<>{translator('whatsappManagement.campaigns')}</>
+							</span>
+						</Grid>
+
+						<Grid
+							container
+							spacing={2}
+							className={classes.manageTemplatesTableWrapper}>
+							<TableContainer>
+								<Table className={classes.tableContainer}>
+									{windowSize !== 'xs' && (
+										<TableHead>
+											<TableRow classes={rowStyle}>
+												<TableCell
+													classes={cellStyle}
+													className={classes.flex3}
+													align='center'>
+													<>
+														{translator(
+															'sms.GridBoundColumnResource2.HeaderText'
+														)}
+													</>
+												</TableCell>
+												<TableCell
+													classes={cellStyle}
+													className={classes.flex1}
+													align='center'>
+													<>{translator('campaigns.recipients')}</>
+												</TableCell>
+												<TableCell
+													classes={cellStyle}
+													className={classes.flex1}
+													align='center'>
+													<>{translator('sms.CreditsResource1.HeaderText')}</>
+												</TableCell>
+												<TableCell
+													classes={cellStyle}
+													className={classes.flex1}
+													align='center'>
+													<>{translator('sms.StatusResource1.HeaderText')}</>
+												</TableCell>
+												<TableCell
+													classes={{ root: classes.tableCellRoot }}
+													className={classes.flex5}></TableCell>
+											</TableRow>
+										</TableHead>
+									)}
+									{campaignListData?.length === 0 ? (
+										<Box
+											className={clsx(
+												classes.flex,
+												classes.justifyCenterOfCenter
+											)}
+											style={{ height: 50 }}>
+											<Typography>
+												<>{translator('common.NoDataTryFilter')}</>
+											</Typography>
+										</Box>
+									) : (
+										<>
+											{campaignListData?.map((campaign: campaignDataProps) => (
+												<TableRow
+													key={campaign.WACampaignID}
+													classes={rowStyle}>
+													<TableCell
+														classes={cellStyle}
+														align='center'
+														className={clsx(
+															classes.flex3,
+															classes.tableCellBody
+														)}>
+														{renderNameCell(campaign)}
+													</TableCell>
+													<TableCell
+														classes={cellStyle}
+														align='center'
+														className={clsx(
+															classes.flex1,
+															classes.tableCellBody
+														)}>
+														{renderRecipientsCell(campaign.TotalSendPlan)}
+													</TableCell>
+													<TableCell
+														classes={cellStyle}
+														align='center'
+														className={clsx(
+															classes.flex1,
+															classes.tableCellBody
+														)}>
+														{renderMessagesCell(1)}
+													</TableCell>
+													<TableCell
+														classes={cellStyle}
+														align='center'
+														className={clsx(
+															classes.flex1,
+															classes.tableCellBody
+														)}>
+														{renderStatusCell(campaign.Status)}
+													</TableCell>
+													<TableCell
+														component='th'
+														scope='row'
+														className={clsx(
+															classes.flex5,
+															classes.tableCellRoot
+														)}>
+														{renderCellIcons(campaign)}
+													</TableCell>
+												</TableRow>
+											))}
+										</>
+									)}
+								</Table>
+							</TableContainer>
+						</Grid>
+						<Pagination
+							classes={classes}
+							rows={totalRecord}
+							rowsPerPage={paginationSetting?.pageSize}
+							onRowsPerPageChange={onRowsPerPageChange}
+							rowsPerPageOptions={[6, 10, 20, 50]}
+							page={paginationSetting?.pageNo}
+							onPageChange={(pageNumber: number) =>
+								updatePaginationSetting({
+									...paginationSetting,
+									pageNo: pageNumber,
+								})
+							}
+							returnPageOne={false}
 						/>
-					</Grid>
-
-					{windowSize !== 'xs' && (
-						<Grid item>
-							<KeyboardDatePicker
-								inputVariant='outlined'
-								className={clsx(classes.textField)}
-								inputProps={{
-									className: classes.datePickerInput,
-								}}
-								variant='inline'
-								keyboardIcon={<CalendarIcon />}
-								format={'DD/MM/YYYY'}
-								placeholder={translator(
-									'whatsappManagement.fromDatePlaceholder'
-								)}
-								initialFocusedDate={moment()}
-								value={fromDate}
-								onChange={handleFromDateChange}
-								onClose={() => setIsFromDatePickerOpen(false)}
-								open={isFromDatePickerOpen}
-								onClick={() => setIsFromDatePickerOpen(true)}
-								autoOk={true}
-							/>
-						</Grid>
-					)}
-
-					{windowSize !== 'xs' && (
-						<Grid item>
-							<KeyboardDatePicker
-								inputVariant='outlined'
-								className={clsx(classes.textField)}
-								inputProps={{
-									className: classes.datePickerInput,
-								}}
-								variant='inline'
-								keyboardIcon={<CalendarIcon />}
-								format={'DD/MM/YYYY'}
-								placeholder={translator('whatsappManagement.toDatePlaceholder')}
-								initialFocusedDate={moment()}
-								minDate={moment(fromDate)}
-								value={toDate}
-								onChange={handleToDate}
-								onClose={() => setIsToDatePickerOpen(false)}
-								open={isToDatePickerOpen}
-								onClick={() => setIsToDatePickerOpen(true)}
-								autoOk={true}
-							/>
-						</Grid>
-					)}
-
-					<Grid item>
-						<Button
-							size='large'
-							variant='contained'
-							onClick={onSearch}
-							className={classes.searchButton}
-							endIcon={<SearchIcon />}>
-							<>{translator('campaigns.btnSearchResource1.Text')}</>
-						</Button>
-					</Grid>
-					{isSearching && (
-						<Grid item>
-							<Button
-								size='large'
-								variant='contained'
-								onClick={clearSearch}
-								className={classes.searchButton}
-								endIcon={<ClearIcon />}>
-								<>{translator('common.clear')}</>
-							</Button>
-						</Grid>
-					)}
-				</Grid>
-
-				<Grid
-					container
-					spacing={2}
-					className={classes.manageTemplatesHeaderButtons}>
-					<div className={classes.manageCampaignCreateAndRestore}>
-						<Button className={'green'} onClick={() => onCreateCamoaign()}>
-							<>{translator('whatsappManagement.createCampaign')}</>
-						</Button>
-						<Button
-							className={'blue'}
-							onClick={() => setIsRestoreDeletedModal(true)}>
-							<>{translator('whatsappManagement.restore')}</>
-						</Button>
 					</div>
 
-					<span className={classes.manageTemplatesCampaignCount}>
-						{totalRecord || 0} <>{translator('whatsappManagement.campaigns')}</>
-					</span>
-				</Grid>
-
-				<Grid
-					container
-					spacing={2}
-					className={classes.manageTemplatesTableWrapper}>
-					<TableContainer>
-						<Table className={classes.tableContainer}>
-							{windowSize !== 'xs' && (
-								<TableHead>
-									<TableRow classes={rowStyle}>
-										<TableCell
-											classes={cellStyle}
-											className={classes.flex3}
-											align='center'>
-											<>
-												{translator('sms.GridBoundColumnResource2.HeaderText')}
-											</>
-										</TableCell>
-										<TableCell
-											classes={cellStyle}
-											className={classes.flex1}
-											align='center'>
-											<>{translator('campaigns.recipients')}</>
-										</TableCell>
-										<TableCell
-											classes={cellStyle}
-											className={classes.flex1}
-											align='center'>
-											<>{translator('sms.CreditsResource1.HeaderText')}</>
-										</TableCell>
-										<TableCell
-											classes={cellStyle}
-											className={classes.flex1}
-											align='center'>
-											<>{translator('sms.StatusResource1.HeaderText')}</>
-										</TableCell>
-										<TableCell
-											classes={{ root: classes.tableCellRoot }}
-											className={classes.flex5}></TableCell>
-									</TableRow>
-								</TableHead>
-							)}
-							{campaignListData?.length === 0 ? (
-								<Box
-									className={clsx(classes.flex, classes.justifyCenterOfCenter)}
-									style={{ height: 50 }}>
-									<Typography>
-										<>{translator('common.NoDataTryFilter')}</>
-									</Typography>
-								</Box>
-							) : (
-								<>
-									{campaignListData?.map((campaign: campaignDataProps) => (
-										<TableRow key={campaign.WACampaignID} classes={rowStyle}>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={clsx(classes.flex3, classes.tableCellBody)}>
-												{renderNameCell(campaign)}
-											</TableCell>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderRecipientsCell(campaign.TotalSendPlan)}
-											</TableCell>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderMessagesCell(1)}
-											</TableCell>
-											<TableCell
-												classes={cellStyle}
-												align='center'
-												className={clsx(classes.flex1, classes.tableCellBody)}>
-												{renderStatusCell(campaign.Status)}
-											</TableCell>
-											<TableCell
-												component='th'
-												scope='row'
-												className={clsx(classes.flex5, classes.tableCellRoot)}>
-												{renderCellIcons(campaign)}
-											</TableCell>
-										</TableRow>
-									))}
-								</>
-							)}
-						</Table>
-					</TableContainer>
-				</Grid>
-				<Pagination
-					classes={classes}
-					rows={totalRecord}
-					rowsPerPage={paginationSetting?.pageSize}
-					onRowsPerPageChange={onRowsPerPageChange}
-					rowsPerPageOptions={[6, 10, 20, 50]}
-					page={paginationSetting?.pageNo}
-					onPageChange={(pageNumber: number) =>
-						updatePaginationSetting({
-							...paginationSetting,
-							pageNo: pageNumber,
-						})
-					}
-					returnPageOne={false}
-				/>
-			</div>
-
-			<RestoreDeletedModal
-				classes={classes}
-				title={translator('whatsappManagement.restoreDeleted')}
-				isOpen={isRestoreDeletedModal}
-				onClose={() => setIsRestoreDeletedModal(false)}
-				onConfirmOrYes={() => onRestoreDeleted()}
-				restoreIds={restoreIds}
-				setRestoreIds={(ids: string[]) => setRestoreIds(ids)}
-				deletedCampaignListData={deletedCampaignListData}
-			/>
-
-			<AlertModal
-				classes={classes}
-				isOpen={isPreviewCampaignOpen}
-				onClose={() => setIsPreviewCampaignOpen(false)}
-				title={translator('whatsappManagement.preview')}
-				subtitle={''}
-				onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
-				type='alert'>
-				<Box className={classes.alertModalContentMobile}>
-					<WhatsappMobilePreview
+					<RestoreDeletedModal
 						classes={classes}
-						templateData={templateData}
-						buttonType={buttonType}
-						fileData={fileData}
+						title={translator('whatsappManagement.restoreDeleted')}
+						isOpen={isRestoreDeletedModal}
+						onClose={() => setIsRestoreDeletedModal(false)}
+						onConfirmOrYes={() => onRestoreDeleted()}
+						restoreIds={restoreIds}
+						setRestoreIds={(ids: string[]) => setRestoreIds(ids)}
+						deletedCampaignListData={deletedCampaignListData}
 					/>
-				</Box>
-			</AlertModal>
 
-			<AlertModal
-				classes={classes}
-				isOpen={isDuplicateCampaignOpen}
-				onClose={() => setIsDuplicateCampaignOpen(false)}
-				title={translator('whatsappManagement.duplicateCampaign')}
-				subtitle={translator('whatsappManagement.duplicateCampaignDesc')}
-				type='delete'
-				onConfirmOrYes={() => onDuplicateCampaign()}
-			/>
+					<AlertModal
+						classes={classes}
+						isOpen={isPreviewCampaignOpen}
+						onClose={() => setIsPreviewCampaignOpen(false)}
+						title={translator('whatsappManagement.preview')}
+						subtitle={''}
+						onConfirmOrYes={() => setIsPreviewCampaignOpen(false)}
+						type='alert'>
+						<Box className={classes.alertModalContentMobile}>
+							<WhatsappMobilePreview
+								classes={classes}
+								templateData={templateData}
+								buttonType={buttonType}
+								fileData={fileData}
+							/>
+						</Box>
+					</AlertModal>
 
-			<AlertModal
-				classes={classes}
-				isOpen={isDeleteCampaignOpen}
-				onClose={() => setIsDeleteCampaignOpen(false)}
-				title={translator('whatsappManagement.deleteCampaign')}
-				subtitle={translator('whatsappManagement.deleteCampaignDesc')}
-				type='delete'
-				onConfirmOrYes={() => onDeleteCampaign()}
-			/>
+					<AlertModal
+						classes={classes}
+						isOpen={isDuplicateCampaignOpen}
+						onClose={() => setIsDuplicateCampaignOpen(false)}
+						title={translator('whatsappManagement.duplicateCampaign')}
+						subtitle={translator('whatsappManagement.duplicateCampaignDesc')}
+						type='delete'
+						onConfirmOrYes={() => onDuplicateCampaign()}
+					/>
 
-			<InfoModal
-				classes={classes}
-				isOpen={isInfoModalOpen}
-				onClose={() => setIsInfoModalOpen(false)}
-				title={translator('whatsappManagement.campaignGroups')}
-				requiredFields={infoModalData}
-			/>
+					<AlertModal
+						classes={classes}
+						isOpen={isDeleteCampaignOpen}
+						onClose={() => setIsDeleteCampaignOpen(false)}
+						title={translator('whatsappManagement.deleteCampaign')}
+						subtitle={translator('whatsappManagement.deleteCampaignDesc')}
+						type='delete'
+						onConfirmOrYes={() => onDeleteCampaign()}
+					/>
 
+					<InfoModal
+						classes={classes}
+						isOpen={isInfoModalOpen}
+						onClose={() => setIsInfoModalOpen(false)}
+						title={translator('whatsappManagement.campaignGroups')}
+						requiredFields={infoModalData}
+					/>
+				</>
+			) : (
+				!isLoader && <NoSetup classes={classes} />
+			)}
 			<Loader isOpen={isLoader} showBackdrop={true} />
 		</DefaultScreen>
 	);

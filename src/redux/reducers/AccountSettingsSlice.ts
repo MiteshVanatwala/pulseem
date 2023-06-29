@@ -132,6 +132,8 @@ const AccountSettingsSlice = createSlice({
             INVALID_CELLPHONE: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.invalidMobile', showAnimtionCheck: false },
             VERIFY_EMAIL: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.verifyEmail', showAnimtionCheck: false },
             VERIFY_CELLPHONE: { severity: 'error', color: 'error', message: 'settings.accountSettings.fixedComDetails.errors.verifyPhone', showAnimtionCheck: false },
+            WHATSAPP_TIER_SAVED: { severity: 'success', color: 'success', message: 'settings.accountSettings.whatsAppTier.tierUpdatedSuccessfully', showAnimtionCheck: false },
+            WHATSAPP_TIER_NOT_SAVED: { severity: 'error', color: 'error', message: 'settings.accountSettings.whatsAppTier.tierUpdatedFailed', showAnimtionCheck: false },
             CHANGE_PASSWORD: {
                 201: { severity: 'success', color: 'success', message: 'settings.changePassword.responses.201', showAnimtionCheck: false },
                 403: { severity: 'error', color: 'error', message: 'settings.changePassword.responses.403', showAnimtionCheck: false },

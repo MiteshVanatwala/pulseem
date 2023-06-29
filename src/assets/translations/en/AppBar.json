@@ -21,6 +21,9 @@
   "mms": {
     "title": "MMS"
   },
+  "whatsapp": {
+    "title": "WhatsApp"
+  },
   "landingPages": {
     "title": "Landing Pages"
   },

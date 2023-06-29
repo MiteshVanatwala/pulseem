@@ -73,6 +73,7 @@
   "Opens": "Opens",
   "Status": "Status",
   "smsStatus": "Sms Status",
+  "whatsappStatus": "WhatsApp Status",
   "emailStatus": "Email Status",
   "ClicksUnique": "Unique Clicks",
   "ErrorEmail": "Error",
@@ -550,6 +551,7 @@
   "invalid": "Invalid",
   "noSms": "Not registered for Sms",
   "noEmail": "Not registered for Email",
+  "noWhatsapp": "Not registered for Whatsapp",
   "restricted": "Restricted",
   "deleteFromAllGroups": "Remove from groups",
   "removeFromAccount": "Remove from account",
@@ -634,5 +636,6 @@
   "doYouWantToProceed": "Do you want to proceed?",
   "templateSaved": "Template successfully saved!",
   "templateNameIsRequired": "Template name is required",
-  "loadMore": "Load More"
+  "loadMore": "Load More",
+  "ReadTime": "Read Time"
 }

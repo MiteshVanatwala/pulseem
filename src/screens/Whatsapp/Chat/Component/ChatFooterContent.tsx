@@ -7,11 +7,17 @@ import { ChatFooterContentProps } from '../Types/WhatsappChat.type';
 import { useTranslation } from 'react-i18next';
 import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import {
+	coreProps,
 	tagDataProps,
 	updatedVariable,
 } from '../../Campaign/Types/WhatsappCampaign.types';
 import clsx from 'clsx';
-import { getVariableValue } from '../../Common';
+import {
+	checkLanguage,
+	getTextDirection,
+	getVariableValue,
+} from '../../Common';
+import { useSelector } from 'react-redux';
 
 const ChatFooterContent = ({
 	classes,
@@ -26,18 +32,29 @@ const ChatFooterContent = ({
 	whatsappChatSession,
 	onChatSend,
 	activeChatContacts,
-	filteredSideChatContacts,
+	ChatContacts,
 	isContactLoader,
+	personalFields,
+	onChatTemplateDelete,
 }: ChatFooterContentProps) => {
 	const { t: translator } = useTranslation();
+	const { isRTL } = useSelector((state: { core: coreProps }) => state.core);
 	const [showEmojis, setShowEmojis] = useState<boolean>(false);
-	const freeFormInputHeight = '40px';
+	const [textDirection, setTextDirection] = useState<string>('ltr');
+	const freeFormInputHeight = '17px';
 	useEffect(() => {
 		const textElement = document.getElementById('free-from-input');
 		if (textElement) {
 			textElement.style.height = '5px';
 			textElement.style.height = textElement.scrollHeight + 'px';
 		}
+	}, [newMessage]);
+	useEffect(() => {
+		const direction = checkLanguage(newMessage, isRTL);
+		if (direction !== 'Both') {
+			setTextDirection(direction === 'English' ? 'ltr' : 'rtl');
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [newMessage]);
 	const isUpdatedVaraiable = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
@@ -54,10 +71,14 @@ const ChatFooterContent = ({
 	};
 	const getUpdatedVariableValue = (variable: string) => {
 		let updatedVariable = getVariableValue(variable);
-		const variableValue = updatedDynamicVariable?.find(
+		const matchedVariable = updatedDynamicVariable?.find(
 			(dynamicVariable: updatedVariable) =>
 				dynamicVariable.VariableIndex === Number(updatedVariable)
-		)?.VariableValue;
+		);
+		const variableValue =
+			matchedVariable?.FieldTypeId === 1
+				? personalFields[matchedVariable?.VariableValue]
+				: matchedVariable?.VariableValue;
 		return variableValue ? variableValue : variable;
 	};
 
@@ -119,8 +140,11 @@ const ChatFooterContent = ({
 									/>
 								</button>
 								{savedTemplate?.length !== 0 ? (
-									<Box className={`${classes.whatsappChat} chat__input m`}>
-										{/* @ts-ignore */}
+									<Box
+										className={`${classes.whatsappChat} chat__input m`}
+										style={{
+											direction: getTextDirection(newMessage, isRTL),
+										}}>
 										<Highlighter
 											searchWords={dynamicVariable}
 											autoEscape={true}
@@ -135,9 +159,17 @@ const ChatFooterContent = ({
 										className={`${classes.whatsappChat} chat__input s`}
 										id={'free-from-input'}
 										style={{
+											direction:
+												newMessage?.length > 0
+													? textDirection === 'rtl'
+														? 'rtl'
+														: 'ltr'
+													: isRTL
+													? 'rtl'
+													: 'ltr',
 											minHeight: freeFormInputHeight,
 											resize: 'none',
-											overflowY: 'hidden',
+											overflowY: 'auto',
 										}}
 										placeholder='Type a message'
 										value={newMessage}
@@ -145,7 +177,7 @@ const ChatFooterContent = ({
 									/>
 								)}
 							</>
-						) : filteredSideChatContacts?.length === 0 && !isContactLoader ? (
+						) : ChatContacts?.length === 0 && !isContactLoader ? (
 							<div
 								className={classes.noContactDiv}
 								style={{ padding: '2px', marginLeft: '12px', width: '100%' }}>
@@ -170,19 +202,23 @@ const ChatFooterContent = ({
 									alignItems='center'
 									spacing={2}>
 									<Typography color='textSecondary'>
-										<label style={{ fontSize: '20px' }}>
+										<label style={{ fontSize: '22px', fontWeight: 'bolder' }}>
 											<>{translator('whatsappChat.conversation')}</>
 										</label>
 										<br />
-										<label style={{ fontSize: '15px' }}>
+										<label style={{ fontSize: '17px', fontWeight: 'bolder' }}>
 											<>{translator('whatsappChat.cantSend')}</>
 										</label>
 									</Typography>
 
 									<Grid className={classes.manageTemplatesHeaderButtons}>
 										<Button
+											className={clsx(
+												classes.whatsappChatSendTemplateButton,
+												'green'
+											)}
 											size='small'
-											className={'green'}
+											style={{ padding: '6px 22px' }}
 											onClick={() => setIsTemplateModal(true)}>
 											<>{translator('whatsappChat.send')}</>
 										</Button>
@@ -190,6 +226,18 @@ const ChatFooterContent = ({
 								</Stack>
 							</div>
 						)}
+						{savedTemplate?.length > 0 && (
+							<>
+								<button
+									aria-label='Delete message'
+									onClick={onChatTemplateDelete}>
+									<Icon
+										id='delete'
+										className={`${classes.whatsappChat} chat__delete-icon`}
+									/>
+								</button>
+							</>
+						)}{' '}
 						{(whatsappChatSession.IsIn24Window ||
 							savedTemplate?.length > 0) && (
 							<button aria-label='Send message' onClick={onChatSend}>

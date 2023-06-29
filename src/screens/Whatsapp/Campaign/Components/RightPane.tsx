@@ -180,15 +180,19 @@ const RightPane = ({
 								<option value='2'>
 									{translator('mainReport.creationDay')}
 								</option>
-								{specialDatedropDown?.map(
-									(specialDate: string, index: number) => (
-										<option
-											key={'specialDate' + specialDate + index}
-											value={index + 3}>
-											{specialDate}
-										</option>
-									)
-								)}
+								{specialDatedropDown &&
+									Object.keys(specialDatedropDown).map((item, i) => {
+										if (specialDatedropDown[item]) {
+											return (
+												item.toLowerCase().indexOf('extradate') > -1 && (
+													<option value={i + 3} key={`extrakey_${i}`}>
+														{Object.values(specialDatedropDown[item])}
+													</option>
+												)
+											);
+										}
+										return <></>;
+									})}
 							</select>
 						</Box>
 
@@ -228,8 +232,8 @@ const RightPane = ({
 										className={
 											sendType === '3'
 												? isSpecialDateBefore
-													? clsx(classes.afterActive)
-													: clsx(classes.after)
+													? clsx(classes.whatsappSpecialDateAfterActive)
+													: clsx(classes.whatsappSpecialDateAfter)
 												: classes.disabledAfter
 										}
 										onClick={() => setIsSpecialDateBefore(true)}>
@@ -239,8 +243,8 @@ const RightPane = ({
 										className={
 											sendType === '3'
 												? !isSpecialDateBefore
-													? classes.beforeActive
-													: classes.before
+													? classes.whatsappSpecialDateBeforeActive
+													: classes.whatsappSpecialDateBefore
 												: classes.disabledBefore
 										}
 										onClick={() => setIsSpecialDateBefore(false)}>

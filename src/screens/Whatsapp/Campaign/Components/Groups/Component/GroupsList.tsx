@@ -20,6 +20,7 @@ const GroupsList = ({
 	groupNameSearch,
 	selectedList,
 	onSelectGroup,
+	from,
 }: groupsListProps) => {
 	const { t: translator } = useTranslation();
 	return list
@@ -29,7 +30,7 @@ const GroupsList = ({
 		.map((group: testGroupDataProps) => {
 			const isExist = selectedList
 				.map((group: testGroupDataProps) => {
-					return group['GroupID'];
+					return group['GroupID'] || group['WACampaignID'];
 				})
 				.includes(group['GroupID']);
 			return (
@@ -58,14 +59,16 @@ const GroupsList = ({
 						title={group.GroupName}
 						primary={group.GroupName}
 					/>
-					<ListItemSecondaryAction className={'groupText'}>
-						{group['Recipients']?.toLocaleString()}{' '}
-						<>
-							{group['Recipients'] !== 1
-								? translator('notifications.recipients')
-								: translator('notifications.recipient')}
-						</>
-					</ListItemSecondaryAction>
+					{from === 'group' && (
+						<ListItemSecondaryAction className={'groupText'}>
+							{group['Recipients']?.toLocaleString()}{' '}
+							<>
+								{group['Recipients'] !== 1
+									? translator('notifications.recipients')
+									: translator('notifications.recipient')}
+							</>
+						</ListItemSecondaryAction>
+					)}
 				</ListItem>
 			);
 		});

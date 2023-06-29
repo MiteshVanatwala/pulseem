@@ -342,8 +342,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/react/Campaigns/SendSettings/${CampaignID}`
-        //href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        //href: `/react/Campaigns/SendSettings/${CampaignID}`
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -839,73 +839,80 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const getDuplicateDialog = (campaignId, campaignName) => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
+    // OLD
     content: (
-      <>
-        <Typography align='center'
-          className={classes.mb5}
-        >{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `<b>"${campaignName}"</b>`))}
-        </Typography>
-        <FormControl>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.Groups)}
-                  checked={duplicateOptions.indexOf(CloneOptions.Groups) > -1}
-                />
-              }
-              label={t("common.Groups")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.Filters)}
-                  checked={duplicateOptions.indexOf(CloneOptions.Filters) > -1}
-                />
-              }
-              label={t("campaigns.newsLetterEditor.sendSettings.filters")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.SendDate)}
-                  checked={duplicateOptions.indexOf(CloneOptions.SendDate) > -1}
-                />
-              }
-              label={t("sms.sendingTime")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.SmsMarketing)}
-                  checked={duplicateOptions.indexOf(CloneOptions.SmsMarketing) > -1}
-                />
-              }
-              label={t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
-                  checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}
-                />
-              }
-              label={t("smsReport.pulseSending")}
-            />
-          </FormGroup>
-        </FormControl>
-      </>
+      <Typography style={{ fontSize: 18 }}>
+        {t('campaigns.dialogDuplicateContent')}
+      </Typography>
     ),
+    // NEW
+    // content: (
+    //   <>
+    //     <Typography align='center'
+    //       className={classes.mb5}
+    //     >{RenderHtml(t("campaigns.newsLetterEditor.sendSettings.insertCampaginName").replace('##campaignName##', `<b>"${campaignName}"</b>`))}
+    //     </Typography>
+    //     <FormControl>
+    //       <FormGroup>
+    //         <FormControlLabel
+    //           control={
+    //             <Checkbox
+    //               color="primary"
+    //               inputProps={{ "aria-label": "secondary checkbox" }}
+    //               onClick={() => handleDuplicateOptions(CloneOptions.Groups)}
+    //               checked={duplicateOptions.indexOf(CloneOptions.Groups) > -1}
+    //             />
+    //           }
+    //           label={t("common.Groups")}
+    //         />
+    //         <FormControlLabel
+    //           control={
+    //             <Checkbox
+    //               color="primary"
+    //               inputProps={{ "aria-label": "secondary checkbox" }}
+    //               onClick={() => handleDuplicateOptions(CloneOptions.Filters)}
+    //               checked={duplicateOptions.indexOf(CloneOptions.Filters) > -1}
+    //             />
+    //           }
+    //           label={t("campaigns.newsLetterEditor.sendSettings.filters")}
+    //         />
+    //         <FormControlLabel
+    //           control={
+    //             <Checkbox
+    //               color="primary"
+    //               inputProps={{ "aria-label": "secondary checkbox" }}
+    //               onClick={() => handleDuplicateOptions(CloneOptions.SendDate)}
+    //               checked={duplicateOptions.indexOf(CloneOptions.SendDate) > -1}
+    //             />
+    //           }
+    //           label={t("sms.sendingTime")}
+    //         />
+    //         <FormControlLabel
+    //           control={
+    //             <Checkbox
+    //               color="primary"
+    //               inputProps={{ "aria-label": "secondary checkbox" }}
+    //               onClick={() => handleDuplicateOptions(CloneOptions.SmsMarketing)}
+    //               checked={duplicateOptions.indexOf(CloneOptions.SmsMarketing) > -1}
+    //             />
+    //           }
+    //           label={t("campaigns.newsLetterEditor.sendSettings.smsMarketing.title")}
+    //         />
+    //         <FormControlLabel
+    //           control={
+    //             <Checkbox
+    //               color="primary"
+    //               inputProps={{ "aria-label": "secondary checkbox" }}
+    //               onClick={() => handleDuplicateOptions(CloneOptions.Pulses)}
+    //               checked={duplicateOptions.indexOf(CloneOptions.Pulses) > -1}
+    //             />
+    //           }
+    //           label={t("smsReport.pulseSending")}
+    //         />
+    //       </FormGroup>
+    //     </FormControl>
+    //   </>
+    // ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
